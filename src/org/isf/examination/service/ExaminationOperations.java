@@ -15,20 +15,22 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.isf.examination.model.PatientExamination;
 import org.isf.generaldata.ExaminationParameters;
+import org.isf.menu.gui.Menu;
 import org.isf.patient.model.Patient;
 import org.isf.utils.db.HybernateSessions;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Mwithi
  * 
  */
+@Component
 public class ExaminationOperations {
 
-	private static Session session;
-
 	/**
-	 * 
+	 * @deprecated Obtain an instance of this class through {@link Menu#getApplicationContext()} instead.
 	 */
+	@Deprecated
 	public ExaminationOperations() {
 		ExaminationParameters.getExaminationParameters();
 	}
@@ -58,7 +60,7 @@ public class ExaminationOperations {
 	 *            - the PatientHistory to save
 	 */
 	public void saveOrUpdate(PatientExamination patex) {
-		session = HybernateSessions.getSession("h8.properties");
+		Session session = HybernateSessions.getSession("h8.properties");
 		Transaction tx = session.beginTransaction();
 		try {
 			session.saveOrUpdate(patex);
@@ -71,7 +73,7 @@ public class ExaminationOperations {
 	}
 
 	public PatientExamination getByID(int ID) {
-		session = HybernateSessions.getSession("h8.properties");
+		Session session = HybernateSessions.getSession("h8.properties");
 		PatientExamination patex = null;
 		Transaction tx = session.beginTransaction();
 		try {
@@ -87,7 +89,7 @@ public class ExaminationOperations {
 
 	@SuppressWarnings("unchecked")
 	public PatientExamination getLastByPatID(int patID) {
-		session = HybernateSessions.getSession("h8.properties");
+		Session session = HybernateSessions.getSession("h8.properties");
 		PatientExamination patex = null;
 		Transaction tx = session.beginTransaction();
 		try {
@@ -109,7 +111,7 @@ public class ExaminationOperations {
 
 	@SuppressWarnings("unchecked")
 	public ArrayList<PatientExamination> getLastNByPatID(int patID, int number) {
-		session = HybernateSessions.getSession("h8.properties");
+		Session session = HybernateSessions.getSession("h8.properties");
 		ArrayList<PatientExamination> patexList = new ArrayList<PatientExamination>();
 		Transaction tx = session.beginTransaction();
 		try {
@@ -130,7 +132,7 @@ public class ExaminationOperations {
 
 	@SuppressWarnings("unchecked")
 	public ArrayList<PatientExamination> getByPatID(int patID) {
-		session = HybernateSessions.getSession("h8.properties");
+		Session session = HybernateSessions.getSession("h8.properties");
 		ArrayList<PatientExamination> patexList = new ArrayList<PatientExamination>();
 		Transaction tx = session.beginTransaction();
 		try {
