@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Update OpenHospital" default="distribute" basedir=".">
+	<property file="build.properties" />
+
+	<path id="classpath">
+		<pathelement path="${commons.dir}/${bin.dir}" />
+		<pathelement path="${bin.dir}" />
+		<pathelement path="${res.dir}" />
+		<fileset dir="${main.dir}/${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean" description="Delete old distribution files">
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="${bin.dir}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="${dist.dir}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="build" description="Source compilation">
+		<mkdir dir="${bin.dir}" />
+
+		<javac deprecation="${compile.deprecation}" optimize="${compile.optimize}" includeantruntime="false" srcdir="${src.dir}" destdir="${bin.dir}" classpathref="classpath" debug="true">
+			<!-- character set of sources -->
+			<compilerarg value="-encoding" />
+			<compilerarg value="UTF8" />
+			<!--<compilerarg value="-Xlint"/>-->
+		</javac>
+		<copy todir="${bin.dir}">
+   			<fileset dir="${src.dir}" includes="**/*.hbm.xml"/>
+		</copy>
+	</target>
+
+	<target name="rebuild" depends="clean,build" description="Sources rebuild" />
+
+	<target name="wrapper">
+		<mkdir dir="${dist.dir}" />
+	</target>
+
+	<target name="distribute" depends="clean,build,wrapper" description="Creates distribution files of application">
+		<mkdir dir="${dist.dir}/${lib.dir}" />
+		<mkdir dir="${dist.dir}/${bin.dir}" />
+		<jar jarfile="${dist.dir}/${bin.dir}/OH.jar" basedir="${bin.dir}" />
+
+		<copy file="startup.sh" todir="${dist.dir}" />
+		<copy file="SetupGSM.sh" todir="${dist.dir}" />
+		<copy file="startup.cmd" todir="${dist.dir}" />
+		<copy file="SetupGSM.cmd" todir="${dist.dir}" />
+		<copy file="oh.ico" todir="${dist.dir}" />
+		
+		<chmod file="${dist.dir}/startup.sh" perm="+x" />
+		<chmod file="${dist.dir}/SetupGSM.sh" perm="+x" />
+
+		<copy todir="${dist.dir}/${rsc.dir}">
+			<fileset dir="${main.dir}/${rsc.dir}">
+			</fileset>
+		</copy>
+		<copy todir="${dist.dir}/${rpt.dir}">
+			<fileset dir="${main.dir}/${rpt.dir}">
+			</fileset>
+		</copy>
+		<mkdir dir="${dist.dir}/${rpt.dir}/PDF" />
+		<copy todir="${dist.dir}/${bundle.dir}">
+			<fileset dir="${main.dir}/${bundle.dir}">
+			</fileset>
+		</copy>
+		<copy todir="${dist.dir}/${lib.dir}">
+			<fileset dir="${main.dir}/${lib.dir}">
+			</fileset>
+		</copy>
+		<copy todir="${dist.dir}/${doc.dir}">
+			<fileset dir="${main.dir}/${doc.dir}">
+				<include name="**/*.pdf" />
+				<include name="**/*.txt" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.dir}/${mysql.dir}">
+			<fileset dir="${main.dir}/${mysql.dir}/db">
+			</fileset>
+		</copy>
+
+	</target>
+
+</project>
