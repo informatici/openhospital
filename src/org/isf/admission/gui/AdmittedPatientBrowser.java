@@ -46,6 +46,7 @@ import org.isf.examination.service.ExaminationOperations;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.gui.Menu;
 import org.isf.opd.gui.OpdEditExtended;
 import org.isf.opd.model.Opd;
 import org.isf.patient.gui.PatientInsert;
@@ -511,7 +512,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 					Patient pat = patient.getPatient();
 					
 					PatientExamination patex;
-					ExaminationOperations examOperations = new ExaminationOperations();
+					ExaminationOperations examOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
 					
 					PatientExamination lastPatex = examOperations.getLastByPatID(pat.getCode());
 					if (lastPatex != null) {
