@@ -8,11 +8,11 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
-import org.isf.medicals.service.IoOperations;
+import org.isf.medicals.service.MedicalsIoOperations;
 import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
-import org.isf.generaldata.MessageBundle;
 
 /**
  * Class that provides gui separation from database operations and gives some
@@ -23,7 +23,7 @@ import org.isf.generaldata.MessageBundle;
  */
 public class MedicalBrowsingManager {
 
-	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
+	private MedicalsIoOperations ioOperations = Menu.getApplicationContext().getBean(MedicalsIoOperations.class);
 	
 	/**
 	 * Returns the requested medical.

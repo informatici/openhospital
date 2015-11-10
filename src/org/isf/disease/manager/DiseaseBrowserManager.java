@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import org.isf.disease.model.Disease;
-import org.isf.disease.service.IoOperations;
+import org.isf.disease.service.DiseaseIoOperations;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
@@ -25,7 +25,7 @@ import org.isf.utils.exception.OHException;
  */
 public class DiseaseBrowserManager {
 
-	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
+	private DiseaseIoOperations ioOperations = Menu.getApplicationContext().getBean(DiseaseIoOperations.class);
 
 	/**
 	 * Returns all the stored {@link Disease} with ODP flag <code>true</code>.

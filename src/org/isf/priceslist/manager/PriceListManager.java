@@ -8,13 +8,13 @@ import javax.swing.JOptionPane;
 import org.isf.menu.gui.Menu;
 import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.Price;
-import org.isf.priceslist.service.IoOperations;
+import org.isf.priceslist.service.PricesListIoOperations;
 import org.isf.serviceprinting.print.PriceForPrint;
 import org.isf.utils.exception.OHException;
 
 public class PriceListManager {
 
-	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
+	private PricesListIoOperations ioOperations = Menu.getApplicationContext().getBean(PricesListIoOperations.class);
 	
 	/**
 	 * return the list of {@link List}s in the DB

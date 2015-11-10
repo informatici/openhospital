@@ -18,7 +18,7 @@ import org.isf.sms.model.Sms;
 import org.isf.sms.service.SmsOperations;
 import org.isf.utils.exception.OHException;
 import org.isf.visits.model.Visit;
-import org.isf.visits.service.IoOperations;
+import org.isf.visits.service.VisitsIoOperations;
 import org.joda.time.DateTime;
 
 /**
@@ -27,7 +27,7 @@ import org.joda.time.DateTime;
  */
 public class VisitManager {
 	
-	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
+	private VisitsIoOperations ioOperations = Menu.getApplicationContext().getBean(VisitsIoOperations.class);
 	
 	/**
 	 * returns the list of all {@link Visit}s related to a patID

@@ -4,9 +4,8 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-
 import org.isf.distype.model.DiseaseType;
-import org.isf.distype.service.IoOperation;
+import org.isf.distype.service.DiseaseTypeIoOperation;
 import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
@@ -15,7 +14,7 @@ import org.isf.utils.exception.OHException;
  */
 public class DiseaseTypeBrowserManager {
 
-	private IoOperation ioOperations = Menu.getApplicationContext().getBean(IoOperation.class);
+	private DiseaseTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(DiseaseTypeIoOperation.class);
 
 	/**
 	 * Returns all the stored {@link DiseaseType}s.

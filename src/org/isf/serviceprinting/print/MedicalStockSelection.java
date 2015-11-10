@@ -29,7 +29,7 @@ import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.manager.DateTextField;
 import org.isf.medicalstock.model.Movement;
-import org.isf.medicalstock.service.IoOperations;
+import org.isf.medicalstock.service.MedicalStockIoOperations;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
@@ -391,7 +391,7 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 						lot = lotField.getText();
 					}
 					
-					org.isf.medicalstock.service.IoOperations ioOperations = Menu.getApplicationContext().getBean(org.isf.medicalstock.service.IoOperations.class);
+					MedicalStockIoOperations ioOperations = Menu.getApplicationContext().getBean(MedicalStockIoOperations.class);
 					int format=0;String path=null;
 					if(formatSelected.equalsIgnoreCase("Java")){
 						format=PrintManager.toDisplay;
@@ -407,22 +407,22 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 						case 0:
 							path="rpt/stockMovementDate.jasper";
 							pMovements = ioOperations.getMovementForPrint(medical,
-										medicalType,wardSelected ,movementType, movFrom, movTo, lot,IoOperations.MovementOrder.DATE);
+										medicalType,wardSelected ,movementType, movFrom, movTo, lot,MedicalStockIoOperations.MovementOrder.DATE);
 							break;
 						case 1:
 							path="rpt/stockMovementWard.jasper";
 							pMovements = ioOperations.getMovementForPrint(medical,
-									medicalType,wardSelected ,movementType, movFrom, movTo, lot,IoOperations.MovementOrder.WARD);
+									medicalType,wardSelected ,movementType, movFrom, movTo, lot,MedicalStockIoOperations.MovementOrder.WARD);
 							break;
 						case 2:
 							path="rpt/stockMovementPhrType.jasper";
 							pMovements = ioOperations.getMovementForPrint(medical,
-									medicalType,wardSelected ,movementType, movFrom, movTo, lot,IoOperations.MovementOrder.PHARMACEUTICAL_TYPE);
+									medicalType,wardSelected ,movementType, movFrom, movTo, lot,MedicalStockIoOperations.MovementOrder.PHARMACEUTICAL_TYPE);
 							break;
 						case 3:
 							path="rpt/stockMovementType.jasper";
 							pMovements = ioOperations.getMovementForPrint(medical,
-									medicalType,wardSelected ,movementType, movFrom, movTo, lot,IoOperations.MovementOrder.TYPE);
+									medicalType,wardSelected ,movementType, movFrom, movTo, lot,MedicalStockIoOperations.MovementOrder.TYPE);
 							break;
 					}
 					} catch (OHException exception) {

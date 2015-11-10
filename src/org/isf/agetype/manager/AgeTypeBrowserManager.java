@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-import org.isf.agetype.service.IoOperations;
-import org.isf.menu.gui.Menu;
 import org.isf.agetype.model.AgeType;
+import org.isf.agetype.service.AgeTypeIoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 public class AgeTypeBrowserManager {
 
-	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
+	private AgeTypeIoOperations ioOperations = Menu.getApplicationContext().getBean(AgeTypeIoOperations.class);
 
 	/**
 	 * Returns all available age types.

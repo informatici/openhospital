@@ -12,7 +12,7 @@ import org.isf.generaldata.MessageBundle;
 
 public class UserBrowsingManager {
 	
-	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
+	private MenuIoOperations ioOperations = Menu.getApplicationContext().getBean(MenuIoOperations.class);
 	
 	/**
 	 * returns the list of {@link User}s

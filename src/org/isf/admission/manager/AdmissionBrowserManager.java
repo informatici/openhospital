@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 
 import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
-import org.isf.admission.service.IoOperations;
+import org.isf.admission.service.AdmissionIoOperations;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.disctype.model.DischargeType;
 import org.isf.generaldata.MessageBundle;
@@ -16,7 +16,7 @@ import org.isf.utils.exception.OHException;
 
 public class AdmissionBrowserManager {
 
-	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
+	private AdmissionIoOperations ioOperations = Menu.getApplicationContext().getBean(AdmissionIoOperations.class);
 
 	/**
 	 * Returns all patients with ward in which they are admitted.

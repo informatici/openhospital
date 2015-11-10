@@ -16,13 +16,13 @@ import org.isf.sms.model.Sms;
 import org.isf.sms.service.SmsOperations;
 import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
-import org.isf.therapy.service.IoOperations;
+import org.isf.therapy.service.TherapyIoOperations;
 import org.isf.utils.exception.OHException;
 import org.joda.time.DateTime;
 
 public class TherapyManager {
 	
-	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
+	private TherapyIoOperations ioOperations = Menu.getApplicationContext().getBean(TherapyIoOperations.class);
 	
 	public Therapy createTherapy(TherapyRow th) {
 		return createTherapy(th.getTherapyID(), th.getPatID(), th.getMedical(), th.getQty(),

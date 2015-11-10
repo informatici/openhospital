@@ -6,12 +6,12 @@ import javax.swing.JOptionPane;
 
 import org.isf.menu.gui.Menu;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
-import org.isf.pregtreattype.service.IoOperation;
+import org.isf.pregtreattype.service.PregnantTreatmentTypeIoOperation;
 import org.isf.utils.exception.OHException;
 
 public class PregnantTreatmentTypeBrowserManager {
 
-	private IoOperation ioOperations = Menu.getApplicationContext().getBean(IoOperation.class);
+	private PregnantTreatmentTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(PregnantTreatmentTypeIoOperation.class);
 	
 	/**
 	 * return the list of {@link PregnantTreatmentType}s

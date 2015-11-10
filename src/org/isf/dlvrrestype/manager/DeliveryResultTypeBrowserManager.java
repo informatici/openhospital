@@ -4,9 +4,8 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-
 import org.isf.dlvrrestype.model.DeliveryResultType;
-import org.isf.dlvrrestype.service.IoOperation;
+import org.isf.dlvrrestype.service.DeliveryResultTypeIoOperation;
 import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
@@ -15,7 +14,7 @@ import org.isf.utils.exception.OHException;
  */
 public class DeliveryResultTypeBrowserManager {
 
-	private IoOperation ioOperations = Menu.getApplicationContext().getBean(IoOperation.class);
+	private DeliveryResultTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(DeliveryResultTypeIoOperation.class);
 
 	/**
 	 * Returns all stored {@link DeliveryResultType}s.

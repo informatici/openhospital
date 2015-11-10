@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import org.isf.exa.model.Exam;
-import org.isf.exa.service.IoOperations;
+import org.isf.exa.service.ExamIoOperations;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
@@ -24,7 +24,7 @@ import org.isf.utils.exception.OHException;
  */
 public class ExamBrowsingManager {
 
-	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
+	private ExamIoOperations ioOperations = Menu.getApplicationContext().getBean(ExamIoOperations.class);
 
 	/**
 	 * Returns the list of {@link Exam}s

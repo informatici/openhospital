@@ -14,11 +14,11 @@ import javax.swing.JOptionPane;
 import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 import org.isf.vactype.model.VaccineType;
-import org.isf.vactype.service.IoOperation;
+import org.isf.vactype.service.VacTypeIoOperation;
 
 public class VaccineTypeBrowserManager {
 	
-		private IoOperation ioOperations = Menu.getApplicationContext().getBean(IoOperation.class);
+		private VacTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(VacTypeIoOperation.class);
 		
 		/**
 		 * This method returns all {@link VaccineType}s from DB	

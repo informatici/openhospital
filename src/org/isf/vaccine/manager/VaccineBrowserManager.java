@@ -8,7 +8,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 import org.isf.vaccine.model.Vaccine;
-import org.isf.vaccine.service.IoOperations;
+import org.isf.vaccine.service.VaccineIoOperations;
 
 /**
  * Class that provides gui separation from database operations and gives some
@@ -23,7 +23,7 @@ import org.isf.vaccine.service.IoOperations;
  */
 public class VaccineBrowserManager {
 
-	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
+	private VaccineIoOperations ioOperations = Menu.getApplicationContext().getBean(VaccineIoOperations.class);
 
 	/**
 	 * returns the list of {@link Vaccine}s in the DB

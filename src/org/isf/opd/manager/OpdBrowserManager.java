@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.opd.model.Opd;
-import org.isf.opd.service.IoOperations;
+import org.isf.opd.service.OpdIoOperations;
 import org.isf.utils.exception.OHException;
 
 
@@ -19,7 +19,7 @@ import org.isf.utils.exception.OHException;
  */
 public class OpdBrowserManager {
 	
-	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
+	private OpdIoOperations ioOperations = Menu.getApplicationContext().getBean(OpdIoOperations.class);
 	
 	/**
 	 * return all OPDs of today or one week ago
