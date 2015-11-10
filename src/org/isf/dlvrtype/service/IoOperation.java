@@ -9,11 +9,13 @@ import java.util.List;
 import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 import org.isf.generaldata.MessageBundle;
 
 /**
  * The persistence class for the DeliveryType module.
  */
+@Component
 public class IoOperation {
 
 	/**

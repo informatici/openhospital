@@ -8,6 +8,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.model.Hospital;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * This class offers the io operations for recovering and
@@ -16,6 +17,7 @@ import org.isf.utils.exception.OHException;
  * @author Fin8, Furla, Thoia
  * 
  */
+@Component
 public class IoOperations {
 	
 	/**

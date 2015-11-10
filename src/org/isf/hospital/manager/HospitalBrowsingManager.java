@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 
 import org.isf.hospital.model.*;
 import org.isf.hospital.service.IoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 /**
@@ -15,7 +16,7 @@ import org.isf.utils.exception.OHException;
  */
 public class HospitalBrowsingManager {
 	
-	private IoOperations ioOperations = new IoOperations();
+	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
 
 	/**
 	 * Reads from database hospital informations

@@ -15,7 +15,9 @@ import org.isf.medtype.model.MedicalType;
 import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IoOperations {
 
 	/**

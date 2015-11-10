@@ -27,12 +27,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExaminationOperations {
 
-	/**
-	 * @deprecated Obtain an instance of this class through {@link Menu#getApplicationContext()} instead.
-	 */
-	@Deprecated
-	public ExaminationOperations() {
-		ExaminationParameters.getExaminationParameters();
+	private ExaminationOperations() {
 	}
 
 	/**

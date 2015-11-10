@@ -15,6 +15,7 @@ import org.isf.medicals.model.*;
 import org.isf.medtype.model.MedicalType;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 import org.isf.generaldata.MessageBundle;
 
 
@@ -27,6 +28,7 @@ import org.isf.generaldata.MessageBundle;
  * 			- column product code
  * 			- column pieces per packet
  */
+@Component
 public class IoOperations {
 
 	/**

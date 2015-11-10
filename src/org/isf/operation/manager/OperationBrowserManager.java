@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.gui.Menu;
 import org.isf.operation.model.Operation;
 import org.isf.operation.service.IoOperations;
 import org.isf.opetype.model.OperationType;
@@ -19,7 +20,7 @@ import org.isf.utils.exception.OHException;
  */
 public class OperationBrowserManager {
 
-	private IoOperations ioOperations = new IoOperations();
+	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
 
 	/**
 	 * return the list of {@link Operation}s

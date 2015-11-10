@@ -9,14 +9,15 @@ import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
 import org.isf.accounting.service.IoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 public class BillBrowserManager {
 
-	IoOperations ioOperations;
+	private IoOperations ioOperations;
 
 	public BillBrowserManager(){
-		ioOperations=new IoOperations();
+		ioOperations=Menu.getApplicationContext().getBean(IoOperations.class);
 	}
 
 	/**

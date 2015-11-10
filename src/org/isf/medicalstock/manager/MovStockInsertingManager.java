@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstock.service.IoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.medicals.model.Medical;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
@@ -21,8 +22,8 @@ public class MovStockInsertingManager {
 	private org.isf.medicals.service.IoOperations ioOperationsMedicals;
 
 	public MovStockInsertingManager() {
-		ioOperations = new IoOperations();
-		ioOperationsMedicals = new org.isf.medicals.service.IoOperations();
+		ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
+		ioOperationsMedicals = Menu.getApplicationContext().getBean(org.isf.medicals.service.IoOperations.class);
 	}
 
 	// Replaced by getMedical in MedicalBrowsingManager

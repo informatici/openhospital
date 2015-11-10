@@ -13,6 +13,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.opd.model.Opd;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /*----------------------------------------------------
  * (org.isf.opd.service)IoOperations - services for opd class
@@ -32,6 +33,7 @@ import org.isf.utils.exception.OHException;
  *                         blocks. Modified methods to format dates.                          
  *------------------------------------------*/
 
+@Component
 public class IoOperations {
 	
 	/**

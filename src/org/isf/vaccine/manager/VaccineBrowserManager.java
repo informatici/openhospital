@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 import org.isf.vaccine.model.Vaccine;
 import org.isf.vaccine.service.IoOperations;
@@ -22,7 +23,7 @@ import org.isf.vaccine.service.IoOperations;
  */
 public class VaccineBrowserManager {
 
-	private IoOperations ioOperations = new IoOperations();
+	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
 
 	/**
 	 * returns the list of {@link Vaccine}s in the DB

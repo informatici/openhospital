@@ -6,10 +6,11 @@ import javax.swing.JOptionPane;
 
 import org.isf.exa.model.ExamRow;
 import org.isf.exa.service.IoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 public class ExamRowBrowsingManager {
-	private IoOperations ioOperations = new IoOperations();
+	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
 		
 	/**
 	 * Returns the list of {@link ExamRow}s

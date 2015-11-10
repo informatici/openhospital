@@ -9,12 +9,14 @@ import java.util.List;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 import org.isf.generaldata.MessageBundle;
 
 /**
  * Persistence class for the medstockmovtype module.
  *
  */
+@Component
 public class IoOperation {
 
 	/**

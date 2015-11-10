@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.gui.Menu;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.pricesothers.service.IoOperations;
 import org.isf.utils.exception.OHException;
 
 public class PricesOthersManager {
 
-	private IoOperations ioOperations = new IoOperations();
+	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
 
 	/**
 	 * return the list of {@link PriceOthers}s in the DB

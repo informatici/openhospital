@@ -10,7 +10,9 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IoOperations {
 
 	/**

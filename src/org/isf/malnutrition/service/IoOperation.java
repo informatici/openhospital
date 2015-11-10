@@ -12,10 +12,12 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.malnutrition.model.Malnutrition;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * Persistence class for the malnutrition module.
  */
+@Component
 public class IoOperation {
 
 	/**

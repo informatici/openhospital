@@ -12,7 +12,9 @@ import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IoOperations {
 
 	/**

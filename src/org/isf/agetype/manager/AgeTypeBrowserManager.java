@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import org.isf.agetype.service.IoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.agetype.model.AgeType;
 import org.isf.utils.exception.OHException;
 
 public class AgeTypeBrowserManager {
 
-	private IoOperations ioOperations = new IoOperations();
+	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
 
 	/**
 	 * Returns all available age types.

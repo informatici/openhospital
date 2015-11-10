@@ -9,11 +9,13 @@ import java.util.List;
 import org.isf.medtype.model.MedicalType;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 import org.isf.generaldata.MessageBundle;
 
 /**
  * Persistence class for the medical type module.
  */
+@Component
 public class IoOperation {
 
 

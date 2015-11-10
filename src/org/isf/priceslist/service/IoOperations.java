@@ -10,7 +10,9 @@ import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.Price;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IoOperations {
 
 	/**

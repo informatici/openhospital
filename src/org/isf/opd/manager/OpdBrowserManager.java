@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 import javax.swing.JOptionPane;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.gui.Menu;
 import org.isf.opd.model.Opd;
 import org.isf.opd.service.IoOperations;
 import org.isf.utils.exception.OHException;
@@ -18,7 +19,7 @@ import org.isf.utils.exception.OHException;
  */
 public class OpdBrowserManager {
 	
-	private IoOperations ioOperations = new IoOperations();
+	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
 	
 	/**
 	 * return all OPDs of today or one week ago

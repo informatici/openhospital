@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 import org.isf.malnutrition.model.Malnutrition;
 import org.isf.malnutrition.service.IoOperation;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 import org.isf.generaldata.MessageBundle;
 
@@ -16,7 +17,7 @@ import org.isf.generaldata.MessageBundle;
  */
 public class MalnutritionManager {
 
-	IoOperation ioOperation = new IoOperation();
+	private IoOperation ioOperation = Menu.getApplicationContext().getBean(IoOperation.class);
 
 	/**
 	 * Retrieves all the {@link Malnutrition} associated to the given admission id.

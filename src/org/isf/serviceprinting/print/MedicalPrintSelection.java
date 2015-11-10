@@ -27,6 +27,7 @@ import org.isf.medicals.model.Medical;
 import org.isf.medicals.service.IoOperations;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
+import org.isf.menu.gui.Menu;
 import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.exception.OHException;
 
@@ -226,7 +227,7 @@ public class MedicalPrintSelection extends JDialog implements ActionListener{
 				if(!(medicalTypeBox.getSelectedItem() instanceof String)){
 					medicalType=((MedicalType)medicalTypeBox.getSelectedItem()).getCode();
 				}
-				IoOperations ioOperations=new IoOperations();
+				IoOperations ioOperations=Menu.getApplicationContext().getBean(IoOperations.class);
 				int format = 0;
 				if(formatSelected.equalsIgnoreCase("Java")){
 					format=PrintManager.toDisplay;

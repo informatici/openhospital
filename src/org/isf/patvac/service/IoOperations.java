@@ -23,7 +23,9 @@ import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.isf.vaccine.model.Vaccine;
 import org.isf.vactype.model.VaccineType;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IoOperations {
 
 	/**

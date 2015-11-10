@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 import org.isf.medicals.model.Medical;
 import org.isf.medicals.service.IoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 import org.isf.generaldata.MessageBundle;
 
@@ -22,7 +23,7 @@ import org.isf.generaldata.MessageBundle;
  */
 public class MedicalBrowsingManager {
 
-	private IoOperations ioOperations = new IoOperations();
+	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
 	
 	/**
 	 * Returns the requested medical.

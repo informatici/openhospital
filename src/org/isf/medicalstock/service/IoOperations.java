@@ -21,6 +21,7 @@ import org.isf.supplier.model.Supplier;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
+import org.springframework.stereotype.Component;
 
 /**
  * Persistence class for MedicalStock module.
@@ -29,6 +30,7 @@ import org.isf.ward.model.Ward;
  * 			- reflection from Medicals pieces per packet
  * 			- added complete Ward and Movement construction in getMovement()
  */
+@Component
 public class IoOperations {
 	
 	public enum MovementOrder {

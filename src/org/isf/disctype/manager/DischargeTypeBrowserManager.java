@@ -6,11 +6,12 @@ import javax.swing.JOptionPane;
 
 import org.isf.disctype.model.DischargeType;
 import org.isf.disctype.service.IoOperation;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 public class DischargeTypeBrowserManager {
 
-	private IoOperation ioOperations = new IoOperation();
+	private IoOperation ioOperations = Menu.getApplicationContext().getBean(IoOperation.class);
 
 	/**
 	 * method that returns all DischargeTypes in a list

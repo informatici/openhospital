@@ -7,11 +7,12 @@ import javax.swing.JOptionPane;
 
 import org.isf.admtype.model.AdmissionType;
 import org.isf.admtype.service.IoOperation;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 public class AdmissionTypeBrowserManager {
 
-	private IoOperation ioOperations = new IoOperation();
+	private IoOperation ioOperations = Menu.getApplicationContext().getBean(IoOperation.class);
 
 	/**
 	 * Returns all the available {@link AdmissionType}s.

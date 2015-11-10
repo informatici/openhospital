@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.dlvrtype.service.IoOperation;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 /**
@@ -14,7 +15,7 @@ import org.isf.utils.exception.OHException;
  */
 public class DeliveryTypeBrowserManager {
 
-	private IoOperation ioOperations = new IoOperation();
+	private IoOperation ioOperations = Menu.getApplicationContext().getBean(IoOperation.class);
 
 	/**
 	 * Returns all stored {@link DeliveryType}s.

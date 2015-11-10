@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
+import org.isf.menu.gui.Menu;
 import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.Price;
 import org.isf.priceslist.service.IoOperations;
@@ -13,7 +14,7 @@ import org.isf.utils.exception.OHException;
 
 public class PriceListManager {
 
-	private IoOperations ioOperations = new IoOperations();
+	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
 	
 	/**
 	 * return the list of {@link List}s in the DB

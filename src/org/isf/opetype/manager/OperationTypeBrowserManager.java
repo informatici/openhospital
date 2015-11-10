@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-
+import org.isf.menu.gui.Menu;
 import org.isf.opetype.model.OperationType;
 import org.isf.opetype.service.IoOperation;
 import org.isf.utils.exception.OHException;
 
 public class OperationTypeBrowserManager {
 
-	private IoOperation ioOperations = new IoOperation();
+	private IoOperation ioOperations = Menu.getApplicationContext().getBean(IoOperation.class);
 	
 	/**
 	 * return the list of {@link OperationType}s

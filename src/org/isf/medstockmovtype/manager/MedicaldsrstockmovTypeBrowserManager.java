@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.medstockmovtype.service.IoOperation;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 /**
@@ -15,7 +16,7 @@ import org.isf.utils.exception.OHException;
  */
 public class MedicaldsrstockmovTypeBrowserManager {
 
-	private IoOperation ioOperations = new IoOperation();
+	private IoOperation ioOperations = Menu.getApplicationContext().getBean(IoOperation.class);
 
 	/**
 	 * Returns all the medical stock movement types.

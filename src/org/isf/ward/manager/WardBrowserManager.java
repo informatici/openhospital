@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
 import org.isf.ward.service.IoOperations;
@@ -18,7 +19,7 @@ import org.isf.ward.service.IoOperations;
  */
 public class WardBrowserManager {
 
-	private IoOperations ioOperations = new IoOperations();
+	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
 
 	/**
 	 * Returns all stored wards.

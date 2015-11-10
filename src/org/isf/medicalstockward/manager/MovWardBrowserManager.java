@@ -12,6 +12,7 @@ import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
 import org.isf.medicalstockward.service.IoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.serviceprinting.print.MedicalWardForPrint;
 import org.isf.serviceprinting.print.MovementForPrint;
 import org.isf.serviceprinting.print.MovementWardForPrint;
@@ -20,10 +21,10 @@ import org.isf.ward.model.Ward;
 
 public class MovWardBrowserManager {
 
-	IoOperations ioOperations;
+	private IoOperations ioOperations;
 
 	public MovWardBrowserManager(){
-		ioOperations=new IoOperations();
+		ioOperations=Menu.getApplicationContext().getBean(IoOperations.class);
 	}
 
 	/**

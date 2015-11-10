@@ -7,11 +7,12 @@ import javax.swing.JOptionPane;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.lab.service.IoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 public class LabRowManager {
 
-	private IoOperations ioOperations = new IoOperations();
+	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
 	
 	/**
 	 * Return a list of results ({@link LaboratoryRow}s) for passed lab entry.

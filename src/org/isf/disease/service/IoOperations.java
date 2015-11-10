@@ -26,6 +26,7 @@ import org.isf.distype.model.DiseaseType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * This class offers the io operations for recovering and managing
@@ -33,6 +34,7 @@ import org.isf.utils.exception.OHException;
  * 
  * @author Rick, Vero
  */
+@Component
 public class IoOperations {
 
 	/**

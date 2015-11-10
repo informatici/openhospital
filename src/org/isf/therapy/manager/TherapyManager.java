@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.gui.Menu;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.sms.model.Sms;
@@ -21,7 +22,7 @@ import org.joda.time.DateTime;
 
 public class TherapyManager {
 	
-	private IoOperations ioOperations = new IoOperations();
+	private IoOperations ioOperations = Menu.getApplicationContext().getBean(IoOperations.class);
 	
 	public Therapy createTherapy(TherapyRow th) {
 		return createTherapy(th.getTherapyID(), th.getPatID(), th.getMedical(), th.getQty(),
