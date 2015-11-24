@@ -8,13 +8,14 @@ import org.isf.accounting.manager.BillBrowserManager;
 import org.isf.accounting.model.Bill;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.gui.Menu;
 import org.isf.patient.model.Patient;
-import org.isf.patient.service.IoOperations;
+import org.isf.patient.service.PatientIoOperations;
 import org.isf.utils.exception.OHException;
 
 public class PatientBrowserManager {
 
-	private IoOperations ioOperations = new IoOperations();
+	private PatientIoOperations ioOperations = Menu.getApplicationContext().getBean(PatientIoOperations.class);
 	
 	/**
 	 * methot that insert a new Patient in the db

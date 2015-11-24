@@ -4,6 +4,7 @@ import java.util.*;
 
 import javax.swing.JOptionPane;
 
+import org.isf.menu.gui.Menu;
 import org.isf.menu.model.*;
 import org.isf.menu.service.*;
 import org.isf.utils.exception.OHException;
@@ -11,7 +12,7 @@ import org.isf.generaldata.MessageBundle;
 
 public class UserBrowsingManager {
 	
-	IoOperations ioOperations = new IoOperations();
+	private MenuIoOperations ioOperations = Menu.getApplicationContext().getBean(MenuIoOperations.class);
 	
 	/**
 	 * returns the list of {@link User}s

@@ -5,19 +5,20 @@ import java.util.GregorianCalendar;
 
 import javax.swing.JOptionPane;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.medicalstock.model.Movement;
-import org.isf.medicalstock.service.IoOperations;
+import org.isf.medicalstock.service.MedicalStockIoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
-import org.isf.generaldata.MessageBundle;
 
 
 public class MovBrowserManager {
 	
-	IoOperations ioOperations;
+	private MedicalStockIoOperations ioOperations;
 	
 	public MovBrowserManager(){
-		ioOperations = new IoOperations();
+		ioOperations = Menu.getApplicationContext().getBean(MedicalStockIoOperations.class);
 	}
 
 	/**

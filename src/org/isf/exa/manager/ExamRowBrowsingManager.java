@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import org.isf.exa.model.ExamRow;
-import org.isf.exa.service.IoOperations;
+import org.isf.exa.service.ExamIoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 public class ExamRowBrowsingManager {
-	private IoOperations ioOperations = new IoOperations();
+	private ExamIoOperations ioOperations = Menu.getApplicationContext().getBean(ExamIoOperations.class);
 		
 	/**
 	 * Returns the list of {@link ExamRow}s

@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import org.isf.exatype.model.ExamType;
-import org.isf.exatype.service.IoOperation;
+import org.isf.exatype.service.ExamTypeIoOperation;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 public class ExamTypeBrowserManager {
 
-	private IoOperation ioOperations = new IoOperation();
+	private ExamTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(ExamTypeIoOperation.class);
 
 	/**
 	 * Return the list of {@link ExamType}s.

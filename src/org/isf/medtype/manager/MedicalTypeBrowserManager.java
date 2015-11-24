@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-
 import org.isf.medtype.model.MedicalType;
-import org.isf.medtype.service.IoOperation;
+import org.isf.medtype.service.MedicalTypeIoOperation;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 /**
@@ -15,7 +15,7 @@ import org.isf.utils.exception.OHException;
  */
 public class MedicalTypeBrowserManager {
 
-	private IoOperation ioOperations = new IoOperation();
+	private MedicalTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(MedicalTypeIoOperation.class);
 
 	/**
 	 * Retrieves all the medical types.

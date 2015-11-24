@@ -47,6 +47,7 @@ import org.isf.examination.model.PatientExamination;
 import org.isf.examination.service.ExaminationOperations;
 import org.isf.generaldata.ExaminationParameters;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.jobjects.VoIntegerTextField;
 import org.isf.utils.jobjects.VoLimitedTextArea;
 
@@ -218,7 +219,7 @@ public class PatientExaminationEdit extends JDialog {
 	private void updateSummary() {
 		StringBuilder summary = new StringBuilder();
 		summary.append(SUMMARY_HEADER);
-		ExaminationOperations examOperations = new ExaminationOperations();
+		ExaminationOperations examOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
 		ArrayList<PatientExamination> patexList = examOperations.getLastNByPatID(patex.getPatient().getCode(), ExaminationParameters.LIST_SIZE);
 		Collections.sort(patexList);
 		
@@ -853,7 +854,7 @@ public class PatientExaminationEdit extends JDialog {
 		}
 		public void actionPerformed(ActionEvent e) {
 			
-			ExaminationOperations ioOperations = new ExaminationOperations();
+			ExaminationOperations ioOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
 			ioOperations.saveOrUpdate(patex);
 			dispose();
 		}

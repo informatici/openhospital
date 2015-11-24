@@ -5,10 +5,11 @@ import java.util.GregorianCalendar;
 
 import javax.swing.JOptionPane;
 
-import org.isf.malnutrition.model.Malnutrition;
-import org.isf.malnutrition.service.IoOperation;
-import org.isf.utils.exception.OHException;
 import org.isf.generaldata.MessageBundle;
+import org.isf.malnutrition.model.Malnutrition;
+import org.isf.malnutrition.service.MalnutritionIoOperation;
+import org.isf.menu.gui.Menu;
+import org.isf.utils.exception.OHException;
 
 /**
  * Manager for malnutrition module.
@@ -16,7 +17,7 @@ import org.isf.generaldata.MessageBundle;
  */
 public class MalnutritionManager {
 
-	IoOperation ioOperation = new IoOperation();
+	private MalnutritionIoOperation ioOperation = Menu.getApplicationContext().getBean(MalnutritionIoOperation.class);
 
 	/**
 	 * Retrieves all the {@link Malnutrition} associated to the given admission id.

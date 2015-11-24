@@ -90,6 +90,7 @@ import org.isf.examination.service.ExaminationOperations;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.gui.Menu;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.patient.gui.PatientInsert;
@@ -1319,7 +1320,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 					}
 					
 					PatientExamination patex;
-					ExaminationOperations examOperations = new ExaminationOperations();
+					ExaminationOperations examOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
 					
 					PatientExamination lastPatex = examOperations.getLastByPatID(opdPatient.getCode());
 					if (lastPatex != null) {

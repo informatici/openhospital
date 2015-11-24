@@ -14,13 +14,14 @@ import javax.swing.JOptionPane;
 
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryForPrint;
-import org.isf.lab.service.IoOperations;
+import org.isf.lab.service.LabIoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
 
 public class LabManager {
 
-	private IoOperations ioOperations = new IoOperations();
+	private LabIoOperations ioOperations = Menu.getApplicationContext().getBean(LabIoOperations.class);
 
 	/**
 	 * Return the whole list of exams ({@link Laboratory}s) within last year.

@@ -11,13 +11,14 @@ import javax.swing.JOptionPane;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.gui.Menu;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.sms.model.Sms;
 import org.isf.sms.service.SmsOperations;
 import org.isf.utils.exception.OHException;
 import org.isf.visits.model.Visit;
-import org.isf.visits.service.IoOperations;
+import org.isf.visits.service.VisitsIoOperations;
 import org.joda.time.DateTime;
 
 /**
@@ -26,7 +27,7 @@ import org.joda.time.DateTime;
  */
 public class VisitManager {
 	
-	private IoOperations ioOperations = new IoOperations();
+	private VisitsIoOperations ioOperations = Menu.getApplicationContext().getBean(VisitsIoOperations.class);
 	
 	/**
 	 * returns the list of all {@link Visit}s related to a patID

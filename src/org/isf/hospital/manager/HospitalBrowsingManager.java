@@ -2,8 +2,9 @@ package org.isf.hospital.manager;
 
 import javax.swing.JOptionPane;
 
-import org.isf.hospital.model.*;
-import org.isf.hospital.service.IoOperations;
+import org.isf.hospital.model.Hospital;
+import org.isf.hospital.service.HospitalIoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 /**
@@ -15,7 +16,7 @@ import org.isf.utils.exception.OHException;
  */
 public class HospitalBrowsingManager {
 	
-	private IoOperations ioOperations = new IoOperations();
+	private HospitalIoOperations ioOperations = Menu.getApplicationContext().getBean(HospitalIoOperations.class);
 
 	/**
 	 * Reads from database hospital informations

@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
-import org.isf.ward.service.IoOperations;
+import org.isf.ward.service.WardIoOperations;
 
 /**
  * Class that provides gui separation from database operations and gives some
@@ -18,7 +19,7 @@ import org.isf.ward.service.IoOperations;
  */
 public class WardBrowserManager {
 
-	private IoOperations ioOperations = new IoOperations();
+	private WardIoOperations ioOperations = Menu.getApplicationContext().getBean(WardIoOperations.class);
 
 	/**
 	 * Returns all stored wards.
