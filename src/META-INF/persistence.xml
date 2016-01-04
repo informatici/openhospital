@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+		version="1.0">
+	<persistence-unit name="OhJpa" transaction-type="RESOURCE_LOCAL">		
+		<class>org.isf.patient.model.Patient</class>
+		<class>org.isf.examination.model.PatientExamination</class>
+		<class>org.isf.priceslist.model.PriceList</class>
+		<class>org.isf.priceslist.model.Price</class>
+		<class>org.isf.accounting.model.Bill</class>
+		<class>org.isf.accounting.model.BillItems</class>
+		<class>org.isf.accounting.model.BillPayments</class>
+		<class>org.isf.admtype.model.AdmissionType</class>
+		<class>org.isf.ward.model.Ward</class>
+		<class>org.isf.distype.model.DiseaseType</class>
+		<class>org.isf.disease.model.Disease</class>
+		<class>org.isf.opetype.model.OperationType</class>
+		<class>org.isf.operation.model.Operation</class>
+		<class>org.isf.disctype.model.DischargeType</class>
+		<class>org.isf.pregtreattype.model.PregnantTreatmentType</class>
+		<class>org.isf.dlvrtype.model.DeliveryType</class>
+		<class>org.isf.dlvrrestype.model.DeliveryResultType</class>
+		<class>org.isf.admission.model.Admission</class>
+		<class>org.isf.agetype.model.AgeType</class>
+		<class>org.isf.exatype.model.ExamType</class>
+		<class>org.isf.medstockmovtype.model.MovementType</class>
+		<class>org.isf.medtype.model.MedicalType</class>
+		<class>org.isf.vactype.model.VaccineType</class>
+		<properties>
+	      	<!-- Configuring JDBC properties -->
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3307/oh"/>
+			<property name="javax.persistence.jdbc.user" value="isf"/>
+			<property name="javax.persistence.jdbc.password" value="isf123"/>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+		
+			<!-- Hibernate properties -->
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+						
+    		<!-- Configuring Connection Pool -->
+			<property name="connection.provider_class"  value="org.hibernate.connection.C3P0ConnectionProvider"/>
+		    <property name="hibernate.c3p0.max_size" value="10" />
+		    <property name="hibernate.c3p0.min_size" value="0" />
+    		<property name="hibernate.c3p0.acquire_increment" value="1" />
+		    <property name="hibernate.c3p0.idle_test_period" value="300" />
+		    <property name="hibernate.c3p0.max_statements" value="0" />
+		    <property name="hibernate.c3p0.timeout" value="100" />	
+		</properties>
+	</persistence-unit>	
+</persistence>

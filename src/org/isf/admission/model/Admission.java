@@ -2,42 +2,153 @@ package org.isf.admission.model;
 
 import java.util.*;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.isf.admtype.model.AdmissionType;
+import org.isf.disctype.model.DischargeType;
+import org.isf.disease.model.Disease;
+import org.isf.dlvrrestype.model.DeliveryResultType;
+import org.isf.dlvrtype.model.DeliveryType;
+import org.isf.operation.model.Operation;
+import org.isf.patient.model.Patient;
+import org.isf.pregtreattype.model.PregnantTreatmentType;
+import org.isf.ward.model.Ward;
+
 /*
  * pure model
  */
-public class Admission implements Comparable<Admission> {
+/*------------------------------------------
+ * Bill - model for the bill entity
+ * -----------------------------------------
+ * modification history
+ * ? - ? - first version 
+ * 30/09/2015 - Antonio - ported to JPA
+ * 
+ *------------------------------------------*/
+@Entity
+@Table(name="ADMISSION")
+public class Admission implements Comparable<Admission> 
+{
+	@Id 
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="ADM_ID")	
 	private int id;							// admission key
+	
+	@Column(name="ADM_IN")
 	private int admitted;					// values are 0 or 1, default 0 (not admitted)
+	
+	@Column(name="ADM_TYPE")
 	private String type;	   				// values are 'N'(normal)  or 'M' (malnutrition)  default 'N' 
-	private String wardId; 					// ward key
+
+	@ManyToOne
+	@JoinColumn(name="ADM_WRD_ID_A")
+	private Ward ward; 						// ward key
+
+	@Column(name="ADM_YPROG")
 	private int yProg;						// a progr. in year for each ward
-	private int patId;						// patient key
+	
+	@ManyToOne
+	@JoinColumn(name="ADM_PAT_ID")
+	private Patient patient;				// patient key
+
+	@Column(name="ADM_DATE_ADM")
 	private GregorianCalendar admDate;		// admission date
-	private String	admType;				// admissionType key
+	
+	@ManyToOne
+	@JoinColumn(name="ADM_ADMT_ID_A_ADM")
+	private AdmissionType admissionType;	// admissionType key
+
+	@Column(name="ADM_FHU")
 	private String FHU;						// FromHealthUnit (null)
-	private String diseaseInId;				// disease in key  (null)
-	private String diseaseOutId1;			// disease out key  (null)
-	private String diseaseOutId2; 			// disease out key (null)
-	private String diseaseOutId3; 			// disease out key (null)
-	private String operationId;				// operation key (null)
-	private String opResult;				// value is 'P' or 'N' (null)
+	
+	@ManyToOne
+	@JoinColumn(name="ADM_IN_DIS_ID_A")
+	private Disease diseaseIn;				// disease in key  (null)
+	
+	@ManyToOne
+	@JoinColumn(name="ADM_OUT_DIS_ID_A")
+	private Disease diseaseOut1;			// disease out key  (null)
+	
+	@ManyToOne
+	@JoinColumn(name="ADM_OUT_DIS_ID_A_2")
+	private Disease diseaseOut2; 			// disease out key (null)
+	
+	@ManyToOne
+	@JoinColumn(name="ADM_OUT_DIS_ID_A_3")
+	private Disease diseaseOut3; 			// disease out key (null)
+	
+	@ManyToOne
+	@JoinColumn(name="ADM_OPE_ID_A")
+	private Operation operation;				// operation key (null)
+
+	@Column(name="ADM_DATE_OP")
 	private GregorianCalendar opDate; 		// operation date (null)
+
+	@Column(name="ADM_RESOP")
+	private String opResult;				// value is 'P' or 'N' (null)
+
+	@Column(name="ADM_DATE_DIS")
 	private GregorianCalendar disDate; 		// discharge date (null)
-	private String disType;					// disChargeType key (null)
+	
+	@ManyToOne
+	@JoinColumn(name="ADM_DIST_ID_A")
+	private DischargeType disType;			// disChargeType key (null)
+
+	@Column(name="ADM_NOTE")
 	private String note;					// free notes (null)
+
+	@Column(name="ADM_TRANS")
 	private Float transUnit;				// transfusional unit
+
+	@Column(name="ADM_PRG_DATE_VIS")
 	private GregorianCalendar visitDate;	// ADM_PRG_DATE_VIS	
-	private String pregTreatmentType;		// ADM_PRG_PTT_ID_A treatmentType key
-	private GregorianCalendar deliveryDate;	// ADM_PRG_DATE_DEL delivery date		
-	private String deliveryTypeId;			// ADM_PRG_DLT_ID_A delivery type key
-	private String deliveryResultId;		// ADM_PRG_DRT_ID_A	delivery res. key
+		
+	@ManyToOne
+	@JoinColumn(name="ADM_PRG_PTT_ID_A")
+	private PregnantTreatmentType pregTreatmentType;		// ADM_PRG_PTT_ID_A treatmentType key
+	
+	@Column(name="ADM_PRG_DATE_DEL")
+	private GregorianCalendar deliveryDate;	// ADM_PRG_DATE_DEL delivery date	
+		
+	@ManyToOne
+	@JoinColumn(name="ADM_PRG_DLT_ID_A")	
+	private DeliveryType deliveryType;		// ADM_PRG_DLT_ID_A delivery type key
+		
+	@ManyToOne
+	@JoinColumn(name="ADM_PRG_DRT_ID_A")
+	private DeliveryResultType deliveryResult;		// ADM_PRG_DRT_ID_A	delivery res. key
+	
+	@Column(name="ADM_PRG_WEIGHT")
 	private Float weight;					// ADM_PRG_WEIGHT	weight
+	
+	@Column(name="ADM_PRG_DATE_CTRL1")
 	private GregorianCalendar ctrlDate1;	// ADM_PRG_DATE_CTRL1
+	
+	@Column(name="ADM_PRG_DATE_CTRL2")
 	private GregorianCalendar ctrlDate2;	// ADM_PRG_DATE_CTRL2
+	
+	@Column(name="ADM_PRG_DATE_ABORT")
 	private GregorianCalendar abortDate;	// ADM_PRG_DATE_ABORT
+	
+	@Column(name="ADM_USR_ID_A")
 	private String userID;					// the user ID
+	
+	@Column(name="ADM_LOCK")
 	private int lock;						// default 0
+	
+	@Column(name="ADM_DELETED")
 	private String deleted;					// flag record deleted ; values are 'Y' OR 'N' default is 'N'
+	
+	@Transient
+	private volatile int hashCode = 0;
 	
 	public Admission() {
 		super();
@@ -78,25 +189,26 @@ public class Admission implements Comparable<Admission> {
 	 * @param lock
 	 * @param deleted
 	 */
-	public Admission(int id, int admitted, String type, String wardId, int prog, int patId, GregorianCalendar admDate, String admType, String fhu, String diseaseInId, String diseaseOutId1, String diseaseOutId2, String diseaseOutId3,
-			String operationId, String opResult, GregorianCalendar opDate, GregorianCalendar disDate, String disType, String note, Float transUnit, GregorianCalendar visitDate,
-			String pregTreatmentType, GregorianCalendar deliveryDate, String deliveryTypeId, String deliveryResultId, Float weight, GregorianCalendar ctrlDate1, GregorianCalendar ctrlDate2,
-			GregorianCalendar abortDate, String userID, int lock, String deleted) {
+	public Admission(int id, int admitted, String type, Ward ward, int prog, Patient patient, GregorianCalendar admDate, AdmissionType admType, String fhu, Disease diseaseIn, Disease diseaseOut1, Disease diseaseOut2, Disease diseaseOut3,
+			Operation operation, String opResult, GregorianCalendar opDate, GregorianCalendar disDate, DischargeType disType, String note, Float transUnit, GregorianCalendar visitDate,
+			PregnantTreatmentType pregTreatmentType, GregorianCalendar deliveryDate, DeliveryType deliveryType, DeliveryResultType deliveryResult, Float weight, GregorianCalendar ctrlDate1, GregorianCalendar ctrlDate2,
+			GregorianCalendar abortDate, String userID, int lock, String deleted) 
+	{
 		super();
 		this.id = id;
 		this.admitted = admitted;
 		this.type = type;
-		this.wardId = wardId;
+		this.ward = ward;
 		this.yProg = prog;
-		this.patId = patId;
+		this.patient = patient;
 		this.admDate = admDate;
-		this.admType = admType;
+		this.admissionType = admType;
 		this.FHU = fhu;
-		this.diseaseInId = diseaseInId;
-		this.diseaseOutId1 = diseaseOutId1;
-		this.diseaseOutId2 = diseaseOutId2;
-		this.diseaseOutId3 = diseaseOutId3;
-		this.operationId = operationId;
+		this.diseaseIn = diseaseIn;
+		this.diseaseOut1 = diseaseOut1;
+		this.diseaseOut2 = diseaseOut2;
+		this.diseaseOut3 = diseaseOut3;
+		this.operation = operation;
 		this.opResult = opResult;
 		this.opDate = opDate;
 		this.disDate = disDate;
@@ -106,8 +218,8 @@ public class Admission implements Comparable<Admission> {
 		this.visitDate = visitDate;
 		this.pregTreatmentType = pregTreatmentType;
 		this.deliveryDate = deliveryDate;
-		this.deliveryTypeId = deliveryTypeId;
-		this.deliveryResultId = deliveryResultId;
+		this.deliveryType = deliveryType;
+		this.deliveryResult = deliveryResult;
 		this.weight = weight;
 		this.ctrlDate1 = ctrlDate1;
 		this.ctrlDate2 = ctrlDate2;
@@ -116,7 +228,7 @@ public class Admission implements Comparable<Admission> {
 		this.lock = lock;
 		this.deleted = deleted;
 	}
-
+	
 	public GregorianCalendar getOpDate() {
 		return opDate;
 	}
@@ -165,12 +277,12 @@ public class Admission implements Comparable<Admission> {
 		this.admitted = admitted;
 	}
 
-	public String getAdmType() {
-		return admType;
+	public AdmissionType getAdmType() {
+		return admissionType;
 	}
 
-	public void setAdmType(String admType) {
-		this.admType = admType;
+	public void setAdmType(AdmissionType admType) {
+		this.admissionType = admType;
 	}
 
 	public GregorianCalendar getCtrlDate1() {
@@ -205,20 +317,20 @@ public class Admission implements Comparable<Admission> {
 		this.deliveryDate = deliveryDate;
 	}
 
-	public String getDeliveryResultId() {
-		return deliveryResultId;
+	public DeliveryResultType getDeliveryResult() {
+		return deliveryResult;
 	}
 
-	public void setDeliveryResultId(String deliveryResultId) {
-		this.deliveryResultId = deliveryResultId;
+	public void setDeliveryResult(DeliveryResultType deliveryResult) {
+		this.deliveryResult = deliveryResult;
 	}
 
-	public String getDeliveryTypeId() {
-		return deliveryTypeId;
+	public DeliveryType getDeliveryType() {
+		return deliveryType;
 	}
 
-	public void setDeliveryTypeId(String deliveryTypeId) {
-		this.deliveryTypeId = deliveryTypeId;
+	public void setDeliveryType(DeliveryType deliveryTypeId) {
+		this.deliveryType = deliveryTypeId;
 	}
 
 	public GregorianCalendar getDisDate() {
@@ -229,43 +341,43 @@ public class Admission implements Comparable<Admission> {
 		this.disDate = disDate;
 	}
 
-	public String getDiseaseInId() {
-		return diseaseInId;
+	public Disease getDiseaseIn() {
+		return diseaseIn;
 	}
 
-	public void setDiseaseInId(String diseaseInId) {
-		this.diseaseInId = diseaseInId;
+	public void setDiseaseIn(Disease diseaseIn) {
+		this.diseaseIn = diseaseIn;
 	}
 
-	public String getDiseaseOutId1() {
-		return diseaseOutId1;
+	public Disease getDiseaseOut1() {
+		return diseaseOut1;
 	}
 
-	public void setDiseaseOutId1(String diseaseOutId1) {
-		this.diseaseOutId1 = diseaseOutId1;
+	public void setDiseaseOut1(Disease diseaseOut1) {
+		this.diseaseOut1 = diseaseOut1;
 	}
 
-	public String getDiseaseOutId2() {
-		return diseaseOutId2;
+	public Disease getDiseaseOut2() {
+		return diseaseOut2;
 	}
 
-	public void setDiseaseOutId2(String diseaseOutId2) {
-		this.diseaseOutId2 = diseaseOutId2;
+	public void setDiseaseOut2(Disease diseaseOut2) {
+		this.diseaseOut2 = diseaseOut2;
 	}
 
-	public String getDiseaseOutId3() {
-		return diseaseOutId3;
+	public Disease getDiseaseOut3() {
+		return diseaseOut3;
 	}
 
-	public void setDiseaseOutId3(String diseaseOutId3) {
-		this.diseaseOutId3 = diseaseOutId3;
+	public void setDiseaseOut3(Disease diseaseOut3) {
+		this.diseaseOut3 = diseaseOut3;
 	}
 
-	public String getDisType() {
+	public DischargeType getDisType() {
 		return disType;
 	}
 
-	public void setDisType(String disType) {
+	public void setDisType(DischargeType disType) {
 		this.disType = disType;
 	}
 
@@ -301,12 +413,12 @@ public class Admission implements Comparable<Admission> {
 		this.note = note;
 	}
 
-	public String getOperationId() {
-		return operationId;
+	public Operation getOperation() {
+		return operation;
 	}
 
-	public void setOperationId(String operationId) {
-		this.operationId = operationId;
+	public void setOperation(Operation operation) {
+		this.operation = operation;
 	}
 
 	public String getOpResult() {
@@ -317,19 +429,19 @@ public class Admission implements Comparable<Admission> {
 		this.opResult = opResult;
 	}
 
-	public int getPatId() {
-		return patId;
+	public Patient getPatient() {
+		return patient;
 	}
 
-	public void setPatId(int patId) {
-		this.patId = patId;
+	public void setPatient(Patient patient) {
+		this.patient = patient;
 	}
 
-	public String getPregTreatmentType() {
+	public PregnantTreatmentType getPregTreatmentType() {
 		return pregTreatmentType;
 	}
 
-	public void setPregTreatmentType(String pregTreatmentType) {
+	public void setPregTreatmentType(PregnantTreatmentType pregTreatmentType) {
 		this.pregTreatmentType = pregTreatmentType;
 	}
 
@@ -349,12 +461,12 @@ public class Admission implements Comparable<Admission> {
 		this.visitDate = visitDate;
 	}
 
-	public String getWardId() {
-		return wardId;
+	public Ward getWard() {
+		return ward;
 	}
 
-	public void setWardId(String wardId) {
-		this.wardId = wardId;
+	public void setWard(Ward ward) {
+		this.ward = ward;
 	}
 
 	public Float getWeight() {
@@ -377,4 +489,32 @@ public class Admission implements Comparable<Admission> {
 	public int compareTo(Admission anAdmission) {
 		return this.id - anAdmission.getId();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (!(obj instanceof Admission)) {
+			return false;
+		}
+		
+		Admission admission = (Admission)obj;
+		return (this.getId() == admission.getId());
+	}
+	
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + id;
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}	
 }

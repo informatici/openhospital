@@ -1,18 +1,12 @@
 package org.isf.opetype.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.isf.generaldata.MessageBundle;
 import org.isf.opetype.model.OperationType;
-import org.isf.utils.db.DbQueryLogger;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-import org.springframework.stereotype.Component;
 
-@Component
 public class OperationTypeIoOperation {
 
 	/**
@@ -21,26 +15,23 @@ public class OperationTypeIoOperation {
 	 * @return the list of {@link OperationType}s. It could be <code>empty</code> or <code>null</code>.
 	 * @throws OHException 
 	 */
-	public ArrayList<OperationType> getOperationType() throws OHException {
-		ArrayList<OperationType> operationTypeList = null;
-		String sqlString = "SELECT OCL_ID_A, OCL_DESC FROM OPERATIONTYPE ORDER BY OCL_DESC";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ResultSet resultSet = dbQuery.getData(sqlString, true);
-			operationTypeList = new ArrayList<OperationType>(resultSet.getFetchSize());
-			while (resultSet.next()) {
-				OperationType opType = new OperationType(
-						resultSet.getString("OCL_ID_A"), 
-						resultSet.getString("OCL_DESC"));
-				operationTypeList.add(opType);
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		}
-		finally{
-			dbQuery.releaseConnection();
-		}
-		return operationTypeList;
+    @SuppressWarnings("unchecked")
+	public ArrayList<OperationType> getOperationType() throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<OperationType> operationTypes = null;
+				
+		
+		jpa.beginTransaction();
+		
+		String query = "SELECT OCL_ID_A, OCL_DESC FROM OPERATIONTYPE ORDER BY OCL_DESC";
+		jpa.createQuery(query, OperationType.class, false);
+		List<OperationType> operationTypeList = (List<OperationType>)jpa.getList();
+		operationTypes = new ArrayList<OperationType>(operationTypeList);	
+		
+		jpa.commitTransaction();
+
+		return operationTypes;
 	}
 	
 	/**
@@ -50,19 +41,17 @@ public class OperationTypeIoOperation {
 	 * @return <code>true</code> if the {@link OperationType} has been inserted, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean newOperationType(OperationType operationType) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try {
-			String sqlString = "INSERT INTO OPERATIONTYPE (OCL_ID_A,OCL_DESC) VALUES (?, ?)";
-			List<Object> parameters = new ArrayList<Object>();
-			parameters.add(operationType.getCode());
-			parameters.add(operationType.getDescription());
-			
-			result = dbQuery.setDataWithParams(sqlString, parameters, true);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+	public boolean newOperationType(
+			OperationType operationType) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.persist(operationType);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 	
@@ -73,23 +62,17 @@ public class OperationTypeIoOperation {
 	 * @return <code>true</code> if the {@link OperationType} has been updated, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean updateOperationType(OperationType operationType) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try {
-			String string = "UPDATE OPERATIONTYPE SET " +
-			"OCL_DESC = ?" +
-			"WHERE OCL_ID_A= ?";
-			
-			List<Object> parameters = new ArrayList<Object>();
-			parameters.add(operationType.getDescription());
-			parameters.add(operationType.getCode());
-			
-			result = dbQuery.setDataWithParams(string, parameters, true);
-			
-		} finally {
-			dbQuery.releaseConnection();
-		}
+	public boolean updateOperationType(
+			OperationType operationType) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.merge(operationType);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 	
@@ -100,17 +83,17 @@ public class OperationTypeIoOperation {
 	 * @return <code>true</code> if the {@link OperationType} has been delete, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean deleteOperationType(OperationType operationType) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		String sqlString = "DELETE FROM OPERATIONTYPE WHERE OCL_ID_A = ?";
-		List<Object> parameters = Collections.<Object>singletonList(operationType.getCode());
+	public boolean deleteOperationType(
+			OperationType operationType) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
 		
-		try {
-			result = dbQuery.setDataWithParams(sqlString, parameters, true);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		
+		jpa.beginTransaction();	
+		jpa.remove(operationType);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 	
@@ -120,19 +103,22 @@ public class OperationTypeIoOperation {
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean isCodePresent(String code) throws OHException{
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean present = false;
-		try {
-			String sqlString = "SELECT OCL_ID_A FROM OPERATIONTYPE WHERE OCL_ID_A = ?";
-			List<Object> parameters = Collections.<Object>singletonList(code);
-			ResultSet set = dbQuery.getDataWithParams(sqlString, parameters, true);
-			if(set.first()) present=true;
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
+	public boolean isCodePresent(
+			String code) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		OperationType operationType;
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		operationType = (OperationType)jpa.find(OperationType.class, code);
+		if (operationType != null)
+		{
+			result = true;
 		}
-		return present;
+    	jpa.commitTransaction();
+    	
+		return result;
 	}
 }

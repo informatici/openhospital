@@ -15,7 +15,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.isf.examination.model.PatientExamination;
 import org.isf.generaldata.ExaminationParameters;
-import org.isf.menu.gui.Menu;
 import org.isf.patient.model.Patient;
 import org.isf.utils.db.HybernateSessions;
 import org.springframework.stereotype.Component;
@@ -27,7 +26,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExaminationOperations {
 
-	private ExaminationOperations() {
+	public ExaminationOperations() {
 	}
 
 	/**

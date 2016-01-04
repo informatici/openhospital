@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.isf.patient.model.Patient;
 
@@ -67,6 +68,9 @@ public class PatientExamination implements Serializable, Comparable<PatientExami
 	
 	@Column(name="PEX_NOTE", length=300)
 	private String pex_note;
+	
+	@Transient
+	private volatile int hashCode = 0;
 
 	/**
 	 * 
@@ -281,5 +285,33 @@ public class PatientExamination implements Serializable, Comparable<PatientExami
 			double temp = Math.pow(10, 2); // 2 <-- decimal digits;
 			return Math.round((pex_weight / Math.pow(new Double(pex_height) / 100, 2)) * temp) / temp ;
 		} else return 0;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (!(obj instanceof PatientExamination)) {
+			return false;
+		}
+		
+		PatientExamination price = (PatientExamination)obj;
+		return (pex_ID == price.getPex_ID());
+	}
+	
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + pex_ID;
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
 	}
 }

@@ -2,7 +2,6 @@ package org.isf.patient.model;
 
 import java.awt.Image;
 import java.sql.Blob;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -146,47 +145,47 @@ public class Patient {
 		
 		this.firstName = "";
 		this.secondName = ""; 
-		 this.birthDate = null;
-		 this.age = 0;
-		 this.agetype = "";
-		 this.sex = ' ';
-		 this.address = "";
-		 this.city = "";
-		 this.nextKin = ""; 
-		 this.telephone = "";
-		 this.mother_name = "";
-		 this.mother = ' ';
-		 this.father_name = "";
-		 this.father = ' ';
-		 this.bloodType = "";
-		 this.hasInsurance = ' ';
-		 this.parentTogether = ' ';
-		 this.taxCode = "";
-		 this.height = 0;
-		 this.weight = 0;
-		 this.lock = 0;
+		this.birthDate = null;
+		this.age = 0;
+		this.agetype = "";
+		this.sex = ' ';
+		this.address = "";
+		this.city = "";
+		this.nextKin = ""; 
+		this.telephone = "";
+		this.mother_name = "";
+		this.mother = ' ';
+		this.father_name = "";
+		this.father = ' ';
+		this.bloodType = "";
+		this.hasInsurance = ' ';
+		this.parentTogether = ' ';
+		this.taxCode = "";
+		this.height = 0;
+		this.weight = 0;
+		this.lock = 0;
 	}
 	
 	public Patient(Opd opd) {
 		
-		 this.firstName = opd.getfirstName();
-		 this.secondName = opd.getsecondName(); 
-		 this.birthDate = null;
-		 this.age = opd.getAge();
-		 this.agetype = "";
-		 this.sex = opd.getSex();
-		 this.address = opd.getaddress();
-		 this.city = opd.getcity();
-		 this.nextKin = opd.getnextKin(); 
-		 this.telephone = "";
-		 this.mother_name = "";
-		 this.mother = ' ';
-		 this.father_name = "";
-		 this.father = ' ';
-		 this.bloodType = "";
-		 this.hasInsurance = ' ';
-		 this.parentTogether = ' ';
-		 this.lock = 0;
+		this.firstName = opd.getfirstName();
+		this.secondName = opd.getsecondName(); 
+		this.birthDate = null;
+		this.age = opd.getAge();
+		this.agetype = "";
+		this.sex = opd.getSex();
+		this.address = opd.getaddress();
+		this.city = opd.getcity();
+		this.nextKin = opd.getnextKin(); 
+		this.telephone = "";
+		this.mother_name = "";
+		this.mother = ' ';
+		this.father_name = "";
+		this.father = ' ';
+		this.bloodType = "";
+		this.hasInsurance = ' ';
+		this.parentTogether = ' ';
+		this.lock = 0;
 	}
 	
 	public Patient(String firstName, String secondName, Date birthDate, int age, String agetype, char sex,

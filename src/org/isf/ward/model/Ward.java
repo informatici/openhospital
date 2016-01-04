@@ -3,6 +3,11 @@
  * 21-jan-2006
  */
 package org.isf.ward.model;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Pure Model Ward (Hospital wards): represents a ward
@@ -10,32 +15,61 @@ package org.isf.ward.model;
  * @author bob
  * 
  */
+/*------------------------------------------
+ * Bill - model for the bill entity
+ * -----------------------------------------
+ * modification history
+ * ? - bob - first version 
+ * 30/09/2015 - Antonio - ported to JPA
+ * 
+ *------------------------------------------*/
+@Entity
+@Table(name="WARD")
 public class Ward {
-
+	@Id 
+	@Column(name="WRD_ID_A")	
     private String code;
-
+	
+	@Column(name="WRD_NAME")
     private String description;
-
+	
+	@Column(name="WRD_TELE")
     private String telephone;
-
+	
+	@Column(name="WRD_FAX")
     private String fax;
-
+	
+	@Column(name="WRD_EMAIL")
     private String email;
-
+	
+	@Column(name="WRD_NBEDS")
     private Integer beds;
-
+	
+	@Column(name="WRD_NQUA_NURS")
     private Integer nurs;
-
+	
+	@Column(name="WRD_NDOC")
     private Integer docs;
-    
+	
+	@Column(name="WRD_IS_PHARMACY")    
     private boolean isPharmacy;
-    
+	
+	@Column(name="WRD_IS_MALE")   
     private boolean isMale;
-    
+	
+	@Column(name="WRD_IS_FEMALE")    
     private boolean isFemale;
-
+	
+	@Column(name="WRD_LOCK")
     private Integer lock;
-
+    
+	@Transient
+	private volatile int hashCode = 0;
+	
+	public Ward() {
+		super();
+	}
+	
     /**
      * @param aCode
      * @param aName
@@ -51,7 +85,8 @@ public class Ward {
      */
     public Ward(String code, String description, String telephone, String fax,
 			String email, Integer beds, Integer nurs, Integer docs,
-			boolean isPharmacy, boolean isMale, boolean isFemale, Integer lock) {
+			boolean isPharmacy, boolean isMale, boolean isFemale, Integer lock) 
+    {
 		super();
 		this.code = code;
 		this.description = description;
@@ -69,7 +104,8 @@ public class Ward {
     
     public Ward(String code, String description, String telephone, String fax,
 			String email, Integer beds, Integer nurs, Integer docs, boolean isMale, boolean isFemale,
-			Integer lock) {
+			Integer lock) 
+    {
 		super();
 		this.code = code;
 		this.description = description;
@@ -181,6 +217,7 @@ public class Ward {
 		this.isFemale = isFemale;
 	}
 
+	@Override
 	public boolean equals(Object anObject) {
         return (anObject == null) || !(anObject instanceof Ward) ? false
                 : (getCode().equals(((Ward) anObject).getCode())
@@ -199,4 +236,18 @@ public class Ward {
     public String toString() {
         return getDescription();
     }
+	
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + code.hashCode();
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}	
 }

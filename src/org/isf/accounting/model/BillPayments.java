@@ -2,24 +2,64 @@ package org.isf.accounting.model;
 
 import java.util.GregorianCalendar;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 /**
  * Pure Model BillPayments : represents a patient Payment for a Bill
  * @author Mwithi
  *
  */
-public class BillPayments implements Comparable<Object>{
-
+/*------------------------------------------
+ * BillPayments - model for the bill entity
+ * -----------------------------------------
+ * modification history
+ * ? - Mwithi - first version 
+ * 23/08/2051 - Antonio - ported to JPA
+ * 
+ *------------------------------------------*/
+@Entity
+@Table(name="BILLPAYMENTS")
+public class BillPayments implements Comparable<Object>
+{
+	@Id 
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="BLP_ID")
 	private int id;
-	private int billID;
-	private GregorianCalendar date;
-	private double amount;
-	private String user;
 	
-	public BillPayments(int id, int billID, GregorianCalendar date,
+	@ManyToOne
+	@JoinColumn(name="BLP_ID_BILL")	
+	private Bill bill;
+	
+	@Column(name="BLP_DATE")
+	private GregorianCalendar date;
+	
+	@Column(name="BLP_AMOUNT")
+	private double amount;
+	
+	@Column(name="BLP_USR_ID_A")
+	private String user;
+
+	@Transient
+	private volatile int hashCode = 0;
+	
+	
+	public BillPayments() {
+		super();
+	}
+	
+	public BillPayments(int id, Bill bill, GregorianCalendar date,
 			double amount, String user) {
 		super();
 		this.id = id;
-		this.billID = billID;
+		this.bill = bill;
 		this.date = date;
 		this.amount = amount;
 		this.user = user;
@@ -33,12 +73,12 @@ public class BillPayments implements Comparable<Object>{
 		this.id = id;
 	}
 
-	public int getBillID() {
-		return billID;
+	public Bill getBill() {
+		return bill;
 	}
 
-	public void setBillID(int billID) {
-		this.billID = billID;
+	public void setBill(Bill bill) {
+		this.bill = bill;
 	}
 
 	public GregorianCalendar getDate() {
@@ -73,4 +113,32 @@ public class BillPayments implements Comparable<Object>{
 				return 0;
 		return 0;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (!(obj instanceof BillPayments)) {
+			return false;
+		}
+		
+		BillPayments billPayment = (BillPayments)obj;
+		return (id == billPayment.getId());
+	}
+	
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + id;
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}	
 }

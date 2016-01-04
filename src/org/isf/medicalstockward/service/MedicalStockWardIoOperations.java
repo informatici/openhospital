@@ -19,12 +19,10 @@ import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
-import org.springframework.stereotype.Component;
 
 /**
  * @author mwithi
  */
-@Component
 public class MedicalStockWardIoOperations {
 
 	/*public ArrayList<MovementWard> getMovementWard() {

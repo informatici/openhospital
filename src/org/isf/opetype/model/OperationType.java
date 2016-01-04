@@ -1,18 +1,45 @@
 package org.isf.opetype.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 /**
  * Pure Model Exam : represents a disease type
  * 
  * @author Rick, Vero, Pupo
  *
  */
-public class OperationType {
-	 
+/*------------------------------------------
+* OperationType - model for the bill entity
+* -----------------------------------------
+* modification history
+* ? - bob - first version 
+* 007/01/2015 - Antonio - ported to JPA
+* 
+*------------------------------------------*/
+@Entity
+@Table(name="OPERATIONTYPE")
+public class OperationType 
+{
+	@Id 
+	@Column(name="OCL_ID_A")
     private String code;
+
+	@Column(name="OCL_DESC")
     private String description;
     
+	@Transient
     private volatile int hashCode = 0;
     
+
+	public OperationType() 
+    {
+		super();
+    }
+	
     /**
      * @param aCode
      * @param aDescription
