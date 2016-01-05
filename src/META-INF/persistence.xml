@@ -27,6 +27,8 @@
 		<class>org.isf.medstockmovtype.model.MovementType</class>
 		<class>org.isf.medtype.model.MedicalType</class>
 		<class>org.isf.vactype.model.VaccineType</class>
+		<class>org.isf.exa.model.Exam</class>
+		<class>org.isf.exa.model.ExamRow</class>
 		<properties>
 	      	<!-- Configuring JDBC properties -->
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3307/oh"/>

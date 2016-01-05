@@ -4,6 +4,14 @@
  */
 package org.isf.exa.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.isf.exatype.model.ExamType;
 
 
@@ -12,20 +20,46 @@ import org.isf.exatype.model.ExamType;
  * 
  * @author bob
  */
-public class Exam {
-
+/*------------------------------------------
+* Disease Type - model for the disease type entity
+* -----------------------------------------
+* modification history
+* ? - bob - first version 
+* 05/01/2016 - Antonio - ported to JPA
+* 
+*------------------------------------------*/
+@Entity
+@Table(name="EXAM")
+public class Exam 
+{
+	@Id 
+	@Column(name="EXA_ID_A")	
 	private String code;
 
+	@Column(name="EXA_DESC")
 	private String description;
-	
+
+	@Column(name="EXA_PROC")
 	private Integer procedure;
-	
+
+	@Column(name="EXA_DEFAULT")
 	private String defaultResult;
 
+	@ManyToOne
+	@JoinColumn(name="EXA_EXC_ID_A")
 	private ExamType examtype;
 
+	@Column(name="EXA_LOCK")
 	private Integer lock;
 
+	@Transient
+	private volatile int hashCode = 0;
+	
+	public Exam() 
+    {
+		super();
+    }
+	
 	public Exam(String code, String description, ExamType examtype,
 			Integer procedure, String defaultResult, Integer lock) {
 		super();
@@ -69,20 +103,6 @@ public class Exam {
 		this.lock = lock;
 	}
 
-	public boolean equals(Object anObject) {
-		return (anObject == null) || !(anObject instanceof Exam) ? false
-				: (getCode().equals(((Exam) anObject).getCode())
-						&& getDescription().equalsIgnoreCase(
-								((Exam) anObject).getDescription())
-						&& getExamtype()
-								.equals(((Exam) anObject).getExamtype()) && (getLock()
-						.equals(((Exam) anObject).getLock())));
-	}
-
-	public String toString() {
-		return getDescription();
-	}
-
 	public String getDefaultResult() {
 		return defaultResult;
 	}
@@ -97,5 +117,34 @@ public class Exam {
 
 	public void setProcedure(Integer procedure) {
 		this.procedure = procedure;
+	}
+
+	@Override
+	public boolean equals(Object anObject) {
+		return (anObject == null) || !(anObject instanceof Exam) ? false
+				: (getCode().equals(((Exam) anObject).getCode())
+						&& getDescription().equalsIgnoreCase(
+								((Exam) anObject).getDescription())
+						&& getExamtype()
+								.equals(((Exam) anObject).getExamtype()) && (getLock()
+						.equals(((Exam) anObject).getLock())));
+	}
+
+	public String toString() {
+		return getDescription();
+	}	
+
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + code.hashCode();
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
 	}
 }
