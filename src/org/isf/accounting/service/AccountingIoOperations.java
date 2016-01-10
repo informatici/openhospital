@@ -262,7 +262,8 @@ public class AccountingIoOperations {
 	 * @throws OHException if an error occurs storing the bill.
 	 */
 	public int newBill(
-			Bill newBill) throws OHException {
+			Bill newBill) throws OHException 
+	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		
 		

@@ -1,14 +1,40 @@
 package org.isf.lab.model;
 
-public class LaboratoryRow {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
-	private Integer code;
-	private Integer labId;
+@Entity
+@Table(name="LABORATORYROW")
+public class LaboratoryRow 
+{
+	@Id 
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="LABR_ID")
+	private int code;
+
+	@ManyToOne
+	@JoinColumn(name="LABR_LAB_ID")
+	private Laboratory laboratory;
+	
+	@Column(name="LABR_DESC")
 	private String description;
 	
-	public LaboratoryRow(Integer aCode, Integer aLabId, String aDescription){
+	@Transient
+	private volatile int hashCode = 0;
+		
+
+	public LaboratoryRow() { }
+	
+	public LaboratoryRow(Integer aCode, Laboratory aLabId, String aDescription){
 		code=aCode;
-		labId = aLabId;
+		laboratory = aLabId;
 		description = aDescription;
 	}
 	
@@ -24,12 +50,38 @@ public class LaboratoryRow {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Integer getLabId() {
-		return labId;
+	public Laboratory getLabId() {
+		return laboratory;
 	}
-	public void setLabId(Integer labId) {
-		this.labId = labId;
+	public void setLabId(Laboratory laboratory) {
+		this.laboratory = laboratory;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (!(obj instanceof LaboratoryRow)) {
+			return false;
+		}
+		
+		LaboratoryRow laboratoryRow = (LaboratoryRow)obj;
+		return (this.getCode().equals(laboratoryRow.getCode()) );
+	}
 	
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + code;
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}	
 }

@@ -65,7 +65,6 @@ public class ExamType
 		this.description = description;
 	}
 
-
 	@Override
 	public boolean equals(Object anObject) {
 		return (anObject == null) || !(anObject instanceof ExamType) ? false
