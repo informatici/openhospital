@@ -1,24 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>OpenHospital20</groupId>
-	<artifactId>OpenHospital20</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<groupId>org.isf</groupId>
+	<artifactId>OH</artifactId>
+	<packaging>jar</packaging>
+	<version>2.0</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
-			<!-- <resource>
+			<resource>
 				<directory>rsc</directory>
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
-			</resource> -->
-			<resource>
-              <directory>rsc</directory>
-            </resource>
-            <resource>
-              <directory>bundle</directory>
-            </resource>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>
@@ -28,7 +23,131 @@
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
-			</plugin><!--  -->
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/OpenHospital20/rsc</outputDirectory>
+							<resources>
+								<resource>
+									<directory>rsc</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-bundle</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/OpenHospital20/bundle</outputDirectory>
+							<resources>
+								<resource>
+									<directory>bundle</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-doc</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/OpenHospital20/doc</outputDirectory>
+							<resources>
+								<resource>
+									<directory>doc</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-report</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/OpenHospital20/rpt</outputDirectory>
+							<resources>
+								<resource>
+									<directory>rpt</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-script</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/OpenHospital20</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}</directory>
+									<include>oh.ico</include>
+									<include>README.md</include>
+									<include>*.cmd</include>
+									<include>*.sh</include>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/OpenHospital20/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>org.isf.menu.gui.Menu</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Class-Path>.</Class-Path>
+						</manifestEntries>
+					</archive>
+					<finalName>OpenHospital20/bin/OH</finalName>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<name>OpenHospital</name>
