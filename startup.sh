@@ -26,6 +26,16 @@ do
   fi
 done
 
+DIRLIBS=${EXEDIR}/rsc/*.xml
+for i in ${DIRLIBS}
+do
+  if [ -z "$OPENHOSPITAL_CLASSPATH" ] ; then
+    OPENHOSPITAL_CLASSPATH=$i
+  else
+    OPENHOSPITAL_CLASSPATH="$i":$OPENHOSPITAL_CLASSPATH
+  fi
+done
+
 
 DIRLIBS=${EXEDIR}/lib/*.jar
 for i in ${DIRLIBS}
