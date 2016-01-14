@@ -43,7 +43,21 @@
 							<resources>
 								<resource>
 									<directory>rsc</directory>
-									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-native-lib</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/OpenHospital20/lib/native</outputDirectory>
+							<resources>
+								<resource>
+									<directory>lib/native</directory>
 								</resource>
 							</resources>
 						</configuration>
@@ -220,6 +234,13 @@
 			<version>0.1</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/io-0.1.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>cx.ath.matthew.io</groupId>
+			<artifactId>debug-disable</artifactId>
+			<version>1.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/debug-disable-1.1.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>cx.ath.matthew.unix</groupId>
