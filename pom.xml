@@ -12,6 +12,12 @@
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
 			<resource>
+	            <directory>src</directory>
+	            <includes>
+	                <include>**/*.xml</include>
+	            </includes>
+	        </resource>
+			<resource>
 				<directory>rsc</directory>
 				<excludes>
 					<exclude>**/*.java</exclude>
