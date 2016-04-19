@@ -14,6 +14,8 @@ import java.util.GregorianCalendar;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -28,6 +30,7 @@ import org.isf.patient.model.Patient;
 public class Laboratory 
 {
 	@Id 
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="LAB_ID")
 	private int code;
 	

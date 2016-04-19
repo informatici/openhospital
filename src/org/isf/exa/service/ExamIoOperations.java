@@ -9,21 +9,14 @@ package org.isf.exa.service;
  *                     when record locked all data is saved now, not only descritpion
  *------------------------------------------*/
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.isf.accounting.model.BillItems;
-import org.isf.admission.model.Admission;
-import org.isf.distype.model.DiseaseType;
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
 

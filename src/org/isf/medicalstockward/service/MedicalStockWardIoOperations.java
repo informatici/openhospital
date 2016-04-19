@@ -16,6 +16,7 @@ import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
 import org.isf.medtype.model.MedicalType;
 import org.isf.patient.model.Patient;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
@@ -23,103 +24,8 @@ import org.isf.ward.model.Ward;
 /**
  * @author mwithi
  */
-public class MedicalStockWardIoOperations {
-
-	/*public ArrayList<MovementWard> getMovementWard() {
-		return getMovementWard(null);
-	}
-
-	public ArrayList<MovementWard> getMovementWard(String ward) {
-		ArrayList<MovementWard> mov = null;
-		StringBuffer stringBfr = new StringBuffer("SELECT * FROM ((((MEDICALDSRSTOCKMOVWARD LEFT JOIN ");
-		stringBfr.append("(PATIENT LEFT JOIN (SELECT MLN_PAT_ID, MLN_HEIGHT AS PAT_HEIGHT, MLN_WEIGHT AS PAT_WEIGHT FROM MALNUTRITIONCONTROL GROUP BY MLN_PAT_ID ORDER BY MLN_DATE_SUPP DESC) AS HW ON PAT_ID = HW.MLN_PAT_ID) ON MMVN_PAT_ID = PAT_ID) JOIN ");
-		stringBfr.append("WARD ON MMVN_WRD_ID_A = WRD_ID_A)) JOIN ");
-		stringBfr.append("MEDICALDSR ON MMVN_MDSR_ID = MDSR_ID) JOIN ");
-		stringBfr.append("MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ");
-		if (ward != null && !ward.equals("")) {
-			stringBfr.append("WHERE WRD_ID_A = '").append(ward).append("'");
-		}
-		dbQuery = new DbQuery();
-		try {
-			try {
-				ResultSet resultSet = dbQuery.getData(stringBfr.toString(), true);
-
-				mov = new ArrayList<MovementWard>(resultSet.getFetchSize());
-				Patient patient;
-				MovementWard movWard;
-				while (resultSet.next()) {
-					patient = new Patient();
-					if (resultSet.getBoolean("MMVN_IS_PATIENT")) {
-						patient.setCode(resultSet.getInt("PAT_ID"));
-						patient.setFirstName(resultSet.getString("PAT_FNAME"));
-						patient.setSecondName(resultSet.getString("PAT_SNAME"));
-						patient.setAddress(resultSet.getString("PAT_ADDR"));
-						patient.setBirthDate(resultSet.getDate("PAT_BDATE"));
-						patient.setAge(resultSet.getInt("PAT_AGE"));
-						patient.setAgetype(resultSet.getString("PAT_AGETYPE"));
-						patient.setSex(resultSet.getString("PAT_SEX").charAt(0));
-						patient.setCity(resultSet.getString("PAT_CITY"));
-						patient.setTelephone(resultSet.getString("PAT_TELE"));
-						patient.setNextKin(resultSet.getString("PAT_NEXT_KIN"));
-						patient.setBloodType(resultSet.getString("PAT_BTYPE"));
-						patient.setFather(resultSet.getString("PAT_FATH").charAt(0));
-						patient.setFather_name(resultSet.getString("PAT_FATH_NAME"));
-						patient.setMother(resultSet.getString("PAT_MOTH").charAt(0));
-						patient.setMother_name(resultSet.getString("PAT_MOTH_NAME"));
-						patient.setHasInsurance(resultSet.getString("PAT_ESTA").charAt(0));
-						patient.setParentTogether(resultSet.getString("PAT_PTOGE").charAt(0));
-						patient.setNote(resultSet.getString("PAT_NOTE"));
-						patient.setHeight(resultSet.getFloat("PAT_HEIGHT"));
-						patient.setWeight(resultSet.getFloat("PAT_WEIGHT"));
-						patient.setLock(resultSet.getInt("PAT_LOCK"));
-					}
-					movWard = new MovementWard( new Ward(resultSet.getString("WRD_ID_A"), 
-							resultSet.getString("WRD_NAME"),
-							resultSet.getString("WRD_TELE"),
-							resultSet.getString("WRD_FAX"),
-							resultSet.getString("WRD_EMAIL"),
-							resultSet.getInt("WRD_NBEDS"),
-							resultSet.getInt("WRD_NQUA_NURS"),
-							resultSet.getInt("WRD_NDOC"),
-							resultSet.getInt("WRD_LOCK")),
-							convertToGregorianCalendar(resultSet.getTimestamp("MMVN_DATE")),
-							resultSet.getBoolean("MMVN_IS_PATIENT"),
-							patient,
-							resultSet.getInt("MMVN_PAT_AGE"),
-							resultSet.getFloat("MMVN_PAT_WEIGHT"),
-							resultSet.getString("MMVN_DESC"),
-							new Medical(resultSet.getInt("MDSR_ID"),
-									new MedicalType(resultSet.getString("MDSRT_ID_A"),
-											resultSet.getString("MDSRT_DESC")),
-											resultSet.getString("MDSR_CODE"),
-											resultSet.getString("MDSR_DESC"),
-											resultSet.getDouble("MDSR_INI_STOCK_QTI"),
-											resultSet.getInt("MDSR_PCS_X_PCK"),
-											resultSet.getDouble("MDSR_MIN_STOCK_QTI"),
-											resultSet.getDouble("MDSR_IN_QTI"),
-											resultSet.getDouble("MDSR_OUT_QTI"),
-											resultSet.getInt("MDSR_LOCK")),
-											resultSet.getDouble("MMVN_MDSR_QTY"),
-											resultSet.getString("MMVN_MDSR_UNITS"));
-					movWard.setCode(resultSet.getInt("MMVN_ID"));
-					mov.add(movWard);
-
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				dbQuery.releaseConnection();
-			}
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e);
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, e);
-		}
-		return mov;
-	}*/
-
+public class MedicalStockWardIoOperations 
+{
 	/**
 	 * Get all {@link MovementWard}s with the specified criteria.
 	 * @param wardId the ward id.
@@ -128,174 +34,57 @@ public class MedicalStockWardIoOperations {
 	 * @return the retrieved movements.
 	 * @throws OHException if an error occurs retrieving the movements.
 	 */
-	public ArrayList<MovementWard> getWardMovements(String wardId, GregorianCalendar dateFrom, GregorianCalendar dateTo) throws OHException {
+	@SuppressWarnings("unchecked")
+	public ArrayList<MovementWard> getWardMovements(
+			String wardId, 
+			GregorianCalendar dateFrom, 
+			GregorianCalendar dateTo) throws OHException 
+	{
 
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Object> params = new ArrayList<Object>();
 		ArrayList<MovementWard> movements = null;
-
-		List<Object> parameters = new ArrayList<Object>();
-		StringBuilder query = new StringBuilder();
-
-		query.append("SELECT * FROM ((((MEDICALDSRSTOCKMOVWARD LEFT JOIN ");
-		query.append("(PATIENT LEFT JOIN (SELECT PEX_PAT_ID, PEX_HEIGHT AS PAT_HEIGHT, PEX_WEIGHT AS PAT_WEIGHT FROM PATIENTEXAMINATION GROUP BY PEX_PAT_ID ORDER BY PEX_DATE DESC) AS HW ON PAT_ID = HW.PEX_PAT_ID) ON MMVN_PAT_ID = PAT_ID) JOIN ");
-		query.append("WARD ON MMVN_WRD_ID_A = WRD_ID_A)) JOIN ");
-		query.append("MEDICALDSR ON MMVN_MDSR_ID = MDSR_ID) JOIN ");
-		query.append("MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ");
-
-		if (wardId!=null || dateFrom!=null || dateTo!=null) query.append("WHERE ");
-
-		if (wardId != null && !wardId.equals("")) {
-			if (parameters.size()!=0) query.append("AND ");
-			parameters.add(wardId);
-			query.append("WRD_ID_A = ? ");
+				
+		
+		jpa.beginTransaction();
+		
+		String query = "SELECT * FROM ((((MEDICALDSRSTOCKMOVWARD LEFT JOIN " +
+						"(PATIENT LEFT JOIN (SELECT PEX_PAT_ID, PEX_HEIGHT AS PAT_HEIGHT, PEX_WEIGHT AS PAT_WEIGHT FROM PATIENTEXAMINATION GROUP BY PEX_PAT_ID ORDER BY PEX_DATE DESC) AS HW ON PAT_ID = HW.PEX_PAT_ID) ON MMVN_PAT_ID = PAT_ID) JOIN " +
+						"WARD ON MMVN_WRD_ID_A = WRD_ID_A)) JOIN " +
+						"MEDICALDSR ON MMVN_MDSR_ID = MDSR_ID) JOIN " +
+						"MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ";
+		if (wardId!=null || dateFrom!=null || dateTo!=null) 
+		{
+			query += "WHERE ";
 		}
-
-		if ((dateFrom != null) && (dateTo != null)) {
-			if (parameters.size()!=0) query.append("AND ");
-			query.append("MMVN_DATE > ? AND MMVN_DATE < ?");
-			parameters.add(toTimestamp(dateFrom));
-			parameters.add(toTimestamp(dateTo));
-		}
-
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-
-			ResultSet resultSet = dbQuery.getDataWithParams(query.toString(), parameters, true);
-			movements = new ArrayList<MovementWard>(resultSet.getFetchSize());
-
-			while (resultSet.next()) {
-				MovementWard movementWard = toMovementWard(resultSet);
-				movements.add(movementWard);
+		if (wardId != null && !wardId.equals("")) 
+		{
+			if (params.size() != 0) 
+			{
+				query += "AND ";
 			}
-
-
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
+			query += "WRD_ID_A = ? ";
+			params.add(wardId);
 		}
+		if ((dateFrom != null) && (dateTo != null)) 
+		{
+			if (params.size() != 0) 
+			{
+				query += "AND ";
+			}
+			query += "MMVN_DATE > ? AND MMVN_DATE < ?";
+			params.add(dateFrom);
+			params.add(dateTo);
+		}
+				
+		jpa.createQuery(query, MovementWard.class, false);
+		jpa.setParameters(params, false);
+		List<MovementWard> movementList = (List<MovementWard>)jpa.getList();
+		movements = new ArrayList<MovementWard>(movementList);			
+		
+		jpa.commitTransaction();
+		
 		return movements;
-	}
-
-	/**
-	 * Extracts a {@link MovementWard} from the current {@link ResultSet} row.
-	 * @param resultSet the resultset.
-	 * @return the extracted movement ward.
-	 * @throws SQLException if an error occurs during the extraction.
-	 */
-	protected MovementWard toMovementWard(ResultSet resultSet) throws SQLException
-	{
-		Patient patient;
-		if (resultSet.getBoolean("MMVN_IS_PATIENT")) {
-			patient = toPatient(resultSet);
-		} else patient = new Patient();
-
-		Ward ward = toWard(resultSet);
-
-		Medical medical = toMedical(resultSet);
-		MovementWard movementWard = new MovementWard(ward,
-				toCalendar(resultSet.getTimestamp("MMVN_DATE")),
-				resultSet.getBoolean("MMVN_IS_PATIENT"),
-				patient,
-				resultSet.getInt("MMVN_PAT_AGE"),
-				resultSet.getFloat("MMVN_PAT_WEIGHT"),
-				resultSet.getString("MMVN_DESC"),
-				medical,
-				resultSet.getDouble("MMVN_MDSR_QTY"),
-				resultSet.getString("MMVN_MDSR_UNITS"));
-
-		movementWard.setCode(resultSet.getInt("MMVN_ID"));
-		return movementWard;
-	}
-
-	/**
-	 * Extracts a {@link Patient} from the current {@link ResultSet} row.
-	 * @param resultSet the resultset.
-	 * @return the extracted patient.
-	 * @throws SQLException if an error occurs during the extraction.
-	 */
-	protected Patient toPatient(ResultSet resultSet) throws SQLException
-	{
-		Patient patient = new Patient();
-		patient.setCode(resultSet.getInt("PAT_ID"));
-		patient.setFirstName(resultSet.getString("PAT_FNAME"));
-		patient.setSecondName(resultSet.getString("PAT_SNAME"));
-		patient.setAddress(resultSet.getString("PAT_ADDR"));
-		patient.setBirthDate(resultSet.getDate("PAT_BDATE"));
-		patient.setAge(resultSet.getInt("PAT_AGE"));
-		patient.setAgetype(resultSet.getString("PAT_AGETYPE"));
-		patient.setSex(resultSet.getString("PAT_SEX").charAt(0));
-		patient.setCity(resultSet.getString("PAT_CITY"));
-		patient.setTelephone(resultSet.getString("PAT_TELE"));
-		patient.setNextKin(resultSet.getString("PAT_NEXT_KIN"));
-		patient.setBloodType(resultSet.getString("PAT_BTYPE"));
-		patient.setFather(resultSet.getString("PAT_FATH").charAt(0));
-		patient.setFather_name(resultSet.getString("PAT_FATH_NAME"));
-		patient.setMother(resultSet.getString("PAT_MOTH").charAt(0));
-		patient.setMother_name(resultSet.getString("PAT_MOTH_NAME"));
-		patient.setHasInsurance(resultSet.getString("PAT_ESTA").charAt(0));
-		patient.setParentTogether(resultSet.getString("PAT_PTOGE").charAt(0));
-		patient.setNote(resultSet.getString("PAT_NOTE"));
-		patient.setHeight(resultSet.getFloat("PAT_HEIGHT"));
-		patient.setWeight(resultSet.getFloat("PAT_WEIGHT"));
-		patient.setLock(resultSet.getInt("PAT_LOCK"));
-		return patient;
-	}
-
-	/**
-	 * Converts a {@link ResultSet} row into an {@link Ward} object.
-	 * @param resultSet the result set to read.
-	 * @return the converted object.
-	 * @throws SQLException if an error occurs.
-	 */
-	private Ward toWard(ResultSet resultSet) throws SQLException {
-		Ward ward = new Ward(resultSet.getString("WRD_ID_A"), 
-				resultSet.getString("WRD_NAME"), 
-				resultSet.getString("WRD_TELE"),
-				resultSet.getString("WRD_FAX"),
-				resultSet.getString("WRD_EMAIL"),
-				resultSet.getInt("WRD_NBEDS"),
-				resultSet.getInt("WRD_NQUA_NURS"),
-				resultSet.getInt("WRD_NDOC"),
-				resultSet.getBoolean("WRD_IS_PHARMACY"), 
-				resultSet.getBoolean("WRD_IS_MALE"),
-				resultSet.getBoolean("WRD_IS_FEMALE"), 
-				resultSet.getInt("WRD_LOCK"));
-		return ward;
-	}
-
-	/**
-	 * Extracts a {@link Medical} from the current {@link ResultSet} row.
-	 * @param resultSet the result set.
-	 * @return the extracted medical.
-	 * @throws SQLException if an error occurs during the extraction.
-	 */
-	protected Medical toMedical(ResultSet resultSet) throws SQLException
-	{
-		MedicalType medicalType = toMedicalType(resultSet);
-		Medical medical = new Medical(resultSet.getInt("MDSR_ID"),
-				medicalType,
-				resultSet.getString("MDSR_CODE"),
-				resultSet.getString("MDSR_DESC"),
-				resultSet.getDouble("MDSR_INI_STOCK_QTI"),
-				resultSet.getInt("MDSR_PCS_X_PCK"),
-				resultSet.getDouble("MDSR_MIN_STOCK_QTI"),
-				resultSet.getDouble("MDSR_IN_QTI"),
-				resultSet.getDouble("MDSR_OUT_QTI"),
-				resultSet.getInt("MDSR_LOCK"));
-		return medical;
-	}
-
-	/**
-	 * Extract a {@link MedicalType} from the current {@link ResultSet} row.
-	 * @param resultSet the result set.
-	 * @return the extracted medical type.
-	 * @throws SQLException if an error occurs during the extraction.
-	 */
-	protected MedicalType toMedicalType(ResultSet resultSet) throws SQLException
-	{
-		MedicalType medicalType = new MedicalType(resultSet.getString("MDSRT_ID_A"),
-				resultSet.getString("MDSRT_DESC"));
-		return medicalType;
 	}
 
 	/**
@@ -305,51 +94,83 @@ public class MedicalStockWardIoOperations {
 	 * @return the total quantity.
 	 * @throws OHException if an error occurs retrieving the quantity.
 	 */
-	public int getCurrentQuantity(Ward ward, Medical medical) throws OHException {
+	public int getCurrentQuantity(
+			Ward ward, 
+			Medical medical) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		Double mainQuantity = 0.0;
+		Double dischargeQuantity = 0.0;
+		int currentQuantity = 0;
+		
+		
+		mainQuantity = _getMainQuantity(jpa, ward, medical);
+		dischargeQuantity = _getDischargeQuantity(jpa, ward, medical);
+		currentQuantity = (int)(mainQuantity - dischargeQuantity);
+		
+		return currentQuantity;	
+	}
+	
+	private Double _getMainQuantity(
+			DbJpaUtil jpa,
+			Ward ward, 
+			Medical medical) throws OHException 
+	{
+		ArrayList<Object> params = new ArrayList<Object>();
+		String query = null;
+		Double mainQuantity = 0.0;
+				
 
-		List<Object> parameters = new ArrayList<Object>(2);
-		StringBuilder query = new StringBuilder();
-
-		query.append("SELECT SUM(MMV_QTY) MAIN FROM MEDICALDSRSTOCKMOV M WHERE MMV_MMVT_ID_A = 'discharge' AND MMV_MDSR_ID = ? ");
-		parameters.add(medical.getCode());
-
-		if (ward!=null) {
-			parameters.add(ward.getCode());
-			query.append(" AND MMV_WRD_ID_A = ?");
-		}
-
-		DbQueryLogger dbQuery = new DbQueryLogger();
+		jpa.beginTransaction();		
+		
 		try {
-
-			ResultSet resultSet = dbQuery.getDataWithParams(query.toString(), parameters, true);
-
-			resultSet.next();
-			int mainQuantity = resultSet.getInt("MAIN");
-
-			query = new StringBuilder();
-			parameters.clear();
-
-			query.append("SELECT SUM(MMVN_MDSR_QTY) DISCHARGE FROM MEDICALDSRSTOCKMOVWARD WHERE MMVN_MDSR_ID = ?");
-			parameters.add(medical.getCode());
-
+			query = "SELECT SUM(MMV_QTY) MAIN FROM MEDICALDSRSTOCKMOV M WHERE MMV_MMVT_ID_A = 'discharge' AND MMV_MDSR_ID = ? ";
+			params.add(medical.getCode());
 			if (ward!=null) {
-				parameters.add(ward.getCode());
-				query.append(" AND MMV_WRD_ID_A = ?");
+				params.add(ward.getCode());
+				query += " AND MMV_WRD_ID_A = ?";
 			}
-
-			resultSet = dbQuery.getDataWithParams(query.toString(), parameters, true);
-
-			resultSet.next();
-			int dischargeQuantity = resultSet.getInt("DISCHARGE");
-
-			resultSet.close();
-			return mainQuantity - dischargeQuantity;
-
-		} catch (SQLException e) {
+			jpa.createQuery(query, null, false);
+			jpa.setParameters(params, false);
+			mainQuantity = (Double)jpa.getResult();
+		}  catch (OHException e) {
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		} 				
+	
+		jpa.commitTransaction();		
+
+		return mainQuantity;	
+	}
+
+	private Double _getDischargeQuantity(
+			DbJpaUtil jpa,
+			Ward ward, 
+			Medical medical) throws OHException 
+	{
+		ArrayList<Object> params = new ArrayList<Object>();
+		String query = null;
+		Double dischargeQuantity = 0.0;
+				
+
+		jpa.beginTransaction();		
+		
+		try {
+			query = "SELECT SUM(MMVN_MDSR_QTY) DISCHARGE FROM MEDICALDSRSTOCKMOVWARD WHERE MMVN_MDSR_ID = ?";
+			params.add(medical.getCode());
+			if (ward!=null) {
+				params.add(ward.getCode());
+				query += " AND MMVN_WRD_ID_A = ?";
+			}
+			jpa.createQuery(query, null, false);
+			jpa.setParameters(params, false);
+			dischargeQuantity = (Double)jpa.getResult();
+		}  catch (OHException e) {
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 				
+	
+		jpa.commitTransaction();		
+
+		return dischargeQuantity;	
 	}
 
 	/**
@@ -358,6 +179,11 @@ public class MedicalStockWardIoOperations {
 	 * @return <code>true</code> if has been stored, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs.
 	 */
+	
+	
+	
+	
+	
 	public boolean newMovementWard(MovementWard movement) throws OHException {
 
 		DbQueryLogger dbQuery = new DbQueryLogger();

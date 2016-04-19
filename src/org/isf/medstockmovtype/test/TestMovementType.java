@@ -10,7 +10,7 @@ public class TestMovementType
 {	
     private String code = "ZZABCD";
     private String description = "TestDescription";
-    private String type = "ZX";
+    private String type = "+";
     
 			
 	public MovementType setup(

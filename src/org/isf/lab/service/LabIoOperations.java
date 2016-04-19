@@ -42,7 +42,6 @@ public class LabIoOperations {
 	public ArrayList<LaboratoryRow> getLabRow(
 			Integer code) throws OHException 
 	{
-
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<LaboratoryRow> laboratoryRows = new ArrayList<LaboratoryRow>();
 		LaboratoryRow laboratoryRow = null;

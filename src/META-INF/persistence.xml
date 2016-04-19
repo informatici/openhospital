@@ -32,6 +32,13 @@
 		<class>org.isf.hospital.model.Hospital</class>
 		<class>org.isf.lab.model.Laboratory</class>
 		<class>org.isf.lab.model.LaboratoryRow</class>
+		<class>org.isf.malnutrition.model.Malnutrition</class>
+		<class>org.isf.medicals.model.Medical</class>
+		<class>org.isf.medicalstock.model.Movement</class>
+		<class>org.isf.medicalstock.model.Lot</class>
+		<class>org.isf.medicalstockward.model.MedicalWard</class>
+		<class>org.isf.medicalstockward.model.MovementWard</class>
+		
 		<properties>
 	      	<!-- Configuring JDBC properties -->
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3307/oh"/>

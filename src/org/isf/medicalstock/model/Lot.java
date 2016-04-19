@@ -2,14 +2,48 @@ package org.isf.medicalstock.model;
 
 import java.util.GregorianCalendar;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.isf.generaldata.MessageBundle;
 
-public class Lot {
+/*------------------------------------------
+ * Medical Lot - model for the medical entity
+ * -----------------------------------------
+ * modification history
+ * ? - ?
+ * 17/01/2015 - Antonio - ported to JPA
+ * 
+ *------------------------------------------*/
+@Entity
+@Table(name="MEDICALDSRLOT")
+public class Lot 
+{
+	@Id 
+	@Column(name="LT_ID_A")
 	private String code;
+	
+	@Column(name="LT_PREP_DATE")
 	private GregorianCalendar preparationDate;
+	
+	@Column(name="LT_DUE_DATE")
 	private GregorianCalendar dueDate;
+
+	@Transient
 	private int quantity;
+	
+	@Column(name="LT_COST")
 	private double cost;
+	
+	@Transient
+	private volatile int hashCode = 0;
+	
+
+	public Lot() { 
+	}
 	
 	public Lot(String aCode,GregorianCalendar aPreparationDate,GregorianCalendar aDueDate){
 		code=aCode;
@@ -66,7 +100,7 @@ public class Lot {
 	public boolean isValidLot(){
 		return getCode().length()<=50;
 	}
-	
+
 	public boolean equals(Lot lot) {
 		if (this.code == lot.getCode() &&
 				this.dueDate == lot.getDueDate() &&
@@ -74,4 +108,18 @@ public class Lot {
 			return true;
 		return false;
 	}
+
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + code.hashCode();
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}	
 }

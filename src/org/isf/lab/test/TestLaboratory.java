@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestLaboratory 
 {	 
-	private int code = 11;
+	private int code = 0;
 	private String material = "TestMaterial";
 	private GregorianCalendar now = new GregorianCalendar();
 	private GregorianCalendar registrationDate = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);
@@ -59,7 +59,6 @@ public class TestLaboratory
 			Exam exam,
 			Patient patient) 
 	{	
-		laboratory.setCode(code);
 		laboratory.setAge(age);
 		laboratory.setDate(registrationDate);
 		laboratory.setExam(exam);
@@ -80,7 +79,6 @@ public class TestLaboratory
 			Laboratory laboratory) 
 	{		
     	System.out.println("Check Laboratory: " + laboratory.getCode());
-    	assertEquals(code, laboratory.getCode());	
     	assertEquals(age, laboratory.getAge());		
     	assertEquals(registrationDate, laboratory.getDate());	
     	assertEquals(examDate, laboratory.getExamDate());
