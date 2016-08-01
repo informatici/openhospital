@@ -38,6 +38,13 @@
 		<class>org.isf.medicalstock.model.Lot</class>
 		<class>org.isf.medicalstockward.model.MedicalWard</class>
 		<class>org.isf.medicalstockward.model.MovementWard</class>
+		<class>org.isf.menu.model.User</class>
+		<class>org.isf.menu.model.UserGroup</class>
+		<class>org.isf.menu.model.GroupMenu</class>
+		<class>org.isf.menu.model.UserMenuItem</class>
+		<class>org.isf.opd.model.Opd</class>
+		<class>org.isf.vaccine.model.Vaccine</class>
+		<class>org.isf.patvac.model.PatientVaccine</class>
 		
 		<properties>
 	      	<!-- Configuring JDBC properties -->

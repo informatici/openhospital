@@ -4,6 +4,13 @@
 package org.isf.vaccine.model;
 
   
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.isf.vactype.model.VaccineType;
 
 
@@ -15,18 +22,30 @@ import org.isf.vactype.model.VaccineType;
  * modification history
  * 20/10/2011 - Cla - insert vaccinetype managment
  * 18/11/2011 - Cla - inserted print method
+ * 04/06/2015 - Antonio - ported to JPA
  *
  */
-public class Vaccine {
-
+@Entity
+@Table(name="VACCINE")
+public class Vaccine 
+{
+	@Id 
+	@Column(name="VAC_ID_A")
     private String code;
 
+	@Column(name="VAC_DESC")
     private String description;
 
+	@ManyToOne
+	@JoinColumn(name="VAC_VACT_ID_A")
     private VaccineType vaccineType;
-    
+
+	@Column(name="VAC_LOCK")
     private Integer lock;
 
+	 public Vaccine() {
+	        super();
+	    }
     /**
      * @param aCode
      * @param aDescription

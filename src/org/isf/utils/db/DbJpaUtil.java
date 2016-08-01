@@ -36,7 +36,7 @@ public class DbJpaUtil
 	 * @throws OHException 
      */
 	public DbJpaUtil()
-	{				
+	{			
 		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
 
 		return;

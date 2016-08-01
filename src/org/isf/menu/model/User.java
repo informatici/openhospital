@@ -1,14 +1,47 @@
 package org.isf.menu.model;
 
-public class User {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
+/*------------------------------------------
+ * User - model for the user entity
+ * -----------------------------------------
+ * modification history
+ * ? - ? - first version 
+ * 07/05/2016 - Antonio - ported to JPA
+ * 
+ *------------------------------------------*/
+@Entity
+@Table(name="USER")
+public class User 
+{
+	@Id 
+	@Column(name="US_ID_A")		
 	private String userName;
-	private String userGroupName;
+	
+	@ManyToOne
+	@JoinColumn(name="US_UG_ID_A")
+	private UserGroup userGroupName;
+	
+	@Column(name="US_PASSWD")
 	private String passwd;
-	private String desc;
+
+	@Column(name="US_DESC")
+	private String desc;	
 	
+	@Transient
+	private volatile int hashCode = 0;
+			
 	
-	public User(String aName, String aGroup, String aPasswd, String aDesc){
+	public User(){
+	}
+	
+	public User(String aName, UserGroup aGroup, String aPasswd, String aDesc){
 		this.userName = aName;
 		this.userGroupName = aGroup;
 		this.passwd = aPasswd;
@@ -27,10 +60,10 @@ public class User {
 	public void setPasswd(String passwd) {
 		this.passwd = passwd;
 	}
-	public String getUserGroupName() {
+	public UserGroup getUserGroupName() {
 		return userGroupName;
 	}
-	public void setUserGroupName(String userGroupName) {
+	public void setUserGroupName(UserGroup userGroupName) {
 		this.userGroupName = userGroupName;
 	}
 	public String getUserName() {
@@ -43,5 +76,28 @@ public class User {
 	public String toString(){
 		return getUserName();		
 	}
+	
+	@Override
+	public boolean equals(Object anObject) {
+		return (anObject == null) || !(anObject instanceof User) ? false
+				: (getUserName().equalsIgnoreCase(
+						((User) anObject).getUserName()) && getDesc()
+						.equalsIgnoreCase(
+								((User) anObject).getDesc()));
+	}
+
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + userName.hashCode();
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}	
 	
 }//class User

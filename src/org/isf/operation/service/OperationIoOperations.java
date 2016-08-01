@@ -74,7 +74,6 @@ public class OperationIoOperations {
 	public boolean newOperation(
 			Operation operation) throws OHException
 	{
-
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
