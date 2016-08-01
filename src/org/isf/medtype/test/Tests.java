@@ -1,4 +1,4 @@
-package org.isf.medype.test;
+package org.isf.medtype.test;
 
 
 import static org.junit.Assert.assertEquals;

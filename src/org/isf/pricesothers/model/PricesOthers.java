@@ -1,20 +1,62 @@
 package org.isf.pricesothers.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 /**
  * Others : represents an other entry for prices
  * @author Alex
  */
-public class PricesOthers {
-    
+ /*------------------------------------------
+ * Others : represents an other entry for prices
+ * -----------------------------------------
+ * modification history
+ * ? - Alex - first version 
+ * 1/08/2016 - Antonio - ported to JPA
+ * 
+ *------------------------------------------*/
+@Entity
+@Table(name="PRICESOTHERS")
+public class PricesOthers 
+{
+	@Id 
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="OTH_ID")
     private int id;
+	
+	@Column(name="OTH_CODE")  
     private String Code;
+	
+	@Column(name="OTH_DESC") 
     private String Description;
+	
+	@Column(name="OTH_OPD_INCLUDE") 
 	private boolean opdInclude;
+	
+	@Column(name="OTH_IPD_INCLUDE") 
 	private boolean ipdInclude;
+	
+	@Column(name="OTH_DAILY") 
 	private boolean daily;
+	
+	@Column(name="OTH_DISCHARGE") 
 	private boolean discharge;
+	
+	@Column(name="OTH_UNDEFINED") 
 	private boolean undefined;
     
+	@Transient
+	private volatile int hashCode = 0;
+	
+	public PricesOthers() {
+		super();
+	}
+	
     public PricesOthers(String code, String desc, boolean opdInclude,
 			boolean ipdInclude, boolean discharge, boolean undefined) {
 		super();
@@ -119,5 +161,32 @@ public class PricesOthers {
 	public String toString() {
 		return Description;
 	}
-
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (!(obj instanceof PricesOthers)) {
+			return false;
+		}
+		
+		PricesOthers priceOther = (PricesOthers)obj;
+		return (id == priceOther.getId());
+	}
+	
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + id;
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}
 }

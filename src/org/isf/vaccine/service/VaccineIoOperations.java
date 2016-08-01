@@ -1,18 +1,11 @@
 package org.isf.vaccine.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.isf.disease.model.Disease;
-import org.isf.generaldata.MessageBundle;
 import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.isf.vaccine.model.Vaccine;
-import org.isf.vactype.model.VaccineType;
 import org.springframework.stereotype.Component;
 
 /**

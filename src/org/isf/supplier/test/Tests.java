@@ -3,9 +3,12 @@ package org.isf.supplier.test;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.isf.supplier.model.Supplier;
+import org.isf.supplier.service.SupplierOperations;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -101,32 +104,95 @@ public class Tests
 	
 	@Test
 	public void testSupplierSaveOrUpdate() 
-	{
-		assertEquals(true, false);
+	{		
+		SupplierOperations ioOperations = new SupplierOperations();
+		boolean result = false;
+		
+		
+		try 
+		{		
+			Supplier supplier = testSupplier.setup(true);
+			result = ioOperations.saveOrUpdate(supplier);
+			
+			assertEquals(true, result);
+			_checkSupplierIntoDb(supplier.getSupId());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("Test Exception" + e);		
+			assertEquals(true, false);
+		}
 		
 		return;
 	}
 	
 	@Test
 	public void testSupplierGetByID() 
-	{
-		assertEquals(true, false);
+	{	
+		SupplierOperations ioOperations = new SupplierOperations();
+		int code = 0;
+		
+		
+		try 
+		{		
+			code = _setupTestSupplier(false);
+			Supplier foundSupplier = ioOperations.getByID(code);
+			
+			_checkSupplierIntoDb(foundSupplier.getSupId());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("Test Exception" + e);		
+			assertEquals(true, false);
+		}
 		
 		return;
 	}
 	
 	@Test
 	public void testSupplierGetAll() 
-	{
-		assertEquals(true, false);
+	{		
+		int code = 0;
+		SupplierOperations ioOperations = new SupplierOperations();
+		
+		
+		try 
+		{		
+			code = _setupTestSupplier(false);
+			Supplier foundSupplier = (Supplier)jpa.find(Supplier.class, code); 
+			List<Supplier> suppliers = ioOperations.getAll();			
+			
+			assertEquals(foundSupplier.getSupNote(), suppliers.get(0).getSupNote());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("Test Exception" + e);		
+			assertEquals(true, false);
+		}
 		
 		return;
 	}
 	
 	@Test
 	public void testSupplierGetList() 
-	{
-		assertEquals(true, false);
+	{	
+		int code = 0;
+		SupplierOperations ioOperations = new SupplierOperations();
+		
+		
+		try 
+		{		
+			code = _setupTestSupplier(false);
+			Supplier foundSupplier = (Supplier)jpa.find(Supplier.class, code); 
+			List<Supplier> suppliers = ioOperations.getList();			
+			
+			assertEquals(foundSupplier.getSupNote(), suppliers.get(0).getSupNote());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("Test Exception" + e);		
+			assertEquals(true, false);
+		}
 		
 		return;
 	}

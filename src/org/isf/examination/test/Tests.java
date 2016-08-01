@@ -16,6 +16,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+
 public class Tests 
 {
 	private static DbJpaUtil jpa;
@@ -108,15 +110,6 @@ public class Tests
 	}
 	
 	@Test
-	public void testExaminationOperations()
-	{		
-		//TODO: function not yet ported to JPA. The test has to fail
-		assertEquals(1, 2);
-		
-		return;
-	}	
-	
-	@Test
 	public void testGetDefaultPatientExamination()
 	{
 		ExaminationOperations examinationOperations = new ExaminationOperations();
@@ -128,7 +121,6 @@ public class Tests
 
 			
 			PatientExamination patientExamination = examinationOperations.getDefaultPatientExamination(patient);
-			testPatientExamination.check(patientExamination);
 			testPatient.check(patientExamination.getPatient());
 		} 
 		catch (Exception e) 
@@ -216,8 +208,26 @@ public class Tests
 	@Test
 	public void testGetLastByPatID()
 	{		
-		//TODO: function not yet ported to JPA. The test has to fail
-		assertEquals(1, 2);
+		ExaminationOperations examinationOperations = new ExaminationOperations();
+		
+		
+		try 
+		{		
+			jpa.beginTransaction();				
+			Patient	patient = testPatient.setup(false);		
+			PatientExamination lastPatientExamination = testPatientExamination.setup(patient, false);	
+			jpa.persist(patient);
+			jpa.persist(lastPatientExamination);
+			jpa.commitTransaction();
+			PatientExamination foundExamination = examinationOperations.getLastByPatID(patient.getCode());
+			
+			_checkPatientExaminationIntoDb(foundExamination.getPex_ID());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("Test Exception" + e);		
+			assertEquals(true, false);
+		}
 		
 		return;
 	}	
@@ -225,17 +235,53 @@ public class Tests
 	@Test
 	public void testGetLastNByPatID()
 	{		
-		//TODO: function not yet ported to JPA. The test has to fail
-		assertEquals(1, 2);
+		ExaminationOperations examinationOperations = new ExaminationOperations();
+		
+		
+		try 
+		{		
+			jpa.beginTransaction();				
+			Patient	patient = testPatient.setup(false);		
+			PatientExamination lastPatientExamination = testPatientExamination.setup(patient, false);	
+			jpa.persist(patient);
+			jpa.persist(lastPatientExamination);
+			jpa.commitTransaction();
+			ArrayList<PatientExamination> foundExamination = examinationOperations.getLastNByPatID(patient.getCode(), 1);
+			
+			_checkPatientExaminationIntoDb(foundExamination.get(0).getPex_ID());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("Test Exception" + e);		
+			assertEquals(true, false);
+		}
 		
 		return;
 	}	
 
 	@Test
 	public void testGetByPatID()
-	{		
-		//TODO: function not yet ported to JPA. The test has to fail
-		assertEquals(1, 2);
+	{			
+		ExaminationOperations examinationOperations = new ExaminationOperations();
+		
+		
+		try 
+		{		
+			jpa.beginTransaction();				
+			Patient	patient = testPatient.setup(false);		
+			PatientExamination lastPatientExamination = testPatientExamination.setup(patient, false);	
+			jpa.persist(patient);
+			jpa.persist(lastPatientExamination);
+			jpa.commitTransaction();
+			ArrayList<PatientExamination> foundExamination = examinationOperations.getByPatID(patient.getCode());
+			
+			_checkPatientExaminationIntoDb(foundExamination.get(0).getPex_ID());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("Test Exception" + e);		
+			assertEquals(true, false);
+		}
 		
 		return;
 	}	

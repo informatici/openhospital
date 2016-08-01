@@ -1,4 +1,4 @@
-package org.isf.medype.test;
+package org.isf.medtype.test;
 
 
 import org.isf.utils.exception.OHException;
