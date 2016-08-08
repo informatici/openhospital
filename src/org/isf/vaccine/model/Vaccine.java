@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.isf.vactype.model.VaccineType;
 
@@ -33,13 +34,16 @@ public class Vaccine
 	@Column(name="VAC_ID_A")
     private String code;
 
+	@NotNull
 	@Column(name="VAC_DESC")
     private String description;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="VAC_VACT_ID_A")
     private VaccineType vaccineType;
 
+	@NotNull
 	@Column(name="VAC_LOCK")
     private Integer lock;
 

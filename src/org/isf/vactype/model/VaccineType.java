@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 /*------------------------------------------
  * VaccineType - vaccine type class to model vaccine type
@@ -35,6 +36,7 @@ public class VaccineType
 	@Column(name="VACT_ID_A")	
 	private String code;
 
+	@NotNull
 	@Column(name="VACT_DESC")	
 	private String description;
 	

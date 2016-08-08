@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.patient.model.Patient;
 
@@ -36,10 +37,12 @@ public class Visit extends GregorianCalendar
 	@Column(name="VST_ID")	
 	private int visitID;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="VST_PAT_ID")
 	Patient patID;
-	
+
+	@NotNull
 	@Column(name="VST_DATE")	
 	private GregorianCalendar date;
 	

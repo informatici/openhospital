@@ -7,6 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 /*------------------------------------------
  * User - model for the user entity
@@ -23,11 +24,13 @@ public class User
 	@Id 
 	@Column(name="US_ID_A")		
 	private String userName;
-	
+
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="US_UG_ID_A")
 	private UserGroup userGroupName;
-	
+
+	@NotNull
 	@Column(name="US_PASSWD")
 	private String passwd;
 

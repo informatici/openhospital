@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -31,13 +32,16 @@ public class Hospital
 	@Id 
 	@Column(name="HOS_ID_A")
     private String code;
-	
+
+	@NotNull
 	@Column(name="HOS_NAME")	
     private String description;
-	
+
+	@NotNull
 	@Column(name="HOS_ADDR")
     private String address;
-	
+
+	@NotNull
 	@Column(name="HOS_CITY")
     private String city;
 	
@@ -52,7 +56,8 @@ public class Hospital
 
 	@Transient
     private String currencyCod;
-	
+
+	@NotNull
 	@Column(name="HOS_LOCK")
     private Integer lock;
 

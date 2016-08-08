@@ -115,7 +115,7 @@ public class Tests
 			DischargeType foundDischargeType = (DischargeType)jpa.find(DischargeType.class, code); 
 			ArrayList<DischargeType> dischargeTypes = ioOperations.getDischargeType();
 			
-			assertEquals(foundDischargeType.getDescription(), dischargeTypes.get(1).getDescription());
+			assertEquals(foundDischargeType.getDescription(), dischargeTypes.get(dischargeTypes.size()-1).getDescription());
 		} 
 		catch (Exception e) 
 		{

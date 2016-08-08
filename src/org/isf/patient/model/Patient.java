@@ -14,6 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 
 import org.isf.opd.model.Opd;
 import org.joda.time.DateTime;
@@ -62,28 +63,34 @@ public class Patient {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="PAT_ID")
 	private Integer code;
-	
+
+	@NotNull
 	@Column(name="PAT_FNAME")
 	private String firstName;
-	
+
+	@NotNull
 	@Column(name="PAT_SNAME")
 	private String secondName;
 	
 	@Column(name="PAT_BDATE")
 	private Date birthDate;
-	
+
+	@NotNull
 	@Column(name="PAT_AGE")
 	private int age;
-	
+
+	@NotNull
 	@Column(name="PAT_AGETYPE")
 	private String agetype;
-	
+
+	@NotNull
 	@Column(name="PAT_SEX")
 	private char sex;
 	
 	@Column(name="PAT_ADDR")
 	private String address;
-	
+
+	@NotNull
 	@Column(name="PAT_CITY")
 	private String city;
 	
@@ -95,19 +102,22 @@ public class Patient {
 	
 	@Column(name="PAT_NOTE")
 	private String note;
-	
+
+	@NotNull
 	@Column(name="PAT_MOTH_NAME")
 	private String mother_name; // mother's name
 	
 	@Column(name="PAT_MOTH")
 	private char mother; // D=dead, A=alive
-	
+
+	@NotNull
 	@Column(name="PAT_FATH_NAME")
 	private String father_name; // father's name
 	
 	@Column(name="PAT_FATH")
 	private char father; // D=dead, A=alive
-	
+
+	@NotNull
 	@Column(name="PAT_BTYPE")
 	private String bloodType; // (0-/+, A-/+ , B-/+, AB-/+)
 	

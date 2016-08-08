@@ -7,6 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.opetype.model.OperationType;
 
@@ -36,17 +37,21 @@ public class Operation
 	@Id 
 	@Column(name="OPE_ID_A")	    
     private String code;
-	
+
+	@NotNull
 	@Column(name="OPE_DESC")
     private String description;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="OPE_OCL_ID_A")
     private OperationType type;
-	
+
+	@NotNull
 	@Column(name="OPE_STAT")
     private Integer major;
-	
+
+	@NotNull
 	@Column(name="OPE_LOCK")
     private Integer lock;
 

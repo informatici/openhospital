@@ -15,7 +15,7 @@ import java.util.GregorianCalendar;
 public class TestOpd 
 {	
     private int code = 10;
-	private Date date = new GregorianCalendar(1984, Calendar.AUGUST, 14).getTime();;
+	private Date date = new GregorianCalendar(1984, Calendar.AUGUST, 14).getTime();
 	private GregorianCalendar visitDate = new GregorianCalendar(1984, Calendar.AUGUST, 14);
 	private int age = 9;
 	private char sex = 'F';

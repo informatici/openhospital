@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -32,6 +33,7 @@ public class ExamType
 	@Column(name="EXC_ID_A") 
 	private String code;
 
+	@NotNull
 	@Column(name="EXC_DESC")	
 	private String description;
 

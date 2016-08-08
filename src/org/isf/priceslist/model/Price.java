@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -33,19 +34,24 @@ public class Price
 	@Column(name="PRC_ID")
 	private int id;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="PRC_LST_ID")
     private PriceList list;
-	
+
+	@NotNull
 	@Column(name="PRC_GRP", length=3)  
     private String group;
-	
+
+	@NotNull
 	@Column(name="PRC_ITEM")  
     private String item;
-	
+
+	@NotNull
 	@Column(name="PRC_DESC")  
     private String desc;
-	
+
+	@NotNull
 	@Column(name="PRC_PRICE")  
     private Double price; 
 	

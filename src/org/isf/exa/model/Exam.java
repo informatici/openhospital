@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.exatype.model.ExamType;
 
@@ -36,19 +37,23 @@ public class Exam
 	@Column(name="EXA_ID_A")	
 	private String code;
 
+	@NotNull
 	@Column(name="EXA_DESC")
 	private String description;
 
+	@NotNull
 	@Column(name="EXA_PROC")
 	private Integer procedure;
 
 	@Column(name="EXA_DEFAULT")
 	private String defaultResult;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="EXA_EXC_ID_A")
 	private ExamType examtype;
 
+	@NotNull
 	@Column(name="EXA_LOCK")
 	private Integer lock;
 

@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 /**
  * Pure Model BillItems : represents an item in the Bill
@@ -34,7 +35,8 @@ public class BillItems
 	@ManyToOne
 	@JoinColumn(name="BLI_ID_BILL")
 	private Bill bill;
-	
+
+	@NotNull
 	@Column(name="BLI_IS_PRICE")
 	private boolean isPrice;
 	
@@ -43,10 +45,12 @@ public class BillItems
 	
 	@Column(name="BLI_ITEM_DESC")
 	private String itemDescription;
-	
+
+	@NotNull
 	@Column(name="BLI_ITEM_AMOUNT")
 	private double itemAmount;
-	
+
+	@NotNull
 	@Column(name="BLI_QTY")
 	private int itemQuantity;
 	

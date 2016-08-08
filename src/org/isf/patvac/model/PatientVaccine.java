@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.isf.patient.model.Patient;
 import org.isf.vaccine.model.Vaccine;
@@ -30,17 +31,21 @@ public class PatientVaccine
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="PAV_ID")
 	private int code;
-	
+
+	@NotNull
 	@Column(name="PAV_YPROG")
 	private int progr;
-	
+
+	@NotNull
 	@Column(name="PAV_DATE")
 	private GregorianCalendar vaccineDate;
-	
+
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="PAV_PAT_ID")
 	private Patient patId;
-	
+
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="PAV_VAC_ID_A")
 	private Vaccine vaccine;

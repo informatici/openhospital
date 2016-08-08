@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.distype.model.DiseaseType;
 
@@ -34,23 +35,29 @@ public class Disease
 	@Id 
 	@Column(name="DIS_ID_A")	    
     private String code;
-	
+
+	@NotNull
 	@Column(name="DIS_DESC")
     private String description;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="DIS_DCL_ID_A")
 	private DiseaseType diseaseType;	   			// values are 'N'(normal)  or 'M' (malnutrition)  default 'N' 
-	
+
+	@NotNull
 	@Column(name="DIS_LOCK")
 	private Integer lock;
-	
+
+	@NotNull
 	@Column(name="DIS_OPD_INCLUDE")
 	private boolean opdInclude;
-	
+
+	@NotNull
 	@Column(name="DIS_IPD_IN_INCLUDE")
 	private boolean ipdInInclude;
-    
+
+	@NotNull
 	@Column(name="DIS_IPD_OUT_INCLUDE")
 	private boolean ipdOutInclude;
 

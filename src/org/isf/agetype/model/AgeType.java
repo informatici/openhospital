@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -28,13 +29,16 @@ public class AgeType
 	@Id 
 	@Column(name="AT_CODE") 
     private String code;
-	
+
+	@NotNull
 	@Column(name="AT_DESC")	
     private String description;
-	
+
+	@NotNull
 	@Column(name="AT_FROM")	
     private int from;
-	
+
+	@NotNull
 	@Column(name="AT_TO")
     private int to;
 

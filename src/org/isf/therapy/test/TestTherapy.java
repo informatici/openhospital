@@ -13,8 +13,8 @@ import java.util.GregorianCalendar;
 
 public class TestTherapy 
 {	
-	private GregorianCalendar startDate = new GregorianCalendar(10, 9, 8);;
-	private GregorianCalendar endDate = new GregorianCalendar(11, 10, 9);;
+	private GregorianCalendar startDate = new GregorianCalendar(10, 9, 8);
+	private GregorianCalendar endDate = new GregorianCalendar(11, 10, 9);
 	private Double qty = 9.9;
 	private int unitID = 10;
 	private int freqInDay = 11;

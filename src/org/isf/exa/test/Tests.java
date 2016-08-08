@@ -167,7 +167,7 @@ public class Tests
 			ExamRow foundExamRow = (ExamRow)jpa.find(ExamRow.class, code); 
 			ArrayList<ExamRow> examRows = ioOperations.getExamRow(null, null);
 			
-			assertEquals(foundExamRow.getDescription(), examRows.get(0).getDescription());
+			assertEquals(foundExamRow.getDescription(), examRows.get(examRows.size()-1).getDescription());
 		} 
 		catch (Exception e) 
 		{
@@ -191,7 +191,7 @@ public class Tests
 			Exam foundExam = (Exam)jpa.find(Exam.class, code); 
 			ArrayList<Exam> exams = ioOperations.getExams();
 			
-			assertEquals(foundExam.getDescription(), exams.get(0).getDescription());
+			assertEquals(foundExam.getDescription(), exams.get(exams.size()-1).getDescription());
 		} 
 		catch (Exception e) 
 		{
@@ -215,7 +215,7 @@ public class Tests
 			ExamType foundExamType = (ExamType)jpa.find(ExamType.class, code); 
 			ArrayList<ExamType> examTypes = ioOperations.getExamType();
 			
-			assertEquals(foundExamType.getDescription(), examTypes.get(0).getDescription());
+			assertEquals(foundExamType.getDescription(), examTypes.get(examTypes.size()-1).getDescription());
 		} 
 		catch (Exception e) 
 		{

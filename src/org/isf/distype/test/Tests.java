@@ -115,7 +115,7 @@ public class Tests
 			DiseaseType foundDiseaseType = (DiseaseType)jpa.find(DiseaseType.class, code); 
 			ArrayList<DiseaseType> diseaseTypes = ioOperations.getDiseaseTypes();
 			
-			assertEquals(foundDiseaseType.getDescription(), diseaseTypes.get(1).getDescription());
+			assertEquals(foundDiseaseType.getDescription(), diseaseTypes.get(diseaseTypes.size()-1).getDescription());
 		} 
 		catch (Exception e) 
 		{

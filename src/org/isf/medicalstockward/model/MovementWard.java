@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.medicals.model.Medical;
 import org.isf.patient.model.Patient;
@@ -38,14 +39,17 @@ public class MovementWard
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="MMVN_ID")
 	private int code;
-	
+
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="MMVN_WRD_ID_A")	
 	private Ward ward;
-	
+
+	@NotNull
 	@Column(name="MMVN_DATE")
 	private GregorianCalendar date;
-	
+
+	@NotNull
 	@Column(name="MMVN_IS_PATIENT")
 	private boolean isPatient;
 	
@@ -58,18 +62,22 @@ public class MovementWard
 	
 	@Column(name="MMVN_PAT_WEIGHT")
 	private float weight;
-	
+
+	@NotNull
 	@Column(name="MMVN_DESC")
 	private String description;
 
+	@NotNull
 	@Column(name="MMVN_MDSR_ID")
 	private Integer medical_code;
 	@Transient
 	private Medical medical;
-	
+
+	@NotNull
 	@Column(name="MMVN_MDSR_QTY")
 	private Double quantity;
-	
+
+	@NotNull
 	@Column(name="MMVN_MDSR_UNITS")
 	private String units;
 

@@ -7,6 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 /*------------------------------------------
 * Disease Type - model for the disease type entity
@@ -22,10 +23,12 @@ public class ExamRow
 	@Id 
 	@Column(name="EXR_ID")	
 	private int code;
-	
+
+	@NotNull
 	@Column(name="EXR_DESC")	
 	private String description;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="EXR_EXA_ID_A")
 	private Exam exam;

@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 /**
  * Others : represents an other entry for prices
@@ -28,19 +29,24 @@ public class PricesOthers
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="OTH_ID")
     private int id;
-	
+
+	@NotNull
 	@Column(name="OTH_CODE")  
     private String Code;
-	
+
+	@NotNull
 	@Column(name="OTH_DESC") 
     private String Description;
-	
+
+	@NotNull
 	@Column(name="OTH_OPD_INCLUDE") 
 	private boolean opdInclude;
-	
+
+	@NotNull
 	@Column(name="OTH_IPD_INCLUDE") 
 	private boolean ipdInclude;
-	
+
+	@NotNull
 	@Column(name="OTH_DAILY") 
 	private boolean daily;
 	

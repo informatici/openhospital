@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -26,10 +27,12 @@ public class MovementType
 	@Id 
 	@Column(name="MMVT_ID_A")	   
     private String code;
-	
+
+	@NotNull
 	@Column(name="MMVT_DESC")	
     private String description;
 
+	@NotNull
 	@Column(name="MMVT_TYPE")	
     private String type;
 

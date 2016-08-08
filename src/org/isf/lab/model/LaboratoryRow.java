@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="LABORATORYROW")
@@ -19,10 +20,12 @@ public class LaboratoryRow
 	@Column(name="LABR_ID")
 	private int code;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="LABR_LAB_ID")
 	private Laboratory laboratory;
-	
+
+	@NotNull
 	@Column(name="LABR_DESC")
 	private String description;
 	

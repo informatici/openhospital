@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.admtype.model.AdmissionType;
 import org.isf.disctype.model.DischargeType;
@@ -41,27 +42,34 @@ public class Admission implements Comparable<Admission>
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="ADM_ID")	
 	private int id;							// admission key
-	
+
+	@NotNull
 	@Column(name="ADM_IN")
 	private int admitted;					// values are 0 or 1, default 0 (not admitted)
-	
+
+	@NotNull
 	@Column(name="ADM_TYPE")
 	private String type;	   				// values are 'N'(normal)  or 'M' (malnutrition)  default 'N' 
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="ADM_WRD_ID_A")
 	private Ward ward; 						// ward key
 
+	@NotNull
 	@Column(name="ADM_YPROG")
 	private int yProg;						// a progr. in year for each ward
-	
+
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="ADM_PAT_ID")
 	private Patient patient;				// patient key
 
+	@NotNull
 	@Column(name="ADM_DATE_ADM")
 	private GregorianCalendar admDate;		// admission date
-	
+
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="ADM_ADMT_ID_A_ADM")
 	private AdmissionType admissionType;	// admissionType key
@@ -140,10 +148,12 @@ public class Admission implements Comparable<Admission>
 	
 	@Column(name="ADM_USR_ID_A")
 	private String userID;					// the user ID
-	
+
+	@NotNull
 	@Column(name="ADM_LOCK")
 	private int lock;						// default 0
-	
+
+	@NotNull
 	@Column(name="ADM_DELETED")
 	private String deleted;					// flag record deleted ; values are 'Y' OR 'N' default is 'N'
 	

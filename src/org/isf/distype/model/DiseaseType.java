@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -30,7 +31,8 @@ public class DiseaseType
 	@Id 
 	@Column(name="DCL_ID_A")	    
     private String code;
-	
+
+	@NotNull
 	@Column(name="DCL_DESC")
     private String description;
 	

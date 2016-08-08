@@ -113,8 +113,8 @@ public class Tests
 		{		
 			ArrayList<Patient> patients = ioOperations.getPatients();
 			
-			
-			assertEquals(testPatientContext.getAllSaved().get(1).getName(), patients.get(0).getName());
+			List<Patient> savePatients = testPatientContext.getAllSaved();
+			assertEquals(savePatients.get(savePatients.size()-1).getName(), patients.get(patients.size()-1).getName());
 		} 
 		catch (Exception e) 
 		{
@@ -137,7 +137,8 @@ public class Tests
 			
 			
 			// Pay attention that query return with PAT_ID descendant
-			assertEquals(testPatientContext.getAllSaved().get(1).getName(), patients.get(patients.size()-1).getName());
+			List<Patient> savePatients = testPatientContext.getAllSaved();
+			assertEquals(savePatients.get(savePatients.size()-1).getName(), patients.get(patients.size()-1).getName());
 		} 
 		catch (Exception e) 
 		{
@@ -159,7 +160,8 @@ public class Tests
 			ArrayList<Patient> patients = ioOperations.getPatientsWithHeightAndWeight(testPatientContext.getAllSaved().get(1).getFirstName());
 			
 			
-			assertEquals(testPatientContext.getAllSaved().get(1).getName(), patients.get(0).getName());
+			List<Patient> savePatients = testPatientContext.getAllSaved();
+			assertEquals(savePatients.get(savePatients.size()-1).getName(), patients.get(patients.size()-1).getName());
 		} 
 		catch (Exception e) 
 		{
@@ -180,8 +182,8 @@ public class Tests
 		{		
 			Patient patient = ioOperations.getPatient(testPatientContext.getAllSaved().get(1).getName());
 			
-			
-			assertEquals(testPatientContext.getAllSaved().get(1).getName(), patient.getName());
+			List<Patient> savePatients = testPatientContext.getAllSaved();
+			assertEquals(savePatients.get(savePatients.size()-1).getName(), patient.getName());
 		} 
 		catch (Exception e) 
 		{
@@ -202,8 +204,9 @@ public class Tests
 		{		
 			Patient patient = ioOperations.getPatient(testPatientContext.getAllSaved().get(1).getCode());
 			
-			
-			assertEquals(testPatientContext.getAllSaved().get(1).getName(), patient.getName());
+
+			List<Patient> savePatients = testPatientContext.getAllSaved();
+			assertEquals(savePatients.get(savePatients.size()-1).getName(), patient.getName());
 		} 
 		catch (Exception e) 
 		{

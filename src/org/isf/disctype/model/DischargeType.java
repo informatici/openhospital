@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -28,7 +29,8 @@ public class DischargeType
 	@Id 
 	@Column(name="DIST_ID_A")	    
     private String code;
-	
+
+	@NotNull
 	@Column(name="DIST_DESC")
     private String description;
 	

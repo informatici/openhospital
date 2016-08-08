@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.patient.model.Patient;
 
@@ -37,10 +38,12 @@ public class PatientExamination implements Serializable, Comparable<PatientExami
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="PEX_ID")
 	private int pex_ID;
-	
+
+	@NotNull
 	@Column(name="PEX_DATE")
 	private Timestamp pex_date;
-	
+
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="PEX_PAT_ID")
 	private Patient patient;

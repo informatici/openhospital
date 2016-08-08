@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 /**
  * Pure Model Exam : represents a disease type
@@ -27,7 +28,8 @@ public class PregnantTreatmentType
 	@Id 
 	@Column(name="PTT_ID_A")	     
     private String code;
-	
+
+	@NotNull
 	@Column(name="PTT_DESC")
     private String description;
 

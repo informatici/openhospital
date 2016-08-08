@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.isf.disease.model.Disease;
 import org.isf.distype.model.DiseaseType;
@@ -36,26 +37,32 @@ public class Opd
 	@Id 
 	@Column(name="OPD_ID") 
 	private int code;
-	
+
+	@NotNull
 	@Column(name="OPD_DATE")
 	private Date date;
-	
+
+	@NotNull
 	@Column(name="OPD_DATE_VIS")
 	private GregorianCalendar visitDate;
 
 	@ManyToOne
 	@JoinColumn(name="OPD_PAT_ID")
 	private Patient patientCode;
-		
+
+	@NotNull
 	@Column(name="OPD_AGE")
 	private int age;
-	
+
+	@NotNull
 	@Column(name="OPD_SEX")
 	private char sex;
-		
+
+	@NotNull
 	@Column(name="OPD_NOTE")
 	private String note; //ADDED: Alex
-	
+
+	@NotNull
 	@Column(name="OPD_PROG_YEAR")	
 	private int year;
 		
@@ -70,10 +77,12 @@ public class Opd
 	@ManyToOne
 	@JoinColumn(name="OPD_DIS_ID_A_3")
 	private Disease disease3;
-	
+
+	@NotNull
 	@Column(name="OPD_LOCK")
 	private int lock;
-		
+
+	@NotNull
 	@Column(name="OPD_NEW_PAT")
 	private char newPatient;	//n=NEW R=REATTENDANCE
 	
@@ -82,7 +91,8 @@ public class Opd
 	
 	@Column(name="OPD_REFERRAL_TO")
 	private String referralTo;		//R=referral to another unit; null=no referral to 
-	
+
+	@NotNull
 	@Column(name="OPD_USR_ID_A")
 	private String userID;
 

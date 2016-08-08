@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.generaldata.MessageBundle;
 
@@ -28,9 +29,11 @@ public class UserMenuItem
 	@Column(name="MNI_ID_A")	
 	private String 	code;
 
+	@NotNull
 	@Column(name="MNI_BTN_LABEL")
 	private String 	buttonLabel;
 
+	@NotNull
 	@Column(name="MNI_LABEL")
 	private String 	altLabel;
 
@@ -40,15 +43,19 @@ public class UserMenuItem
 	@Column(name="MNI_SHORTCUT")
 	private char	shortcut;
 
+	@NotNull
 	@Column(name="MNI_SUBMENU")
 	private String	mySubmenu;
 
+	@NotNull
 	@Column(name="MNI_CLASS")
 	private String	myClass;
 
+	@NotNull
 	@Column(name="MNI_IS_SUBMENU")
 	private boolean	isASubMenu;
 
+	@NotNull
 	@Column(name="MNI_POSITION")
 	private int 	position;
 

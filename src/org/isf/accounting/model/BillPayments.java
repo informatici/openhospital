@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 /**
  * Pure Model BillPayments : represents a patient Payment for a Bill
@@ -37,13 +38,16 @@ public class BillPayments implements Comparable<Object>
 	@ManyToOne
 	@JoinColumn(name="BLP_ID_BILL")	
 	private Bill bill;
-	
+
+	@NotNull
 	@Column(name="BLP_DATE")
 	private GregorianCalendar date;
-	
+
+	@NotNull
 	@Column(name="BLP_AMOUNT")
 	private double amount;
-	
+
+	@NotNull
 	@Column(name="BLP_USR_ID_A")
 	private String user;
 

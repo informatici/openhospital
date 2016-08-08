@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.medicals.model.Medical;
 import org.isf.medstockmovtype.model.MovementType;
@@ -35,10 +36,12 @@ public class Movement
 	@Column(name="MMV_ID")
 	private int code;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="MMV_MDSR_ID")
 	private Medical medical;
-	
+
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="MMV_MMVT_ID_A")
 	private MovementType type;
@@ -52,9 +55,11 @@ public class Movement
 	@Transient
 	private Lot lot;
 
+	@NotNull
 	@Column(name="MMV_DATE")
 	private GregorianCalendar date;
 
+	@NotNull
 	@Column(name="MMV_QTY")
 	private int quantity;
 
@@ -63,6 +68,7 @@ public class Movement
 	@Transient
 	private Supplier supplier;
 
+	@NotNull
 	@Column(name="MMV_REFNO")
 	private String refNo;
 	

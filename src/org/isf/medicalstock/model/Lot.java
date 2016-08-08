@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.generaldata.MessageBundle;
 
@@ -25,10 +26,12 @@ public class Lot
 	@Id 
 	@Column(name="LT_ID_A")
 	private String code;
-	
+
+	@NotNull
 	@Column(name="LT_PREP_DATE")
 	private GregorianCalendar preparationDate;
-	
+
+	@NotNull
 	@Column(name="LT_DUE_DATE")
 	private GregorianCalendar dueDate;
 

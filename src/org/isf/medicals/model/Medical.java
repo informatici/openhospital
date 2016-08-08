@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.medtype.model.MedicalType;
 
@@ -49,12 +50,14 @@ public class Medical implements Comparable<Medical> {
 	/**
 	 * Code of the product
 	 */
+	@NotNull
 	@Column(name="MDSR_CODE")	
 	private String prod_code;
 
 	/**
 	 * Type of the medical
 	 */
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="MDSR_MDSRT_ID_A")
 	private MedicalType type;
@@ -62,42 +65,49 @@ public class Medical implements Comparable<Medical> {
 	/**
 	 * Description of the medical
 	 */
+	@NotNull
 	@Column(name="MDSR_DESC")
 	private String description;
 
 	/**
 	 * initial quantity
 	 */
+	@NotNull
 	@Column(name="MDSR_MIN_STOCK_QTI")
 	private double initialqty;
 	
 	/**
 	 * pieces per packet
 	 */
+	@NotNull
 	@Column(name="MDSR_PCS_X_PCK")
 	private Integer pcsperpck;
 
 	/**
 	 * input quantity
 	 */
+	@NotNull
 	@Column(name="MDSR_INI_STOCK_QTI")
 	private double inqty;
 
 	/**
 	 * out quantity
 	 */
+	@NotNull
 	@Column(name="MDSR_OUT_QTI")
 	private double outqty;
 	
 	/**
 	 * min quantity
 	 */
+	@NotNull
 	@Column(name="MDSR_IN_QTI")
 	private double minqty;
 
 	/**
 	 * Lock control
 	 */
+	@NotNull
 	@Column(name="MDSR_LOCK")
 	private Integer lock;
 	

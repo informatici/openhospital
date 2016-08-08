@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -30,16 +31,20 @@ public class PriceList
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="LST_ID")
 	private int id;
-	
+
+	@NotNull
 	@Column(name="LST_CODE")
     private String code;
-	
+
+	@NotNull
 	@Column(name="LST_NAME")
     private String name;
-	
+
+	@NotNull
 	@Column(name="LST_DESC")
     private String description;
-	
+
+	@NotNull
 	@Column(name="LST_CURRENCY")
     private String currency;
 	

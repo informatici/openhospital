@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.exa.model.Exam;
 import org.isf.patient.model.Patient;
@@ -37,19 +38,23 @@ public class Laboratory
 	@Column(name="LAB_MATERIAL")
 	private String material;
 
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="LAB_EXA_ID_A")
 	private Exam exam;
-	
+
+	@NotNull
 	@Column(name="LAB_DATE")
 	private GregorianCalendar registrationDate;
 	
 	@Column(name="LAB_EXAM_DATE")
 	private GregorianCalendar examDate;
-	
+
+	@NotNull
 	@Column(name="LAB_RES")
 	private String result;
-	
+
+	@NotNull
 	@Column(name="LAB_LOCK")
 	private int lock;
 	

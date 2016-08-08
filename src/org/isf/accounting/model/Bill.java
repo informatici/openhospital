@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.isf.patient.model.Patient;
 import org.isf.priceslist.model.PriceList;
@@ -37,12 +38,15 @@ public class Bill implements Comparable<Bill>
 	@Column(name="BLL_ID")
 	private int id;
 	
+	@NotNull
 	@Column(name="BLL_DATE")
 	private GregorianCalendar date;
 
+	@NotNull
 	@Column(name="BLL_UPDATE")
 	private GregorianCalendar update;
-	
+
+	@NotNull
 	@Column(name="BLL_IS_LST")
 	private boolean isList;
 	
@@ -52,7 +56,8 @@ public class Bill implements Comparable<Bill>
 	
 	@Column(name="BLL_LST_NAME")
 	private String listName;
-	
+
+	@NotNull
 	@Column(name="BLL_IS_PAT")
 	private boolean isPatient;
 	
@@ -71,7 +76,8 @@ public class Bill implements Comparable<Bill>
 	
 	@Column(name="BLL_BALANCE")
 	private Double balance;
-	
+
+	@NotNull
 	@Column(name="BLL_USR_ID_A")
 	private String user;
 

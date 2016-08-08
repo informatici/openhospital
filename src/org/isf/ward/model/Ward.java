@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 /**
  * Pure Model Ward (Hospital wards): represents a ward
@@ -29,7 +30,8 @@ public class Ward {
 	@Id 
 	@Column(name="WRD_ID_A")	
     private String code;
-	
+
+	@NotNull
 	@Column(name="WRD_NAME")
     private String description;
 	
@@ -41,25 +43,32 @@ public class Ward {
 	
 	@Column(name="WRD_EMAIL")
     private String email;
-	
+
+	@NotNull
 	@Column(name="WRD_NBEDS")
     private Integer beds;
-	
+
+	@NotNull
 	@Column(name="WRD_NQUA_NURS")
     private Integer nurs;
-	
+
+	@NotNull
 	@Column(name="WRD_NDOC")
     private Integer docs;
-	
+
+	@NotNull
 	@Column(name="WRD_IS_PHARMACY")    
     private boolean isPharmacy;
-	
+
+	@NotNull
 	@Column(name="WRD_IS_MALE")   
     private boolean isMale;
-	
+
+	@NotNull
 	@Column(name="WRD_IS_FEMALE")    
     private boolean isFemale;
-	
+
+	@NotNull
 	@Column(name="WRD_LOCK")
     private Integer lock;
     

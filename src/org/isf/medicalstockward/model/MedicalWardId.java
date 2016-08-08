@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 
 /*------------------------------------------
  * Medical Ward - model for the medical entity
@@ -19,7 +20,8 @@ public class MedicalWardId implements Serializable
 {	
 	@Column(name="MDSRWRD_WRD_ID_A")
 	private char ward_id;
-	
+
+	@NotNull
 	@Column(name="MDSRWRD_MDSR_ID")
 	private int medical_id;
 	
