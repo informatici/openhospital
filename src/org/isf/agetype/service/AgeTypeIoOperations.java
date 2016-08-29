@@ -46,7 +46,6 @@ public class AgeTypeIoOperations
 	public boolean updateAgeType(
 			ArrayList<AgeType> ageTypes) throws OHException 
 	{
-
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		

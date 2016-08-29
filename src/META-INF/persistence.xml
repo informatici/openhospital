@@ -12,7 +12,7 @@
 		<class>org.isf.accounting.model.Bill</class>
 		<class>org.isf.dlvrrestype.model.DeliveryResultType</class>
 		<class>org.isf.dlvrtype.model.DeliveryType</class>
-		<!-- dicom - already implemented with sessions -->
+		<class>org.isf.dicom.model.FileDicom</class>
 		<class>org.isf.disctype.model.DischargeType</class>
 		<class>org.isf.disease.model.Disease</class>
 		<class>org.isf.distype.model.DiseaseType</class>

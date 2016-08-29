@@ -35,7 +35,7 @@ import org.dcm4che2.imageio.plugins.dcm.DicomStreamMetaData;
 import org.dcm4che2.io.DicomCodingException;
 import org.imgscalr.Scalr;
 import org.isf.dicom.manager.DicomManagerFactory;
-import org.isf.dicom.model.FileDicomDetail;
+import org.isf.dicom.model.FileDicom;
 import org.isf.generaldata.MessageBundle;
 import org.isf.patient.model.Patient;
 
@@ -63,7 +63,7 @@ public class DicomViewGui extends JPanel {
 	private int frameIndex = 0;
 	private BufferedImage tmpImg = null;
 	private DicomObject tmpDicom = null;
-	private FileDicomDetail tmpDbFile = null;
+	private FileDicom tmpDbFile = null;
 
 	// GUI
 	private JPanel jPanelHeader = null;
@@ -457,7 +457,7 @@ public class DicomViewGui extends JPanel {
 	 * @param dett
 	 * @return
 	 */
-	private void getImageFromDicom(FileDicomDetail dett) {
+	private void getImageFromDicom(FileDicom dett) {
 		try {
 			tmpImg = null;
 			Iterator<?> iter = ImageIO.getImageReadersByFormatName("DICOM");

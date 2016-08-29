@@ -1,22 +1,21 @@
 package org.isf.dicom.manager;
 
-import org.isf.dicom.model.FileDicomBase;
-import org.isf.dicom.model.FileDicomDetail;
+import org.isf.dicom.model.FileDicom;
 
 /**
  * Interface for definitions IO for Dicom acquired files
  * @author Pietro Castellucci
  * @version 1.0.0 
  */
-public interface DicomManagerIntf {
-   
+public interface DicomManagerInterface 
+{   
     /**
      * Load a list of idfile for series
      * @param idPaziente, the patient id
      * @param numeroSerie, the series number
      * @return
      */
-    public Long[] getSerieDetail(int idPaziente, String numeroSerie);  
+    public Long[] getSerieDetail(int idPaziente, String numeroSerie);
 
     /**
      * delete series 
@@ -24,7 +23,7 @@ public interface DicomManagerIntf {
      * @param numeroSerie, the seres number to delete
      * @return, true if success
      */
-    public boolean deleteSerie(int idPaziente, String numeroSerie);  
+    public boolean deleteSerie(int idPaziente, String numeroSerie) ;
     
     /**
     * ceck if dicom is loaded
@@ -33,14 +32,14 @@ public interface DicomManagerIntf {
     * @param dicom, the detail od dicom
     * @return true if file exist
     */
-    public boolean exist(FileDicomDetail dicom);
+    public boolean exist(FileDicom dicom);
 
     /**
      * load the Detail of DICOM
      * @param, idFile
      * @return, FileDicomDettaglio
      */
-    public FileDicomDetail loadDettaglio(Long idFile,int idPaziente, String numeroSerie);   
+    public FileDicom loadDettaglio(Long idFile,int idPaziente, String numeroSerie);
     
     /**
      * Load detail
@@ -48,18 +47,18 @@ public interface DicomManagerIntf {
      * @param numeroSerie, numero della serie
      * @return, details
      */
-    public FileDicomDetail loadDettaglio(long idFile,int idPaziente, String numeroSerie);   
+    public FileDicom loadDettaglio(long idFile,int idPaziente, String numeroSerie);
 
     /**
      * load metadata from DICOM files fo the patient
      * @param idPaziente
      * @return
      */
-    public FileDicomBase[] loadFilesPaziente(int idPaziente);
+    public FileDicom[] loadFilesPaziente(int idPaziente);
 
     /**
      * save the DICOM file and metadata
      * @param dicom
      */
-    public void saveFile(FileDicomDetail dicom);  
+    public void saveFile(FileDicom dicom);
 }
