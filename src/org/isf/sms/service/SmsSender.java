@@ -9,6 +9,7 @@ import java.util.List;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.SmsParameters;
 import org.isf.sms.model.Sms;
+import org.isf.utils.exception.OHException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,13 @@ public class SmsSender implements Runnable {
 		while (running) {
 			logger.info("SMS Sender running...");
 			SmsOperations smsOp = new SmsOperations();
-			List<Sms> smsList = smsOp.getList();
+			List<Sms> smsList = null;
+			try {
+				smsList = smsOp.getList();
+			} catch (OHException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			if (!smsList.isEmpty()) {
 				logger.info("Found " + smsList.size() + " SMS to send");
 				if (SmsParameters.MODE.equals("GSM")) {
@@ -49,7 +56,12 @@ public class SmsSender implements Runnable {
 								boolean result = sender.sendSMS(sms, GeneralData.DEBUG);
 								if (result) {
 									sms.setSmsDateSent(new Date());
-									smsOp.saveOrUpdate(sms);
+									try {
+										smsOp.saveOrUpdate(sms);
+									} catch (OHException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
 									logger.debug("Sent");
 								} else {
 									logger.error("Not sent");
@@ -72,7 +84,12 @@ public class SmsSender implements Runnable {
 								boolean result = sender.sendSMS(sms, GeneralData.DEBUG);
 								if (result) {
 									sms.setSmsDateSent(new Date());
-									smsOp.saveOrUpdate(sms);
+									try {
+										smsOp.saveOrUpdate(sms);
+									} catch (OHException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
 									logger.debug("Sent");
 								} else {
 									logger.error("Not sent");

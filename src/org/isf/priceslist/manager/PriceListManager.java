@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import org.isf.menu.gui.Menu;
 import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.Price;
+import org.isf.priceslist.model.PriceList;
 import org.isf.priceslist.service.PricesListIoOperations;
 import org.isf.serviceprinting.print.PriceForPrint;
 import org.isf.utils.exception.OHException;
@@ -20,7 +21,7 @@ public class PriceListManager {
 	 * return the list of {@link List}s in the DB
 	 * @return the list of {@link List}s
 	 */
-	public ArrayList<List> getLists() {
+	public ArrayList<PriceList> getLists() {
 		try {
 			return ioOperations.getLists();
 		} catch (OHException e) {
@@ -48,7 +49,7 @@ public class PriceListManager {
 	 * @param prices - the list of {@link Price}s
 	 * @return <code>true</code> if the list has been replaced, <code>false</code> otherwise
 	 */
-	public boolean updatePrices(List list, ArrayList<Price> prices) {
+	public boolean updatePrices(PriceList list, ArrayList<Price> prices) {
 		try {
 			return ioOperations.updatePrices(list, prices);
 		} catch (OHException e) {
@@ -63,7 +64,7 @@ public class PriceListManager {
 	 * @param list - the {@link List}
 	 * @return <code>true</code> if the list has been inserted, <code>false</code> otherwise
 	 */
-	public boolean newList(List list) {
+	public boolean newList(PriceList list) {
 		try {
 			return ioOperations.newList(list);
 		} catch (OHException e) {
@@ -78,7 +79,7 @@ public class PriceListManager {
 	 * @param list - the {@link List} to update
 	 * @return <code>true</code> if the list has been updated, <code>false</code> otherwise
 	 */
-	public boolean updateList(List updateList) {
+	public boolean updateList(PriceList updateList) {
 		try {
 			return ioOperations.updateList(updateList);
 		} catch (OHException e) {
@@ -93,7 +94,7 @@ public class PriceListManager {
 	 * @param list - the {@link List} to delete
 	 * @return <code>true</code> if the list has been deleted, <code>false</code> otherwise
 	 */
-	public boolean deleteList(List deleteList) {
+	public boolean deleteList(PriceList deleteList) {
 		try {
 			return ioOperations.deleteList(deleteList);
 		} catch (OHException e) {
@@ -108,7 +109,7 @@ public class PriceListManager {
 	 * @param list
 	 * @return <code>true</code> if the list has been duplicated, <code>false</code> otherwise
 	 */
-	public boolean copyList(List list) {
+	public boolean copyList(PriceList list) {
 		return copyList(list, 1., 0.);
 	}
 	
@@ -120,7 +121,7 @@ public class PriceListManager {
 	 * @param step - the rounding step
 	 * @return <code>true</code> if the list has been duplicated, <code>false</code> otherwise
 	 */
-	public boolean copyList(List list, double factor, double step) {
+	public boolean copyList(PriceList list, double factor, double step) {
 		try {
 			return ioOperations.copyList(list, factor, step);
 		} catch (OHException e) {
@@ -129,10 +130,10 @@ public class PriceListManager {
 		}
 	}
 	
-	public ArrayList<PriceForPrint> convertPrice(List listSelected, ArrayList<Price> prices) {
+	public ArrayList<PriceForPrint> convertPrice(PriceList listSelected, ArrayList<Price> prices) {
 		ArrayList<PriceForPrint> pricePrint = new ArrayList<PriceForPrint>();
 		for (Price price : prices) {
-			if (price.getList() == listSelected.getId() && price.getPrice() != 0.) {
+			if (price.getList().getId() == listSelected.getId() && price.getPrice() != 0.) {
 				PriceForPrint price4print = new PriceForPrint();
 				price4print.setList(listSelected.getName());
 				price4print.setCurrency(listSelected.getCurrency());

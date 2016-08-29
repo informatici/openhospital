@@ -24,7 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.isf.dicom.manager.DicomManagerFactory;
-import org.isf.dicom.model.FileDicomBase;
+import org.isf.dicom.model.FileDicom;
 import org.isf.generaldata.MessageBundle;
 
 /**
@@ -72,7 +72,7 @@ public class ThumbnailViewGui extends JList {
 					if (sel.isSelectionEmpty())
 						disableDeleteButton();
 					else
-						enableDeleteButton((FileDicomBase) getModel().getElementAt(sel.getLeadSelectionIndex()));
+						enableDeleteButton((FileDicom) getModel().getElementAt(sel.getLeadSelectionIndex()));
 
 				}
 			}
@@ -117,7 +117,7 @@ public class ThumbnailViewGui extends JList {
 		dicomViewer.disableDeleteButton();
 	}
 
-	private void enableDeleteButton(FileDicomBase selectedDicom) {
+	private void enableDeleteButton(FileDicom selectedDicom) {
 		dicomViewer.enableDeleteButton(selectedDicom);
 	}
 
@@ -126,9 +126,9 @@ public class ThumbnailViewGui extends JList {
 	}
 
 	private void loadDicomFromDB() {
-		FileDicomBase[] fdb = DicomManagerFactory.getManager().loadFilesPaziente(patID);
+		FileDicom[] fdb = DicomManagerFactory.getManager().loadFilesPaziente(patID);
 		if (fdb == null)
-			fdb = new FileDicomBase[0];
+			fdb = new FileDicom[0];
 
 		dicomThumbsModel.clear();
 
@@ -144,11 +144,11 @@ public class ThumbnailViewGui extends JList {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private LinkedList<FileDicomBase> thumbnailList;
+		private LinkedList<FileDicom> thumbnailList;
 
 		public DicomThumbsModel() {
 
-			thumbnailList = new LinkedList<FileDicomBase>();
+			thumbnailList = new LinkedList<FileDicom>();
 
 		}
 
@@ -164,7 +164,7 @@ public class ThumbnailViewGui extends JList {
 			return thumbnailList.size();
 		}
 
-		public void addInstance(FileDicomBase instance) {
+		public void addInstance(FileDicom instance) {
 			thumbnailList.addLast(instance);
 			int size = thumbnailList.size();
 			fireIntervalAdded(this, size, size);
@@ -190,7 +190,7 @@ public class ThumbnailViewGui extends JList {
 
 			p.setBackground(Color.DARK_GRAY);
 
-			FileDicomBase instance = (FileDicomBase) value;
+			FileDicom instance = (FileDicom) value;
 
 			BufferedImage immagine = instance.getDicomThumbnailAsImage();
 
@@ -247,9 +247,9 @@ public class ThumbnailViewGui extends JList {
 		}
 	}
 
-	public FileDicomBase getSelectedInstance() {
+	public FileDicom getSelectedInstance() {
 		DicomThumbsModel dicomThumbsModel = (DicomThumbsModel) getModel();
-		FileDicomBase selected = (FileDicomBase) dicomThumbsModel.getElementAt(getSelectionModel().getMinSelectionIndex());
+		FileDicom selected = (FileDicom) dicomThumbsModel.getElementAt(getSelectionModel().getMinSelectionIndex());
 		return selected;
 	}
 
@@ -257,7 +257,7 @@ public class ThumbnailViewGui extends JList {
 		return dicomThumbsModel;
 	}
 
-	private String getTooltipText(FileDicomBase dicomFile) {
+	private String getTooltipText(FileDicom dicomFile) {
 		String separator = ": ";
 		String newline = " <br>";
 		StringBuilder rv = new StringBuilder("<html>");

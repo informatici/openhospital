@@ -21,6 +21,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.priceslist.gui.ListEdit.ListListener;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.List;
+import org.isf.priceslist.model.PriceList;
 import org.isf.utils.jobjects.ModalJFrame;
 
 public class ListBrowser extends ModalJFrame  implements ListListener{
@@ -48,9 +49,9 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 	private int[] columWidth = {100, 100, 200, 100};
 	private boolean[] columResizable = {false, false, true, false};
 	
-	private List list;
+	private PriceList list;
 	PriceListManager listManager = new PriceListManager();
-	private ArrayList<List> listArray;
+	private ArrayList<PriceList> listArray;
 	private JFrame myFrame;
 			
 	public ListBrowser() {
@@ -99,7 +100,7 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 							return;
 						}
 						int selectedRow = jTablePriceLists.getSelectedRow();
-						list = (List)jTablePriceLists.getModel().getValueAt(selectedRow, -1);
+						list = (PriceList)jTablePriceLists.getModel().getValueAt(selectedRow, -1);
 						
 						int ok = JOptionPane.showConfirmDialog(
 								null,
@@ -143,7 +144,7 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 						return;									
 					}else {		
 						int selectedRow = jTablePriceLists.getSelectedRow();
-						list = (List)jTablePriceLists.getModel().getValueAt(selectedRow, -1);
+						list = (PriceList)jTablePriceLists.getModel().getValueAt(selectedRow, -1);
 						
 						String newName = JOptionPane.showInputDialog(MessageBundle.getMessage("angal.priceslist.enterthenameforthenewlist")); //$NON-NLS-1$
 						
@@ -215,7 +216,7 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 							
 							// Save new list
 							if(newName.equals("")) newName = MessageBundle.getMessage("angal.priceslist.copyof").concat(" ").concat(list.getName()); 
-							List copiedList = new List(list.getId(),MessageBundle.getMessage("angal.priceslist.acode"),newName,MessageBundle.getMessage("angal.priceslist.adescription"),list.getCurrency());
+							PriceList copiedList = new PriceList(list.getId(),MessageBundle.getMessage("angal.priceslist.acode"),newName,MessageBundle.getMessage("angal.priceslist.adescription"),list.getCurrency());
 							
 							boolean result = false;
 							result = listManager.copyList(copiedList, qty, step);
@@ -255,7 +256,7 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 						return;									
 					}else {		
 						int selectedRow = jTablePriceLists.getSelectedRow();
-						list = (List)jTablePriceLists.getModel().getValueAt(selectedRow, -1);
+						list = (PriceList)jTablePriceLists.getModel().getValueAt(selectedRow, -1);
 						ListEdit editList = new ListEdit(myFrame, list, false);	
 						editList.addListListener(ListBrowser.this);
 						editList.setVisible(true);
@@ -275,7 +276,7 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 				
 				public void actionPerformed(ActionEvent event) {
 					
-					List newList = new List(0, "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					PriceList newList = new PriceList(0, "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					ListEdit editList = new ListEdit(myFrame, newList, true);	
 					editList.addListListener(ListBrowser.this);
 					editList.setVisible(true);

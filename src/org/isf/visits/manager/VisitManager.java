@@ -73,7 +73,7 @@ public class VisitManager {
 			SmsOperations smsOp = new SmsOperations();
 			PatientBrowserManager patMan = new PatientBrowserManager();
 			try {
-				int patID = visits.get(0).getPatID();
+				int patID = visits.get(0).getPatID().getCode();
 				ioOperations.deleteAllVisits(patID);
 				smsOp.deleteByModuleModuleID("visit", String.valueOf(patID));
 
@@ -87,7 +87,7 @@ public class VisitManager {
 						GregorianCalendar date = (GregorianCalendar) visit.clone(); 
 						date.add(Calendar.DAY_OF_MONTH, -1);
 						if (visit.after(now.toDateMidnight().toGregorianCalendar())) {
-							Patient pat = patMan.getPatient(visit.getPatID());
+							Patient pat = patMan.getPatient(visit.getPatID().getName());
 							
 							Sms sms = new Sms();
 							sms.setSmsDateSched(date.getTime());

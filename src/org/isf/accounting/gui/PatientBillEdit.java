@@ -102,7 +102,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 		ArrayList<Bill> patientPendingBills = billManager.getPendingBills(patient.getCode());
 		if (patientPendingBills.isEmpty()) {
 			//BILL
-			thisBill.setPatID(patientSelected.getCode());
+			thisBill.setPatient(patientSelected);
 			thisBill.setPatient(true);
 			thisBill.setPatName(patientSelected.getName());
 		} else {
@@ -231,7 +231,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	public PatientBillEdit(JFrame owner, Patient patient) {
 		Bill bill = new Bill();
 		bill.setPatient(true);
-		bill.setPatID(patient.getCode());
+		bill.setPatient(patient);
 		bill.setPatName(patient.getName());
 		PatientBillEdit newBill = new PatientBillEdit(owner, bill, true);
 		newBill.setPatientSelected(patient);
@@ -280,7 +280,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 		if (thisBill.isList()) {
 			for (List list : lstArray) {
 				
-				if (list.getId() == thisBill.getListID()) {
+				if (list.getId() == thisBill.getList().getId()) {
 					listSelected = list;
 					foundList = true;
 					break;
@@ -306,7 +306,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 							JOptionPane.WARNING_MESSAGE);
 					list = lstArray.get(0);
 				}
-				thisBill.setListID(list.getId());
+				thisBill.setList(list.getId());
 				thisBill.setListName(list.getName());
 				
 			}
@@ -314,7 +314,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 				
 		if (thisBill.isPatient()) {
 			
-			Patient patient = patManager.getPatient(thisBill.getPatID());
+			Patient patient = patManager.getPatient(thisBill.getPatient().getCode());
 			if (patient != null) {
 				patientSelected = patient;
 			} else {  //Patient not found
@@ -327,7 +327,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 						icon);
 				
 				thisBill.setPatient(false);
-				thisBill.setPatID(0);
+				thisBill.getPatient().setCode(0);
 			}
 		}
 	}
@@ -399,7 +399,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 				
 				jComboBoxPriceList.addItem(lst);
 				if (!insert)
-					if (lst.getId() == thisBill.getListID())
+					if (lst.getId() == thisBill.getList().getId())
 						list = lst;
 			}
 			if (list != null) 
@@ -505,7 +505,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 					patientSelected = null;
 					//BILL
 					thisBill.setPatient(false);
-					thisBill.setPatID(0);
+					thisBill.getPatient().setCode(0);
 					thisBill.setPatName(""); //$NON-NLS-1$
 					//INTERFACE
 					jTextFieldPatient.setText(""); //$NON-NLS-1$
@@ -907,11 +907,11 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 								billDate,			 						//from calendar
 								upDate,										//most recent payment 
 								true,										//is a List?
-								listSelected.getId(),						//List
+								listSelected,								//List
 								listSelected.getName(),						//List name
 								thisBill.isPatient(),						//is a Patient?
 								thisBill.isPatient() ? 
-										thisBill.getPatID() : 0,			//Patient ID
+										thisBill.getPatient() : null,			//Patient ID
 								thisBill.isPatient() ? 
 										patientSelected.getName() : 
 										jTextFieldPatient.getText(),		//Patient Name
@@ -939,11 +939,11 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 								billDate,									//from calendar
 								upDate,										//most recent payment
 								true,										//is a List?
-								listSelected.getId(),						//List
+								listSelected,								//List
 								listSelected.getName(),						//List name
 								thisBill.isPatient(),						//is a Patient?
 								thisBill.isPatient() ?
-										thisBill.getPatID() : 0,			//Patient ID
+										thisBill.getPatient() : null,			//Patient ID
 								thisBill.isPatient() ?
 										thisBill.getPatName() :
 										jTextFieldPatient.getText(),		//Patient Name

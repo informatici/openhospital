@@ -153,7 +153,7 @@ class PriceNode {
     }
     
     public boolean isPrice() {
-    	return price.getList() == 0;
+    	return price.getList().getId() == 0;
 	}
 
 	public void addItem(PriceNode price){

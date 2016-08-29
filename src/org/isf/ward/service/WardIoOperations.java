@@ -15,6 +15,35 @@ import org.isf.ward.model.Ward;
  * 
  */
 public class WardIoOperations {
+
+	/**
+	 * Retrieves the number of patients currently admitted in the {@link Ward}
+	 * @param ward - the ward
+	 * @return the number of patients currently admitted
+	 * @throws OHException
+	 */
+	@SuppressWarnings("unchecked")
+	public int getCurrentOccupation(
+			Ward ward) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Ward> wards = null;
+		ArrayList<Object> params = new ArrayList<Object>();
+				
+		
+		jpa.beginTransaction();
+		
+		String query = "SELECT * FROM ADMISSION WHERE ADM_IN = 1 AND ADM_WRD_ID_A = ?";
+		jpa.createQuery(query, Ward.class, false);
+		params.add(ward.getCode());
+		jpa.setParameters(params, false);
+		List<Ward> wardList = (List<Ward>)jpa.getList();
+		wards = new ArrayList<Ward>(wardList);			
+		
+		jpa.commitTransaction();
+
+		return wards.size();
+	}
 	
 	/**
 	 * Retrieves all stored {@link Ward}s with flag maternity equals <code>false</code>.

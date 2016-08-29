@@ -30,6 +30,7 @@ import org.isf.operation.model.Operation;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.Price;
+import org.isf.priceslist.model.PriceList;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.serviceprinting.manager.PrintManager;
@@ -65,9 +66,9 @@ public class PricesBrowser extends ModalJFrame {
 	private int[] columWidth = {400,150};
     
 	private PriceListManager listManager = new PriceListManager();
-	private ArrayList<List> listArray = listManager.getLists();
+	private ArrayList<PriceList> listArray = listManager.getLists();
 	private ArrayList<Price> priceArray = listManager.getPrices();
-	private List listSelected;
+	private PriceList listSelected;
 	
 	private PriceNode examNodes;
 	private ExamBrowsingManager examManager = new ExamBrowsingManager();
@@ -327,35 +328,35 @@ public class PricesBrowser extends ModalJFrame {
 	    					  price.getItem(), price);
 	    }
 	    
-	    examNodes = new PriceNode(new Price(0,"","",cCategoriesNames[0],null)); //$NON-NLS-1$ //$NON-NLS-2$
+	    examNodes = new PriceNode(new Price(null,"","",cCategoriesNames[0],null)); //$NON-NLS-1$ //$NON-NLS-2$
 	    for(Exam exa: examArray){
 	    	Price p = priceHashTable.get(listSelected.getId()+cCategories[0]+exa.getCode());
 	    	double priceValue = p != null ? p.getPrice() : 0.;
-		    examNodes.addItem(new PriceNode(new Price(0, cCategories[0], exa.getCode(), exa.getDescription(), priceValue)));
+		    examNodes.addItem(new PriceNode(new Price(null, cCategories[0], exa.getCode(), exa.getDescription(), priceValue)));
 	    }
 	    
-	    opeNodes = new PriceNode(new Price(0,"","",cCategoriesNames[1],null)); //$NON-NLS-1$ //$NON-NLS-2$
+	    opeNodes = new PriceNode(new Price(null,"","",cCategoriesNames[1],null)); //$NON-NLS-1$ //$NON-NLS-2$
 	    for(Operation ope: operArray){
 	    	Price p = priceHashTable.get(listSelected.getId()+cCategories[1]+ope.getCode());
 	    	double priceValue = p != null ? p.getPrice() : 0.;
-		    opeNodes.addItem(new PriceNode(new Price(0, cCategories[1], ope.getCode(), ope.getDescription(), priceValue)));
+		    opeNodes.addItem(new PriceNode(new Price(null, cCategories[1], ope.getCode(), ope.getDescription(), priceValue)));
 	    }
 	    
-	    medNodes = new PriceNode(new Price(0,"","",cCategoriesNames[2],null)); //$NON-NLS-1$ //$NON-NLS-2$
+	    medNodes = new PriceNode(new Price(null,"","",cCategoriesNames[2],null)); //$NON-NLS-1$ //$NON-NLS-2$
 	    for(Medical med: mediArray){
 	    	Price p = priceHashTable.get(listSelected.getId()+cCategories[2]+med.getCode().toString());
 	    	double priceValue = p != null ? p.getPrice() : 0.;
-		    medNodes.addItem(new PriceNode(new Price(0, cCategories[2], med.getCode().toString(), med.getDescription(), priceValue)));
+		    medNodes.addItem(new PriceNode(new Price(null, cCategories[2], med.getCode().toString(), med.getDescription(), priceValue)));
 	    }
 	    
-	    othNodes = new PriceNode(new Price(0,"","",cCategoriesNames[3],null)); //$NON-NLS-1$ //$NON-NLS-2$
+	    othNodes = new PriceNode(new Price(null,"","",cCategoriesNames[3],null)); //$NON-NLS-1$ //$NON-NLS-2$
 	    for(PricesOthers oth: othArray){
 	    	Price p = priceHashTable.get(listSelected.getId()+cCategories[3]+oth.getId());
 	    	double priceValue = p != null ? p.getPrice() : 0.;
-	    	othNodes.addItem(new PriceNode(new Price(0, cCategories[3], Integer.toString(oth.getId()), oth.getDescription(), priceValue, !oth.isUndefined())));
+	    	othNodes.addItem(new PriceNode(new Price(null, cCategories[3], Integer.toString(oth.getId()), oth.getDescription(), priceValue, !oth.isUndefined())));
 	    }
 	    
-	    PriceNode root = new PriceNode(new Price(0,"","",listSelected.getName(),null)); //$NON-NLS-1$ //$NON-NLS-2$
+	    PriceNode root = new PriceNode(new Price(null,"","",listSelected.getName(),null)); //$NON-NLS-1$ //$NON-NLS-2$
 	    root.addItem(examNodes);
 	    root.addItem(opeNodes);
 	    root.addItem(medNodes);
@@ -376,7 +377,7 @@ public class PricesBrowser extends ModalJFrame {
 		if (jComboBoxLists == null) {
 			jComboBoxLists = new JComboBox();
 			//jComboBoxLists.setModel(new DefaultComboBoxModel(new Object[] { "item0", "item1", "item2", "item3" }));
-			for (List elem : listArray) {
+			for (PriceList elem : listArray) {
 				
 				jComboBoxLists.addItem(elem);
 			}
@@ -390,7 +391,7 @@ public class PricesBrowser extends ModalJFrame {
 															   JOptionPane.OK_CANCEL_OPTION);
 						
 					if (option == 0) {
-						listSelected = (List) jComboBoxLists.getSelectedItem();
+						listSelected = (PriceList) jComboBoxLists.getSelectedItem();
 						
 						PriceNode root = getTreeContent();
 						jTreeTable.setModel(new PriceModel(root));
@@ -408,7 +409,7 @@ public class PricesBrowser extends ModalJFrame {
 					}
 				}				
 			});	
-			listSelected = (List) jComboBoxLists.getSelectedItem();
+			listSelected = (PriceList) jComboBoxLists.getSelectedItem();
 			jComboBoxLists.setDoubleBuffered(false);
 			jComboBoxLists.setBorder(null);
 		}
