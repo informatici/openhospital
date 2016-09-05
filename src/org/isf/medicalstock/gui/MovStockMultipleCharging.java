@@ -55,6 +55,7 @@ import org.isf.medstockmovtype.model.MovementType;
 import org.isf.supplier.model.Supplier;
 import org.isf.supplier.service.SupplierOperations;
 import org.isf.utils.db.NormalizeString;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
@@ -619,7 +620,13 @@ public class MovStockMultipleCharging extends JDialog {
 			jComboBoxSupplier = new JComboBox();
 			jComboBoxSupplier.addItem(""); //$NON-NLS-1$
 			SupplierOperations supOp = new SupplierOperations();
-			ArrayList<Supplier> suppliers = (ArrayList<Supplier>) supOp.getList();
+			ArrayList<Supplier> suppliers = null;
+			try {
+				suppliers = (ArrayList<Supplier>) supOp.getList();
+			} catch (OHException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			for (Supplier sup : suppliers) {
 				jComboBoxSupplier.addItem(sup);
 			}

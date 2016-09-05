@@ -174,7 +174,7 @@ public class Tests
 		
 		try 
 		{		
-			id = _setupTestMovemetnWard(false);
+			id = _setupTestMovementWard(false);
 			_checkMovemetnWardIntoDb(id);
 		} 
 		catch (Exception e) 
@@ -194,7 +194,7 @@ public class Tests
 		
 		try 
 		{		
-			id = _setupTestMovemetnWard(true);
+			id = _setupTestMovementWard(true);
 			_checkMovemetnWardIntoDb(id);
 		} 
 		catch (Exception e) 
@@ -218,7 +218,7 @@ public class Tests
 		
 		try 
 		{		
-			code = _setupTestMovemetnWard(false);
+			code = _setupTestMovementWard(false);
 			MovementWard foundMovement = (MovementWard)jpa.find(MovementWard.class, code); 
 			ArrayList<MovementWard> movements = ioOperations.getWardMovements(
 					foundMovement.getWard().getCode(),
@@ -235,8 +235,6 @@ public class Tests
 		
 		return;
 	}
-	
-
 	
 	@Test
 	public void testIoGetCurrentQuantity() 
@@ -275,6 +273,122 @@ public class Tests
 					medical);
 
 			assertEquals(-46, quantity);
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("Test Exception" + e);		
+			assertEquals(true, false);
+		}
+		
+		return;
+	}
+	
+	@Test
+	public void testIoNewMovementWard() 
+	{
+		MedicalStockWardIoOperations ioOperations = new MedicalStockWardIoOperations();
+		boolean result = false;
+		
+		
+		try 
+		{		
+			MovementWard movementWard;
+			MedicalType medicalType = testMedicalType.setup(false);
+			Medical medical= testMedical.setup(medicalType, false);
+			Ward ward = testWard.setup(false);
+			Patient patient = testPatient.setup(false);
+			
+		
+			jpa.beginTransaction();	
+			jpa.persist(medicalType);
+			jpa.persist(medical);
+			jpa.persist(ward);
+			jpa.persist(patient);
+			jpa.commitTransaction();
+			movementWard = testMovementWard.setup(ward, patient, medical, false);
+			result = ioOperations.newMovementWard(movementWard);
+			
+			assertEquals(true, result);
+			_checkMovemetnWardIntoDb(movementWard.getCode());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("Test Exception" + e);		
+			assertEquals(true, false);
+		}
+		
+		return;
+	}
+	
+	@Test
+	public void testIoUpdateMovementWard()
+	{
+		int code = 0;
+		MedicalStockWardIoOperations ioOperations = new MedicalStockWardIoOperations();
+		boolean result = false;
+		
+		
+		try 
+		{		
+			code = _setupTestMovementWard(false);
+			MovementWard foundMovementWard = (MovementWard)jpa.find(MovementWard.class, code); 
+			foundMovementWard.setDescription("Update");
+			result = ioOperations.updateMovementWard(foundMovementWard);
+			MovementWard updateMovementWard = (MovementWard)jpa.find(MovementWard.class, code); 
+			
+			assertEquals(true, result);
+			assertEquals("Update", updateMovementWard.getDescription());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("Test Exception" + e);		
+			assertEquals(true, false);
+		}
+		
+		return;
+	}
+
+	@Test
+	public void testIoDeleteMovementWard() 
+	{
+		int code = 0;
+		MedicalStockWardIoOperations ioOperations = new MedicalStockWardIoOperations();
+		boolean result = false;
+		
+
+		try 
+		{		
+			code = _setupTestMovementWard(false);
+			MovementWard foundMovementWard = (MovementWard)jpa.find(MovementWard.class, code); 
+			result = ioOperations.deleteMovementWard(foundMovementWard);
+			
+			assertEquals(true, result);
+			MovementWard deletedMovementWard = (MovementWard)jpa.find(MovementWard.class, code); 
+			assertEquals(null, deletedMovementWard);
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("Test Exception" + e);		
+			assertEquals(true, false);
+		}
+		
+		return;
+	}
+	
+	@Test
+	public void testIoGetMedicalsWard()
+	{
+		MedicalWardId code = new MedicalWardId();
+		MedicalStockWardIoOperations ioOperations = new MedicalStockWardIoOperations();
+		
+		
+		try 
+		{		
+			code = _setupTestMedicalWard(false);
+			MedicalWard foundMedicalWard = (MedicalWard)jpa.find(MedicalWard.class, code); 
+			ArrayList<MedicalWard> medicalWards = ioOperations.getMedicalsWard(foundMedicalWard.getId().getWardId());
+
+			assertEquals(foundMedicalWard.getInQuantity()-foundMedicalWard.getOutQuantity(), medicalWards.get(0).getQty());
 		} 
 		catch (Exception e) 
 		{
@@ -352,7 +466,7 @@ public class Tests
 		return;
 	}	
     
-	private int _setupTestMovemetnWard(
+	private int _setupTestMovementWard(
 			boolean usingSet) throws OHException 
 	{
 		MovementWard movementWard;

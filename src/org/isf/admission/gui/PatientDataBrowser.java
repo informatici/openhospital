@@ -512,7 +512,7 @@ class AdmissionBrowserModel extends DefaultTableModel {
 				
 			} else if (c == 1) {				
 				if (r < admList.size()) {
-					String id = admList.get(r).getWardId();
+					String id = admList.get(r).getWard().getCode();
 					for (Ward elem : ward) {
 						if (elem.getCode().equalsIgnoreCase(id))
 							return elem.getDescription();
@@ -524,13 +524,13 @@ class AdmissionBrowserModel extends DefaultTableModel {
 			else if (c == 2) {
 				String id = null;
 				if (r < admList.size()) {
-					id = admList.get(r).getDiseaseInId();
+					id = admList.get(r).getDiseaseIn().getCode();
 					if (id == null){
 						id = "";
 					}	
 				} else {
 					int z = r - admList.size();
-					id = opdList.get(z).getDisease();
+					id = opdList.get(z).getDisease().getCode();
 					if (id == null){
 						id = "";
 					}
@@ -544,15 +544,15 @@ class AdmissionBrowserModel extends DefaultTableModel {
 			}else if (c == 3) {
 				String id = null;
 				if (r < admList.size()) {
-					id = admList.get(r).getDiseaseOutId1();
+					id = admList.get(r).getDiseaseOut1().getCode();
 					if (id == null){
 						id = "";
 					}
 				} else {
 					int z = r - admList.size();
-					id = opdList.get(z).getDisease3();
+					id = opdList.get(z).getDisease3().getCode();
 					if (id == null){
-						id = opdList.get(z).getDisease2();
+						id = opdList.get(z).getDisease2().getCode();
 						if (id == null){
 							id = "";
 						}
@@ -575,7 +575,7 @@ class AdmissionBrowserModel extends DefaultTableModel {
 					}
 				} else {
 					int z = r - admList.size();
-					String status = opdList.get(z).getNewPatient();
+					String status = "" + opdList.get(z).getNewPatient();
 					return (status.compareTo("R")==0?MessageBundle.getMessage("angal.opd.reattendance"):MessageBundle.getMessage("angal.opd.newattendance"));
 				}
 			} 

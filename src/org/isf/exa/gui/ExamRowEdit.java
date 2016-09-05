@@ -135,7 +135,7 @@ public class ExamRowEdit extends JDialog {
             cancelButton.setMnemonic(KeyEvent.VK_C);
 			cancelButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					examRow=new ExamRow("","","");
+					examRow=new ExamRow();
 					dispose();
 				}
 			});
@@ -161,9 +161,9 @@ public class ExamRowEdit extends JDialog {
 					else{	
 						ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
 						examRow.setDescription(descriptionTextField.getText().toUpperCase());
-						examRow.setExamCode(exam.getCode());
+						examRow.setExamCode(exam);
 						manager.newExamRow(examRow);
-						ArrayList<ExamRow> key = manager.getExamRow(examRow.getExamCode(),examRow.getDescription());
+						ArrayList<ExamRow> key = manager.getExamRow(examRow.getExamCode().getCode(),examRow.getDescription());
 					//	if(key.size()>0){
 							examRow.setCode(key.get(0).getCode());
 							dispose();

@@ -253,12 +253,12 @@ public class UserEdit extends JDialog {
 					UserBrowsingManager manager = new UserBrowsingManager();
 					if (insert) {
 						String hashed = BCrypt.hashpw(new String(password), BCrypt.gensalt());
-						user.setUserGroupName(((UserGroup)typeComboBox.getSelectedItem()).getCode());
+						user.setUserGroupName(((UserGroup)typeComboBox.getSelectedItem()));
 						user.setUserName(nameTextField.getText());
 						user.setPasswd(hashed);
 						user.setDesc(descriptionTextField.getText());
 					} else {
-						user.setUserGroupName((String)typeComboBox.getSelectedItem());
+						user.setUserGroupName((UserGroup)typeComboBox.getSelectedItem());
 						user.setUserName(nameTextField.getText());
 						user.setDesc(descriptionTextField.getText());
 					}

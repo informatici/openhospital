@@ -345,7 +345,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 					if (selectedObj instanceof Opd) {
 						
 						Opd opd = (Opd) sorter.getValueAt(selectedRow, -1);
-						new GenericReportOpd(opd.getCode(), opd.getpatientCode(), GeneralData.OPDCHART);				
+						new GenericReportOpd(opd.getCode(), opd.getpatientCode().getCode(), GeneralData.OPDCHART);				
 					} else {
 						JOptionPane.showMessageDialog(PatientFolderBrowser.this, MessageBundle.getMessage("angal.admission.patientfolder.pleaseselectanopd"), //$NON-NLS-1$
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.PLAIN_MESSAGE); //$NON-NLS-1$
@@ -381,7 +381,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 									MessageBundle.getMessage("angal.hospital"), JOptionPane.PLAIN_MESSAGE); //$NON-NLS-1$
 							return;
 						}
-						new GenericReportDischarge(adm.getId(), adm.getPatId(), GeneralData.DISCHART);				
+						new GenericReportDischarge(adm.getId(), adm.getPatient().getCode(), GeneralData.DISCHART);				
 					} else {
 						JOptionPane.showMessageDialog(PatientFolderBrowser.this, MessageBundle.getMessage("angal.admission.patientfolder.pleaseselectanadmission"), //$NON-NLS-1$
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.PLAIN_MESSAGE); //$NON-NLS-1$
@@ -412,7 +412,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 					if (selectedObj instanceof Admission) {
 						
 						Admission adm = (Admission) sorter.getValueAt(selectedRow, -1);
-						new GenericReportAdmission(adm.getId(), adm.getPatId(), GeneralData.ADMCHART);				
+						new GenericReportAdmission(adm.getId(), adm.getPatient().getCode(), GeneralData.ADMCHART);				
 					} else {
 						JOptionPane.showMessageDialog(PatientFolderBrowser.this, MessageBundle.getMessage("angal.admission.patientfolder.pleaseselectanadmission"), //$NON-NLS-1$
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.PLAIN_MESSAGE); //$NON-NLS-1$
@@ -542,7 +542,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 				
 			} else if (c == 1) {				
 				if (r < admList.size()) {
-					String id = admList.get(r).getWardId();
+					String id = admList.get(r).getWard().getCode();
 					for (Ward elem : ward) {
 						if (elem.getCode().equalsIgnoreCase(id))
 							return elem.getDescription();
@@ -554,13 +554,13 @@ public class PatientFolderBrowser extends ModalJFrame implements
 			else if (c == 2) {
 				String id = null;
 				if (r < admList.size()) {
-					id = admList.get(r).getDiseaseInId();
+					id = admList.get(r).getDiseaseIn().getCode();
 					if (id == null){
 						id = ""; //$NON-NLS-1$
 					}	
 				} else {
 					int z = r - admList.size();
-					id = opdList.get(z).getDisease();
+					id = opdList.get(z).getDisease().getCode();
 					if (id == null){
 						id = ""; //$NON-NLS-1$
 					}
@@ -574,15 +574,15 @@ public class PatientFolderBrowser extends ModalJFrame implements
 			}else if (c == 3) {
 				String id = null;
 				if (r < admList.size()) {
-					id = admList.get(r).getDiseaseOutId1();
+					id = admList.get(r).getDiseaseOut1().getCode();
 					if (id == null){
 						id = ""; //$NON-NLS-1$
 					}
 				} else {
 					int z = r - admList.size();
-					id = opdList.get(z).getDisease3();
+					id = opdList.get(z).getDisease3().getCode();
 					if (id == null){
-						id = opdList.get(z).getDisease2();
+						id = opdList.get(z).getDisease2().getCode();
 						if (id == null){
 							id = ""; //$NON-NLS-1$
 						}
@@ -605,7 +605,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 					}
 				} else {
 					int z = r - admList.size();
-					String status = opdList.get(z).getNewPatient();
+					String status = "" + opdList.get(z).getNewPatient();
 					return (status.compareTo("R")==0?MessageBundle.getMessage("angal.opd.reattendance"):MessageBundle.getMessage("angal.opd.newattendance")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			} 

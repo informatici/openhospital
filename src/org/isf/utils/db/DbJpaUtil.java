@@ -213,11 +213,6 @@ public class DbJpaUtil
 	  		boolean jpql) throws OHException 
     {    	    	  	
 		try {
-			if (jpql == true)
-		  	{
-				//TODO: not yet developed
-				throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), null);	  	
-		  	}
 			for (int i=0; i < parameters.size(); i++) 
 			{
 				query.setParameter((i + 1), parameters.get(i));	

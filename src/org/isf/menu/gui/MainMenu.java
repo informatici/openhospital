@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import org.isf.generaldata.GeneralData;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
+import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
 import org.isf.sms.service.SmsSender;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -45,7 +46,7 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 		if (e.getSource() instanceof User) {
 			myUser = (User) e.getSource();
 			MDC.put("OHUser", myUser.getUserName());
-			MDC.put("OHUserGroup", myUser.getUserGroupName());
+			MDC.put("OHUserGroup", myUser.getUserGroupName().getCode());
 			logger.info("Logging: \"" + myUser.getUserName() + "\" user has logged the system.");
 		}
 	}
@@ -122,9 +123,9 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 
 		if (singleUser) {
 			logger.info("Logging: Single User mode.");
-			myUser = new User("admin", "admin", "admin", "");
+			myUser = new User("admin", new UserGroup("admin", ""), "admin", "");
 			MDC.put("OHUser", myUser.getUserName());
-			MDC.put("OHUserGroup", myUser.getUserGroupName());
+			MDC.put("OHUserGroup", myUser.getUserGroupName().getCode());
 		} else {
 			// get an user
 			logger.info("Logging: Multi User mode.");

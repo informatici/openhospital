@@ -35,6 +35,7 @@ import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class WardPharmacyEdit extends JDialog {
@@ -110,7 +111,12 @@ public class WardPharmacyEdit extends JDialog {
 		movSelected = movWard;
 		initComponents();
 		if (movSelected.isPatient()) jComboBoxPatients.setSelectedItem(movWard.getPatient());
-		jComboBoxDrugs.setSelectedItem(movWard.getMedical());
+		try {
+			jComboBoxDrugs.setSelectedItem(movWard.getMedical());
+		} catch (OHException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		setTitle(MessageBundle.getMessage("angal.common.edit")); //$NON-NLS-1$
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

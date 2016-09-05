@@ -276,7 +276,7 @@ public class LabNew extends JDialog implements SelectionListener {
 						lab.setDate(newDate);
 						lab.setExamDate(newDate);
 						lab.setInOutPatient(inOut);
-						lab.setPatId(patientSelected.getCode());
+						lab.setPatId(patientSelected);
 						lab.setPatName(patientSelected.getName());
 						lab.setSex(patientSelected.getSex()+"");
 					}
@@ -354,7 +354,7 @@ public class LabNew extends JDialog implements SelectionListener {
 				jComboBoxExamResults.setPreferredSize(new Dimension(EastWidth, ComponentHeight));
 				
 				for (ExamRow exaRow : exaRowArray) {
-					if (selectedExam.getCode().compareTo(exaRow.getExamCode()) == 0) {
+					if (selectedExam.getCode().compareTo(exaRow.getExamCode().getCode()) == 0) {
 						jComboBoxExamResults.addItem(exaRow.getDescription());
 					}
 				}
@@ -378,7 +378,7 @@ public class LabNew extends JDialog implements SelectionListener {
 				boolean checked;
 				
 				for (ExamRow exaRow : exaRowArray) {
-					if (selectedExam.getCode().compareTo(exaRow.getExamCode()) == 0) {
+					if (selectedExam.getCode().compareTo(exaRow.getExamCode().getCode()) == 0) {
 						
 						checked = false;
 						if (checking.contains(exaRow.getDescription()))
@@ -695,7 +695,7 @@ public class LabNew extends JDialog implements SelectionListener {
 						
 						ArrayList<ExamRow> exaRowTemp = new ArrayList<ExamRow>();
 						for (ExamRow exaRow : exaRowArray) {
-							if (exa.getCode().compareTo(exaRow.getExamCode()) == 0) {
+							if (exa.getCode().compareTo(exaRow.getExamCode().getCode()) == 0) {
 								exaRowTemp.add(exaRow);
 							}
 						}

@@ -56,6 +56,7 @@ import org.isf.patient.model.Patient;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.Price;
+import org.isf.priceslist.model.PriceList;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.stat.manager.GenericReportBill;
@@ -183,7 +184,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	private BigDecimal bigTotal = new BigDecimal(0);
 	private BigDecimal balance = new BigDecimal(0);
 	private int billID;
-	private List listSelected;
+	private PriceList listSelected;
 	private boolean insert;
 	private boolean modified = false;
 	private boolean keepDate = true;
@@ -203,7 +204,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	//Prices and Lists (ALL)
 	private PriceListManager prcManager = new PriceListManager();
 	private ArrayList<Price> prcArray = prcManager.getPrices();
-	private ArrayList<List> lstArray = prcManager.getLists();
+	private ArrayList<PriceList> lstArray = prcManager.getLists();
 	
 	//PricesOthers (ALL)
 	private PricesOthersManager othManager = new PricesOthersManager();
@@ -278,7 +279,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 		
 		foundList = false;
 		if (thisBill.isList()) {
-			for (List list : lstArray) {
+			for (PriceList list : lstArray) {
 				
 				if (list.getId() == thisBill.getList().getId()) {
 					listSelected = list;
@@ -288,7 +289,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 			}
 			if (!foundList) { //PriceList not found
 				Icon icon = new ImageIcon("rsc/icons/list_dialog.png"); //$NON-NLS-1$
-				List list = (List)JOptionPane.showInputDialog(
+				PriceList list = (PriceList)JOptionPane.showInputDialog(
 				                    PatientBillEdit.this,
 				                    MessageBundle.getMessage("angal.newbill.pricelistassociatedwiththisbillnolongerexists") + //$NON-NLS-1$
 				                    "no longer exists", //$NON-NLS-1$
@@ -306,7 +307,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 							JOptionPane.WARNING_MESSAGE);
 					list = lstArray.get(0);
 				}
-				thisBill.setList(list.getId());
+				thisBill.setList(list);
 				thisBill.setListName(list.getName());
 				
 			}
@@ -394,8 +395,8 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	private JComboBox getJComboBoxPriceList() {
 		if (jComboBoxPriceList == null) {
 			jComboBoxPriceList = new JComboBox();
-			List list = null;
-			for (List lst : lstArray) {
+			PriceList list = null;
+			for (PriceList lst : lstArray) {
 				
 				jComboBoxPriceList.addItem(lst);
 				if (!insert)
@@ -409,7 +410,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 
 				public void actionPerformed(ActionEvent e) {
 					
-					listSelected = (List)jComboBoxPriceList.getSelectedItem();
+					listSelected = (PriceList)jComboBoxPriceList.getSelectedItem();
 					jTableBill.setModel(new BillTableModel());
 					updateTotals();
 				}
@@ -1570,7 +1571,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 					}
 					
 					BillItems newItem = new BillItems(0,
-							billID,
+							billManager.getBill(billID),
 							false,
 							"", //$NON-NLS-1$
 							desc,
@@ -1639,7 +1640,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 		if (prc != null) {
 			double amount = prc.getPrice();
 			BillItems item = new BillItems(0, 
-					billID, 
+					billManager.getBill(billID), 
 					isPrice, 
 					prc.getGroup()+prc.getItem(),
 					prc.getDesc(),
@@ -1689,7 +1690,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	private void addPayment(GregorianCalendar datePay, double qty) {
 		if (qty != 0) {
 			BillPayments pay = new BillPayments(0,
-					billID,
+					billManager.getBill(billID),
 					datePay,
 					qty,
 					user);
@@ -1744,7 +1745,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 			 */
 			if (listSelected == null) listSelected = lstArray.get(0);
 			for (Price price : prcArray) {
-				if (price.getList() == listSelected.getId()) 
+				if (price.getList().getId() == listSelected.getId()) 
 		    		prcListArray.add(price);
 		    }
 			

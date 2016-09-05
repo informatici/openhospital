@@ -46,6 +46,7 @@ import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryForPrint;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.menu.gui.MainMenu;
+import org.isf.patient.model.Patient;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoDateTextField;
 
@@ -248,7 +249,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 				public void actionPerformed(ActionEvent event) {
 					laboratory = new Laboratory(0, new Exam("", "",
 							new ExamType("", ""), 0, "", 0),
-							new GregorianCalendar(), "P", 0, "", 0, "");
+							new GregorianCalendar(), "P", 0, "", new Patient(), "");
 					if (GeneralData.LABEXTENDED) {
 						if (GeneralData.LABMULTIPLEINSERT) {
 							LabNew editrecord = new LabNew(myFrame);

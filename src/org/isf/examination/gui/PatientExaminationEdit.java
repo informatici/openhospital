@@ -48,6 +48,7 @@ import org.isf.examination.service.ExaminationOperations;
 import org.isf.generaldata.ExaminationParameters;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.VoIntegerTextField;
 import org.isf.utils.jobjects.VoLimitedTextArea;
 
@@ -220,7 +221,13 @@ public class PatientExaminationEdit extends JDialog {
 		StringBuilder summary = new StringBuilder();
 		summary.append(SUMMARY_HEADER);
 		ExaminationOperations examOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
-		ArrayList<PatientExamination> patexList = examOperations.getLastNByPatID(patex.getPatient().getCode(), ExaminationParameters.LIST_SIZE);
+		ArrayList<PatientExamination> patexList = null;
+		try {
+			patexList = examOperations.getLastNByPatID(patex.getPatient().getCode(), ExaminationParameters.LIST_SIZE);
+		} catch (OHException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Collections.sort(patexList);
 		
 		for (PatientExamination patex : patexList) {
@@ -855,7 +862,12 @@ public class PatientExaminationEdit extends JDialog {
 		public void actionPerformed(ActionEvent e) {
 			
 			ExaminationOperations ioOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
-			ioOperations.saveOrUpdate(patex);
+			try {
+				ioOperations.saveOrUpdate(patex);
+			} catch (OHException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			dispose();
 		}
 	}

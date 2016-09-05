@@ -42,6 +42,7 @@ import javax.swing.table.TableColumnModel;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
+import org.isf.patient.model.Patient;
 import org.isf.patvac.manager.PatVacManager;
 import org.isf.patvac.model.PatientVaccine;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -184,10 +185,10 @@ public class PatVacBrowser extends ModalJFrame implements ActionListener{
 		   buttonNew.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent event) {
-					patientVaccine = new PatientVaccine(0,0,new GregorianCalendar(),0,
+					patientVaccine = new PatientVaccine(0,0,new GregorianCalendar(),new Patient(),
 							                new Vaccine ("","",new VaccineType("",""),0),0);
 							
-					PatientVaccine  last = new PatientVaccine(0,0,new GregorianCalendar(),0,
+					PatientVaccine  last = new PatientVaccine(0,0,new GregorianCalendar(),new Patient(),
 							                     new Vaccine ("","",new VaccineType("",""),0),0);
                     new PatVacEdit (myFrame, patientVaccine, true);
                     
