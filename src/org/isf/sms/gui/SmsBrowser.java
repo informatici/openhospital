@@ -33,6 +33,7 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.sms.model.Sms;
 import org.isf.sms.service.SmsOperations;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -263,7 +264,12 @@ public class SmsBrowser extends ModalJFrame {
 							for (int i : indexes) {
 								SmsOperations smsOp = new SmsOperations();
 								Sms sms = (Sms) jSmsTable.getValueAt(i, -1);
-								smsOp.delete(sms);
+								try {
+									smsOp.delete(sms);
+								} catch (OHException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
 							}
 						}
 						updateModel(dateFrom, dateTo);
@@ -276,7 +282,12 @@ public class SmsBrowser extends ModalJFrame {
 	}
 	
 	private void updateModel(Date from, Date to) {
-		smsList = smsOp.getAll(from, to);
+		try {
+			smsList = smsOp.getAll(from, to);
+		} catch (OHException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private void updateGUI() {

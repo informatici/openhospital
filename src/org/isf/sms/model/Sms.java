@@ -10,20 +10,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+
 
 /**
  * @author Mwithi
  */
 @Entity
 @Table(name="SMS")
-public class Sms {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
+public class Sms 
+{	
 	@Id 
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="SMS_ID")
@@ -56,9 +53,12 @@ public class Sms {
 	@Column(name="SMS_MOD")
 	private String module;
 	
-	@NotNull
 	@Column(name="SMS_MOD_ID")
-	private String moduleID;
+	private String moduleID;	
+
+	@Transient
+	private volatile int hashCode = 0;
+	
 
 	public Sms() {
 	}
@@ -154,5 +154,32 @@ public class Sms {
 	public void setModuleID(String moduleID) {
 		this.moduleID = moduleID;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (!(obj instanceof Sms)) {
+			return false;
+		}
+		
+		Sms sms = (Sms)obj;
+		return (this.getSmsId() == sms.getSmsId());
+	}
 
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + smsId;
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}
 }

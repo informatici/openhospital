@@ -2,24 +2,65 @@ package org.isf.malnutrition.model;
 
 import java.util.GregorianCalendar;
 
-public class Malnutrition {
+/*------------------------------------------
+ * Malnutrition - malnutrition control model
+ * -----------------------------------------
+ * modification history
+ * 11/01/2016 - Antonio - ported to JPA
+ * 
+ *------------------------------------------*/
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Table(name="MALNUTRITIONCONTROL")
+public class Malnutrition 
+{
+	@Id 
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="MLN_ID")
 	private int code;
 
+	@NotNull
+	@Column(name="MLN_DATE_SUPP")
 	private GregorianCalendar dateSupp;
 
+	@Column(name="MNL_DATE_CONF")
 	private GregorianCalendar dateConf;
 
+	@NotNull
+	@Column(name="MLN_ADM_ID")
 	private int admId;
-	
+
+	@NotNull
+	@Transient
 	private int patId;
 
+	@NotNull
+	@Column(name="MLN_HEIGHT")
 	private float height;
 
+	@NotNull
+	@Column(name="MLN_WEIGHT")
 	private float weight;
 
+	@NotNull
+	@Column(name="MLN_LOCK")
 	private int lock;
 
+	@Transient
+	private volatile int hashCode = 0;
+	
+
+	public Malnutrition() { }
+	
 	public Malnutrition(int aCode, GregorianCalendar aDateSupp,
 			GregorianCalendar aDateConf, int aAdmId, float aHeight,
 			float aWeight, int aLock) {
@@ -109,6 +150,7 @@ public class Malnutrition {
 		return weight;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		boolean result = false;
 		if ((other == null) || (!(other instanceof Malnutrition)))
@@ -135,5 +177,19 @@ public class Malnutrition {
 				return false;
 		} else
 			return false;
+	}
+
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + code;
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
 	}
 }

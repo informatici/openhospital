@@ -102,6 +102,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private JButton jButtonDelete;
 	private JButton jButtonClose;
 	private JButton jButtonReport;
+	@SuppressWarnings("rawtypes")
 	private JComboBox jComboUsers;
 	private JMonthChooser jComboBoxMonths;
 	private JYearChooser jComboBoxYears;
@@ -619,6 +620,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 		return jPanelRange;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JComboBox getJComboUsers() {
 		if (jComboUsers == null) {
 			jComboUsers = new JComboBox();
@@ -953,7 +955,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 		
 		//Payments in range contribute for Paid Period (total)
 		for (BillPayments payment : paymentsPeriod) {
-			if (notDeletedBills.contains(payment.getBillID())) {
+			if (notDeletedBills.contains(payment.getId())) {
 				BigDecimal payAmount = new BigDecimal(Double.toString(payment.getAmount()));
 				String payUser = payment.getUser();
 				
@@ -974,7 +976,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 		
 		//Payments in today contribute for Paid Today (total)
 		for (BillPayments payment : paymentsToday) {
-			if (notDeletedBills.contains(payment.getBillID())) {
+			if (notDeletedBills.contains(payment.getId())) {
 				BigDecimal payAmount = new BigDecimal(Double.toString(payment.getAmount()));
 				String payUser = payment.getUser();
 				totalToday = totalToday.add(payAmount);
@@ -1089,7 +1091,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 				return formatDateTime(thisBill.getDate());
 			}
 			if (c == ++index) {
-				int patID = thisBill.getPatID();
+				int patID = thisBill.getPatient().getCode();
 				return patID == 0 ? "" : String.valueOf(patID);
 			}
 			if (c == ++index) {

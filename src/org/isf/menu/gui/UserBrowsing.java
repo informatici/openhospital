@@ -171,7 +171,7 @@ public class UserBrowsing extends ModalJFrame implements UserEdit.UserListener {
 		buttonNew.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				user = new User("","","","");
+				user = new User("",new UserGroup(),"","");
 				new UserEdit(myFrame, user, true);
 			}
 		});

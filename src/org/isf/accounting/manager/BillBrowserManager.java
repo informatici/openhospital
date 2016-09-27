@@ -99,7 +99,7 @@ public class BillBrowserManager {
 	 */
 	public boolean newBillItems(int billID, ArrayList<BillItems> billItems) {
 		try {
-			return ioOperations.newBillItems(billID, billItems);
+			return ioOperations.newBillItems(ioOperations.getBill(billID), billItems);
 		} catch (OHException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 			return false;
@@ -114,7 +114,7 @@ public class BillBrowserManager {
 	 */
 	public boolean newBillPayments(int billID, ArrayList<BillPayments> payItems) {
 		try {
-			return ioOperations.newBillPayments(billID, payItems);
+			return ioOperations.newBillPayments(ioOperations.getBill(billID), payItems);
 		} catch (OHException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 			return false;

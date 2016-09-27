@@ -27,7 +27,7 @@ import javax.swing.LayoutStyle;
 import org.isf.admission.gui.PatientFolderBrowser;
 import org.isf.dicom.manager.DicomManagerFactory;
 import org.isf.dicom.manager.SourceFiles;
-import org.isf.dicom.model.FileDicomBase;
+import org.isf.dicom.model.FileDicom;
 import org.isf.generaldata.MessageBundle;
 import org.isf.patient.model.Patient;
 
@@ -372,7 +372,7 @@ public class DicomGui extends JFrame implements WindowListener {
 
 	// BOTTONI
 
-	private FileDicomBase selectedElement = null;
+	private FileDicom selectedElement = null;
 
 	public void disableDeleteButton() {
 		selectedElement = null;
@@ -380,7 +380,7 @@ public class DicomGui extends JFrame implements WindowListener {
 		jButtonDeleteDicom.setEnabled(false);
 	}
 
-	public void enableDeleteButton(FileDicomBase selezionato) {
+	public void enableDeleteButton(FileDicom selezionato) {
 
 		this.selectedElement = selezionato;
 

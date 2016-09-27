@@ -1,21 +1,15 @@
 package org.isf.dlvrtype.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.isf.dlvrtype.model.DeliveryType;
-import org.isf.utils.db.DbQueryLogger;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-import org.springframework.stereotype.Component;
-import org.isf.generaldata.MessageBundle;
 
 /**
  * The persistence class for the DeliveryType module.
  */
-@Component
 public class DeliveryTypeIoOperation {
 
 	/**
@@ -23,22 +17,23 @@ public class DeliveryTypeIoOperation {
 	 * @return all stored delivery types.
 	 * @throws OHException if an error occurs retrieving the delivery types. 
 	 */
-	public ArrayList<DeliveryType> getDeliveryType() throws OHException {
-		ArrayList<DeliveryType> deliverytypes = null;
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try{
-			String query = "select * from DELIVERYTYPE order by DLT_DESC";
-			ResultSet resultSet = dbQuery.getData(query,true);
-			deliverytypes = new ArrayList<DeliveryType>(resultSet.getFetchSize());
-			while (resultSet.next()) {
-				deliverytypes.add(new DeliveryType(resultSet.getString("DLT_ID_A"), resultSet.getString("DLT_DESC")));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
-		}
-		return deliverytypes;
+    @SuppressWarnings("unchecked")
+	public ArrayList<DeliveryType> getDeliveryType() throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<DeliveryType> deliveryTypes = null;
+				
+		
+		jpa.beginTransaction();
+		
+		String query = "SELECT * FROM DELIVERYTYPE ORDER BY DLT_DESC";
+		jpa.createQuery(query, DeliveryType.class, false);
+		List<DeliveryType> deliveryList = (List<DeliveryType>)jpa.getList();
+		deliveryTypes = new ArrayList<DeliveryType>(deliveryList);			
+		
+		jpa.commitTransaction();
+
+		return deliveryTypes;
 	}
 
 	/**
@@ -47,20 +42,18 @@ public class DeliveryTypeIoOperation {
 	 * @return <code>true</code> if the delivery type has been update.
 	 * @throws OHException if an error occurs during the update operation.
 	 */
-	public boolean updateDeliveryType(DeliveryType deliveryType) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try {
-			List<Object> parameters = new ArrayList<Object>(3);
-			parameters.add(deliveryType.getCode());
-			parameters.add(deliveryType.getDescription());
-			parameters.add(deliveryType.getCode());
-			String query = "update DELIVERYTYPE set DLT_ID_A=? , DLT_DESC=? where DLT_ID_A=?";
-			result = dbQuery.setDataWithParams(query, parameters, true);
-		} finally{
-			dbQuery.releaseConnection();
-		}
-		return result;
+	public boolean updateDeliveryType(
+			DeliveryType deliveryType) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.merge(deliveryType);
+    	jpa.commitTransaction();
+    	
+		return result;	
 	}
 
 	/**
@@ -69,18 +62,17 @@ public class DeliveryTypeIoOperation {
 	 * @return <code>true</code> if the delivery type has been stored, <code>false</code> otherwise.
 	 * @throws OHException if an error occurred during the store operation.
 	 */
-	public boolean newDeliveryType(DeliveryType deliveryType) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try {
-			List<Object> parameters = new ArrayList<Object>(2);
-			parameters.add(deliveryType.getCode());
-			parameters.add(deliveryType.getDescription());
-			String query = "insert into DELIVERYTYPE (DLT_ID_A,DLT_DESC) values (?,?)";
-			result = dbQuery.setDataWithParams(query, parameters, true);
-		} finally{
-			dbQuery.releaseConnection();
-		}
+	public boolean newDeliveryType(
+			DeliveryType deliveryType) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.persist(deliveryType);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -90,17 +82,18 @@ public class DeliveryTypeIoOperation {
 	 * @return <code>true</code> if the delivery type has been deleted, <code>false</code> otherwise.
 	 * @throws OHException if an error occurred during the delete operation.
 	 */
-	public boolean deleteDeliveryType(DeliveryType deliveryType) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try {
-			List<Object> parameters = Collections.<Object>singletonList(deliveryType.getCode());
-			String query = "delete from DELIVERYTYPE where DLT_ID_A=?";
-			result = dbQuery.setDataWithParams(query, parameters, true);
-		} finally{
-			dbQuery.releaseConnection();
-		}
-		return result;
+	public boolean deleteDeliveryType(
+			DeliveryType deliveryType) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.remove(deliveryType);
+    	jpa.commitTransaction();
+    	
+		return result;	
 	}
 
 	/**
@@ -109,19 +102,22 @@ public class DeliveryTypeIoOperation {
 	 * @return <code>true</code> if the code is used, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the check.
 	 */
-	public boolean isCodePresent(String code) throws OHException{
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean present = false;
-		try{
-			List<Object> parameters = Collections.<Object>singletonList(code);
-			String query = "SELECT DLT_ID_A FROM DELIVERYTYPE where DLT_ID_A=?";
-			ResultSet set = dbQuery.getDataWithParams(query, parameters, true);
-			present = set.first();
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
+	public boolean isCodePresent(
+			String code) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		DeliveryType deliveryType;
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		deliveryType = (DeliveryType)jpa.find(DeliveryType.class, code);
+		if (deliveryType != null)
+		{
+			result = true;
 		}
-		return present;
+    	jpa.commitTransaction();
+    	
+		return result;	
 	}
 }

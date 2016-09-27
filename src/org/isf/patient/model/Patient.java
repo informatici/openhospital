@@ -2,7 +2,6 @@ package org.isf.patient.model;
 
 import java.awt.Image;
 import java.sql.Blob;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -15,6 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 
 import org.isf.opd.model.Opd;
 import org.joda.time.DateTime;
@@ -63,28 +63,34 @@ public class Patient {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="PAT_ID")
 	private Integer code;
-	
+
+	@NotNull
 	@Column(name="PAT_FNAME")
 	private String firstName;
-	
+
+	@NotNull
 	@Column(name="PAT_SNAME")
 	private String secondName;
 	
 	@Column(name="PAT_BDATE")
 	private Date birthDate;
-	
+
+	@NotNull
 	@Column(name="PAT_AGE")
 	private int age;
-	
+
+	@NotNull
 	@Column(name="PAT_AGETYPE")
 	private String agetype;
-	
+
+	@NotNull
 	@Column(name="PAT_SEX")
 	private char sex;
 	
 	@Column(name="PAT_ADDR")
 	private String address;
-	
+
+	@NotNull
 	@Column(name="PAT_CITY")
 	private String city;
 	
@@ -96,19 +102,22 @@ public class Patient {
 	
 	@Column(name="PAT_NOTE")
 	private String note;
-	
+
+	@NotNull
 	@Column(name="PAT_MOTH_NAME")
 	private String mother_name; // mother's name
 	
 	@Column(name="PAT_MOTH")
 	private char mother; // D=dead, A=alive
-	
+
+	@NotNull
 	@Column(name="PAT_FATH_NAME")
 	private String father_name; // father's name
 	
 	@Column(name="PAT_FATH")
 	private char father; // D=dead, A=alive
-	
+
+	@NotNull
 	@Column(name="PAT_BTYPE")
 	private String bloodType; // (0-/+, A-/+ , B-/+, AB-/+)
 	
@@ -146,47 +155,47 @@ public class Patient {
 		
 		this.firstName = "";
 		this.secondName = ""; 
-		 this.birthDate = null;
-		 this.age = 0;
-		 this.agetype = "";
-		 this.sex = ' ';
-		 this.address = "";
-		 this.city = "";
-		 this.nextKin = ""; 
-		 this.telephone = "";
-		 this.mother_name = "";
-		 this.mother = ' ';
-		 this.father_name = "";
-		 this.father = ' ';
-		 this.bloodType = "";
-		 this.hasInsurance = ' ';
-		 this.parentTogether = ' ';
-		 this.taxCode = "";
-		 this.height = 0;
-		 this.weight = 0;
-		 this.lock = 0;
+		this.birthDate = null;
+		this.age = 0;
+		this.agetype = "";
+		this.sex = ' ';
+		this.address = "";
+		this.city = "";
+		this.nextKin = ""; 
+		this.telephone = "";
+		this.mother_name = "";
+		this.mother = ' ';
+		this.father_name = "";
+		this.father = ' ';
+		this.bloodType = "";
+		this.hasInsurance = ' ';
+		this.parentTogether = ' ';
+		this.taxCode = "";
+		this.height = 0;
+		this.weight = 0;
+		this.lock = 0;
 	}
 	
 	public Patient(Opd opd) {
 		
-		 this.firstName = opd.getfirstName();
-		 this.secondName = opd.getsecondName(); 
-		 this.birthDate = null;
-		 this.age = opd.getAge();
-		 this.agetype = "";
-		 this.sex = opd.getSex();
-		 this.address = opd.getaddress();
-		 this.city = opd.getcity();
-		 this.nextKin = opd.getnextKin(); 
-		 this.telephone = "";
-		 this.mother_name = "";
-		 this.mother = ' ';
-		 this.father_name = "";
-		 this.father = ' ';
-		 this.bloodType = "";
-		 this.hasInsurance = ' ';
-		 this.parentTogether = ' ';
-		 this.lock = 0;
+		this.firstName = opd.getfirstName();
+		this.secondName = opd.getsecondName(); 
+		this.birthDate = null;
+		this.age = opd.getAge();
+		this.agetype = "";
+		this.sex = opd.getSex();
+		this.address = opd.getaddress();
+		this.city = opd.getcity();
+		this.nextKin = opd.getnextKin(); 
+		this.telephone = "";
+		this.mother_name = "";
+		this.mother = ' ';
+		this.father_name = "";
+		this.father = ' ';
+		this.bloodType = "";
+		this.hasInsurance = ' ';
+		this.parentTogether = ' ';
+		this.lock = 0;
 	}
 	
 	public Patient(String firstName, String secondName, Date birthDate, int age, String agetype, char sex,

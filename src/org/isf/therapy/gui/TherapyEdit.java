@@ -57,6 +57,7 @@ import org.isf.sms.service.SmsOperations;
 import org.isf.therapy.manager.TherapyManager;
 import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.JAgenda;
 import org.isf.utils.jobjects.JAgenda.AgendaDayObject;
 import org.isf.visits.gui.InsertVisit;
@@ -392,7 +393,7 @@ public class TherapyEdit extends JDialog {
 						
 						Visit visit = new Visit();
 						visit.setTime(date);
-						visit.setPatID(patient.getCode());
+						visit.setPatID(patient);
 						
 						VisitManager vstManager = new VisitManager();
 						int visitID = vstManager.newVisit(visit);
@@ -617,7 +618,12 @@ public class TherapyEdit extends JDialog {
 							if (ok == JOptionPane.YES_OPTION) {
 								thManager.deleteAllTherapies(patient.getCode());
 								SmsOperations smsOp = new SmsOperations();
-								smsOp.deleteByModuleModuleID("therapy", String.valueOf(patient.getCode()));
+								try {
+									smsOp.deleteByModuleModuleID("therapy", String.valueOf(patient.getCode()));
+								} catch (OHException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
 							} else return;
 						} else {
 							if (checked) {
@@ -661,7 +667,12 @@ public class TherapyEdit extends JDialog {
 							if (ok == JOptionPane.YES_OPTION) {
 								vstManager.deleteAllVisits(patient.getCode());
 								SmsOperations smsOp = new SmsOperations();
-								smsOp.deleteByModuleModuleID("visit", String.valueOf(patient.getCode()));
+								try {
+									smsOp.deleteByModuleModuleID("visit", String.valueOf(patient.getCode()));
+								} catch (OHException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
 							} else 	return;
 						} else {
 							if (vstManager.newVisits(visits)) {

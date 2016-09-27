@@ -119,7 +119,7 @@ public class WardBrowserManager {
 			return ioOperations.isCodePresent(code);
 		} catch (OHException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+			return false; 
 		}
 	}
 	

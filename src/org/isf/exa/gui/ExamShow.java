@@ -112,8 +112,8 @@ public class ExamShow extends JDialog {
             newButton.setMnemonic(KeyEvent.VK_N);
 			newButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					examRow=new ExamRow("","","");
-					ExamRow last=new ExamRow("","","");
+					examRow=new ExamRow();
+					ExamRow last=new ExamRow();
 					ExamRowEdit newrecord = new ExamRowEdit(myFrame,examRow,exam);
 					newrecord.setVisible(true);
 					if(!last.equals(examRow)){

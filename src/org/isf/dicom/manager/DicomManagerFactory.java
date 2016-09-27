@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 import javax.swing.JOptionPane;
+
 import org.isf.generaldata.MessageBundle;
 
 /**
@@ -14,21 +15,21 @@ import org.isf.generaldata.MessageBundle;
  */
 public class DicomManagerFactory {
 
-	private static DicomManagerIntf instance = null;
+	private static DicomManagerInterface instance = null;
 
 	private static Properties props = new Properties();
 
 	/**
 	 * return the manager for DICOM acquired files
 	 */
-	public synchronized static DicomManagerIntf getManager() {
+	public synchronized static DicomManagerInterface getManager() {
 
 		if (instance == null) {
 
 			init();
 
 			try {
-				instance = (DicomManagerIntf) Class.forName(props.getProperty("dicom.manager.impl")).getConstructor(Class.forName("java.util.Properties")).newInstance(props);
+				instance = (DicomManagerInterface) Class.forName(props.getProperty("dicom.manager.impl")).getConstructor(Class.forName("java.util.Properties")).newInstance(props);
 			} catch (Exception ecc) {
 				JOptionPane.showMessageDialog(null, props.getProperty("dicom.manager.impl") + " " + MessageBundle.getMessage("angal.dicom.manager.noimpl"));
 

@@ -1,0 +1,53 @@
+package org.isf.vactype.test;
+
+
+import org.isf.utils.exception.OHException;
+import org.isf.vactype.model.VaccineType;
+
+import static org.junit.Assert.assertEquals;
+
+public class TestVaccineType 
+{	
+    private String code = "Z";
+    private String description = "TestDescription";
+    
+			
+	public VaccineType setup(
+			boolean usingSet) throws OHException 
+	{
+		VaccineType vaccineType;
+	
+				
+		if (usingSet == true)
+		{
+			vaccineType = new VaccineType();
+			_setParameters(vaccineType);
+		}
+		else
+		{
+			// Create VaccineType with all parameters 
+			vaccineType = new VaccineType(code, description);
+		}
+				    	
+		return vaccineType;
+	}
+	
+	public void _setParameters(
+			VaccineType vaccineType) 
+	{	
+		vaccineType.setCode(code);
+		vaccineType.setDescription(description);
+		
+		return;
+	}
+	
+	public void check(
+			VaccineType vaccineType) 
+	{		
+    	System.out.println("Check VaccineType: " + vaccineType.getCode());
+    	assertEquals(code, vaccineType.getCode());
+    	assertEquals(description, vaccineType.getDescription());
+		
+		return;
+	}
+}

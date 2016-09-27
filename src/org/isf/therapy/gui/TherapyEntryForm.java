@@ -43,9 +43,14 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
+import org.isf.medicals.service.MedicalsIoOperations;
+import org.isf.menu.gui.Menu;
+import org.isf.patient.model.Patient;
+import org.isf.patient.service.PatientIoOperations;
 import org.isf.therapy.manager.TherapyManager;
 import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.IconButton;
 import org.isf.utils.time.TimeTools;
 import org.joda.time.DateTime;
@@ -754,7 +759,16 @@ public class TherapyEntryForm extends JDialog {
 					boolean notify = false;
 					boolean sms = false;
 					
-					thRow = new TherapyRow(therapyID, patID, startDate, endDate, medical, qty, unitID, freqInDay, freqInPeriod, note, notify, sms);
+					PatientIoOperations patientIoOperations = Menu.getApplicationContext().getBean(PatientIoOperations.class);
+					Patient patient = null;
+					try {
+						patient = patientIoOperations.getPatient(patID);
+					} catch (OHException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					thRow = new TherapyRow(therapyID, patient, startDate, endDate, medical, qty, unitID, freqInDay, freqInPeriod, note, notify, sms);
+										
 					TherapyManager thManager = new TherapyManager();
 					therapyID = thManager.newTherapy(thRow);
 					if (therapyID > 0) {

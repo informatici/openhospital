@@ -20,6 +20,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.isf.generaldata.SmsParameters;
 import org.isf.sms.model.Sms;
 import org.isf.sms.providers.GSMParameters;
+import org.isf.utils.exception.OHException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,7 +177,13 @@ public class SmsSenderGSM implements SmsSenderInterface, SerialPortEventListener
 		
 		//Get SMS
 		SmsOperations smsOp = new SmsOperations();
-		List<Sms> smsList = smsOp.getList();
+		List<Sms> smsList = null;
+		try {
+			smsList = smsOp.getList();
+		} catch (OHException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("Found " + smsList.size() + " SMS to send");
 		
 		//Send

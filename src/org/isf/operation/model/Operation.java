@@ -1,5 +1,14 @@
 package org.isf.operation.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.isf.opetype.model.OperationType;
 
 /*----------------------------------------------------------
@@ -13,16 +22,48 @@ import org.isf.opetype.model.OperationType;
  * 
  * @author Rick, Vero, Pupo
  */
-public class Operation {
-	 
+/*------------------------------------------
+* Operation - model for the bill entity
+* -----------------------------------------
+* modification history
+* ? - bob - first version 
+* 007/01/2015 - Antonio - ported to JPA
+* 
+*------------------------------------------*/
+@Entity
+@Table(name="OPERATION")
+public class Operation 
+{
+	@Id 
+	@Column(name="OPE_ID_A")	    
     private String code;
+
+	@NotNull
+	@Column(name="OPE_DESC")
     private String description;
+
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name="OPE_OCL_ID_A")
     private OperationType type;
+
+	@NotNull
+	@Column(name="OPE_STAT")
     private Integer major;
+
+	@NotNull
+	@Column(name="OPE_LOCK")
     private Integer lock;
-    
+
+	@Transient
     private volatile int hashCode = 0;
     
+    
+	public Operation() 
+    {
+		super();
+    }
+	
     /**
      * @param aCode
      * @param aDescription

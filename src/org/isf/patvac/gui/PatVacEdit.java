@@ -498,7 +498,7 @@ public class PatVacEdit extends JDialog {
 
 		for (Patient elem : pat) {
 			if (!insert) {
-				if (elem.getCode() == patVac.getPatId()) {
+				if (elem.getCode() == patVac.getPatId().getCode()) {
 					patSelected = elem;
 				}
 			}
@@ -614,7 +614,7 @@ public class PatVacEdit extends JDialog {
 		if (sexTextField == null) {
 			sexTextField = new VoLimitedTextField(1);
 			if (!insert) {
-				sexTextField.setText(patVac.getPatSex());
+				sexTextField.setText("" + patVac.getPatSex());
 			}
 		}
 		return sexTextField;
@@ -683,10 +683,10 @@ public class PatVacEdit extends JDialog {
 
 					patVac.setVaccineDate(gregDate);
 					patVac.setVaccine((Vaccine) vaccineComboBox.getSelectedItem());
-					patVac.setPatId(selectedPatient.getCode());
+					patVac.setPatId(selectedPatient);
 					patVac.setLock(0);
 					patVac.setPatName(selectedPatient.getName());
-					patVac.setPatSex("" + selectedPatient.getSex());
+					patVac.setPatSex(selectedPatient.getSex());
 					patVac.setPatAge(selectedPatient.getAge());
 
 					boolean result = false;
@@ -701,7 +701,7 @@ public class PatVacEdit extends JDialog {
 					if (!result)
 						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patvac.thedatacouldnobesaved"));
 					else {
-						patVac = new PatientVaccine(0, 0, new GregorianCalendar(), 0, new Vaccine("", "", new VaccineType("", ""), 0), 0);
+						patVac = new PatientVaccine(0, 0, new GregorianCalendar(), new Patient(), new Vaccine("", "", new VaccineType("", ""), 0), 0);
 						dispose();
 					}
 				}

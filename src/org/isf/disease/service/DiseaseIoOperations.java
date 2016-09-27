@@ -15,18 +15,12 @@ package org.isf.disease.service;
  *                     by description only	
  *------------------------------------------*/
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.isf.disease.model.Disease;
-import org.isf.distype.model.DiseaseType;
-import org.isf.generaldata.MessageBundle;
-import org.isf.utils.db.DbQueryLogger;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-import org.springframework.stereotype.Component;
 
 /**
  * This class offers the io operations for recovering and managing
@@ -34,7 +28,6 @@ import org.springframework.stereotype.Component;
  * 
  * @author Rick, Vero
  */
-@Component
 public class DiseaseIoOperations {
 
 	/**
@@ -43,28 +36,24 @@ public class DiseaseIoOperations {
 	 * @return the found disease, <code>null</code> if no disease has found.
 	 * @throws OHException if an error occurred getting the disease.
 	 */
-	public Disease getDiseaseByCode(int code) throws OHException {
+	public Disease getDiseaseByCode(
+			int code) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
 		Disease disease = null;
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try{
-			List<Object> parameters = Collections.<Object>singletonList(code);
-			String query = "select * from DISEASE join DISEASETYPE on DIS_DCL_ID_A = DCL_ID_A WHERE DIS_ID_A = ?";
+		ArrayList<Object> params = new ArrayList<Object>();
+				
+		
+		jpa.beginTransaction();
+		
+		String query = "SELECT * FROM DISEASE JOIN DISEASETYPE ON DIS_DCL_ID_A = DCL_ID_A WHERE DIS_ID_A = ?";
+		jpa.createQuery(query, Disease.class, false);
+		params.add(code);
+		jpa.setParameters(params, false);
+		disease = (Disease)jpa.getResult();		
+		
+		jpa.commitTransaction();
 
-			ResultSet resultSet = dbQuery.getDataWithParams(query, parameters, true);
-			while (resultSet.next()) {
-				disease = new Disease(resultSet.getString("DIS_ID_A"), 
-						resultSet.getString("DIS_DESC"), 
-						new DiseaseType(resultSet.getString("DIS_DCL_ID_A"), resultSet.getString("DCL_DESC")),
-						resultSet.getInt("DIS_LOCK"));
-				disease.setOpdInclude(resultSet.getInt("DIS_OPD_INCLUDE")==1);
-				disease.setIpdInInclude(resultSet.getInt("DIS_IPD_IN_INCLUDE")==1);
-				disease.setIpdOutInclude(resultSet.getInt("DIS_IPD_OUT_INCLUDE")==1);
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
-		}
 		return disease;
 	}
 	
@@ -77,96 +66,101 @@ public class DiseaseIoOperations {
 	 * @return the retrieved diseases.
 	 * @throws OHException if an error occurs retrieving the diseases.
 	 */
-	public ArrayList<Disease> getDiseases(String disTypeCode, boolean opd, boolean ipdIn, boolean ipdOut) throws OHException {
+    @SuppressWarnings("unchecked")
+	public ArrayList<Disease> getDiseases(
+			String disTypeCode, 
+			boolean opd, 
+			boolean ipdIn, 
+			boolean ipdOut) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Disease> diseases = null;
-		String selectClause = "select * from DISEASE join DISEASETYPE on DIS_DCL_ID_A = DCL_ID_A";
-		String whereClause = "";
-
-		List<Object> parameters = new ArrayList<Object>(1);
-
-		if (disTypeCode != null) {
-			whereClause= " where DCL_ID_A like ?";
-			parameters.add(disTypeCode);
-		}
-
-		if (opd) {
-			if (whereClause.equals("")) whereClause=" where "; else whereClause+=" and  "; 
-			whereClause+=" (DIS_OPD_INCLUDE=1 or DIS_OPD_INCLUDE is null) ";
-		}
-
-		if (ipdIn) {
-			if (whereClause.equals("")) whereClause=" where "; else whereClause+=" and  "; 
-			whereClause+=" (DIS_IPD_IN_INCLUDE=1 or DIS_IPD_IN_INCLUDE is null) ";
-		}
+		ArrayList<Object> params = new ArrayList<Object>();
+				
 		
-		if (ipdOut) {
-			if (whereClause.equals("")) whereClause=" where "; else whereClause+=" and  "; 
-			whereClause+=" (DIS_IPD_OUT_INCLUDE=1 or DIS_IPD_OUT_INCLUDE is null) ";
-		}
+		jpa.beginTransaction();
 		
-		String orderClause = " order BY DIS_DESC";
-
-		String query =  selectClause + whereClause + orderClause;
-
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try{
-			ResultSet resultSet = dbQuery.getDataWithParams(query, parameters, true);
-			diseases = new ArrayList<Disease>(resultSet.getFetchSize());
-			while (resultSet.next()) {
-				Disease disease = new Disease(resultSet.getString("DIS_ID_A"), 
-						resultSet.getString("DIS_DESC"), 
-						new DiseaseType(resultSet.getString("DIS_DCL_ID_A"), resultSet.getString("DCL_DESC")),
-						resultSet.getInt("DIS_LOCK"));
-				disease.setOpdInclude(resultSet.getInt("DIS_OPD_INCLUDE")==1);
-				disease.setIpdInInclude(resultSet.getInt("DIS_IPD_IN_INCLUDE")==1);
-				disease.setIpdOutInclude(resultSet.getInt("DIS_IPD_OUT_INCLUDE")==1);
-
-				diseases.add(disease);
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
+		String query = _calculateGetDiseasesQuery(disTypeCode, opd, ipdIn, ipdOut); 
+		jpa.createQuery(query, Disease.class, false);		
+		if (disTypeCode != null) 
+		{
+			params.add(disTypeCode);		
+			jpa.setParameters(params, false);
 		}
+		List<Disease> diseaseList = (List<Disease>)jpa.getList();
+		diseases = new ArrayList<Disease>(diseaseList);			
+		
+		jpa.commitTransaction();
+
 		return diseases;
 	}
+	
+	private String _calculateGetDiseasesQuery(
+			String disTypeCode, 
+			boolean opd, 
+			boolean ipdIn, 
+			boolean ipdOut) 
+	{		
+		String selectClause = "SELECT * FROM DISEASE JOIN DISEASETYPE ON DIS_DCL_ID_A = DCL_ID_A";			
+		String whereClause = "";
+		if (disTypeCode != null) 
+		{
+			whereClause= " where DCL_ID_A like ?";
+		}		
+		if (opd) 
+		{
+			whereClause = _initWherClause(whereClause);
+			whereClause +=" (DIS_OPD_INCLUDE=1 or DIS_OPD_INCLUDE is null) ";
+		}		
+		if (ipdIn) 
+		{
+			whereClause = _initWherClause(whereClause);
+			whereClause +=" (DIS_IPD_IN_INCLUDE=1 or DIS_IPD_IN_INCLUDE is null) ";
+		}		
+		if (ipdOut) 
+		{
+			whereClause = _initWherClause(whereClause);
+			whereClause +=" (DIS_IPD_OUT_INCLUDE=1 or DIS_IPD_OUT_INCLUDE is null) ";
+		}		
+		String orderClause = " order BY DIS_DESC";
+		
+		String query = selectClause + whereClause + orderClause;
 
-
+		return query;
+	}
+	
+	private String _initWherClause(
+			String whereClause)
+	{		
+		if (whereClause.equals("")) 
+		{
+			whereClause =" where "; 
+		}
+		else
+		{
+			whereClause +=" and  "; 
+		}
+		
+		return whereClause;
+	}
+	
 	/**
 	 * Stores the specified {@link Disease}. 
 	 * @param disease the disease to store.
 	 * @return <code>true</code> if the disease has been stored, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs storing the disease.
 	 */
-	public boolean newDisease(Disease disease) throws OHException{
-
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try{
-
-			List<Object> parameters = new ArrayList<Object>(5);
-			parameters.add(disease.getCode());
-			parameters.add(disease.getType().getCode());
-			parameters.add(disease.getDescription());
-			parameters.add(disease.getOpdInclude());
-			parameters.add(disease.getIpdInInclude());
-			parameters.add(disease.getIpdOutInclude());
-
-			String query = "insert into DISEASE (DIS_ID_A, DIS_DCL_ID_A, DIS_DESC, DIS_OPD_INCLUDE, DIS_IPD_IN_INCLUDE, DIS_IPD_OUT_INCLUDE) values (?, ?, ?, ?, ?, ?)";
-			result = dbQuery.setDataWithParams(query, parameters, true);
-			//retrieve the primary key
-			parameters.clear();
-			parameters.add(disease.getType().getCode());
-			parameters.add(disease.getDescription());
-			query = "select DIS_ID_A from DISEASE where DIS_DCL_ID_A = ? and DIS_DESC = ?";
-			ResultSet resultSet = dbQuery.getDataWithParams(query, parameters, true);
-			if (resultSet.first()) disease.setCode(resultSet.getString(1));
-
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
-		}
+	public boolean newDisease(
+			Disease disease) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.persist(disease);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -176,27 +170,18 @@ public class DiseaseIoOperations {
 	 * @return <code>true</code> if the disease has been updated, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the update.
 	 */
-	public boolean updateDisease(Disease disease) throws OHException {
-
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-
-		try{
-			List<Object> parameters = new ArrayList<Object>(5);
-			parameters.add(disease.getType().getCode());
-			parameters.add(disease.getDescription());
-			parameters.add(disease.getOpdInclude());
-			parameters.add(disease.getIpdInInclude());
-			parameters.add(disease.getIpdOutInclude());
-			parameters.add(disease.getCode());
-
-			String query = "UPDATE DISEASE SET DIS_DCL_ID_A = ?, DIS_DESC = ?, DIS_OPD_INCLUDE = ?, DIS_IPD_IN_INCLUDE = ?, DIS_IPD_OUT_INCLUDE = ?," +
-					" DIS_LOCK = DIS_LOCK + 1 where DIS_ID_A = ?";
-			result = dbQuery.setDataWithParams(query, parameters, true);
-			if (result) disease.setLock(disease.getLock()+1);
-		} finally{
-			dbQuery.releaseConnection();
-		}
+	public boolean updateDisease(
+			Disease disease) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		disease.setLock(disease.getLock() + 1);
+		jpa.merge(disease);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -206,22 +191,19 @@ public class DiseaseIoOperations {
 	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
 	 * @throws OHException if an error occurred during the check.
 	 */
-	public boolean hasDiseaseModified(Disease disease) throws OHException
+	public boolean hasDiseaseModified(
+			Disease disease) throws OHException
 	{
-		DbQueryLogger dbQuery = new DbQueryLogger();
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		Disease foundDisease = (Disease)jpa.find(Disease.class, disease.getCode());
 		boolean result = false;
-		try{
-			List<Object> parameters = Collections.<Object>singletonList(disease.getCode());
-			String query = "select DIS_LOCK from DISEASE where DIS_ID_A = ?";
-			ResultSet resultSet = dbQuery.getDataWithParams(query, parameters, true);
-			if (resultSet.first()) {
-				result = resultSet.getInt("DIS_LOCK")!=disease.getLock();
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
+		
+		
+		if (foundDisease.getLock() != disease.getLock())
+		{
+			result = true;
 		}
+		
 		return result;
 	}
 
@@ -231,16 +213,20 @@ public class DiseaseIoOperations {
 	 * @return <code>true</code> if the disease has been marked, <code>false</code> otherwise.
 	 * @throws OHException if an error occurred during the delete operation.
 	 */
-	public boolean deleteDisease(Disease disease) throws OHException{
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try{
-			List<Object> parameters = Collections.<Object>singletonList(disease.getCode());
-			String query = "UPDATE DISEASE SET DIS_OPD_INCLUDE = 0, DIS_IPD_IN_INCLUDE = 0, DIS_IPD_OUT_INCLUDE = 0 WHERE DIS_ID_A = ?";
-			result = dbQuery.setDataWithParams(query, parameters, true);
-		} finally{
-			dbQuery.releaseConnection();
-		}
+	public boolean deleteDisease(
+			Disease disease) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		disease.setOpdInclude(false);
+		disease.setIpdInInclude(false);
+		disease.setIpdOutInclude(false);
+		jpa.merge(disease);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -250,19 +236,19 @@ public class DiseaseIoOperations {
 	 * @return <code>true</code> if it is already used, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the check.
 	 */
-	public boolean isCodePresent(String code) throws OHException{
-		DbQueryLogger dbQuery = new DbQueryLogger();
+	public boolean isCodePresent(
+			String code) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		Disease foundDisease = (Disease)jpa.find(Disease.class, code);
 		boolean present = false;
-		try{
-			List<Object> parameters = Collections.<Object>singletonList(code);
-			String query = "SELECT DIS_ID_A FROM DISEASE where DIS_ID_A = ?";
-			ResultSet set = dbQuery.getDataWithParams(query, parameters, true);
-			present = set.first();
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
+
+		
+		if (foundDisease != null)
+		{
+			present = true;
 		}
+		
 		return present;
 	}
 
@@ -273,21 +259,20 @@ public class DiseaseIoOperations {
 	 * @return <code>true</code> if is used, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the check.
 	 */
-	public boolean isDescriptionPresent(String description, String typeCode) throws OHException{
-		DbQueryLogger dbQuery = new DbQueryLogger();
+	public boolean isDescriptionPresent(
+			String description, 
+			String typeCode) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		Disease foundDisease = (Disease)jpa.find(Disease.class, typeCode);
 		boolean present = false;
-		try{
-			List<Object> parameters = new ArrayList<Object>(2);
-			parameters.add(description);
-			parameters.add(typeCode);
-			String query = "SELECT DIS_ID_A FROM DISEASE where DIS_DESC = ? and DIS_DCL_ID_A = ?";
-			ResultSet set = dbQuery.getDataWithParams(query, parameters, true);
-			present = set.first();
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
+
+		
+		if (foundDisease.getDescription().compareTo(description) == 0)
+		{
+			present = true;
 		}
+		
 		return present;
 	}
 }

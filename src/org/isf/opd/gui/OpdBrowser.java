@@ -200,7 +200,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 		initialize();
         setVisible(true);
         //if(bOpenEdit)
-        opd = new Opd(0,' ',-1,"0",0);
+        opd = new Opd();
         OpdEditExtended editrecord = new OpdEditExtended(myFrame, opd, patient, true);
         editrecord.addSurgeryListener(OpdBrowser.this);
 		editrecord.setVisible(true);
@@ -280,7 +280,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 			jNewButton.addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent event) {
-					opd = new Opd(0,' ',-1,"0",0);
+					opd = new Opd();
 					if (GeneralData.OPDEXTENDED) {
 						OpdEditExtended newrecord = new OpdEditExtended(myFrame, opd, true);
 						newrecord.addSurgeryListener(OpdBrowser.this);
@@ -914,7 +914,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 		
 		private static final long serialVersionUID = -9129145534999353730L;
 		
-		public OpdBrowsingModel(String diseaseTypeCode,String diseaseCode, GregorianCalendar dateFrom,GregorianCalendar dateTo,int ageFrom, int ageTo,char sex,String newPatient) {
+		public OpdBrowsingModel(String diseaseTypeCode,String diseaseCode, GregorianCalendar dateFrom,GregorianCalendar dateTo,int ageFrom, int ageTo,char sex,char newPatient) {
 			pSur = manager.getOpd(diseaseTypeCode,diseaseCode,dateFrom,dateTo,ageFrom,ageTo,sex,newPatient);
 		}
 		
@@ -969,7 +969,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 				return opd.getDiseaseTypeDesc();
 			} else if (c == 7) {
 				String patientStatus;
-				if (opd.getNewPatient().equals("N")){
+				if (opd.getNewPatient() == 'N'){
 					patientStatus = MessageBundle.getMessage("angal.common.new");
 				} else {
 					patientStatus = MessageBundle.getMessage("angal.opd.reattendance");
@@ -1044,10 +1044,10 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 					else if (radiom.isSelected()) sex='M';
 					else sex='F';
 					
-					String newPatient;
-					if(radioAll.isSelected()) newPatient="A";
-					else if(radioNew.isSelected()) newPatient="N";
-					else newPatient="R";
+					char newPatient;
+					if(radioAll.isSelected()) newPatient='A';
+					else if(radioNew.isSelected()) newPatient='N';
+					else newPatient='R';
 					
 					GregorianCalendar dateFrom = getDateFrom();
 					GregorianCalendar dateTo = getDateTo();

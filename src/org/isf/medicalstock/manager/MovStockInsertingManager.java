@@ -169,7 +169,7 @@ public class MovStockInsertingManager {
 		}
 		try {
 			return ioOperations.getLotsByMedical(medical);
-		} catch (OHException e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 			return null;
 		}
@@ -322,7 +322,7 @@ public class MovStockInsertingManager {
 				}
 
 				// checks if the lot is already used by other medicals
-				List<Integer> medicalIds = ioOperations.getMedicalsFromLot(dbQuery, movement.getLot().getCode());
+				List<Integer> medicalIds = ioOperations.getMedicalsFromLot(movement.getLot().getCode());
 				if (!(medicalIds.size() == 0 || (medicalIds.size() == 1 && medicalIds.get(0).intValue() == movement.getMedical().getCode().intValue()))) {
 					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.thislotreferstoanothermedical"));
 					return false;
@@ -330,7 +330,7 @@ public class MovStockInsertingManager {
 				}
 			}
 
-			return ioOperations.prepareChargingMovement(dbQuery, movement);
+			return ioOperations.prepareChargingMovement(movement);
 		} catch (OHException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 			return false;
@@ -364,9 +364,9 @@ public class MovStockInsertingManager {
 		try {
 			boolean result;
 			if (isAutomaticLot()) {
-				result = ioOperations.newAutomaticDischargingMovement(dbQuery, movement);
+				result = ioOperations.newAutomaticDischargingMovement(movement);
 			} else
-				result = ioOperations.prepareDischargingwMovement(dbQuery, movement);
+				result = ioOperations.prepareDischargingwMovement(movement);
 			return result;
 		} catch (OHException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());

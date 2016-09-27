@@ -2,46 +2,49 @@ package org.isf.menu.service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.isf.accounting.model.Bill;
+import org.isf.accounting.model.BillItems;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.model.GroupMenu;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
+import org.isf.patient.model.Patient;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MenuIoOperations {
-
+public class MenuIoOperations 
+{
 	/**
 	 * returns the list of {@link User}s
 	 * 
 	 * @return the list of {@link User}s
 	 * @throws OHException
 	 */
-	public ArrayList<User> getUser() throws OHException {
+	@SuppressWarnings("unchecked")
+	public ArrayList<User> getUser() throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<User> users = null;
-		String sqlString = "SELECT * FROM USER ORDER BY US_ID_A";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ResultSet resultSet = dbQuery.getData(sqlString,true);
-			users = new ArrayList<User>(resultSet.getFetchSize());
-
-			while (resultSet.next()) {
-				users.add(new User(resultSet.getString("US_ID_A"), 
-						resultSet.getString("US_UG_ID_A"), 
-						resultSet.getString("US_PASSWD"), 
-						resultSet.getString("US_DESC")));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+				
+		
+		jpa.beginTransaction();
+		
+		String query = "SELECT * FROM USER ORDER BY US_ID_A";
+		jpa.createQuery(query, User.class, false);
+		List<User> userList = (List<User>)jpa.getList();
+		users = new ArrayList<User>(userList);			
+		
+		jpa.commitTransaction();
+	
 		return users;
 	}
 
@@ -52,27 +55,26 @@ public class MenuIoOperations {
 	 * @return the list of {@link User}s
 	 * @throws OHException
 	 */
-	public ArrayList<User> getUser(String groupID) throws OHException {
+	@SuppressWarnings("unchecked")
+	public ArrayList<User> getUser(
+			String groupID) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<User> users = null;
-		String string = "SELECT * FROM USER WHERE US_UG_ID_A = ? ORDER BY US_ID_A";
-		List<Object> parameters = Collections.<Object>singletonList(groupID);
+		ArrayList<Object> params = new ArrayList<Object>();
+				
 		
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ResultSet resultSet = dbQuery.getDataWithParams(string, parameters, true);
-			users = new ArrayList<User>(resultSet.getFetchSize());
-
-			while (resultSet.next()) {
-				users.add(new User(resultSet.getString("US_ID_A"), 
-						resultSet.getString("US_UG_ID_A"), 
-						resultSet.getString("US_PASSWD"), 
-						resultSet.getString("US_DESC")));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		jpa.beginTransaction();
+		
+		String query = "SELECT * FROM USER WHERE US_UG_ID_A = ? ORDER BY US_ID_A";
+		jpa.createQuery(query, User.class, false);
+		params.add(groupID);
+		jpa.setParameters(params, false);		
+		List<User> userList = (List<User>)jpa.getList();
+		users = new ArrayList<User>(userList);			
+		
+		jpa.commitTransaction();
+	
 		return users;
 	}
 	
@@ -82,20 +84,20 @@ public class MenuIoOperations {
 	 * @return the {@link User}'s description
 	 * @throws OHException
 	 */
-	public String getUsrInfo(String userName) throws OHException {
-		String string = "SELECT US_DESC FROM USER WHERE US_ID_A = ?";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		List<Object> parameters = Collections.<Object>singletonList(userName);
-		String info = null;
-		try{
-			ResultSet result =dbQuery.getDataWithParams(string, parameters, true);
-			while(result.next()) info = result.getString(1);
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
-		}	
-		return info;
+	public String getUsrInfo(
+			String userName) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		User user = null;
+				
+		
+		jpa.beginTransaction();
+		
+		user = (User)jpa.find(User.class, userName); 
+		
+		jpa.commitTransaction();
+		
+		return user.getDesc();
 	}
 	
 	/**
@@ -104,25 +106,23 @@ public class MenuIoOperations {
 	 * @return the list of {@link UserGroup}s
 	 * @throws OHException
 	 */
-	public ArrayList<UserGroup> getUserGroup() throws OHException {
-		ArrayList<UserGroup> group = null;
-		String string = "SELECT * FROM USERGROUP ORDER BY UG_ID_A";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ResultSet resultSet = dbQuery.getData(string,true);
-			group = new ArrayList<UserGroup>(resultSet.getFetchSize());
-
-			while (resultSet.next()) {
-				group.add(new UserGroup(
-						resultSet.getString("UG_ID_A"),
-						resultSet.getString("UG_DESC")));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
-		return group;
+	@SuppressWarnings("unchecked")
+	public ArrayList<UserGroup> getUserGroup() throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<UserGroup> users = null;
+				
+		
+		jpa.beginTransaction();
+		
+		String query = "SELECT * FROM USERGROUP ORDER BY UG_ID_A";
+		jpa.createQuery(query, UserGroup.class, false);
+		List<UserGroup> userList = (List<UserGroup>)jpa.getList();
+		users = new ArrayList<UserGroup>(userList);			
+		
+		jpa.commitTransaction();
+	
+		return users;
 	}
 	
 	/**
@@ -132,20 +132,23 @@ public class MenuIoOperations {
 	 * @return <code>true</code> if the medical code is already stored, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the check.
 	 */
-	public boolean isUserNamePresent(String userName) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
+	public boolean isUserNamePresent(
+			String userName) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean present = false;
-		try{
-			List<Object> parameters = Collections.<Object>singletonList(userName);
-			String query = "SELECT US_ID_A FROM USER WHERE US_ID_A = ?";
-			ResultSet set = dbQuery.getDataWithParams(query, parameters, true);
-			if(set.first()) present = true;
-
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
-		}	
+		
+		
+		jpa.beginTransaction();
+		
+		User foundUser = (User)jpa.find(User.class, userName); 
+		if (foundUser != null)
+		{
+			present = true;
+		}
+		
+		jpa.commitTransaction();
+		
 		return present;
 	}
 	
@@ -156,20 +159,24 @@ public class MenuIoOperations {
 	 * @return <code>true</code> if the medical code is already stored, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the check.
 	 */
-	public boolean isGroupNamePresent(String groupName) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean present = false;
-		try{
-			List<Object> parameters = Collections.<Object>singletonList(groupName);
-			String query = "SELECT UG_ID_A FROM USERGROUP WHERE UG_ID_A = ?";
-			ResultSet set = dbQuery.getDataWithParams(query, parameters, true);
-			if(set.first()) present = true;
+	public boolean isGroupNamePresent(
+			String groupName) throws OHException 
+	{
 
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
-		}	
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean present = false;
+		
+		
+		jpa.beginTransaction();
+		
+		UserGroup foundUserGroup = (UserGroup)jpa.find(UserGroup.class, groupName); 
+		if (foundUserGroup != null)
+		{
+			present = true;
+		}
+		
+		jpa.commitTransaction();
+		
 		return present;
 	}
 	
@@ -180,22 +187,20 @@ public class MenuIoOperations {
 	 * @return <code>true</code> if the user has been inserted, <code>false</code> otherwise.
 	 * @throws OHException
 	 */
-	public boolean newUser(User user) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		List<Object> parameters = new ArrayList<Object>();
-		boolean result = false;
-		String sqlString = "INSERT INTO USER (US_ID_A , US_UG_ID_A, US_PASSWD, US_DESC ) VALUES (?, ?, ?, ?)";
-		parameters.add(user.getUserName());
-		parameters.add(user.getUserGroupName());
-		parameters.add(user.getPasswd());
-		parameters.add(user.getDesc());
-			
-		result = dbQuery.setDataWithParams(sqlString, parameters, true);
-
-		dbQuery.releaseConnection();
+	public boolean newUser(
+			User user) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.persist(user);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
-	
+		
 	/**
 	 * updates an existing {@link User} in the DB
 	 * 
@@ -203,18 +208,31 @@ public class MenuIoOperations {
 	 * @return <code>true</code> if the user has been updated, <code>false</code> otherwise.
 	 * @throws OHException
 	 */
-	public boolean updateUser(User user) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		List<Object> parameters = new ArrayList<Object>();
-		boolean result = false;
+	public boolean updateUser(
+			User user) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		String query = null;
+		boolean result = true;
+				
 
-		String sqlstring = "UPDATE USER SET US_DESC = ? WHERE US_ID_A = ?";
-		parameters.add(user.getDesc());
-		parameters.add(user.getUserName());
+		jpa.beginTransaction();		
 		
-		result = dbQuery.setDataWithParams(sqlstring, parameters, true);
-
-		dbQuery.releaseConnection();
+		try {
+			query = "UPDATE USER SET US_DESC = ? WHERE US_ID_A = ?";
+			jpa.createQuery(query, Patient.class, false);
+			params.add(user.getDesc());
+			params.add(user.getUserName());
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();			
+		}  catch (OHException e) {
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 				
+	
+		jpa.commitTransaction();
+    	
 		return result;
 	}
 	
@@ -225,18 +243,31 @@ public class MenuIoOperations {
 	 * @return <code>true</code> if the user has been updated, <code>false</code> otherwise.
 	 * @throws OHException
 	 */
-	public boolean updatePassword(User user) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		List<Object> parameters = new ArrayList<Object>();
-		boolean result = false;
+	public boolean updatePassword(
+			User user) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		String query = null;
+		boolean result = true;
+				
 
-		String sqlstring = "UPDATE USER SET US_PASSWD = ? WHERE US_ID_A = ?";
-		parameters.add(user.getPasswd());
-		parameters.add(user.getUserName());
+		jpa.beginTransaction();		
 		
-		result = dbQuery.setDataWithParams(sqlstring, parameters, true);
-
-		dbQuery.releaseConnection();
+		try {
+			query = "UPDATE USER SET US_PASSWD = ? WHERE US_ID_A = ?";
+			jpa.createQuery(query, Patient.class, false);
+			params.add(user.getDesc());
+			params.add(user.getUserName());
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();			
+		}  catch (OHException e) {
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 				
+	
+		jpa.commitTransaction();
+		
 		return result;
 	}
 
@@ -247,15 +278,17 @@ public class MenuIoOperations {
 	 * @return <code>true</code> if the user has been deleted, <code>false</code> otherwise.
 	 * @throws OHException
 	 */
-	public boolean deleteUser(User user) throws OHException {
-		String string = "DELETE FROM USER WHERE US_ID_A = ?";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		List<Object> parameters = Collections.<Object>singletonList(user.getUserName());
-		boolean result = false;
+	public boolean deleteUser(
+			User user) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
 		
-		result = dbQuery.setDataWithParams(string, parameters, true);
 		
-		dbQuery.releaseConnection();
+		jpa.beginTransaction();	
+		jpa.remove(user);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 	
@@ -266,36 +299,28 @@ public class MenuIoOperations {
 	 * @return the list of {@link UserMenuItem}s 
 	 * @throws OHException
 	 */
-	public ArrayList<UserMenuItem> getMenu(User aUser) throws OHException {
+	@SuppressWarnings("unchecked")
+	public ArrayList<UserMenuItem> getMenu(
+			User aUser) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Object> params = new ArrayList<Object>();
 		ArrayList<UserMenuItem> menu = null;
-		String string = "select mn.*,GROUPMENU.GM_ACTIVE from USERGROUP inner join USER on US_UG_ID_A=UG_ID_A "
+				
+		
+		jpa.beginTransaction();
+		
+		String query = "select mn.*,GROUPMENU.GM_ACTIVE from USERGROUP inner join USER on US_UG_ID_A=UG_ID_A "
 				+ " inner join GROUPMENU on UG_ID_A=GM_UG_ID_A inner join MENUITEM as mn on "
 				+ " GM_MNI_ID_A=mn.MNI_ID_A where US_ID_A = ? order by MNI_POSITION";
-		List<Object> parameters = Collections.<Object>singletonList(aUser.getUserName());
-
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ResultSet resultSet = dbQuery.getDataWithParams(string, parameters, true);
-			menu = new ArrayList<UserMenuItem>(resultSet.getFetchSize());
-
-			while (resultSet.next()) {
-				menu.add(new UserMenuItem(resultSet.getString("MNI_ID_A"),
-						MessageBundle.getMessage(resultSet.getString("MNI_BTN_LABEL")), 
-						MessageBundle.getMessage(resultSet.getString("MNI_LABEL")), 
-						resultSet.getString("MNI_TOOLTIP"), 
-						((resultSet.getString("MNI_SHORTCUT") == null) ? 'x'
-								: (char) (resultSet.getString("MNI_SHORTCUT")).charAt(0)), 
-								resultSet.getString("MNI_SUBMENU"), 
-								resultSet.getString("MNI_CLASS"), 
-								(resultSet.getString("MNI_IS_SUBMENU").equals("Y") ? true : false),
-						resultSet.getInt("MNI_POSITION"), 
-						(resultSet.getString("GM_ACTIVE").equals("Y") ? true : false)));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		jpa.createQuery(query, UserMenuItem.class, false);
+		params.add(aUser.getUserName());
+		jpa.setParameters(params, false);
+		List<UserMenuItem> menuList = (List<UserMenuItem>)jpa.getList();
+		menu = new ArrayList<UserMenuItem>(menuList);			
+		
+		jpa.commitTransaction();
+		
 		return menu;
 	}
 
@@ -306,36 +331,28 @@ public class MenuIoOperations {
 	 * @return the list of {@link UserMenuItem}s 
 	 * @throws OHException
 	 */
-	public ArrayList<UserMenuItem> getGroupMenu(UserGroup aGroup) throws OHException {
+	@SuppressWarnings("unchecked")
+	public ArrayList<UserMenuItem> getGroupMenu(
+			UserGroup aGroup) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Object> params = new ArrayList<Object>();
 		ArrayList<UserMenuItem> menu = null;
-		String string = "select mn.*,GROUPMENU.GM_ACTIVE from USERGROUP "
+				
+		
+		jpa.beginTransaction();
+		
+		String query = "select mn.*,GROUPMENU.GM_ACTIVE from USERGROUP "
 				+ " inner join GROUPMENU on UG_ID_A=GM_UG_ID_A inner join MENUITEM as mn on "
 				+ " GM_MNI_ID_A=mn.MNI_ID_A where UG_ID_A = ? order by MNI_POSITION";
-		List<Object> parameters = Collections.<Object>singletonList(aGroup.getCode());
-
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ResultSet resultSet = dbQuery.getDataWithParams(string, parameters, true);
-			menu = new ArrayList<UserMenuItem>(resultSet.getFetchSize());
-
-			while (resultSet.next()) {
-				menu.add(new UserMenuItem(resultSet.getString("MNI_ID_A"),
-						MessageBundle.getMessage(resultSet.getString("MNI_BTN_LABEL")), 
-						MessageBundle.getMessage(resultSet.getString("MNI_LABEL")), 
-						resultSet.getString("MNI_TOOLTIP"), 
-						((resultSet.getString("MNI_SHORTCUT") == null) ? 'x'
-								: (char) (resultSet.getString("MNI_SHORTCUT")).charAt(0)), 
-								resultSet.getString("MNI_SUBMENU"), 
-								resultSet.getString("MNI_CLASS"), 
-								(resultSet.getString("MNI_IS_SUBMENU").equals("Y") ? true : false),
-						resultSet.getInt("MNI_POSITION"), 
-						(resultSet.getString("GM_ACTIVE").equals("Y") ? true : false)));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		jpa.createQuery(query, UserMenuItem.class, false);		
+		params.add(aGroup.getCode());
+		jpa.setParameters(params, false);
+		List<UserMenuItem> menuList = (List<UserMenuItem>)jpa.getList();
+		menu = new ArrayList<UserMenuItem>(menuList);			
+		
+		jpa.commitTransaction();
+		
 		return menu;
 	}
 
@@ -348,27 +365,78 @@ public class MenuIoOperations {
 	 * @return <code>true</code> if the menu has been replaced, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean setGroupMenu(UserGroup aGroup, ArrayList<UserMenuItem> menu, boolean insert) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		List<Object> parameters = new ArrayList<Object>();
-		String sqlString = "DELETE FROM GROUPMENU WHERE GM_UG_ID_A = ?";
-		parameters.add(aGroup.getCode());
+	public boolean setGroupMenu(
+			UserGroup aGroup, 
+			ArrayList<UserMenuItem> menu, 
+			boolean insert) throws OHException 
+	{
 		boolean result = true;
 
-		dbQuery.setDataWithParams(sqlString, parameters, false);
-		sqlString = "INSERT INTO GROUPMENU (GM_UG_ID_A, GM_MNI_ID_A, GM_ACTIVE) values(?, ?, ?)";	
+	
+		result = _deleteGroupMenu(aGroup);
+		
 		for (UserMenuItem item : menu) {
-			parameters.clear();
-			parameters.add(aGroup.getCode());
-			parameters.add(item.getCode());
-			parameters.add(item.isActive() ? "Y" : "N");
-			result = result && dbQuery.setDataWithParams(sqlString, parameters, false);
+			result = result && _insertGroupMenu(aGroup, item, insert);
 		}
 		
-		if (result) dbQuery.commit();
-		else dbQuery.rollback();
+		return result;
+	}
+	
+	public boolean _deleteGroupMenu(
+			UserGroup aGroup) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		String query = null;
+		boolean result = true;
+				
+
+		jpa.beginTransaction();		
 		
-		if (!insert) dbQuery.releaseConnection();
+		try {
+			query = "DELETE FROM GROUPMENU WHERE GM_UG_ID_A = ?";
+			jpa.createQuery(query, Patient.class, false);
+			params.add(aGroup.getCode());
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();			
+		}  catch (OHException e) {
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 				
+	
+		jpa.commitTransaction();
+		
+		return result;
+	}
+	
+	public boolean _insertGroupMenu(
+			UserGroup aGroup,
+			UserMenuItem item, 
+			boolean insert) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		String query = null;
+		boolean result = true;
+				
+
+		jpa.beginTransaction();		
+		
+		try {
+			query = "INSERT INTO GROUPMENU (GM_UG_ID_A, GM_MNI_ID_A, GM_ACTIVE) values(?, ?, ?)";
+			jpa.createQuery(query, Patient.class, false);
+			params.add(aGroup.getCode());
+			params.add(item.getCode());
+			params.add(item.isActive() ? "Y" : "N");
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();			
+		}  catch (OHException e) {
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 				
+	
+		jpa.commitTransaction();
+		
 		return result;
 	}
 	
@@ -379,21 +447,29 @@ public class MenuIoOperations {
 	 * @return <code>true</code> if the group has been deleted, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean deleteGroup(UserGroup aGroup) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		List<Object> parameters = Collections.<Object>singletonList(aGroup.getCode());
+	public boolean deleteGroup(
+			UserGroup aGroup) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
-	
-		String sqlString = "DELETE FROM GROUPMENU WHERE GM_UG_ID_A = ?";
-		dbQuery.setDataWithParams(sqlString, parameters, false);
 		
-		sqlString = "DELETE FROM USERGROUP WHERE UG_ID_A =?";
-		dbQuery.setDataWithParams(sqlString, parameters, false);
-
-		if (result) dbQuery.commit();
-		else dbQuery.rollback();
 		
-		dbQuery.releaseConnection();
+		jpa.beginTransaction();		
+		
+		try {
+			jpa.createQuery("DELETE FROM GROUPMENU WHERE GM_UG_ID_A = ?", GroupMenu.class, false);
+			params.add(aGroup.getClass());
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();
+			jpa.remove(aGroup);
+		}  catch (OHException e) {
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 	
+		
+		jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -404,29 +480,17 @@ public class MenuIoOperations {
 	 * @return <code>true</code> if the group has been inserted, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean newUserGroup(UserGroup aGroup) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		List<Object> parameters = new ArrayList<Object>();
-		boolean result = false;
-		String sqlString = "INSERT INTO USERGROUP (UG_ID_A, UG_DESC) VALUES(?, ?)";
-		parameters.add(aGroup.getCode());
-		parameters.add(aGroup.getDesc());
-
-		result = dbQuery.setDataWithParams(sqlString, parameters, true);
+	public boolean newUserGroup(
+			UserGroup aGroup) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
 		
-		// get 'admin' menu (complete)
-		ArrayList<UserMenuItem> menu = getGroupMenu(new UserGroup("admin", ""));
-		// remove everything except Exit and File items
-		for (UserMenuItem e : menu) {
-			// Setting inactive also for node
-			if (!e.getCode().equalsIgnoreCase("EXIT") && 
-				!e.getCode().equalsIgnoreCase("FILE"))
-				e.setActive(false);
-		}
-		// set the new group rights
-		result = result && setGroupMenu(aGroup, menu, true);
 		
-		dbQuery.releaseConnection();
+		jpa.beginTransaction();	
+		jpa.persist(aGroup);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -437,18 +501,31 @@ public class MenuIoOperations {
 	 * @return <code>true</code> if the group has been updated, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean updateUserGroup(UserGroup aGroup) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		List<Object> parameters = new ArrayList<Object>();
-		boolean result = false;
-		String sqlstring = "UPDATE USERGROUP SET UG_DESC = ? WHERE UG_ID_A = ?";
+	public boolean updateUserGroup(
+			UserGroup aGroup) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		String query = null;
+		boolean result = true;
+				
+
+		jpa.beginTransaction();		
 		
-		parameters.add(aGroup.getDesc());
-		parameters.add(aGroup.getCode());
-
-		result = dbQuery.setDataWithParams(sqlstring, parameters, true);
-
-		dbQuery.releaseConnection();
+		try {
+			query = "UPDATE USERGROUP SET UG_DESC = ? WHERE UG_ID_A = ?";
+			jpa.createQuery(query, Patient.class, false);
+			params.add(aGroup.getDesc());
+			params.add(aGroup.getCode());
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();			
+		}  catch (OHException e) {
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 				
+	
+		jpa.commitTransaction();
+		
 		return result;
 	}
 }

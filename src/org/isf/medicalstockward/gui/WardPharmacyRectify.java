@@ -35,6 +35,7 @@ import org.isf.medicals.model.Medical;
 import org.isf.medicalstockward.manager.MovWardBrowserManager;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
+import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
 
 public class WardPharmacyRectify extends JDialog {
@@ -111,7 +112,12 @@ public class WardPharmacyRectify extends JDialog {
 		super(owner, true);
 		wardMap = new HashMap<Integer, Double>();
 		for (MedicalWard medWard : drugs) {
-			wardMap.put(medWard.getMedical().getCode(), medWard.getQty());
+			try {
+				wardMap.put(medWard.getMedical().getCode(), medWard.getQty());
+			} catch (OHException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		medicalMap = new HashMap<String, Medical>();
 		for (Medical med : medicals) {

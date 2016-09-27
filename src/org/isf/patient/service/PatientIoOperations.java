@@ -1,7 +1,7 @@
 package org.isf.patient.service;
 
 /*------------------------------------------
- * IoOperations - db operations for the patient entity
+ * IoOperations - dB operations for the patient entity
  * -----------------------------------------
  * modification history
  * 05/05/2005 - giacomo  - first beta version 
@@ -18,80 +18,43 @@ package org.isf.patient.service;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.sql.Blob;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.patient.model.Patient;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
-import org.springframework.stereotype.Component;
 
-@Component
-public class PatientIoOperations {
-
+public class PatientIoOperations 
+{
 	/**
 	 * method that returns the full list of Patients not logically deleted
 	 * 
 	 * @return the list of patients
 	 * @throws OHException
 	 */
-	public ArrayList<Patient> getPatients() throws OHException {
+	@SuppressWarnings("unchecked")
+	public ArrayList<Patient> getPatients() throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Patient> pPatient = null;
-		String query = "SELECT * FROM PATIENT WHERE (PAT_DELETED='N' OR PAT_DELETED IS NULL) ORDER BY PAT_NAME";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ResultSet resultSet = dbQuery.getData(query, true);
-			pPatient = new ArrayList<Patient>(resultSet.getFetchSize());
-			Patient patient;
-			while (resultSet.next()) {
-				patient = new Patient();
-				patient.setCode(resultSet.getInt("PAT_ID"));
-				patient.setFirstName(resultSet.getString("PAT_FNAME"));
-				patient.setSecondName(resultSet.getString("PAT_SNAME"));
-				patient.setAddress(resultSet.getString("PAT_ADDR"));
-				patient.setBirthDate(resultSet.getDate("PAT_BDATE"));
-				patient.setAge(resultSet.getInt("PAT_AGE"));
-				patient.setAgetype(resultSet.getString("PAT_AGETYPE"));
-				patient.setSex(resultSet.getString("PAT_SEX").charAt(0));
-				patient.setCity(resultSet.getString("PAT_CITY"));
-				patient.setTelephone(resultSet.getString("PAT_TELE"));
-				patient.setNextKin(resultSet.getString("PAT_NEXT_KIN"));
-				patient.setBloodType(resultSet.getString("PAT_BTYPE"));
-				patient.setFather(resultSet.getString("PAT_FATH").charAt(0));
-				patient.setFather_name(resultSet.getString("PAT_FATH_NAME"));
-				patient.setMother(resultSet.getString("PAT_MOTH").charAt(0));
-				patient.setMother_name(resultSet.getString("PAT_MOTH_NAME"));
-				patient.setHasInsurance(resultSet.getString("PAT_ESTA").charAt(0));
-				patient.setParentTogether(resultSet.getString("PAT_PTOGE").charAt(0));
-				patient.setNote(resultSet.getString("PAT_NOTE"));
-				patient.setTaxCode(resultSet.getString("PAT_TAXCODE"));
-				patient.setLock(resultSet.getInt("PAT_LOCK"));
-				Blob photoBlob = resultSet.getBlob("PAT_PHOTO");
-				if (photoBlob != null) {
-					BufferedInputStream is = new BufferedInputStream(photoBlob.getBinaryStream());
-					Image image = ImageIO.read(is);
-					patient.setPhoto(image);
-				} else {
-					patient.setPhoto(null);
-				}
-				pPatient.add(patient);
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} catch (IOException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+				
+		
+		jpa.beginTransaction();
+		
+		jpa.createQuery("SELECT * FROM PATIENT WHERE (PAT_DELETED='N' OR PAT_DELETED IS NULL) ORDER BY PAT_NAME", Patient.class, false);
+		List<Patient> patients = (List<Patient>)jpa.getList();
+		pPatient = new ArrayList<Patient>(patients);			
+		
+		jpa.commitTransaction();
+			
 		return pPatient;
 	}
 
@@ -102,76 +65,74 @@ public class PatientIoOperations {
 	 * @return the full list of Patients with Height and Weight
 	 * @throws OHException
 	 */
-	public ArrayList<Patient> getPatientsWithHeightAndWeight(String regex) throws OHException {
-		ArrayList<Patient> pPatient = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-		// Recupera i pazienti arricchiti con Peso e Altezza
-		StringBuilder queryBld = new StringBuilder(
-				"SELECT * FROM PATIENT LEFT JOIN (SELECT PEX_PAT_ID, PEX_HEIGHT AS PAT_HEIGHT, PEX_WEIGHT AS PAT_WEIGHT FROM PATIENTEXAMINATION GROUP BY PEX_PAT_ID ORDER BY PEX_DATE DESC) AS HW ON PAT_ID = HW.PEX_PAT_ID WHERE (PAT_DELETED='N' or PAT_DELETED is null) ");
+	@SuppressWarnings("unchecked")
+	public ArrayList<Patient> getPatientsWithHeightAndWeight(
+			String regex) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Patient> pPatient = null;	
+		String[] words = _getPatientsWithHeightAndWeightRegex(regex);
+		String query = _getPatientsWithHeightAndWeightQuery(words);
+		ArrayList<Object> params = _getPatientsWithHeightAndWeightParameters(words);
+		
+		
+		jpa.beginTransaction();		
 
-		if (regex != null && !regex.equals("")) {
-			String s = regex.trim().toLowerCase();
-			String[] s1 = s.split(" ");
+		jpa.createQuery(query, Patient.class, false);
+		jpa.setParameters(params, false);
+		List<Patient> patients = (List<Patient>)jpa.getList();
+		pPatient = new ArrayList<Patient>(patients);			
+		
+		jpa.commitTransaction();	
+		
+		return pPatient;
+	}
+	
+	private String[] _getPatientsWithHeightAndWeightRegex(
+			String regex) throws OHException 
+	{
+		String string = null;
+		String[] words = new String[0];
+		
+		
+		if ((regex != null) 
+			&& (!regex.equals(""))) 
+		{
+			string = regex.trim().toLowerCase();
+			words = string.split(" ");
+		}
 
-			for (int i = 0; i < s1.length; i++) {
-				queryBld.append("AND CONCAT(PAT_ID, LOWER(PAT_SNAME), LOWER(PAT_FNAME), LOWER(PAT_NOTE), LOWER(PAT_TAXCODE)) ");
-				//queryBld.append("LIKE ? ");
-				//params.add("%" + s1[i] + "%");
-				queryBld.append("LIKE CONCAT('%', ? , '%') ");
-				params.add(s1[i]);
-			}
+		return words;
+	}
+		
+	private String _getPatientsWithHeightAndWeightQuery(
+			String[] words) throws OHException 
+	{
+		StringBuilder queryBld = new StringBuilder("SELECT * FROM PATIENT LEFT JOIN (SELECT PEX_PAT_ID, PEX_HEIGHT AS PAT_HEIGHT, PEX_WEIGHT AS PAT_WEIGHT FROM PATIENTEXAMINATION GROUP BY PEX_PAT_ID ORDER BY PEX_DATE DESC) AS HW ON PAT_ID = HW.PEX_PAT_ID WHERE (PAT_DELETED='N' or PAT_DELETED is null) ");
+		
+		
+		for (int i=0; i<words.length; i++) 
+		{
+			queryBld.append("AND CONCAT(PAT_ID, LOWER(PAT_SNAME), LOWER(PAT_FNAME), LOWER(PAT_NOTE), LOWER(PAT_TAXCODE)) ");
+			queryBld.append("LIKE CONCAT('%', ? , '%') ");
 		}
 		queryBld.append(" ORDER BY PAT_ID DESC");
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ResultSet resultSet = dbQuery.getDataWithParams(queryBld.toString(), params, true);
-			pPatient = new ArrayList<Patient>(resultSet.getFetchSize());
-			Patient patient;
-			while (resultSet.next()) {
-				patient = new Patient();
-				patient.setCode(resultSet.getInt("PAT_ID"));
-				patient.setFirstName(resultSet.getString("PAT_FNAME"));
-				patient.setSecondName(resultSet.getString("PAT_SNAME"));
-				patient.setAddress(resultSet.getString("PAT_ADDR"));
-				patient.setBirthDate(resultSet.getDate("PAT_BDATE"));
-				patient.setAge(resultSet.getInt("PAT_AGE"));
-				patient.setAgetype(resultSet.getString("PAT_AGETYPE"));
-				patient.setSex(resultSet.getString("PAT_SEX").charAt(0));
-				patient.setCity(resultSet.getString("PAT_CITY"));
-				patient.setTelephone(resultSet.getString("PAT_TELE"));
-				patient.setNextKin(resultSet.getString("PAT_NEXT_KIN"));
-				patient.setBloodType(resultSet.getString("PAT_BTYPE")); // added
-				patient.setFather(resultSet.getString("PAT_FATH").charAt(0));
-				patient.setFather_name(resultSet.getString("PAT_FATH_NAME"));
-				patient.setMother(resultSet.getString("PAT_MOTH").charAt(0));
-				patient.setMother_name(resultSet.getString("PAT_MOTH_NAME"));
-				patient.setHasInsurance(resultSet.getString("PAT_ESTA").charAt(0));
-				patient.setParentTogether(resultSet.getString("PAT_PTOGE").charAt(0));
-				patient.setNote(resultSet.getString("PAT_NOTE"));
-				patient.setTaxCode(resultSet.getString("PAT_TAXCODE"));
-				patient.setHeight(resultSet.getFloat("PAT_HEIGHT"));
-				patient.setWeight(resultSet.getFloat("PAT_WEIGHT"));
-				patient.setLock(resultSet.getInt("PAT_LOCK"));
-				Blob photoBlob = resultSet.getBlob("PAT_PHOTO");
 
-				if (photoBlob != null) {
-					BufferedInputStream is = new BufferedInputStream(photoBlob.getBinaryStream());
-					Image image = ImageIO.read(is);
-					patient.setPhoto(image);
-				} else {
-					patient.setPhoto(null);
-				}
-
-				pPatient.add(patient);
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} catch (IOException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e);
-		} finally {
-			dbQuery.releaseConnection();
+		return queryBld.toString();
+	}
+	
+	private ArrayList<Object> _getPatientsWithHeightAndWeightParameters(
+			String[] words) throws OHException 
+	{
+		ArrayList<Object> params = new ArrayList<Object>();
+		
+		
+		for (int i=0; i<words.length; i++) 
+		{
+			params.add(words[i]);
 		}
-		return pPatient;
+
+		return params;
 	}
 
 	/**
@@ -181,55 +142,28 @@ public class PatientIoOperations {
 	 * @return the Patient that match specified name
 	 * @throws OHException
 	 */
-	public Patient getPatient(String name) throws OHException {
-		Patient patient = null;
-		String query = "SELECT * FROM PATIENT WHERE PAT_NAME = ? AND (PAT_DELETED='N' OR PAT_DELETED IS NULL) ORDER BY PAT_SNAME,PAT_FNAME";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ArrayList<Object> params = new ArrayList<Object>();
-			params.add(name);
-			ResultSet resultSet = dbQuery.getDataWithParams(query, params, true);
-			patient = new Patient();
-			while (resultSet.next()) {
-				patient = new Patient();
-				patient.setCode(resultSet.getInt("PAT_ID"));
-				patient.setFirstName(resultSet.getString("PAT_FNAME"));
-				patient.setSecondName(resultSet.getString("PAT_SNAME"));
-				patient.setAddress(resultSet.getString("PAT_ADDR"));
-				patient.setBirthDate(resultSet.getDate("PAT_BDATE"));
-				patient.setAge(resultSet.getInt("PAT_AGE"));
-				patient.setAgetype(resultSet.getString("PAT_AGETYPE"));
-				patient.setSex(resultSet.getString("PAT_SEX").charAt(0));
-				patient.setCity(resultSet.getString("PAT_CITY"));
-				patient.setTelephone(resultSet.getString("PAT_TELE"));
-				patient.setNextKin(resultSet.getString("PAT_NEXT_KIN"));
-				patient.setBloodType(resultSet.getString("PAT_BTYPE")); // added
-				patient.setFather(resultSet.getString("PAT_FATH").charAt(0));
-				patient.setFather_name(resultSet.getString("PAT_FATH_NAME"));
-				patient.setMother(resultSet.getString("PAT_MOTH").charAt(0));
-				patient.setMother_name(resultSet.getString("PAT_MOTH_NAME"));
-				patient.setHasInsurance(resultSet.getString("PAT_ESTA").charAt(0));
-				patient.setParentTogether(resultSet.getString("PAT_PTOGE").charAt(0));
-				patient.setNote(resultSet.getString("PAT_NOTE"));
-				patient.setTaxCode(resultSet.getString("PAT_TAXCODE"));
-				patient.setLock(resultSet.getInt("PAT_LOCK"));
-				Blob photoBlob = resultSet.getBlob("PAT_PHOTO");
-				// System.out.println("blob size: " + photoBlob.length());
-				if (photoBlob != null) {
-					BufferedInputStream is = new BufferedInputStream(photoBlob.getBinaryStream());
-					Image image = ImageIO.read(is);
-					patient.setPhoto(image);
-				} else {
-					patient.setPhoto(null);
-				}
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} catch (IOException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e);
-		} finally {
-			dbQuery.releaseConnection();
+	@SuppressWarnings("unchecked")
+	public Patient getPatient(
+			String name) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		Patient patient = null;	
+		
+		
+		jpa.beginTransaction();		
+
+		jpa.createQuery("SELECT * FROM PATIENT WHERE PAT_NAME = ? AND (PAT_DELETED='N' OR PAT_DELETED IS NULL) ORDER BY PAT_SNAME,PAT_FNAME", Patient.class, false);
+		params.add(name);
+		jpa.setParameters(params, false);
+		List<Patient> patients = (List<Patient>)jpa.getList();
+		if (patients.size() > 0)
+		{			
+			patient = patients.get(patients.size()-1);			
 		}
+		
+		jpa.commitTransaction();	
+		
 		return patient;
 	}
 
@@ -240,55 +174,28 @@ public class PatientIoOperations {
 	 * @return the Patient
 	 * @throws OHException
 	 */
-	public Patient getPatient(Integer code) throws OHException {
-		Patient patient = null;
-		String query = "SELECT * FROM PATIENT WHERE PAT_ID = ? AND (PAT_DELETED='N' OR PAT_DELETED IS NULL)";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ArrayList<Object> params = new ArrayList<Object>();
-			params.add(code);
-			ResultSet resultSet = dbQuery.getDataWithParams(query, params, true);
-			patient = new Patient();
-			while (resultSet.next()) {
-				patient = new Patient();
-				patient.setCode(resultSet.getInt("PAT_ID"));
-				patient.setFirstName(resultSet.getString("PAT_FNAME"));
-				patient.setSecondName(resultSet.getString("PAT_SNAME"));
-				patient.setAddress(resultSet.getString("PAT_ADDR"));
-				patient.setBirthDate(resultSet.getDate("PAT_BDATE"));
-				patient.setAge(resultSet.getInt("PAT_AGE"));
-				patient.setAgetype(resultSet.getString("PAT_AGETYPE"));
-				patient.setSex(resultSet.getString("PAT_SEX").charAt(0));
-				patient.setCity(resultSet.getString("PAT_CITY"));
-				patient.setTelephone(resultSet.getString("PAT_TELE"));
-				patient.setNextKin(resultSet.getString("PAT_NEXT_KIN"));
-				patient.setBloodType(resultSet.getString("PAT_BTYPE")); // added
-				patient.setFather(resultSet.getString("PAT_FATH").charAt(0));
-				patient.setFather_name(resultSet.getString("PAT_FATH_NAME"));
-				patient.setMother(resultSet.getString("PAT_MOTH").charAt(0));
-				patient.setMother_name(resultSet.getString("PAT_MOTH_NAME"));
-				patient.setHasInsurance(resultSet.getString("PAT_ESTA").charAt(0));
-				patient.setParentTogether(resultSet.getString("PAT_PTOGE").charAt(0));
-				patient.setNote(resultSet.getString("PAT_NOTE"));
-				patient.setTaxCode(resultSet.getString("PAT_TAXCODE"));
-				patient.setLock(resultSet.getInt("PAT_LOCK"));
-				Blob photoBlob = resultSet.getBlob("PAT_PHOTO");
+	@SuppressWarnings("unchecked")
+	public Patient getPatient(
+			Integer code) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		Patient patient = null;	
+		
+		
+		jpa.beginTransaction();		
 
-				if (photoBlob != null) {
-					BufferedInputStream is = new BufferedInputStream(photoBlob.getBinaryStream());
-					Image image = ImageIO.read(is);
-					patient.setPhoto(image);
-				} else {
-					patient.setPhoto(null);
-				}
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} catch (IOException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e);
-		} finally {
-			dbQuery.releaseConnection();
+		jpa.createQuery("SELECT * FROM PATIENT WHERE PAT_ID = ? AND (PAT_DELETED='N' OR PAT_DELETED IS NULL)", Patient.class, false);
+		params.add(code);
+		jpa.setParameters(params, false);
+		List<Patient> patients = (List<Patient>)jpa.getList();
+		if (patients.size() > 0)
+		{			
+			patient = patients.get(patients.size()-1);			
 		}
+		
+		jpa.commitTransaction();	
+		
 		return patient;
 	}
 
@@ -299,55 +206,28 @@ public class PatientIoOperations {
 	 * @return the list of Patients
 	 * @throws OHException
 	 */
-	public Patient getPatientAll(Integer code) throws OHException {
-		Patient patient = null;
-		String query = "SELECT * FROM PATIENT WHERE PAT_ID = ?";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ArrayList<Object> params = new ArrayList<Object>();
-			params.add(code);
-			ResultSet resultSet = dbQuery.getDataWithParams(query, params, true);
-			patient = new Patient();
-			while (resultSet.next()) {
-				patient = new Patient();
-				patient.setCode(resultSet.getInt("PAT_ID"));
-				patient.setFirstName(resultSet.getString("PAT_FNAME"));
-				patient.setSecondName(resultSet.getString("PAT_SNAME"));
-				patient.setAddress(resultSet.getString("PAT_ADDR"));
-				patient.setBirthDate(resultSet.getDate("PAT_BDATE"));
-				patient.setAge(resultSet.getInt("PAT_AGE"));
-				patient.setAgetype(resultSet.getString("PAT_AGETYPE"));
-				patient.setSex(resultSet.getString("PAT_SEX").charAt(0));
-				patient.setCity(resultSet.getString("PAT_CITY"));
-				patient.setTelephone(resultSet.getString("PAT_TELE"));
-				patient.setNextKin(resultSet.getString("PAT_NEXT_KIN"));
-				patient.setBloodType(resultSet.getString("PAT_BTYPE")); // added
-				patient.setFather(resultSet.getString("PAT_FATH").charAt(0));
-				patient.setFather_name(resultSet.getString("PAT_FATH_NAME"));
-				patient.setMother(resultSet.getString("PAT_MOTH").charAt(0));
-				patient.setMother_name(resultSet.getString("PAT_MOTH_NAME"));
-				patient.setHasInsurance(resultSet.getString("PAT_ESTA").charAt(0));
-				patient.setParentTogether(resultSet.getString("PAT_PTOGE").charAt(0));
-				patient.setNote(resultSet.getString("PAT_NOTE"));
-				patient.setTaxCode(resultSet.getString("PAT_TAXCODE"));
-				patient.setLock(resultSet.getInt("PAT_LOCK"));
-				Blob photoBlob = resultSet.getBlob("PAT_PHOTO");
+	@SuppressWarnings("unchecked")
+	public Patient getPatientAll(
+			Integer code) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		Patient patient = null;	
+		
+		
+		jpa.beginTransaction();		
 
-				if (photoBlob != null) {
-					BufferedInputStream is = new BufferedInputStream(photoBlob.getBinaryStream());
-					Image image = ImageIO.read(is);
-					patient.setPhoto(image);
-				} else {
-					patient.setPhoto(null);
-				}
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} catch (IOException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e);
-		} finally {
-			dbQuery.releaseConnection();
+		jpa.createQuery("SELECT * FROM PATIENT WHERE PAT_ID = ?", Patient.class, false);
+		params.add(code);
+		jpa.setParameters(params, false);
+		List<Patient> patients = (List<Patient>)jpa.getList();
+		if (patients.size() > 0)
+		{			
+			patient = patients.get(patients.size()-1);			
 		}
+		
+		jpa.commitTransaction();	
+		
 		return patient;
 	}
 
@@ -357,9 +237,12 @@ public class PatientIoOperations {
 	 * @param anImage
 	 * @return
 	 */
-	private ByteArrayInputStream createPatientPhotoInputStream(Image anImage) {
-
+	private ByteArrayInputStream createPatientPhotoInputStream(
+			Image anImage) 
+	{
 		ByteArrayInputStream inStream = null;
+		
+		
 		try {
 			// Paint the image onto the buffered image
 			BufferedImage bu = new BufferedImage(anImage.getWidth(null), anImage.getHeight(null), BufferedImage.TYPE_INT_RGB);
@@ -374,64 +257,77 @@ public class PatientIoOperations {
 			// Create the ByteArrayInputStream
 			inStream = new ByteArrayInputStream(outStream.toByteArray());
 		} catch (IOException ioe) {
-
+			//TODO: handle exception
 		} catch (Exception ioe) {
-
+			//TODO: handle exception
 		}
+		
 		return inStream;
 	}
 
 	/**
-	 * methot that insert a new Patient in the db
+	 * Method that insert a new Patient in the dB
 	 * 
 	 * @param patient
 	 * @return true - if the new Patient has been inserted
 	 * @throws OHException
 	 */
-	public boolean newPatient(Patient patient) throws OHException {
+	public boolean newPatient(
+			Patient patient) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		String query = "INSERT INTO PATIENT (PAT_NAME, PAT_FNAME, PAT_SNAME, PAT_BDATE, PAT_AGE, PAT_AGETYPE, PAT_SEX, PAT_ADDR, PAT_CITY, PAT_NEXT_KIN, PAT_TELE, PAT_MOTH_NAME, PAT_MOTH, PAT_FATH_NAME, PAT_FATH, PAT_BTYPE, PAT_ESTA, PAT_PTOGE, PAT_NOTE, PAT_TAXCODE, PAT_PHOTO) " +
+				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		boolean result = true;
 
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
+		
+		jpa.beginTransaction();		
+
 		try {
-			String query = "INSERT INTO PATIENT (PAT_NAME, PAT_FNAME, PAT_SNAME, PAT_BDATE, PAT_AGE, PAT_AGETYPE, PAT_SEX, PAT_ADDR, PAT_CITY, PAT_NEXT_KIN, PAT_TELE, PAT_MOTH_NAME, PAT_MOTH, PAT_FATH_NAME, PAT_FATH, PAT_BTYPE, PAT_ESTA, PAT_PTOGE, PAT_NOTE, PAT_TAXCODE, PAT_PHOTO) " +
-					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			
-			ArrayList<Object> params = new ArrayList<Object>();
-			params.add(patient.getName());
-			params.add(patient.getFirstName());
-			params.add(patient.getSecondName());
-			params.add(patient.getBirthDate());
-			params.add(patient.getAge());
-			params.add(patient.getAgetype());
-			params.add(String.valueOf(patient.getSex()));
-			params.add(patient.getAddress());
-			params.add(patient.getCity());
-			params.add(patient.getNextKin());
-			params.add(patient.getTelephone());
-			params.add(patient.getMother_name());
-			params.add(String.valueOf(patient.getMother()));
-			params.add(patient.getFather_name());
-			params.add(String.valueOf(patient.getFather()));
-			params.add(patient.getBloodType());
-			params.add(String.valueOf(patient.getHasInsurance()));
-			params.add(String.valueOf(patient.getParentTogether()));
-			params.add(patient.getNote());
-			params.add(patient.getTaxCode());
-			params.add(createPatientPhotoInputStream(patient.getPhoto()));
-
-			ResultSet r = dbQuery.setDataReturnGeneratedKeyWithParams(query, params, true);
-
-			if (r.first()) {
-				patient.setCode(r.getInt(1));
-				result = true;
-			}
-
-		} catch (SQLException e) {
+			jpa.createQuery(query, Patient.class, false);
+			params = _addNewPatientParameters(patient);
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();
+		}  catch (OHException e) {
+			result = false;
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		} 
+				
+		jpa.commitTransaction();	
+		
 		return result;
+	}
+	
+	private ArrayList<Object> _addNewPatientParameters(
+			Patient patient) throws OHException 
+	{
+		ArrayList<Object> params = new ArrayList<Object>();
+		
+		
+		params.add(patient.getName());
+		params.add(patient.getFirstName());
+		params.add(patient.getSecondName());
+		params.add(patient.getBirthDate());
+		params.add(patient.getAge());
+		params.add(patient.getAgetype());
+		params.add(String.valueOf(patient.getSex()));
+		params.add(patient.getAddress());
+		params.add(patient.getCity());
+		params.add(patient.getNextKin());
+		params.add(patient.getTelephone());
+		params.add(patient.getMother_name());
+		params.add(String.valueOf(patient.getMother()));
+		params.add(patient.getFather_name());
+		params.add(String.valueOf(patient.getFather()));
+		params.add(patient.getBloodType());
+		params.add(String.valueOf(patient.getHasInsurance()));
+		params.add(String.valueOf(patient.getParentTogether()));
+		params.add(patient.getNote());
+		params.add(patient.getTaxCode());
+		params.add(createPatientPhotoInputStream(patient.getPhoto()));
+
+		return params;
 	}
 
 	/**
@@ -443,92 +339,145 @@ public class PatientIoOperations {
 	 * @return true - if the existing {@link Patient} has been updated
 	 * @throws OHException
 	 */
-	public boolean updatePatient(Patient patient, boolean check) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		ResultSet set = null;
+	public boolean updatePatient(
+			Patient patient, 
+			boolean check) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		String query = null;
 		int lock = 0;
-		try {
-			if (check) { 
-			
-				// we establish if someone else has updated/deleted the record
-				// since the last read
-				String query = "SELECT PAT_LOCK FROM PATIENT " + " WHERE PAT_ID = ?";
-				ArrayList<Object> params = new ArrayList<Object>();
-				params.add(patient.getCode());
-				set = dbQuery.getDataWithParams(query, params, false); // we use manual commit of the transaction
-				if (set.first()) {
-					lock = set.getInt("PAT_LOCK");
-					// ok the record is present, it was not deleted
-					if (lock != patient.getLock()) {
-						//the patient has been update by someone else
-						return false;
-					}
-				}
-			}
-
-			String query = "UPDATE PATIENT SET PAT_FNAME = ?, PAT_SNAME = ?, PAT_NAME  = ?, PAT_BDATE = ?, PAT_AGE = ?, PAT_AGETYPE = ?, PAT_SEX = ?, PAT_ADDR = ?, PAT_CITY = ?, PAT_NEXT_KIN = ?, PAT_TELE = ?, PAT_MOTH = ?, PAT_MOTH_NAME = ?, PAT_FATH = ?, PAT_FATH_NAME = ?, PAT_BTYPE = ?, PAT_ESTA = ?, PAT_PTOGE = ?, PAT_NOTE = ?, PAT_TAXCODE = ?, PAT_LOCK = ?, PAT_PHOTO = ? WHERE PAT_ID = ?";
-
-			ArrayList<Object> params = new ArrayList<Object>();
-			params.add(patient.getFirstName());
-			params.add(patient.getSecondName());
-			params.add(patient.getName());
-			params.add(patient.getBirthDate());
-			params.add(patient.getAge());
-			params.add(patient.getAgetype());
-			params.add(String.valueOf(patient.getSex()));
-			params.add(patient.getAddress());
-			params.add(patient.getCity());
-			params.add(patient.getNextKin());
-			params.add(patient.getTelephone());
-			params.add(String.valueOf(patient.getMother()));
-			params.add(patient.getMother_name());
-			params.add(String.valueOf(patient.getFather()));
-			params.add(patient.getFather_name());
-			params.add(patient.getBloodType());
-			params.add(String.valueOf(patient.getHasInsurance()));
-			params.add(String.valueOf(patient.getParentTogether()));
-			params.add(patient.getNote());
-			params.add(patient.getTaxCode());
-			params.add(lock + 1);
-			params.add(createPatientPhotoInputStream(patient.getPhoto()));
-			params.add(patient.getCode());
-
-			result = dbQuery.setDataWithParams(query.toString(), params, true);
-
-			/*
-			 * Occorre aggiornare il model perch� il paziente non viene riletto dal DB.
-			 */
-			if (result)
-				patient.setLock(lock + 1);
-			else throw new OHException(MessageBundle.getMessage("angal.patient.thedataisnomorepresent")); // the record has been deleted since the last read
+		boolean result = true;
 				
-		} catch (SQLException e) {
+
+		lock = _getUpdatePatientLock(patient.getCode(), check);
+
+		jpa.beginTransaction();		
+		
+		try {
+			query = "UPDATE PATIENT SET PAT_FNAME = ?, PAT_SNAME = ?, PAT_NAME  = ?, PAT_BDATE = ?, PAT_AGE = ?, PAT_AGETYPE = ?, PAT_SEX = ?, PAT_ADDR = ?, PAT_CITY = ?, PAT_NEXT_KIN = ?, PAT_TELE = ?, PAT_MOTH = ?, PAT_MOTH_NAME = ?, PAT_FATH = ?, PAT_FATH_NAME = ?, PAT_BTYPE = ?, PAT_ESTA = ?, PAT_PTOGE = ?, PAT_NOTE = ?, PAT_TAXCODE = ?, PAT_LOCK = ?, PAT_PHOTO = ? WHERE PAT_ID = ?";
+			jpa.createQuery(query, Patient.class, false);
+			params = _addUpdatePatientParameters(patient, lock);
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();
+			
+			_updatePatientLock(patient, check, lock);
+		}  catch (OHException e) {
+			result = false;
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		} 				
+	
+		jpa.commitTransaction();			
+
 		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private int _getUpdatePatientLock(
+			Integer code, 
+			boolean check) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		String query = null;
+		int lock = 0;
+
+		
+		jpa.beginTransaction();		
+
+		if (check == true) 
+		{ 
+			query = "SELECT * FROM PATIENT WHERE PAT_ID = ?";
+			jpa.createQuery(query, Patient.class, false);
+			params.add(code);
+			jpa.setParameters(params, false);
+			List<Patient> patients = (List<Patient>)jpa.getList();
+			lock = patients.get(0).getLock();
+		}
+				
+		jpa.commitTransaction();
+		
+		return lock;
+	}
+	
+	private ArrayList<Object> _addUpdatePatientParameters(
+			Patient patient,
+			int lock) throws OHException 
+	{
+		ArrayList<Object> params = new ArrayList<Object>();
+		
+		
+		params.add(patient.getFirstName());
+		params.add(patient.getSecondName());
+		params.add(patient.getName());
+		params.add(patient.getBirthDate());
+		params.add(patient.getAge());
+		params.add(patient.getAgetype());
+		params.add(String.valueOf(patient.getSex()));
+		params.add(patient.getAddress());
+		params.add(patient.getCity());
+		params.add(patient.getNextKin());
+		params.add(patient.getTelephone());
+		params.add(String.valueOf(patient.getMother()));
+		params.add(patient.getMother_name());
+		params.add(String.valueOf(patient.getFather()));
+		params.add(patient.getFather_name());
+		params.add(patient.getBloodType());
+		params.add(String.valueOf(patient.getHasInsurance()));
+		params.add(String.valueOf(patient.getParentTogether()));
+		params.add(patient.getNote());
+		params.add(patient.getTaxCode());
+		params.add(lock + 1);
+		params.add(createPatientPhotoInputStream(patient.getPhoto()));
+		params.add(patient.getCode());
+
+		return params;
+	}
+	
+	public void _updatePatientLock(
+			Patient patient, 
+			boolean check,
+			int lock) throws OHException 
+	{
+		if (check == true) 
+		{
+			patient.setLock(lock + 1);
+		}		
+
+		return;
 	}
 
 	/**
-	 * method that logically delete a Patient (not phisically deleted)
+	 * method that logically delete a Patient (not physically deleted)
 	 * 
 	 * @param aPatient
-	 * @return true - if the Patient has beeb deleted (logically)
+	 * @return true - if the Patient has been deleted (logically)
 	 * @throws OHException
 	 */
-	public boolean deletePatient(Patient aPatient) throws OHException {
-
-		boolean result = false;
-		String sqlString = "UPDATE PATIENT SET PAT_DELETED = 'Y' WHERE PAT_ID = ?";
-
+	public boolean deletePatient(
+			Patient patient) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
-		params.add(aPatient.getCode());
+		String query = null;
+		boolean result = true;
+				
 
-		// System.out.println(sqlString);
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		result = dbQuery.setDataWithParams(sqlString, params, true);
+		jpa.beginTransaction();		
+		
+		try {
+			query = "UPDATE PATIENT SET PAT_DELETED = 'Y' WHERE PAT_ID = ?";
+			jpa.createQuery(query, Patient.class, false);
+			params.add(patient.getCode());
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();			
+		}  catch (OHException e) {
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 				
+	
+		jpa.commitTransaction();
+		
 		return result;
 	}
 
@@ -539,47 +488,62 @@ public class PatientIoOperations {
 	 * @return true - if the patient is already present
 	 * @throws OHException
 	 */
-	public boolean isPatientPresent(String name) throws OHException {
-		boolean result = false;
-		String string = "SELECT PAT_ID FROM PATIENT WHERE PAT_NAME = ? AND PAT_DELETED='N'";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-
+	@SuppressWarnings("unchecked")
+	public boolean isPatientPresent(
+			String name) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
-		params.add(name);
+		String query = null;
+		boolean result = false;
+				
 
+		jpa.beginTransaction();		
+		
 		try {
-			ResultSet set = dbQuery.getDataWithParams(string, params, true);
-			if (set.first()) {
-				result = true;
+			query = "SELECT * FROM PATIENT WHERE PAT_NAME = ? AND PAT_DELETED='N'";
+			jpa.createQuery(query, Patient.class, false);
+			params.add(name);
+			jpa.setParameters(params, false);
+			List<Patient> patients = (List<Patient>)jpa.getList();
+			if (patients.isEmpty() == false)
+			{
+				result = true;	
 			}
-		} catch (SQLException e) {
+		}  catch (OHException e) {
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		} 				
+	
+		jpa.commitTransaction();
+
 		return result;
 	}
 
 	/**
-	 * methot that get next PAT_ID is going to be used.
+	 * Method that get next PAT_ID is going to be used.
 	 * 
 	 * @return code
 	 * @throws OHException
 	 */
-	public int getNextPatientCode() throws OHException {
-		int code = 0;
-		String string = "SELECT MAX(PAT_ID) FROM PATIENT";
-		DbQueryLogger dbQuery = new DbQueryLogger();
+	public int getNextPatientCode() throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		String query = null;
+		Integer code = 0;
+				
+
+		jpa.beginTransaction();		
+		
 		try {
-			ResultSet set = dbQuery.getData(string, false);
-			if (set.first()) {
-				code = set.getInt(1) + 1;
-			}
-		} catch (SQLException e) {
+			query = "SELECT MAX(PAT_ID) FROM PATIENT";
+			jpa.createQuery(query, null, false);
+			code = (Integer)jpa.getResult();
+		}  catch (OHException e) {
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		} 				
+	
+		jpa.commitTransaction();
+
 		return code;
 	}
 
@@ -591,7 +555,9 @@ public class PatientIoOperations {
 	 * @return true - if no OHExceptions occurred
 	 * @throws OHException 
 	 */
-	public boolean mergePatientHistory(Patient mergedPatient, Patient patient2) throws OHException {
+	public boolean mergePatientHistory(
+			Patient mergedPatient, 
+			Patient patient2) throws OHException {
 		DbQueryLogger dbQuery = new DbQueryLogger();
 		int mergedID = mergedPatient.getCode();
 		int obsoleteID = patient2.getCode();

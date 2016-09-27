@@ -20,6 +20,7 @@ import javax.swing.event.EventListenerList;
 import org.isf.generaldata.MessageBundle;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.List;
+import org.isf.priceslist.model.PriceList;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class ListEdit extends JDialog {
@@ -78,12 +79,12 @@ public class ListEdit extends JDialog {
 	private JButton jButtonOK;
 	private JButton jButtonCancel;
 	private boolean insert;
-	private List list;
+	private PriceList list;
 	
-	public ListEdit(JFrame parent, List listSelected, boolean inserting) {
+	public ListEdit(JFrame parent, PriceList list2, boolean inserting) {
 		super(parent, true);
 		insert = inserting;
-		list = listSelected;
+		list = list2;
 		initComponents();
 		pack();
 		setLocationRelativeTo(null);
