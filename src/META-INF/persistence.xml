@@ -57,13 +57,14 @@
 		
 		<properties>
 	      	<!-- Configuring JDBC properties -->
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3307/oh"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/oh"/>
 			<property name="javax.persistence.jdbc.user" value="isf"/>
 			<property name="javax.persistence.jdbc.password" value="isf123"/>
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
 		
 			<!-- Hibernate properties -->
-			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.format_sql" value="true" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
 						
