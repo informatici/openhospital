@@ -111,12 +111,7 @@ public class WardPharmacyEdit extends JDialog {
 		movSelected = movWard;
 		initComponents();
 		if (movSelected.isPatient()) jComboBoxPatients.setSelectedItem(movWard.getPatient());
-		try {
-			jComboBoxDrugs.setSelectedItem(movWard.getMedical());
-		} catch (OHException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		jComboBoxDrugs.setSelectedItem(movWard.getMedical());
 		setTitle(MessageBundle.getMessage("angal.common.edit")); //$NON-NLS-1$
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

@@ -15,8 +15,6 @@ import javax.validation.constraints.NotNull;
 
 import org.isf.medicals.model.Medical;
 import org.isf.patient.model.Patient;
-import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
 
 /**
@@ -67,10 +65,8 @@ public class MovementWard
 	@Column(name="MMVN_DESC")
 	private String description;
 
-	@NotNull
-	@Column(name="MMVN_MDSR_ID")
-	private Integer medical_code;
-	@Transient
+	@ManyToOne
+	@JoinColumn(name="MMVN_MDSR_ID")
 	private Medical medical;
 
 	@NotNull
@@ -112,7 +108,6 @@ public class MovementWard
 		this.weight = weight;
 		this.description = description;
 		this.medical = medical;
-		this.medical_code = medical.getCode();
 		this.quantity = quantity;
 		this.units = units;
 	}
@@ -121,14 +116,7 @@ public class MovementWard
 		return code;
 	}
 	
-	public Medical getMedical() throws OHException{		
-		DbJpaUtil jpa = new DbJpaUtil(); 
-	
-	
-		jpa.beginTransaction();	
-		Medical medical = (Medical)jpa.find(Medical.class, this.medical_code); 
-		jpa.commitTransaction();
-		
+	public Medical getMedical() {		
 		return medical;
 	}
 	
@@ -210,7 +198,6 @@ public class MovementWard
 	
 	public void setMedical(Medical aMedical){
 		medical=aMedical;
-		medical_code = medical.getCode();
 	}
 	
 	@Override

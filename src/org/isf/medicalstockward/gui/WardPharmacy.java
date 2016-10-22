@@ -977,12 +977,7 @@ public class WardPharmacy extends ModalJFrame implements
 				boolean ok = true;
 				Patient patient = mov.getPatient();
 				Medical medical = null;
-				try {
-					medical = mov.getMedical();
-				} catch (OHException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				medical = mov.getMedical();
 				int age = mov.getAge();
 				float weight = mov.getWeight();
 
@@ -1048,12 +1043,7 @@ public class WardPharmacy extends ModalJFrame implements
 					return MessageBundle.getMessage("angal.medicalstockward.notapplicable.abb");
 			}
 			if (c == 5) {
-				try {
-					return mov.getMedical().getDescription();
-				} catch (OHException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				return mov.getMedical().getDescription();
 			}
 			if (c == 6) {
 				return "" + mov.getQuantity() + " " + //$NON-NLS-1$ 

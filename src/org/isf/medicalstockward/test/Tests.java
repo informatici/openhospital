@@ -262,7 +262,7 @@ public class Tests
 			jpa.persist(movementWard);
 			jpa.persist(supplier);
 			jpa.persist(lot);
-			movementType.setCode("discharge");
+			movementType.setCode("testDisc");
 			jpa.persist(movementType);
 			Movement movement = testMovement.setup(medical, movementType, ward, lot, supplier, false);
 			jpa.persist(movement);
@@ -276,7 +276,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("Test Exception ==> " + e);		
 			assertEquals(true, false);
 		}
 		
