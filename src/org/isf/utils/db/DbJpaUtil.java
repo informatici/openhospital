@@ -36,8 +36,9 @@ public class DbJpaUtil
 	 * @throws OHException 
      */
 	public DbJpaUtil()
-	{			
-		entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
+	{	
+		if (getEntityManager() == null)
+			entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
 
 		return;
 	}	
@@ -174,7 +175,7 @@ public class DbJpaUtil
     public void beginTransaction() throws OHException
     {
     	try {
-    		if (entityManager == null) open();
+    		if (getEntityManager() == null) open();
 			entityManager.getTransaction().begin();
 					
 		} catch (IllegalStateException e) {
