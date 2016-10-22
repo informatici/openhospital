@@ -934,7 +934,7 @@ public class MovStockBrowser extends ModalJFrame {
 				return movement.getType().toString();
 			} else if (c == ++col) {
 				Ward ward = movement.getWard();
-				if (ward.getDescription() != null)
+				if (ward != null)
 					return ward;
 				else
 					return "";
