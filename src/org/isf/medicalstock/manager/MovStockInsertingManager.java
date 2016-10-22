@@ -239,24 +239,16 @@ public class MovStockInsertingManager {
 	 *         {@link Movement} in the list
 	 */
 	public int newMultipleChargingMovements(ArrayList<Movement> movements) {
-		DbQueryLogger dbQuery = new DbQueryLogger();
 
 		int i = 0;
-		try {
-			boolean ok = true;
-			int size = movements.size();
-			for (i = 0; i < size; i++) {
-				Movement mov = movements.get(i);
-				ok = prepareChargingMovement(dbQuery, mov);
-			}
-			if (ok) {
-				// i = size - 1
-				dbQuery.commit();
-				i++;
-			}
-			dbQuery.releaseConnection();
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+		boolean ok = true;
+		int size = movements.size();
+		for (i = 0; i < size; i++) {
+			Movement mov = movements.get(i);
+			ok = prepareChargingMovement(mov);
+		}
+		if (ok) {
+			i++;
 		}
 		return i;
 	}
@@ -264,14 +256,12 @@ public class MovStockInsertingManager {
 	/**
 	 * Prepare the insert of the specified {@link Movement} (no commit)
 	 * 
-	 * @param dbQuery
-	 *            - the session with the DB
 	 * @param movement
 	 *            - the movement to store.
 	 * @return <code>true</code> if the movement has been stored,
 	 *         <code>false</code> otherwise.
 	 */
-	private boolean prepareChargingMovement(DbQueryLogger dbQuery, Movement movement) {
+	private boolean prepareChargingMovement(Movement movement) {
 		try {
 
 			if (movement.getQuantity() == 0) {
@@ -338,29 +328,20 @@ public class MovStockInsertingManager {
 	}
 
 	public int newMultipleDischargingMovements(ArrayList<Movement> movements) {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-
 		int i = 0;
-		try {
-			boolean ok = true;
-			int size = movements.size();
-			for (i = 0; i < size; i++) {
-				Movement mov = movements.get(i);
-				ok = prepareDishargingMovement(dbQuery, mov);
-			}
-			if (ok) {
-				// i = size - 1
-				dbQuery.commit();
-				i++;
-			}
-			dbQuery.releaseConnection();
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+		boolean ok = true;
+		int size = movements.size();
+		for (i = 0; i < size; i++) {
+			Movement mov = movements.get(i);
+			ok = prepareDishargingMovement(mov);
+		}
+		if (ok) {
+			i++;
 		}
 		return i;
 	}
 
-	private boolean prepareDishargingMovement(DbQueryLogger dbQuery, Movement movement) {
+	private boolean prepareDishargingMovement(Movement movement) {
 		try {
 			boolean result;
 			if (isAutomaticLot()) {
