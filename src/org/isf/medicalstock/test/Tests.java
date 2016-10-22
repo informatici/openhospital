@@ -81,6 +81,8 @@ public class Tests
     {
         jpa.open();
         
+        testLot.setup(false);
+        
         _saveContext();
 		
 		return;
@@ -197,7 +199,7 @@ public class Tests
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			List<Integer> medicalIds = ioOperations.getMedicalsFromLot(foundMovement.getLotId());
+			List<Integer> medicalIds = ioOperations.getMedicalsFromLot(foundMovement.getLot().getCode());
 
 			assertEquals(foundMovement.getMedical().getCode(), medicalIds.get(0));
 		} 
@@ -223,7 +225,7 @@ public class Tests
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
 			List<Lot> lots = ioOperations.getLotsByMedical(foundMovement.getMedical());
 
-			assertEquals(foundMovement.getLotId(), lots.get(0).getCode());
+			assertEquals(foundMovement.getLot().getCode(), lots.get(0).getCode());
 		} 
 		catch (Exception e) 
 		{
@@ -467,7 +469,7 @@ public class Tests
 												foundMovement.getType().getCode(),
 												fromDate,
 												toDate,
-												foundMovement.getLotId(),
+												foundMovement.getLot().getCode(),
 												order
 											);
 

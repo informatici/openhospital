@@ -50,9 +50,8 @@ public class Movement
 	@JoinColumn(name="MMV_WRD_ID_A")
 	private Ward ward;
 
-	@Column(name="MMV_LT_ID_A")
-	private String lot_id;
-	@Transient
+	@ManyToOne
+	@JoinColumn(name="MMV_LT_ID_A")
 	private Lot lot;
 
 	@NotNull
@@ -63,9 +62,8 @@ public class Movement
 	@Column(name="MMV_QTY")
 	private int quantity;
 
-	@Column(name="MMV_FROM")
-	private Integer supplier_id;
-	@Transient
+	@ManyToOne(optional = true, targetEntity=Supplier.class)
+	@JoinColumn(name="MMV_FROM")
 	private Supplier supplier;
 
 	@NotNull
@@ -83,11 +81,9 @@ public class Movement
 		type = aType;
 		ward = aWard;
 		lot = aLot;
-		lot_id = aLot.getCode();
 		date = aDate;
 		quantity = aQuantity;
 		supplier = aSupplier;
-		supplier_id = aSupplier.getSupId();
 		refNo=aRefNo;
 	}
 	
@@ -106,11 +102,11 @@ public class Movement
 	public Lot getLot(){
 		return lot;
 	}
-	public String getLotId(){
-		return lot_id;
-	}
 	public GregorianCalendar getDate(){
 		return date;
+	}
+	public Supplier getSupplier() {
+		return supplier;
 	}
 	public int getQuantity(){
 		return quantity;
@@ -118,18 +114,20 @@ public class Movement
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-	public Integer getOrigin(){
-		return supplier_id;
+	public Supplier getOrigin(){
+		return supplier;
 	}
 	public void setWard(Ward ward) {
 		this.ward = ward;
+	}
+	public void setLot(Lot lot) {
+		this.lot = lot;
 	}
 	public void setDate(GregorianCalendar date) {
 		this.date = date;
 	}
 	public void setSupplier(Supplier supplier) {
 		this.supplier = supplier;
-		supplier_id = supplier.getSupId();		
 	}
 	public void setCode(int aCode){
 		code=aCode;
@@ -139,10 +137,6 @@ public class Movement
 	}
 	public void setType(MovementType aType){
 		type=aType;
-	}
-	public void setLot(Lot aLot){
-		lot=aLot;
-		lot_id = lot.getCode();
 	}
 	public String getRefNo() {
 		return refNo;

@@ -134,9 +134,9 @@ public class MedicalStockIoOperations {
 		String lotCode = null;
 		
 		
-		if (movement.getLotId() != null)
+		if (movement.getLot() != null)
 		{
-			lotCode = movement.getLotId();
+			lotCode = movement.getLot().getCode();
 		}
 
 		try 
@@ -207,9 +207,9 @@ public class MedicalStockIoOperations {
 		String lotCode = null;
 		
 		
-		if (movement.getLotId() != null)
+		if (movement.getLot() != null)
 		{
-			lotCode = movement.getLotId();
+			lotCode = movement.getLot().getCode();
 		}
 
 		boolean movementStored = storeMovement(movement, lotCode);

@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestLot 
 {	 
-	private String code = "ZZ";
+	private String code = "123456";
 	private GregorianCalendar now = new GregorianCalendar();
 	private GregorianCalendar preparationDate = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);
 	private GregorianCalendar dueDate = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);
