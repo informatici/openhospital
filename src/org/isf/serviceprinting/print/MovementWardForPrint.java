@@ -25,12 +25,7 @@ public class MovementWardForPrint implements Comparable<MovementWardForPrint>{
 		this.ward = mov.getWard().getDescription();
 		this.date = removeTime(mov.getDate());
 		this.medical = null;
-		try {
-			this.medical = mov.getMedical().getDescription();
-		} catch (OHException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.medical = mov.getMedical().getDescription();
 		this.quantity = mov.getQuantity();
 		this.units = mov.getUnits();
 		this.patient = mov.isPatient();
