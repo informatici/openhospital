@@ -6,11 +6,13 @@ import java.util.List;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * Persistence class for the medstockmovtype module.
  *
  */
+@Component
 public class MedicalStockMovementTypeIoOperation {
 
 	/**
