@@ -979,12 +979,11 @@ public class MedicalStockIoOperations {
 			jpa.createQuery(query, null, false);
 			params.add(refNo);
 			jpa.setParameters(params, false);
-			String refNumber = (String)jpa.getResult();
-			if (refNumber != null) 
+			if (jpa.getList().size() > 0)
 			{
 				result = true;
 			}		
-		}  catch (OHException e) {
+		} catch (OHException e) {
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
 		} 				
 	
