@@ -129,15 +129,6 @@ public class Tests
 		return;
 	}
 	
-	@Test
-	public void testIoGetHospitalCurrencyCod() 
-	{	
-		assertEquals(true, false);
-		
-		return;
-	}
-		
-	
 	private void _saveContext() throws OHException 
     {	
 		testHospitalContext.saveAll(jpa);

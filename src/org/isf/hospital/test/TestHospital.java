@@ -14,7 +14,7 @@ public class TestHospital
     private String telephone = "Testtelephone";
     private String fax = "TestFax";
     private String email = "TestEmail";
-    private String currencyCod = "TestCurrencyCod";
+    private String currencyCod = "Cod";
 	private Integer lock = 1;
     
 			
@@ -65,7 +65,7 @@ public class TestHospital
     	assertEquals(telephone, hospital.getTelephone());
     	assertEquals(email, hospital.getEmail());
     	assertEquals(fax, hospital.getFax());
-    	//assertEquals(currencyCod, hospital.getCurrencyCod());
+    	assertEquals(currencyCod, hospital.getCurrencyCod());
     	assertEquals(lock, hospital.getLock());
 		
 		return;

@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 
 /**
@@ -54,7 +55,7 @@ public class Hospital
 	@Column(name="HOS_EMAIL")
     private String email;
 
-	@Transient
+	@Column(name="HOS_CURR_COD")
     private String currencyCod;
 
 	@NotNull
@@ -185,9 +186,8 @@ public class Hospital
                         && (getAddress().equalsIgnoreCase(((Hospital) anObject).getAddress()) 
                         && (getCity().equalsIgnoreCase(((Hospital) anObject).getCity())
                         && (getEmail().equalsIgnoreCase(((Hospital) anObject).getEmail())
-                        && (getCurrencyCod().equalsIgnoreCase(((Hospital)anObject).getCurrencyCod()))
-                        && (getLock()
-                        .equals(((Hospital) anObject).getLock())))))));
+                        && (getCurrencyCod() != null && ((Hospital) anObject).getCurrencyCod() != null && getCurrencyCod().equals(((Hospital) anObject).getCurrencyCod()))
+                        && (getLock().equals(((Hospital) anObject).getLock())))))));
     }
 
 	public String toString() {
