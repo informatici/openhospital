@@ -548,7 +548,7 @@ public class MovStockMultipleDischarging extends JDialog {
 	protected Medical chooseMedical(String text) {
 		ArrayList<Medical> medList = new ArrayList<Medical>();
 		for (Medical aMed : medicalMap.values()) {
-			if (NormalizeString.normalizeContains(aMed.getDescription().toLowerCase(), text))
+			if (NormalizeString.normalizeContains(aMed.getDescription().toLowerCase(), text.toLowerCase()))
 				medList.add(aMed);
 		}
 		Collections.sort(medList);
@@ -883,8 +883,14 @@ public class MovStockMultipleDischarging extends JDialog {
 			return false;
 		}
 		
-		// Check and set all movements
+		// Check destination
 		ArrayList<Movement> movements = model.getMovements();
+		if (movements.isEmpty()) {
+			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.noelementtosave")); //$NON-NLS-1$
+			return false;
+		}
+		
+		// Check and set all movements
 		for (int i = 0; i < movements.size(); i++) {
 			Movement mov = movements.get(i);
 			mov.setWard((Ward) jComboBoxDestination.getSelectedItem());
@@ -899,11 +905,6 @@ public class MovStockMultipleDischarging extends JDialog {
 	private boolean save() {
 		boolean ok = true;
 		ArrayList<Movement> movements = model.getMovements();
-		if (movements.isEmpty()) {
-			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.noelementtosave")); //$NON-NLS-1$
-			return false;
-		}
-		
 		int movSize = movements.size();
 		MovStockInsertingManager movManager = new MovStockInsertingManager();
 		int index = movManager.newMultipleDischargingMovements(movements);
