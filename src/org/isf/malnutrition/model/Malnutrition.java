@@ -10,14 +10,21 @@ import java.util.GregorianCalendar;
  * 
  *------------------------------------------*/
 
+
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+
+import org.isf.admission.model.Admission;
+import org.isf.patient.model.Patient;
 
 @Entity
 @Table(name="MALNUTRITIONCONTROL")
@@ -35,13 +42,9 @@ public class Malnutrition
 	@Column(name="MNL_DATE_CONF")
 	private GregorianCalendar dateConf;
 
-	@NotNull
-	@Column(name="MLN_ADM_ID")
-	private int admId;
-
-	@NotNull
-	@Transient
-	private int patId;
+	@ManyToOne
+	@JoinColumn(name="MLN_ADM_ID")
+	private Admission admission;
 
 	@NotNull
 	@Column(name="MLN_HEIGHT")
@@ -62,25 +65,24 @@ public class Malnutrition
 	public Malnutrition() { }
 	
 	public Malnutrition(int aCode, GregorianCalendar aDateSupp,
-			GregorianCalendar aDateConf, int aAdmId, float aHeight,
+			GregorianCalendar aDateConf, Admission anAdmission, float aHeight,
 			float aWeight, int aLock) {
 		code = aCode;
 		dateSupp = aDateSupp;
 		dateConf = aDateConf;
-		admId = aAdmId;
+		admission = anAdmission;
 		height = aHeight;
 		weight = aWeight;
 		lock = aLock;
 	}
 	
 	public Malnutrition(int aCode, GregorianCalendar aDateSupp,
-			GregorianCalendar aDateConf, int aAdmId, int aPatId, float aHeight,
+			GregorianCalendar aDateConf, Admission anAdmission, Patient aPatient, float aHeight,
 			float aWeight, int aLock) {
 		code = aCode;
 		dateSupp = aDateSupp;
 		dateConf = aDateConf;
-		admId = aAdmId;
-		patId = aPatId;
+		admission = anAdmission;
 		height = aHeight;
 		weight = aWeight;
 		lock = aLock;
@@ -101,6 +103,14 @@ public class Malnutrition
 	public int getLock() {
 		return lock;
 	}
+	
+	public Admission getAdmission() {
+		return admission;
+	}
+
+	public void setAdmission(Admission admission) {
+		this.admission = admission;
+	}
 
 	public void setDateSupp(GregorianCalendar aDateSupp) {
 		dateSupp = aDateSupp;
@@ -108,14 +118,6 @@ public class Malnutrition
 
 	public void setDateConf(GregorianCalendar aDateConf) {
 		dateConf = aDateConf;
-	}
-
-	public void setAdmId(int aAdmId) {
-		admId = aAdmId;
-	}
-
-	public void setPatId(int patId) {
-		this.patId = patId;
 	}
 	
 	public void setHeight(float aHeight) {
@@ -134,14 +136,6 @@ public class Malnutrition
 		return dateConf;
 	}
 
-	public int getAdmId() {
-		return admId;
-	}
-
-	public int getPatId() {
-		return patId;
-	}
-	
 	public float getHeight() {
 		return height;
 	}
@@ -169,7 +163,7 @@ public class Malnutrition
 			result = true;
 		}
 		if (result) {
-			if (getAdmId() == (((Malnutrition) other).getAdmId())
+			if (getAdmission() == (((Malnutrition) other).getAdmission())
 					&& getHeight() == (((Malnutrition) other).getHeight())
 					&& getWeight() == (((Malnutrition) other).getWeight())) {
 				return true;
