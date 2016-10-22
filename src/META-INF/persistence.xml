@@ -20,11 +20,9 @@
 		<class>org.isf.exa.model.ExamRow</class>
 		<class>org.isf.exatype.model.ExamType</class>
 		<class>org.isf.menu.model.GroupMenu</class>
-		<!-- help - not implemented into code -->
 		<class>org.isf.hospital.model.Hospital</class>
 		<class>org.isf.lab.model.Laboratory</class>
 		<class>org.isf.lab.model.LaboratoryRow</class>
-		<!-- log - not implemented into code -->
 		<class>org.isf.malnutrition.model.Malnutrition</class>
 		<class>org.isf.medicals.model.Medical</class>
 		<class>org.isf.medicalstock.model.Lot</class>
@@ -51,7 +49,6 @@
 		<class>org.isf.menu.model.UserGroup</class>
 		<class>org.isf.vaccine.model.Vaccine</class>
 		<class>org.isf.vactype.model.VaccineType</class>
-		<!-- version - implemented into a file not into the dB -->
 		<class>org.isf.visits.model.Visit</class>
 		<class>org.isf.ward.model.Ward</class>
 		
