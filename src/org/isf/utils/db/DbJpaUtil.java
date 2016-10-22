@@ -60,6 +60,13 @@ public class DbJpaUtil
 	}
     
     /**
+	 * @return the entityManager
+	 */
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+	/**
      * method to persist an object
      * @throws OHException 
      */
@@ -167,7 +174,9 @@ public class DbJpaUtil
     public void beginTransaction() throws OHException
     {
     	try {
+    		if (entityManager == null) open();
 			entityManager.getTransaction().begin();
+					
 		} catch (IllegalStateException e) {
 			System.out.println("IllegalStateException");
 			System.out.println(e);
