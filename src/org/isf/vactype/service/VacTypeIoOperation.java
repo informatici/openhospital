@@ -14,8 +14,9 @@ import java.util.List;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.isf.vactype.model.VaccineType;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class VacTypeIoOperation {
 	
 	/**

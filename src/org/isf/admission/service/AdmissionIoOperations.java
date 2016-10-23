@@ -28,7 +28,9 @@ import org.isf.generaldata.GeneralData;
 import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AdmissionIoOperations 
 {
 	/**
