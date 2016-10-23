@@ -92,7 +92,7 @@ public class MovStockMultipleCharging extends JDialog {
 	private ArrayList<Integer> units;
 	private JTableModel model;
 	private String[] qtyOption = new String[] { MessageBundle.getMessage("angal.medicalstock.multiplecharging.units"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.packet") }; //$NON-NLS-1$ //$NON-NLS-2$
-	private JComboBox comboBox = new JComboBox(qtyOption);
+	private JComboBox comboBoxUnits = new JComboBox(qtyOption);
 	private final int UNITS = 0;
 	private final int PACKETS = 1;
 	private int optionSelected = UNITS;
@@ -326,7 +326,7 @@ public class MovStockMultipleCharging extends JDialog {
 			}
 
 			TableColumn qtyOptionColumn = jTableMovements.getColumnModel().getColumn(4);
-			qtyOptionColumn.setCellEditor(new DefaultCellEditor(comboBox));
+			qtyOptionColumn.setCellEditor(new DefaultCellEditor(comboBoxUnits));
 			
 			TableColumn costColumn = jTableMovements.getColumnModel().getColumn(8);
 			costColumn.setCellRenderer(new DecimalFormatRenderer());
@@ -334,7 +334,7 @@ public class MovStockMultipleCharging extends JDialog {
 			TableColumn totalColumn = jTableMovements.getColumnModel().getColumn(9);
 			totalColumn.setCellRenderer(new DecimalFormatRenderer());
 			
-			comboBox.setSelectedIndex(optionSelected);
+			comboBoxUnits.setSelectedIndex(optionSelected);
 		}
 		return jTableMovements;
 	}
@@ -747,7 +747,7 @@ public class MovStockMultipleCharging extends JDialog {
 			} else if (c == 3) {
 				movement.setQuantity((Integer) value);
 			} else if (c == 4) {
-				units.set(r, comboBox.getSelectedIndex());
+				units.set(r, comboBoxUnits.getSelectedIndex());
 			} else if (c == 6) {
 				lot.setCode((String) value);
 			} else if (c == 7) {

@@ -14,7 +14,6 @@ import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstock.service.MedicalStockIoOperations;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 
 public class MovStockInsertingManager {

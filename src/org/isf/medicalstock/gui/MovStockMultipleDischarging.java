@@ -93,7 +93,7 @@ public class MovStockMultipleDischarging extends JDialog {
 	private HashMap<String, Medical> medicalMap;
 	private ArrayList<Integer> units;
 	private JTableModel model;
-	private String[] qtyOption = new String[] { "", "" }; //$NON-NLS-1$ //$NON-NLS-2$
+	private String[] qtyOption = new String[] { MessageBundle.getMessage("angal.medicalstock.multipledischarging.units"), MessageBundle.getMessage("angal.medicalstock.multipledischarging.packet") }; //$NON-NLS-1$ //$NON-NLS-2$
 	private final int UNITS = 0;
 	private final int PACKETS = 1;
 	private int optionSelected = UNITS;

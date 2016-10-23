@@ -819,10 +819,11 @@ public class MedicalStockIoOperations {
 		
 		jpa.beginTransaction();
 		
-		String query = "select LT_ID_A,LT_PREP_DATE,LT_DUE_DATE,LT_COST,SUM(MMV_QTY) as quantity from "
+		String query = "select LT_ID_A,LT_PREP_DATE,LT_DUE_DATE,LT_COST,"
+				+ "SUM(IF(MMVT_TYPE='+',MMV_QTY,-MMV_QTY)) as quantity from "
 				+ "((MEDICALDSRLOT join MEDICALDSRSTOCKMOV on MMV_LT_ID_A=LT_ID_A) join MEDICALDSR on MMV_MDSR_ID=MDSR_ID)"
 				+ " join MEDICALDSRSTOCKMOVTYPE on MMV_MMVT_ID_A=MMVT_ID_A "
-				+ "where (MDSR_ID=? and MMVT_TYPE='+') group by LT_ID_A order by LT_DUE_DATE";
+				+ "where MDSR_ID=? group by LT_ID_A order by LT_DUE_DATE";
 		params.add(medical.getCode());
 		jpa.createQuery(query, null, false);
 		jpa.setParameters(params, false);
@@ -834,14 +835,7 @@ public class MedicalStockIoOperations {
 			
 			lots.add(lot);
 		}
-		
 		jpa.commitTransaction();
-		
-		_calculateLotsByMedicalQuantity(jpa, lots);				
-		
-		// Remove empty lots
-		ArrayList<Lot> emptyLots = _calculateLotsByMedicalEmpty(lots);
-		lots.removeAll(emptyLots);
 		
 		return lots;
 	}	
@@ -872,57 +866,6 @@ public class MedicalStockIoOperations {
 		return calendar;
 	}
 		
-	private void _calculateLotsByMedicalQuantity(
-			DbJpaUtil jpa,
-			ArrayList<Lot> lots) throws Exception
-	{
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-		
-		jpa.beginTransaction();
-			
-		for (Lot lot : lots) 
-		{
-			String dischargeQuery = "select SUM(MMV_QTY) as qty2 from "
-					+ "MEDICALDSRSTOCKMOV join MEDICALDSRSTOCKMOVTYPE on MMV_MMVT_ID_A=MMVT_ID_A "
-					+ "where (MMVT_TYPE='-') and (MMV_LT_ID_A=?) group by MMV_LT_ID_A order by MMV_QTY desc";
-			params.clear();
-			params.add(lot.getCode());
-			jpa.createQuery(dischargeQuery, null, false);
-			jpa.setParameters(params, false);
-			try
-			{
-				int qty2 = (Integer)jpa.getResult();			
-				if (qty2 != 0)
-				{
-					lot.setQuantity(lot.getQuantity() - qty2);
-					jpa.persist(lot);
-				}
-			} catch (Exception e) {		
-				//Nothing to do
-			}
-		}
-		
-		jpa.commitTransaction();
-		
-		return;		
-	}
-	
-	private ArrayList<Lot> _calculateLotsByMedicalEmpty(
-			ArrayList<Lot> lots)
-	{
-		ArrayList<Lot> emptyLots = new ArrayList<Lot>();
-		for (Lot aLot : lots) 
-		{
-			if (aLot.getQuantity() == 0)
-			{
-				emptyLots.add(aLot);				
-			}
-		}
-		
-		return emptyLots;
-	}
-	
 	/**
 	 * returns the date of the last movement
 	 * @return 
