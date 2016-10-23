@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.isf.generaldata.GeneralData;
+import org.isf.generaldata.MessageBundle;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
@@ -343,7 +344,7 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 
 			for (UserMenuItem u : myMenu)
 				if (u.getMySubmenu().equals("main")) {
-					button[k - 1] = new JButton(u.getButtonLabel());
+					button[k - 1] = new JButton(MessageBundle.getMessage(u.getButtonLabel()));
 
 					button[k - 1].setMnemonic(KeyEvent.VK_A + (int) (u.getShortcut() - 'A'));
 

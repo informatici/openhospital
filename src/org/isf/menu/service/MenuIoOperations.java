@@ -1,14 +1,14 @@
 package org.isf.menu.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
-import org.isf.accounting.model.Bill;
-import org.isf.accounting.model.BillItems;
+import javax.persistence.ColumnResult;
+import javax.persistence.EntityResult;
+import javax.persistence.Query;
+import javax.persistence.SqlResultSetMapping;
+
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.model.GroupMenu;
 import org.isf.menu.model.User;
@@ -16,7 +16,6 @@ import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
 import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
 
@@ -310,17 +309,30 @@ public class MenuIoOperations
 		
 		jpa.beginTransaction();
 		
-		String query = "select mn.*,GROUPMENU.GM_ACTIVE from USERGROUP inner join USER on US_UG_ID_A=UG_ID_A "
+		String query = "select mn.*,GROUPMENU.GM_ACTIVE as IS_ACTIVE from USERGROUP inner join USER on US_UG_ID_A=UG_ID_A "
 				+ " inner join GROUPMENU on UG_ID_A=GM_UG_ID_A inner join MENUITEM as mn on "
 				+ " GM_MNI_ID_A=mn.MNI_ID_A where US_ID_A = ? order by MNI_POSITION";
+		
+		Query q = jpa.getEntityManager().createNativeQuery(query,"UserMenuItemWithStatus");
+		q.setParameter(1, aUser.getUserName());
+		
 		jpa.createQuery(query, UserMenuItem.class, false);
 		params.add(aUser.getUserName());
 		jpa.setParameters(params, false);
-		List<UserMenuItem> menuList = (List<UserMenuItem>)jpa.getList();
-		menu = new ArrayList<UserMenuItem>(menuList);			
+		
+		List<Object[]> menuList = (List<Object[]>)q.getResultList();
+		menu = new ArrayList<UserMenuItem>();
+		Iterator<Object[]> it = menuList.iterator();
+		while (it.hasNext()) {
+			Object[] object = it.next();
+			char active = (Character) object[1];
+			UserMenuItem umi = (UserMenuItem)object[0];
+			umi.setActive(active == 'Y' ? true : false);
+			menu.add(umi);
+		}
 		
 		jpa.commitTransaction();
-		
+		System.out.println(menu);
 		return menu;
 	}
 

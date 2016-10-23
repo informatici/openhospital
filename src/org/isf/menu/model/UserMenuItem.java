@@ -1,7 +1,11 @@
 package org.isf.menu.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ColumnResult;
+import javax.persistence.EntityResult;
+import javax.persistence.FieldResult;
 import javax.persistence.Id;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -17,12 +21,28 @@ import org.isf.generaldata.MessageBundle;
  * User - model for the user entity
  * -----------------------------------------
  * modification history
- * ? - flavio - first version 
+ * ? 		  - flavio - first version 
  * 07/05/2016 - Antonio - ported to JPA
  * 
  *------------------------------------------*/
 @Entity
 @Table(name="MENUITEM")
+@SqlResultSetMapping(name="UserMenuItemWithStatus",
+	entities={
+	    @EntityResult(entityClass=org.isf.menu.model.UserMenuItem.class, fields={
+                @FieldResult(name="code", column="MNI_ID_A"),
+                @FieldResult(name="buttonLabel", column="MNI_BTN_LABEL"), 
+                @FieldResult(name="altLabel", column="MNI_LABEL"),
+                @FieldResult(name="tooltip", column="MNI_TOOLTIP"),
+                @FieldResult(name="shortcut", column="MNI_SHORTCUT"),
+                @FieldResult(name="mySubmenu", column="MNI_SUBMENU"),
+                @FieldResult(name="myClass", column="MNI_CLASS"),
+                @FieldResult(name="isASubMenu", column="MNI_IS_SUBMENU"),
+                @FieldResult(name="isActive", column="IS_ACTIVE"),
+                @FieldResult(name="position", column="MNI_POSITION")})},
+	columns={
+	    @ColumnResult(name="is_active")}
+	)
 public class UserMenuItem 
 {
 	@Id 

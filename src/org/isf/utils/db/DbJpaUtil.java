@@ -37,7 +37,7 @@ public class DbJpaUtil
      */
 	public DbJpaUtil()
 	{	
-		if (getEntityManager() == null)
+//		if (getEntityManagerFactory() == null)
 			entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
 
 		return;
@@ -58,6 +58,13 @@ public class DbJpaUtil
 		}
 		
 		return;
+	}
+	
+	/**
+	 * @return the entityManager
+	 */
+	public EntityManagerFactory getEntityManagerFactory() {
+		return entityManagerFactory;
 	}
     
     /**

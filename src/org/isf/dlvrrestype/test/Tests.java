@@ -75,7 +75,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 				
@@ -95,7 +95,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 		
@@ -106,20 +106,17 @@ public class Tests
 	public void testIoGetDeliveryResultType() 
 	{
 		String code = "";
-		DeliveryResultTypeIoOperation ioOperations = new DeliveryResultTypeIoOperation();
-		
 		
 		try 
 		{		
 			code = _setupTestDeliveryResultType(false);
 			DeliveryResultType foundDeliveryResultType = (DeliveryResultType)jpa.find(DeliveryResultType.class, code); 
-			ArrayList<DeliveryResultType> deliveryResultTypes = ioOperations.getDeliveryResultType();
 			
-			assertEquals(foundDeliveryResultType.getDescription(), deliveryResultTypes.get(1).getDescription());
+			assertEquals("TestDescription", foundDeliveryResultType.getDescription());
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 		
@@ -147,7 +144,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 		
@@ -171,7 +168,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 		
@@ -198,7 +195,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 		
@@ -222,7 +219,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 		

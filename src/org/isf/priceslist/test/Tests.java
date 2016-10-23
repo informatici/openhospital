@@ -81,7 +81,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 				
@@ -101,7 +101,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 		
@@ -123,7 +123,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 		
@@ -143,7 +143,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 				
@@ -163,7 +163,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 		
@@ -185,7 +185,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 		
@@ -218,7 +218,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 		
@@ -243,7 +243,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 				
@@ -269,7 +269,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 						
@@ -296,7 +296,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 						
@@ -325,7 +325,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 						
@@ -354,7 +354,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("Test Exception" + e);		
+			System.out.println("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 						
@@ -447,7 +447,7 @@ public class Tests
 			jpa.createQuery(query, null, false);
 			id = (Integer)jpa.getResult();
 		}  catch (OHException e) {
-			System.out.println("Test Exception" + e);
+			System.out.println("==> Test Exception: " + e);
 		} 				
 	
 		jpa.commitTransaction();
@@ -469,7 +469,7 @@ public class Tests
 			jpa.createQuery(query, null, false);
 			id = (Integer)jpa.getResult();
 		}  catch (OHException e) {
-			System.out.println("Test Exception" + e);
+			System.out.println("==> Test Exception: " + e);
 		} 				
 	
 		jpa.commitTransaction();

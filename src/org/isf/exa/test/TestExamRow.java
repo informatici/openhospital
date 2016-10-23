@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestExamRow 
 {	
-    private int code = 11;
+    private int code = 999;
     private String description = "TestDescription";
     
 			
