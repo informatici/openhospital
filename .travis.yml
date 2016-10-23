@@ -1,4 +1,1 @@
 language: java
-java:
-  - 1.6
-class: org.isf.test.AllTests.php
