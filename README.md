@@ -16,7 +16,7 @@ For remote MySQL server you need to change:
 - rsc/database.properties
 - rsc/log4j.properties
 
-**How to launch the softer**:
+**How to launch the software**:
 
 Use scripts OpenHospital.sh (Linux) or OpenHospital.cmd (Windows)
 
