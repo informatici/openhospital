@@ -449,7 +449,7 @@ public class MovStockMultipleCharging extends JDialog {
 			MedicaldsrstockmovTypeBrowserManager movMan = new MedicaldsrstockmovTypeBrowserManager();
 			ArrayList<MovementType> movTypes = movMan.getMedicaldsrstockmovType();
 			for (MovementType movType : movTypes) {
-				if (movType.getType().equals("+")) //$NON-NLS-1$
+				if (movType.getType().contains("+")) //$NON-NLS-1$
 					jComboBoxChargeType.addItem(movType);
 			}
 		}

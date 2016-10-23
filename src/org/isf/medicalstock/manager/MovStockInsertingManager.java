@@ -118,7 +118,7 @@ public class MovStockInsertingManager {
 			}
 
 			// we check movement quantity in outgoing stock case
-			if (!movement.getType().getType().equals("+")) {
+			if (!movement.getType().getType().contains("+")) {
 
 				Medical medical = ioOperationsMedicals.getMedical(movement.getMedical().getCode());
 				double totalQuantity = medical.getTotalQuantity() - movement.getQuantity();

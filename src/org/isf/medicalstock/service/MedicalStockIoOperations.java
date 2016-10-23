@@ -142,7 +142,7 @@ public class MedicalStockIoOperations {
 		try 
 		{
 			//we have to manage the Lot
-			if (movement.getType().getType().equals("+")) 
+			if (movement.getType().getType().contains("+")) 
 			{
 				//if is in automatic lot mode then we have to generate a new lot code
 				if (isAutomaticLotMode() || lotCode.equals("")) 
@@ -361,7 +361,7 @@ public class MedicalStockIoOperations {
 	protected boolean updateStockQuantity(
 			Movement movement) throws OHException 
 	{
-		if (movement.getType().getType().equals("+")) 
+		if (movement.getType().getType().contains("+")) 
 		{
 			//incoming medical stock
 			int medicalCode = movement.getMedical().getCode();

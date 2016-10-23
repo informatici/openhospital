@@ -1,11 +1,6 @@
 package org.isf.medicalstockward.service;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -15,16 +10,17 @@ import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
-import org.isf.medtype.model.MedicalType;
 import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
+import org.springframework.stereotype.Component;
 
 /**
  * @author mwithi
  */
+@Component
 public class MedicalStockWardIoOperations 
 {
 	/**
@@ -189,6 +185,7 @@ public class MedicalStockWardIoOperations
 		
 		jpa.beginTransaction();	
 		jpa.persist(movement);
+		updateStockWardQuantity(jpa, movement);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -263,15 +260,13 @@ public class MedicalStockWardIoOperations
 	 * @throws OHException if an error occurs during the update.
 	 */
 	protected boolean updateStockWardQuantity(
+			DbJpaUtil jpa,
 			MovementWard movement) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		boolean result = true;
 				
-		jpa.beginTransaction();		
-		
 		try {
 			query = "UPDATE MEDICALDSRWARD SET MDSRWRD_OUT_QTI = MDSRWRD_OUT_QTI + ? WHERE MDSRWRD_WRD_ID_A = ? AND MDSRWRD_MDSR_ID = ?";
 			jpa.createQuery(query, Patient.class, false);
@@ -285,8 +280,6 @@ public class MedicalStockWardIoOperations
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
 		} 				
 	
-		jpa.commitTransaction();			
-
 		return result;
 	}
 
