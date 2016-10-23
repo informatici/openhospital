@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.isf.exa.model.Exam;
 import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.model.Hospital;
 import org.isf.utils.db.DbJpaUtil;
