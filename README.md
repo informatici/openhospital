@@ -24,7 +24,7 @@ Use scripts OpenHospital.sh (Linux) or OpenHospital.cmd (Windows)
 
 Please read Admin and User manuals in doc/ folder
 
-**How to contribute**
+# How to contribute
 
 Please read the OpenHospital [Wiki](https://openhospital.atlassian.net/wiki/display/OH/Contribution+Guidelines)
 
