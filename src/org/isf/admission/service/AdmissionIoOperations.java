@@ -18,7 +18,10 @@ package org.isf.admission.service;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
+
+import javax.persistence.Query;
 
 import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
@@ -53,7 +56,7 @@ public class AdmissionIoOperations
 			String searchTerms) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<AdmittedPatient> patients = new ArrayList<AdmittedPatient>();
+		ArrayList<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
 		ArrayList<Object> params = new ArrayList<Object>();
 		
 		
@@ -62,27 +65,23 @@ public class AdmissionIoOperations
 		String[] terms = _calculateAdmittedPatientsTerms(searchTerms);
 		String query = _calculateAdmittedPatientsQuery(terms);
 		params = _calculateAdmittedPatientParameters(terms);
-				
+		
+		Query q = jpa.getEntityManager().createNativeQuery(query,"AdmittedPatient");
 		jpa.createQuery(query, null, false);
 		jpa.setParameters(params, false);
-		List<Integer> admissionIdList = (List<Integer>)jpa.getList();
-		for (Integer admissionId:admissionIdList)
-		{
-			try 
-			{
-				Admission admission = (Admission)jpa.find(Admission.class, admissionId);
-				AdmittedPatient admittedPatient = new AdmittedPatient(admission.getPatient(), admission);
-				patients.add(admittedPatient);
-			} 
-			catch (Exception e) 
-			{
-				System.out.println("Exception adding a found Admitted Patient");
-			}
+		List<Object[]> admittedPatientsList = (List<Object[]>)q.getResultList();
+		Iterator<Object[]> it = admittedPatientsList.iterator();
+		while (it.hasNext()) {
+			Object[] object = it.next();
+			Patient patient = (Patient) object[0];
+			Admission admission = (Admission) object[1];
+			AdmittedPatient admittedPatient = new AdmittedPatient(patient, admission);
+			admittedPatients.add(admittedPatient);
 		}
 		
 		jpa.commitTransaction();
 
-		return patients;
+		return admittedPatients;
 	}
     
     private String[] _calculateAdmittedPatientsTerms(
@@ -107,7 +106,7 @@ public class AdmissionIoOperations
     	String query = null;	
 
     	
-    	query = "SELECT ADM.ADM_ID " +
+    	query = "SELECT PAT.*, ADM.* " +
     			"FROM PATIENT PAT LEFT JOIN " +
     			"(SELECT * FROM ADMISSION WHERE (ADM_DELETED='N' or ADM_DELETED is null) AND ADM_IN = 1) ADM " +
     			"ON ADM.ADM_PAT_ID = PAT.PAT_ID " +

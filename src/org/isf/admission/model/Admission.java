@@ -4,11 +4,14 @@ import java.util.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityResult;
+import javax.persistence.FieldResult;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -36,6 +39,65 @@ import org.isf.ward.model.Ward;
  *------------------------------------------*/
 @Entity
 @Table(name="ADMISSION")
+@SqlResultSetMapping(name="AdmittedPatient",
+entities={
+    @EntityResult(entityClass=org.isf.patient.model.Patient.class, fields={
+            @FieldResult(name="code", column="PAT_ID"),
+            @FieldResult(name="firstName", column="PAT_FNAME"), 
+            @FieldResult(name="secondName", column="PAT_SNAME"),
+            @FieldResult(name="birthDate", column="PAT_BDATE"),
+            @FieldResult(name="age", column="PAT_AGE"),
+            @FieldResult(name="agetype", column="PAT_AGETYPE"),
+            @FieldResult(name="sex", column="PAT_SEX"),
+            @FieldResult(name="address", column="PAT_ADDR"),
+            @FieldResult(name="city", column="PAT_CITY"),
+            @FieldResult(name="nextKin", column="PAT_NEXT_KIN"),
+            @FieldResult(name="telephone", column="PAT_TELE"),
+            @FieldResult(name="note", column="PAT_NOTE"),
+            @FieldResult(name="mother_name", column="PAT_MOTH_NAME"),
+            @FieldResult(name="mother", column="PAT_MOTH"),
+            @FieldResult(name="father_name", column="PAT_FATH_NAME"),
+            @FieldResult(name="father", column="PAT_FATH"),
+            @FieldResult(name="bloodType", column="PAT_BTYPE"),
+            @FieldResult(name="hasInsurance", column="PAT_ESTA"),
+            @FieldResult(name="parentTogether", column="PAT_PTOGE"),
+            @FieldResult(name="taxCode", column="PAT_TAXCODE"),
+            @FieldResult(name="lock", column="PAT_LOCK"),
+            @FieldResult(name="photo", column="PAT_PHOTO")}),
+     @EntityResult(entityClass=org.isf.admission.model.Admission.class, fields={
+	        @FieldResult(name="id", column="ADM_ID"),
+	        @FieldResult(name="admitted", column="ADM_IN"), 
+	        @FieldResult(name="type", column="ADM_TYPE"),
+	        @FieldResult(name="ward", column="ADM_WRD_ID_A"),
+	        @FieldResult(name="yProg", column="ADM_YPROG"),
+	        @FieldResult(name="patient", column="ADM_PAT_ID"),
+	        @FieldResult(name="admDate", column="ADM_DATE_ADM"),
+	        @FieldResult(name="admissionType", column="ADM_ADMT_ID_A_ADM"),
+	        @FieldResult(name="FHU", column="ADM_FHU"),
+	        @FieldResult(name="diseaseIn", column="ADM_IN_DIS_ID_A"),
+	        @FieldResult(name="diseaseOut1", column="ADM_OUT_DIS_ID_A"),
+	        @FieldResult(name="diseaseOut2", column="ADM_OUT_DIS_ID_A_2"),
+	        @FieldResult(name="diseaseOut3", column="ADM_OUT_DIS_ID_A_3"),
+	        @FieldResult(name="operation", column="ADM_OPE_ID_A"),
+	        @FieldResult(name="opDate", column="ADM_DATE_OP"),
+	        @FieldResult(name="opResult", column="ADM_RESOP"),
+	        @FieldResult(name="disDate", column="ADM_DATE_DIS"),
+	        @FieldResult(name="disType", column="ADM_DIST_ID_A"),
+	        @FieldResult(name="note", column="ADM_NOTE"),
+	        @FieldResult(name="transUnit", column="ADM_TRANS"),
+	        @FieldResult(name="visitDate", column="ADM_PRG_DATE_VIS"),
+	        @FieldResult(name="pregTreatmentType", column="ADM_PRG_PTT_ID_A"),
+	        @FieldResult(name="deliveryDate", column="ADM_PRG_DATE_DEL"),
+	        @FieldResult(name="deliveryType", column="ADM_PRG_DLT_ID_A"),
+	        @FieldResult(name="deliveryResult", column="ADM_PRG_DRT_ID_A"),
+	        @FieldResult(name="weight", column="ADM_PRG_WEIGHT"),
+	        @FieldResult(name="ctrlDate1", column="ADM_PRG_DATE_CTRL1"),
+	        @FieldResult(name="ctrlDate2", column="ADM_PRG_DATE_CTRL2"),
+	        @FieldResult(name="abortDate", column="ADM_PRG_DATE_ABORT"),
+	        @FieldResult(name="userID", column="ADM_USR_ID_A"),
+	        @FieldResult(name="lock", column="ADM_LOCK"),
+	        @FieldResult(name="deleted", column="ADM_DELETED")})}
+)
 public class Admission implements Comparable<Admission> 
 {
 	@Id 
