@@ -15,7 +15,7 @@ public class TestPatient
 	private static String firstName = "TestFirstName";
 	private static String secondName = "TestSecondName";
 	private static Date birthDate = new GregorianCalendar(1984, Calendar.AUGUST, 14).getTime();
-	private static int age = 31;
+	private static int age = 31; //IT WILL CHANGE WITH TIME
 	private static String agetype = "Date";
 	private static char sex = 'F';
 	private static String address = "TestAddress";
@@ -53,7 +53,8 @@ public class TestPatient
 			// Create Patient with all parameters 
 			patient = new Patient(firstName, secondName, birthDate, age, agetype, sex,
 					address, city, nextKin, telephone, mother_name, mother, father_name, father,
-					bloodType, hasInsurance, parentTogether, lock, taxCode);	
+					bloodType, hasInsurance, parentTogether, lock, taxCode);
+			patient.setAge(patient.getAge()); //IT WILL CHANGE WITH TIME
 		}
 				    	
 		return patient;
