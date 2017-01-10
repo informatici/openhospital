@@ -57,6 +57,7 @@ public class Tests
     public static void tearDownClass() throws OHException 
     {
     	jpa.destroy();
+    	
 
     	return;
     }
@@ -339,7 +340,7 @@ public class Tests
 		{		
 			result = ioOperations.isMaternityPresent();
 			
-			assertEquals(false, result);
+			assertEquals(true, result);
 		} 
 		catch (Exception e) 
 		{
