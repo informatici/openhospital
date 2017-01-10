@@ -3,12 +3,10 @@ package org.isf.dlvrrestype.test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-
+import org.isf.dlvrrestype.model.DeliveryResultType;
+import org.isf.dlvrrestype.service.DeliveryResultTypeIoOperation;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-import org.isf.dlvrrestype.service.DeliveryResultTypeIoOperation;
-import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -57,6 +55,8 @@ public class Tests
     public static void tearDownClass() throws OHException 
     {
     	jpa.destroy();
+    	testDeliveryResultType = null;
+    	testDeliveryResultTypeContext = null;
 
     	return;
     }

@@ -69,6 +69,12 @@ public class Tests
     public static void tearDownClass() throws OHException 
     {
     	jpa.destroy();
+    	testExam = null;
+    	testExamType = null;
+    	testExamRow = null;
+    	testExamContext = null;
+    	testExamTypeContext = null;
+    	testExamRowContext = null;
 
     	return;
     }

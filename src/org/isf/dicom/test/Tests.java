@@ -55,6 +55,8 @@ public class Tests
     public static void tearDownClass() throws OHException 
     {
     	jpa.destroy();
+    	testFileDicom = null;
+    	testFileDicomContext = null;
 
     	return;
     }
@@ -235,6 +237,7 @@ public class Tests
 	@Test
 	public void testIoGetImagesCounts() 
 	{
+		//TODO: function not yet ported to JPA. The test has to fail
 		assertEquals(true, false);
 	}
 	

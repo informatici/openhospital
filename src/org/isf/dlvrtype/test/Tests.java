@@ -57,6 +57,8 @@ public class Tests
     public static void tearDownClass() throws OHException 
     {
     	jpa.destroy();
+    	testDeliveryType = null;
+    	testDeliveryTypeContext = null;
 
     	return;
     }
