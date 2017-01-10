@@ -115,7 +115,7 @@ public class Tests
 			OperationType foundOperationType = (OperationType)jpa.find(OperationType.class, code); 
 			ArrayList<OperationType> operationTypes = ioOperations.getOperationType();
 			
-			assertEquals(foundOperationType.getDescription(), operationTypes.get(1).getDescription());
+			assertEquals(foundOperationType.getDescription(), operationTypes.get(operationTypes.size() - 1).getDescription());
 		} 
 		catch (Exception e) 
 		{
