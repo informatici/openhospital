@@ -115,7 +115,7 @@ public class Tests
 			PregnantTreatmentType foundPregnantTreatmentType = (PregnantTreatmentType)jpa.find(PregnantTreatmentType.class, code); 
 			ArrayList<PregnantTreatmentType> pregnantTreatmentTypes = ioOperations.getPregnantTreatmentType();
 			
-			assertEquals(foundPregnantTreatmentType.getDescription(), pregnantTreatmentTypes.get(1).getDescription());
+			assertEquals(foundPregnantTreatmentType.getDescription(), pregnantTreatmentTypes.get(pregnantTreatmentTypes.size() - 1).getDescription());
 		} 
 		catch (Exception e) 
 		{
@@ -248,7 +248,8 @@ public class Tests
 	private String _setupTestPregnantTreatmentType(
 			boolean usingSet) throws OHException 
 	{
-		PregnantTreatmentType pregnantTreatmentType;
+		PregnantTreatmentType pregnantTreatmentType = new PregnantTreatmentType();
+		pregnantTreatmentType.setDescription("Test Description");
 		
 
     	jpa.beginTransaction();	
