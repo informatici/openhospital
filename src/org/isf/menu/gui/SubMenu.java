@@ -131,7 +131,7 @@ public class SubMenu extends JDialog implements ActionListener{
 			
 			for(UserMenuItem u : myMenu){
 				if (u.getMySubmenu().equals(subName)) numItems++;
-				if (u.getCode().equalsIgnoreCase(subName)) title=u.getButtonLabel();
+				if (u.getCode().equalsIgnoreCase(subName)) title=MessageBundle.getMessage(u.getButtonLabel());
 			}	
 				
 			//System.out.println(numItems);
