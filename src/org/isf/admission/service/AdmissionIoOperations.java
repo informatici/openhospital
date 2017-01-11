@@ -21,6 +21,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.isf.admission.model.Admission;
@@ -367,20 +368,29 @@ public class AdmissionIoOperations
 		Admission admission = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 		
-		
-		jpa.beginTransaction();
-		
 		String query = "SELECT * FROM ADMISSION " +
 				"WHERE ADM_WRD_ID_A=? AND ADM_DATE_ADM >= ? AND ADM_DATE_ADM <= ? AND ADM_DELETED='N' " +
 				"ORDER BY ADM_YPROG DESC";
-		jpa.createQuery(query, Admission.class, false);
-		params = _calculateNextYProgParameters(wardId);
-		jpa.setParameters(params, false);
-		admission = (Admission)jpa.getResult();	
-		next = admission.getYProg() + 1; 
+		
+		try {
 			
-		jpa.commitTransaction();
-
+			jpa.beginTransaction();
+			
+			jpa.createQuery(query, Admission.class, false);
+			params = _calculateNextYProgParameters(wardId);
+			jpa.setParameters(params, false);
+			admission = (Admission)jpa.getResult();	
+			if (admission != null) next = admission.getYProg() + 1; 
+				
+		} catch (Exception e) {
+			if (e.getCause().getClass().equals(NoResultException.class))
+				return next;
+			else throw new OHException(e.getCause().getMessage(), e.getCause());
+			
+		} finally {
+			jpa.commitTransaction();
+		}
+		
 		return next;
 	}
 	
@@ -459,19 +469,29 @@ public class AdmissionIoOperations
 	public int getUsedWardBed(
 			String wardId) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();	
-				
-		
-		jpa.beginTransaction();
+    	List<Admission> admissionList;
+    	DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Object> params = new ArrayList<Object>();
 		
 		String query = "SELECT * FROM ADMISSION WHERE ADM_IN = 1 AND ADM_WRD_ID_A = ? AND ADM_DELETED = 'N'";
-		jpa.createQuery(query, Admission.class, false);
-		params.add(wardId);
-		jpa.setParameters(params, false);
-		List<Admission> admissionList = (List<Admission>)jpa.getList();		
 		
-		jpa.commitTransaction();
+		try {
+			
+			jpa.beginTransaction();
+			
+			jpa.createQuery(query, Admission.class, false);
+			params.add(wardId);
+			jpa.setParameters(params, false);
+			admissionList = (List<Admission>)jpa.getList();		
+			
+		} catch (Exception e) {
+			if (e.getCause().getClass().equals(NoResultException.class))
+				return 0;
+			else throw new OHException(e.getCause().getMessage(), e.getCause());
+			
+		} finally {
+			jpa.commitTransaction();
+		}
 
 		return admissionList.size();
 	}
