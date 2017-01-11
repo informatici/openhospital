@@ -5,20 +5,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
-import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.exception.OHException;
-import org.isf.disease.model.Disease;
-import org.isf.disease.service.DiseaseIoOperations;
-import org.isf.distype.model.DiseaseType;
 import org.isf.menu.model.GroupMenu;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
 import org.isf.menu.service.MenuIoOperations;
-import org.isf.menu.test.TestUserGroup;
-import org.isf.menu.test.TestUserGroupContext;
-import org.isf.menu.test.TestUser;
-import org.isf.menu.test.TestUserContext;
+import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.exception.OHException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
