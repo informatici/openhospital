@@ -748,7 +748,7 @@ public class AdmissionBrowser extends JDialog {
 			for (DeliveryResultType elem : deliveryResultTypeList) {
 				deliveryResultTypeBox.addItem(elem);
 				if (editing) {
-					if (admission.getDeliveryResult().getCode() != null && admission.getDeliveryResult().getCode().equalsIgnoreCase(elem.getCode())) {
+					if (admission.getDeliveryResult() != null && admission.getDeliveryResult().getCode().equalsIgnoreCase(elem.getCode())) {
 						deliveryResultTypeBox.setSelectedItem(elem);
 					}
 				}
@@ -771,7 +771,7 @@ public class AdmissionBrowser extends JDialog {
 			for (DeliveryType elem : deliveryTypeList) {
 				deliveryTypeBox.addItem(elem);
 				if (editing) {
-					if (admission.getDeliveryType().getCode() != null && admission.getDeliveryType().getCode().equalsIgnoreCase(elem.getCode())) {
+					if (admission.getDeliveryType() != null && admission.getDeliveryType().getCode().equalsIgnoreCase(elem.getCode())) {
 						deliveryTypeBox.setSelectedItem(elem);
 					}
 				}
@@ -1115,7 +1115,7 @@ public class AdmissionBrowser extends JDialog {
 			diseaseOutList = dbm.getDiseaseAll();
 			for (Disease elem : diseaseOutList) {
 				diseaseOut1Box.addItem(elem);
-				if (admission.getDiseaseOut1().getCode() != null && admission.getDiseaseOut1().getCode().equalsIgnoreCase(elem.getCode())) {
+				if (admission.getDiseaseOut1() != null && admission.getDiseaseOut1().getCode().equalsIgnoreCase(elem.getCode())) {
 					diseaseOut1Box.setSelectedItem(elem);
 					found = true;
 				}
@@ -1126,7 +1126,7 @@ public class AdmissionBrowser extends JDialog {
 				if (ok) diseaseOut1Box.addItem(elem);
 			}
 		}
-		if (editing && !found && admission.getDiseaseOut1().getCode() != null) {
+		if (editing && !found && admission.getDiseaseOut1() != null) {
 			diseaseOut1Box.addItem(MessageBundle.getMessage("angal.admission.no") + admission.getDiseaseOut1().getCode() + " " + MessageBundle.getMessage("angal.admission.notfoundasinpatientdisease"));
 			diseaseOut1Box.setSelectedIndex(diseaseOut1Box.getItemCount() - 1);
 		}
@@ -1151,8 +1151,8 @@ public class AdmissionBrowser extends JDialog {
 			diseaseOutList = dbm.getDiseaseAll();
 			for (Disease elem : diseaseOutList) {
 				diseaseOut2Box.addItem(elem);
-				if (admission.getDiseaseOut2().getCode() != null && admission.getDiseaseOut2().getCode().equalsIgnoreCase(elem.getCode())) {
-					diseaseOut1Box.setSelectedItem(elem);
+				if (admission.getDiseaseOut2() != null && admission.getDiseaseOut2().getCode().equalsIgnoreCase(elem.getCode())) {
+					diseaseOut2Box.setSelectedItem(elem);
 					found = true;
 				}
 			}
@@ -1162,8 +1162,8 @@ public class AdmissionBrowser extends JDialog {
 				if (ok) diseaseOut2Box.addItem(elem);
 			}
 		}
-		if (editing && !found && admission.getDiseaseOut2().getCode() != null) {
-			diseaseOut2Box.addItem(MessageBundle.getMessage("angal.admission.no") + admission.getDiseaseOut1().getCode() + " " + MessageBundle.getMessage("angal.admission.notfoundasinpatientdisease"));
+		if (editing && !found && admission.getDiseaseOut2() != null) {
+			diseaseOut2Box.addItem(MessageBundle.getMessage("angal.admission.no") + admission.getDiseaseOut2().getCode() + " " + MessageBundle.getMessage("angal.admission.notfoundasinpatientdisease"));
 			diseaseOut2Box.setSelectedIndex(diseaseOut2Box.getItemCount() - 1);
 		}
 		JPanel diseaseOut2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -1186,8 +1186,8 @@ public class AdmissionBrowser extends JDialog {
 			diseaseOutList = dbm.getDiseaseAll();
 			for (Disease elem : diseaseOutList) {
 				diseaseOut3Box.addItem(elem);
-				if (admission.getDiseaseOut3().getCode() != null && admission.getDiseaseOut3().getCode().equalsIgnoreCase(elem.getCode())) {
-					diseaseOut1Box.setSelectedItem(elem);
+				if (admission.getDiseaseOut3() != null && admission.getDiseaseOut3().getCode().equalsIgnoreCase(elem.getCode())) {
+					diseaseOut3Box.setSelectedItem(elem);
 					found = true;
 				}
 			}
@@ -1197,7 +1197,7 @@ public class AdmissionBrowser extends JDialog {
 				if (ok) diseaseOut3Box.addItem(elem);
 			}
 		}
-		if (editing && !found && admission.getDiseaseOut3().getCode() != null) {
+		if (editing && !found && admission.getDiseaseOut3() != null) {
 			diseaseOut3Box.addItem(MessageBundle.getMessage("angal.admission.no") + admission.getDiseaseOut3().getCode() + " " + MessageBundle.getMessage("angal.admission.notfoundasinpatientdisease"));
 			diseaseOut3Box.setSelectedIndex(diseaseOut3Box.getItemCount() - 1);
 		}
@@ -1233,7 +1233,7 @@ public class AdmissionBrowser extends JDialog {
 			for (Operation elem : operationList) {
 				operationBox.addItem(elem);
 				if (editing) {
-					if (admission.getOperation().getCode() != null && admission.getOperation().getCode().equalsIgnoreCase(elem.getCode())) {
+					if (admission.getOperation() != null && admission.getOperation().getCode().equalsIgnoreCase(elem.getCode())) {
 						operationBox.setSelectedItem(elem);
 					}
 				}
@@ -1461,7 +1461,6 @@ public class AdmissionBrowser extends JDialog {
 					try {
 						lastPatex = examOperations.getLastByPatID(patient.getCode());
 					} catch (OHException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					if (lastPatex != null) {
@@ -1566,41 +1565,41 @@ public class AdmissionBrowser extends JDialog {
 						} else {
 							try {
 								Disease diseaseIn = (Disease) diseaseInBox.getSelectedItem();
-								admission.getDiseaseIn().setCode(diseaseIn.getCode());
+								admission.setDiseaseIn(diseaseIn);
 							} catch (IndexOutOfBoundsException e1) {
 								/*
 								 * Workaround in case a fake-disease is selected (ie
 								 * when previous disease has been deleted)
 								 */
-								admission.getDiseaseIn().setCode(null);
+								admission.setDiseaseIn(null);
 							}
 						}
 	
 						// get disease out id ( it can be null)
 						int disease1index = diseaseOut1Box.getSelectedIndex();
 						if (disease1index == 0) {
-							admission.getDiseaseOut1().setCode(null);
+							admission.setDiseaseOut1(null);
 						} else {
 							Disease diseaseOut1 = (Disease) diseaseOut1Box.getSelectedItem();
-							admission.getDiseaseOut1().setCode(diseaseOut1.getCode());
+							admission.setDiseaseOut1(diseaseOut1);
 						}
 	
 						// get disease out id 2 ( it can be null)
 						int disease2index = diseaseOut2Box.getSelectedIndex();
 						if (disease2index == 0) {
-							admission.getDiseaseOut2().setCode(null);
+							admission.setDiseaseOut2(null);
 						} else {
 							Disease diseaseOut2 = (Disease) diseaseOut2Box.getSelectedItem();
-							admission.getDiseaseOut2().setCode(diseaseOut2.getCode());
+							admission.setDiseaseOut2(diseaseOut2);
 						}
 	
 						// get disease out id 3 ( it can be null)
 						int disease3index = diseaseOut3Box.getSelectedIndex();
 						if (disease3index == 0) {
-							admission.getDiseaseOut3().setCode(null);
+							admission.setDiseaseOut3(null);
 						} else {
 							Disease diseaseOut3 = (Disease) diseaseOut3Box.getSelectedItem();
-							admission.getDiseaseOut3().setCode(diseaseOut3.getCode());
+							admission.setDiseaseOut3(diseaseOut3);
 						}
 	
 						// get year prog ( not null)
@@ -1863,7 +1862,7 @@ public class AdmissionBrowser extends JDialog {
 
 						// get the disease out n.1 (it can be null)
 						// if isDischarge, null value not allowed
-						if (admission.getDiseaseOut1().getCode() == null) {
+						if (admission.getDiseaseOut1() == null) {
 							if (isDischarge) {
 								int yes = JOptionPane.showConfirmDialog(null, MessageBundle.getMessage("angal.admission.diagnosisoutsameasdiagnosisin"));
 								if (yes == JOptionPane.YES_OPTION) {
