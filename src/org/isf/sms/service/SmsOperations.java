@@ -12,11 +12,13 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.sms.model.Sms;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * @see org.isf.sms.model.Sms
  * @author Mwithi
  */
+@Component
 public class SmsOperations {
 
 	/**

@@ -6,11 +6,13 @@ import java.util.List;
 import org.isf.agetype.model.AgeType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * Persistence class for agetype module.
  *
  */
+@Component
 public class AgeTypeIoOperations 
 {
 	/**

@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.ColumnResult;
-import javax.persistence.EntityResult;
 import javax.persistence.Query;
-import javax.persistence.SqlResultSetMapping;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.model.GroupMenu;

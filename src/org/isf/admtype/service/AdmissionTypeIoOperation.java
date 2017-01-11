@@ -6,10 +6,12 @@ import java.util.List;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * Persistence class for admtype module.
  */
+@Component
 public class AdmissionTypeIoOperation 
 {
 	/**

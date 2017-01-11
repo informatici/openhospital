@@ -10,11 +10,13 @@ import org.isf.generaldata.ExaminationParameters;
 import org.isf.supplier.model.Supplier;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Mwithi
  * 
  */
+@Component
 public class SupplierOperations {
 
 	/**

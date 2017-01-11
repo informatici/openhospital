@@ -11,10 +11,12 @@ import org.isf.accounting.model.BillPayments;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * Persistence class for Accounting module.
  */
+@Component
 public class AccountingIoOperations {
 
 	/**

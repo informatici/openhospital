@@ -931,7 +931,7 @@ public class AdmissionBrowser extends JDialog {
 						return;
 					} else {
 						String wardId = ((Ward) wardBox.getSelectedItem()).getCode();
-						if (wardId.equalsIgnoreCase(admission.getWard().getCode())) {
+						if (editing && wardId.equalsIgnoreCase(admission.getWard().getCode())) {
 							yProgTextField.setText("" + admission.getYProg());
 						} else {
 							AdmissionBrowserManager abm = new AdmissionBrowserManager();

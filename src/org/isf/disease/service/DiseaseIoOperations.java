@@ -21,6 +21,7 @@ import java.util.List;
 import org.isf.disease.model.Disease;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * This class offers the io operations for recovering and managing
@@ -28,6 +29,7 @@ import org.isf.utils.exception.OHException;
  * 
  * @author Rick, Vero
  */
+@Component
 public class DiseaseIoOperations {
 
 	/**

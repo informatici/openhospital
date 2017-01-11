@@ -6,10 +6,12 @@ import java.util.List;
 import org.isf.distype.model.DiseaseType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * Persistence class for the DisType module.
  */
+@Component
 public class DiseaseTypeIoOperation {
 
 	/**

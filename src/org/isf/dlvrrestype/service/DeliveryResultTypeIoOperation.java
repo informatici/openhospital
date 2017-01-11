@@ -6,10 +6,12 @@ import java.util.List;
 import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * Persistence class for DeliveryResultType module.
  */
+@Component
 public class DeliveryResultTypeIoOperation {
 
 	/**

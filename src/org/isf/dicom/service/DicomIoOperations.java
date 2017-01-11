@@ -9,6 +9,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.dicom.model.FileDicom;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
 /**
  * Manager for hybernate database communication
@@ -24,6 +25,7 @@ import org.isf.utils.exception.OHException;
  * 29/08/2016 - Antonio - ported to JPA
  * 
  *------------------------------------------*/
+@Component
 public class DicomIoOperations 
 {
 	/**

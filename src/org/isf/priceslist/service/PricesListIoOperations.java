@@ -8,7 +8,9 @@ import org.isf.priceslist.model.Price;
 import org.isf.priceslist.model.PriceList;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PricesListIoOperations {
 
 	/**
