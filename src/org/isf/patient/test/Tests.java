@@ -133,12 +133,11 @@ public class Tests
 		
 		try 
 		{		
+			// Pay attention that query return with PAT_ID descendant
 			ArrayList<Patient> patients = ioOperations.getPatientsWithHeightAndWeight(null);
 			
-			
-			// Pay attention that query return with PAT_ID descendant
 			List<Patient> savePatients = testPatientContext.getAllSaved();
-			assertEquals(savePatients.get(savePatients.size()-1).getName(), patients.get(patients.size()-1).getName());
+			assertEquals(savePatients.get(savePatients.size()-1).getName(), patients.get(0).getName());
 		} 
 		catch (Exception e) 
 		{
@@ -156,12 +155,11 @@ public class Tests
 		
 		
 		try 
-		{		
+		{	
 			ArrayList<Patient> patients = ioOperations.getPatientsWithHeightAndWeight(testPatientContext.getAllSaved().get(1).getFirstName());
 			
-			
 			List<Patient> savePatients = testPatientContext.getAllSaved();
-			assertEquals(savePatients.get(savePatients.size()-1).getName(), patients.get(patients.size()-1).getName());
+			assertEquals(savePatients.get(1).getName(), patients.get(0).getName());
 		} 
 		catch (Exception e) 
 		{
@@ -183,7 +181,7 @@ public class Tests
 			Patient patient = ioOperations.getPatient(testPatientContext.getAllSaved().get(1).getName());
 			
 			List<Patient> savePatients = testPatientContext.getAllSaved();
-			assertEquals(savePatients.get(savePatients.size()-1).getName(), patient.getName());
+			assertEquals(savePatients.get(1).getName(), patient.getName());
 		} 
 		catch (Exception e) 
 		{
@@ -206,7 +204,7 @@ public class Tests
 			
 
 			List<Patient> savePatients = testPatientContext.getAllSaved();
-			assertEquals(savePatients.get(savePatients.size()-1).getName(), patient.getName());
+			assertEquals(savePatients.get(1).getName(), patient.getName());
 		} 
 		catch (Exception e) 
 		{
