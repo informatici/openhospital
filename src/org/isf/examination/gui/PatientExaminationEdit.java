@@ -225,7 +225,6 @@ public class PatientExaminationEdit extends JDialog {
 		try {
 			patexList = examOperations.getLastNByPatID(patex.getPatient().getCode(), ExaminationParameters.LIST_SIZE);
 		} catch (OHException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Collections.sort(patexList);

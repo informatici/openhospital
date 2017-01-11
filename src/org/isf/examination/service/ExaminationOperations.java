@@ -90,25 +90,34 @@ public class ExaminationOperations {
 	public PatientExamination getLastByPatID(
 			int patID) throws OHException 
 	{
-		ArrayList<PatientExamination> patients = getByPatID(patID);
+		ArrayList<PatientExamination> patExamination = getByPatID(patID);
 		
-		return patients.get(0);
+		return !patExamination.isEmpty() ? patExamination.get(0) : null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<PatientExamination> getLastNByPatID(
 			int patID, 
 			int number) throws OHException 
 	{
-		ArrayList<PatientExamination> patientsList;
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<PatientExamination> patExaminations = null;
+		ArrayList<Object> params = new ArrayList<Object>();
+			
 		
+		jpa.beginTransaction();
 		
-		ArrayList<PatientExamination> patients = getByPatID(patID);
-		if (patients.size() > 1)
-		{
-			patientsList = (ArrayList<PatientExamination>) patients.subList(1, number);
-		}
-				
-		return patients;
+		String query = "SELECT * FROM PATIENTEXAMINATION WHERE PEX_PAT_ID = ? ORDER BY PEX_DATE DESC LIMIT ?";
+		params.add(patID);
+		params.add(number);
+		jpa.createQuery(query, PatientExamination.class, false);
+		jpa.setParameters(params, false);
+		List<PatientExamination> patExaminationList = (List<PatientExamination>)jpa.getList();
+		patExaminations = new ArrayList<PatientExamination>(patExaminationList);			
+		
+		jpa.commitTransaction();
+		
+		return patExaminations;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -116,7 +125,7 @@ public class ExaminationOperations {
 			int patID) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<PatientExamination> patients = null;
+		ArrayList<PatientExamination> patExaminations = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 			
 		
@@ -126,11 +135,11 @@ public class ExaminationOperations {
 		params.add(patID);
 		jpa.createQuery(query, PatientExamination.class, false);
 		jpa.setParameters(params, false);
-		List<PatientExamination> spatientsList = (List<PatientExamination>)jpa.getList();
-		patients = new ArrayList<PatientExamination>(spatientsList);			
+		List<PatientExamination> patExaminationList = (List<PatientExamination>)jpa.getList();
+		patExaminations = new ArrayList<PatientExamination>(patExaminationList);			
 		
 		jpa.commitTransaction();
 		
-		return patients;
+		return patExaminations;
 	}
 }
