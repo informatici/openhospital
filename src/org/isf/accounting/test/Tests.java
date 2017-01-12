@@ -327,7 +327,7 @@ public class Tests
 			BillPayments foundBillPayment = (BillPayments)jpa.find(BillPayments.class, id); 
 			userIds = ioOperations.getUsers();
 			
-			assertEquals(userIds.get(0), foundBillPayment.getUser());
+			assertEquals(true, userIds.contains(foundBillPayment.getUser()));
 		} 
 		catch (Exception e) 
 		{
@@ -341,17 +341,16 @@ public class Tests
 	@Test
 	public void testIoGetItems() 
 	{
-		int id = 0;
 		AccountingIoOperations ioOperations = new AccountingIoOperations();
-		
 		
 		try 
 		{
-			id = _setupTestBillItems(false);
-			BillItems foundBillItem = (BillItems)jpa.find(BillItems.class, id); 
-			ArrayList<BillItems> billItems = ioOperations.getItems(0);
+			int billItemID = _setupTestBillItems(false);
 			
-			assertEquals(foundBillItem.getItemAmount(), billItems.get(0).getItemAmount(), 0.1);
+			BillItems foundBillItem = (BillItems)jpa.find(BillItems.class, billItemID); 
+			ArrayList<BillItems> billItems = ioOperations.getItems(foundBillItem.getBill().getId());
+			
+			assertEquals(true, billItems.contains(foundBillItem));
 		} 
 		catch (Exception e) 
 		{
@@ -401,7 +400,7 @@ public class Tests
 			GregorianCalendar dateTo = new GregorianCalendar();
 			ArrayList<BillPayments> billPayments = ioOperations.getPayments(dateFrom, dateTo);
 			
-			assertEquals(foundBillPayment.getAmount(), billPayments.get(0).getAmount(), 0.1);
+			assertEquals(true, billPayments.contains(foundBillPayment));
 		} 
 		catch (Exception e) 
 		{

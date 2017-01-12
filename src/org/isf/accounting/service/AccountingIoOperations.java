@@ -104,7 +104,7 @@ public class AccountingIoOperations {
 	}
 
 	/**
-	 * Returns all user ids related to a {@link BillPayments}.
+	 * Returns all user ids from {@link BillPayments}.
 	 * @return a list of user id.
 	 * @throws OHException if an error occurs retrieving the users list.
 	 */

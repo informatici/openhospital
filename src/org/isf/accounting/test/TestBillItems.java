@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestBillItems 
 {	
-	private static boolean isPrice = true;
+	private static boolean isPrice = false;
 	private static String priceID = "TestPId";
 	private static String itemDescription = "TestItemDescription";
 	private static double itemAmount = 10.10;
