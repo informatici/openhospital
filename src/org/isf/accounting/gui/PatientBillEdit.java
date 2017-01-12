@@ -1753,7 +1753,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 			 * crea una hastTable con i prezzi selezionati.
 			 */
 			for (Price price : prcListArray) {
-				priceHashTable.put(price.getList()+
+				priceHashTable.put(price.getList().getId()+
   					  price.getGroup()+
   					  price.getItem(), price);
 		    }

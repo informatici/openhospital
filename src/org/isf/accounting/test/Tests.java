@@ -278,7 +278,7 @@ public class Tests
 			Bill foundBill = (Bill)jpa.find(Bill.class, id); 
 			ArrayList<Bill> bills = ioOperations.getBills();
 			
-			assertEquals(foundBill.getAmount(), bills.get(0).getAmount(), 0.1);
+			assertEquals(true, bills.contains(foundBill));
 		} 
 		catch (Exception e) 
 		{
@@ -599,7 +599,7 @@ public class Tests
 			GregorianCalendar dateTo = new GregorianCalendar();
 			ArrayList<Bill> bills = ioOperations.getBills(dateFrom, dateTo);
 			
-			assertEquals(foundBill.getAmount(), bills.get(0).getAmount(), 0.1);
+			assertEquals(true, bills.contains(foundBill));
 		} 
 		catch (Exception e) 
 		{
