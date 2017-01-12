@@ -1,21 +1,19 @@
 package org.isf.opd.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.disease.model.Disease;
-import org.isf.opd.model.Opd;
-import org.isf.patient.model.Patient;
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
+
+import org.isf.disease.model.Disease;
+import org.isf.opd.model.Opd;
+import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHException;
 
 public class TestOpd 
 {	
-    private int code = 10;
-	private Date date = new GregorianCalendar(1984, Calendar.AUGUST, 14).getTime();
+    private int code = 999999999;
 	private GregorianCalendar visitDate = new GregorianCalendar(1984, Calendar.AUGUST, 14);
 	private int age = 9;
 	private char sex = 'F';
@@ -46,7 +44,6 @@ public class TestOpd
 			// Create Opd with all parameters 
 			opd = new Opd(year, sex, age, disease, lock);
 			opd.setCode(code);
-			opd.setDate(date);
 			opd.setVisitDate(visitDate);
 			opd.setNote(note);
 			opd.setNewPatient(newPatient); 
@@ -67,7 +64,6 @@ public class TestOpd
 			Opd opd) 
 	{	
 		opd.setCode(code);
-		opd.setDate(date);
 		opd.setVisitDate(visitDate);
 		opd.setAge(age);
 		opd.setSex(sex);
@@ -91,7 +87,6 @@ public class TestOpd
 	{		
     	System.out.println("Check Opd: " + opd.getCode());
     	assertEquals(code, opd.getCode());
-    	assertEquals(date, opd.getDate());
     	assertEquals(visitDate, opd.getVisitDate());
     	assertEquals(age, opd.getAge());
     	assertEquals(sex, opd.getSex());

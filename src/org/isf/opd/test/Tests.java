@@ -4,6 +4,7 @@ package org.isf.opd.test;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
@@ -359,6 +360,7 @@ public class Tests
 
     	jpa.beginTransaction();	
     	opd = testOpd.setup(patient, disease, usingSet);
+    	opd.setDate(new Date());
     	jpa.persist(patient);
     	jpa.persist(diseaseType);
     	jpa.persist(disease);
