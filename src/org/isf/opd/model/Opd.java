@@ -48,7 +48,7 @@ public class Opd
 
 	@ManyToOne
 	@JoinColumn(name="OPD_PAT_ID")
-	private Patient patientCode;
+	private Patient patient;
 
 	@NotNull
 	@Column(name="OPD_AGE")
@@ -134,14 +134,14 @@ public class Opd
 	}
 	
 	public String getFullName() {
-		return patientCode.getName();
+		return patient.getName();
 	}
 
-	public Patient getpatientCode() {
-		return patientCode;
+	public Patient getPatient() {
+		return patient;
 	}
-	public void setpatientCode(Patient patientCode) {
-		this.patientCode = patientCode;
+	public void setPatient(Patient patient) {
+		this.patient = patient;
 	}
 
 	public int getAge() {
@@ -152,43 +152,43 @@ public class Opd
 	}
 
 	public String getfirstName() {
-		return patientCode.getFirstName();
+		return patient.getFirstName();
 	}
 
 	public void setfirstName(String firstName) {
-		this.patientCode.setFirstName(firstName);
+		this.patient.setFirstName(firstName);
 	}
 
 	public String getsecondName() {
-		return patientCode.getSecondName();
+		return patient.getSecondName();
 	}
 
 	public void setsecondName(String secondName) {
-		this.patientCode.setSecondName(secondName);
+		this.patient.setSecondName(secondName);
 	}
 
 	public String getnextKin() {
-		return patientCode.getNextKin();
+		return patient.getNextKin();
 	}
 
 	public void setnextKin(String nextKin) {
-		this.patientCode.setNextKin(nextKin);
+		this.patient.setNextKin(nextKin);
 	}
 	
 	public String getcity() {
-		return patientCode.getCity();
+		return patient.getCity();
 	}
 
 	public void setcity(String city) {
-		this.patientCode.setCity(city);
+		this.patient.setCity(city);
 	}
 
 	public String getaddress() {
-		return patientCode.getAddress();
+		return patient.getAddress();
 	}
 
 	public void setaddress(String address) {
-		this.patientCode.setAddress(address);
+		this.patient.setAddress(address);
 	}
 
 	public String getReferralTo() {

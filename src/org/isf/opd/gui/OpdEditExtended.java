@@ -130,8 +130,8 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 	private EventListenerList surgeryListeners = new EventListenerList();
 	
 	public interface SurgeryListener extends EventListener {
-		public void surgeryUpdated(AWTEvent e);
-		public void surgeryInserted(AWTEvent e);
+		public void surgeryUpdated(AWTEvent e, Opd opd);
+		public void surgeryInserted(AWTEvent e, Opd opd);
 	}
 	
 	public void addSurgeryListener(SurgeryListener l) {
@@ -152,7 +152,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		
 		EventListener[] listeners = surgeryListeners.getListeners(SurgeryListener.class);
 		for (int i = 0; i < listeners.length; i++)
-			((SurgeryListener)listeners[i]).surgeryInserted(event);
+			((SurgeryListener)listeners[i]).surgeryInserted(event, opd);
 	}
 	private void fireSurgeryUpdated() {
 		AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
@@ -164,7 +164,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		
 		EventListener[] listeners = surgeryListeners.getListeners(SurgeryListener.class);
 		for (int i = 0; i < listeners.length; i++)
-			((SurgeryListener)listeners[i]).surgeryUpdated(event);
+			((SurgeryListener)listeners[i]).surgeryUpdated(event, opd);
 	}
 	
 	private static final String VERSION="1.3"; 
@@ -271,9 +271,9 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		opd=old;
 		insert=inserting;
 		if(!insert) {
-			if (opd.getpatientCode().getCode() != 0) { 
+			if (opd.getPatient().getCode() != 0) { 
 				PatientBrowserManager patBrowser = new PatientBrowserManager();
-				opdPatient = patBrowser.getPatientAll(opd.getpatientCode().getCode());
+				opdPatient = patBrowser.getPatientAll(opd.getPatient().getCode());
 			} else { //old OPD has no PAT_ID => Create Patient from OPD
 				opdPatient = new Patient(opd);
 				opdPatient.setCode(0);
@@ -847,7 +847,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			else if (elem.getType().equals((DiseaseType)diseaseTypeBox.getSelectedItem()))
 				diseaseBox1.addItem(elem);
 			if(!insert && opd.getDisease()!=null){
-				if(opd.getDisease().equals(elem.getCode())){
+				if(opd.getDisease().equals(elem)){
 					elem2 = elem;}
 				
 			}
@@ -881,7 +881,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		for (Disease elem : diseasesOPD) {
 			diseaseBox2.addItem(elem);
 			if(!insert && opd.getDisease2()!=null){
-				if(opd.getDisease2().equals(elem.getCode())){
+				if(opd.getDisease2().equals(elem)){
 					elem2 = elem;}
 			} 
 		}
@@ -1089,7 +1089,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		for (Disease elem : diseasesOPD) {
 			diseaseBox3.addItem(elem);
 			if(!insert && opd.getDisease3()!=null){
-				if(opd.getDisease3().equals(elem.getCode())){
+				if(opd.getDisease3().equals(elem)){
 					elem2 = elem;}
 			}
 		}
@@ -1431,7 +1431,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 						return;
 					}
 					opd.setNote(jNoteTextArea.getText());
-					opd.setpatientCode(opdPatient); //ADDED : alex
+					opd.setPatient(opdPatient); //ADDED : alex
 					opd.setfirstName(opdPatient.getFirstName());
 					opd.setsecondName(opdPatient.getSecondName());
 					opd.setNewPatient(newPatient);

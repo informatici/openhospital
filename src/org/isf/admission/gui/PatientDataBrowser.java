@@ -106,10 +106,10 @@ public class PatientDataBrowser extends ModalJFrame implements
 		initialize();		
 	}
 	
-	public void surgeryInserted(AWTEvent e) {
+	public void surgeryInserted(AWTEvent e, Opd opd) {
 	}
 	
-	public void surgeryUpdated(AWTEvent e) {
+	public void surgeryUpdated(AWTEvent e, Opd opd) {
 		jContentPane = null;
 		initialize();
 	}

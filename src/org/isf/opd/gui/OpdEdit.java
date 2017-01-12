@@ -72,8 +72,8 @@ public class OpdEdit extends JDialog implements ActionListener {
 	private EventListenerList surgeryListeners = new EventListenerList();
 	
 	public interface SurgeryListener extends EventListener {
-		public void surgeryUpdated(AWTEvent e);
-		public void surgeryInserted(AWTEvent e);
+		public void surgeryUpdated(AWTEvent e, Opd opd);
+		public void surgeryInserted(AWTEvent e, Opd opd);
 	}
 	
 	public void addSurgeryListener(SurgeryListener l) {
@@ -93,7 +93,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 		
 		EventListener[] listeners = surgeryListeners.getListeners(SurgeryListener.class);
 		for (int i = 0; i < listeners.length; i++)
-			((SurgeryListener)listeners[i]).surgeryInserted(event);
+			((SurgeryListener)listeners[i]).surgeryInserted(event, opd);
 	}
 	private void fireSurgeryUpdated() {
 		AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
@@ -104,7 +104,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 		
 		EventListener[] listeners = surgeryListeners.getListeners(SurgeryListener.class);
 		for (int i = 0; i < listeners.length; i++)
-			((SurgeryListener)listeners[i]).surgeryUpdated(event);
+			((SurgeryListener)listeners[i]).surgeryUpdated(event, opd);
 	}
 	
 	public void actionPerformed(ActionEvent e) {

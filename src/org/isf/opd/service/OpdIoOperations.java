@@ -1,8 +1,11 @@
 package org.isf.opd.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import javax.persistence.NoResultException;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.opd.model.Opd;
@@ -169,7 +172,7 @@ public class OpdIoOperations {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
+		opd.setDate(new Date());
 		
 		jpa.beginTransaction();	
 		jpa.persist(opd);
@@ -213,6 +216,7 @@ public class OpdIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
+		opd.setLock(opd.getLock()+1);
 		
 		jpa.beginTransaction();	
 		jpa.merge(opd);
@@ -275,7 +279,7 @@ public class OpdIoOperations {
 	
 		jpa.commitTransaction();
 		
-		return progYear;
+		return progYear == null ? new Integer(0) : progYear;
 	}
 	
 	/**
@@ -293,15 +297,24 @@ public class OpdIoOperations {
 		String query = "";
 				
 		
-		jpa.beginTransaction();		
-		
-		query = "SELECT * FROM OPD LEFT JOIN PATIENT ON OPD_PAT_ID = PAT_ID WHERE OPD_PAT_ID = ?  ORDER BY OPD_DATE DESC";
-		jpa.createQuery(query, Opd.class, false);
-		params.add(patID);
-		jpa.setParameters(params, false);	
-		Opd opd = (Opd)jpa.getResult();			
-		
-		jpa.commitTransaction();
+		Opd opd;
+		try {
+			jpa.beginTransaction();		
+			
+			query = "SELECT * FROM OPD LEFT JOIN PATIENT ON OPD_PAT_ID = PAT_ID WHERE OPD_PAT_ID = ? ORDER BY OPD_DATE DESC LIMIT 1";
+			jpa.createQuery(query, Opd.class, false);
+			params.add(patID);
+			jpa.setParameters(params, false);	
+			opd = (Opd)jpa.getResult();			
+			
+		} catch (Exception e) {
+			if (e.getCause().getClass().equals(NoResultException.class))
+				return null;
+			else throw new OHException(e.getCause().getMessage(), e.getCause());
+			
+		} finally {
+			jpa.commitTransaction();
+		}
 		
 		return opd;
 	}	

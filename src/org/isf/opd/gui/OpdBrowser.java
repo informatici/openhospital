@@ -956,7 +956,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 				}
 				return sVisitDate;
 			} else if (c == 1) {
-				return opd.getpatientCode(); //MODIFIED: alex
+				return opd.getPatient().getCode(); //MODIFIED: alex
 			} else if (c == 2) {
 				return opd.getFullName(); //MODIFIED: alex
 			} else if (c == 3) {
@@ -1011,7 +1011,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 	}
 	
 	
-	public void surgeryUpdated(AWTEvent e) {
+	public void surgeryUpdated(AWTEvent e, Opd opd) {
 		pSur.set(pSur.size() - selectedrow - 1, opd);
 		//System.out.println("riga->" + selectedrow);
 		((OpdBrowsingModel) jTable.getModel()).fireTableDataChanged();
@@ -1021,7 +1021,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 		rowCounter.setText(rowCounterText + pSur.size());
 	}
 	
-	public void surgeryInserted(AWTEvent e) {
+	public void surgeryInserted(AWTEvent e, Opd opd) {
 		pSur.add(pSur.size(), opd);
 		((OpdBrowsingModel) jTable.getModel()).fireTableDataChanged();
 		if (jTable.getRowCount() > 0)

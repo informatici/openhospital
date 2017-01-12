@@ -311,7 +311,7 @@ public class Tests
 		{		
 			code = _setupTestOpd(false);
 			Opd foundOpd = (Opd)jpa.find(Opd.class, code); 
-			Opd lastOpd = ioOperations.getLastOpd(foundOpd.getpatientCode().getCode());
+			Opd lastOpd = ioOperations.getLastOpd(foundOpd.getPatient().getCode());
 
 			assertEquals(foundOpd.getCode(), lastOpd.getCode());
 		} 

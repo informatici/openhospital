@@ -53,7 +53,7 @@ public class TestOpd
 			opd.setReferralFrom(referralFrom); 
 			opd.setReferralTo(referralTo);
 			opd.setUserID(userID);
-			opd.setpatientCode(patient);
+			opd.setPatient(patient);
 			opd.setDisease2(disease);
 			opd.setDisease3(disease);
 		}
@@ -78,7 +78,7 @@ public class TestOpd
 		opd.setReferralFrom(referralFrom);
 		opd.setReferralTo(referralTo);
 		opd.setUserID(userID);
-		opd.setpatientCode(patient);
+		opd.setPatient(patient);
 		opd.setDisease(disease);
 		opd.setDisease2(disease);
 		opd.setDisease3(disease);		

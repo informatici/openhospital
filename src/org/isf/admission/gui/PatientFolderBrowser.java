@@ -345,7 +345,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 					if (selectedObj instanceof Opd) {
 						
 						Opd opd = (Opd) sorter.getValueAt(selectedRow, -1);
-						new GenericReportOpd(opd.getCode(), opd.getpatientCode().getCode(), GeneralData.OPDCHART);				
+						new GenericReportOpd(opd.getCode(), opd.getPatient().getCode(), GeneralData.OPDCHART);				
 					} else {
 						JOptionPane.showMessageDialog(PatientFolderBrowser.this, MessageBundle.getMessage("angal.admission.patientfolder.pleaseselectanopd"), //$NON-NLS-1$
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.PLAIN_MESSAGE); //$NON-NLS-1$
