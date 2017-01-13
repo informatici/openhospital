@@ -219,14 +219,17 @@ public class ExamIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
         		
 		
-		jpa.beginTransaction();		
-
+		jpa.beginTransaction();
+		
 		try {
 			jpa.createQuery("DELETE FROM EXAMROW WHERE EXR_EXA_ID_A = ?", ExamRow.class, false);
 			params.add(exam.getCode());
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
-			jpa.remove(exam);
+			
+			Exam examToRemove = (Exam) jpa.find(Exam.class, exam.getCode());
+			jpa.remove(examToRemove);
+			
 		}  catch (OHException e) {
 			result = false;
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
@@ -270,7 +273,7 @@ public class ExamIoOperations {
 			Exam exam) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		boolean result = true;
+		boolean result = false;
 		
 		
 		jpa.beginTransaction();	

@@ -180,8 +180,7 @@ public class ExamEdit extends JDialog {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if((codeTextField.getText().trim().equals(""))||(descriptionTextField.getText().trim().equals(""))){
 						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exa.pleaseinsertcodeoranddescription"));
-					}
-					else{	
+					} else {	
 						ExamBrowsingManager manager = new ExamBrowsingManager();
 						exam.setExamtype((ExamType)typeComboBox.getSelectedItem());
 						exam.setDescription(descriptionTextField.getText());
@@ -202,7 +201,7 @@ public class ExamEdit extends JDialog {
 						}
 						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exa.thedatacouldnotbesaved"));
 						else  dispose();
-						}
+					}
 				}
 			});
 		}

@@ -386,12 +386,12 @@ public class Tests
 		try 
 		{		
 			ExamType examType = testExamType.setup(false);
-			
+			Exam exam = testExam.setup(examType, false);
 			
 			jpa.beginTransaction();	
 			jpa.persist(examType);
+			jpa.persist(exam);
 			jpa.commitTransaction();
-			Exam exam = testExam.setup(examType, false);
 			result = ioOperations.isKeyPresent(exam);
 			
 			assertEquals(true, result);
