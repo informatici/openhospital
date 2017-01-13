@@ -176,18 +176,17 @@ public class Hospital
     }
 
 	@Override
-    public boolean equals(Object anObject) {
-        return (anObject == null) || !(anObject instanceof Hospital) ? false
-                : (getCode().equals(((Hospital) anObject).getCode())
-                        && getDescription().equalsIgnoreCase(((Hospital) anObject).getDescription())
-                        && getTelephone().equalsIgnoreCase(((Hospital) anObject).getTelephone()) && (getFax()
-                        .equalsIgnoreCase(((Hospital) anObject).getFax()) 
-                        && (getAddress().equalsIgnoreCase(((Hospital) anObject).getAddress()) 
-                        && (getCity().equalsIgnoreCase(((Hospital) anObject).getCity())
-                        && (getEmail().equalsIgnoreCase(((Hospital) anObject).getEmail())
-                        && (getCurrencyCod() != null && ((Hospital) anObject).getCurrencyCod() != null && getCurrencyCod().equals(((Hospital) anObject).getCurrencyCod()))
-                        && (getLock().equals(((Hospital) anObject).getLock())))))));
-    }
+	public boolean equals(Object anObject) {
+		return (anObject == null) || !(anObject instanceof Hospital) ? false
+				: (getCode().equals(((Hospital) anObject).getCode())
+						&& getDescription().equalsIgnoreCase(((Hospital) anObject).getDescription())
+						&& getTelephone().equalsIgnoreCase(((Hospital) anObject).getTelephone())
+						&& getFax().equalsIgnoreCase(((Hospital) anObject).getFax())
+						&& getAddress().equalsIgnoreCase(((Hospital) anObject).getAddress())
+						&& getCity().equalsIgnoreCase(((Hospital) anObject).getCity())
+						&& getEmail().equalsIgnoreCase(((Hospital) anObject).getEmail()) 
+						&& (getCurrencyCod() == ((Hospital) anObject).getCurrencyCod()));
+	}
 
 	public String toString() {
 		return getDescription();
