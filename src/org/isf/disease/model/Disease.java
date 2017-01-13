@@ -43,7 +43,7 @@ public class Disease
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name="DIS_DCL_ID_A")
-	private DiseaseType diseaseType;	   			// values are 'N'(normal)  or 'M' (malnutrition)  default 'N' 
+	private DiseaseType diseaseType; 
 
 	@NotNull
 	@Column(name="DIS_LOCK")

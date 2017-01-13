@@ -18,7 +18,10 @@ package org.isf.disease.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import org.isf.disease.model.Disease;
+import org.isf.distype.model.DiseaseType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
@@ -265,14 +268,33 @@ public class DiseaseIoOperations {
 			String description, 
 			String typeCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		Disease foundDisease = (Disease)jpa.find(Disease.class, typeCode);
+		DbJpaUtil jpa = new DbJpaUtil();
+		Disease foundDisease = null;
 		boolean present = false;
-
+		ArrayList<Object> params = new ArrayList<Object>();
 		
-		if (foundDisease.getDescription().compareTo(description) == 0)
-		{
-			present = true;
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM DISEASE WHERE DIS_DESC = ? AND DIS_DCL_ID_A = ?";
+			jpa.createQuery(query, Disease.class, false);
+			params.add(description);
+			params.add(typeCode);
+			jpa.setParameters(params, false);
+			foundDisease = (Disease)jpa.getResult();		
+			
+			if (foundDisease != null && foundDisease.getDescription().compareTo(description) == 0)
+			{
+				present = true;
+			}
+			
+		} catch (Exception e) {
+			if (e.getCause().getClass().equals(NoResultException.class))
+				return false;
+			else throw new OHException(e.getCause().getMessage(), e.getCause());
+			
+		} finally {
+			jpa.commitTransaction();
 		}
 		
 		return present;

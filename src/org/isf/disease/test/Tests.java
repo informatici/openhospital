@@ -309,7 +309,7 @@ public class Tests
 		{		
 			code = _setupTestDisease(false);
 			Disease foundDisease = (Disease)jpa.find(Disease.class, code); 
-			result = ioOperations.isDescriptionPresent(foundDisease.getDescription(), code);
+			result = ioOperations.isDescriptionPresent(foundDisease.getDescription(), foundDisease.getType().getCode());
 			
 			assertEquals(true, result);
 		} 
