@@ -56,6 +56,8 @@ public class Tests
     public static void tearDownClass() throws OHException 
     {
     	jpa.destroy();
+    	testHospital = null;
+    	testHospitalContext = null;
 
     	return;
     }
@@ -132,13 +134,14 @@ public class Tests
 	private void _saveContext() throws OHException 
     {	
 		testHospitalContext.saveAll(jpa);
+		System.out.println("Saved: " + testHospitalContext.getAllSaved());
         		
         return;
     }
 	
     private void _restoreContext() throws OHException 
     {
-		System.out.println(testHospitalContext.getAllSaved());
+		System.out.println("Restore: " + testHospitalContext.getAllSaved());
 		testHospitalContext.deleteNews(jpa);
         
         return;
