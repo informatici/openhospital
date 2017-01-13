@@ -84,6 +84,7 @@ public class HospitalIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
+		hospital.setLock(hospital.getLock()+1);
 		
 		jpa.beginTransaction();	
 		jpa.merge(hospital);
