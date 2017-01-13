@@ -21,7 +21,6 @@ import java.util.List;
 import javax.persistence.NoResultException;
 
 import org.isf.disease.model.Disease;
-import org.isf.distype.model.DiseaseType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
