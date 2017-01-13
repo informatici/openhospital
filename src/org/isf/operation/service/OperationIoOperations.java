@@ -11,6 +11,8 @@ package org.isf.operation.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import org.isf.operation.model.Operation;
 import org.isf.opetype.model.OperationType;
 import org.isf.utils.db.DbJpaUtil;
@@ -145,7 +147,8 @@ public class OperationIoOperations {
 		
 		
 		jpa.beginTransaction();	
-		jpa.remove(operation);
+		Operation operationToRemove = (Operation) jpa.find(Operation.class, operation.getCode());
+		jpa.remove(operationToRemove);
     	jpa.commitTransaction();
     	
 		return result;
@@ -185,14 +188,33 @@ public class OperationIoOperations {
 			String description, 
 			String typeCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		Operation foundOperation = (Operation)jpa.find(Operation.class, typeCode);
+		DbJpaUtil jpa = new DbJpaUtil();
+		Operation foundOperation = null;
 		boolean present = false;
-
+		ArrayList<Object> params = new ArrayList<Object>();
 		
-		if (foundOperation.getDescription().compareTo(description) == 0)
-		{
-			present = true;
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM OPERATION WHERE OPE_DESC = ? AND OPE_OCL_ID_A = ?";
+			jpa.createQuery(query, Operation.class, false);
+			params.add(description);
+			params.add(typeCode);
+			jpa.setParameters(params, false);
+			foundOperation = (Operation)jpa.getResult();		
+			
+			if (foundOperation != null && foundOperation.getDescription().compareTo(description) == 0)
+			{
+				present = true;
+			}
+			
+		} catch (Exception e) {
+			if (e.getCause().getClass().equals(NoResultException.class))
+				return false;
+			else throw new OHException(e.getCause().getMessage(), e.getCause());
+			
+		} finally {
+			jpa.commitTransaction();
 		}
 		
 		return present;
