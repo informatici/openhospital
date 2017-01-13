@@ -188,7 +188,7 @@ public class Tests
 			code = _setupTestWard(false);
 			Ward foundWard = (Ward)jpa.find(Ward.class, code); 
 			foundWard.setDescription("Update");
-			result = ioOperations.updateWard(foundWard, false);
+			result = ioOperations.updateWard(foundWard);
 			Ward updateWard = (Ward)jpa.find(Ward.class, code); 
 			
 			assertEquals(true, result);
@@ -214,9 +214,9 @@ public class Tests
 		{		
 			Ward ward = testWard.setup(true);
 			ward.setCode("X");
-			result = ioOperations.updateWard(ward, false);
+			result = ioOperations.updateWard(ward);
 			
-			assertEquals(false, result);
+			assertEquals(true, result);
 		} 
 		catch (Exception e) 
 		{
@@ -241,7 +241,7 @@ public class Tests
 			Ward cloneWard= testWard.setup(false);
 			cloneWard.setLock(cloneWard.getLock()+1);
 			cloneWard.setDescription("Update");
-			result = ioOperations.updateWard(cloneWard, true);
+			result = ioOperations.updateWard(cloneWard);
 			Ward updateWard = (Ward)jpa.find(Ward.class, code); 
 			
 			assertEquals(true, result);

@@ -131,40 +131,20 @@ public class WardIoOperations {
 	/**
 	 * Updates the specified {@link Ward}.
 	 * @param disease the {@link Ward} to update.
-	 * @param isConfirmedOverwriteRecord if the user has confirmed she wants to overwrite the record
+	 * @param isConfirmedOverwriteRecord if the user has confirmed he wants to overwrite the record
 	 * @return <code>true</code> if the ward has been updated, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the update.
 	 */
 	public boolean updateWard(
-			Ward ward,
-			boolean isConfirmedOverwriteRecord) throws OHException
+			Ward ward) throws OHException
 	{				
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		boolean result = false;
+		boolean result = true;
 		
-		
-		if (isCodePresent(ward.getCode())) 
-		{	
-			if (isLockWard(ward))
-			{
-				result = true;				
-			}
-			else
-			{
-				if (isConfirmedOverwriteRecord)
-				{
-					result = true;					
-				}
-			}
-		}
-    	
-		if (result == true)
-		{
-			jpa.beginTransaction();	
-			ward.setLock(ward.getLock()+1);
-			jpa.merge(ward);
-			jpa.commitTransaction();		
-		}
+		jpa.beginTransaction();	
+		ward.setLock(ward.getLock()+1);
+		jpa.merge(ward);
+		jpa.commitTransaction();		
 		
 		return result;
 	}
@@ -181,9 +161,10 @@ public class WardIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
+		Ward wardToRemove = (Ward) jpa.find(Ward.class, ward.getCode());
 		
 		jpa.beginTransaction();	
-		jpa.remove(ward);
+		jpa.remove(wardToRemove);
     	jpa.commitTransaction();
     	
 		return result;	
