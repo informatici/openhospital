@@ -93,7 +93,9 @@ public class MedicalStockMovementTypeIoOperation {
 		
 		
 		jpa.beginTransaction();	
-		jpa.remove(medicaldsrstockmovType);
+		MovementType objToRemove = (MovementType) jpa.find(MovementType.class, medicaldsrstockmovType.getCode());
+
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -110,7 +112,7 @@ public class MedicalStockMovementTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		MovementType medicaldsrstockmovType;
-		boolean result = true;
+		boolean result = false;
 		
 		
 		jpa.beginTransaction();	
