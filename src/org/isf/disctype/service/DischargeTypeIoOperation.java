@@ -92,8 +92,9 @@ public class DischargeTypeIoOperation {
 		boolean result = true;
 		
 		
-		jpa.beginTransaction();	
-		jpa.remove(dischargeType);
+		jpa.beginTransaction();
+		DischargeType objToRemove = (DischargeType) jpa.find(DischargeType.class, dischargeType.getCode());
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -111,7 +112,7 @@ public class DischargeTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		DischargeType dischargeType;
-		boolean result = true;
+		boolean result = false;
 		
 		
 		jpa.beginTransaction();	
