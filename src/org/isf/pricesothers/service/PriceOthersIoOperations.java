@@ -72,8 +72,9 @@ public class PriceOthersIoOperations {
 		boolean result = true;
 		
 		
-		jpa.beginTransaction();	
-		jpa.remove(other);
+		jpa.beginTransaction();
+		PricesOthers objToRemove = (PricesOthers) jpa.find(PricesOthers.class, other.getId());
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
     	
 		return result;
