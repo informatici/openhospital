@@ -90,9 +90,9 @@ public class AdmissionTypeIoOperation
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
 		jpa.beginTransaction();	
-		jpa.remove(admissionType);
+		AdmissionType objToRemove = (AdmissionType) jpa.find(AdmissionType.class, admissionType.getCode());
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -109,7 +109,7 @@ public class AdmissionTypeIoOperation
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		AdmissionType admissionType;
-		boolean result = true;
+		boolean result = false;
 		
 		
 		jpa.beginTransaction();	
