@@ -93,7 +93,8 @@ public class OperationTypeIoOperation {
 		
 		
 		jpa.beginTransaction();	
-		jpa.remove(operationType);
+		OperationType objToRemove = (OperationType) jpa.find(OperationType.class, operationType.getCode());
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
     	
 		return result;
@@ -110,7 +111,7 @@ public class OperationTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		OperationType operationType;
-		boolean result = true;
+		boolean result = false;
 		
 		
 		jpa.beginTransaction();	
