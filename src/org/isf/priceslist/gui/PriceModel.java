@@ -160,7 +160,7 @@ class PriceNode {
     	this.items.add(price);
     }
 	/**
-     * Returns the the string to be used to display this leaf in the JTree.
+     * Returns the string to be used to display this leaf in the JTree.
      */
     public String toString() { 
     	return price.getDesc();

@@ -28,7 +28,6 @@ import org.isf.medicals.model.Medical;
 import org.isf.operation.manager.OperationBrowserManager;
 import org.isf.operation.model.Operation;
 import org.isf.priceslist.manager.PriceListManager;
-import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.Price;
 import org.isf.priceslist.model.PriceList;
 import org.isf.pricesothers.manager.PricesOthersManager;
@@ -323,7 +322,7 @@ public class PricesBrowser extends ModalJFrame {
 		
 		HashMap<String,Price> priceHashTable = new HashMap<String,Price>();
 	    for (Price price : priceArray) {
-	    	priceHashTable.put(price.getList()+
+	    	priceHashTable.put(price.getList().getId()+
 	    					  price.getGroup()+
 	    					  price.getItem(), price);
 	    }
