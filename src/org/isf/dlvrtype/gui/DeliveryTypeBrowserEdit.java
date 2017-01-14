@@ -103,7 +103,7 @@ public class DeliveryTypeBrowserEdit extends JDialog{
 	 */
 	private void initialize() {
 		
-		this.setBounds(300,300,350,180);
+//		this.setBounds(300,300,350,180);
 		this.setContentPane(getJContentPane());
 		if (insert) {
 			this.setTitle(MessageBundle.getMessage("angal.dlvrtype.newdeliverytyperecord"));
@@ -111,6 +111,8 @@ public class DeliveryTypeBrowserEdit extends JDialog{
 			this.setTitle(MessageBundle.getMessage("angal.dlvrtype.editingdeliverytyperecord"));
 		}
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.pack();
+		setLocationRelativeTo(null);
 	}
 
 	/**

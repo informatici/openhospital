@@ -92,7 +92,8 @@ public class DeliveryTypeIoOperation {
 		
 		
 		jpa.beginTransaction();	
-		jpa.remove(deliveryType);
+		DeliveryType objToRemove = (DeliveryType) jpa.find(DeliveryType.class, deliveryType.getCode());
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -109,7 +110,7 @@ public class DeliveryTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		DeliveryType deliveryType;
-		boolean result = true;
+		boolean result = false;
 		
 		
 		jpa.beginTransaction();	
