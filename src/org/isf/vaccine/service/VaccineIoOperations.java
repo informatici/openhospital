@@ -69,9 +69,8 @@ public class VaccineIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
 		jpa.beginTransaction();	
-		jpa.merge(vaccine);
+		jpa.persist(vaccine);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -114,9 +113,10 @@ public class VaccineIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
+		vaccine.setLock(vaccine.getLock()+1);
 		
 		jpa.beginTransaction();	
-		jpa.persist(vaccine);
+		jpa.merge(vaccine);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -136,8 +136,9 @@ public class VaccineIoOperations {
 		boolean result = true;
 		
 		
-		jpa.beginTransaction();	
-		jpa.remove(vaccine);
+		jpa.beginTransaction();
+		Vaccine vaccineToRemove = (Vaccine) jpa.find(Vaccine.class, vaccine.getCode());
+		jpa.remove(vaccineToRemove);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -155,7 +156,7 @@ public class VaccineIoOperations {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		Vaccine vaccine;
-		boolean result = true;
+		boolean result = false;
 		
 		
 		jpa.beginTransaction();	
