@@ -174,8 +174,9 @@ public class SmsOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		
 		
-		jpa.beginTransaction();	
-		jpa.remove(sms);
+		jpa.beginTransaction();
+		Sms objToRemove = (Sms) jpa.find(Sms.class, sms.getSmsId());
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
     	
 		return;	

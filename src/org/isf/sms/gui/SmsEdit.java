@@ -314,6 +314,7 @@ public class SmsEdit extends JDialog implements SelectionListener {
 						smsToSend.setSmsDateSched(schedDate);
 						smsToSend.setSmsUser(MainMenu.getUser());
 						smsToSend.setSmsText(text);
+						smsToSend.setModule("smsmanager");
 						SmsOperations smsOp = new SmsOperations();
 						try {
 							smsOp.saveOrUpdate(smsToSend);
