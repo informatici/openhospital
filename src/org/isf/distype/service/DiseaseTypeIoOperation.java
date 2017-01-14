@@ -92,7 +92,8 @@ public class DiseaseTypeIoOperation {
 		
 		
 		jpa.beginTransaction();	
-		jpa.remove(diseaseType);
+		DiseaseType objToRemove = (DiseaseType) jpa.find(DiseaseType.class, diseaseType.getCode());
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -109,7 +110,7 @@ public class DiseaseTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		DiseaseType diseaseType;
-		boolean result = true;
+		boolean result = false;
 		
 		
 		jpa.beginTransaction();	
