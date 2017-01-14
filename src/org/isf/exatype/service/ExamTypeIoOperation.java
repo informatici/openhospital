@@ -89,7 +89,8 @@ public class ExamTypeIoOperation {
 		
 		
 		jpa.beginTransaction();	
-		jpa.remove(examType);
+		ExamType objToRemove = (ExamType) jpa.find(ExamType.class, examType.getCode());
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -107,7 +108,7 @@ public class ExamTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ExamType examType;
-		boolean result = true;
+		boolean result = false;
 		
 		
 		jpa.beginTransaction();	
