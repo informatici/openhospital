@@ -59,7 +59,7 @@ public class VacTypeIoOperation {
 		
 		
 		jpa.beginTransaction();	
-		jpa.merge(vaccineType);
+		jpa.persist(vaccineType);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -80,7 +80,7 @@ public class VacTypeIoOperation {
 		
 		
 		jpa.beginTransaction();	
-		jpa.persist(vaccineType);
+		jpa.merge(vaccineType);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -100,8 +100,9 @@ public class VacTypeIoOperation {
 		boolean result = true;
 		
 		
-		jpa.beginTransaction();	
-		jpa.remove(vaccineType);
+		jpa.beginTransaction();
+		VaccineType objToRemove = (VaccineType) jpa.find(VaccineType.class, vaccineType.getCode());
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -120,7 +121,7 @@ public class VacTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		VaccineType vaccineType;
-		boolean result = true;
+		boolean result = false;
 		
 		
 		jpa.beginTransaction();	
