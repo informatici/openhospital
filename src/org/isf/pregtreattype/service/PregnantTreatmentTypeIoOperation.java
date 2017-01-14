@@ -92,8 +92,9 @@ public class PregnantTreatmentTypeIoOperation {
 		boolean result = true;
 		
 		
-		jpa.beginTransaction();	
-		jpa.remove(pregnantTreatmentType);
+		jpa.beginTransaction();
+		PregnantTreatmentType objToRemove = (PregnantTreatmentType) jpa.find(PregnantTreatmentType.class, pregnantTreatmentType.getCode());
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
     	
 		return result;	
@@ -111,7 +112,7 @@ public class PregnantTreatmentTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		PregnantTreatmentType pregnantTreatmentTyp;
-		boolean result = true;
+		boolean result = false;
 		
 		
 		jpa.beginTransaction();	
