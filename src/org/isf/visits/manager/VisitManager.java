@@ -62,7 +62,7 @@ public class VisitManager {
 	/**
 	 * inserts or replaces all {@link Visit}s related to a patID
 	 * 
-	 * @param patID - the {@link Patient} ID
+	 * @param patient - the {@link Patient} ID
 	 * @param visits - the list of {@link Visit}s related to patID. 
 	 * @return <code>true</code> if the list has been replaced, <code>false</code> otherwise
 	 * @throws OHException 
@@ -73,21 +73,22 @@ public class VisitManager {
 			SmsOperations smsOp = new SmsOperations();
 			PatientBrowserManager patMan = new PatientBrowserManager();
 			try {
-				int patID = visits.get(0).getPatID().getCode();
+				int patID = visits.get(0).getPatient().getCode();
 				ioOperations.deleteAllVisits(patID);
 				smsOp.deleteByModuleModuleID("visit", String.valueOf(patID));
 
 				for (Visit visit : visits) {
 					
+					visit.setVisitID(0); //reset ID in order to persist again (otherwise JPA think data is already persisted)
 					int visitID = ioOperations.newVisit(visit);
 					if (visitID == 0) return false;
 					
 					visit.setVisitID(visitID);
 					if (visit.isSms()) {
-						GregorianCalendar date = (GregorianCalendar) visit.clone(); 
+						GregorianCalendar date = (GregorianCalendar) visit.getDate().clone(); 
 						date.add(Calendar.DAY_OF_MONTH, -1);
-						if (visit.after(now.toDateMidnight().toGregorianCalendar())) {
-							Patient pat = patMan.getPatient(visit.getPatID().getName());
+						if (visit.getDate().after(now.toDateMidnight().toGregorianCalendar())) {
+							Patient pat = patMan.getPatient(visit.getPatient().getName());
 							
 							Sms sms = new Sms();
 							sms.setSmsDateSched(date.getTime());

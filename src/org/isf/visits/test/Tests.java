@@ -125,9 +125,9 @@ public class Tests
 		{		
 			id = _setupTestVisit(false);
 			Visit foundVisit = (Visit)jpa.find(Visit.class, id); 
-			ArrayList<Visit> visits = ioOperations.getVisits(foundVisit.getPatID().getCode());
+			ArrayList<Visit> visits = ioOperations.getVisits(foundVisit.getPatient().getCode());
 			
-			assertEquals(foundVisit.getNote(), visits.get(visits.size()-1).getNote());
+			assertEquals(foundVisit.getDate(), visits.get(visits.size()-1).getDate());
 		} 
 		catch (Exception e) 
 		{
@@ -177,7 +177,7 @@ public class Tests
 		{		
 			id = _setupTestVisit(false);
 			Visit foundVisit = (Visit)jpa.find(Visit.class, id); 
-			result = ioOperations.deleteAllVisits(foundVisit.getPatID().getCode());
+			result = ioOperations.deleteAllVisits(foundVisit.getPatient().getCode());
 			
 			assertEquals(true, result);
 			Visit deletedVisit = (Visit)jpa.find(Visit.class, id); 

@@ -50,7 +50,6 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstockward.manager.MovWardBrowserManager;
-import org.isf.medicalstockward.model.MovementWard;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.sms.service.SmsOperations;
@@ -171,7 +170,7 @@ public class TherapyEdit extends JDialog {
 
 		getContentPane().setLayout(new BorderLayout());
 
-		jAgenda = new JAgenda();
+		jAgenda = new JAgenda(TherapyEdit.this);
 
 		/*
 		 * Rows in the therapies table
@@ -181,8 +180,8 @@ public class TherapyEdit extends JDialog {
 		/*
 		 * HashTable of the rows
 		 */
+		hashTableThRow = new Hashtable<Integer, TherapyRow>();
 		if (!thRows.isEmpty()) {
-			hashTableThRow = new Hashtable<Integer, TherapyRow>();
 			for (TherapyRow thRow : thRows) {
 				hashTableThRow.put(thRow.getTherapyID(), thRow);
 			}
@@ -201,8 +200,8 @@ public class TherapyEdit extends JDialog {
 		/*
 		 * HashTable of the visits
 		 */
+		hashTableVisits = new Hashtable<Integer, Visit>();
 		if (!visits.isEmpty()) {
-			hashTableVisits = new Hashtable<Integer, Visit>();
 			for (Visit visit : visits) {
 				hashTableVisits.put(visit.getVisitID(), visit);
 			}
@@ -260,12 +259,11 @@ public class TherapyEdit extends JDialog {
 	private void showVisits() {
 		for (Visit visit : visits) {
 			// System.out.println(th.numTherapy+"-"+formatDate(gc));
-			if (visit.get(GregorianCalendar.YEAR) == yearChooser.getYear()) {
-				if (visit.get(GregorianCalendar.MONTH) == monthChooser
-						.getMonth()) {
+			if (visit.getDate().get(GregorianCalendar.YEAR) == yearChooser.getYear()) {
+				if (visit.getDate().get(GregorianCalendar.MONTH) == monthChooser.getMonth()) {
 					// jAgenda.addElement(index, th,
 					// gc.get(GregorianCalendar.DAY_OF_MONTH));
-					jAgenda.addElement(visit, visit.get(GregorianCalendar.DAY_OF_MONTH));
+					jAgenda.addElement(visit, visit.getDate().get(GregorianCalendar.DAY_OF_MONTH));
 				}
 			}
 		}
@@ -392,8 +390,8 @@ public class TherapyEdit extends JDialog {
 					if (date != null) {
 						
 						Visit visit = new Visit();
-						visit.setTime(date);
-						visit.setPatID(patient);
+						visit.setDate(date);
+						visit.setPatient(patient);
 						
 						VisitManager vstManager = new VisitManager();
 						int visitID = vstManager.newVisit(visit);
@@ -401,10 +399,10 @@ public class TherapyEdit extends JDialog {
 							visit.setVisitID(visitID);
 							visits.add(visit);
 							hashTableVisits.put(visitID, visit);
-							visitModified = true;
+							//visitModified = true;
 							if (smsenable) smsCheckBox.setEnabled(true);
 							if (notifiable) notifyCheckBox.setEnabled(true);
-							saveButton.setEnabled(true);
+							//saveButton.setEnabled(true);
 							showAll();
 						}
 					} else {
@@ -731,7 +729,7 @@ public class TherapyEdit extends JDialog {
 					if (therapyModified || visitModified) {
 						int ok = JOptionPane
 								.showConfirmDialog(TherapyEdit.this,
-										MessageBundle.getMessage("angal.common.close")); //$NON-NLS-1$
+										MessageBundle.getMessage("angal.common.save") + "?"); //$NON-NLS-1$
 						if (ok == JOptionPane.YES_OPTION) {
 							saveButton.doClick();
 						} else if (ok == JOptionPane.NO_OPTION) {
@@ -801,8 +799,6 @@ public class TherapyEdit extends JDialog {
 					ArrayList<Medical> medArray = medManager.getMedicals();
 
 					MovWardBrowserManager wardManager = new MovWardBrowserManager();
-					ArrayList<MovementWard> wardArray = wardManager
-							.getMovementWard();
 
 					ArrayList<Medical> medOutStock = new ArrayList<Medical>();
 
@@ -854,7 +850,6 @@ public class TherapyEdit extends JDialog {
 
 					// to free memory
 					if (medArray != null) medArray.clear();
-					if (wardArray != null) wardArray.clear();
 					if (medOutStock != null) medOutStock.clear();
 				}
 			});
@@ -924,12 +919,13 @@ public class TherapyEdit extends JDialog {
 						Therapy thisTherapy = thManager.createTherapy(thRow);
 						therapies.add(thisTherapy); // FOR GUI
 						hashTableTherapy.put(thRow.getTherapyID(), thisTherapy);
+						hashTableThRow.put(thRow.getTherapyID(), thRow);
 						checked = false;
-						therapyModified = true;
+						//therapyModified = true;
 						if (smsenable) smsCheckBox.setEnabled(true);
 						if (notifiable) notifyCheckBox.setEnabled(true);
 						checkTherapy.setEnabled(true);
-						saveButton.setEnabled(true);
+						//saveButton.setEnabled(true);
 						updateCheckLabel();
 						showAll();
 					}

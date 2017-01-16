@@ -206,7 +206,7 @@ public class TherapyEntryForm extends JDialog {
 		} else {
 			secondDay = firstDay;
 		}
-		int days = TimeTools.getDaysBetweenDates(firstDay, secondDay);
+		int days = TimeTools.getDaysBetweenDates(firstDay, secondDay, true);
 
 		jSpinnerFreqInPeriod.setValue(days > 0 ? days : 1);
 		therapyStartdate.setDate(firstDay.getTime());

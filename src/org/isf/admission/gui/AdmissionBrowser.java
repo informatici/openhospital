@@ -1386,7 +1386,7 @@ public class AdmissionBrowser extends JDialog {
 	
 	private void updateBedDays() {
 		try {
-			int bedDays = TimeTools.getDaysBetweenDates(dateInFieldCal.getDate(), dateOutFieldCal.getDate());
+			int bedDays = TimeTools.getDaysBetweenDates(dateInFieldCal.getDate(), dateOutFieldCal.getDate(), true);
 			if (bedDays == 0) bedDays = 1;
 			bedDaysTextField.setText(String.valueOf(bedDays));
 		} catch (Exception e) {

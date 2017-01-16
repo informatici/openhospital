@@ -97,7 +97,7 @@ public class TherapyManager {
 	 * or
 	 * return all {@link TherapyRow}s (therapies) if <code>0</code> is passed
 	 * 
-	 * @param patID - the Patient ID
+	 * @param patient - the Patient ID
 	 * @return the list of {@link TherapyRow}s (therapies)
 	 */
 	public ArrayList<TherapyRow> getTherapyRows(int code) {
@@ -194,7 +194,7 @@ public class TherapyManager {
 	/**
 	 * delete all {@link TherapyRow}s (therapies) for specified Patient ID
 	 * 
-	 * @param patID - the Patient ID
+	 * @param patient - the Patient ID
 	 * @return <code>true</code> if the therapies have been deleted, <code>false</code> otherwise
 	 */
 	public boolean deleteAllTherapies(Integer code) {

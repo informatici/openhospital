@@ -1,9 +1,8 @@
 package org.isf.visits.model;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,10 +27,8 @@ import org.isf.patient.model.Patient;
  *------------------------------------------*/
 @Entity
 @Table(name="VISITS")
-public class Visit extends GregorianCalendar 
+public class Visit
 {
-	private static final long serialVersionUID = 1L;
-
 	@Id 
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="VST_ID")	
@@ -40,10 +37,10 @@ public class Visit extends GregorianCalendar
 	@NotNull
 	@ManyToOne
 	@JoinColumn(name="VST_PAT_ID")
-	Patient patID;
+	Patient patient;
 
 	@NotNull
-	@Column(name="VST_DATE")	
+	@Column(name="VST_DATE")
 	private GregorianCalendar date;
 	
 	@Column(name="VST_NOTE")	
@@ -60,36 +57,11 @@ public class Visit extends GregorianCalendar
 		super();
 	}
 
-	public Visit(int year, int month, int dayOfMonth, int hourOfDay,
-			int minute, int second) {
-		super(year, month, dayOfMonth, hourOfDay, minute, second);
-	}
-
-	public Visit(int year, int month, int dayOfMonth, int hourOfDay, int minute) {
-		super(year, month, dayOfMonth, hourOfDay, minute);
-	}
-
-	public Visit(int year, int month, int dayOfMonth) {
-		super(year, month, dayOfMonth);
-	}
-
-	public Visit(Locale locale) {
-		super(locale);
-	}
-
-	public Visit(TimeZone zone, Locale locale) {
-		super(zone, locale);
-	}
-
-	public Visit(TimeZone zone) {
-		super(zone);
-	}
-
 	public Visit(int visitID, GregorianCalendar date, Patient patient, String note, boolean sms) {
 		super();
 		this.visitID = visitID;
 		this.date = date;
-		this.patID = patient;
+		this.patient = patient;
 		this.note = note;
 		this.sms = sms;		
 	}
@@ -101,6 +73,12 @@ public class Visit extends GregorianCalendar
 	public void setDate(GregorianCalendar date) {
 		this.date = date;
 	}
+	
+	public void setDate(Date date) {
+		GregorianCalendar gregorian = new GregorianCalendar();
+		gregorian.setTime(date);
+		setDate(gregorian);
+	}
 
 	public int getVisitID() {
 		return visitID;
@@ -110,12 +88,12 @@ public class Visit extends GregorianCalendar
 		this.visitID = visitID;
 	}
 
-	public Patient getPatID() {
-		return patID;
+	public Patient getPatient() {
+		return patient;
 	}
 
-	public void setPatID(Patient patID) {
-		this.patID = patID;
+	public void setPatient(Patient patient) {
+		this.patient = patient;
 	}
 
 	public String getNote() {
@@ -133,10 +111,10 @@ public class Visit extends GregorianCalendar
 	public void setSms(boolean sms) {
 		this.sms = sms;
 	}
-
+	
 	public String toString() {
-
-		return formatDateTime(this);
+		
+		return formatDateTime(this.date);
 	}
 
 	public String formatDateTime(GregorianCalendar time) {

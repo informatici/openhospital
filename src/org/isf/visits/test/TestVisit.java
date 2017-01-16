@@ -44,7 +44,7 @@ public class TestVisit
 	{	
 		visit.setDate(date);
 		visit.setNote(note);
-		visit.setPatID(patient);
+		visit.setPatient(patient);
 		visit.setSms(sms);
 				
 		return;
