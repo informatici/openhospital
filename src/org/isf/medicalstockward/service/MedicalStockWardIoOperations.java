@@ -136,7 +136,7 @@ public class MedicalStockWardIoOperations
 	
 		jpa.commitTransaction();		
 
-		return mainQuantity;	
+		return mainQuantity != null ? mainQuantity : 0.0;	
 	}
 
 	private Double _getDischargeQuantity(
@@ -167,7 +167,7 @@ public class MedicalStockWardIoOperations
 	
 		jpa.commitTransaction();		
 
-		return dischargeQuantity;	
+		return dischargeQuantity != null ? dischargeQuantity : 0.0;	
 	}
 
 	/**
