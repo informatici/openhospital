@@ -278,26 +278,28 @@ public class PatientIoOperations
 			Patient patient) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil();
-		ArrayList<Object> params = new ArrayList<Object>();
-		String query = "INSERT INTO PATIENT (PAT_NAME, PAT_FNAME, PAT_SNAME, PAT_BDATE, PAT_AGE, PAT_AGETYPE, PAT_SEX, PAT_ADDR, PAT_CITY, PAT_NEXT_KIN, PAT_TELE, PAT_MOTH_NAME, PAT_MOTH, PAT_FATH_NAME, PAT_FATH, PAT_BTYPE, PAT_ESTA, PAT_PTOGE, PAT_NOTE, PAT_TAXCODE, PAT_PHOTO) " +
-				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		boolean result = true;
-
 		
-		jpa.beginTransaction();		
-
-		try {
-			jpa.createQuery(query, Patient.class, false);
-			params = _addNewPatientParameters(patient);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 
-				
-		jpa.commitTransaction();	
+//		try {
+//				ArrayList<Object> params = new ArrayList<Object>();
+//				String query = "INSERT INTO PATIENT (PAT_NAME, PAT_FNAME, PAT_SNAME, PAT_BDATE, PAT_AGE, PAT_AGETYPE, PAT_SEX, PAT_ADDR, PAT_CITY, PAT_NEXT_KIN, PAT_TELE, PAT_MOTH_NAME, PAT_MOTH, PAT_FATH_NAME, PAT_FATH, PAT_BTYPE, PAT_ESTA, PAT_PTOGE, PAT_NOTE, PAT_TAXCODE, PAT_PHOTO) " +
+//				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//			jpa.createQuery(query, Patient.class, false);
+//			params = _addNewPatientParameters(patient);
+//			jpa.setParameters(params, false);
+//			jpa.executeUpdate();
+//			
+//		}  catch (OHException e) {
+//			result = false;
+//			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+//		} finally {
+//			jpa.commitTransaction();
+//		}
 		
+		jpa.beginTransaction();	
+		jpa.persist(patient);
+		jpa.commitTransaction();
+
 		return result;
 	}
 	
@@ -546,7 +548,7 @@ public class PatientIoOperations
 	
 		jpa.commitTransaction();
 
-		return code;
+		return code+1;
 	}
 
 	/**
