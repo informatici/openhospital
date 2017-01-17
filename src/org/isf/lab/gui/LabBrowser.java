@@ -533,7 +533,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		/**
 		 * Note: We must get the objects in a reversed way because of the query
 		 * 
-		 * @see org.isf.lab.service.IoOperations
+		 * @see org.isf.lab.service.LabIoOperations
 		 */
 		public Object getValueAt(int r, int c) {
 			if (c == -1) {
