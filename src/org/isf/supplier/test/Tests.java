@@ -164,7 +164,7 @@ public class Tests
 			Supplier foundSupplier = (Supplier)jpa.find(Supplier.class, code); 
 			List<Supplier> suppliers = ioOperations.getAll();			
 			
-			assertEquals(foundSupplier.getSupNote(), suppliers.get(0).getSupNote());
+			assertEquals(true, suppliers.contains(foundSupplier));
 		} 
 		catch (Exception e) 
 		{
@@ -188,7 +188,7 @@ public class Tests
 			Supplier foundSupplier = (Supplier)jpa.find(Supplier.class, code); 
 			List<Supplier> suppliers = ioOperations.getList();			
 			
-			assertEquals(foundSupplier.getSupNote(), suppliers.get(0).getSupNote());
+			assertEquals(true, suppliers.contains(foundSupplier));
 		} 
 		catch (Exception e) 
 		{
