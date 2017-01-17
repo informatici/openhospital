@@ -2,7 +2,7 @@ package org.isf.patient.test;
 
 
 import org.isf.patient.model.Patient;
-import org.isf.patient.service.IoOperations;
+import org.isf.patient.service.PatientIoOperations;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.junit.After;
@@ -106,7 +106,7 @@ public class Tests
 	@Test
 	public void testIoGetPatients() 
 	{
-		IoOperations ioOperations = new IoOperations();
+		PatientIoOperations ioOperations = new PatientIoOperations();
 
 		
 		try 
@@ -128,7 +128,7 @@ public class Tests
 	@Test
 	public void testIoGetPatientsWithHeightAndWeight() 
 	{
-		IoOperations ioOperations = new IoOperations();
+		PatientIoOperations ioOperations = new PatientIoOperations();
 		
 		
 		try 
@@ -151,7 +151,7 @@ public class Tests
 	@Test
 	public void testIoGetPatientsWithHeightAndWeightRegEx() 
 	{
-		IoOperations ioOperations = new IoOperations();
+		PatientIoOperations ioOperations = new PatientIoOperations();
 		
 		
 		try 
@@ -173,7 +173,7 @@ public class Tests
 	@Test
 	public void testIoGetPatientFromName() 
 	{
-		IoOperations ioOperations = new IoOperations();
+		PatientIoOperations ioOperations = new PatientIoOperations();
 		
 		
 		try 
@@ -195,7 +195,7 @@ public class Tests
 	@Test
 	public void testIoGetPatientFromCode() 
 	{
-		IoOperations ioOperations = new IoOperations();
+		PatientIoOperations ioOperations = new PatientIoOperations();
 		
 		
 		try 
@@ -218,7 +218,7 @@ public class Tests
 	@Test
 	public void testIoGetPatientAll() 
 	{
-		IoOperations ioOperations = new IoOperations();
+		PatientIoOperations ioOperations = new PatientIoOperations();
 		
 		
 		try 
@@ -240,7 +240,7 @@ public class Tests
 	@Test
 	public void testNewPatient() 
 	{
-		IoOperations ioOperations = new IoOperations();
+		PatientIoOperations ioOperations = new PatientIoOperations();
 
 		
 		try 
@@ -262,7 +262,7 @@ public class Tests
 	@Test
 	public void testUpdatePatientFalse() 
 	{
-		IoOperations ioOperations = new IoOperations();
+		PatientIoOperations ioOperations = new PatientIoOperations();
 		int lock = 0;
 		
 		
@@ -288,7 +288,7 @@ public class Tests
 	@Test
 	public void testUpdatePatientTrue() 
 	{
-		IoOperations ioOperations = new IoOperations();
+		PatientIoOperations ioOperations = new PatientIoOperations();
 		int lock = 0;
 		
 		
@@ -314,7 +314,7 @@ public class Tests
 	@Test
 	public void testDeletePatient() 
 	{
-		IoOperations ioOperations = new IoOperations();
+		PatientIoOperations ioOperations = new PatientIoOperations();
 		
 		
 		try 
@@ -339,7 +339,7 @@ public class Tests
 	@Test
 	public void testIsPatientPresent() 
 	{
-		IoOperations ioOperations = new IoOperations();
+		PatientIoOperations ioOperations = new PatientIoOperations();
 		
 		
 		try 
@@ -360,7 +360,7 @@ public class Tests
 	@Test
 	public void testGetNextPatientCode() 
 	{
-		IoOperations ioOperations = new IoOperations();
+		PatientIoOperations ioOperations = new PatientIoOperations();
 		Integer code = 0;
 		Integer max = 0;
 		
@@ -369,7 +369,7 @@ public class Tests
 		{		
 			code = ioOperations.getNextPatientCode();
 			max = testPatientContext.getMaxCode();
-			assertEquals(max, code);
+			assertEquals(max+1, code);
 		} 
 		catch (Exception e) 
 		{
