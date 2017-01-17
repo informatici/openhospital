@@ -575,8 +575,8 @@ public class PatientIoOperations
 		params.add(obsoleteID);
 		dbQuery.setDataWithParams(query, params, false);
 		
-		// HEIGHT & WEIGHT HISTORY
-		query = "UPDATE MALNUTRITIONCONTROL SET MLN_PAT_ID = ? WHERE MLN_PAT_ID = ?";
+		// EXAMINATION HISTORY
+		query = "UPDATE PATIENTEXAMINATION SET PEX_PAT_ID = ? WHERE PEX_PAT_ID = ?";
 		params.clear();
 		params.add(mergedID);
 		params.add(obsoleteID);
@@ -593,17 +593,11 @@ public class PatientIoOperations
 		dbQuery.setDataWithParams(query, params, false);
 
 		// OPD HISTORY
-		query = "UPDATE OPD SET OPD_PAT_ID = ?, OPD_PAT_FULLNAME = ?, OPD_AGE = ?, OPD_SEX = ?, OPD_PAT_FNAME = ?, OPD_PAT_SNAME = ?, OPD_PAT_NEXT_KIN = ?, OPD_PAT_ADDR = ?, OPD_PAT_CITY = ? WHERE OPD_PAT_ID = ?";
+		query = "UPDATE OPD SET OPD_PAT_ID = ?, OPD_AGE = ?, OPD_SEX = ? WHERE OPD_PAT_ID = ?";
 		params.clear();
 		params.add(mergedID);
-		params.add(mergedPatient.getName());
 		params.add(mergedPatient.getAge());
 		params.add(String.valueOf(mergedPatient.getSex()));
-		params.add(mergedPatient.getFirstName());
-		params.add(mergedPatient.getSecondName());
-		params.add(mergedPatient.getNextKin());
-		params.add(mergedPatient.getAddress());
-		params.add(mergedPatient.getCity());
 		params.add(obsoleteID);
 		dbQuery.setDataWithParams(query, params, false);
 

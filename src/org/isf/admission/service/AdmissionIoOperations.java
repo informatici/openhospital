@@ -158,15 +158,22 @@ public class AdmissionIoOperations
 		ArrayList<Object> params = new ArrayList<Object>();
 				
 		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM ADMISSION WHERE ADM_PAT_ID=? AND ADM_DELETED='N' AND ADM_DATE_DIS IS NULL";
-		jpa.createQuery(query, Admission.class, false);
-		params.add(patient.getCode());
-		jpa.setParameters(params, false);
-		admission = (Admission)jpa.getResult();		
-		
-		jpa.commitTransaction();
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM ADMISSION WHERE ADM_PAT_ID=? AND ADM_DELETED='N' AND ADM_DATE_DIS IS NULL";
+			jpa.createQuery(query, Admission.class, false);
+			params.add(patient.getCode());
+			jpa.setParameters(params, false);
+			admission = (Admission)jpa.getResult();		
+			
+		} catch (Exception e) {
+			if (e.getCause().getClass().equals(NoResultException.class))
+				return null;
+			else throw new OHException(e.getCause().getMessage(), e.getCause());
+		} finally {
+			jpa.commitTransaction();
+		}
 
 		return admission;
 	}
