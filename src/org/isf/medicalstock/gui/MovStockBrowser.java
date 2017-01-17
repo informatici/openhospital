@@ -916,7 +916,7 @@ public class MovStockBrowser extends ModalJFrame {
 		/**
 		 * Note: We must get the objects in a reversed way because of the query
 		 * 
-		 * @see org.isf.lab.service.IoOperations
+		 * @see org.isf.medicalstock.service.MedicalStockIoOperations
 		 */
 		public Object getValueAt(int r, int c) {
 			Movement movement = moves.get(r);
