@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.isf.disease.model.Disease;
@@ -95,6 +96,9 @@ public class Opd
 	@NotNull
 	@Column(name="OPD_USR_ID_A")
 	private String userID;
+	
+	@Transient
+	private volatile int hashCode = 0;
 
 
 	public char getNewPatient() {
@@ -309,5 +313,33 @@ public class Opd
 
 	public void setUserID(String userID) {
 		this.userID = userID;
+	}
+
+	@Override
+	public int hashCode() {
+		if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + code;
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (!(obj instanceof Opd)) {
+			return false;
+		}
+		
+		Opd opd = (Opd)obj;
+		return (code == opd.getCode());
 	}
 }
