@@ -281,7 +281,7 @@ public class Tests
 		{		
 			code = _setupTestOperation(false);
 			Operation foundOperation = (Operation)jpa.find(Operation.class, code); 
-			result = ioOperations.isDescriptionPresent(foundOperation.getDescription(), code);
+			result = ioOperations.isDescriptionPresent(foundOperation.getDescription(), foundOperation.getType().getCode());
 			
 			assertEquals(true, result);
 		} 
@@ -305,8 +305,6 @@ public class Tests
 	
     private void _restoreContext() throws OHException 
     {
-		System.out.println(testOperationContext.getAllSaved());
-		System.out.println(testOperationTypeContext.getAllSaved());
 		testOperationContext.deleteNews(jpa);
 		testOperationTypeContext.deleteNews(jpa);
         
