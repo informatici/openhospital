@@ -831,7 +831,7 @@ public class PatVacBrowser extends ModalJFrame implements ActionListener{
 		/**
 		 * Note: We must get the objects in a reversed way because of the query
 		 * 
-		 * @see org.isf.lab.service.IoOperations
+		 * @see org.isf.patvac.service.PatVacIoOperations
 		 */
 		public Object getValueAt(int r, int c) {
 			PatientVaccine patVac = lPatVac.get(r);
