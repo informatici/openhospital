@@ -104,12 +104,36 @@ public class Lot
 		return getCode().length()<=50;
 	}
 
-	public boolean equals(Lot lot) {
-		if (this.code == lot.getCode() &&
-				this.dueDate == lot.getDueDate() &&
-				this.preparationDate == lot.getPreparationDate())
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		return false;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Lot other = (Lot) obj;
+		if (code == null) {
+			if (other.code != null)
+				return false;
+		} else if (!code.equals(other.code))
+			return false;
+		if (Double.doubleToLongBits(cost) != Double
+				.doubleToLongBits(other.cost))
+			return false;
+		if (dueDate == null) {
+			if (other.dueDate != null)
+				return false;
+		} else if (!dueDate.equals(other.dueDate))
+			return false;
+		if (preparationDate == null) {
+			if (other.preparationDate != null)
+				return false;
+		} else if (!preparationDate.equals(other.preparationDate))
+			return false;
+		if (quantity != other.quantity)
+			return false;
+		return true;
 	}
 
 	@Override

@@ -274,7 +274,7 @@ public class MedicalStockIoOperations {
 			{
 				candidateCode = Math.abs(random.nextLong());
 				jpa.beginTransaction();	
-				lot = (Lot)jpa.find(Lot.class, candidateCode); 
+				lot = (Lot)jpa.find(Lot.class, String.valueOf(candidateCode)); 
 				jpa.commitTransaction();
 			} while (lot !=null);
 		} 
