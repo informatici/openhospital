@@ -8,6 +8,8 @@ package org.isf.medicals.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.*;
 import org.isf.medicalstock.model.Movement;
@@ -166,36 +168,31 @@ public class MedicalsIoOperations {
 	 * @return <code>true</code> if exists <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the check.
 	 */
-	public boolean medicalExists(
-			Medical medical) throws OHException
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+	public boolean medicalExists(Medical medical) throws OHException {
+		
+		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = false;
 		ArrayList<Object> params = new ArrayList<Object>();
-				
-		
+
 		jpa.beginTransaction();
-		
-		String query = "select * from MEDICALDSR where MDSR_MDSRT_ID_A = ? and MDSR_DESC = ?";
+
+		String query = "SELECT * FROM MEDICALDSR WHERE MDSR_MDSRT_ID_A = ? AND MDSR_DESC = ?";
 		params.add(medical.getType().getCode());
 		params.add(medical.getDescription());
 		jpa.createQuery(query, Medical.class, false);
 		jpa.setParameters(params, false);
-		try 
-		{		
-			Medical foundMedical = (Medical)jpa.getResult();
-			if (foundMedical.getCode() == medical.getCode())
-			{
+		try {
+			Medical foundMedical = (Medical) jpa.getResult();
+			if (foundMedical != null) {
 				result = true;
 			}
-		} 
-		catch (Exception e) 
-		{
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);		
+		} catch (Exception e) {
+			if (e.getCause().getClass().equals(NoResultException.class))
+				return false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} finally {
+			jpa.commitTransaction();
 		}
-		
-		jpa.commitTransaction();
 
 		return result;
 	}
@@ -206,17 +203,14 @@ public class MedicalsIoOperations {
 	 * @return <code>true</code> if the medical has been stored, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs storing the medical.
 	 */
-	public boolean newMedical(
-			Medical medical) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+	public boolean newMedical(Medical medical) throws OHException {
+		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
-		
-		
-		jpa.beginTransaction();	
+
+		jpa.beginTransaction();
 		jpa.persist(medical);
-    	jpa.commitTransaction();
-    	
+		jpa.commitTransaction();
+
 		return result;
 	}
 
@@ -253,17 +247,22 @@ public class MedicalsIoOperations {
 	 * @return <code>true</code> if the medical has been updated <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the update.
 	 */
-	public boolean updateMedical(
-			Medical medical) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+	public boolean updateMedical(Medical medical) throws OHException {
+		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(medical);
-    	jpa.commitTransaction();
-    	
+		medical.setLock(new Integer(medical.getLock().intValue() + 1));
+
+		try {
+			
+			jpa.beginTransaction();
+			jpa.merge(medical);
+			jpa.commitTransaction();
+			
+		} catch (Exception e) {
+			throw new OHException(e.getMessage(), e);
+		}
+
 		return result;
 	}
 
@@ -275,33 +274,32 @@ public class MedicalsIoOperations {
 	 */
 	public boolean isMedicalReferencedInStockMovement(
 			int code) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+ {
+		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = false;
 		ArrayList<Object> params = new ArrayList<Object>();
-				
-		
+
 		jpa.beginTransaction();
-		
+
 		String query = "select * from MEDICALDSRSTOCKMOV where MMV_MDSR_ID = ?";
 		params.add(code);
 		jpa.createQuery(query, Movement.class, false);
 		jpa.setParameters(params, false);
-		try 
-		{			
-			Movement foundMovement = (Movement)jpa.getResult();
-			if (foundMovement.getMedical().getCode() == code)
-			{
+		try {
+			Movement foundMovement = (Movement) jpa.getResult();
+			if (foundMovement.getMedical().getCode() == code) {
 				result = true;
 			}
-		} 
-		catch (Exception e) 
-		{
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);				
+		} catch (Exception e) {
+			if (e.getCause().getClass().equals(NoResultException.class))
+				return false;
+			throw new OHException(
+					MessageBundle
+							.getMessage("angal.sql.problemsoccurredwiththesqlistruction"),
+					e);
+		} finally {
+			jpa.commitTransaction();
 		}
-		
-		jpa.commitTransaction();
 
 		return result;
 	}
@@ -320,7 +318,8 @@ public class MedicalsIoOperations {
 		
 		
 		jpa.beginTransaction();	
-		jpa.remove(medical);
+		Medical objToRemove = (Medical) jpa.find(Medical.class, medical.getCode());
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
     	
 		return result;

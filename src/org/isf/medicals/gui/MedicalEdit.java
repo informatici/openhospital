@@ -19,6 +19,8 @@ import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
+import org.isf.utils.jobjects.VoDoubleTextField;
+import org.isf.utils.jobjects.VoIntegerTextField;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 /**
@@ -55,13 +57,13 @@ public class MedicalEdit extends JDialog {
 	
 	private JLabel criticLabel = null;
 	
-	private JTextField pcsperpckField = null;
+	private VoIntegerTextField pcsperpckField = null;
 
 	private VoLimitedTextField descriptionTextField = null;
 	
 	private VoLimitedTextField codeTextField = null;
 
-	private JTextField minQtiField = null;
+	private VoDoubleTextField minQtiField = null;
 
 	private JLabel typeLabel = null;
 
@@ -202,33 +204,34 @@ public class MedicalEdit extends JDialog {
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-						MedicalBrowsingManager manager = new MedicalBrowsingManager();
-						medical.setType((MedicalType) typeComboBox
-								.getSelectedItem());
-						medical.setDescription(descriptionTextField.getText());
-						medical.setProd_code(codeTextField.getText());
-						try {
-							medical.setPcsperpck(Integer.valueOf(pcsperpckField.getText()));
-							medical.setMinqty(Double.valueOf(minQtiField.getText()));
-							boolean result = false;
-							if (insert) { // inserting
-								result = manager.newMedical(medical);
-								if (result) {
-									dispose();
-								}
-							} else { // updating
-								result = manager.updateMedical(medical);
-								if (result) {
-									dispose();
-								}
+					MedicalBrowsingManager manager = new MedicalBrowsingManager();
+					medical.setType((MedicalType) typeComboBox.getSelectedItem());
+					medical.setDescription(descriptionTextField.getText());
+					medical.setProd_code(codeTextField.getText());
+					try {
+						medical.setPcsperpck(Integer.valueOf(pcsperpckField.getText()));
+						medical.setMinqty(Double.valueOf(minQtiField.getText()));
+						boolean result = false;
+						if (insert) { // inserting
+							result = manager.newMedical(medical);
+							if (result) {
+								dispose();
 							}
-							if (!result)
-								JOptionPane.showMessageDialog(null,
-										MessageBundle.getMessage("angal.medicals.thedatacouldnotbesaved"));
+						} else { // updating
+							result = manager.updateMedical(medical);
+							if (result) {
+								dispose();
+							}
+						}
+						if (!result)
+							JOptionPane.showMessageDialog(
+									null,
+									MessageBundle.getMessage("angal.medicals.thedatacouldnotbesaved"));
 
-						} catch (NumberFormatException ex) {
-							JOptionPane.showMessageDialog(null,
-									MessageBundle.getMessage("angal.medicals.insertavalidvalue"));
+					} catch (NumberFormatException ex) {
+						JOptionPane.showMessageDialog(
+								null, 
+								MessageBundle.getMessage("angal.medicals.insertavalidvalue"));
 					}
 				}
 			});
@@ -272,9 +275,9 @@ public class MedicalEdit extends JDialog {
 	private JTextField getMinQtiField() {
 		if (minQtiField == null) {
 			if (insert)
-				minQtiField = new JTextField(3);
+				minQtiField = new VoDoubleTextField(0,3);
 			else
-				minQtiField = new JTextField(String.valueOf(medical.getMinqty()));
+				minQtiField = new VoDoubleTextField(medical.getMinqty(),3);
 		}
 		return minQtiField;
 	}
@@ -282,9 +285,9 @@ public class MedicalEdit extends JDialog {
 	private JTextField getPcsperpckField() {
 		if (pcsperpckField == null) {
 			if (insert)
-				pcsperpckField = new JTextField(3);
+				pcsperpckField = new VoIntegerTextField(1,3);
 			else
-				pcsperpckField = new JTextField(String.valueOf(medical.getPcsperpck()));
+				pcsperpckField = new VoIntegerTextField(medical.getPcsperpck(),3);
 		}
 		return pcsperpckField;
 	}
