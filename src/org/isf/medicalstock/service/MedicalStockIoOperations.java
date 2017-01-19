@@ -475,7 +475,7 @@ public class MedicalStockIoOperations {
 		
 		jpa.commitTransaction();
 		
-		if (medicalWards != null)
+		if (!medicalWards.isEmpty())
 		{			
 			for (MedicalWard medicalWard : medicalWards)
 			{
