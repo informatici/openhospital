@@ -299,27 +299,26 @@ public class MedicalStockWardIoOperations
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
 		
-		}  catch (NoResultException e) {
-			//insert
-			ArrayList<Object> parameters = new ArrayList<Object>(3);
-			String query = "INSERT INTO MEDICALDSRWARD (MDSRWRD_WRD_ID_A, MDSRWRD_MDSR_ID, MDSRWRD_IN_QTI, MDSRWRD_OUT_QTI) " +
-					"VALUES (?, ?, ?, '0')";
-			jpa.createQuery(query, MovementWard.class, false);
-			parameters.add(ward);
-			parameters.add(medical);
-			parameters.add(-qty);
-			jpa.setParameters(parameters, false);
-			jpa.executeUpdate();
+		}  catch (Exception e) {
+			if (e.getCause().getClass().equals(NoResultException.class)) {
+				
+				//insert
+				ArrayList<Object> parameters = new ArrayList<Object>(3);
+				String query = "INSERT INTO MEDICALDSRWARD (MDSRWRD_WRD_ID_A, MDSRWRD_MDSR_ID, MDSRWRD_IN_QTI, MDSRWRD_OUT_QTI) " +
+						"VALUES (?, ?, ?, '0')";
+				jpa.createQuery(query, MovementWard.class, false);
+				parameters.add(ward);
+				parameters.add(medical);
+				parameters.add(-qty);
+				jpa.setParameters(parameters, false);
+				jpa.executeUpdate();
+				
+			} else {
+				result = false;
+				throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+			}
 			
-		} 	catch (OHException e) {
-			
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		
-		} finally {
-			jpa.commitTransaction();
-		}
-	
+		} 
 		return result;
 	}
 
