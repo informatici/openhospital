@@ -5,12 +5,13 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
-import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
@@ -45,36 +46,40 @@ public class MedicalStockWardIoOperations
 		
 		jpa.beginTransaction();
 		
-		String query = "SELECT * FROM ((((MEDICALDSRSTOCKMOVWARD LEFT JOIN " +
+		StringBuilder query = new StringBuilder();
+		
+		query.append("SELECT * FROM ((((MEDICALDSRSTOCKMOVWARD LEFT JOIN " +
 						"(PATIENT LEFT JOIN (SELECT PEX_PAT_ID, PEX_HEIGHT AS PAT_HEIGHT, PEX_WEIGHT AS PAT_WEIGHT FROM PATIENTEXAMINATION GROUP BY PEX_PAT_ID ORDER BY PEX_DATE DESC) AS HW ON PAT_ID = HW.PEX_PAT_ID) ON MMVN_PAT_ID = PAT_ID) JOIN " +
 						"WARD ON MMVN_WRD_ID_A = WRD_ID_A)) JOIN " +
 						"MEDICALDSR ON MMVN_MDSR_ID = MDSR_ID) JOIN " +
-						"MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ";
+						"MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ");
 		if (wardId!=null || dateFrom!=null || dateTo!=null) 
 		{
-			query += "WHERE ";
+			query.append("WHERE ");
 		}
 		if (wardId != null && !wardId.equals("")) 
 		{
 			if (params.size() != 0) 
 			{
-				query += "AND ";
+				query.append("AND ");
 			}
-			query += "WRD_ID_A = ? ";
+			query.append("WRD_ID_A = ? ");
 			params.add(wardId);
 		}
 		if ((dateFrom != null) && (dateTo != null)) 
 		{
 			if (params.size() != 0) 
 			{
-				query += "AND ";
+				query.append("AND ");
 			}
-			query += "MMVN_DATE > ? AND MMVN_DATE < ?";
+			query.append("MMVN_DATE > ? AND MMVN_DATE < ?");
 			params.add(dateFrom);
 			params.add(dateTo);
 		}
+		
+		query.append(" ORDER BY MMVN_DATE ASC");
 				
-		jpa.createQuery(query, MovementWard.class, false);
+		jpa.createQuery(query.toString(), MovementWard.class, false);
 		jpa.setParameters(params, false);
 		List<MovementWard> movementList = (List<MovementWard>)jpa.getList();
 		movements = new ArrayList<MovementWard>(movementList);			
@@ -263,22 +268,57 @@ public class MedicalStockWardIoOperations
 			DbJpaUtil jpa,
 			MovementWard movement) throws OHException 
 	{
-		ArrayList<Object> params = new ArrayList<Object>();
-		String query = null;
+		Double qty = movement.getQuantity();
+		String ward = movement.getWard().getCode();
+		Integer medical = movement.getMedical().getCode();
+		
 		boolean result = true;
-				
+		
 		try {
-			query = "UPDATE MEDICALDSRWARD SET MDSRWRD_OUT_QTI = MDSRWRD_OUT_QTI + ? WHERE MDSRWRD_WRD_ID_A = ? AND MDSRWRD_MDSR_ID = ?";
-			jpa.createQuery(query, Patient.class, false);
-			params.add(movement.getQuantity());
-			params.add(movement.getWard().getCode());
-			params.add(movement.getMedical().getCode());
+		
+			ArrayList<Object> params = new ArrayList<Object>(3);
+			String query = "SELECT * FROM MEDICALDSRWARD WHERE MDSRWRD_WRD_ID_A = ? AND MDSRWRD_MDSR_ID = ?";
+			jpa.createQuery(query, MovementWard.class, false);
+			params.add(ward);
+			params.add(medical);
 			jpa.setParameters(params, false);
-			jpa.executeUpdate();			
-		}  catch (OHException e) {
+			jpa.getResult(); //if NoResultException -> insert in catch block
+			
+			//update
+			params = new ArrayList<Object>(3);
+			if (qty.doubleValue() < 0) {
+				query = "UPDATE MEDICALDSRWARD SET MDSRWRD_IN_QTI = MDSRWRD_IN_QTI + ? WHERE MDSRWRD_WRD_ID_A = ? AND MDSRWRD_MDSR_ID = ?";
+				params.add(-qty);
+			} else {
+				query = "UPDATE MEDICALDSRWARD SET MDSRWRD_OUT_QTI = MDSRWRD_OUT_QTI + ? WHERE MDSRWRD_WRD_ID_A = ? AND MDSRWRD_MDSR_ID = ?";
+				params.add(qty);
+			}
+			jpa.createQuery(query, MovementWard.class, false);
+			params.add(ward);
+			params.add(medical);
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();
+		
+		}  catch (NoResultException e) {
+			//insert
+			ArrayList<Object> parameters = new ArrayList<Object>(3);
+			String query = "INSERT INTO MEDICALDSRWARD (MDSRWRD_WRD_ID_A, MDSRWRD_MDSR_ID, MDSRWRD_IN_QTI, MDSRWRD_OUT_QTI) " +
+					"VALUES (?, ?, ?, '0')";
+			jpa.createQuery(query, MovementWard.class, false);
+			parameters.add(ward);
+			parameters.add(medical);
+			parameters.add(-qty);
+			jpa.setParameters(parameters, false);
+			jpa.executeUpdate();
+			
+		} 	catch (OHException e) {
+			
 			result = false;
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 				
+		
+		} finally {
+			jpa.commitTransaction();
+		}
 	
 		return result;
 	}
