@@ -415,13 +415,15 @@ public class LabIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
+		jpa.beginTransaction();
 		
-		jpa.beginTransaction();	
-		if (aLaboratory.getExam().getProcedure() == 2) 
+		Laboratory objToRemove = (Laboratory) jpa.find(Laboratory.class, aLaboratory.getCode());
+		
+		if (objToRemove.getExam().getProcedure() == 2) 
 		{
 			try {
 				jpa.createQuery("DELETE FROM LABORATORYROW WHERE LABR_LAB_ID = ?", LaboratoryRow.class, false);
-				params.add(aLaboratory.getCode());
+				params.add(objToRemove.getCode());
 				jpa.setParameters(params, false);
 				jpa.executeUpdate();
 			}  catch (OHException e) {
@@ -429,7 +431,7 @@ public class LabIoOperations {
 				throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
 			}
 		}
-		jpa.remove(aLaboratory);
+		jpa.remove(objToRemove);
     	jpa.commitTransaction();
 		
 		return result;
