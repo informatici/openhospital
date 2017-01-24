@@ -25,7 +25,7 @@ import org.isf.utils.exception.OHException;
 public class DbJpaUtil 
 {
 	private static final String PERSISTENCE_UNIT = "OhJpa";
-    private static EntityManagerFactory entityManagerFactory;
+    private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
 	private static EntityManager entityManager;
 	private static Query query;
 	
@@ -35,13 +35,7 @@ public class DbJpaUtil
 	 * @throws ClassNotFoundException 
 	 * @throws OHException 
      */
-	public DbJpaUtil()
-	{	
-//		if (getEntityManagerFactory() == null)
-			entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
-
-		return;
-	}	
+	public DbJpaUtil() {}	
 	
 	/**
      * constructor that initialize the entity Manager
@@ -332,7 +326,10 @@ public class DbJpaUtil
 			System.out.println("PersistenceException");
 			System.out.println(e);
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 	
+		} catch (Exception e) {
+			System.out.println("UnknownException");
+			System.out.println(e);
+		}
 		
 		return result;
     }    
