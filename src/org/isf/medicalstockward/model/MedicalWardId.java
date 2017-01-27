@@ -50,4 +50,34 @@ public class MedicalWardId implements Serializable
 	public void setMedicalId(int medical_id) {
 		this.medical_id = medical_id;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + medical_id;
+		result = prime * result + ward_id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof MedicalWardId)) {
+			return false;
+		}
+		MedicalWardId other = (MedicalWardId) obj;
+		if (medical_id != other.medical_id) {
+			return false;
+		}
+		if (ward_id != other.ward_id) {
+			return false;
+		}
+		return true;
+	}
 }
