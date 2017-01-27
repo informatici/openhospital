@@ -273,11 +273,11 @@ public class OpdIoOperations {
 			jpa.createQuery(query, null, false);
 			jpa.setParameters(params, false);	
 			progYear = (Integer)jpa.getResult();
-		}  catch (OHException e) {
+		} catch (OHException e) {
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 				
-	
-		jpa.commitTransaction();
+		} finally {
+			jpa.commitTransaction();
+		}
 		
 		return progYear == null ? new Integer(0) : progYear;
 	}

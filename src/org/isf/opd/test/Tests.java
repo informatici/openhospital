@@ -290,7 +290,7 @@ public class Tests
 			progYear = ioOperations.getProgYear(0);
 
 			Opd foundOpd = (Opd)jpa.find(Opd.class, code); 
-			assertEquals(foundOpd.getYear(), progYear);
+			assertEquals(foundOpd.getProgYear(), progYear);
 		} 
 		catch (Exception e) 
 		{

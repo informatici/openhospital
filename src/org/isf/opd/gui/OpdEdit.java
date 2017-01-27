@@ -494,7 +494,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 						opd.setReferralTo(referralTo);
 						opd.setAge(age);
 						opd.setSex(sex);
-						opd.setYear(manager.getProgYear(date.get(GregorianCalendar.YEAR))+1);
+						opd.setProgYear(manager.getProgYear(date.get(GregorianCalendar.YEAR))+1);
 						opd.setDisease(disease);				
 						opd.setDisease2(disease2);
 						opd.setDisease3(disease3);

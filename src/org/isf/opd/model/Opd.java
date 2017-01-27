@@ -65,7 +65,7 @@ public class Opd
 
 	@NotNull
 	@Column(name="OPD_PROG_YEAR")	
-	private int year;
+	private int prog_year;
 		
 	@ManyToOne
 	@JoinColumn(name="OPD_DIS_ID_A")
@@ -121,8 +121,8 @@ public class Opd
      * @param aLock
      */
 	
-	public Opd(int aYear,char aSex,int aAge,Disease aDisease,int aLock) {
-		year=aYear;
+	public Opd(int aProgYear,char aSex,int aAge,Disease aDisease,int aLock) {
+		prog_year=aProgYear;
 		sex=aSex;
 		age=aAge;
 		disease=aDisease;
@@ -277,11 +277,11 @@ public class Opd
 	public void setSex(char sex) {
 		this.sex = sex;
 	}
-	public int getYear() {
-		return year;
+	public int getProgYear() {
+		return prog_year;
 	}
-	public void setYear(int year) {
-		this.year = year;
+	public void setProgYear(int prog_year) {
+		this.prog_year = prog_year;
 	}
 	public String getDiseaseDesc() {
 		return disease.getDescription();

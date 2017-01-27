@@ -753,10 +753,10 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 
 	private String getOpdNum() {
 		int OpdNum;
-		if (!insert) return ""+opd.getYear();
+		if (!insert) return ""+opd.getProgYear();
 		GregorianCalendar date = new GregorianCalendar();
-		opd.setYear(opdManager.getProgYear(date.get(Calendar.YEAR))+1);
-		OpdNum = opd.getYear();
+		opd.setProgYear(opdManager.getProgYear(date.get(Calendar.YEAR))+1);
+		OpdNum = opd.getProgYear();
 		return ""+OpdNum;
 	}
 	
@@ -1464,7 +1464,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 					opd.setVisitDate(gregDate);
 					if (insert){
 						GregorianCalendar date =new GregorianCalendar();
-						opd.setYear(opdManager.getProgYear(date.get(Calendar.YEAR))+1);
+						opd.setProgYear(opdManager.getProgYear(date.get(Calendar.YEAR))+1);
 						//remember for later use
 						RememberDates.setLastOpdVisitDate(gregDate);
 						result = opdManager.newOpd(opd);

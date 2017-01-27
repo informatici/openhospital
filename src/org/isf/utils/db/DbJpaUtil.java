@@ -291,7 +291,6 @@ public class DbJpaUtil
     {
     	Object result = null;
     	
-    	  	
 		try {
 			result = query.getSingleResult();			
 		} catch (NoResultException e) {
