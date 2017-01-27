@@ -4,7 +4,13 @@ package org.isf.patvac.test;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.isf.patient.model.Patient;
+import org.isf.patient.test.TestPatient;
+import org.isf.patient.test.TestPatientContext;
+import org.isf.patvac.model.PatientVaccine;
+import org.isf.patvac.service.PatVacIoOperations;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.isf.vaccine.model.Vaccine;
@@ -13,13 +19,6 @@ import org.isf.vaccine.test.TestVaccineContext;
 import org.isf.vactype.model.VaccineType;
 import org.isf.vactype.test.TestVaccineType;
 import org.isf.vactype.test.TestVaccineTypeContext;
-import org.isf.patient.model.Patient;
-import org.isf.patient.test.TestPatient;
-import org.isf.patient.test.TestPatientContext;
-import org.isf.patvac.model.PatientVaccine;
-import org.isf.patvac.service.PatVacIoOperations;
-import org.isf.patvac.test.TestPatientVaccine;
-import org.isf.patvac.test.TestPatientVaccineContext;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -150,9 +149,9 @@ public class Tests
 					foundPatientVaccine.getVaccine().getCode(),
 					foundPatientVaccine.getVaccineDate(),
 					foundPatientVaccine.getVaccineDate(),
-					foundPatientVaccine.getPatId().getSex(),
-					foundPatientVaccine.getPatId().getAge(),
-					foundPatientVaccine.getPatId().getAge());
+					foundPatientVaccine.getPatient().getSex(),
+					foundPatientVaccine.getPatient().getAge(),
+					foundPatientVaccine.getPatient().getAge());
 			
 			assertEquals(foundPatientVaccine.getPatName(), patientVaccines.get(patientVaccines.size()-1).getPatName());
 		} 
@@ -253,21 +252,26 @@ public class Tests
 		return;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testIoGetProgYear() 
 	{
-		int code = 0;
 		PatVacIoOperations ioOperations = new PatVacIoOperations();
 		int prog_year = 0;
-		
+		int found_prog_year = 0;
 
 		try 
 		{		
-			code = _setupTestPatientVaccine(false);
-			PatientVaccine foundPatientVaccine = (PatientVaccine)jpa.find(PatientVaccine.class, code); 
-			prog_year = ioOperations.getProgYear(2000);
+			_setupTestPatientVaccine(false);
+			List<PatientVaccine> patientVaccineList = ioOperations.getPatientVaccine(null, null, null, null, 'A', 0, 0);
+			for (PatientVaccine patVac : patientVaccineList) {
+				if (patVac.getProgr() > found_prog_year) found_prog_year = patVac.getProgr();
+			}
+			prog_year = ioOperations.getProgYear(0);
+			assertEquals(found_prog_year, prog_year);
 			
-			assertEquals(foundPatientVaccine.getProgr(), prog_year);
+			prog_year = ioOperations.getProgYear(1984); //TestPatientVaccine's year
+			assertEquals(10, prog_year);
 		} 
 		catch (Exception e) 
 		{

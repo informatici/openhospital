@@ -101,6 +101,7 @@ public class PatVacEdit extends JDialog {
 		super(myFrameIn, true);
 		insert = action;
 		patVac = patientVaccineIn;
+		selectedPatient = patientVaccineIn.getPatient();
 		patNextYProg = getPatientVaccineYMaxProg() + 1;
 		initialize();
 	}
@@ -498,7 +499,7 @@ public class PatVacEdit extends JDialog {
 
 		for (Patient elem : pat) {
 			if (!insert) {
-				if (elem.getCode() == patVac.getPatId().getCode()) {
+				if (elem.getCode().equals(patVac.getPatient().getCode())) {
 					patSelected = elem;
 				}
 			}
@@ -683,7 +684,7 @@ public class PatVacEdit extends JDialog {
 
 					patVac.setVaccineDate(gregDate);
 					patVac.setVaccine((Vaccine) vaccineComboBox.getSelectedItem());
-					patVac.setPatId(selectedPatient);
+					patVac.setPatient(selectedPatient);
 					patVac.setLock(0);
 					patVac.setPatName(selectedPatient.getName());
 					patVac.setPatSex(selectedPatient.getSex());

@@ -49,7 +49,7 @@ public class TestPatientVaccine
 		patientVaccine.setCode(code);
 		patientVaccine.setProgr(progr);
 		patientVaccine.setVaccineDate(vaccineDate);
-		patientVaccine.setPatId(patient);
+		patientVaccine.setPatient(patient);
 		patientVaccine.setVaccine(vaccine);
 		patientVaccine.setLock(lock);
 		

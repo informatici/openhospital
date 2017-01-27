@@ -55,7 +55,7 @@ import org.isf.vactype.model.VaccineType;
 import com.toedter.calendar.JDateChooser;
 
 
-public class PatVacBrowser extends ModalJFrame implements ActionListener{
+public class PatVacBrowser extends ModalJFrame {
 
     /**
 	 * 
@@ -193,9 +193,8 @@ public class PatVacBrowser extends ModalJFrame implements ActionListener{
                     new PatVacEdit (myFrame, patientVaccine, true);
                     
                     if (!last.equals(patientVaccine)) {
-						lPatVac.add(lPatVac.size(), patientVaccine);
-						((PatVacBrowsingModel) jTable.getModel())
-								.fireTableDataChanged();
+						lPatVac.add(0, patientVaccine);
+						((PatVacBrowsingModel) jTable.getModel()).fireTableDataChanged();
 						updateRowCounter();
 						if (jTable.getRowCount() > 0)
 							jTable.setRowSelectionInterval(0, 0);
@@ -231,19 +230,18 @@ public class PatVacBrowser extends ModalJFrame implements ActionListener{
 					PatientVaccine last = new PatientVaccine(patientVaccine.getCode(),
 								                  patientVaccine.getProgr(),
 								                  patientVaccine.getVaccineDate(),
-								                  patientVaccine.getPatId(),
+								                  patientVaccine.getPatient(),
 								                  patientVaccine.getVaccine(),
 								                  patientVaccine.getLock(),
 								                  patientVaccine.getPatName(),
 								                  patientVaccine.getPatAge(),
 								                  patientVaccine.getPatSex());
 					
-					new PatVacEdit (myFrame, patientVaccine, false);	
-										
+					new PatVacEdit (myFrame, patientVaccine, false);
+					
 					if (!last.equals(patientVaccine)) {
-						lPatVac.set(lPatVac.size() - selectedrow - 1, patientVaccine);
-						((PatVacBrowsingModel) jTable.getModel())
-								.fireTableDataChanged();
+//						lPatVac.set(lPatVac.size() - selectedrow - 1, patientVaccine);
+						((PatVacBrowsingModel) jTable.getModel()).fireTableDataChanged();
 						updateRowCounter();
 						if ((jTable.getRowCount() > 0) && selectedrow > -1)
 						  	jTable.setRowSelectionInterval(selectedrow, selectedrow);
@@ -455,9 +453,6 @@ public class PatVacBrowser extends ModalJFrame implements ActionListener{
 			group.add(radiom);
 			group.add(radiof);
 			group.add(radioa);
-			radiom.addActionListener(this);
-			radiof.addActionListener(this);
-			radioa.addActionListener(this);
 			
 			label1Panel.add(radioa);
 			sexPanel.add(label1Panel);
