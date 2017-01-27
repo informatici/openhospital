@@ -72,7 +72,7 @@ public class PatientPhotoPanel extends JPanel {
 	
 	private static int buttonMode = BUTTONMODE_showStream;
 	
-	public PatientPhotoPanel(final PatientInsertExtended patientFrame, final int code, final Image patientPhoto) throws IOException {
+	public PatientPhotoPanel(final PatientInsertExtended patientFrame, final Integer code, final Image patientPhoto) throws IOException {
 		owner = patientFrame;
 		if (jPhotoPanel == null) {
 			jPhotoPanel = new JPanel();

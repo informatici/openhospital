@@ -76,6 +76,8 @@ public class JAgenda extends JPanel implements ActionListener, KeyListener,
 	
 	private static final long serialVersionUID = 5876398337018781820L;
 
+	private JDialog owner;
+	
 	protected AgendaDayObject[] days;
 	
 	protected JButton[] weeks;
@@ -139,8 +141,9 @@ public class JAgenda extends JPanel implements ActionListener, KeyListener,
 	/**
 	 * Default JDayChooser constructor.
 	 */
-	public JAgenda() {
+	public JAgenda(JDialog owner) {
 		this(false);
+		this.owner = owner;
 	}
 
 	/**
@@ -1041,7 +1044,7 @@ public class JAgenda extends JPanel implements ActionListener, KeyListener,
 	 */
 	public static void main(String[] s) {
 		JFrame frame = new JFrame("JDayChooser");
-		frame.getContentPane().add(new JAgenda());
+		frame.getContentPane().add(new JAgenda(null));
 		frame.setSize(800,600);
 		//frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
@@ -1225,7 +1228,7 @@ public class JAgenda extends JPanel implements ActionListener, KeyListener,
 				
 				JPanel thisDay = null;
 				thisDay = AgendaDayObject.this.popUp();
-				final JDialog dialog = new JDialog();
+				final JDialog dialog = new JDialog(owner);
 				dialog.add(thisDay);
 				dialog.setUndecorated(true);
 				dialog.setSize(new Dimension(600,400));
@@ -1297,6 +1300,7 @@ public class JAgenda extends JPanel implements ActionListener, KeyListener,
 		
 		tmpCalendar.set(Calendar.DAY_OF_MONTH, 1);
 		int firstDay = tmpCalendar.get(Calendar.DAY_OF_WEEK) - firstDayOfWeek;
+		if (firstDay < 0) firstDay+=7;
 		
 		int realIndex = 6 + firstDay + day;
 		

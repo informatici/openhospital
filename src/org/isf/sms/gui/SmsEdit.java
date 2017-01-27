@@ -37,6 +37,7 @@ import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
 import org.isf.sms.model.Sms;
 import org.isf.sms.service.SmsOperations;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.JDateAndTimeChooserDialog;
 
 import com.toedter.calendar.JDateChooser;
@@ -299,7 +300,12 @@ public class SmsEdit extends JDialog implements SelectionListener {
 								smsToSend.setModule("smsmanager");
 								smsToSend.setModuleID(null);
 								SmsOperations smsOp = new SmsOperations();
-								smsOp.saveOrUpdate(smsToSend);
+								try {
+									smsOp.saveOrUpdate(smsToSend);
+								} catch (OHException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
 							}
 						} else return;
 					} else {
@@ -308,8 +314,14 @@ public class SmsEdit extends JDialog implements SelectionListener {
 						smsToSend.setSmsDateSched(schedDate);
 						smsToSend.setSmsUser(MainMenu.getUser());
 						smsToSend.setSmsText(text);
+						smsToSend.setModule("smsmanager");
 						SmsOperations smsOp = new SmsOperations();
-						smsOp.saveOrUpdate(smsToSend);
+						try {
+							smsOp.saveOrUpdate(smsToSend);
+						} catch (OHException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 					dispose();
 				}

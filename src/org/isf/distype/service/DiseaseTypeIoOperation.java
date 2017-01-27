@@ -1,16 +1,12 @@
 package org.isf.distype.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.isf.distype.model.DiseaseType;
-import org.isf.utils.db.DbQueryLogger;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
-import org.isf.generaldata.MessageBundle;
 
 /**
  * Persistence class for the DisType module.
@@ -23,21 +19,22 @@ public class DiseaseTypeIoOperation {
 	 * @return a list of disease type.
 	 * @throws OHException if an error occurs retrieving the diseases list.
 	 */
-	public ArrayList<DiseaseType> getDiseaseTypes() throws OHException {
+    @SuppressWarnings("unchecked")
+	public ArrayList<DiseaseType> getDiseaseTypes() throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<DiseaseType> diseaseTypes = null;
-		String query = "select * from DISEASETYPE order by DCL_DESC";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try{
-			ResultSet resultSet = dbQuery.getData(query,true);
-			diseaseTypes = new ArrayList<DiseaseType>(resultSet.getFetchSize());
-			while (resultSet.next()) {
-				diseaseTypes.add(new DiseaseType(resultSet.getString("DCL_ID_A"), resultSet.getString("DCL_DESC")));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
-		}
+				
+		
+		jpa.beginTransaction();
+		
+		String query = "SELECT * FROM DISEASETYPE ORDER BY DCL_DESC";
+		jpa.createQuery(query, DiseaseType.class, false);
+		List<DiseaseType> diseaseTypeList = (List<DiseaseType>)jpa.getList();
+		diseaseTypes = new ArrayList<DiseaseType>(diseaseTypeList);			
+		
+		jpa.commitTransaction();
+
 		return diseaseTypes;
 	}
 
@@ -47,20 +44,18 @@ public class DiseaseTypeIoOperation {
 	 * @return <code>true</code> if the disease type has been updated, false otherwise.
 	 * @throws OHException if an error occurs during the update operation.
 	 */
-	public boolean updateDiseaseType(DiseaseType diseaseType) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try {
-			List<Object> parameters = new ArrayList<Object>(3);
-			parameters.add(diseaseType.getCode());
-			parameters.add(diseaseType.getDescription());
-			parameters.add(diseaseType.getCode());
-			String query = "update DISEASETYPE set DCL_ID_A=?, DCL_DESC=? where DCL_ID_A=?";
-			result = dbQuery.setDataWithParams(query, parameters, true);
-		} finally{
-			dbQuery.releaseConnection();
-		}
-		return result;
+	public boolean updateDiseaseType(
+			DiseaseType diseaseType) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.merge(diseaseType);
+    	jpa.commitTransaction();
+    	
+		return result;	
 	}
 
 	/**
@@ -69,18 +64,17 @@ public class DiseaseTypeIoOperation {
 	 * @return <code>true</code> if the {@link DiseaseType} has been stored, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the store operation.
 	 */
-	public boolean newDiseaseType(DiseaseType diseaseType) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try {
-			List<Object> parameters = new ArrayList<Object>(2);
-			parameters.add(diseaseType.getCode());
-			parameters.add(diseaseType.getDescription());
-			String query = "insert into DISEASETYPE (DCL_ID_A,DCL_DESC) values (?,?)";
-			result = dbQuery.setDataWithParams(query, parameters, true);
-		} finally{
-			dbQuery.releaseConnection();
-		}
+	public boolean newDiseaseType(
+			DiseaseType diseaseType) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.persist(diseaseType);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -90,17 +84,19 @@ public class DiseaseTypeIoOperation {
 	 * @return <code>true</code> if the disease has been removed, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the delete procedure.
 	 */
-	public boolean deleteDiseaseType(DiseaseType diseaseType) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try {
-			List<Object> parameters = Collections.<Object>singletonList(diseaseType.getCode());
-			String query = "delete from DISEASETYPE where DCL_ID_A = ?";
-			result = dbQuery.setDataWithParams(query, parameters, true);
-		} finally{
-			dbQuery.releaseConnection();
-		}
-		return result;
+	public boolean deleteDiseaseType(
+			DiseaseType diseaseType) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		DiseaseType objToRemove = (DiseaseType) jpa.find(DiseaseType.class, diseaseType.getCode());
+		jpa.remove(objToRemove);
+    	jpa.commitTransaction();
+    	
+		return result;	
 	}
 
 	/**
@@ -109,21 +105,22 @@ public class DiseaseTypeIoOperation {
 	 * @return <code>true</code> if the code is used, false otherwise.
 	 * @throws OHException if an error occurs during the check.
 	 */
-	public boolean isCodePresent(String code) throws OHException{
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean present=false;
-		try{
-			List<Object> parameters = Collections.<Object>singletonList(code);
-			String query = "SELECT DCL_ID_A FROM DISEASETYPE where DCL_ID_A = ?";
-			ResultSet set = dbQuery.getDataWithParams(query, parameters, true);
-			present = set.first();
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
+	public boolean isCodePresent(
+			String code) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		DiseaseType diseaseType;
+		boolean result = false;
+		
+		
+		jpa.beginTransaction();	
+		diseaseType = (DiseaseType)jpa.find(DiseaseType.class, code);
+		if (diseaseType != null)
+		{
+			result = true;
 		}
-		return present;
+    	jpa.commitTransaction();
+    	
+		return result;	
 	}
-
-
 }

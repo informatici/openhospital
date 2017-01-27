@@ -17,7 +17,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.ward.manager.WardBrowserManager;
@@ -225,43 +224,17 @@ public class WardBrowser extends ModalJFrame implements WardEdit.WardListener {
 						return;							
 					}else {
 						WardBrowserManager wardManager = new WardBrowserManager();
-						AdmissionBrowserManager admManager = new AdmissionBrowserManager();
-						Ward m = (Ward)(((WardBrowserModel) model).getValueAt(table.getSelectedRow(), -1));
-						if (m.getCode().equals("M")) {
-							JOptionPane.showMessageDialog(				
-									WardBrowser.this,
-									MessageBundle.getMessage("angal.ward.cannotdeletematernityward"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);				
-							return;
-						}
-						int noPatients = admManager.getUsedWardBed(m.getCode());
-						if (noPatients == 0) {
-							int n = JOptionPane.showConfirmDialog(
-									WardBrowser.this,
-									MessageBundle.getMessage("angal.ward.deleteward") + " \""+m.getDescription()+"\" ?",
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.YES_NO_OPTION);
-							
-							if ((n == JOptionPane.YES_OPTION) && (wardManager.deleteWard(m))){
-									pWard.remove(table.getSelectedRow());
-								model.fireTableDataChanged();
-								table.updateUI();
-							}
-						} else {
-							JOptionPane.showMessageDialog(				
-									WardBrowser.this,
-									MessageBundle.getMessage("angal.ward.selectedwardhaspatients1") +
-									" " + noPatients + " " +
-									MessageBundle.getMessage("angal.ward.selectedwardhaspatients2"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);				
-							JOptionPane.showMessageDialog(				
-									WardBrowser.this,
-									MessageBundle.getMessage("angal.ward.pleasecheckinadmissionpatients"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);				
-							return;
+						Ward ward = (Ward)(((WardBrowserModel) model).getValueAt(table.getSelectedRow(), -1));
+						int n = JOptionPane.showConfirmDialog(
+								WardBrowser.this,
+								MessageBundle.getMessage("angal.ward.deleteward") + " \""+ward.getDescription()+"\" ?",
+								MessageBundle.getMessage("angal.hospital"),
+								JOptionPane.YES_NO_OPTION);
+						
+						if ((n == JOptionPane.YES_OPTION) && (wardManager.deleteWard(ward))){
+								pWard.remove(table.getSelectedRow());
+							model.fireTableDataChanged();
+							table.updateUI();
 						}
 					}
 				}

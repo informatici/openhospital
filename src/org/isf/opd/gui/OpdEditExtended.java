@@ -97,6 +97,7 @@ import org.isf.patient.gui.PatientInsert;
 import org.isf.patient.gui.PatientInsertExtended;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
 import org.isf.utils.time.TimeTools;
@@ -129,8 +130,8 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 	private EventListenerList surgeryListeners = new EventListenerList();
 	
 	public interface SurgeryListener extends EventListener {
-		public void surgeryUpdated(AWTEvent e);
-		public void surgeryInserted(AWTEvent e);
+		public void surgeryUpdated(AWTEvent e, Opd opd);
+		public void surgeryInserted(AWTEvent e, Opd opd);
 	}
 	
 	public void addSurgeryListener(SurgeryListener l) {
@@ -151,7 +152,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		
 		EventListener[] listeners = surgeryListeners.getListeners(SurgeryListener.class);
 		for (int i = 0; i < listeners.length; i++)
-			((SurgeryListener)listeners[i]).surgeryInserted(event);
+			((SurgeryListener)listeners[i]).surgeryInserted(event, opd);
 	}
 	private void fireSurgeryUpdated() {
 		AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
@@ -163,7 +164,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		
 		EventListener[] listeners = surgeryListeners.getListeners(SurgeryListener.class);
 		for (int i = 0; i < listeners.length; i++)
-			((SurgeryListener)listeners[i]).surgeryUpdated(event);
+			((SurgeryListener)listeners[i]).surgeryUpdated(event, opd);
 	}
 	
 	private static final String VERSION="1.3"; 
@@ -270,9 +271,9 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		opd=old;
 		insert=inserting;
 		if(!insert) {
-			if (opd.getpatientCode() != 0) { 
+			if (opd.getPatient().getCode() != 0) { 
 				PatientBrowserManager patBrowser = new PatientBrowserManager();
-				opdPatient = patBrowser.getPatientAll(opd.getpatientCode());
+				opdPatient = patBrowser.getPatientAll(opd.getPatient().getCode());
 			} else { //old OPD has no PAT_ID => Create Patient from OPD
 				opdPatient = new Patient(opd);
 				opdPatient.setCode(0);
@@ -344,13 +345,13 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		
 		for (Disease disease : diseasesOPD) {
 			
-			if (lastOpd.getDisease() != null && disease.getCode().compareTo(lastOpd.getDisease()) == 0) {
+			if (lastOpd.getDisease() != null && disease.getCode().compareTo(lastOpd.getDisease().getCode()) == 0) {
 					lastOPDDisease1 = disease;
 			}
-			if (lastOpd.getDisease2() != null && disease.getCode().compareTo(lastOpd.getDisease2()) == 0) {
+			if (lastOpd.getDisease2() != null && disease.getCode().compareTo(lastOpd.getDisease2().getCode()) == 0) {
 				lastOPDDisease2 = disease;
 			}
-			if (lastOpd.getDisease3() != null && disease.getCode().compareTo(lastOpd.getDisease3()) == 0) {
+			if (lastOpd.getDisease3() != null && disease.getCode().compareTo(lastOpd.getDisease3().getCode()) == 0) {
 				lastOPDDisease3 = disease;
 			}
 		}
@@ -425,7 +426,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			jPanelNorth.add(rePatientCheckBox);
 			jPanelNorth.add(newPatientCheckBox);
 			if(!insert){
-				if (opd.getNewPatient().equals("N"))
+				if (opd.getNewPatient() == 'N')
 					newPatientCheckBox.setSelected(true);
 				else
 					rePatientCheckBox.setSelected(true);
@@ -752,10 +753,10 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 
 	private String getOpdNum() {
 		int OpdNum;
-		if (!insert) return ""+opd.getYear();
+		if (!insert) return ""+opd.getProgYear();
 		GregorianCalendar date = new GregorianCalendar();
-		opd.setYear(opdManager.getProgYear(date.get(Calendar.YEAR))+1);
-		OpdNum = opd.getYear();
+		opd.setProgYear(opdManager.getProgYear(date.get(Calendar.YEAR))+1);
+		OpdNum = opd.getProgYear();
 		return ""+OpdNum;
 	}
 	
@@ -846,7 +847,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			else if (elem.getType().equals((DiseaseType)diseaseTypeBox.getSelectedItem()))
 				diseaseBox1.addItem(elem);
 			if(!insert && opd.getDisease()!=null){
-				if(opd.getDisease().equals(elem.getCode())){
+				if(opd.getDisease().equals(elem)){
 					elem2 = elem;}
 				
 			}
@@ -857,7 +858,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			} else { //try in the canceled diseases
 				if (opd.getDisease()!=null) {
 					for (Disease elem : diseasesAll) {
-						if (opd.getDisease().compareTo(elem.getCode()) == 0) {
+						if (opd.getDisease().getCode().compareTo(elem.getCode()) == 0) {
 							JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.opd.disease1mayhavebeencanceled"));
 							diseaseBox1.addItem(elem);
 							diseaseBox1.setSelectedItem(elem);
@@ -880,7 +881,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		for (Disease elem : diseasesOPD) {
 			diseaseBox2.addItem(elem);
 			if(!insert && opd.getDisease2()!=null){
-				if(opd.getDisease2().equals(elem.getCode())){
+				if(opd.getDisease2().equals(elem)){
 					elem2 = elem;}
 			} 
 		}
@@ -890,7 +891,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			if (opd.getDisease2()!=null) {
 				for (Disease elem : diseasesAll) {
 					
-					if (opd.getDisease2().compareTo(elem.getCode()) == 0) {
+					if (opd.getDisease2().getCode().compareTo(elem.getCode()) == 0) {
 						JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.opd.disease2mayhavebeencanceled"));
 						diseaseBox2.addItem(elem);
 						diseaseBox2.setSelectedItem(elem);
@@ -1088,7 +1089,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		for (Disease elem : diseasesOPD) {
 			diseaseBox3.addItem(elem);
 			if(!insert && opd.getDisease3()!=null){
-				if(opd.getDisease3().equals(elem.getCode())){
+				if(opd.getDisease3().equals(elem)){
 					elem2 = elem;}
 			}
 		}
@@ -1097,7 +1098,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		} else { //try in the canceled diseases
 			if (opd.getDisease3()!=null) {	
 				for (Disease elem : diseasesAll) {
-					if (opd.getDisease3().compareTo(elem.getCode()) == 0) {
+					if (opd.getDisease3().getCode().compareTo(elem.getCode()) == 0) {
 						JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.opd.disease3mayhavebeencanceled"));
 						diseaseBox3.addItem(elem);
 						diseaseBox3.setSelectedItem(elem);
@@ -1319,14 +1320,20 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 						return;
 					}
 					
-					PatientExamination patex;
+					PatientExamination patex = null;
 					ExaminationOperations examOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
 					
-					PatientExamination lastPatex = examOperations.getLastByPatID(opdPatient.getCode());
-					if (lastPatex != null) {
-						patex = examOperations.getFromLastPatientExamination(lastPatex);
-					} else {
-						patex = examOperations.getDefaultPatientExamination(opdPatient);
+					PatientExamination lastPatex;
+					try {
+						lastPatex = examOperations.getLastByPatID(opdPatient.getCode());
+						if (lastPatex != null) {
+							patex = examOperations.getFromLastPatientExamination(lastPatex);
+						} else {
+							patex = examOperations.getDefaultPatientExamination(opdPatient);
+						}
+					} catch (OHException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
 					
 					GenderPatientExamination gpatex = new GenderPatientExamination(patex, opdPatient.getSex() == 'M');
@@ -1358,15 +1365,12 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 					
 					boolean result = false;
 					GregorianCalendar gregDate = new GregorianCalendar();
-					String newPatient="";
+					char newPatient=' ';
 					String referralTo=null;
 					String referralFrom=null;
-					String disease=null;
-					String disease2=null;
-					String disease3=null;
-					String diseaseType=null;
-					String diseaseDesc="";
-					String diseaseTypeDesc="";
+					Disease disease=null;
+					Disease disease2=null;
+					Disease disease3=null;
 
 					if (diseaseBox1.getSelectedIndex()==0) {
 						JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.opd.pleaseselectadisease"));
@@ -1379,9 +1383,9 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 					}
 
 					if (newPatientCheckBox.isSelected()){
-						newPatient="N";
+						newPatient='N';
 					}else{
-						newPatient="R";
+						newPatient='R';
 					}
 					if (referralToCheckBox.isSelected()){
 						referralTo="R";
@@ -1395,31 +1399,28 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 					}
 					//disease
 					if (diseaseBox1.getSelectedIndex()>0) {
-						disease=((Disease)diseaseBox1.getSelectedItem()).getCode();					
-						diseaseDesc=((Disease)diseaseBox1.getSelectedItem()).getDescription();
-						diseaseTypeDesc=((Disease)diseaseBox1.getSelectedItem()).getType().getDescription();
-						diseaseType=(((Disease)diseaseBox1.getSelectedItem()).getType().getCode());
+						disease=((Disease)diseaseBox1.getSelectedItem());
 					}
 					//disease2
 					if (diseaseBox2.getSelectedIndex()>0) {
-						disease2=((Disease)diseaseBox2.getSelectedItem()).getCode();
+						disease2=((Disease)diseaseBox2.getSelectedItem());
 					}
 					//disease3
 					if (diseaseBox3.getSelectedIndex()>0) {
-						disease3=((Disease)diseaseBox3.getSelectedItem()).getCode();					
+						disease3=((Disease)diseaseBox3.getSelectedItem());					
 					}
 					//Check double diseases
-					if (disease2 != null && disease == disease2) {
+					if (disease2 != null && disease.getCode().equals(disease2.getCode())) {
 						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opd.duplicatediseasesnotallowed"));
 						disease2 = null;
 						return;
 					}
-					if (disease3 != null && disease == disease3) {
+					if (disease3 != null && disease.getCode().equals(disease3.getCode())) {
 						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opd.duplicatediseasesnotallowed"));
 						disease3 = null;
 						return;
 					}
-					if (disease2 != null && disease3 != null && disease2 == disease3) {
+					if (disease2 != null && disease3 != null && disease2.getCode().equals(disease3.getCode())) {
 						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opd.duplicatediseasesnotallowed"));
 						disease3 = null;
 						return;
@@ -1430,8 +1431,9 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 						return;
 					}
 					opd.setNote(jNoteTextArea.getText());
-					opd.setpatientCode(opdPatient.getCode()); //ADDED : alex
-					opd.setFullName(opdPatient.getName());
+					opd.setPatient(opdPatient); //ADDED : alex
+					opd.setfirstName(opdPatient.getFirstName());
+					opd.setsecondName(opdPatient.getSecondName());
 					opd.setNewPatient(newPatient);
 					opd.setReferralFrom(referralFrom);
 					opd.setReferralTo(referralTo);
@@ -1444,10 +1446,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 					opd.setcity(opdPatient.getCity());
 					opd.setnextKin(opdPatient.getNextKin());
 					
-					opd.setDisease(disease);						
-					opd.setDiseaseType(diseaseType);
-					opd.setDiseaseDesc(diseaseDesc);
-					opd.setDiseaseTypeDesc(diseaseTypeDesc);
+					opd.setDisease(disease);					
 					opd.setDisease2(disease2);
 					opd.setDisease3(disease3);
 					
@@ -1465,7 +1464,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 					opd.setVisitDate(gregDate);
 					if (insert){
 						GregorianCalendar date =new GregorianCalendar();
-						opd.setYear(opdManager.getProgYear(date.get(Calendar.YEAR))+1);
+						opd.setProgYear(opdManager.getProgYear(date.get(Calendar.YEAR))+1);
 						//remember for later use
 						RememberDates.setLastOpdVisitDate(gregDate);
 						result = opdManager.newOpd(opd);

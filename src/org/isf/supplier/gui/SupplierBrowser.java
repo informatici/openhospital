@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import org.isf.generaldata.MessageBundle;
 import org.isf.supplier.model.Supplier;
 import org.isf.supplier.service.SupplierOperations;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -226,7 +227,12 @@ public class SupplierBrowser extends ModalJFrame implements SupplierEdit.Supplie
 						
 						if (n == JOptionPane.YES_OPTION) {
 							m.setSupDeleted('Y');
-							supManager.saveOrUpdate(m);
+							try {
+								supManager.saveOrUpdate(m);
+							} catch (OHException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							model.fireTableDataChanged();
 							table.updateUI();
 						}
@@ -300,7 +306,12 @@ public class SupplierBrowser extends ModalJFrame implements SupplierEdit.Supplie
 
 		public SupplierBrowserModel() {
 			SupplierOperations ioOperations = new SupplierOperations();
-			pSupplier = ioOperations.getAll();
+			try {
+				pSupplier = ioOperations.getAll();
+			} catch (OHException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		public int getRowCount() {
 			if (pSupplier == null)

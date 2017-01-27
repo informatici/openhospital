@@ -21,6 +21,7 @@ import javax.swing.event.EventListenerList;
 import org.isf.generaldata.MessageBundle;
 import org.isf.supplier.model.Supplier;
 import org.isf.supplier.service.SupplierOperations;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.JLabelRequired;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
@@ -266,13 +267,23 @@ public class SupplierEdit extends JDialog {
 					
 					boolean result = false;
 					if (insert) { // inserting
-						result = ioOperations.saveOrUpdate(supplier);
+						try {
+							result = ioOperations.saveOrUpdate(supplier);
+						} catch (OHException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						if (result) {
 							fireSupplierInserted();
 						}
 					}
 					else { // updating
-						result = ioOperations.saveOrUpdate(supplier);
+						try {
+							result = ioOperations.saveOrUpdate(supplier);
+						} catch (OHException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						if (result) {
 							fireSupplierUpdated();
 						}

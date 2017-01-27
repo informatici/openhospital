@@ -19,7 +19,7 @@ import org.dcm4che2.io.DicomCodingException;
 import org.imgscalr.Scalr;
 import org.isf.dicom.gui.DicomLoader;
 import org.isf.dicom.gui.ThumbnailViewGui;
-import org.isf.dicom.model.FileDicomDetail;
+import org.isf.dicom.model.FileDicom;
 import org.isf.generaldata.MessageBundle;
 
 /**
@@ -185,7 +185,7 @@ public class SourceFiles extends Thread {
 
 			// Caricato... pronto per il salvataggio del file
 
-			FileDicomDetail dicomFileDetail = new FileDicomDetail();
+			FileDicom dicomFileDetail = new FileDicom();
 			dicomFileDetail.setDicomData(sourceFile);
 			dicomFileDetail.setFileName(sourceFile.getName());
 			dicomFileDetail.setDicomAccessionNumber(accessionNumber);

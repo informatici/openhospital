@@ -47,7 +47,7 @@ public class MovWardBrowserManager {
 	 * @param wardId the ward id.
 	 * @return the retrieved medicals.
 	 */
-	public ArrayList<MedicalWard> getMedicalsWard(String wardId) {
+	public ArrayList<MedicalWard> getMedicalsWard(char wardId) {
 		try {
 			return ioOperations.getMedicalsWard(wardId);
 		} catch (OHException e) {

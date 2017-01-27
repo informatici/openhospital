@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
@@ -73,7 +74,7 @@ public class WardBrowserManager {
 	 * @return <code>true</code> if the ward has been updated, <code>false</code> otherwise.
 	 */
 	public boolean updateWard(Ward ward) {
-		boolean isConfirmedOverwriteRecord = false;
+		boolean isConfirmedOverwriteRecord = true;
 		try {
 			int admitted_patients_in_ward = getCurrentOccupation(ward);
 			if (ward.getBeds() < admitted_patients_in_ward) {
@@ -86,7 +87,9 @@ public class WardBrowserManager {
 						MessageBundle.getMessage("angal.ward.doyouwanttooverwritethedata") + "?", 
 						MessageBundle.getMessage("angal.ward.select"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION);
 			}
-			return ioOperations.updateWard(ward,isConfirmedOverwriteRecord);
+			if (isConfirmedOverwriteRecord)
+				return ioOperations.updateWard(ward);
+			else return false;
 		} catch (OHException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 			return false;
@@ -100,6 +103,31 @@ public class WardBrowserManager {
 	 * @return <code>true</code> if the ward has been marked, <code>false</code> otherwise.
 	 */
 	public boolean deleteWard(Ward ward) {
+		AdmissionBrowserManager admManager = new AdmissionBrowserManager();
+		if (ward.getCode().equals("M")) {
+			JOptionPane.showMessageDialog(				
+					null,
+					MessageBundle.getMessage("angal.ward.cannotdeletematernityward"),
+					MessageBundle.getMessage("angal.hospital"),
+					JOptionPane.PLAIN_MESSAGE);				
+			return false;
+		}
+		int noPatients = admManager.getUsedWardBed(ward.getCode());
+		if (noPatients > 0) {
+			JOptionPane.showMessageDialog(				
+					null,
+					MessageBundle.getMessage("angal.ward.selectedwardhaspatients1") +
+					" " + noPatients + " " +
+					MessageBundle.getMessage("angal.ward.selectedwardhaspatients2"),
+					MessageBundle.getMessage("angal.hospital"),
+					JOptionPane.PLAIN_MESSAGE);				
+			JOptionPane.showMessageDialog(				
+					null,
+					MessageBundle.getMessage("angal.ward.pleasecheckinadmissionpatients"),
+					MessageBundle.getMessage("angal.hospital"),
+					JOptionPane.PLAIN_MESSAGE);				
+			return false;
+		}
 		try {
 			return ioOperations.deleteWard(ward);
 		} catch (OHException e) {
@@ -119,7 +147,7 @@ public class WardBrowserManager {
 			return ioOperations.isCodePresent(code);
 		} catch (OHException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+			return false; 
 		}
 	}
 	

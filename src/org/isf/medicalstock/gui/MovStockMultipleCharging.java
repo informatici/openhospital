@@ -55,6 +55,7 @@ import org.isf.medstockmovtype.model.MovementType;
 import org.isf.supplier.model.Supplier;
 import org.isf.supplier.service.SupplierOperations;
 import org.isf.utils.db.NormalizeString;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
@@ -91,7 +92,7 @@ public class MovStockMultipleCharging extends JDialog {
 	private ArrayList<Integer> units;
 	private JTableModel model;
 	private String[] qtyOption = new String[] { MessageBundle.getMessage("angal.medicalstock.multiplecharging.units"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.packet") }; //$NON-NLS-1$ //$NON-NLS-2$
-	private JComboBox comboBox = new JComboBox(qtyOption);
+	private JComboBox comboBoxUnits = new JComboBox(qtyOption);
 	private final int UNITS = 0;
 	private final int PACKETS = 1;
 	private int optionSelected = UNITS;
@@ -325,7 +326,7 @@ public class MovStockMultipleCharging extends JDialog {
 			}
 
 			TableColumn qtyOptionColumn = jTableMovements.getColumnModel().getColumn(4);
-			qtyOptionColumn.setCellEditor(new DefaultCellEditor(comboBox));
+			qtyOptionColumn.setCellEditor(new DefaultCellEditor(comboBoxUnits));
 			
 			TableColumn costColumn = jTableMovements.getColumnModel().getColumn(8);
 			costColumn.setCellRenderer(new DecimalFormatRenderer());
@@ -333,7 +334,7 @@ public class MovStockMultipleCharging extends JDialog {
 			TableColumn totalColumn = jTableMovements.getColumnModel().getColumn(9);
 			totalColumn.setCellRenderer(new DecimalFormatRenderer());
 			
-			comboBox.setSelectedIndex(optionSelected);
+			comboBoxUnits.setSelectedIndex(optionSelected);
 		}
 		return jTableMovements;
 	}
@@ -448,7 +449,7 @@ public class MovStockMultipleCharging extends JDialog {
 			MedicaldsrstockmovTypeBrowserManager movMan = new MedicaldsrstockmovTypeBrowserManager();
 			ArrayList<MovementType> movTypes = movMan.getMedicaldsrstockmovType();
 			for (MovementType movType : movTypes) {
-				if (movType.getType().equals("+")) //$NON-NLS-1$
+				if (movType.getType().contains("+")) //$NON-NLS-1$
 					jComboBoxChargeType.addItem(movType);
 			}
 		}
@@ -532,7 +533,7 @@ public class MovStockMultipleCharging extends JDialog {
 	protected Medical chooseMedical(String text) {
 		ArrayList<Medical> medList = new ArrayList<Medical>();
 		for (Medical aMed : medicalMap.values()) {
-			if (NormalizeString.normalizeContains(aMed.getDescription().toLowerCase(), text))
+			if (NormalizeString.normalizeContains(aMed.getDescription().toLowerCase(), text.toLowerCase()))
 				medList.add(aMed);
 		}
 		Collections.sort(medList);
@@ -619,7 +620,13 @@ public class MovStockMultipleCharging extends JDialog {
 			jComboBoxSupplier = new JComboBox();
 			jComboBoxSupplier.addItem(""); //$NON-NLS-1$
 			SupplierOperations supOp = new SupplierOperations();
-			ArrayList<Supplier> suppliers = (ArrayList<Supplier>) supOp.getList();
+			ArrayList<Supplier> suppliers = null;
+			try {
+				suppliers = (ArrayList<Supplier>) supOp.getList();
+			} catch (OHException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			for (Supplier sup : suppliers) {
 				jComboBoxSupplier.addItem(sup);
 			}
@@ -740,7 +747,7 @@ public class MovStockMultipleCharging extends JDialog {
 			} else if (c == 3) {
 				movement.setQuantity((Integer) value);
 			} else if (c == 4) {
-				units.set(r, comboBox.getSelectedIndex());
+				units.set(r, comboBoxUnits.getSelectedIndex());
 			} else if (c == 6) {
 				lot.setCode((String) value);
 			} else if (c == 7) {
@@ -781,13 +788,19 @@ public class MovStockMultipleCharging extends JDialog {
 		
 		// Check supplier
 		Object supplier = jComboBoxSupplier.getSelectedItem();
-		if (supplier instanceof String) {
+		if (supplier == null || supplier instanceof String) {
 			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseselectasupplier")); //$NON-NLS-1$
 			return false;
 		}
 		
-		// Check and set all movements
+		// Check movements
 		ArrayList<Movement> movements = model.getMovements();
+		if (movements.isEmpty()) {
+			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.noelementtosave")); //$NON-NLS-1$
+			return false;
+		}
+		
+		// Check and set all movements
 		for (int i = 0; i < movements.size(); i++) {
 			Movement mov = movements.get(i);
 			Lot lot = mov.getLot();
@@ -818,11 +831,6 @@ public class MovStockMultipleCharging extends JDialog {
 		boolean ok = true;
 		MovStockInsertingManager movManager = new MovStockInsertingManager();
 		ArrayList<Movement> movements = model.getMovements();
-		if (movements.isEmpty()) {
-			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.noelementtosave")); //$NON-NLS-1$
-			return false;
-		}
-		
 		int movSize = movements.size();
 		int index = movManager.newMultipleChargingMovements(movements);
 		

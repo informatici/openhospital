@@ -72,8 +72,8 @@ public class OpdEdit extends JDialog implements ActionListener {
 	private EventListenerList surgeryListeners = new EventListenerList();
 	
 	public interface SurgeryListener extends EventListener {
-		public void surgeryUpdated(AWTEvent e);
-		public void surgeryInserted(AWTEvent e);
+		public void surgeryUpdated(AWTEvent e, Opd opd);
+		public void surgeryInserted(AWTEvent e, Opd opd);
 	}
 	
 	public void addSurgeryListener(SurgeryListener l) {
@@ -93,7 +93,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 		
 		EventListener[] listeners = surgeryListeners.getListeners(SurgeryListener.class);
 		for (int i = 0; i < listeners.length; i++)
-			((SurgeryListener)listeners[i]).surgeryInserted(event);
+			((SurgeryListener)listeners[i]).surgeryInserted(event, opd);
 	}
 	private void fireSurgeryUpdated() {
 		AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
@@ -104,7 +104,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 		
 		EventListener[] listeners = surgeryListeners.getListeners(SurgeryListener.class);
 		for (int i = 0; i < listeners.length; i++)
-			((SurgeryListener)listeners[i]).surgeryUpdated(event);
+			((SurgeryListener)listeners[i]).surgeryUpdated(event, opd);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -300,7 +300,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 				if (opd.getDisease() != null) {
 					ArrayList<Disease> diseasesAll = manager.getDiseaseAll();
 					for (Disease elem : diseasesAll) {
-						if (opd.getDisease().compareTo(elem.getCode()) == 0) {
+						if (opd.getDisease().getCode().compareTo(elem.getCode()) == 0) {
 							JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.opd.disease1mayhavebeencanceled"));
 							diseaseBox.addItem(elem);
 							diseaseBox.setSelectedItem(elem);
@@ -337,7 +337,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 			if (opd.getDisease2()!=null) {
 				ArrayList<Disease> diseasesAll = manager.getDiseaseAll();
 				for (Disease elem : diseasesAll) {
-					if (opd.getDisease2().compareTo(elem.getCode()) == 0) {
+					if (opd.getDisease2().getCode().compareTo(elem.getCode()) == 0) {
 						JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.opd.disease2mayhavebeencanceled"));
 						diseaseBox2.addItem(elem);
 						diseaseBox2.setSelectedItem(elem);
@@ -372,7 +372,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 			if (opd.getDisease3()!=null) {
 				ArrayList<Disease> diseasesAll = manager.getDiseaseAll();
 				for (Disease elem : diseasesAll) {
-					if (opd.getDisease3().compareTo(elem.getCode()) == 0) {
+					if (opd.getDisease3().getCode().compareTo(elem.getCode()) == 0) {
 						JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.opd.disease3mayhavebeencanceled"));
 						diseaseBox3.addItem(elem);
 						diseaseBox3.setSelectedItem(elem);
@@ -413,15 +413,12 @@ public class OpdEdit extends JDialog implements ActionListener {
 					OpdBrowserManager manager= new OpdBrowserManager();
 					boolean result = false;
 					GregorianCalendar gregDate = new GregorianCalendar();
-					String newPatient="";
+					char newPatient=' ';
 					String referralTo="";
 					String referralFrom="";
-					String disease=null;
-					String disease2=null;
-					String disease3=null;
-					String diseaseType=null;
-					String diseaseDesc="";
-					String diseaseTypeDesc="";
+					Disease disease=null;
+					Disease disease2=null;
+					Disease disease3=null;
 
 					if (diseaseBox.getSelectedIndex()==0) {
 						JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.opd.pleaseselectadisease"));
@@ -434,9 +431,9 @@ public class OpdEdit extends JDialog implements ActionListener {
 					}
 
 					if (newPatientCheckBox.isSelected()) {
-						newPatient = "N";
+						newPatient = 'N';
 					} else {
-						newPatient = "R";
+						newPatient = 'R';
 					}
 
 					if (referralToCheckBox.isSelected()){
@@ -454,18 +451,15 @@ public class OpdEdit extends JDialog implements ActionListener {
 					
 					//disease
 					if (diseaseBox.getSelectedIndex()>0) {
-						disease=((Disease)diseaseBox.getSelectedItem()).getCode();					
-						diseaseDesc=((Disease)diseaseBox.getSelectedItem()).getDescription();
-						diseaseTypeDesc=((Disease)diseaseBox.getSelectedItem()).getType().getDescription();
-						diseaseType=(((Disease)diseaseBox.getSelectedItem()).getType().getCode());
+						disease=((Disease)diseaseBox.getSelectedItem());					
 					}
 					//disease2
 					if (diseaseBox2.getSelectedIndex()>0) {
-						disease2=((Disease)diseaseBox2.getSelectedItem()).getCode();					
+						disease2=((Disease)diseaseBox2.getSelectedItem());					
 					}
 					//disease3
 					if (diseaseBox3.getSelectedIndex()>0) {
-						disease3=((Disease)diseaseBox3.getSelectedItem()).getCode();					
+						disease3=((Disease)diseaseBox3.getSelectedItem());					
 					}
 					// visit date	
 					String d = OpdDateField.getText().trim();
@@ -500,11 +494,8 @@ public class OpdEdit extends JDialog implements ActionListener {
 						opd.setReferralTo(referralTo);
 						opd.setAge(age);
 						opd.setSex(sex);
-						opd.setYear(manager.getProgYear(date.get(GregorianCalendar.YEAR))+1);
-						opd.setDisease(disease);						
-						opd.setDiseaseType(diseaseType);
-						opd.setDiseaseDesc(diseaseDesc);
-						opd.setDiseaseTypeDesc(diseaseTypeDesc);
+						opd.setProgYear(manager.getProgYear(date.get(GregorianCalendar.YEAR))+1);
+						opd.setDisease(disease);				
 						opd.setDisease2(disease2);
 						opd.setDisease3(disease3);
 						opd.setVisitDate(gregDate);
@@ -531,10 +522,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 						opd.setReferralTo(referralTo);
 						opd.setAge(age);
 						opd.setSex(sex);
-						opd.setDisease(disease);						
-						opd.setDiseaseType(diseaseType);
-						opd.setDiseaseDesc(diseaseDesc);
-						opd.setDiseaseTypeDesc(diseaseTypeDesc);
+						opd.setDisease(disease);				
 						opd.setDisease2(disease2);
 						opd.setDisease3(disease3);
 						opd.setVisitDate(gregDate);
@@ -706,7 +694,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 			newPatientCheckBox = new JCheckBox(MessageBundle.getMessage("angal.opd.newattendance"));
 			jNewPatientPanel.add(newPatientCheckBox);
 			if(!insert){
-				if (opd.getNewPatient().equals("N"))newPatientCheckBox.setSelected(true);
+				if (opd.getNewPatient() == 'N')newPatientCheckBox.setSelected(true);
 			}
 			referralFromCheckBox = new JCheckBox(MessageBundle.getMessage("angal.opd.referral.from"));
 			jNewPatientPanel.add(referralFromCheckBox);

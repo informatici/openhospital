@@ -6,6 +6,17 @@
 
 package org.isf.medicals.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.isf.medtype.model.MedicalType;
 
 /**
@@ -16,59 +27,96 @@ import org.isf.medtype.model.MedicalType;
  * 			- product code
  * 			- pieces per packet
  */
+/*------------------------------------------
+ * Medical - model for the medical entity
+ * -----------------------------------------
+ * modification history
+ * ? - bob - first version 
+ * ? - modified by alex
+ * 13/01/2015 - Antonio - ported to JPA
+ * 
+ *------------------------------------------*/
+@Entity
+@Table(name="MEDICALDSR")
 public class Medical implements Comparable<Medical> {
 	/**
 	 * Code of the medical
 	 */
+	@Id 
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="MDSR_ID")
 	private Integer code;
 
 	/**
 	 * Code of the product
 	 */
-	
+	@NotNull
+	@Column(name="MDSR_CODE")	
 	private String prod_code;
 
 	/**
 	 * Type of the medical
 	 */
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name="MDSR_MDSRT_ID_A")
 	private MedicalType type;
 
 	/**
 	 * Description of the medical
 	 */
+	@NotNull
+	@Column(name="MDSR_DESC")
 	private String description;
 
 	/**
 	 * initial quantity
 	 */
+	@NotNull
+	@Column(name="MDSR_MIN_STOCK_QTI")
 	private double initialqty;
 	
 	/**
 	 * pieces per packet
 	 */
+	@NotNull
+	@Column(name="MDSR_PCS_X_PCK")
 	private Integer pcsperpck;
 
 	/**
 	 * input quantity
 	 */
+	@NotNull
+	@Column(name="MDSR_INI_STOCK_QTI")
 	private double inqty;
 
 	/**
 	 * out quantity
 	 */
+	@NotNull
+	@Column(name="MDSR_OUT_QTI")
 	private double outqty;
+	
 	/**
 	 * min quantity
 	 */
+	@NotNull
+	@Column(name="MDSR_IN_QTI")
 	private double minqty;
-
 
 	/**
 	 * Lock control
 	 */
-
+	@NotNull
+	@Column(name="MDSR_LOCK")
 	private Integer lock;
+	
+	@Transient
+	private volatile int hashCode = 0;
+		
 
+	public Medical() { }
+	
 	/**
 	 * Constructor
 	 */
@@ -171,6 +219,7 @@ public class Medical implements Comparable<Medical> {
 		this.pcsperpck = pcsperpck;
 	}
 
+	@Override
 	public boolean equals(Object anObject) {
 		return (anObject == null) || !(anObject instanceof Medical) ? false
 				: (getCode().equals(((Medical) anObject).getCode())
@@ -192,4 +241,18 @@ public class Medical implements Comparable<Medical> {
 	public int compareTo(Medical o) {
 		return this.description.compareTo(o.getDescription());
 	}
+
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + code.hashCode();
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}	
 }

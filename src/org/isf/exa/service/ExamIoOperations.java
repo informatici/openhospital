@@ -9,17 +9,14 @@ package org.isf.exa.service;
  *                     when record locked all data is saved now, not only descritpion
  *------------------------------------------*/
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
-import org.isf.utils.db.DbQueryLogger;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
 
@@ -33,37 +30,36 @@ public class ExamIoOperations {
 	 * @return the list of {@link ExamRow}s
 	 * @throws OHException
 	 */
-	public ArrayList<ExamRow> getExamRow(String aExamCode, String aDescription) throws OHException {
-		ArrayList<ExamRow> pRow = null;
-		
-		DbQueryLogger dbQuery = new DbQueryLogger();
+    @SuppressWarnings("unchecked")
+	public ArrayList<ExamRow> getExamRow(
+			String aExamCode, 
+			String aDescription) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<ExamRow> examrows = null;
 		ArrayList<Object> params = new ArrayList<Object>();
+				
 		
-		StringBuilder query = new StringBuilder("SELECT * FROM EXAMROW");
+		jpa.beginTransaction();
+		
+		String query = "SELECT * FROM EXAMROW";
 		if (aExamCode != null) {
-			query.append(" WHERE EXR_EXA_ID_A = ?");
+			query += " WHERE EXR_EXA_ID_A = ?";
 			params.add(aExamCode);
 		}
 		if (aDescription != null) {
-			query.append(" AND EXR_DESC = ?");
+			query += " AND EXR_DESC = ?";
 			params.add(aDescription);
 		}
-		query.append(" ORDER BY EXR_EXA_ID_A, EXR_DESC");
+		query += " ORDER BY EXR_EXA_ID_A, EXR_DESC";
+		jpa.createQuery(query, ExamRow.class, false);
+		jpa.setParameters(params, false);
+		List<ExamRow> examRowList = (List<ExamRow>)jpa.getList();
+		examrows = new ArrayList<ExamRow>(examRowList);			
 		
-		try {
-			ResultSet resultSet = dbQuery.getDataWithParams(query.toString(), params, true);
-			pRow = new ArrayList<ExamRow>(resultSet.getFetchSize());
-			while (resultSet.next()) {
-				pRow.add(new ExamRow(resultSet.getString("EXR_ID"),
-						resultSet.getString("EXR_EXA_ID_A"), resultSet
-								.getString("EXR_DESC")));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
-		return pRow;
+		jpa.commitTransaction();
+
+		return examrows;
 	}
 
 	/**
@@ -71,7 +67,8 @@ public class ExamIoOperations {
 	 * @return the list of {@link Exam}s
 	 * @throws OHException
 	 */
-	public ArrayList<Exam> getExams() throws OHException {
+	public ArrayList<Exam> getExams() throws OHException 
+	{
 		return getExamsByDesc(null);
 	}
 	
@@ -81,38 +78,31 @@ public class ExamIoOperations {
 	 * @return the list of {@link Exam}s
 	 * @throws OHException
 	 */
-	public ArrayList<Exam> getExamsByDesc(String description) throws OHException {
-		ArrayList<Exam> pExams = null;
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		ArrayList<Object> params = new ArrayList<Object>(1);
+    @SuppressWarnings("unchecked")
+	public ArrayList<Exam> getExamsByDesc(
+			String description) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Exam> exams = null;
+		ArrayList<Object> params = new ArrayList<Object>();
+				
 		
-		StringBuilder query = new StringBuilder("SELECT * FROM EXAM JOIN EXAMTYPE ON EXA_EXC_ID_A = EXC_ID_A");
+		jpa.beginTransaction();
+		
+		String query = "SELECT * FROM EXAM JOIN EXAMTYPE ON EXA_EXC_ID_A = EXC_ID_A";
 		if (description != null) {
-			query.append(" WHERE EXC_DESC LIKE ?");
+			query += " WHERE EXC_DESC LIKE ?";
 			params.add('%'+description+'%');
 		}
-		query.append(" ORDER BY EXC_DESC, EXA_DESC");
+		query += " ORDER BY EXC_DESC, EXA_DESC";
+		jpa.createQuery(query, Exam.class, false);
+		jpa.setParameters(params, false);
+		List<Exam> examList = (List<Exam>)jpa.getList();
+		exams = new ArrayList<Exam>(examList);			
 		
-		try {
-			ResultSet resultSet = null;
-			if (description != null) resultSet = dbQuery.getDataWithParams(query.toString(), params, true);
-			else resultSet = dbQuery.getData(query.toString(), true);
-			pExams = new ArrayList<Exam>(resultSet.getFetchSize());
-			while (resultSet.next()) {
-				pExams.add(new Exam(resultSet.getString("EXA_ID_A"),
-						resultSet.getString("EXA_DESC"), new ExamType(
-								resultSet.getString("EXC_ID_A"), resultSet
-										.getString("EXC_DESC")), resultSet
-								.getInt("EXA_PROC"), resultSet
-								.getString("EXA_DEFAULT"), resultSet
-								.getInt("EXA_LOCK")));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
-		return pExams;
+		jpa.commitTransaction();
+
+		return exams;
 	}
 
 	/**
@@ -120,23 +110,23 @@ public class ExamIoOperations {
 	 * @return the list of {@link ExamType}s
 	 * @throws OHException
 	 */
-	public ArrayList<ExamType> getExamType() throws OHException {
-		ArrayList<ExamType> pexamtype = null;
+    @SuppressWarnings("unchecked")
+	public ArrayList<ExamType> getExamType() throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<ExamType> examTypes = null;
+				
+		
+		jpa.beginTransaction();
+		
 		String query = "SELECT EXC_ID_A, EXC_DESC FROM EXAMTYPE ORDER BY EXC_DESC";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ResultSet resultSet = dbQuery.getData(query, true);
-			pexamtype = new ArrayList<ExamType>(resultSet.getFetchSize());
-			while (resultSet.next()) {
-				pexamtype.add(new ExamType(resultSet.getString(1),
-						resultSet.getString(2)));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
-		return pexamtype;
+		jpa.createQuery(query, ExamType.class, false);
+		List<ExamType> examTypeList = (List<ExamType>)jpa.getList();
+		examTypes = new ArrayList<ExamType>(examTypeList);			
+		
+		jpa.commitTransaction();
+
+		return examTypes;
 	}
 
 	/**
@@ -146,20 +136,17 @@ public class ExamIoOperations {
 	 * @return <code>true</code> if the {@link Exam} has been inserted, <code>false</code> otherwise
 	 * @throws OHException 
 	 */
-	public boolean newExam(Exam exam) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		ArrayList<Object> params = new ArrayList<Object>();
-		String query = "INSERT INTO EXAM (EXA_ID_A , EXA_DESC, EXA_EXC_ID_A, EXA_PROC, EXA_DEFAULT ) VALUES (?, ?, ?, ?, ?)";
+	public boolean newExam(
+			Exam exam) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
 		
-		params.add(exam.getCode());
-		params.add(sanitize(exam.getDescription()));
-		params.add(exam.getExamtype().getCode());
-		params.add(exam.getProcedure());
-		params.add(sanitize(exam.getDefaultResult()));
 		
-		boolean result = dbQuery.setDataWithParams(query, params, true);
-		
-		dbQuery.releaseConnection();
+		jpa.beginTransaction();	
+		jpa.persist(exam);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -170,19 +157,17 @@ public class ExamIoOperations {
 	 * @return <code>true</code> if the {@link ExamRow} has been inserted, <code>false</code> otherwise
 	 * @throws OHException
 	 */
-	public boolean newExamRow(ExamRow examRow) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		ArrayList<Object> params = new ArrayList<Object>();
-		String query = "INSERT INTO EXAMROW (EXR_EXA_ID_A , EXR_DESC) VALUES (?, ?)";
+	public boolean newExamRow(
+			ExamRow examRow) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
 		
-		params.add(examRow.getExamCode());
-		params.add(sanitize(examRow.getDescription()));
-		boolean result = false;
-		try {
-			result = dbQuery.setDataWithParams(query, params, true);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		
+		jpa.beginTransaction();	
+		jpa.persist(examRow);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -193,51 +178,31 @@ public class ExamIoOperations {
 	 * @return <code>true</code> if the {@link Exam} has been updated, <code>false</code> otherwise
 	 * @throws OHException
 	 */
-	public boolean updateExam(Exam exam, boolean check) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		ResultSet set = null;
-		int lock = 0;
-
-		try {
-			if (check) { 
-				// we establish if someone else has updated/deleted the record 
-				// since the last read
-				String query = "SELECT EXA_LOCK FROM EXAM WHERE EXA_ID_A = ?";
-				List<Object> params = Collections.<Object>singletonList(exam.getCode());
-				set = dbQuery.getDataWithParams(query, params, false); //we use manual commit of the transaction
-				if (set.first()) { 
-					lock = set.getInt("EXA_LOCK");
-					// ok the record is present, it was not deleted
-					if (lock != exam.getLock()) { 
-						// it was updated by someone else
-						return false;
-					}
-				} else { // the record was deleted since the last read
-					throw new OHException(MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"));
-				}
+	public boolean updateExam(
+			Exam exam, 
+			boolean check) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		if (check) 
+		{ 
+			Exam foundExam = (Exam)jpa.find(Exam.class, exam.getCode()); 
+			if (foundExam == null)
+			{
+				throw new OHException(MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"));		
 			}
-			
-			String query = "UPDATE EXAM SET EXA_DESC = ?, EXA_LOCK = ?, EXA_PROC = ?, EXA_DEFAULT = ? WHERE EXA_ID_A = ?";
-			ArrayList<Object> params = new ArrayList<Object>();
-			
-			params.add(sanitize(exam.getDescription()));
-			params.add(lock + 1);
-			params.add(exam.getProcedure());
-			params.add(sanitize(exam.getDefaultResult()));
-			params.add(exam.getCode());
-			
-			result = dbQuery.setDataWithParams(query, params, true);
-			if (result)
-				exam.setLock(exam.getLock() + 1);
-			else throw new OHException(MessageBundle.getMessage("angal.sql.thedataisnomorepresent")); // the record has been deleted since the last read
-				
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
-		return result;
+			else if (foundExam.getLock() != exam.getLock())
+			{
+				result = false;
+			}		
+		}	
+		jpa.merge(exam);
+    	jpa.commitTransaction();
+    	
+		return result;	
 	}
 
 	/**
@@ -246,23 +211,33 @@ public class ExamIoOperations {
 	 * @return <code>true</code> if the {@link Exam} has been deleted, <code>false</code> otherwise
 	 * @throws OHException
 	 */
-	public boolean deleteExam(Exam exam) throws OHException {
-		String query;
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = true;
+	public boolean deleteExam(
+			Exam exam) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;		
+		ArrayList<Object> params = new ArrayList<Object>();
+        		
+		
+		jpa.beginTransaction();
+		
 		try {
-			query = "DELETE FROM EXAMROW WHERE EXR_EXA_ID_A = ?";
-			List<Object> params = Collections.<Object>singletonList(exam.getCode());
-			dbQuery.setDataWithParams(query, params, false);
-		
-			query = "DELETE FROM EXAM WHERE EXA_ID_A = ?";
-			dbQuery.setDataWithParams(query, params, false);
-		
-		} finally {
-			dbQuery.commit();
-			dbQuery.releaseConnection();
-		}
-		return result;
+			jpa.createQuery("DELETE FROM EXAMROW WHERE EXR_EXA_ID_A = ?", ExamRow.class, false);
+			params.add(exam.getCode());
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();
+			
+			Exam examToRemove = (Exam) jpa.find(Exam.class, exam.getCode());
+			jpa.remove(examToRemove);
+			
+		}  catch (OHException e) {
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 	
+
+		jpa.commitTransaction();	
+	    	
+		return result;	
 	}
 
 	/**
@@ -271,18 +246,18 @@ public class ExamIoOperations {
 	 * @return <code>true</code> if the {@link ExamRow} has been deleted, <code>false</code> otherwise
 	 * @throws OHException
 	 */
-	public boolean deleteExamRow(ExamRow examRow) throws OHException {
-
-		String query = "DELETE FROM EXAMROW WHERE EXR_ID = ?";
-		List<Object> params = Collections.<Object>singletonList(examRow.getCode());
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try {
-			result = dbQuery.setDataWithParams(query, params, true);
-		} finally {
-			dbQuery.releaseConnection();
-		}
-		return result;
+	public boolean deleteExamRow(
+			ExamRow examRow) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.remove(examRow);
+    	jpa.commitTransaction();
+    	
+		return result;	
 	}
 
 	/**
@@ -294,22 +269,22 @@ public class ExamIoOperations {
 	 * @return <code>true</code> if the Exam code has already been used, <code>false</code> otherwise
 	 * @throws OHException 
 	 */
-	public boolean isKeyPresent(Exam exam) throws OHException {
-		String query = "SELECT * FROM EXAM WHERE EXA_ID_A = ?";
-		List<Object> params = Collections.<Object>singletonList(exam.getCode());
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		ResultSet result;
-		try {
-			result = dbQuery.getDataWithParams(query, params, true);
-			if (result.first()) {
-				return true;
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
+	public boolean isKeyPresent(
+			Exam exam) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = false;
+		
+		
+		jpa.beginTransaction();	
+		Exam foundExam = (Exam)jpa.find(Exam.class, exam.getCode());
+		if (foundExam != null)
+		{
+			result = true;
 		}
-		return false;
+    	jpa.commitTransaction();
+    	
+		return result;	
 	}
 	
 	/**
@@ -318,9 +293,17 @@ public class ExamIoOperations {
 	 * @param value the value to sanitize.
 	 * @return the sanitized value or <code>null</code> if the passed value is <code>null</code>.
 	 */
-	protected String sanitize(String value)
+	protected String sanitize(
+			String value)
 	{
-		if (value == null) return null;
-		return value.trim().replaceAll("'", "''");
+		String result = null;
+		
+		
+		if (value != null) 
+		{
+			result = value.trim().replaceAll("'", "''");
+		}
+		
+		return result;
 	}
 }

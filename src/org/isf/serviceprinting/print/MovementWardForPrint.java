@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.isf.medicalstockward.model.MovementWard;
+import org.isf.utils.exception.OHException;
 
 /**
  * 		   @author mwithi
@@ -23,6 +24,7 @@ public class MovementWardForPrint implements Comparable<MovementWardForPrint>{
 		super();
 		this.ward = mov.getWard().getDescription();
 		this.date = removeTime(mov.getDate());
+		this.medical = null;
 		this.medical = mov.getMedical().getDescription();
 		this.quantity = mov.getQuantity();
 		this.units = mov.getUnits();

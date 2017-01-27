@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
+import org.isf.medicals.service.MedicalsIoOperations;
 import org.isf.menu.gui.MainMenu;
 import org.isf.menu.gui.Menu;
 import org.isf.patient.manager.PatientBrowserManager;
@@ -25,12 +26,12 @@ public class TherapyManager {
 	private TherapyIoOperations ioOperations = Menu.getApplicationContext().getBean(TherapyIoOperations.class);
 	
 	public Therapy createTherapy(TherapyRow th) {
-		return createTherapy(th.getTherapyID(), th.getPatID(), th.getMedical(), th.getQty(),
+		return createTherapy(th.getTherapyID(), th.getPatID().getCode(), th.getMedical(), th.getQty(),
 				th.getStartDate(), th.getEndDate(), th.getFreqInPeriod(), th.getFreqInDay(), 
 				th.getNote(), th.isNotify(), th.isSms());
 	}
 	
-	public Therapy createTherapy(int therapyID, int patID, Medical med, Double qty,
+	public Therapy createTherapy(int therapyID, int patID, Integer medId, Double qty,
 			GregorianCalendar startDate, GregorianCalendar endDate, int freqInPeriod,
 			int freqInDay, String note, boolean notify, boolean sms) {
 		
@@ -61,6 +62,14 @@ public class TherapyManager {
 			//System.out.println(formatDate(dates[i]));
 		}
 		
+		MedicalsIoOperations medicalIoOperations = Menu.getApplicationContext().getBean(MedicalsIoOperations.class);
+		Medical med = null;
+		try {
+			med = medicalIoOperations.getMedical(medId);
+		} catch (OHException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Therapy th = new Therapy(therapyID,	patID, dates, med, qty, "", freqInDay, note, notify, sms);
 		datesArray.clear();
 		dates = null;
@@ -88,7 +97,7 @@ public class TherapyManager {
 	 * or
 	 * return all {@link TherapyRow}s (therapies) if <code>0</code> is passed
 	 * 
-	 * @param patID - the Patient ID
+	 * @param patient - the Patient ID
 	 * @return the list of {@link TherapyRow}s (therapies)
 	 */
 	public ArrayList<TherapyRow> getTherapyRows(int code) {
@@ -128,7 +137,7 @@ public class TherapyManager {
 			SmsOperations smsOp = new SmsOperations();
 			PatientBrowserManager patMan = new PatientBrowserManager();
 			try {
-				int patID = thRows.get(0).getPatID();
+				int patID = thRows.get(0).getPatID().getCode();
 				ioOperations.deleteAllTherapies(patID);
 				smsOp.deleteByModuleModuleID("therapy", String.valueOf(patID));
 
@@ -144,7 +153,7 @@ public class TherapyManager {
 						for (GregorianCalendar date : dates) {
 							date.set(Calendar.HOUR_OF_DAY, 8);
 							if (date.after(now.toDateMidnight().toGregorianCalendar())) {
-								Patient pat = patMan.getPatient(thRow.getPatID());
+								Patient pat = patMan.getPatient(thRow.getPatID().getName());
 								
 								Sms sms = new Sms();
 								sms.setSmsDateSched(date.getTime());
@@ -185,7 +194,7 @@ public class TherapyManager {
 	/**
 	 * delete all {@link TherapyRow}s (therapies) for specified Patient ID
 	 * 
-	 * @param patID - the Patient ID
+	 * @param patient - the Patient ID
 	 * @return <code>true</code> if the therapies have been deleted, <code>false</code> otherwise
 	 */
 	public boolean deleteAllTherapies(Integer code) {

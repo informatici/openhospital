@@ -8,16 +8,14 @@ package org.isf.operation.service;
  * 13/02/09 - Alex - added Major/Minor control
  -----------------------------------------------------------*/
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.isf.generaldata.MessageBundle;
+import javax.persistence.NoResultException;
+
 import org.isf.operation.model.Operation;
 import org.isf.opetype.model.OperationType;
-import org.isf.utils.db.DbQueryLogger;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
 
@@ -37,58 +35,58 @@ public class OperationIoOperations {
 	 * @return the list of {@link Operation}s. It could be <code>empty</code> or <code>null</code>.
 	 * @throws OHException 
 	 */
-	public ArrayList<Operation> getOperation(String typeDescription) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		ArrayList<Operation> operationList = null;
-		ResultSet resultSet;
+    @SuppressWarnings("unchecked")
+	public ArrayList<Operation> getOperation(
+			String typeDescription) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Operation> operations = null;
+		String query = null;
+		ArrayList<Object> params = new ArrayList<Object>();
+				
 		
-		if (typeDescription == null) {
-			String sqlString = "SELECT * FROM OPERATION JOIN OPERATIONTYPE ON OPE_OCL_ID_A = OCL_ID_A ORDER BY OPE_DESC";
-			resultSet = dbQuery.getData(sqlString,true);
-		} else {
-			String sqlString = "SELECT * FROM OPERATION JOIN OPERATIONTYPE ON OPE_OCL_ID_A = OCL_ID_A WHERE OCL_DESC LIKE CONCAT('%', ? , '%') ORDER BY OPE_DESC";
-			List<Object> parameters = Collections.<Object>singletonList(typeDescription);
-			resultSet = dbQuery.getDataWithParams(sqlString, parameters, true);
+		jpa.beginTransaction();
+		if (typeDescription == null) 
+		{
+			query = "SELECT * FROM OPERATION JOIN OPERATIONTYPE ON OPE_OCL_ID_A = OCL_ID_A ORDER BY OPE_DESC";
 		}
-		try {
-			operationList = new ArrayList<Operation>(resultSet.getFetchSize());
-			while (resultSet.next()) {
-				Operation operation = new Operation(
-						resultSet.getString("OPE_ID_A"), 
-						resultSet.getString("OPE_DESC"), 
-						new OperationType(
-								resultSet.getString("OPE_OCL_ID_A"),
-								resultSet.getString("OCL_DESC")),
-						resultSet.getInt("OPE_STAT"), 
-						resultSet.getInt("OPE_LOCK"));
-				operationList.add(operation);
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		else
+		{
+			query = "SELECT * FROM OPERATION JOIN OPERATIONTYPE ON OPE_OCL_ID_A = OCL_ID_A WHERE OCL_DESC LIKE CONCAT('%', ? , '%') ORDER BY OPE_DESC";
+		}	
+		jpa.createQuery(query, Operation.class, false);
+		if (typeDescription != null) 
+		{
+			params.add(typeDescription);
+			jpa.setParameters(params, false);
 		}
-		finally{
-			dbQuery.releaseConnection();
-		}
-		return operationList;
+		List<Operation> operationList = (List<Operation>)jpa.getList();
+		operations = new ArrayList<Operation>(operationList);		
+		
+		jpa.commitTransaction();
+
+		return operations;
 	}
 	
 	/**
-	 * insert an {@link Operation} in the DB
+	 * insert an {@link Operation} in the DBs
 	 * 
 	 * @param operation - the {@link Operation} to insert
 	 * @return <code>true</code> if the operation has been inserted, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean newOperation(Operation operation) throws OHException{
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		String sqlString = "INSERT INTO OPERATION (OPE_ID_A, OPE_OCL_ID_A, OPE_DESC, OPE_STAT) VALUES (?, ?, ?, ?)";
-		List<Object> parameters = new ArrayList<Object>();
-		parameters.add(operation.getCode());
-		parameters.add(operation.getType().getCode());
-		parameters.add(operation.getDescription());
-		parameters.add(operation.getMajor());
+	public boolean newOperation(
+			Operation operation) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
 		
-		return dbQuery.setDataWithParams(sqlString, parameters, true);
+		
+		jpa.beginTransaction();	
+		jpa.persist(operation);
+    	jpa.commitTransaction();
+    	
+		return result;
 	}
 	
 	/**
@@ -97,29 +95,19 @@ public class OperationIoOperations {
 	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the check.
 	 */
-	public boolean hasOperationModified(Operation operation) throws OHException {
-
-		DbQueryLogger dbQuery = new DbQueryLogger();
+	public boolean hasOperationModified(
+			Operation operation) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		Operation foundOperation = (Operation)jpa.find(Operation.class, operation.getCode());
 		boolean result = false;
-
-		// we establish if someone else has updated/deleted the record since the last read
-		String query = "SELECT OPE_LOCK FROM OPERATION WHERE OPE_ID_A = ?";
-		List<Object> parameters = Collections.<Object>singletonList(operation.getCode());
-
-		try {
-			// we use manual commit of the transaction
-			ResultSet resultSet =  dbQuery.getDataWithParams(query, parameters, true);
-			if (resultSet.first()) { 
-				// ok the record is present, it was not deleted
-				result = resultSet.getInt("OPE_LOCK") != operation.getLock();
-			} else {
-				throw new OHException(MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
+		
+		
+		if (foundOperation.getLock() != operation.getLock())
+		{
+			result = true;
 		}
+		
 		return result;
 	}
 	
@@ -130,28 +118,18 @@ public class OperationIoOperations {
 	 * @return <code>true</code> if the item has been updated, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean updateOperation(Operation operation) throws OHException{
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
+	public boolean updateOperation(
+			Operation operation) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
 		
-		try {
-			String sqlString = "UPDATE OPERATION set " +
-			" OPE_DESC = ?," +
-			" OPE_LOCK = OPE_LOCK + 1, " +
-			" OPE_STAT = ?" +
-			" WHERE OPE_ID_A = ?";
-			
-			List<Object> parameters = new ArrayList<Object>();
-			parameters.add(operation.getDescription());
-			parameters.add(operation.getMajor());
-			parameters.add(operation.getCode());
-			
-			result = dbQuery.setDataWithParams(sqlString, parameters, true);
-			if (result) operation.setLock(operation.getLock()+1);
-			
-		}finally{
-			dbQuery.releaseConnection();
-		}
+		
+		jpa.beginTransaction();	
+		operation.setLock(operation.getLock() + 1);
+		jpa.merge(operation);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 	
@@ -161,12 +139,19 @@ public class OperationIoOperations {
 	 * @return <code>true</code> if the item has been updated, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean deleteOperation(Operation operation) throws OHException{
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		String sqlString = "DELETE FROM OPERATION WHERE OPE_ID_A = ?";
-		List<Object> parameters = Collections.<Object>singletonList(operation.getCode());
+	public boolean deleteOperation(
+			Operation operation) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
 		
-		return dbQuery.setDataWithParams(sqlString, parameters, true);
+		
+		jpa.beginTransaction();	
+		Operation operationToRemove = (Operation) jpa.find(Operation.class, operation.getCode());
+		jpa.remove(operationToRemove);
+    	jpa.commitTransaction();
+    	
+		return result;
 	}
 	
 	/**
@@ -175,19 +160,19 @@ public class OperationIoOperations {
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean isCodePresent(String code) throws OHException{
-		DbQueryLogger dbQuery = new DbQueryLogger();
+	public boolean isCodePresent(
+			String code) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		Operation foundOperation = (Operation)jpa.find(Operation.class, code);
 		boolean present = false;
-		try {
-			String sqlstring = "SELECT OPE_ID_A FROM OPERATION WHERE OPE_ID_A = ? ";
-			List<Object> parameters = Collections.<Object>singletonList(code);
-			ResultSet set = dbQuery.getDataWithParams(sqlstring, parameters, true);
-			if(set.first()) present = true;
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
+
+		
+		if (foundOperation != null)
+		{
+			present = true;
 		}
+		
 		return present;
 	}
 	
@@ -199,23 +184,40 @@ public class OperationIoOperations {
 	 * @return <code>true</code> if the description is already in use, <code>false</code> otherwise.
 	 * @throws OHException 
 	 */
-	public boolean isDescriptionPresent(String description, String typeCode) throws OHException{
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean present=false;
+	public boolean isDescriptionPresent(
+			String description, 
+			String typeCode) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		Operation foundOperation = null;
+		boolean present = false;
+		ArrayList<Object> params = new ArrayList<Object>();
+		
 		try {
-			String sqlstring = "SELECT OPE_DESC FROM OPERATION WHERE OPE_DESC = ? AND OPE_OCL_ID_A = ?";
-			List<Object> parameters = new ArrayList<Object>();
-			parameters.add(description);
-			parameters.add(typeCode);
-			ResultSet set = dbQuery.getDataWithParams(sqlstring, parameters, true);
-			if(set.first()) present=true;
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM OPERATION WHERE OPE_DESC = ? AND OPE_OCL_ID_A = ?";
+			jpa.createQuery(query, Operation.class, false);
+			params.add(description);
+			params.add(typeCode);
+			jpa.setParameters(params, false);
+			foundOperation = (Operation)jpa.getResult();		
+			
+			if (foundOperation != null && foundOperation.getDescription().compareTo(description) == 0)
+			{
+				present = true;
+			}
+			
+		} catch (Exception e) {
+			if (e.getCause().getClass().equals(NoResultException.class))
+				return false;
+			else throw new OHException(e.getCause().getMessage(), e.getCause());
+			
+		} finally {
+			jpa.commitTransaction();
 		}
+		
 		return present;
 	}
 }
-
 

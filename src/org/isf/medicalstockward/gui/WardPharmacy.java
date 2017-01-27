@@ -60,6 +60,7 @@ import org.isf.menu.gui.MainMenu;
 import org.isf.patient.model.Patient;
 import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.excel.ExcelExporter;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.ward.manager.WardBrowserManager;
@@ -975,7 +976,8 @@ public class WardPharmacy extends ModalJFrame implements
 			for (MovementWard mov : listMovementWardFromTo) {
 				boolean ok = true;
 				Patient patient = mov.getPatient();
-				Medical medical = mov.getMedical();
+				Medical medical = null;
+				medical = mov.getMedical();
 				int age = mov.getAge();
 				float weight = mov.getWeight();
 
@@ -1078,7 +1080,7 @@ public class WardPharmacy extends ModalJFrame implements
 		int newQty;
 
 		public DrugsModel() {
-			wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode());
+			wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
 		}
 
 		public int getRowCount() {
@@ -1093,7 +1095,11 @@ public class WardPharmacy extends ModalJFrame implements
 				return wardDrug;
 			}
 			if (c == 0) {
-				return wardDrug.getMedical().getDescription();
+				try {
+					return wardDrug.getMedical().getDescription();
+				} catch (OHException e) {
+					return null;
+				}
 			}
 			if (c == 1) {
 				return wardDrug.getQty() + " " + MessageBundle.getMessage("angal.medicalstockward.pieces");

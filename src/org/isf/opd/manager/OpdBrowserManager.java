@@ -50,7 +50,7 @@ public class OpdBrowserManager {
 	 * @param newPatient
 	 * @return the list of OPDs. It could be <code>null</code>.
 	 */
-	public ArrayList<Opd> getOpd(String diseaseTypeCode,String diseaseCode, GregorianCalendar dateFrom,GregorianCalendar dateTo,int ageFrom, int ageTo,char sex,String newPatient) {
+	public ArrayList<Opd> getOpd(String diseaseTypeCode,String diseaseCode, GregorianCalendar dateFrom,GregorianCalendar dateTo,int ageFrom, int ageTo,char sex,char newPatient) {
 		try {
 			return ioOperations.getOpdList(diseaseTypeCode,diseaseCode,dateFrom,dateTo,ageFrom,ageTo,sex,newPatient);
 		} catch (OHException e) {

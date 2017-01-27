@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+		version="1.0">
+	<persistence-unit name="OhJpa" transaction-type="RESOURCE_LOCAL">		
+		<class>org.isf.admission.model.Admission</class>
+		<class>org.isf.admtype.model.AdmissionType</class>
+		<class>org.isf.agetype.model.AgeType</class>
+		<class>org.isf.accounting.model.BillItems</class>
+		<class>org.isf.accounting.model.BillPayments</class>
+		<class>org.isf.accounting.model.Bill</class>
+		<class>org.isf.dlvrrestype.model.DeliveryResultType</class>
+		<class>org.isf.dlvrtype.model.DeliveryType</class>
+		<class>org.isf.dicom.model.FileDicom</class>
+		<class>org.isf.disctype.model.DischargeType</class>
+		<class>org.isf.disease.model.Disease</class>
+		<class>org.isf.distype.model.DiseaseType</class>
+		<class>org.isf.exa.model.Exam</class>
+		<class>org.isf.exa.model.ExamRow</class>
+		<class>org.isf.exatype.model.ExamType</class>
+		<class>org.isf.menu.model.GroupMenu</class>
+		<class>org.isf.hospital.model.Hospital</class>
+		<class>org.isf.lab.model.Laboratory</class>
+		<class>org.isf.lab.model.LaboratoryRow</class>
+		<class>org.isf.malnutrition.model.Malnutrition</class>
+		<class>org.isf.medicals.model.Medical</class>
+		<class>org.isf.medicalstock.model.Lot</class>
+		<class>org.isf.medicalstock.model.Movement</class>
+		<class>org.isf.medicalstockward.model.MovementWard</class>
+		<class>org.isf.medstockmovtype.model.MovementType</class>
+		<class>org.isf.medtype.model.MedicalType</class>
+		<class>org.isf.medicalstockward.model.MedicalWard</class>
+		<class>org.isf.menu.model.UserMenuItem</class>
+		<class>org.isf.opd.model.Opd</class>
+		<class>org.isf.operation.model.Operation</class>
+		<class>org.isf.opetype.model.OperationType</class>
+		<class>org.isf.patient.model.Patient</class>
+		<class>org.isf.examination.model.PatientExamination</class>
+		<class>org.isf.patvac.model.PatientVaccine</class>
+		<class>org.isf.pregtreattype.model.PregnantTreatmentType</class>
+		<class>org.isf.priceslist.model.PriceList</class>
+		<class>org.isf.priceslist.model.Price</class>
+		<class>org.isf.pricesothers.model.PricesOthers</class>
+		<class>org.isf.sms.model.Sms</class>
+		<class>org.isf.supplier.model.Supplier</class>
+		<class>org.isf.therapy.model.TherapyRow</class>
+		<class>org.isf.menu.model.User</class>
+		<class>org.isf.menu.model.UserGroup</class>
+		<class>org.isf.vaccine.model.Vaccine</class>
+		<class>org.isf.vactype.model.VaccineType</class>
+		<class>org.isf.visits.model.Visit</class>
+		<class>org.isf.ward.model.Ward</class>
+		
+		<properties>
+	      	<!-- Configuring JDBC properties -->
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/oh"/>
+			<property name="javax.persistence.jdbc.user" value="isf"/>
+			<property name="javax.persistence.jdbc.password" value="isf123"/>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+		
+			<!-- Hibernate properties -->
+			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+						
+    		<!-- Configuring Connection Pool -->
+			<property name="connection.provider_class"  value="org.hibernate.connection.C3P0ConnectionProvider"/>
+		    <property name="hibernate.c3p0.max_size" value="10" />
+		    <property name="hibernate.c3p0.min_size" value="0" />
+    		<property name="hibernate.c3p0.acquire_increment" value="1" />
+		    <property name="hibernate.c3p0.idle_test_period" value="300" />
+		    <property name="hibernate.c3p0.max_statements" value="0" />
+		    <property name="hibernate.c3p0.timeout" value="100" />	
+		</properties>
+	</persistence-unit>	
+</persistence>

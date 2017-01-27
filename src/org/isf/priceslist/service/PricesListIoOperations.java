@@ -1,14 +1,12 @@
 package org.isf.priceslist.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.Price;
-import org.isf.utils.db.DbQueryLogger;
+import org.isf.priceslist.model.PriceList;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
 
@@ -21,26 +19,21 @@ public class PricesListIoOperations {
 	 * @return the list of {@link List}s
 	 * @throws OHException 
 	 */
-	public ArrayList<List> getLists() throws OHException {
-		ArrayList<List> lists = null;
-		String string = "SELECT * FROM PRICELISTS";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ResultSet resultSet = dbQuery.getData(string, true);
-			lists = new ArrayList<List>(resultSet.getFetchSize());
-			while (resultSet.next()) {
-				lists.add(new List(resultSet.getInt("LST_ID"),
-									 resultSet.getString("LST_CODE"),
-									 resultSet.getString("LST_NAME"),
-									 resultSet.getString("LST_DESC"),
-									 resultSet.getString("LST_CURRENCY")));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
-		}
-		return lists;
+	@SuppressWarnings("unchecked")
+	public ArrayList<PriceList> getLists() throws OHException {
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<PriceList> pList = null;
+				
+		
+		jpa.beginTransaction();
+		
+		jpa.createQuery("SELECT * FROM PRICELISTS", PriceList.class, false);
+		List<PriceList> priceLists = (List<PriceList>)jpa.getList();
+		pList = new ArrayList<PriceList>(priceLists);			
+		
+		jpa.commitTransaction();
+		
+		return pList;
 	}
 	
 	/**
@@ -49,27 +42,21 @@ public class PricesListIoOperations {
 	 * @return the list of {@link Price}s
 	 * @throws OHException 
 	 */
+	@SuppressWarnings("unchecked")
 	public ArrayList<Price> getPrices() throws OHException {
-		ArrayList<Price> prices = null;
-		String string = "SELECT * FROM PRICES ORDER BY PRC_DESC";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ResultSet resultSet = dbQuery.getData(string,true);
-			prices = new ArrayList<Price>(resultSet.getFetchSize());
-			while (resultSet.next()) {
-				prices.add(new Price(resultSet.getInt("PRC_ID"),
-									 resultSet.getInt("PRC_LST_ID"),
-									 resultSet.getString("PRC_GRP"),
-									 resultSet.getString("PRC_ITEM"),
-									 resultSet.getString("PRC_DESC"),
-									 resultSet.getDouble("PRC_PRICE")));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
-		}
-		return prices;
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Price> pPrice = null;
+				
+		
+		jpa.beginTransaction();
+		
+		jpa.createQuery("SELECT * FROM PRICES ORDER BY PRC_DESC", Price.class, false);
+		List<Price> prices = (List<Price>)jpa.getList();
+		pPrice = new ArrayList<Price>(prices);			
+		
+		jpa.commitTransaction();
+
+		return pPrice;
 	}
 
 	/**
@@ -80,38 +67,89 @@ public class PricesListIoOperations {
 	 * @return <code>true</code> if the list has been replaced, <code>false</code> otherwise
 	 * @throws OHException 
 	 */
-	public boolean updatePrices(List list, ArrayList<Price> prices) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		ArrayList<Object> parameters = new ArrayList<Object>();
-		boolean result = false;
-		try {
-			String query = "DELETE FROM PRICES WHERE PRC_LST_ID = ?";
-			parameters.add(list.getId());
-			result = dbQuery.setDataWithParams(query, parameters, false);
-			
-			query = "INSERT INTO PRICES (PRC_LST_ID, PRC_GRP, PRC_ITEM, PRC_DESC, PRC_PRICE) VALUES (?,?,?,?,?)";
-			parameters.clear();
-			for (Price price : prices) {
-				parameters.add(list.getId());
-				parameters.add(price.getGroup());
-				parameters.add(price.getItem());
-				parameters.add(price.getDesc());
-				parameters.add(price.getPrice());
-			
-				result = result && dbQuery.setDataWithParams(query, parameters, false);
-				parameters.clear();
-			}
-			
-			if (result) {
-				dbQuery.commit();
-			} else {
-				dbQuery.rollback();
-			}
-		} finally {
-			dbQuery.releaseConnection();
-		}
+	public boolean updatePrices(
+			PriceList list, 
+			ArrayList<Price> prices) throws OHException {
+		DbJpaUtil jpa = new DbJpaUtil();
+		boolean result = true;
+		
+		
+		result = _deletePricesInsideList(jpa, list.getId());
+		
+		result &= _insertNewPricesInsideList(jpa, list, prices);
+
 		return result;
 	}
+	
+	private boolean _deletePricesInsideList(
+			DbJpaUtil jpa,
+			int id) throws OHException 
+    {	
+		ArrayList<Object> params = new ArrayList<Object>();
+		boolean result = true;
+        		
+		
+		jpa.beginTransaction();		
+
+		try {
+			jpa.createQuery("DELETE FROM PRICES WHERE PRC_LST_ID = ?", Price.class, false);
+			params.add(id);
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();
+		}  catch (OHException e) {
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 	
+
+		jpa.commitTransaction();	
+		
+        return result;
+    }
+	
+	private boolean _insertNewPricesInsideList(
+			DbJpaUtil jpa,
+			PriceList list,
+			ArrayList<Price> prices) throws OHException 
+    {	
+		ArrayList<Object> params = new ArrayList<Object>();
+		boolean result = true;
+        		
+		
+		for (Price price : prices) 
+		{
+			jpa.beginTransaction();		
+	
+			try {
+				jpa.createQuery("INSERT INTO PRICES (PRC_LST_ID, PRC_GRP, PRC_ITEM, PRC_DESC, PRC_PRICE) VALUES (?,?,?,?,?)", Price.class, false);
+				params = _addUpdatePriceParameters(list, price);
+				jpa.setParameters(params, false);
+				jpa.executeUpdate();
+			}  catch (OHException e) {
+				result = false;
+				throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+			} 	
+	
+			jpa.commitTransaction();
+		}		
+		
+        return result;
+    }
+	
+	private ArrayList<Object> _addUpdatePriceParameters(
+			PriceList list, 
+			Price price) throws OHException 
+    {	
+		ArrayList<Object> params = new ArrayList<Object>();
+		
+
+		params.add(list.getId());
+		params.add(price.getGroup());
+		params.add(price.getItem());
+		params.add(price.getDesc());
+		params.add(price.getPrice());
+        		
+        return params;
+    }
 
 	/**
 	 * insert a new {@link List} in the DB
@@ -120,23 +158,44 @@ public class PricesListIoOperations {
 	 * @return <code>true</code> if the list has been inserted, <code>false</code> otherwise
 	 * @throws OHException 
 	 */
-	public boolean newList(List list) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		ArrayList<Object> parameters = new ArrayList<Object>();
-		boolean result = false;
+	public boolean newList(
+			PriceList list) throws OHException {
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		boolean result = true;
+        		
+		
+		jpa.beginTransaction();		
+
 		try {
-			String query = "INSERT INTO PRICELISTS (LST_CODE, LST_NAME, LST_DESC, LST_CURRENCY) VALUES (?,?,?,?)";
-			parameters.add(list.getCode());
-			parameters.add(list.getName());
-			parameters.add(list.getDescription());
-			parameters.add(list.getCurrency());
-			
-			result = dbQuery.setDataWithParams(query, parameters, true);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+			jpa.createQuery("INSERT INTO PRICELISTS (LST_CODE, LST_NAME, LST_DESC, LST_CURRENCY) VALUES (?,?,?,?)", PriceList.class, false);
+			params = _addNewPriceListParameters(list);
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();
+		}  catch (OHException e) {
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 	
+
+		jpa.commitTransaction();
+
 		return result;
 	}
+	
+	private ArrayList<Object> _addNewPriceListParameters(
+			PriceList list) throws OHException 
+    {	
+
+		ArrayList<Object> params = new ArrayList<Object>();
+		
+			
+		params.add(list.getCode());
+		params.add(list.getName());
+		params.add(list.getDescription());
+		params.add(list.getCurrency());
+        		
+        return params;
+    }
 
 	/**
 	 * update a {@link List} in the DB
@@ -145,30 +204,50 @@ public class PricesListIoOperations {
 	 * @return <code>true</code> if the list has been updated, <code>false</code> otherwise
 	 * @throws OHException 
 	 */
-	public boolean updateList(List list) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		java.util.List<Object> parameters = new ArrayList<Object>();
-		boolean result = false;
+	public boolean updateList(
+			PriceList list) throws OHException {
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		boolean result = true;
+        		
+		
+		jpa.beginTransaction();		
+
 		try {
 			String query = "UPDATE PRICELISTS SET LST_CODE = ?, " +
 						   "LST_NAME = ?, " +
 						   "LST_DESC = ?, " +
 						   "LST_CURRENCY = ? "+
 						   "WHERE LST_ID = ?";
+			jpa.createQuery(query, PriceList.class, false);
+			params = _addUpdatePriceListParameters(list);
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();
+		}  catch (OHException e) {
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 	
 
-			parameters.add(list.getCode());
-			parameters.add(list.getName());
-			parameters.add(list.getDescription());
-			parameters.add(list.getCurrency());
-			parameters.add(list.getId());
-			
-			result = dbQuery.setDataWithParams(query, parameters, true);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		jpa.commitTransaction();
+		
 		return result;
 	}
 
+	private ArrayList<Object> _addUpdatePriceListParameters(
+			PriceList list) throws OHException 
+    {	
+		ArrayList<Object> params = new ArrayList<Object>();
+		
+			
+		params.add(list.getCode());
+		params.add(list.getName());
+		params.add(list.getDescription());
+		params.add(list.getCurrency());
+		params.add(list.getId());
+        		
+        return params;
+    }
+	
 	/**
 	 * delete a {@link List} in the DB
 	 * 
@@ -176,26 +255,43 @@ public class PricesListIoOperations {
 	 * @return <code>true</code> if the list has been deleted, <code>false</code> otherwise
 	 * @throws OHException 
 	 */
-	public boolean deleteList(List list) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		java.util.List<Object> parameters = Collections.<Object>singletonList(list.getId());
-		boolean result = false;
-		try {
-			String query = "DELETE FROM PRICELISTS WHERE LST_ID = ? ";
-			result = dbQuery.setDataWithParams(query, parameters, true);
-			
-			/*
-			 * If FOREIGN KEYS are working this is not needed.
-			 * Execute for safe. 
-			 */
-			query = "DELETE FROM PRICES WHERE PRC_LST_ID = ? ";
-			dbQuery.setDataWithParams(query, parameters, true);
-			
-		} finally {
-			dbQuery.releaseConnection();
-		}
+	public boolean deleteList(
+			PriceList list) throws OHException {
+		DbJpaUtil jpa = new DbJpaUtil();
+		boolean result = true;
+
+		
+		result = _deletePricesInsideList(jpa, list.getId());
+
+		result &= _deletePriceList(jpa, list.getId());
+				
 		return result;
-	}
+	}	
+	
+	private boolean _deletePriceList(
+			DbJpaUtil jpa,
+			int id) throws OHException 
+    {	
+		ArrayList<Object> params = new ArrayList<Object>();
+		boolean result = true;
+        		
+		
+		jpa.beginTransaction();		
+
+		try {
+			jpa.createQuery("DELETE FROM PRICELISTS WHERE LST_ID = ? ", PriceList.class, false);
+			params.add(id);
+			jpa.setParameters(params, false);
+			jpa.executeUpdate();
+		}  catch (OHException e) {
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		} 	
+
+		jpa.commitTransaction();	
+		
+        return result;
+    }
 
 	/**
 	 * duplicate {@link list} multiplying by <code>factor</code> and rounding by <code>step</code>
@@ -206,53 +302,116 @@ public class PricesListIoOperations {
 	 * @return <code>true</code> if the list has been duplicated, <code>false</code> otherwise
 	 * @throws OHException 
 	 */
-	public boolean copyList(List list, double factor, double step) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		java.util.List<Object> parameters = new ArrayList<Object>();
+	public boolean copyList(
+			PriceList list, 
+			double factor, 
+			double step) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = false;
-		int newID;
-		try {
-			String query = "INSERT INTO PRICELISTS (LST_CODE, LST_NAME, LST_DESC, LST_CURRENCY) VALUES (?,?,?,?)";
-			parameters.add(list.getCode());
-			parameters.add(list.getName());
-			parameters.add(list.getDescription());
-			parameters.add(list.getCurrency());
-
-			ResultSet set = dbQuery.setDataReturnGeneratedKeyWithParams(query, parameters, false);
-
-			if(set.first()){
-				newID = set.getInt(1);
-				parameters.clear();
+		
 				
-				if (step > 0.) {
-					query = "INSERT INTO PRICES (PRC_LST_ID, PRC_GRP, PRC_ITEM, PRC_DESC, PRC_PRICE) "+
-					        "SELECT ?, PRC_GRP, PRC_ITEM, PRC_DESC, ROUND((PRC_PRICE * ?) / ?) * ? AS PRC_PRICE FROM PRICES WHERE PRC_LST_ID = ?";
-					parameters.add(newID);
-					parameters.add(factor);
-					parameters.add(step);
-					parameters.add(step);
-					parameters.add(list.getId());
-				} else {
-					query = "INSERT INTO PRICES (PRC_LST_ID, PRC_GRP, PRC_ITEM, PRC_DESC, PRC_PRICE) "+
-			        "SELECT ?, PRC_GRP, PRC_ITEM, PRC_DESC, ROUND((PRC_PRICE * ?) AS PRC_PRICE FROM PRICES WHERE PRC_LST_ID = ?";
-					parameters.add(newID);
-					parameters.add(factor);
-					parameters.add(list.getId());
-				}
-				result = dbQuery.setDataWithParams(query, parameters, false);
-				if (result) {
-					dbQuery.commit();
-					list.setId(newID);
-				}
-			} else {
-				dbQuery.rollback();
-				result = false;
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
+		if (step > 0) 
+		{
+			result = _insertCopyListSteps(jpa, list, factor, step);
+			
 		}
+		else
+		{
+			result = _insertCopyList(jpa, list, factor);			
+		}
+
 		return result;
 	}
+	
+    @SuppressWarnings("unchecked")
+	private boolean _insertCopyListSteps(
+			DbJpaUtil jpa,
+			PriceList list, 
+			double factor, 
+			double step) throws OHException 
+    {	
+    	PriceList newList = _insertNewPriceList(jpa, list);
+		ArrayList<Object> params = new ArrayList<Object>();
+		boolean result = true; 		
+
+		
+		jpa.beginTransaction();			
+		
+		jpa.createQuery("SELECT * FROM PRICES WHERE PRC_LST_ID = ?", Price.class, false);
+		params.add(list.getId());			
+		jpa.setParameters(params, false);
+		List<Price> Prices = (List<Price>)jpa.getList();
+		for (Price price: Prices) 
+		{    
+			Price newPrice = new Price();
+			
+			
+			newPrice.setList(newList);
+			newPrice.setGroup(price.getGroup());
+			newPrice.setDesc(price.getDesc());
+			newPrice.setPrice(Math.round((price.getPrice() * factor) / step) * step);
+			newPrice.setItem(price.getItem());
+			
+			jpa.persist(newPrice);			
+	    }        
+		
+		jpa.commitTransaction();			
+		
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")	
+	private boolean _insertCopyList(
+			DbJpaUtil jpa,
+			PriceList list, 
+			double factor) throws OHException 
+    {	
+    	PriceList newList = _insertNewPriceList(jpa, list);
+		ArrayList<Object> params = new ArrayList<Object>();
+		boolean result = true;
+        		
+				
+		jpa.beginTransaction();			
+		
+		jpa.createQuery("SELECT * FROM PRICES WHERE PRC_LST_ID = ?", Price.class, false);
+		params.add(list.getId());			
+		jpa.setParameters(params, false);
+		List<Price> Prices = (List<Price>)jpa.getList();
+		for (Price price: Prices) 
+		{    
+			Price newPrice = new Price();
+			
+			
+			newPrice.setList(newList);
+			newPrice.setGroup(price.getGroup());
+			newPrice.setDesc(price.getDesc());
+			newPrice.setPrice(price.getPrice() * factor);
+			newPrice.setItem(price.getItem());
+								
+			jpa.persist(newPrice);		
+		}        
+		
+		jpa.commitTransaction();			
+		
+        return result;		
+    }
+
+	private PriceList _insertNewPriceList(
+			DbJpaUtil jpa,
+			PriceList list) throws OHException 
+    {			
+		jpa.beginTransaction();	
+		
+		PriceList newList = new PriceList();
+		newList.setCode(list.getCode());
+		newList.setName(list.getName());
+		newList.setDescription(list.getDescription());
+		newList.setCurrency(list.getCurrency());
+		jpa.persist(newList);
+		
+    	jpa.commitTransaction();
+		
+        return newList;
+    }
 }

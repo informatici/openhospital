@@ -42,6 +42,7 @@ import javax.swing.table.TableColumnModel;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
+import org.isf.patient.model.Patient;
 import org.isf.patvac.manager.PatVacManager;
 import org.isf.patvac.model.PatientVaccine;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -54,7 +55,7 @@ import org.isf.vactype.model.VaccineType;
 import com.toedter.calendar.JDateChooser;
 
 
-public class PatVacBrowser extends ModalJFrame implements ActionListener{
+public class PatVacBrowser extends ModalJFrame {
 
     /**
 	 * 
@@ -184,17 +185,16 @@ public class PatVacBrowser extends ModalJFrame implements ActionListener{
 		   buttonNew.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent event) {
-					patientVaccine = new PatientVaccine(0,0,new GregorianCalendar(),0,
+					patientVaccine = new PatientVaccine(0,0,new GregorianCalendar(),new Patient(),
 							                new Vaccine ("","",new VaccineType("",""),0),0);
 							
-					PatientVaccine  last = new PatientVaccine(0,0,new GregorianCalendar(),0,
+					PatientVaccine  last = new PatientVaccine(0,0,new GregorianCalendar(),new Patient(),
 							                     new Vaccine ("","",new VaccineType("",""),0),0);
                     new PatVacEdit (myFrame, patientVaccine, true);
                     
                     if (!last.equals(patientVaccine)) {
-						lPatVac.add(lPatVac.size(), patientVaccine);
-						((PatVacBrowsingModel) jTable.getModel())
-								.fireTableDataChanged();
+						lPatVac.add(0, patientVaccine);
+						((PatVacBrowsingModel) jTable.getModel()).fireTableDataChanged();
 						updateRowCounter();
 						if (jTable.getRowCount() > 0)
 							jTable.setRowSelectionInterval(0, 0);
@@ -230,19 +230,18 @@ public class PatVacBrowser extends ModalJFrame implements ActionListener{
 					PatientVaccine last = new PatientVaccine(patientVaccine.getCode(),
 								                  patientVaccine.getProgr(),
 								                  patientVaccine.getVaccineDate(),
-								                  patientVaccine.getPatId(),
+								                  patientVaccine.getPatient(),
 								                  patientVaccine.getVaccine(),
 								                  patientVaccine.getLock(),
 								                  patientVaccine.getPatName(),
 								                  patientVaccine.getPatAge(),
 								                  patientVaccine.getPatSex());
 					
-					new PatVacEdit (myFrame, patientVaccine, false);	
-										
+					new PatVacEdit (myFrame, patientVaccine, false);
+					
 					if (!last.equals(patientVaccine)) {
-						lPatVac.set(lPatVac.size() - selectedrow - 1, patientVaccine);
-						((PatVacBrowsingModel) jTable.getModel())
-								.fireTableDataChanged();
+//						lPatVac.set(lPatVac.size() - selectedrow - 1, patientVaccine);
+						((PatVacBrowsingModel) jTable.getModel()).fireTableDataChanged();
 						updateRowCounter();
 						if ((jTable.getRowCount() > 0) && selectedrow > -1)
 						  	jTable.setRowSelectionInterval(selectedrow, selectedrow);
@@ -454,9 +453,6 @@ public class PatVacBrowser extends ModalJFrame implements ActionListener{
 			group.add(radiom);
 			group.add(radiof);
 			group.add(radioa);
-			radiom.addActionListener(this);
-			radiof.addActionListener(this);
-			radioa.addActionListener(this);
 			
 			label1Panel.add(radioa);
 			sexPanel.add(label1Panel);
@@ -830,7 +826,7 @@ public class PatVacBrowser extends ModalJFrame implements ActionListener{
 		/**
 		 * Note: We must get the objects in a reversed way because of the query
 		 * 
-		 * @see org.isf.lab.service.IoOperations
+		 * @see org.isf.patvac.service.PatVacIoOperations
 		 */
 		public Object getValueAt(int r, int c) {
 			PatientVaccine patVac = lPatVac.get(r);

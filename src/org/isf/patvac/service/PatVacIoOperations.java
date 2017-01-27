@@ -8,21 +8,15 @@ package org.isf.patvac.service;
  * 20/10/2011 - insert vaccine type management
  * 14/11/2011 - claudia - inserted search condtion on date
  *------------------------------------------*/
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.patvac.model.PatientVaccine;
-import org.isf.utils.db.DbQueryLogger;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-import org.isf.vaccine.model.Vaccine;
-import org.isf.vactype.model.VaccineType;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -35,11 +29,18 @@ public class PatVacIoOperations {
 	 * @return the list of {@link PatientVaccine}s
 	 * @throws OHException 
 	 */
-	public ArrayList<PatientVaccine> getPatientVaccine(boolean minusOneWeek) throws OHException {
+	public ArrayList<PatientVaccine> getPatientVaccine(
+			boolean minusOneWeek) throws OHException 
+	{
 		GregorianCalendar timeTo = new GregorianCalendar();
 		GregorianCalendar timeFrom = new GregorianCalendar();
+	
+		
 		if (minusOneWeek)
-			timeFrom.add(GregorianCalendar.WEEK_OF_YEAR, -1);
+		{
+			timeFrom.add(GregorianCalendar.WEEK_OF_YEAR, -1);			
+		}
+		
 		return getPatientVaccine(null, null, timeFrom, timeTo, 'A', 0, 0);
 	}
 
@@ -57,69 +58,72 @@ public class PatVacIoOperations {
 	 * @return the list of {@link PatientVaccine}s
 	 * @throws OHException 
 	 */
-	public ArrayList<PatientVaccine> getPatientVaccine(String vaccineTypeCode, String vaccineCode, GregorianCalendar dateFrom, GregorianCalendar dateTo, char sex, int ageFrom, int ageTo) throws OHException {
-		ArrayList<PatientVaccine> patVacList = null;
-		StringBuilder sqlString = new StringBuilder();
-		List<Object> parameters = new ArrayList<Object>();
-
-		sqlString.append("SELECT PV.*, V.*, P.PAT_SNAME, P.PAT_FNAME, P.PAT_AGE, P.PAT_SEX , VT.VACT_ID_A, VT.VACT_DESC"
-				+ " FROM PATIENTVACCINE PV JOIN VACCINE V ON PAV_VAC_ID_A=VAC_ID_A"
-				+ " JOIN VACCINETYPE VT ON VAC_VACT_ID_A = VACT_ID_A"
-				+ " JOIN PATIENT P ON PAV_PAT_ID = PAT_ID");
-
-		sqlString.append(" WHERE DATE_FORMAT(PAV_DATE,'%Y-%m-%d') >= ?" +
-				" AND DATE_FORMAT(PAV_DATE,'%Y-%m-%d') <= ?");
-		parameters.add(convertToSQLDateLimited(dateFrom));
-		parameters.add(convertToSQLDateLimited(dateTo));
-
+	@SuppressWarnings("unchecked")
+	public ArrayList<PatientVaccine> getPatientVaccine(
+			String vaccineTypeCode, 
+			String vaccineCode, 
+			GregorianCalendar dateFrom, 
+			GregorianCalendar dateTo, 
+			char sex, 
+			int ageFrom, 
+			int ageTo) throws OHException 
+	{
+		
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<PatientVaccine> patientVaccines = null;
+		StringBuilder query = new StringBuilder();
+		ArrayList<Object> params = new ArrayList<Object>();
+				
+		
+		jpa.beginTransaction();
+		String clause = " WHERE";
+		query.append("SELECT *"
+				+ " FROM PATIENTVACCINE JOIN VACCINE ON PAV_VAC_ID_A=VAC_ID_A"
+				+ " JOIN VACCINETYPE ON VAC_VACT_ID_A = VACT_ID_A"
+				+ " JOIN PATIENT ON PAV_PAT_ID = PAT_ID");
+		if (dateFrom != null || dateTo != null) {
+			if (dateFrom != null) {
+				query.append(clause).append(" DATE_FORMAT(PAV_DATE,'%Y-%m-%d') >= ?");
+				params.add(convertToSQLDateLimited(dateFrom));
+				clause = " AND";
+			}
+			if (dateTo != null) {
+				params.add(convertToSQLDateLimited(dateTo));
+				query.append(clause).append(" DATE_FORMAT(PAV_DATE,'%Y-%m-%d') <= ?");
+				clause = " AND";
+			}
+		}
 		if (vaccineTypeCode != null) {
-			sqlString.append(" AND VACT_ID_A = ?");
-			parameters.add(vaccineTypeCode);
+			query.append(clause).append(" VACT_ID_A = ?");
+			params.add(vaccineTypeCode);
+			clause = " AND";
 		}
 		if (vaccineCode != null) {
-			sqlString.append(" AND VAC_ID_A = ?");
-			parameters.add(vaccineCode);
+			query.append(clause).append(" VAC_ID_A = ?");
+			params.add(vaccineCode);
+			clause = " AND";
 		}
 		if ('A' != sex) {
-			sqlString.append(" AND PAT_SEX = ?");
-			parameters.add(String.valueOf(sex));
-		}
+			query.append(clause).append(" PAT_SEX = ?");
+			params.add(sex);
+			clause = " AND";
+		}		
 		if (ageFrom != 0 || ageTo != 0) {
-			sqlString.append(" AND OPD_AGE BETWEEN ? AND ?");
-			parameters.add(ageFrom);
-			parameters.add(ageTo);
-		}
+			query.append(clause).append(" PAT_AGE BETWEEN ? AND ?");
+			params.add(ageFrom);
+			params.add(ageTo);
+			clause = " AND";
+		}		
+		query.append(" ORDER BY PAV_DATE DESC, PAV_ID");
+		
+		jpa.createQuery(query.toString(), PatientVaccine.class, false);
+		jpa.setParameters(params, false);
+		List<PatientVaccine> patientVaccineList = (List<PatientVaccine>)jpa.getList();
+		patientVaccines = new ArrayList<PatientVaccine>(patientVaccineList);		
+		
+		jpa.commitTransaction();
 
-		sqlString.append(" ORDER BY PV.PAV_DATE, PV.PAV_ID");
-
-		//System.out.println("getPatientVaccine: sql=" + sqlString.toString());
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {
-			ResultSet resultSet = dbQuery.getDataWithParams(sqlString.toString(), parameters, true);
-			patVacList = new ArrayList<PatientVaccine>(resultSet.getFetchSize());
-			while (resultSet.next()) {
-				PatientVaccine pv = new PatientVaccine(
-						resultSet.getInt("PAV_ID"), 
-						resultSet.getInt("PAV_YPROG"), 
-						convertToGregorianDate((Date) resultSet.getObject("PAV_DATE")), 
-						resultSet.getInt("PAV_PAT_ID"), 
-						new Vaccine(resultSet.getString("VAC_ID_A"), 
-									resultSet.getString("VAC_DESC"), 
-									new VaccineType(resultSet.getString("VACT_ID_A"), 
-													resultSet.getString("VACT_DESC")), 
-									resultSet.getInt("VAC_LOCK")), 
-						resultSet.getInt("PAV_LOCK"), 
-						resultSet.getString("PAT_SNAME") + " " + resultSet.getString("PAT_FNAME"), 
-						resultSet.getInt("PAT_AGE"), 
-						resultSet.getString("PAT_SEX"));
-				patVacList.add(pv);
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
-		return patVacList;
+		return patientVaccines;
 	}
 
 	/**
@@ -129,31 +133,18 @@ public class PatVacIoOperations {
 	 * @return <code>true</code> if the item has been inserted, <code>false</code> otherwise 
 	 * @throws OHException 
 	 */
-	public boolean newPatientVaccine(PatientVaccine patVac) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		List<Object> parameters = new ArrayList<Object>();
-		boolean result = false;
-		try {
-			String sqlString = "INSERT INTO PATIENTVACCINE" +
-				" (PAV_YPROG, PAV_DATE, PAV_PAT_ID, PAV_VAC_ID_A,PAV_LOCK) VALUES" +
-				" (?, ?, ?, ?, ?)";
+	public boolean newPatientVaccine(
+			PatientVaccine patVac) throws OHException 
+	{
 
-			parameters.add(patVac.getProgr());
-			parameters.add(new java.sql.Timestamp(patVac.getVaccineDate().getTime().getTime()));
-			parameters.add(patVac.getPatId());
-			parameters.add(patVac.getVaccine().getCode());
-			parameters.add(patVac.getLock());
-
-			ResultSet res = dbQuery.setDataReturnGeneratedKeyWithParams(sqlString, parameters, true);
-			if (res.first()) {
-				patVac.setCode(res.getInt(1));
-				result = true;
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.persist(patVac);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -164,31 +155,17 @@ public class PatVacIoOperations {
 	 * @return <code>true</code> if the item has been updated, <code>false</code> otherwise 
 	 * @throws OHException 
 	 */
-	public boolean updatePatientVaccine(PatientVaccine patVac) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		List<Object> parameters = new ArrayList<Object>();
-		boolean result = false;
-		try {
-			String sqlString = "UPDATE PATIENTVACCINE SET" + 
-				" PAV_YPROG = ?," + 
-				" PAV_DATE = ?," + 
-				" PAV_PAT_ID = ?," + 
-				" PAV_VAC_ID_A = ?," + 
-				" PAV_LOCK = ? " + 
-				" WHERE PAV_ID = ? ";
-
-			parameters.add(patVac.getProgr());
-			parameters.add(new java.sql.Timestamp(patVac.getVaccineDate().getTime().getTime()));
-			parameters.add(patVac.getPatId());
-			parameters.add(patVac.getVaccine().getCode());
-			parameters.add(patVac.getLock());
-			parameters.add(patVac.getCode());
-
-			result = dbQuery.setDataWithParams(sqlString, parameters, true);
-			
-		} finally {
-			dbQuery.releaseConnection();
-		}
+	public boolean updatePatientVaccine(
+			PatientVaccine patVac) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.merge(patVac);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -199,16 +176,18 @@ public class PatVacIoOperations {
 	 * @return <code>true</code> if the item has been deleted, <code>false</code> otherwise 
 	 * @throws OHException 
 	 */
-	public boolean deletePatientVaccine(PatientVaccine patVac) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		List<Object> parameters = Collections.<Object>singletonList(patVac.getCode());
-		boolean result = false;
-		try {
-			String sqlString = "DELETE FROM PATIENTVACCINE WHERE PAV_ID = ?";
-			result = dbQuery.setDataWithParams(sqlString, parameters, true);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+	public boolean deletePatientVaccine(
+			PatientVaccine patVac) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		PatientVaccine objToRemove = (PatientVaccine) jpa.find(PatientVaccine.class, patVac.getCode());
+		jpa.remove(objToRemove);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -219,29 +198,33 @@ public class PatVacIoOperations {
 	 * @return <code>int</code> - the progressive number in the year
 	 * @throws OHException 
 	 */
-	public int getProgYear(int year) throws OHException {
-		int progYear=0;
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		ResultSet resultSet;
-		StringBuilder sqlString = new StringBuilder("SELECT MAX(PAV_YPROG) FROM PATIENTVACCINE");
-		
-		if (year == 0) {
-			resultSet = dbQuery.getData(sqlString.toString(), true);
-		} else {
-			sqlString.append(" WHERE YEAR(PAV_DATE) = ?");
-			List<Object> parameters = Collections.<Object>singletonList(year);
-			resultSet = dbQuery.getDataWithParams(sqlString.toString(), parameters, true);
-		}
+	public int getProgYear(
+			int year) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		StringBuilder query = new StringBuilder();
+		Integer progYear = 0;
+
+		jpa.beginTransaction();		
 		
 		try {
-			resultSet.next();
-			progYear = resultSet.getInt("MAX(PAV_YPROG)");
-		} catch (SQLException e) {
+			query.append("SELECT MAX(PAV_YPROG) FROM PATIENTVACCINE");
+			if (year != 0) {
+				query.append(" WHERE YEAR(PAV_DATE) = ?");
+				params.add(year);
+			}
+			jpa.createQuery(query.toString(), null, false);
+			jpa.setParameters(params, false);	
+			progYear = (Integer)jpa.getResult();
+			
+		} catch (OHException e) {
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
 		} finally {
-			dbQuery.releaseConnection();
+			jpa.commitTransaction();
 		}
-		return progYear;
+		
+		return progYear == null ? new Integer(0) : progYear;
 	}
 	
 	/**
@@ -253,16 +236,5 @@ public class PatVacIoOperations {
 	private String convertToSQLDateLimited(GregorianCalendar date) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return sdf.format(date.getTime());
-	}
-	
-	/**
-	 * convert passed {@link Date} to a {@link GregorianCalendar}
-	 * @param aDate - the {@link Date} to convert
-	 * @return {@link GregorianCalendar}
-	 */
-	public GregorianCalendar convertToGregorianDate(Date aDate) {
-		GregorianCalendar time = new GregorianCalendar();
-		time.setTime(aDate);
-		return time;
 	}
 }

@@ -111,6 +111,7 @@ public class ExamBrowser extends ModalJFrame{
 				ExamEdit newrecord = new ExamEdit(myFrame,exam,true);
 				newrecord.setVisible(true);
 				if(!last.equals(exam)){
+					//TODO: implement ExamListener
 					pExam.add(0,exam);
 					((ExamBrowsingModel)table.getModel()).fireTableDataChanged();
 					//table.updateUI();

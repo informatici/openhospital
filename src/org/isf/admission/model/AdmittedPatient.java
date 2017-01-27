@@ -1,6 +1,6 @@
 package org.isf.admission.model;
 
-import org.isf.patient.model.*;
+import org.isf.patient.model.Patient;
 
 public class AdmittedPatient {
 

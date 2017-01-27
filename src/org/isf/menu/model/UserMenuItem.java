@@ -1,4 +1,15 @@
 package org.isf.menu.model;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ColumnResult;
+import javax.persistence.EntityResult;
+import javax.persistence.FieldResult;
+import javax.persistence.Id;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.isf.generaldata.MessageBundle;
 
 /**
@@ -6,20 +17,78 @@ import org.isf.generaldata.MessageBundle;
  * @author flavio
  *	an item in user menu
  */
-public class UserMenuItem {
-
+/*------------------------------------------
+ * User - model for the user entity
+ * -----------------------------------------
+ * modification history
+ * ? 		  - flavio - first version 
+ * 07/05/2016 - Antonio - ported to JPA
+ * 
+ *------------------------------------------*/
+@Entity
+@Table(name="MENUITEM")
+@SqlResultSetMapping(name="UserMenuItemWithStatus",
+	entities={
+	    @EntityResult(entityClass=org.isf.menu.model.UserMenuItem.class, fields={
+                @FieldResult(name="code", column="MNI_ID_A"),
+                @FieldResult(name="buttonLabel", column="MNI_BTN_LABEL"), 
+                @FieldResult(name="altLabel", column="MNI_LABEL"),
+                @FieldResult(name="tooltip", column="MNI_TOOLTIP"),
+                @FieldResult(name="shortcut", column="MNI_SHORTCUT"),
+                @FieldResult(name="mySubmenu", column="MNI_SUBMENU"),
+                @FieldResult(name="myClass", column="MNI_CLASS"),
+                @FieldResult(name="isASubMenu", column="MNI_IS_SUBMENU"),
+                @FieldResult(name="isActive", column="IS_ACTIVE"),
+                @FieldResult(name="position", column="MNI_POSITION")})},
+	columns={
+	    @ColumnResult(name="is_active")}
+	)
+public class UserMenuItem 
+{
+	@Id 
+	@Column(name="MNI_ID_A")	
 	private String 	code;
+
+	@NotNull
+	@Column(name="MNI_BTN_LABEL")
 	private String 	buttonLabel;
+
+	@NotNull
+	@Column(name="MNI_LABEL")
 	private String 	altLabel;
+
+	@Column(name="MNI_TOOLTIP")
 	private String 	tooltip;
+
+	@Column(name="MNI_SHORTCUT")
 	private char	shortcut;
+
+	@NotNull
+	@Column(name="MNI_SUBMENU")
 	private String	mySubmenu;
+
+	@NotNull
+	@Column(name="MNI_CLASS")
 	private String	myClass;
+
+	@NotNull
+	@Column(name="MNI_IS_SUBMENU")
 	private boolean	isASubMenu;
+
+	@NotNull
+	@Column(name="MNI_POSITION")
 	private int 	position;
+
+	@Transient
 	private boolean isActive;
 	
+	@Transient
+	private volatile int hashCode = 0;
 	
+	public UserMenuItem() {
+		super();
+	}
+		
 	public UserMenuItem(String code, String buttonLabel, String altLabel, String tooltip, char shortcut, String mySubmenu, String myClass, boolean isASubMenu, int position, boolean isActive) {
 		super();
 		this.code = code;
@@ -95,9 +164,8 @@ public class UserMenuItem {
 	public void setTooltip(String tooltip) {
 		this.tooltip = tooltip;
 	}
-	
-	
-	
+		
+	@Override
 	public boolean equals(Object anObject) {
         return (anObject == null) || !(anObject instanceof UserMenuItem) ? false
                 : (getCode().equals(((UserMenuItem) anObject).getCode())
@@ -122,5 +190,18 @@ public class UserMenuItem {
 				MessageBundle.getMessage("angal.menu.isactive")+isActive()+MessageBundle.getMessage("angal.menu.inposition")+getPosition();
 				
 	}
-	
+
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + code.hashCode();
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}		
 }

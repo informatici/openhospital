@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -49,6 +50,10 @@ public class Supplier implements java.io.Serializable {
 	
 	@Column(name="SUP_DELETED")
 	private Character supDeleted;
+	
+	@Transient
+	private volatile int hashCode = 0;
+	
 
 	/**
 	 * 
@@ -68,7 +73,7 @@ public class Supplier implements java.io.Serializable {
 	 * @param supEmail
 	 * @param supNote
 	 */
-	public Supplier(int supID, String supName, String supAddress, String supTaxcode, String supPhone, String supFax, String supEmail, String supNote) {
+	public Supplier(Integer supID, String supName, String supAddress, String supTaxcode, String supPhone, String supFax, String supEmail, String supNote) {
 		this.supId = supID;
 		this.supName = supName;
 		this.supAddress = supAddress;
@@ -92,7 +97,7 @@ public class Supplier implements java.io.Serializable {
 	 * @param supNote
 	 * @param supDeleted
 	 */
-	public Supplier(int supID, String supName, String supAddress, String supTaxcode, String supPhone, String supFax, String supEmail, String supNote, Character supDeleted) {
+	public Supplier(Integer supID, String supName, String supAddress, String supTaxcode, String supPhone, String supFax, String supEmail, String supNote, Character supDeleted) {
 		this.supId = supID;
 		this.supName = supName;
 		this.supAddress = supAddress;
@@ -179,4 +184,32 @@ public class Supplier implements java.io.Serializable {
 	public String toString() {
 		return this.supName;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (!(obj instanceof Supplier)) {
+			return false;
+		}
+		
+		Supplier supplier = (Supplier)obj;
+		return (this.getSupId() == supplier.getSupId());
+	}
+
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + supId.hashCode();
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}	
 }

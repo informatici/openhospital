@@ -104,7 +104,7 @@ public class DiseaseTypeBrowserEdit extends JDialog{
 	 */
 	private void initialize() {
 		
-		this.setBounds(300,300,350,180);
+//		this.setBounds(300,300,350,180);
 		this.setContentPane(getJContentPane());
 		if (insert) {
 			this.setTitle(MessageBundle.getMessage("angal.distype.newdiseasetyperecord"));
@@ -112,6 +112,9 @@ public class DiseaseTypeBrowserEdit extends JDialog{
 			this.setTitle(MessageBundle.getMessage("angal.distype.editingdiseasetyperecord"));
 		}
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		this.pack();
+		this.setLocationRelativeTo(null);
 	}
 
 	/**

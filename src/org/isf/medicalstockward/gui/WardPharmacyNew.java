@@ -39,6 +39,7 @@ import org.isf.medicalstockward.model.MovementWard;
 import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
 
 public class WardPharmacyNew extends JDialog implements SelectionListener {
@@ -143,7 +144,12 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 		super(owner, true);
 		wardDrugs = drugs;
 		for (MedicalWard elem : wardDrugs) {
-			medArray.add(elem.getMedical());
+			try {
+				medArray.add(elem.getMedical());
+			} catch (OHException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			qtyArray.add(elem.getQty());
 		}
 		wardSelected = ward;
@@ -233,7 +239,13 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 
 					// remove already inserted items
 					for (MedicalWard medItem : medItems) {
-						Medical med = medItem.getMedical();
+						Medical med = null;
+						try {
+							med = medItem.getMedical();
+						} catch (OHException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						int index = currentMeds.indexOf(med);
 						currentMeds.remove(index);
 						currentQties.remove(index);
@@ -413,8 +425,9 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 					
 					if (medItems.size() == 1) {
 						
-						MovementWard oneMovementWard = 
-							new MovementWard(wardSelected,
+						MovementWard oneMovementWard = null;
+						try {
+							oneMovementWard = new MovementWard(wardSelected,
 								 			newDate,
 								 			isPatient,
 								 			patientSelected,
@@ -424,6 +437,10 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 								 			medItems.get(0).getMedical(),
 								 			medItems.get(0).getQty(),
 											MessageBundle.getMessage("angal.medicalstockwardedit.pieces"));
+						} catch (OHException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						
 						boolean result = wardManager.newMovementWard(oneMovementWard);
 						if (result) {
@@ -437,17 +454,22 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 						
 						ArrayList<MovementWard> manyMovementWard = new ArrayList<MovementWard>();
 						for (int i = 0; i < medItems.size(); i++) {
-							manyMovementWard.add(new MovementWard(
-									wardSelected,
-									newDate,
-									isPatient,
-									patientSelected,
-									age,
-									weight,
-									description,
-									medItems.get(i).getMedical(),
-									medItems.get(i).getQty(),
-									MessageBundle.getMessage("angal.medicalstockwardedit.pieces")));
+							try {
+								manyMovementWard.add(new MovementWard(
+										wardSelected,
+										newDate,
+										isPatient,
+										patientSelected,
+										age,
+										weight,
+										description,
+										medItems.get(i).getMedical(),
+										medItems.get(i).getQty(),
+										MessageBundle.getMessage("angal.medicalstockwardedit.pieces")));
+							} catch (OHException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 						}
 						
 						boolean result = wardManager.newMovementWard(manyMovementWard);
@@ -619,7 +641,11 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 				return medItems.get(r);
 			}
 			if (c == 0) {
-				return medItems.get(r).getMedical().getDescription();
+				try {
+					return medItems.get(r).getMedical().getDescription();
+				} catch (OHException e) {
+					return null;
+				}
 			}
 			if (c == 1) {
 				return medItems.get(r).getQty(); 

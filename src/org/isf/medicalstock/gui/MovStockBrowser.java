@@ -916,7 +916,7 @@ public class MovStockBrowser extends ModalJFrame {
 		/**
 		 * Note: We must get the objects in a reversed way because of the query
 		 * 
-		 * @see org.isf.lab.service.IoOperations
+		 * @see org.isf.medicalstock.service.MedicalStockIoOperations
 		 */
 		public Object getValueAt(int r, int c) {
 			Movement movement = moves.get(r);
@@ -934,7 +934,7 @@ public class MovStockBrowser extends ModalJFrame {
 				return movement.getType().toString();
 			} else if (c == ++col) {
 				Ward ward = movement.getWard();
-				if (ward.getDescription() != null)
+				if (ward != null)
 					return ward;
 				else
 					return "";
@@ -953,7 +953,7 @@ public class MovStockBrowser extends ModalJFrame {
 			} else if (c == ++col) {
 				return formatDate(lot.getDueDate());
 			} else if (c == ++col){
-				return movement.getOrigin().getSupName();
+				return movement.getOrigin();
 			} else if (c == ++col){
 				return cost;
 			} else if (c == ++col){

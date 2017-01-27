@@ -1,5 +1,20 @@
 package org.isf.opd.model;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
+import org.isf.disease.model.Disease;
+import org.isf.distype.model.DiseaseType;
+import org.isf.patient.model.Patient;
 
 /*------------------------------------------
  * Opd - model for OPD
@@ -14,55 +29,89 @@ package org.isf.opd.model;
  * 16/06/2008 - ross - added patient detail
  * 05/09/2008 - alex - added fullname e notefield
  * 09/01/2009 - fabrizio - date field modified to type Date
+ * 02/06/2015 - Antonio - ported to JPA
  *------------------------------------------*/
-
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-public class Opd {
-	/**
-	 * @author Vero, Rick, Pupo
-	 */
-	
+@Entity
+@Table(name="OPD")
+public class Opd 
+{
+	@Id 
+	@Column(name="OPD_ID") 
 	private int code;
+
+	@NotNull
+	@Column(name="OPD_DATE")
 	private Date date;
+
+	@NotNull
+	@Column(name="OPD_DATE_VIS")
 	private GregorianCalendar visitDate;
 
-	private int patientCode;
-	private String fullName; //ADDED : alex
-	private String firstName;
-	private String secondName;
+	@ManyToOne
+	@JoinColumn(name="OPD_PAT_ID")
+	private Patient patient;
+
+	@NotNull
+	@Column(name="OPD_AGE")
 	private int age;
+
+	@NotNull
+	@Column(name="OPD_SEX")
 	private char sex;
-	private String address;
-	private String city;
-	private String nextKin;
+
+	@NotNull
+	@Column(name="OPD_NOTE")
 	private String note; //ADDED: Alex
+
+	@NotNull
+	@Column(name="OPD_PROG_YEAR")	
+	private int prog_year;
+		
+	@ManyToOne
+	@JoinColumn(name="OPD_DIS_ID_A")
+	private Disease disease;
 	
-	private int year;
-	private String disease;
-	private String disease2;
-	private String disease3;
+	@ManyToOne
+	@JoinColumn(name="OPD_DIS_ID_A_2")
+	private Disease disease2;
+	
+	@ManyToOne
+	@JoinColumn(name="OPD_DIS_ID_A_3")
+	private Disease disease3;
+
+	@NotNull
+	@Column(name="OPD_LOCK")
 	private int lock;
-	private String diseaseType;
-	private String diseaseDesc;
-	private String diseaseTypeDesc;
-	private String newPatient;	//n=NEW R=REATTENDANCE
+
+	@NotNull
+	@Column(name="OPD_NEW_PAT")
+	private char newPatient;	//n=NEW R=REATTENDANCE
 	
+	@Column(name="OPD_REFERRAL_FROM")
 	private String referralFrom;	//R=referral from another unit; null=no referral from
-	private String referralTo;		//R=referral to another unit; null=no referral to 
 	
+	@Column(name="OPD_REFERRAL_TO")
+	private String referralTo;		//R=referral to another unit; null=no referral to 
+
+	@NotNull
+	@Column(name="OPD_USR_ID_A")
 	private String userID;
+	
+	@Transient
+	private volatile int hashCode = 0;
 
 
-	public String getNewPatient() {
+	public char getNewPatient() {
 		return newPatient;
 	}
 
-	public void setNewPatient(String newPatient) {
+	public void setNewPatient(char newPatient) {
 		this.newPatient = newPatient;
 	}
 
+	public Opd() {
+	}
+	
 	/**
      * @param aYear
      * @param aSex
@@ -72,14 +121,14 @@ public class Opd {
      * @param aLock
      */
 	
-	public Opd(int aYear,char aSex,int aAge,String aDisease,int aLock) {
-		year=aYear;
+	public Opd(int aProgYear,char aSex,int aAge,Disease aDisease,int aLock) {
+		prog_year=aProgYear;
 		sex=aSex;
 		age=aAge;
 		disease=aDisease;
 		lock=aLock;
 	}
-	//ADDED: Alex
+	
 	public String getNote() {
 		return note;
 	}
@@ -89,18 +138,14 @@ public class Opd {
 	}
 	
 	public String getFullName() {
-		return fullName;
+		return patient.getName();
 	}
 
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
+	public Patient getPatient() {
+		return patient;
 	}
-	/////////////////////
-	public int getpatientCode() {
-		return patientCode;
-	}
-	public void setpatientCode(int patientCode) {
-		this.patientCode = patientCode;
+	public void setPatient(Patient patient) {
+		this.patient = patient;
 	}
 
 	public int getAge() {
@@ -111,43 +156,43 @@ public class Opd {
 	}
 
 	public String getfirstName() {
-		return firstName;
+		return patient.getFirstName();
 	}
 
 	public void setfirstName(String firstName) {
-		this.firstName = firstName;
+		this.patient.setFirstName(firstName);
 	}
 
 	public String getsecondName() {
-		return secondName;
+		return patient.getSecondName();
 	}
 
 	public void setsecondName(String secondName) {
-		this.secondName = secondName;
+		this.patient.setSecondName(secondName);
 	}
 
 	public String getnextKin() {
-		return nextKin;
+		return patient.getNextKin();
 	}
 
 	public void setnextKin(String nextKin) {
-		this.nextKin = nextKin;
+		this.patient.setNextKin(nextKin);
 	}
 	
 	public String getcity() {
-		return city;
+		return patient.getCity();
 	}
 
 	public void setcity(String city) {
-		this.city = city;
+		this.patient.setCity(city);
 	}
 
 	public String getaddress() {
-		return address;
+		return patient.getAddress();
 	}
 
 	public void setaddress(String address) {
-		this.address = address;
+		this.patient.setAddress(address);
 	}
 
 	public String getReferralTo() {
@@ -165,7 +210,6 @@ public class Opd {
 	public void setReferralFrom(String referralFrom) {
 		this.referralFrom = referralFrom;
 	}
-
 	
 	public int getCode() {
 		return code;
@@ -173,16 +217,16 @@ public class Opd {
 	public void setCode(int code) {
 		this.code = code;
 	}
-	public String getDisease() {
+	public Disease getDisease() {
 		return disease;
 	}
-	public String getDisease2() {
+	public Disease getDisease2() {
 		return disease2;
 	}
-	public String getDisease3() {
+	public Disease getDisease3() {
 		return disease3;
 	}
-	public void setDisease(String disease) {
+	public void setDisease(Disease disease) {
 		this.disease = disease;
 		if (disease!=null) {
 			if (disease.equals("")) {
@@ -190,7 +234,7 @@ public class Opd {
 			}
 		}
 	}
-	public void setDisease2(String disease) {
+	public void setDisease2(Disease disease) {
 		this.disease2 = disease;
 		if (disease!=null) {
 			if (disease.equals("")) {
@@ -198,7 +242,7 @@ public class Opd {
 			}
 		}
 	}
-	public void setDisease3(String disease) {
+	public void setDisease3(Disease disease) {
 		this.disease3 = disease;
 		if (disease!=null) {
 			if (disease.equals("")) {
@@ -233,34 +277,34 @@ public class Opd {
 	public void setSex(char sex) {
 		this.sex = sex;
 	}
-	public int getYear() {
-		return year;
+	public int getProgYear() {
+		return prog_year;
 	}
-	public void setYear(int year) {
-		this.year = year;
+	public void setProgYear(int prog_year) {
+		this.prog_year = prog_year;
 	}
 	public String getDiseaseDesc() {
-		return diseaseDesc;
+		return disease.getDescription();
 	}
 
 	public void setDiseaseDesc(String diseaseDesc) {
-		this.diseaseDesc = diseaseDesc;
+		this.disease.setDescription(diseaseDesc);
 	}
 
 	public String getDiseaseTypeDesc() {
-		return diseaseTypeDesc;
+		return disease.getType().getDescription();
 	}
 
 	public void setDiseaseTypeDesc(String diseaseTypeDesc) {
-		this.diseaseTypeDesc = diseaseTypeDesc;
+		this.disease.getType().setDescription(diseaseTypeDesc);
 	}
 
-	public String getDiseaseType() {
-		return diseaseType;
+	public DiseaseType getDiseaseType() {
+		return disease.getType();
 	}
 
-	public void setDiseaseType(String diseaseType) {
-		this.diseaseType = diseaseType;
+	public void setDiseaseType(DiseaseType diseaseType) {
+		this.disease.setType(diseaseType);
 	}
 
 	public String getUserID() {
@@ -269,5 +313,33 @@ public class Opd {
 
 	public void setUserID(String userID) {
 		this.userID = userID;
+	}
+
+	@Override
+	public int hashCode() {
+		if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + code;
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (!(obj instanceof Opd)) {
+			return false;
+		}
+		
+		Opd opd = (Opd)obj;
+		return (code == opd.getCode());
 	}
 }

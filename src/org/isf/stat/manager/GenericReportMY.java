@@ -66,8 +66,8 @@ public class GenericReportMY {
 
 				String queryString = query.getText();
 
-				queryString = queryString.replace("$P{anno}", "'" + String.valueOf(year) + "'");
-				queryString = queryString.replace("$P{mese}", "'" + String.valueOf(month) + "'");
+				queryString = queryString.replace("$P{year}", "'" + String.valueOf(year) + "'");
+				queryString = queryString.replace("$P{month}", "'" + String.valueOf(month) + "'");
 
 				DbQueryLogger dbQuery = new DbQueryLogger();
 				ResultSet resultSet = dbQuery.getData(queryString, true);

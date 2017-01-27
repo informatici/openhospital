@@ -2,44 +2,87 @@ package org.isf.malnutrition.model;
 
 import java.util.GregorianCalendar;
 
-public class Malnutrition {
+/*------------------------------------------
+ * Malnutrition - malnutrition control model
+ * -----------------------------------------
+ * modification history
+ * 11/01/2016 - Antonio - ported to JPA
+ * 
+ *------------------------------------------*/
 
+
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
+import org.isf.admission.model.Admission;
+import org.isf.patient.model.Patient;
+
+@Entity
+@Table(name="MALNUTRITIONCONTROL")
+public class Malnutrition 
+{
+	@Id 
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="MLN_ID")
 	private int code;
 
+	@NotNull
+	@Column(name="MLN_DATE_SUPP")
 	private GregorianCalendar dateSupp;
 
+	@Column(name="MNL_DATE_CONF")
 	private GregorianCalendar dateConf;
 
-	private int admId;
-	
-	private int patId;
+	@ManyToOne
+	@JoinColumn(name="MLN_ADM_ID")
+	private Admission admission;
 
+	@NotNull
+	@Column(name="MLN_HEIGHT")
 	private float height;
 
+	@NotNull
+	@Column(name="MLN_WEIGHT")
 	private float weight;
 
+	@NotNull
+	@Column(name="MLN_LOCK")
 	private int lock;
 
+	@Transient
+	private volatile int hashCode = 0;
+	
+
+	public Malnutrition() { }
+	
 	public Malnutrition(int aCode, GregorianCalendar aDateSupp,
-			GregorianCalendar aDateConf, int aAdmId, float aHeight,
+			GregorianCalendar aDateConf, Admission anAdmission, float aHeight,
 			float aWeight, int aLock) {
 		code = aCode;
 		dateSupp = aDateSupp;
 		dateConf = aDateConf;
-		admId = aAdmId;
+		admission = anAdmission;
 		height = aHeight;
 		weight = aWeight;
 		lock = aLock;
 	}
 	
 	public Malnutrition(int aCode, GregorianCalendar aDateSupp,
-			GregorianCalendar aDateConf, int aAdmId, int aPatId, float aHeight,
+			GregorianCalendar aDateConf, Admission anAdmission, Patient aPatient, float aHeight,
 			float aWeight, int aLock) {
 		code = aCode;
 		dateSupp = aDateSupp;
 		dateConf = aDateConf;
-		admId = aAdmId;
-		patId = aPatId;
+		admission = anAdmission;
 		height = aHeight;
 		weight = aWeight;
 		lock = aLock;
@@ -60,6 +103,14 @@ public class Malnutrition {
 	public int getLock() {
 		return lock;
 	}
+	
+	public Admission getAdmission() {
+		return admission;
+	}
+
+	public void setAdmission(Admission admission) {
+		this.admission = admission;
+	}
 
 	public void setDateSupp(GregorianCalendar aDateSupp) {
 		dateSupp = aDateSupp;
@@ -67,14 +118,6 @@ public class Malnutrition {
 
 	public void setDateConf(GregorianCalendar aDateConf) {
 		dateConf = aDateConf;
-	}
-
-	public void setAdmId(int aAdmId) {
-		admId = aAdmId;
-	}
-
-	public void setPatId(int patId) {
-		this.patId = patId;
 	}
 	
 	public void setHeight(float aHeight) {
@@ -93,14 +136,6 @@ public class Malnutrition {
 		return dateConf;
 	}
 
-	public int getAdmId() {
-		return admId;
-	}
-
-	public int getPatId() {
-		return patId;
-	}
-	
 	public float getHeight() {
 		return height;
 	}
@@ -109,6 +144,7 @@ public class Malnutrition {
 		return weight;
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		boolean result = false;
 		if ((other == null) || (!(other instanceof Malnutrition)))
@@ -127,7 +163,7 @@ public class Malnutrition {
 			result = true;
 		}
 		if (result) {
-			if (getAdmId() == (((Malnutrition) other).getAdmId())
+			if (getAdmission() == (((Malnutrition) other).getAdmission())
 					&& getHeight() == (((Malnutrition) other).getHeight())
 					&& getWeight() == (((Malnutrition) other).getWeight())) {
 				return true;
@@ -135,5 +171,19 @@ public class Malnutrition {
 				return false;
 		} else
 			return false;
+	}
+
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + code;
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
 	}
 }

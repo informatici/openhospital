@@ -1,16 +1,12 @@
 package org.isf.medtype.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.isf.medtype.model.MedicalType;
-import org.isf.utils.db.DbQueryLogger;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
-import org.isf.generaldata.MessageBundle;
 
 /**
  * Persistence class for the medical type module.
@@ -24,23 +20,22 @@ public class MedicalTypeIoOperation {
 	 * @return the stored medical types.
 	 * @throws OHException if an error occurs retrieving the medical types.
 	 */
-	public ArrayList<MedicalType> getMedicalTypes() throws OHException {
+    @SuppressWarnings("unchecked")
+	public ArrayList<MedicalType> getMedicalTypes() throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<MedicalType> medicaltypes = null;
-		String query = "SELECT MDSRT_ID_A,MDSRT_DESC FROM MEDICALDSRTYPE ORDER BY MDSRT_DESC";
-		DbQueryLogger dbQuery = new DbQueryLogger();
+				
+		
+		jpa.beginTransaction();
+		
+		String query = "SELECT * FROM MEDICALDSRTYPE ORDER BY MDSRT_DESC";
+		jpa.createQuery(query, MedicalType.class, false);
+		List<MedicalType> medicalTypeList = (List<MedicalType>)jpa.getList();
+		medicaltypes = new ArrayList<MedicalType>(medicalTypeList);			
+		
+		jpa.commitTransaction();
 
-		try{
-			ResultSet resultSet = dbQuery.getData(query,true);
-			medicaltypes = new ArrayList<MedicalType>(resultSet.getFetchSize());
-			while (resultSet.next()) {
-				medicaltypes.add(new MedicalType(resultSet.getString("MDSRT_ID_A"), resultSet.getString("MDSRT_DESC")));
-			}
-
-		}catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
-		}	
 		return medicaltypes;
 	}
 
@@ -50,23 +45,17 @@ public class MedicalTypeIoOperation {
 	 * @return <code>true</code> if the medical type has been updated, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs updating the medical type.
 	 */
-	public boolean updateMedicalType(MedicalType medicalType) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try {
-			List<Object> parameters = new ArrayList<Object>(3);
-			parameters.add(medicalType.getCode());
-			parameters.add(medicalType.getDescription());
-			parameters.add(medicalType.getCode());
-
-			String query = "UPDATE MEDICALDSRTYPE SET " +
-					"MDSRT_ID_A = ?,"+
-					"MDSRT_DESC = ? "+
-					"WHERE MDSRT_ID_A= ?";
-			result = dbQuery.setDataWithParams(query, parameters, true);
-		} finally{
-			dbQuery.releaseConnection();
-		}	
+	public boolean updateMedicalType(
+			MedicalType medicalType) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.merge(medicalType);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -76,19 +65,18 @@ public class MedicalTypeIoOperation {
 	 * @return <code>true</code> if the medical type has been stored, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs storing the new medical type.
 	 */
-	public boolean newMedicalType(MedicalType medicalType) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try {
-			List<Object> parameters = new ArrayList<Object>(2);
-			parameters.add(medicalType.getCode());
-			parameters.add(medicalType.getDescription());
-			String query = "INSERT INTO MEDICALDSRTYPE (MDSRT_ID_A,MDSRT_DESC) VALUES (?,?)";
-			result = dbQuery.setDataWithParams(query, parameters, true);
-		} finally{
-			dbQuery.releaseConnection();
-		}
-		return result;
+	public boolean newMedicalType(
+			MedicalType medicalType) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		jpa.persist(medicalType);
+    	jpa.commitTransaction();
+    	
+		return result;	
 	}
 
 	/**
@@ -97,17 +85,18 @@ public class MedicalTypeIoOperation {
 	 * @return <code>true</code> if the medical type has been deleted, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs deleting the medical type.
 	 */
-	public boolean deleteMedicalType(MedicalType medicalType) throws OHException {
-
-		List<Object> parameters = Collections.<Object>singletonList(medicalType.getCode());
-		String query = "DELETE FROM MEDICALDSRTYPE WHERE MDSRT_ID_A = ?";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean result = false;
-		try {
-			result = dbQuery.setDataWithParams(query, parameters, true);
-		} finally{
-			dbQuery.releaseConnection();
-		}
+	public boolean deleteMedicalType(
+			MedicalType medicalType) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
+		
+		
+		jpa.beginTransaction();	
+		MedicalType objToRemove = (MedicalType) jpa.find(MedicalType.class, medicalType.getCode());
+		jpa.remove(objToRemove);
+    	jpa.commitTransaction();
+    	
 		return result;
 	}
 
@@ -117,20 +106,22 @@ public class MedicalTypeIoOperation {
 	 * @return <code>true</code> if the medical code is already stored, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the check.
 	 */
-	public boolean isCodePresent(String code) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		boolean present = false;
-		try{
-			List<Object> parameters = Collections.<Object>singletonList(code);
-			String query = "SELECT MDSRT_ID_A FROM MEDICALDSRTYPE where MDSRT_ID_A = ?";
-			ResultSet set = dbQuery.getDataWithParams(query, parameters, true);
-			if(set.first()) present = true;
-
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally{
-			dbQuery.releaseConnection();
-		}	
-		return present;
+	public boolean isCodePresent(
+			String code) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		MedicalType medicalType;
+		boolean result = false;
+		
+		
+		jpa.beginTransaction();	
+		medicalType = (MedicalType)jpa.find(MedicalType.class, code);
+		if (medicalType != null)
+		{
+			result = true;
+		}
+    	jpa.commitTransaction();
+    	
+		return result;	
 	}
 }

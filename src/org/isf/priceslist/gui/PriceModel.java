@@ -153,14 +153,14 @@ class PriceNode {
     }
     
     public boolean isPrice() {
-    	return price.getList() == 0;
+    	return price.getList().getId() == 0;
 	}
 
 	public void addItem(PriceNode price){
     	this.items.add(price);
     }
 	/**
-     * Returns the the string to be used to display this leaf in the JTree.
+     * Returns the string to be used to display this leaf in the JTree.
      */
     public String toString() { 
     	return price.getDesc();

@@ -331,7 +331,7 @@ public class LabEdit extends JDialog {
 			patientComboBox.addItem(MessageBundle.getMessage("angal.lab.selectapatient"));
 			for (Patient elem : pat) {
 				if (!insert) {
-					if (elem.getCode()==lab.getPatId()) {
+					if (elem.getCode()==lab.getPatId().getCode()) {
 						patSelected=elem;
 					}
 				}
@@ -552,7 +552,7 @@ public class LabEdit extends JDialog {
 					lab.setExam(examSelected);
 					lab.setNote(noteTextArea.getText());
 					lab.setInOutPatient((inPatientCheckBox.isSelected()?"I":"R"));
-					lab.setPatId(patId);
+					lab.setPatId(new Patient());
 					lab.setPatName(patTextField.getText());
 					int tmpAge=0;
 					try {

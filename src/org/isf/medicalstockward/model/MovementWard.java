@@ -2,6 +2,17 @@ package org.isf.medicalstockward.model;
 
 import java.util.GregorianCalendar;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.isf.medicals.model.Medical;
 import org.isf.patient.model.Patient;
 import org.isf.ward.model.Ward;
@@ -10,20 +21,68 @@ import org.isf.ward.model.Ward;
  * 		   @author mwithi
  * 
  */
-public class MovementWard {
-
+/*------------------------------------------
+ * Medical Ward Movement - model for the medical entity
+ * -----------------------------------------
+ * modification history
+ * ? - ?
+ * 17/01/2015 - Antonio - ported to JPA
+ * 
+ *------------------------------------------*/
+@Entity
+@Table(name="MEDICALDSRSTOCKMOVWARD")
+public class MovementWard 
+{
+	@Id 
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="MMVN_ID")
 	private int code;
+
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name="MMVN_WRD_ID_A")	
 	private Ward ward;
+
+	@NotNull
+	@Column(name="MMVN_DATE")
 	private GregorianCalendar date;
+
+	@NotNull
+	@Column(name="MMVN_IS_PATIENT")
 	private boolean isPatient;
+	
+	@ManyToOne
+	@JoinColumn(name="MMVN_PAT_ID")
 	private Patient patient;
+	
+	@Column(name="MMVN_PAT_AGE")
 	private int age;
+	
+	@Column(name="MMVN_PAT_WEIGHT")
 	private float weight;
+
+	@NotNull
+	@Column(name="MMVN_DESC")
 	private String description;
+
+	@ManyToOne
+	@JoinColumn(name="MMVN_MDSR_ID")
 	private Medical medical;
+
+	@NotNull
+	@Column(name="MMVN_MDSR_QTY")
 	private Double quantity;
+
+	@NotNull
+	@Column(name="MMVN_MDSR_UNITS")
 	private String units;
 
+	@Transient
+	private volatile int hashCode = 0;
+	
+	
+	public MovementWard() {}
+	
 	/**
 	 * 
 	 * @param ward
@@ -57,7 +116,7 @@ public class MovementWard {
 		return code;
 	}
 	
-	public Medical getMedical(){
+	public Medical getMedical() {		
 		return medical;
 	}
 	
@@ -140,4 +199,32 @@ public class MovementWard {
 	public void setMedical(Medical aMedical){
 		medical=aMedical;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		
+		if (!(obj instanceof MovementWard)) {
+			return false;
+		}
+		
+		MovementWard movment = (MovementWard)obj;
+		return (this.getCode() == movment.getCode());
+	}
+	
+	@Override
+	public int hashCode() {
+	    if (this.hashCode == 0) {
+	        final int m = 23;
+	        int c = 133;
+	        
+	        c = m * c + code;
+	        
+	        this.hashCode = c;
+	    }
+	  
+	    return this.hashCode;
+	}	
 }

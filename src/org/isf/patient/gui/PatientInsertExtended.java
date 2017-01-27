@@ -45,14 +45,13 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.generaldata.SmsParameters;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.utils.jobjects.BusyState;
 import org.isf.video.gui.PatientPhotoPanel;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
 
 import com.toedter.calendar.JDateChooser;
-
-import org.isf.utils.jobjects.BusyState;
 
 /*------------------------------------------
  * PatientInsertExtended - model for the patient entry
@@ -1700,8 +1699,7 @@ public class PatientInsertExtended extends JDialog {
 				jDataContainPanel = setMyBorderCenter(jDataContainPanel, patient.getName() + " (" + MessageBundle.getMessage("angal.patient.code") + ": " + patient.getCode() + ")");
 
 			} else {
-				int nextcode = manager.getNextPatientCode();
-				patient.setCode(nextcode);
+				//int nextcode = manager.getNextPatientCode();
 				jDataContainPanel = setMyBorderCenter(jDataContainPanel, MessageBundle.getMessage("angal.patient.insertdataofnewpatient"));
 			}
 			jDataContainPanel.setLayout(new BorderLayout());

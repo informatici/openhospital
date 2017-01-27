@@ -3,9 +3,11 @@ package org.isf.hospital.service;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.model.Hospital;
+import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
@@ -26,29 +28,23 @@ public class HospitalIoOperations {
 	 * @return {@link Hospital} object
 	 * @throws OHException 
 	 */
-	public Hospital getHospital() throws OHException {
-		Hospital pHospital = null;
-		String string = "SELECT * FROM HOSPITAL";
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {	
-			ResultSet resultSet = dbQuery.getData(string, true);
-			pHospital = new Hospital();
-			if (resultSet.first()) {
-				pHospital.setCode(resultSet.getString("HOS_ID_A"));
-				pHospital.setDescription(resultSet.getString("HOS_NAME"));
-				pHospital.setAddress(resultSet.getString("HOS_ADDR"));
-				pHospital.setCity(resultSet.getString("HOS_CITY"));
-				pHospital.setTelephone(resultSet.getString("HOS_TELE"));
-				pHospital.setFax(resultSet.getString("HOS_FAX"));
-				pHospital.setEmail(resultSet.getString("HOS_EMAIL"));
-				pHospital.setCurrencyCod(resultSet.getString("HOS_CURR_COD"));
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
-		return pHospital;
+    @SuppressWarnings("unchecked")
+	public Hospital getHospital() throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Hospital> hospitals = null;
+				
+		
+		jpa.beginTransaction();
+		
+		String query = "SELECT * FROM HOSPITAL";
+		jpa.createQuery(query, Hospital.class, false);
+		List<Hospital> hospitalList = (List<Hospital>)jpa.getList();
+		hospitals = new ArrayList<Hospital>(hospitalList);			
+		
+		jpa.commitTransaction();
+
+		return hospitals.get(0);
 	}
 	
 	/**
@@ -56,7 +52,8 @@ public class HospitalIoOperations {
 	 * @return currency cod
 	 * @throws OHException
 	 */
-	public String getHospitalCurrencyCod() throws OHException{
+	public String getHospitalCurrencyCod() throws OHException
+	{
 		String query = "SELECT HOS_CURR_COD FROM HOSPITAL";
 		String currencyCod = "";
 		
@@ -81,34 +78,19 @@ public class HospitalIoOperations {
 	 * @return <code>true</code> if the hospital informations have been updated, <code>false</code> otherwise
 	 * @throws OHException 
 	 */
-	public boolean updateHospital(Hospital hospital) throws OHException {
+	public boolean updateHospital(
+			Hospital hospital) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		boolean result = true;
 		
-		boolean result = false;
-		String query= "UPDATE HOSPITAL SET " +
-		"HOS_NAME = ?, " +
-		"HOS_ADDR = ?, " +
-		"HOS_CITY = ?, " +
-		"HOS_TELE = ?, " +
-		"HOS_FAX = ?, " +
-		"HOS_EMAIL = ?, " +
-		"HOS_CURR_COD = ?";
+		hospital.setLock(hospital.getLock()+1);
 		
-		ArrayList<Object> params = new ArrayList<Object>();
-		params.add(sanitize(hospital.getDescription()));
-		params.add(sanitize(hospital.getAddress()));
-		params.add(sanitize(hospital.getCity()));
-		params.add(sanitize(hospital.getTelephone()));
-		params.add(sanitize(hospital.getFax()));
-		params.add(sanitize(hospital.getEmail()));
-		params.add(sanitize(hospital.getCurrencyCod()));
+		jpa.beginTransaction();	
+		jpa.merge(hospital);
+    	jpa.commitTransaction();
 		
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {			
-			result = dbQuery.setDataWithParams(query, params, true);
-		} finally {
-			dbQuery.releaseConnection();
-		}
-		return result;	
+		return result;
 	} 
 	
 	/**
@@ -119,7 +101,14 @@ public class HospitalIoOperations {
 	 */
 	protected String sanitize(String value)
 	{
-		if (value == null) return null;
-		return value.trim().replaceAll("'", "''");
+		String result = null;
+		
+		
+		if (value != null) 
+		{
+			result = value.trim().replaceAll("'", "''");
+		}
+		
+		return result;
 	}
 }

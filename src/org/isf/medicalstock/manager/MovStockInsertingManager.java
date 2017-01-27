@@ -14,7 +14,6 @@ import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstock.service.MedicalStockIoOperations;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 
 public class MovStockInsertingManager {
@@ -119,7 +118,7 @@ public class MovStockInsertingManager {
 			}
 
 			// we check movement quantity in outgoing stock case
-			if (!movement.getType().getType().equals("+")) {
+			if (!movement.getType().getType().contains("+")) {
 
 				Medical medical = ioOperationsMedicals.getMedical(movement.getMedical().getCode());
 				double totalQuantity = medical.getTotalQuantity() - movement.getQuantity();
@@ -169,7 +168,7 @@ public class MovStockInsertingManager {
 		}
 		try {
 			return ioOperations.getLotsByMedical(medical);
-		} catch (OHException e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 			return null;
 		}
@@ -239,24 +238,16 @@ public class MovStockInsertingManager {
 	 *         {@link Movement} in the list
 	 */
 	public int newMultipleChargingMovements(ArrayList<Movement> movements) {
-		DbQueryLogger dbQuery = new DbQueryLogger();
 
 		int i = 0;
-		try {
-			boolean ok = true;
-			int size = movements.size();
-			for (i = 0; i < size; i++) {
-				Movement mov = movements.get(i);
-				ok = prepareChargingMovement(dbQuery, mov);
-			}
-			if (ok) {
-				// i = size - 1
-				dbQuery.commit();
-				i++;
-			}
-			dbQuery.releaseConnection();
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+		boolean ok = true;
+		int size = movements.size();
+		for (i = 0; i < size; i++) {
+			Movement mov = movements.get(i);
+			ok = prepareChargingMovement(mov);
+		}
+		if (ok) {
+			i++;
 		}
 		return i;
 	}
@@ -264,14 +255,12 @@ public class MovStockInsertingManager {
 	/**
 	 * Prepare the insert of the specified {@link Movement} (no commit)
 	 * 
-	 * @param dbQuery
-	 *            - the session with the DB
 	 * @param movement
 	 *            - the movement to store.
 	 * @return <code>true</code> if the movement has been stored,
 	 *         <code>false</code> otherwise.
 	 */
-	private boolean prepareChargingMovement(DbQueryLogger dbQuery, Movement movement) {
+	private boolean prepareChargingMovement(Movement movement) {
 		try {
 
 			if (movement.getQuantity() == 0) {
@@ -322,7 +311,7 @@ public class MovStockInsertingManager {
 				}
 
 				// checks if the lot is already used by other medicals
-				List<Integer> medicalIds = ioOperations.getMedicalsFromLot(dbQuery, movement.getLot().getCode());
+				List<Integer> medicalIds = ioOperations.getMedicalsFromLot(movement.getLot().getCode());
 				if (!(medicalIds.size() == 0 || (medicalIds.size() == 1 && medicalIds.get(0).intValue() == movement.getMedical().getCode().intValue()))) {
 					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.thislotreferstoanothermedical"));
 					return false;
@@ -330,7 +319,7 @@ public class MovStockInsertingManager {
 				}
 			}
 
-			return ioOperations.prepareChargingMovement(dbQuery, movement);
+			return ioOperations.prepareChargingMovement(movement);
 		} catch (OHException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 			return false;
@@ -338,35 +327,26 @@ public class MovStockInsertingManager {
 	}
 
 	public int newMultipleDischargingMovements(ArrayList<Movement> movements) {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-
 		int i = 0;
-		try {
-			boolean ok = true;
-			int size = movements.size();
-			for (i = 0; i < size; i++) {
-				Movement mov = movements.get(i);
-				ok = prepareDishargingMovement(dbQuery, mov);
-			}
-			if (ok) {
-				// i = size - 1
-				dbQuery.commit();
-				i++;
-			}
-			dbQuery.releaseConnection();
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+		boolean ok = true;
+		int size = movements.size();
+		for (i = 0; i < size; i++) {
+			Movement mov = movements.get(i);
+			ok = prepareDishargingMovement(mov);
+		}
+		if (ok) {
+			i++;
 		}
 		return i;
 	}
 
-	private boolean prepareDishargingMovement(DbQueryLogger dbQuery, Movement movement) {
+	private boolean prepareDishargingMovement(Movement movement) {
 		try {
 			boolean result;
 			if (isAutomaticLot()) {
-				result = ioOperations.newAutomaticDischargingMovement(dbQuery, movement);
+				result = ioOperations.newAutomaticDischargingMovement(movement);
 			} else
-				result = ioOperations.prepareDischargingwMovement(dbQuery, movement);
+				result = ioOperations.prepareDischargingwMovement(movement);
 			return result;
 		} catch (OHException e) {
 			JOptionPane.showMessageDialog(null, e.getMessage());

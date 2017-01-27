@@ -134,6 +134,13 @@ public class MedicalBrowsingManager {
 		}
 
 		try {
+			
+			boolean medicalExists = ioOperations.medicalExists(medical);
+			if (medicalExists) {
+				JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicals.thetypemedicalyouinsertedwasalreadyinuse"));
+				return false;
+			}
+			
 			int lock = ioOperations.getMedicalLock(medical.getCode());
 			if (lock>=0) {
 				//ok the record is present, it was not deleted

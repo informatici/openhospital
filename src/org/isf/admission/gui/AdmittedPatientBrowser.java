@@ -39,6 +39,7 @@ import org.isf.accounting.model.Bill;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
+import org.isf.disease.model.Disease;
 import org.isf.examination.gui.PatientExaminationEdit;
 import org.isf.examination.model.GenderPatientExamination;
 import org.isf.examination.model.PatientExamination;
@@ -55,6 +56,7 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.therapy.gui.TherapyEdit;
 import org.isf.utils.db.NormalizeString;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.time.TimeTools;
@@ -157,7 +159,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 		int row = table.getSelectedRow();
 		
 		for (AdmittedPatient elem : pPatient) {
-			if (elem.getPatient().getCode() == adm.getPatId()) {
+			if (elem.getPatient().getCode() == adm.getPatient().getCode()) {
 				//found same patient in the list
 				Admission elemAdm = elem.getAdmission();
 				if (elemAdm != null) {
@@ -187,7 +189,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 		
 		//remember selected row
 		int row = table.getSelectedRow();
-		int patId = adm.getPatId();
+		int patId = adm.getPatient().getCode();
 		
 		for (AdmittedPatient elem : pPatient) {
 			if (elem.getPatient().getCode() == patId) {
@@ -216,7 +218,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 		//remember selected row
 		int row = table.getSelectedRow();
 		int admId = adm.getId();
-		int patId = adm.getPatId();
+		int patId = adm.getPatient().getCode();
 		
 		for (AdmittedPatient elem : pPatient) {
 			if (elem.getPatient().getCode() == patId) {
@@ -514,7 +516,13 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 					PatientExamination patex;
 					ExaminationOperations examOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
 					
-					PatientExamination lastPatex = examOperations.getLastByPatID(pat.getCode());
+					PatientExamination lastPatex = null;
+					try {
+						lastPatex = examOperations.getLastByPatID(pat.getCode());
+					} catch (OHException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					if (lastPatex != null) {
 						patex = examOperations.getFromLastPatientExamination(lastPatex);
 					} else {
@@ -658,7 +666,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				patient = (AdmittedPatient) table.getValueAt(table.getSelectedRow(), -1);
 				
 				if (patient  != null) {
-					Opd opd = new Opd(0,' ',-1,"0",0);
+					Opd opd = new Opd(0,' ', -1, new Disease(), 0);
 					OpdEditExtended newrecord = new OpdEditExtended(myFrame, opd, patient.getPatient(), true);
 					newrecord.setVisible(true);
 					
@@ -998,7 +1006,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 					if (adm != null) {
 						int cc = -1;
 						for (int j = 0; j < wardList.size(); j++) {
-							if (adm.getWardId().equalsIgnoreCase(
+							if (adm.getWard().getCode().equalsIgnoreCase(
 									wardList.get(j).getCode())) {
 								cc = j;
 								break;
@@ -1066,7 +1074,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				} else {
 					for (int i = 0; i < wardList.size(); i++) {
 						if (wardList.get(i).getCode()
-								.equalsIgnoreCase(admission.getWardId())) {
+								.equalsIgnoreCase(admission.getWard().getCode())) {
 							return wardList.get(i).getDescription();
 						}
 					}

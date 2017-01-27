@@ -382,7 +382,7 @@ public class LabEditExtended extends JDialog {
 			patientComboBox.addItem(MessageBundle.getMessage("angal.lab.selectapatient"));
 			
 			if (!insert) {
-				labPat = patBrowser.getPatientAll(lab.getPatId());
+				labPat = patBrowser.getPatientAll(lab.getPatId().getCode());
 				patientComboBox.addItem(labPat);
 				patientComboBox.setSelectedItem(labPat);
 				patientComboBox.setEnabled(false);
@@ -645,7 +645,7 @@ public class LabEditExtended extends JDialog {
 					lab.setExam(examSelected);
 					lab.setNote(noteTextArea.getText());
 					lab.setInOutPatient((inPatientCheckBox.isSelected()?"I":"R"));
-					lab.setPatId(labPat.getCode());
+					lab.setPatId(labPat);
 					lab.setPatName(labPat.getName());
 					lab.setAge(labPat.getAge());
 					lab.setSex(labPat.getSex()+"");

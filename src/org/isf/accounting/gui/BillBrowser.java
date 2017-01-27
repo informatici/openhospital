@@ -55,6 +55,7 @@ import org.isf.menu.gui.MainMenu;
 import org.isf.stat.manager.GenericReportBill;
 import org.isf.stat.manager.GenericReportFromDateToDate;
 import org.isf.stat.manager.GenericReportUserInDate;
+import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.joda.time.DateTime;
 
@@ -102,6 +103,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private JButton jButtonDelete;
 	private JButton jButtonClose;
 	private JButton jButtonReport;
+	@SuppressWarnings("rawtypes")
 	private JComboBox jComboUsers;
 	private JMonthChooser jComboBoxMonths;
 	private JYearChooser jComboBoxYears;
@@ -234,7 +236,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 					dateFrom.set(GregorianCalendar.HOUR_OF_DAY, 0);
 					dateFrom.set(GregorianCalendar.MINUTE, 0);
 					dateFrom.set(GregorianCalendar.SECOND, 0);
-					dateToday0.setTime(dateFrom.getTime());
+					//dateToday0.setTime(dateFrom.getTime());
 					jButtonToday.setEnabled(true);
 					//billFilter();
 					billInserted(null);
@@ -261,7 +263,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 					dateTo.set(GregorianCalendar.HOUR_OF_DAY, 23);
 					dateTo.set(GregorianCalendar.MINUTE, 59);
 					dateTo.set(GregorianCalendar.SECOND, 59);
-					dateToday24.setTime(dateTo.getTime());
+					//dateToday24.setTime(dateTo.getTime());
 					jButtonToday.setEnabled(true);
 					billInserted(null);
 				}
@@ -320,8 +322,14 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 							} else {
 								user = MainMenu.getUser();
 							}
+							try {
+								BusyState.setBusyState(BillBrowser.this, true);
 							new GenericReportUserInDate(from, to, user, "BillsReportUserInDate");
 							return;
+							} finally {
+								BusyState.setBusyState(BillBrowser.this, false);
+							}
+							
 						}
 					if (options.indexOf(option) == ++i) {
 						
@@ -392,10 +400,20 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 					if (option == null) return;
 					
 					if (options.indexOf(option) == 0) {
-						new GenericReportFromDateToDate(from, to,  GeneralData.BILLSREPORTMONTH, false);
+						try {
+							BusyState.setBusyState(BillBrowser.this, true);
+							new GenericReportFromDateToDate(from, to, GeneralData.BILLSREPORTMONTH, false);
+						} finally {
+							BusyState.setBusyState(BillBrowser.this, false);
+					}
 					}
 					if (options.indexOf(option) == 1) {
-						new GenericReportFromDateToDate(from, to,  GeneralData.BILLSREPORT, false);
+						try {
+							BusyState.setBusyState(BillBrowser.this, true);
+							new GenericReportFromDateToDate(from, to, GeneralData.BILLSREPORT, false);
+						} finally {
+							BusyState.setBusyState(BillBrowser.this, false);
+						}
 					}
 				}
 			});
@@ -619,6 +637,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 		return jPanelRange;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JComboBox getJComboUsers() {
 		if (jComboUsers == null) {
 			jComboUsers = new JComboBox();
@@ -953,7 +972,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 		
 		//Payments in range contribute for Paid Period (total)
 		for (BillPayments payment : paymentsPeriod) {
-			if (notDeletedBills.contains(payment.getBillID())) {
+			if (notDeletedBills.contains(payment.getBill().getId())) {
 				BigDecimal payAmount = new BigDecimal(Double.toString(payment.getAmount()));
 				String payUser = payment.getUser();
 				
@@ -974,7 +993,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 		
 		//Payments in today contribute for Paid Today (total)
 		for (BillPayments payment : paymentsToday) {
-			if (notDeletedBills.contains(payment.getBillID())) {
+			if (notDeletedBills.contains(payment.getBill().getId())) {
 				BigDecimal payAmount = new BigDecimal(Double.toString(payment.getAmount()));
 				String payUser = payment.getUser();
 				totalToday = totalToday.add(payAmount);
@@ -1089,7 +1108,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 				return formatDateTime(thisBill.getDate());
 			}
 			if (c == ++index) {
-				int patID = thisBill.getPatID();
+				int patID = thisBill.getPatient().getCode();
 				return patID == 0 ? "" : String.valueOf(patID);
 			}
 			if (c == ++index) {

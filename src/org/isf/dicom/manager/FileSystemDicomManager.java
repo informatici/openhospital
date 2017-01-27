@@ -17,8 +17,7 @@ import java.util.Vector;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.swing.JOptionPane;
 
-import org.isf.dicom.model.FileDicomBase;
-import org.isf.dicom.model.FileDicomDetail;
+import org.isf.dicom.model.FileDicom;
 import org.isf.generaldata.MessageBundle;
 
 /**
@@ -27,7 +26,7 @@ import org.isf.generaldata.MessageBundle;
  * @author Pietro Castellucci
  * @version 1.0.0
  */
-public class FileSystemDicomManager implements DicomManagerIntf {
+public class FileSystemDicomManager implements DicomManagerInterface {
 
 	private static String NOSERIE = "_NOSERIE";
 
@@ -140,7 +139,7 @@ public class FileSystemDicomManager implements DicomManagerIntf {
 	 * @param, idFile
 	 * @return, FileDicomDettaglio
 	 */
-	public FileDicomDetail loadDettaglio(Long idFile, int idPaziente, String numeroSerie) {
+	public FileDicom loadDettaglio(Long idFile, int idPaziente, String numeroSerie) {
 		// a volte numero di serie pu� essere NULL, � errato, ma aggiungo questa
 		// linea per non creare eccezione
 		if (numeroSerie == null || numeroSerie.trim().length() == 0 || numeroSerie.equalsIgnoreCase("null"))
@@ -158,7 +157,7 @@ public class FileSystemDicomManager implements DicomManagerIntf {
 	 * @param idFile
 	 * @return, details
 	 */
-	public FileDicomDetail loadDettaglio(long idFile, int idPaziente, String numeroSerie) {
+	public FileDicom loadDettaglio(long idFile, int idPaziente, String numeroSerie) {
 		try {
 			// System.out.println("FS loadDettaglio "+idFile+","+idPaziente+","+numeroSerie);
 			return loadData(idFile, idPaziente, numeroSerie);
@@ -174,12 +173,12 @@ public class FileSystemDicomManager implements DicomManagerIntf {
 	 * @param idPaziente
 	 * @return
 	 */
-	public FileDicomBase[] loadFilesPaziente(int idPaziente) {
+	public FileDicom[] loadFilesPaziente(int idPaziente) {
 		try {
 			// System.out.println("FS loadFilesPaziente "+idPaziente);
 			File df = getPatientDir(idPaziente);
 			File[] serie = df.listFiles();
-			FileDicomBase[] db = new FileDicomBase[serie.length];
+			FileDicom[] db = new FileDicom[serie.length];
 
 			for (int i = 0; i < serie.length; i++) {
 				long idFile = getFirst(serie[i]);
@@ -192,7 +191,7 @@ public class FileSystemDicomManager implements DicomManagerIntf {
 		} catch (Exception ecc) {
 			ecc.printStackTrace();
 
-			return new FileDicomBase[0];
+			return new FileDicom[0];
 		}
 	}
 
@@ -201,7 +200,7 @@ public class FileSystemDicomManager implements DicomManagerIntf {
 	 * 
 	 * @param dicom
 	 */
-	public void saveFile(FileDicomDetail dicom) {
+	public void saveFile(FileDicom dicom) {
 		if (exist(dicom))
 			return;
 
@@ -264,12 +263,12 @@ public class FileSystemDicomManager implements DicomManagerIntf {
 		}
 	}
 
-	private FileDicomBase loadMetadata(long idFile, int idPaziente, String serie) throws IOException {
-		// System.out.println("loadMetadata "+idFile+","+idPaziente+","+serie);
-		FileDicomBase rv = null;
+	private FileDicom loadMetadata(long idFile, int idPaziente, String serie) throws IOException {
+		// System.out.println("loadMetadata "+idFile+","+idPaziente+","+series);
+		FileDicom rv = null;
 
 		try {
-			rv = new FileDicomBase();
+			rv = new FileDicom();
 			File sd = getSerieDir(idPaziente, serie, false);
 			rv.setFrameCount(getFramesCount(idPaziente, serie));
 			Properties p = loadMetadata(sd, idFile);
@@ -309,14 +308,14 @@ public class FileSystemDicomManager implements DicomManagerIntf {
 		return rv;
 	}
 
-	private FileDicomDetail loadData(long idFile, int idPaziente, String serie) throws IOException {
+	private FileDicom loadData(long idFile, int idPaziente, String serie) throws IOException {
 		// a volte numero di serie pu� essere NULL, � errato, ma aggiungo questa
 		// linea per non creare eccezione
 		if (serie == null || serie.trim().length() == 0 || serie.equalsIgnoreCase("null"))
 			serie = NOSERIE;
 
 		// System.out.println("loadData "+idFile+","+idPaziente+","+serie);
-		FileDicomDetail rv = new FileDicomDetail();
+		FileDicom rv = new FileDicom();
 		File sd = getSerieDir(idPaziente, serie, false);
 
 		Properties p = loadMetadata(sd, idFile);
@@ -390,7 +389,7 @@ public class FileSystemDicomManager implements DicomManagerIntf {
 		}
 	}
 
-	public boolean exist(FileDicomDetail dicom) {
+	public boolean exist(FileDicom dicom) {
 		// System.out.println("exists "+dicom.getPatId()+" - "+dicom.getDicomSeriesNumber()+" - "+
 		// dicom.getDicomSeriesInstanceUID());
 		boolean rv = false;
@@ -563,14 +562,14 @@ public class FileSystemDicomManager implements DicomManagerIntf {
 			return -1;
 	}
 
-	private FileDicomBase[] compact(FileDicomBase[] db) {
-		Vector<FileDicomBase> rv = new Vector<FileDicomBase>(0);
+	private FileDicom[] compact(FileDicom[] db) {
+		Vector<FileDicom> rv = new Vector<FileDicom>(0);
 
 		for (int i = 0; i < db.length; i++)
 			if (db[i] != null)
 				rv.addElement(db[i]);
 
-		FileDicomBase[] ret = new FileDicomBase[rv.size()];
+		FileDicom[] ret = new FileDicom[rv.size()];
 
 		rv.copyInto(ret);
 
