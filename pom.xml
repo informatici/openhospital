@@ -54,6 +54,21 @@
 						</configuration>
 					</execution>
 					<execution>
+						<id>copy-lib</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/OpenHospital20/lib</outputDirectory>
+							<resources>
+								<resource>
+									<directory>lib</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
 						<id>copy-native-lib</id>
 						<phase>validate</phase>
 						<goals>
@@ -433,13 +448,18 @@
 	  	<dependency>
 	  		<groupId>org.hibernate</groupId>
 	  		<artifactId>hibernate-core</artifactId>
-	  		<version>4.1.5.Final</version>
+	  		<version>4.2.13.Final</version>
 	  	</dependency>
 	  	<dependency>
 	  		<groupId>org.hibernate.javax.persistence</groupId>
 	  		<artifactId>hibernate-jpa-2.0-api</artifactId>
 	  		<version>1.0.1.Final</version>
 	  	</dependency>
+	  	<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.2.5.Final</version>
+		</dependency>
 	  	<dependency>
 	  		<groupId>org.jboss.logging</groupId>
 	  		<artifactId>jboss-logging</artifactId>
