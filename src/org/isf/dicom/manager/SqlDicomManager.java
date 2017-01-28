@@ -1,7 +1,13 @@
 package org.isf.dicom.manager;
 
+import java.io.File;
+import java.util.Properties;
+
+import javax.swing.JOptionPane;
+
 import org.isf.dicom.model.FileDicom;
 import org.isf.dicom.service.DicomIoOperations;
+import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHException;
 
 /**
@@ -11,6 +17,13 @@ import org.isf.utils.exception.OHException;
  */
 public class SqlDicomManager implements DicomManagerInterface
 {   
+	
+	/**
+	 * Constructor
+	 */
+	public SqlDicomManager(Properties externalPrp) {
+	}
+	
     /**
      * Load a list of idfile for series
      * @param idPaziente, the patient id
