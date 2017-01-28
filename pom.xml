@@ -360,6 +360,44 @@
 			<systemPath>${project.basedir}/lib/sal_isf.jar</systemPath>
 		</dependency>
 		<dependency>
+			<groupId>jai</groupId>
+			<artifactId>clibwrapper</artifactId>
+			<version>0.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/dicom/jai/clibwrapper_jiio.jar</systemPath>
+		</dependency>
+		<!-- <dependency>
+		    <groupId>com.github.jai-imageio</groupId>
+		    <artifactId>jai-imageio-core</artifactId>
+		    <version>1.3.1</version>
+		</dependency> -->
+		<dependency>
+			<groupId>jai</groupId>
+			<artifactId>jai_core</artifactId>
+			<version>1.1.4</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/dicom/jai/jai_core-1.1.4-b03.jar</systemPath>
+		</dependency>
+		<!-- <dependency>
+		    <groupId>com.github.jai-imageio</groupId>
+		    <artifactId>jai-imageio-jpeg2000</artifactId>
+		    <version>1.3.0</version>
+		</dependency> -->
+		<dependency>
+			<groupId>jai</groupId>
+			<artifactId>jai_imageio</artifactId>
+			<version>1.2</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/dicom/jai/jai_imageio-1.2-b04.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>jai</groupId>
+			<artifactId>jai_codec</artifactId>
+			<version>1.1.4</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/dicom/jai/jai_codec-1.1.4-b03.jar</systemPath>
+		</dependency>
+		<dependency>
 			<groupId>org.dcm4che2</groupId>
 			<artifactId>dcm4che-core</artifactId>
 			<version>2.0.26</version>
@@ -461,9 +499,9 @@
 			<version>4.2.5.Final</version>
 		</dependency>
 		<dependency>
-		  <groupId>org.hibernate</groupId>
-		  <artifactId>hibernate-c3p0</artifactId>
-		  <version>4.2.13.Final</version>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-c3p0</artifactId>
+		    <version>4.2.13.Final</version>
 		</dependency>
 	  	<dependency>
 	  		<groupId>org.jboss.logging</groupId>
