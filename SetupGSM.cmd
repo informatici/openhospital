@@ -22,10 +22,6 @@ FOR %%A IN (%OH_LIB%\*.jar) DO (
 	set CLASSPATH=!CLASSPATH!;%%A
 )
 
-FOR %%A IN (%OH_LIB%\h8\*.jar) DO (
-	set CLASSPATH=!CLASSPATH!;%%A
-)
-
 FOR %%A IN (%OH_LIB%\dicom\*.jar) DO (
 	set CLASSPATH=!CLASSPATH!;%%A
 )

@@ -460,6 +460,11 @@
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>4.2.5.Final</version>
 		</dependency>
+		<dependency>
+		  <groupId>org.hibernate</groupId>
+		  <artifactId>hibernate-c3p0</artifactId>
+		  <version>4.2.13.Final</version>
+		</dependency>
 	  	<dependency>
 	  		<groupId>org.jboss.logging</groupId>
 	  		<artifactId>jboss-logging</artifactId>

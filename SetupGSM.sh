@@ -37,16 +37,6 @@ do
   fi
 done
 
-DIRLIBS=${EXEDIR}/lib/h8/*.jar
-for i in ${DIRLIBS}
-do
-  if [ -z "$OPENHOSPITAL_CLASSPATH" ] ; then
-    OPENHOSPITAL_CLASSPATH=$i
-  else
-    OPENHOSPITAL_CLASSPATH="$i":$OPENHOSPITAL_CLASSPATH
-  fi
-done
-
 DIRLIBS=${EXEDIR}/lib/dicom/*.jar
 for i in ${DIRLIBS}
 do
