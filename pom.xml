@@ -366,11 +366,6 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/dicom/jai/clibwrapper_jiio.jar</systemPath>
 		</dependency>
-		<!-- <dependency>
-		    <groupId>com.github.jai-imageio</groupId>
-		    <artifactId>jai-imageio-core</artifactId>
-		    <version>1.3.1</version>
-		</dependency> -->
 		<dependency>
 			<groupId>jai</groupId>
 			<artifactId>jai_core</artifactId>
@@ -378,11 +373,6 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/dicom/jai/jai_core-1.1.4-b03.jar</systemPath>
 		</dependency>
-		<!-- <dependency>
-		    <groupId>com.github.jai-imageio</groupId>
-		    <artifactId>jai-imageio-jpeg2000</artifactId>
-		    <version>1.3.0</version>
-		</dependency> -->
 		<dependency>
 			<groupId>jai</groupId>
 			<artifactId>jai_imageio</artifactId>
