@@ -239,11 +239,10 @@ public class PatientIoOperations
 	 * @param anImage
 	 * @return
 	 */
-	private ByteArrayInputStream createPatientPhotoInputStream(
+	private byte[] createPatientPhotoInputStream(
 			Image anImage) 
 	{
-		ByteArrayInputStream inStream = null;
-		
+		byte[] byteArray = null;
 		
 		try {
 			// Paint the image onto the buffered image
@@ -256,15 +255,16 @@ public class PatientIoOperations
 
 			ImageIO.write(bu, "jpg", outStream);
 			System.out.println("dimensione output stream: " + outStream.size());
-			// Create the ByteArrayInputStream
-			inStream = new ByteArrayInputStream(outStream.toByteArray());
+			
+			if (outStream != null) byteArray = outStream.toByteArray();
+			
 		} catch (IOException ioe) {
 			//TODO: handle exception
 		} catch (Exception ioe) {
 			//TODO: handle exception
 		}
 		
-		return inStream;
+		return byteArray;
 	}
 
 	/**
