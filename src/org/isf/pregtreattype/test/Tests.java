@@ -56,7 +56,7 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
+    	//jpa.destroy();
 
     	return;
     }
@@ -115,7 +115,13 @@ public class Tests
 			PregnantTreatmentType foundPregnantTreatmentType = (PregnantTreatmentType)jpa.find(PregnantTreatmentType.class, code); 
 			ArrayList<PregnantTreatmentType> pregnantTreatmentTypes = ioOperations.getPregnantTreatmentType();
 			
-			assertEquals(foundPregnantTreatmentType.getDescription(), pregnantTreatmentTypes.get(pregnantTreatmentTypes.size() - 1).getDescription());
+			for (int i=0; i<pregnantTreatmentTypes.size(); i++)
+			{
+				if (pregnantTreatmentTypes.get(i).getCode().equals(code))
+				{
+					assertEquals(foundPregnantTreatmentType.getDescription(), pregnantTreatmentTypes.get(i).getDescription());
+				}
+			}
 		} 
 		catch (Exception e) 
 		{

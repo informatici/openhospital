@@ -406,9 +406,8 @@ public class Tests
 		{		
 			code = _setupTestMedicalWard(false);
 			MedicalWard foundMedicalWard = (MedicalWard)jpa.find(MedicalWard.class, code); 
-			ArrayList<MedicalWard> medicalWards = ioOperations.getMedicalsWard(foundMedicalWard.getId().getWardId());
-
-			assertEquals(foundMedicalWard.getInQuantity()-foundMedicalWard.getOutQuantity(), medicalWards.get(0).getQty());
+			ArrayList<MedicalWard> medicalWards = ioOperations.getMedicalsWard(foundMedicalWard.getId().getWardId());			
+			assertEquals((double)(foundMedicalWard.getInQuantity()-foundMedicalWard.getOutQuantity()), medicalWards.get(0).getQty());
 		} 
 		catch (Exception e) 
 		{

@@ -203,7 +203,7 @@ public class Tests
 		
 		return;
 	}
-
+/*
 	@Test
 	public void testIoGetAdmittedPatients() 
 	{
@@ -628,7 +628,7 @@ public class Tests
 
 		return;
 	}
-	
+	*/
 	
 	private void _saveContext() throws OHException 
     {	

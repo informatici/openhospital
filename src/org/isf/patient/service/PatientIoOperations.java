@@ -115,7 +115,7 @@ public class PatientIoOperations
 		
 		for (int i=0; i<words.length; i++) 
 		{
-			queryBld.append("AND CONCAT(PAT_ID, LOWER(PAT_SNAME), LOWER(PAT_FNAME), LOWER(PAT_NOTE), LOWER(PAT_TAXCODE)) ");
+			queryBld.append("AND CONCAT_WS(PAT_ID, LOWER(PAT_SNAME), LOWER(PAT_FNAME), LOWER(PAT_NOTE), LOWER(PAT_TAXCODE)) ");
 			queryBld.append("LIKE CONCAT('%', ? , '%') ");
 		}
 		queryBld.append(" ORDER BY PAT_ID DESC");

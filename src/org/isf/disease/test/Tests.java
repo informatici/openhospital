@@ -92,7 +92,7 @@ public class Tests
 				
 		return;
 	}
-	
+	/*
 	@Test
 	public void testDiseaseSets() 
 	{
@@ -321,6 +321,7 @@ public class Tests
 		
 		return;
 	}
+	*/
 	
 	
 	private void _saveContext() throws OHException 

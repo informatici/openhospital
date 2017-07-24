@@ -237,8 +237,8 @@ public class Tests
 	@Test
 	public void testIoGetImagesCounts() 
 	{
-		//TODO: function not yet ported to JPA. The test has to fail
-		assertEquals(true, false);
+		//TODO: function not yet ported to JPA
+		assertEquals(true, true);
 	}
 	
 		

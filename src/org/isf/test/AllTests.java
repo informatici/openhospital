@@ -28,22 +28,21 @@ import org.junit.runners.Suite.SuiteClasses;
 	org.isf.medstockmovtype.test.Tests.class,
 	org.isf.medtype.test.Tests.class,
 //	org.isf.menu.test.Tests.class,
-
 //	org.isf.opd.test.Tests.class,
-//	org.isf.operation.test.Tests.class,
-//	org.isf.opetype.test.Tests.class,	
-//	org.isf.patient.test.Tests.class,
-//	org.isf.patvac.test.Tests.class,
-//	org.isf.pregtreattype.test.Tests.class,	
-//	org.isf.priceslist.test.Tests.class,
-//	org.isf.pricesothers.test.Tests.class,
-//	org.isf.sms.test.Tests.class,
-//	org.isf.supplier.test.Tests.class,
-//	org.isf.therapy.test.Tests.class,
-//	org.isf.vaccine.test.Tests.class,
-//	org.isf.vactype.test.Tests.class,
-//	org.isf.visits.test.Tests.class,
-//	org.isf.ward.test.Tests.class*/
+	org.isf.operation.test.Tests.class,
+	org.isf.opetype.test.Tests.class,	
+	org.isf.patient.test.Tests.class,
+	org.isf.patvac.test.Tests.class,
+	org.isf.pregtreattype.test.Tests.class,	
+	org.isf.priceslist.test.Tests.class,
+	org.isf.pricesothers.test.Tests.class,
+	org.isf.sms.test.Tests.class,
+	org.isf.supplier.test.Tests.class,
+	org.isf.therapy.test.Tests.class,
+	org.isf.vaccine.test.Tests.class,
+	org.isf.vactype.test.Tests.class,
+	org.isf.visits.test.Tests.class,
+	org.isf.ward.test.Tests.class
 	})
 public class AllTests {
 
