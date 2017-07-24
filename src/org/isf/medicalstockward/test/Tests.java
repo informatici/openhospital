@@ -120,7 +120,7 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
+    	//jpa.destroy();
     	testMedical = null;
     	testMedicalContext = null;
     	testMedicalType = null;

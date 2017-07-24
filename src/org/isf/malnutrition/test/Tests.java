@@ -140,7 +140,7 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
+    	//jpa.destroy();
     	testAdmission = null;
     	testAdmissionContext = null;
     	testWard = null;
