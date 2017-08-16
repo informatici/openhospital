@@ -134,7 +134,7 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
+    	//jpa.destroy();
     	testAdmission = null;
     	testAdmissionContext = null;
     	testWard = null;
@@ -203,7 +203,7 @@ public class Tests
 		
 		return;
 	}
-/*
+
 	@Test
 	public void testIoGetAdmittedPatients() 
 	{
@@ -628,7 +628,7 @@ public class Tests
 
 		return;
 	}
-	*/
+	
 	
 	private void _saveContext() throws OHException 
     {	
@@ -638,6 +638,7 @@ public class Tests
     	testAdmissionTypeContext.saveAll(jpa);
     	testDiseaseTypeContext.saveAll(jpa);
     	testDiseaseContext.saveAll(jpa);
+		testDiseaseContext.addMissingKey(jpa);
     	testOperationTypeContext.saveAll(jpa);
     	testOperationContext.saveAll(jpa);
     	testDischargeTypeContext.saveAll(jpa);

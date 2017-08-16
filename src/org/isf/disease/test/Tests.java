@@ -4,6 +4,7 @@ package org.isf.disease.test;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
@@ -92,7 +93,7 @@ public class Tests
 				
 		return;
 	}
-	/*
+	
 	@Test
 	public void testDiseaseSets() 
 	{
@@ -321,13 +322,12 @@ public class Tests
 		
 		return;
 	}
-	*/
-	
 	
 	private void _saveContext() throws OHException 
     {	
 		testDiseaseContext.saveAll(jpa);
 		testDiseaseTypeContext.saveAll(jpa);
+		testDiseaseContext.addMissingKey(jpa);
         		
         return;
     }

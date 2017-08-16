@@ -332,6 +332,7 @@ public class Tests
 		testPatientContext.saveAll(jpa);
 		testDiseaseContext.saveAll(jpa);
 		testDiseaseTypeContext.saveAll(jpa);
+		testDiseaseContext.addMissingKey(jpa);
         		
         return;
     }
