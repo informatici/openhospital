@@ -2,9 +2,11 @@ package org.isf.disease.test;
 
 
 import org.isf.disease.model.Disease;
+import org.isf.distype.model.DiseaseType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestDiseaseContext 
@@ -50,4 +52,25 @@ public class TestDiseaseContext
 		        
         return;
     } 
+    
+	@SuppressWarnings("unchecked")
+	public void addMissingKey(
+    		DbJpaUtil jpa) throws OHException 
+    {	
+		jpa.beginTransaction();			
+		jpa.createQuery("SELECT DISTINCT DCL_ID_A FROM DISEASETYPE", null, false);
+		List<String> diseaseTypeList = (List<String>)jpa.getList();
+		ArrayList<String> diseaseTypeArray = new ArrayList<String>(diseaseTypeList);
+		jpa.createQuery("SELECT DISTINCT DIS_DCL_ID_A FROM DISEASE", null, false);
+		List<String> missingDiseaseTypeList = (List<String>)jpa.getList();
+		ArrayList<String> missingDiseaseType = new ArrayList<String>(missingDiseaseTypeList);	
+		missingDiseaseType.removeAll(diseaseTypeArray);
+		for (int i = 0; i < missingDiseaseType.size(); i++) {
+			DiseaseType diseaseType = new DiseaseType(missingDiseaseType.get(i), "Add because missing...");
+			jpa.persist(diseaseType);
+		}
+		jpa.commitTransaction();
+        		
+        return;
+    }
 }

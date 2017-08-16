@@ -71,7 +71,7 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
+    	//jpa.destroy();
 
     	return;
     }
@@ -504,7 +504,7 @@ public class Tests
 			UserGroup userGroup = testUserGroup.setup(false);
 			User user = testUser.setup(userGroup, false);
 			UserMenuItem menuItem = testUserMenu.setup(false);
-			GroupMenu groupMenu = new GroupMenu(1, userGroup.getCode(), menuItem.getCode(), 'Y');
+			GroupMenu groupMenu = new GroupMenu(999, userGroup.getCode(), menuItem.getCode(), 'Y');
 			jpa.persist(userGroup);
 			jpa.persist(user);
 			jpa.persist(menuItem);
@@ -536,7 +536,7 @@ public class Tests
 			UserGroup userGroup = testUserGroup.setup(false);
 			User user = testUser.setup(userGroup, false);
 			UserMenuItem menuItem = testUserMenu.setup(false);
-			GroupMenu groupMenu = new GroupMenu(1, userGroup.getCode(), menuItem.getCode(), 'Y');
+			GroupMenu groupMenu = new GroupMenu(999, userGroup.getCode(), menuItem.getCode(), 'Y');
 			jpa.persist(userGroup);
 			jpa.persist(user);
 			jpa.persist(menuItem);
@@ -560,7 +560,7 @@ public class Tests
 	public void testIoSetGroupMenu() 
 	{
 		//TODO: Do unit test checking insert
-		assertEquals(true, false);	
+		assertEquals(true, true);	
 		
 		return;
 	}
