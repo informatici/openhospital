@@ -54,6 +54,8 @@ import org.isf.medicalstock.model.Movement;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.utils.db.NormalizeString;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
@@ -714,7 +716,17 @@ public class MovStockMultipleDischarging extends JDialog {
 			jComboBoxDestination = new JComboBox();
 			jComboBoxDestination.addItem(""); //$NON-NLS-1$
 			WardBrowserManager wardMan = new WardBrowserManager();
-			ArrayList<Ward> wards = wardMan.getWards();
+			ArrayList<Ward> wards;
+			try {
+				wards = wardMan.getWards();
+			}catch(OHServiceException e){
+				wards = new ArrayList<Ward>();
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			for (Ward ward : wards) {
 				if (GeneralData.INTERNALPHARMACIES) {
 					if (ward.isPharmacy())

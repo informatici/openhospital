@@ -47,6 +47,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.EventListenerList;
 
 import org.isf.admission.manager.AdmissionBrowserManager;
+import org.isf.admission.model.Admission;
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.manager.ExamRowBrowsingManager;
 import org.isf.exa.model.Exam;
@@ -59,6 +60,8 @@ import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
 
@@ -327,15 +330,26 @@ public class LabEdit extends JDialog {
 			patientComboBox = new JComboBox();
 			Patient patSelected=null;
 			PatientBrowserManager patBrowser = new PatientBrowserManager();
-			ArrayList<Patient> pat = patBrowser.getPatient();
-			patientComboBox.addItem(MessageBundle.getMessage("angal.lab.selectapatient"));
-			for (Patient elem : pat) {
-				if (!insert) {
-					if (elem.getCode()==lab.getPatId().getCode()) {
-						patSelected=elem;
+			ArrayList<Patient> pat = null;
+			try {
+				pat = patBrowser.getPatient();
+			} catch (OHServiceException e) {
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
 					}
 				}
-				patientComboBox.addItem(elem);
+			}
+			patientComboBox.addItem(MessageBundle.getMessage("angal.lab.selectapatient"));
+			if(pat != null){
+				for (Patient elem : pat) {
+					if (!insert) {
+						if (elem.getCode()==lab.getPatId().getCode()) {
+							patSelected=elem;
+						}
+					}
+					patientComboBox.addItem(elem);
+				}
 			}
 			if (patSelected!=null)
 				patientComboBox.setSelectedItem(patSelected);
@@ -348,7 +362,17 @@ public class LabEdit extends JDialog {
 						patTextField.setText(pat.getName());
 						ageTextField.setText(pat.getAge()+"");
 						sexTextField.setText(pat.getSex()+"");
-						inPatientCheckBox.setSelected(admMan.getCurrentAdmission(pat) != null ? true : false);
+						Admission admission = null;
+						try {
+							admission = admMan.getCurrentAdmission(pat);
+						}catch(OHServiceException e){
+							if(e.getMessages() != null){
+								for(OHExceptionMessage msg : e.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						}
+						inPatientCheckBox.setSelected(admission != null ? true : false);
 					}
 				}
 			});

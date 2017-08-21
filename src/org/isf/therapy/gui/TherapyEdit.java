@@ -57,6 +57,8 @@ import org.isf.therapy.manager.TherapyManager;
 import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.JAgenda;
 import org.isf.utils.jobjects.JAgenda.AgendaDayObject;
 import org.isf.visits.gui.InsertVisit;
@@ -533,7 +535,15 @@ public class TherapyEdit extends JDialog {
 							if (number != null) {
 								patient.setTelephone(number);
 								PatientBrowserManager patManager = new PatientBrowserManager();
-								patManager.updatePatient(patient);
+								try{
+									patManager.updatePatient(patient);
+								}catch(OHServiceException ex){
+									if(ex.getMessages() != null){
+										for(OHExceptionMessage msg : ex.getMessages()){
+											JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+										}
+									}
+								}
 							}
 						} else return;
 					}

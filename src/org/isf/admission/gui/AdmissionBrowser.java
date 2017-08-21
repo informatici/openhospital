@@ -78,6 +78,8 @@ import org.isf.patient.model.Patient;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ShadowBorder;
 import org.isf.utils.jobjects.VoDateTextField;
@@ -389,7 +391,15 @@ public class AdmissionBrowser extends JDialog {
 		ps = new PatientSummary(patient);
 
 		if (editing) {
-			admission = admMan.getCurrentAdmission(patient);
+			try {
+				admission = admMan.getCurrentAdmission(patient);
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			if (admission.getWard().getCode().equalsIgnoreCase("M")) {
 				viewingPregnancy = true;
 			} else {
@@ -424,7 +434,15 @@ public class AdmissionBrowser extends JDialog {
 		}
 		ps = new PatientSummary(patient);
 
-		admission = admMan.getAdmission(anAdmission.getId());
+		try {
+			admission = admMan.getAdmission(anAdmission.getId());
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		if (admission.getWard().getCode().equalsIgnoreCase("M")) {
 			viewingPregnancy = true;
 		} 
@@ -902,7 +920,16 @@ public class AdmissionBrowser extends JDialog {
 			WardBrowserManager wbm = new WardBrowserManager();
 			wardBox = new JComboBox();
 			wardBox.addItem("");
-			wardList = wbm.getWards();
+			try {
+				wardList = wbm.getWards();
+			}catch(OHServiceException e){
+				wardList = new ArrayList<Ward>();
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			for (Ward ward : wardList) {
 				// if patient is a male you don't see pregnancy case
 				if (("" + patient.getSex()).equalsIgnoreCase("F") && !ward.isFemale()) {
@@ -935,12 +962,30 @@ public class AdmissionBrowser extends JDialog {
 							yProgTextField.setText("" + admission.getYProg());
 						} else {
 							AdmissionBrowserManager abm = new AdmissionBrowserManager();
-							int nextProg = abm.getNextYProg(wardId);
+							int nextProg = 1;
+							try {
+								nextProg = abm.getNextYProg(wardId);
+							}catch(OHServiceException ex){
+								if(ex.getMessages() != null){
+									for(OHExceptionMessage msg : ex.getMessages()){
+										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+									}
+								}
+							}
 							yProgTextField.setText("" + nextProg);
 
 							// get default selected warn default beds number
 							int nBeds = (((Ward) wardBox.getSelectedItem()).getBeds()).intValue();
-							int usedBeds = abm.getUsedWardBed(wardId);
+							int usedBeds = 0;
+							try {
+								usedBeds = abm.getUsedWardBed(wardId);
+							}catch(OHServiceException ex){
+								if(ex.getMessages() != null){
+									for(OHExceptionMessage msg : ex.getMessages()){
+										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+									}
+								}
+							}
 							int freeBeds = nBeds - usedBeds;
 							if (freeBeds <= 0)
 								JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.wardwithnobedsavailable"));
@@ -1041,7 +1086,15 @@ public class AdmissionBrowser extends JDialog {
 			admTypeBox = new JComboBox();
 			admTypeBox.setPreferredSize(new Dimension(preferredWidthTypes, preferredHeightLine));
 			admTypeBox.addItem("");
-			admTypeList = admMan.getAdmissionType();
+			try {
+				admTypeList = admMan.getAdmissionType();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			for (AdmissionType elem : admTypeList) {
 				admTypeBox.addItem(elem);
 				if (editing) {
@@ -1355,7 +1408,15 @@ public class AdmissionBrowser extends JDialog {
 			disTypeBox = new JComboBox();
 			disTypeBox.setPreferredSize(new Dimension(preferredWidthTypes, preferredHeightLine));
 			disTypeBox.addItem("");
-			disTypeList = admMan.getDischargeType();
+			try {
+				disTypeList = admMan.getDischargeType();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			for (DischargeType elem : disTypeList) {
 				disTypeBox.addItem(elem);
 				if (editing) {
@@ -1528,7 +1589,17 @@ public class AdmissionBrowser extends JDialog {
 						 * Initizalize AdmissionBrowserManager
 						 */
 						AdmissionBrowserManager abm = new AdmissionBrowserManager();
-						ArrayList<Admission> admList = abm.getAdmissions(patient);
+						ArrayList<Admission> admList;
+						try {
+							admList = abm.getAdmissions(patient);
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+							admList = new ArrayList<Admission>();
+						}
 
 						/*
 						 * Today Gregorian Calendar
@@ -2200,7 +2271,16 @@ public class AdmissionBrowser extends JDialog {
 
 						// ready to save...
 						if (!editing && !isDischarge) {
-							int newKey = admMan.newAdmissionReturnKey(admission);
+							int newKey = -1;
+							try {
+								newKey = admMan.newAdmissionReturnKey(admission);
+							}catch(OHServiceException exc){
+								if(exc.getMessages() != null){
+									for(OHExceptionMessage msg : exc.getMessages()){
+										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+									}
+								}
+							}
 							if (newKey > 0) {
 								result = true;
 								admission.setId(newKey);
@@ -2212,13 +2292,43 @@ public class AdmissionBrowser extends JDialog {
 								dispose();
 							}
 						} else if (!editing && isDischarge) {
-							result = admMan.newAdmission(admission);
+							try {
+								result = admMan.newAdmission(admission);
+							}catch(OHServiceException ex){
+								if(ex.getMessages() != null){
+									for(OHExceptionMessage msg : ex.getMessages()){
+										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+									}
+								}
+							}
 							if (result) {
 								fireAdmissionUpdated(admission);
 								dispose();
 							}
 						} else {
-							result = admMan.updateAdmission(admission);
+							try{
+								boolean recordUpdated = admMan.isAdmissionModified(admission); 
+								if (!recordUpdated) { 
+									// it was not updated
+									result = admMan.updateAdmission(admission);
+								} else { 
+									// it was updated by someone else
+									String message = MessageBundle.getMessage("angal.admission.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
+									int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
+									boolean overWrite = response== JOptionPane.OK_OPTION;
+
+									if (overWrite) {
+										// the user has confirmed he wants to overwrite the record
+										result = admMan.updateAdmission(admission);
+									}
+								}
+							}catch(OHServiceException ex){
+								if(ex.getMessages() != null){
+									for(OHExceptionMessage msg : ex.getMessages()){
+										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+									}
+								}
+							}
 							if (result) {
 								fireAdmissionUpdated(admission);
 								if (GeneralData.XMPPMODULEENABLED) {

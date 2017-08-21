@@ -65,6 +65,8 @@ import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
 import org.isf.utils.excel.ExcelExporter;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
@@ -356,7 +358,17 @@ public class MovStockBrowser extends ModalJFrame {
 		wardBox = new JComboBox();
 		wardBox.setPreferredSize(new Dimension(130,25));
 		wardBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));
-		ArrayList<Ward> wardList = wbm.getWards();
+		ArrayList<Ward> wardList;
+		try {
+			wardList = wbm.getWards();
+		}catch(OHServiceException e){
+			wardList = new ArrayList<Ward>();
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		for (org.isf.ward.model.Ward elem : wardList) {
 			wardBox.addItem(elem);
 		}

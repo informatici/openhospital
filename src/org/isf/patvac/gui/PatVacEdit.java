@@ -34,15 +34,18 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.patvac.manager.PatVacManager;
+import org.isf.patvac.model.PatientVaccine;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
 import org.isf.vaccine.manager.VaccineBrowserManager;
 import org.isf.vaccine.model.Vaccine;
 import org.isf.vactype.manager.VaccineTypeBrowserManager;
 import org.isf.vactype.model.VaccineType;
+
 import com.toedter.calendar.JDateChooser;
-import org.isf.patvac.manager.PatVacManager;
-import org.isf.patvac.model.PatientVaccine;
 
 public class PatVacEdit extends JDialog {
 	/**
@@ -492,18 +495,37 @@ public class PatVacEdit extends JDialog {
 		Patient patSelected = null;
 		PatientBrowserManager patBrowser = new PatientBrowserManager();
 
-		if (GeneralData.ENHANCEDSEARCH)
-			pat = patBrowser.getPatientWithHeightAndWeight(regExp);
-		else
-			pat = patBrowser.getPatient();
-
-		for (Patient elem : pat) {
-			if (!insert) {
-				if (elem.getCode().equals(patVac.getPatient().getCode())) {
-					patSelected = elem;
+		if (GeneralData.ENHANCEDSEARCH){
+			try {
+				pat = patBrowser.getPatientWithHeightAndWeight(regExp);
+			}catch(OHServiceException ex){
+				if(ex.getMessages() != null){
+					for(OHExceptionMessage msg : ex.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+				pat = new ArrayList<Patient>();
+			}
+		}else{
+			try {
+				pat = patBrowser.getPatient();
+			} catch (OHServiceException e) {
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
 				}
 			}
-			patientComboBox.addItem(elem);
+		}
+		if(pat != null){
+			for (Patient elem : pat) {
+				if (!insert) {
+					if (elem.getCode().equals(patVac.getPatient().getCode())) {
+						patSelected = elem;
+					}
+				}
+				patientComboBox.addItem(elem);
+			}
 		}
 		if (patSelected != null) {
 			patientComboBox.setSelectedItem(patSelected);

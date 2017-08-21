@@ -18,6 +18,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
@@ -94,7 +96,15 @@ public class WardBrowser extends ModalJFrame implements WardEdit.WardListener {
 		//check if in the db maternity ward exists
 		WardBrowserManager manager = new WardBrowserManager();
 		if(!manager.maternityControl()) {
-			manager.newWard(new Ward("M",MessageBundle.getMessage("angal.admission.maternity"),"234/52544","54324/5424","maternity@stluke.org",20,3,2,false,false,true,0));
+			try {
+				manager.newWard(new Ward("M",MessageBundle.getMessage("angal.admission.maternity"),"234/52544","54324/5424","maternity@stluke.org",20,3,2,false,false,true,0));
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 		}
 		initialize();
 		setVisible(true);
@@ -230,11 +240,18 @@ public class WardBrowser extends ModalJFrame implements WardEdit.WardListener {
 								MessageBundle.getMessage("angal.ward.deleteward") + " \""+ward.getDescription()+"\" ?",
 								MessageBundle.getMessage("angal.hospital"),
 								JOptionPane.YES_NO_OPTION);
-						
-						if ((n == JOptionPane.YES_OPTION) && (wardManager.deleteWard(ward))){
+						try{
+							if ((n == JOptionPane.YES_OPTION) && (wardManager.deleteWard(ward))){
 								pWard.remove(table.getSelectedRow());
-							model.fireTableDataChanged();
-							table.updateUI();
+								model.fireTableDataChanged();
+								table.updateUI();
+							}
+						}catch(OHServiceException e){
+							if(e.getMessages() != null){
+								for(OHExceptionMessage msg : e.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
 						}
 					}
 				}
@@ -308,7 +325,16 @@ public class WardBrowser extends ModalJFrame implements WardEdit.WardListener {
 
 		public WardBrowserModel() {
 			WardBrowserManager manager = new WardBrowserManager();
-			pWard = manager.getWards();
+			try {
+				pWard = manager.getWards();
+			}catch(OHServiceException e){
+				pWard = new ArrayList<Ward>();
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 		}
 		public int getRowCount() {
 			if (pWard == null)

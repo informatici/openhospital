@@ -35,6 +35,8 @@ import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class WardPharmacyEdit extends JDialog {
@@ -175,7 +177,16 @@ public class WardPharmacyEdit extends JDialog {
 				
 				public void actionPerformed(ActionEvent e) {
 					jComboBoxPatients.removeAllItems();
-					pat = patBrowser.getPatientWithHeightAndWeight(jTextFieldSearchPatient.getText());
+					try {
+						pat = patBrowser.getPatientWithHeightAndWeight(jTextFieldSearchPatient.getText());
+					}catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
+						pat = new ArrayList<Patient>();
+					}
 					getJComboBoxPatients(jTextFieldSearchPatient.getText());
 				}
 			});

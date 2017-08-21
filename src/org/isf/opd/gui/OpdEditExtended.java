@@ -98,6 +98,8 @@ import org.isf.patient.gui.PatientInsertExtended;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
 import org.isf.utils.time.TimeTools;
@@ -273,7 +275,15 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		if(!insert) {
 			if (opd.getPatient().getCode() != 0) { 
 				PatientBrowserManager patBrowser = new PatientBrowserManager();
-				opdPatient = patBrowser.getPatientAll(opd.getPatient().getCode());
+				try{
+					opdPatient = patBrowser.getPatientAll(opd.getPatient().getCode());
+				} catch (OHServiceException e) {
+					if(e.getMessages() != null){
+						for(OHExceptionMessage msg : e.getMessages()){
+							JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+						}
+					}
+				}
 			} else { //old OPD has no PAT_ID => Create Patient from OPD
 				opdPatient = new Patient(opd);
 				opdPatient.setCode(0);
@@ -937,7 +947,16 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 				
 				public void actionPerformed(ActionEvent e) {
 					jComboPatResult.removeAllItems();
-					pat = patBrowser.getPatientWithHeightAndWeight(jTextPatientSrc.getText());
+					try {
+						pat = patBrowser.getPatientWithHeightAndWeight(jTextPatientSrc.getText());
+					}catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
+						pat = new ArrayList<Patient>();
+					}
 					getSearchBox(jTextPatientSrc.getText());
 				}
 			});

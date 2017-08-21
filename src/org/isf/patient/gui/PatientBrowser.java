@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -19,6 +20,8 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.patient.gui.PatientInsert.PatientListener;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 
 
@@ -232,14 +235,21 @@ public class PatientBrowser extends ModalJFrame implements PatientListener{
 						int n = JOptionPane.showConfirmDialog(null,
 								MessageBundle.getMessage("angal.patient.deletepatient") + " \" "+pat.getName() + "\" ?",
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
-						
-						if ((n == JOptionPane.YES_OPTION)
-								&& (manager.deletePatient(pat))) {
-							pPat.remove(pPat.size() - jTable.getSelectedRow()
-									- 1);
-							model.fireTableDataChanged();
-							jTable.updateUI();
-							
+						try{
+							if ((n == JOptionPane.YES_OPTION)
+									&& (manager.deletePatient(pat))) {
+								pPat.remove(pPat.size() - jTable.getSelectedRow()
+										- 1);
+								model.fireTableDataChanged();
+								jTable.updateUI();
+
+							}
+						}catch(OHServiceException e){
+							if(e.getMessages() != null){
+								for(OHExceptionMessage msg : e.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
 						}
 					}
 				}
@@ -259,7 +269,15 @@ class PatientBrowserModel extends DefaultTableModel {
 
 		public PatientBrowserModel() {
 			PatientBrowserManager manager = new PatientBrowserManager();
-			pPat = manager.getPatient();
+			try {
+				pPat = manager.getPatient();
+			} catch (OHServiceException e) {
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			
 		}
 		public int getRowCount() {

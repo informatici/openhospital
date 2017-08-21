@@ -39,6 +39,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.EventListenerList;
 
 import org.isf.admission.manager.AdmissionBrowserManager;
+import org.isf.admission.model.Admission;
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.manager.ExamRowBrowsingManager;
 import org.isf.exa.model.Exam;
@@ -51,6 +52,8 @@ import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
 
@@ -375,33 +378,61 @@ public class LabEditExtended extends JDialog {
 		
 		//String key = s;
 		PatientBrowserManager patBrowser = new PatientBrowserManager();
-		if (insert) pat = patBrowser.getPatient();
-			
+		if (insert){
+			try {
+				pat = patBrowser.getPatient();
+			} catch (OHServiceException e) {
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+		}
 		if (patientComboBox == null) {
 			patientComboBox = new JComboBox();
 			patientComboBox.addItem(MessageBundle.getMessage("angal.lab.selectapatient"));
 			
 			if (!insert) {
-				labPat = patBrowser.getPatientAll(lab.getPatId().getCode());
-				patientComboBox.addItem(labPat);
-				patientComboBox.setSelectedItem(labPat);
-				patientComboBox.setEnabled(false);
-				jTextPatientSrc.setText(String.valueOf(labPat.getCode()));
-				jTextPatientSrc.setEnabled(false);
+				try{
+					labPat = patBrowser.getPatientAll(lab.getPatId().getCode());
+					patientComboBox.addItem(labPat);
+					patientComboBox.setSelectedItem(labPat);
+					patientComboBox.setEnabled(false);
+					jTextPatientSrc.setText(String.valueOf(labPat.getCode()));
+					jTextPatientSrc.setEnabled(false);
+				} catch (OHServiceException e) {
+					if(e.getMessages() != null){
+						for(OHExceptionMessage msg : e.getMessages()){
+							JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+						}
+					}
+				}
 				return patientComboBox;
 			}
 			
-			for (Patient elem : pat) {
-				patientComboBox.addItem(elem);
+			if(pat != null){
+				for (Patient elem : pat) {
+					patientComboBox.addItem(elem);
+				}
 			}
-			
 			patientComboBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					if (patientComboBox.getSelectedIndex()>0) {
 						AdmissionBrowserManager admMan = new AdmissionBrowserManager();
 						labPat=(Patient)patientComboBox.getSelectedItem();
 						setPatient(labPat);
-						inPatientCheckBox.setSelected(admMan.getCurrentAdmission(labPat) != null ? true : false);
+						Admission admission = null;
+						try {
+							admission = admMan.getCurrentAdmission(labPat);
+						}catch(OHServiceException e){
+							if(e.getMessages() != null){
+								for(OHExceptionMessage msg : e.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						}
+						inPatientCheckBox.setSelected(admission != null ? true : false);
 					}
 				}
 			});

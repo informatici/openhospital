@@ -52,6 +52,8 @@ import org.isf.lab.model.Laboratory;
 import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.time.RememberDates;
 
 import com.toedter.calendar.JDateChooser;
@@ -309,7 +311,15 @@ public class LabNew extends JDialog implements SelectionListener {
 	private String getIsAdmitted() {
 		AdmissionBrowserManager man = new AdmissionBrowserManager();
 		Admission adm = new Admission();
-		adm = man.getCurrentAdmission(patientSelected);
+		try {
+			adm = man.getCurrentAdmission(patientSelected);
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		return (adm==null?"R":"I");					
 	}
 

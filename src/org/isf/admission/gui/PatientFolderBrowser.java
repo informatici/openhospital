@@ -44,6 +44,8 @@ import org.isf.stat.manager.GenericReportAdmission;
 import org.isf.stat.manager.GenericReportDischarge;
 import org.isf.stat.manager.GenericReportOpd;
 import org.isf.stat.manager.GenericReportPatient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.table.TableSorter;
 import org.isf.ward.manager.WardBrowserManager;
@@ -489,7 +491,15 @@ public class PatientFolderBrowser extends ModalJFrame implements
 
 		public AdmissionBrowserModel() {
 			AdmissionBrowserManager manager = new AdmissionBrowserManager();
-			admList = manager.getAdmissions(patient);
+			try {
+				admList = manager.getAdmissions(patient);
+			}catch(OHServiceException ex){
+				if(ex.getMessages() != null){
+					for(OHExceptionMessage msg : ex.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 //			Collections.sort(admList);
 //			Collections.reverse(admList);
 			DiseaseBrowserManager dbm = new DiseaseBrowserManager();
@@ -497,7 +507,16 @@ public class PatientFolderBrowser extends ModalJFrame implements
 //			org.isf.operation.manager.OperationBrowserManager obm = new org.isf.operation.manager.OperationBrowserManager();
 //			operation = obm.getOperation();
 			WardBrowserManager wbm = new WardBrowserManager();
-			ward = wbm.getWards();
+			try {
+				ward = wbm.getWards();
+			}catch(OHServiceException e){
+				ward = new ArrayList<Ward>();
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			OpdBrowserManager opd = new OpdBrowserManager();
 			opdList = opd.getOpdList(patient.getCode());
 		}

@@ -2,8 +2,6 @@ package org.isf.admission.manager;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
 import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
 import org.isf.admission.service.AdmissionIoOperations;
@@ -13,21 +11,38 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AdmissionBrowserManager {
 
+	private final Logger logger = LoggerFactory.getLogger(AdmissionBrowserManager.class);
+	
 	private AdmissionIoOperations ioOperations = Menu.getApplicationContext().getBean(AdmissionIoOperations.class);
 
 	/**
 	 * Returns all patients with ward in which they are admitted.
 	 * @return the patient list with associated ward or <code>null</code> if the operation fails.
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<AdmittedPatient> getAdmittedPatients(){
+	public ArrayList<AdmittedPatient> getAdmittedPatients() throws OHServiceException{
 		try {
 			return ioOperations.getAdmittedPatients();
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -35,13 +50,23 @@ public class AdmissionBrowserManager {
 	 * Returns all patients with ward in which they are admitted filtering the list using the passed search term.
 	 * @param searchTerms the search terms to use for filter the patient list, <code>null</code> if no filter have to be applied.
 	 * @return the filtered patient list or <code>null</code> if the operation fails.
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<AdmittedPatient> getAdmittedPatients(String searchTerms){
+	public ArrayList<AdmittedPatient> getAdmittedPatients(String searchTerms) throws OHServiceException{
 		try {
 			return ioOperations.getAdmittedPatients(searchTerms);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -49,13 +74,23 @@ public class AdmissionBrowserManager {
 	 * Returns the admission with the selected id.
 	 * @param id the admission id.
 	 * @return the admission with the specified id, <code>null</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public Admission getAdmission(int id){
+	public Admission getAdmission(int id) throws OHServiceException{
 		try {
 			return ioOperations.getAdmission(id);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -63,13 +98,23 @@ public class AdmissionBrowserManager {
 	 * Returns the only one admission without dimission date (or null if none) for the specified patient.
 	 * @param patient the patient target of the admission.
 	 * @return the patient admission or <code>null</code> if the operation fails.
+	 * @throws OHServiceException 
 	 */
-	public Admission getCurrentAdmission(Patient patient){
+	public Admission getCurrentAdmission(Patient patient) throws OHServiceException{
 		try {
 			return ioOperations.getCurrentAdmission(patient);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -77,13 +122,23 @@ public class AdmissionBrowserManager {
 	 * Returns all the admissions for the specified patient.
 	 * @param patient the patient.
 	 * @return the admission list or <code>null</code> if the operation fails.
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Admission> getAdmissions(Patient patient){
+	public ArrayList<Admission> getAdmissions(Patient patient) throws OHServiceException{
 		try {
 			return ioOperations.getAdmissions(patient);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -91,39 +146,69 @@ public class AdmissionBrowserManager {
 	 * Returns the next prog in the year for a certain ward.
 	 * @param wardId the ward id.
 	 * @return the next prog or <code>null</code> if the operation fails.
+	 * @throws OHServiceException 
 	 */
-	public int getNextYProg(String wardId){
+	public int getNextYProg(String wardId) throws OHServiceException{
 		try {
 			return ioOperations.getNextYProg(wardId);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return 1;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
 	/**
 	 * Lists the {@link AdmissionType}s.
 	 * @return the admission types  or <code>null</code> if the operation fails.
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<AdmissionType> getAdmissionType(){	
+	public ArrayList<AdmissionType> getAdmissionType() throws OHServiceException{	
 		try {
 			return ioOperations.getAdmissionType();
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
 	/**
 	 * Lists the {@link DischargeType}s.
 	 * @return the discharge types  or <code>null</code> if the operation fails.
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<DischargeType> getDischargeType(){	
+	public ArrayList<DischargeType> getDischargeType() throws OHServiceException{	
 		try {
 			return ioOperations.getDischargeType();
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -131,13 +216,23 @@ public class AdmissionBrowserManager {
 	 * Inserts a new admission.
 	 * @param admission the admission to insert.
 	 * @return <code>true</code> if the admission has been successfully inserted, <code>false</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public boolean newAdmission(Admission admission){
+	public boolean newAdmission(Admission admission) throws OHServiceException{
 		try {
 			return ioOperations.newAdmission(admission);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -145,43 +240,71 @@ public class AdmissionBrowserManager {
 	 * Inserts a new {@link Admission} and the returns the generated id.
 	 * @param admission the admission to insert.
 	 * @return the generated id or <code>null</code> if the operation fails.
+	 * @throws OHServiceException 
 	 */
-	public int newAdmissionReturnKey(Admission admission){
+	public int newAdmissionReturnKey(Admission admission) throws OHServiceException{
 		try {
 			return ioOperations.newAdmissionReturnKey(admission);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return -1;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
 	/**
+	 * Check is the specified {@link Admission} object modified.
+	 * @param admission the admission object to update.
+	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
+	 * @throws OHServiceException 
+	 */
+	public boolean isAdmissionModified(Admission admission) throws OHServiceException{
+		try {
+			return ioOperations.hasAdmissionModified(admission);
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+		}
+	}
+	
+	/**
 	 * Updates the specified {@link Admission} object.
 	 * @param admission the admission object to update.
 	 * @return <code>true</code> if has been updated, <code>false</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public boolean updateAdmission(Admission admission){
+	public boolean updateAdmission(Admission admission) throws OHServiceException{
 		try {
-			boolean recordUpdated = ioOperations.hasAdmissionModified(admission);
-
-			if (!recordUpdated) { 
-				// it was not updated
-				return ioOperations.updateAdmission(admission);
-			} else { 
-				// it was updated by someone else
-				String message = MessageBundle.getMessage("angal.admission.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
-				int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
-				boolean overWrite = response== JOptionPane.OK_OPTION;
-
-				if (overWrite) {
-					// the user has confirmed he wants to overwrite the record
-					return ioOperations.updateAdmission(admission);
-				}
-			}
-			return false;
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+			return ioOperations.updateAdmission(admission);
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -189,13 +312,23 @@ public class AdmissionBrowserManager {
 	 * Sets an admission record to deleted.
 	 * @param admissionId the admission id.
 	 * @return <code>true</code> if the record has been set to delete.
+	 * @throws OHServiceException 
 	 */
-	public boolean setDeleted(int admissionId){
+	public boolean setDeleted(int admissionId) throws OHServiceException{
 		try {
 			return ioOperations.setDeleted(admissionId);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -203,13 +336,23 @@ public class AdmissionBrowserManager {
 	 * Counts the number of used bed for the specified ward.
 	 * @param wardId the ward id.
 	 * @return the number of used beds.
+	 * @throws OHServiceException 
 	 */
-	public int getUsedWardBed(String wardId) {
+	public int getUsedWardBed(String wardId) throws OHServiceException {
 		try {
 			return ioOperations.getUsedWardBed(wardId);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return 0;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -217,13 +360,23 @@ public class AdmissionBrowserManager {
 	 * Deletes the patient photo.
 	 * @param patientId the patient id.
 	 * @return <code>true</code> if the photo has been deleted, <code>false</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public boolean deletePatientPhoto(int id) {
+	public boolean deletePatientPhoto(int id) throws OHServiceException {
 		try {
 			return ioOperations.deletePatientPhoto(id);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 }

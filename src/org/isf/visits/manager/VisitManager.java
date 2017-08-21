@@ -17,6 +17,8 @@ import org.isf.patient.model.Patient;
 import org.isf.sms.model.Sms;
 import org.isf.sms.service.SmsOperations;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.visits.model.Visit;
 import org.isf.visits.service.VisitsIoOperations;
 import org.joda.time.DateTime;
@@ -101,7 +103,13 @@ public class VisitManager {
 						}
 					}
 				}
-			} catch (OHException e) {
+			}  catch (OHServiceException e) {
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}catch (OHException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage());
 				return false;
 			}

@@ -37,6 +37,8 @@ import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.Menu;
 import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.ward.model.Ward;
 
 public class MedicalStockSelection extends JDialog implements ActionListener{
@@ -336,7 +338,17 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 		org.isf.ward.manager.WardBrowserManager wbm = new org.isf.ward.manager.WardBrowserManager();
 		wardBox = new JComboBox();
 		wardBox.addItem("All");
-		ArrayList<Ward> wardList = wbm.getWards();
+		ArrayList<Ward> wardList;
+		try {
+			wardList = wbm.getWards();
+		}catch(OHServiceException e){
+			wardList = new ArrayList<Ward>();
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		for (org.isf.ward.model.Ward elem : wardList) {
 			wardBox.addItem(elem);
 		}

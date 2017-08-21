@@ -19,6 +19,8 @@ import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
 import org.isf.therapy.service.TherapyIoOperations;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.joda.time.DateTime;
 
 public class TherapyManager {
@@ -155,6 +157,7 @@ public class TherapyManager {
 							if (date.after(now.toDateMidnight().toGregorianCalendar())) {
 								Patient pat = patMan.getPatient(thRow.getPatID().getName());
 								
+								
 								Sms sms = new Sms();
 								sms.setSmsDateSched(date.getTime());
 								sms.setSmsNumber(pat.getTelephone());
@@ -167,7 +170,13 @@ public class TherapyManager {
 						}
 					}
 				}
-			} catch (OHException e) {
+			}  catch (OHServiceException e) {
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}catch (OHException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage());
 				return false;
 			}

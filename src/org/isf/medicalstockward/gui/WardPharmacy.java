@@ -61,6 +61,8 @@ import org.isf.patient.model.Patient;
 import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.excel.ExcelExporter;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.ward.manager.WardBrowserManager;
@@ -807,7 +809,16 @@ public class WardPharmacy extends ModalJFrame implements
 		if (jComboBoxWard == null) {
 			jComboBoxWard = new JComboBox();
 			WardBrowserManager wardManager = new WardBrowserManager();
-			wardList = wardManager.getWards();
+			try {
+				wardList = wardManager.getWards();
+			}catch(OHServiceException e){
+				wardList = new ArrayList<Ward>();
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			jComboBoxWard.addItem(MessageBundle.getMessage("angal.medicalstockward.selectaward"));
 			for (Ward ward : wardList) {
 				if (ward.isPharmacy())
