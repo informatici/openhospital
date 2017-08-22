@@ -656,7 +656,15 @@ public class PatientInsertExtended extends JDialog {
 			AgeType ageType = null;
 			
 			if (index > 0) {
-				ageType = at.getTypeByCode(index);
+				try {
+					ageType = at.getTypeByCode(index);
+				}catch(OHServiceException e){
+					if(e.getMessages() != null){
+						for(OHExceptionMessage msg : e.getMessages()){
+							JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+						}
+					}
+				}
 			} else
 				return false;
 
@@ -1453,7 +1461,17 @@ public class PatientInsertExtended extends JDialog {
 			jAgeDescComboBox = new JComboBox();
 
 			AgeTypeBrowserManager at = new AgeTypeBrowserManager();
-			ArrayList<AgeType> ageList = at.getAgeType();
+			ArrayList<AgeType> ageList;
+			try {
+				ageList = at.getAgeType();
+			}catch(OHServiceException e){
+				ageList = new ArrayList<AgeType>();
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			jAgeDescComboBox.addItem("");
 			for (AgeType ag : ageList) {
 				jAgeDescComboBox.addItem(MessageBundle.getMessage(ag.getDescription()));
