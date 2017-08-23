@@ -14,12 +14,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
-import org.isf.utils.jobjects.*;
-
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class PregnantTreatmentTypeEdit extends JDialog{
 
@@ -208,52 +209,59 @@ public class PregnantTreatmentTypeEdit extends JDialog{
 						
 						return;	
 					}
-					if(insert){
-					if (manager.codeControl(key)){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.preagtreattype.codealreadyinuse"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						codeTextField.setText("");
-						return;	
-					}};
-					if (descriptionTextField.getText().equals("")){
-						JOptionPane.showMessageDialog(				
-		                        null,
-		                        MessageBundle.getMessage("angal.preagtreattype.pleaseinsertavaliddescription"),
-		                        MessageBundle.getMessage("angal.hospital"),
-		                        JOptionPane.PLAIN_MESSAGE);
-						return;	
+					try{
+						if(insert){
+							if (manager.codeControl(key)){
+								JOptionPane.showMessageDialog(				
+										null,
+										MessageBundle.getMessage("angal.preagtreattype.codealreadyinuse"),
+										MessageBundle.getMessage("angal.hospital"),
+										JOptionPane.PLAIN_MESSAGE);
+								codeTextField.setText("");
+								return;	
+							}};
+							if (descriptionTextField.getText().equals("")){
+								JOptionPane.showMessageDialog(				
+										null,
+										MessageBundle.getMessage("angal.preagtreattype.pleaseinsertavaliddescription"),
+										MessageBundle.getMessage("angal.hospital"),
+										JOptionPane.PLAIN_MESSAGE);
+								return;	
+							}
+							if (descriptionTextField.getText().equals(lastdescription)){
+								dispose();	
+							}
+							pregnantTreatmentType.setDescription(descriptionTextField.getText());
+							pregnantTreatmentType.setCode(codeTextField.getText());
+							boolean result = false;
+							if (insert) {      // inserting
+								result = manager.newPregnantTreatmentType(pregnantTreatmentType);
+								if (result) {
+									firePregnantTreatmentInserted();
+								}
+								if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.preagtreattype.thedatacouldnotbesaved"));
+								else  dispose();
+							}
+							else {                          // updating
+								if (descriptionTextField.getText().equals(lastdescription)){
+									dispose();	
+								}else{
+									result = manager.updatePregnantTreatmentType(pregnantTreatmentType);
+									if (result) {
+										firePregnantTreatmentUpdated();
+									}
+									if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.preagtreattype.thedatacouldnotbesaved"));
+									else  dispose();
+								}
+
+							}
+					}catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
 					}
-					if (descriptionTextField.getText().equals(lastdescription)){
-						dispose();	
-					}
-					pregnantTreatmentType.setDescription(descriptionTextField.getText());
-					pregnantTreatmentType.setCode(codeTextField.getText());
-					boolean result = false;
-					if (insert) {      // inserting
-						result = manager.newPregnantTreatmentType(pregnantTreatmentType);
-						if (result) {
-                           firePregnantTreatmentInserted();
-                        }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.preagtreattype.thedatacouldnotbesaved"));
-	                    else  dispose();
-                    }
-                    else {                          // updating
-                    	if (descriptionTextField.getText().equals(lastdescription)){
-    						dispose();	
-    					}else{
-    						result = manager.updatePregnantTreatmentType(pregnantTreatmentType);
-						if (result) {
-							firePregnantTreatmentUpdated();
-                        }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.preagtreattype.thedatacouldnotbesaved"));
-                        else  dispose();
-    					}
-                    	
-					}
-					
                 }
 			});
 		}

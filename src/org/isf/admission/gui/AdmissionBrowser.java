@@ -271,9 +271,9 @@ public class AdmissionBrowser extends JDialog {
 	
 	private DiseaseBrowserManager dbm = new DiseaseBrowserManager();
 
-	private ArrayList<Disease> diseaseInList = dbm.getDiseaseIpdIn();
+	private ArrayList<Disease> diseaseInList;
 	
-	private ArrayList<Disease> diseaseOutList = dbm.getDiseaseIpdOut();
+	private ArrayList<Disease> diseaseOutList;
 
 	private JCheckBox malnuCheck;
 
@@ -390,22 +390,24 @@ public class AdmissionBrowser extends JDialog {
 		}
 		ps = new PatientSummary(patient);
 
-		if (editing) {
-			try {
+		try {
+			diseaseOutList = dbm.getDiseaseIpdOut();
+			diseaseInList = dbm.getDiseaseIpdIn();
+			if (editing) {
 				admission = admMan.getCurrentAdmission(patient);
-			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
+				if (admission.getWard().getCode().equalsIgnoreCase("M")) {
+					viewingPregnancy = true;
+				} else {
+				}
+			} else {
+				admission = new Admission();
+			}
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
 				}
 			}
-			if (admission.getWard().getCode().equalsIgnoreCase("M")) {
-				viewingPregnancy = true;
-			} else {
-			}
-		} else {
-			admission = new Admission();
 		}
 		initialize(parentFrame);
 		
@@ -435,6 +437,8 @@ public class AdmissionBrowser extends JDialog {
 		ps = new PatientSummary(patient);
 
 		try {
+			diseaseOutList = dbm.getDiseaseIpdOut();
+			diseaseInList = dbm.getDiseaseIpdIn();
 			admission = admMan.getAdmission(anAdmission.getId());
 		}catch(OHServiceException e){
 			if(e.getMessages() != null){
@@ -702,12 +706,22 @@ public class AdmissionBrowser extends JDialog {
 			PregnantTreatmentTypeBrowserManager abm = new PregnantTreatmentTypeBrowserManager();
 			treatmTypeBox = new JComboBox();
 			treatmTypeBox.addItem("");
-			treatmTypeList = abm.getPregnantTreatmentType();
-			for (PregnantTreatmentType elem : treatmTypeList) {
-				treatmTypeBox.addItem(elem);
-				if (editing) {
-					if (admission.getPregTreatmentType() != null && admission.getPregTreatmentType().getCode().equalsIgnoreCase(elem.getCode())) {
-						treatmTypeBox.setSelectedItem(elem);
+			try {
+				treatmTypeList = abm.getPregnantTreatmentType();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			if(treatmTypeList != null){
+				for (PregnantTreatmentType elem : treatmTypeList) {
+					treatmTypeBox.addItem(elem);
+					if (editing) {
+						if (admission.getPregTreatmentType() != null && admission.getPregTreatmentType().getCode().equalsIgnoreCase(elem.getCode())) {
+							treatmTypeBox.setSelectedItem(elem);
+						}
 					}
 				}
 			}
@@ -762,16 +776,25 @@ public class AdmissionBrowser extends JDialog {
 			DeliveryResultTypeBrowserManager drtbm = new DeliveryResultTypeBrowserManager();
 			deliveryResultTypeBox = new JComboBox();
 			deliveryResultTypeBox.addItem("");
-			deliveryResultTypeList = drtbm.getDeliveryResultType();
-			for (DeliveryResultType elem : deliveryResultTypeList) {
-				deliveryResultTypeBox.addItem(elem);
-				if (editing) {
-					if (admission.getDeliveryResult() != null && admission.getDeliveryResult().getCode().equalsIgnoreCase(elem.getCode())) {
-						deliveryResultTypeBox.setSelectedItem(elem);
+			try {
+				deliveryResultTypeList = drtbm.getDeliveryResultType();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
 					}
 				}
 			}
-			
+			if(deliveryResultTypeList != null){
+				for (DeliveryResultType elem : deliveryResultTypeList) {
+					deliveryResultTypeBox.addItem(elem);
+					if (editing) {
+						if (admission.getDeliveryResult() != null && admission.getDeliveryResult().getCode().equalsIgnoreCase(elem.getCode())) {
+							deliveryResultTypeBox.setSelectedItem(elem);
+						}
+					}
+				}
+			}
 			deliveryResultTypePanel.add(deliveryResultTypeBox);
 			deliveryResultTypePanel.setBorder(BorderFactory.createTitledBorder(MessageBundle.getMessage("angal.admission.deliveryresultype")));
 		}
@@ -785,12 +808,22 @@ public class AdmissionBrowser extends JDialog {
 			DeliveryTypeBrowserManager dtbm = new DeliveryTypeBrowserManager();
 			deliveryTypeBox = new JComboBox();
 			deliveryTypeBox.addItem("");
-			deliveryTypeList = dtbm.getDeliveryType();
-			for (DeliveryType elem : deliveryTypeList) {
-				deliveryTypeBox.addItem(elem);
-				if (editing) {
-					if (admission.getDeliveryType() != null && admission.getDeliveryType().getCode().equalsIgnoreCase(elem.getCode())) {
-						deliveryTypeBox.setSelectedItem(elem);
+			try {
+				deliveryTypeList = dtbm.getDeliveryType();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			if(deliveryTypeList != null){
+				for (DeliveryType elem : deliveryTypeList) {
+					deliveryTypeBox.addItem(elem);
+					if (editing) {
+						if (admission.getDeliveryType() != null && admission.getDeliveryType().getCode().equalsIgnoreCase(elem.getCode())) {
+							deliveryTypeBox.setSelectedItem(elem);
+						}
 					}
 				}
 			}
@@ -1032,12 +1065,22 @@ public class AdmissionBrowser extends JDialog {
 			diseaseInBox.setPreferredSize(new Dimension(preferredWidthDiagnosis, preferredHeightLine));
 			diseaseInBox.addItem("");
 			if (editing) {
-				diseaseInList = dbm.getDiseaseAll();
-				for (Disease elem : diseaseInList) {
-					diseaseInBox.addItem(elem);
-					if (admission.getDiseaseIn().getCode() != null && admission.getDiseaseIn().getCode().equalsIgnoreCase(elem.getCode())) {
-						diseaseInBox.setSelectedItem(elem);
-						found = true;
+				try {
+					diseaseInList = dbm.getDiseaseAll();
+				}catch(OHServiceException e){
+					if(e.getMessages() != null){
+						for(OHExceptionMessage msg : e.getMessages()){
+							JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+						}
+					}
+				}
+				if(diseaseInList != null){
+					for (Disease elem : diseaseInList) {
+						diseaseInBox.addItem(elem);
+						if (admission.getDiseaseIn().getCode() != null && admission.getDiseaseIn().getCode().equalsIgnoreCase(elem.getCode())) {
+							diseaseInBox.setSelectedItem(elem);
+							found = true;
+						}
 					}
 				}
 			} else {
@@ -1165,12 +1208,22 @@ public class AdmissionBrowser extends JDialog {
 		diseaseOut1Box.setPreferredSize(new Dimension(preferredWidthDiagnosis, preferredHeightLine));
 		diseaseOut1Box.addItem("");
 		if (editing) {
-			diseaseOutList = dbm.getDiseaseAll();
-			for (Disease elem : diseaseOutList) {
-				diseaseOut1Box.addItem(elem);
-				if (admission.getDiseaseOut1() != null && admission.getDiseaseOut1().getCode().equalsIgnoreCase(elem.getCode())) {
-					diseaseOut1Box.setSelectedItem(elem);
-					found = true;
+			try {
+				diseaseOutList = dbm.getDiseaseAll();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			if(diseaseOutList != null){
+				for (Disease elem : diseaseOutList) {
+					diseaseOut1Box.addItem(elem);
+					if (admission.getDiseaseOut1() != null && admission.getDiseaseOut1().getCode().equalsIgnoreCase(elem.getCode())) {
+						diseaseOut1Box.setSelectedItem(elem);
+						found = true;
+					}
 				}
 			}
 		} else {
@@ -1201,12 +1254,22 @@ public class AdmissionBrowser extends JDialog {
 		diseaseOut2Box.setPreferredSize(new Dimension(preferredWidthDiagnosis, preferredHeightLine));
 		diseaseOut2Box.addItem("");
 		if (editing) {
-			diseaseOutList = dbm.getDiseaseAll();
-			for (Disease elem : diseaseOutList) {
-				diseaseOut2Box.addItem(elem);
-				if (admission.getDiseaseOut2() != null && admission.getDiseaseOut2().getCode().equalsIgnoreCase(elem.getCode())) {
-					diseaseOut2Box.setSelectedItem(elem);
-					found = true;
+			try {
+				diseaseOutList = dbm.getDiseaseAll();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			if(diseaseOutList != null){
+				for (Disease elem : diseaseOutList) {
+					diseaseOut2Box.addItem(elem);
+					if (admission.getDiseaseOut2() != null && admission.getDiseaseOut2().getCode().equalsIgnoreCase(elem.getCode())) {
+						diseaseOut2Box.setSelectedItem(elem);
+						found = true;
+					}
 				}
 			}
 		} else {
@@ -1236,12 +1299,22 @@ public class AdmissionBrowser extends JDialog {
 		diseaseOut3Box.setPreferredSize(new Dimension(preferredWidthDiagnosis, preferredHeightLine));
 		diseaseOut3Box.addItem("");
 		if (editing) {
-			diseaseOutList = dbm.getDiseaseAll();
-			for (Disease elem : diseaseOutList) {
-				diseaseOut3Box.addItem(elem);
-				if (admission.getDiseaseOut3() != null && admission.getDiseaseOut3().getCode().equalsIgnoreCase(elem.getCode())) {
-					diseaseOut3Box.setSelectedItem(elem);
-					found = true;
+			try {
+				diseaseOutList = dbm.getDiseaseAll();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			if(diseaseOutList != null){
+				for (Disease elem : diseaseOutList) {
+					diseaseOut3Box.addItem(elem);
+					if (admission.getDiseaseOut3() != null && admission.getDiseaseOut3().getCode().equalsIgnoreCase(elem.getCode())) {
+						diseaseOut3Box.setSelectedItem(elem);
+						found = true;
+					}
 				}
 			}
 		} else {
@@ -1282,12 +1355,22 @@ public class AdmissionBrowser extends JDialog {
 			OperationBrowserManager obm = new OperationBrowserManager();
 			operationBox = new JComboBox();
 			operationBox.addItem("");
-			operationList = obm.getOperation();
-			for (Operation elem : operationList) {
-				operationBox.addItem(elem);
-				if (editing) {
-					if (admission.getOperation() != null && admission.getOperation().getCode().equalsIgnoreCase(elem.getCode())) {
-						operationBox.setSelectedItem(elem);
+			try {
+				operationList = obm.getOperation();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			if(operationList != null){
+				for (Operation elem : operationList) {
+					operationBox.addItem(elem);
+					if (editing) {
+						if (admission.getOperation() != null && admission.getOperation().getCode().equalsIgnoreCase(elem.getCode())) {
+							operationBox.setSelectedItem(elem);
+						}
 					}
 				}
 			}

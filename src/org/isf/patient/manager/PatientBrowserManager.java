@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import org.isf.accounting.manager.BillBrowserManager;
 import org.isf.accounting.model.Bill;
 import org.isf.admission.manager.AdmissionBrowserManager;
@@ -262,16 +260,7 @@ public class PatientBrowserManager {
 		boolean billPending = false;
 		BillBrowserManager billMan = new BillBrowserManager();
 		ArrayList<Bill> bills = billMan.getPendingBills(mergedPatient.getCode());
-		try {
-			bills = billMan.getPendingBills(mergedPatient.getCode());
-		}catch(OHServiceException e){
-			bills = new ArrayList<Bill>();
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
-		}
+		bills = billMan.getPendingBills(mergedPatient.getCode());
 		if (bills != null && !bills.isEmpty()) billPending = true;
 		else {
 			bills = billMan.getPendingBills(patient2.getCode());

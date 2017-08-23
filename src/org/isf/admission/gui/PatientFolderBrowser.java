@@ -491,34 +491,21 @@ public class PatientFolderBrowser extends ModalJFrame implements
 
 		public AdmissionBrowserModel() {
 			AdmissionBrowserManager manager = new AdmissionBrowserManager();
+			DiseaseBrowserManager dbm = new DiseaseBrowserManager();
+			WardBrowserManager wbm = new WardBrowserManager();
+			OpdBrowserManager opd = new OpdBrowserManager();
 			try {
 				admList = manager.getAdmissions(patient);
-			}catch(OHServiceException ex){
-				if(ex.getMessages() != null){
-					for(OHExceptionMessage msg : ex.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
-			}
-//			Collections.sort(admList);
-//			Collections.reverse(admList);
-			DiseaseBrowserManager dbm = new DiseaseBrowserManager();
-			disease = dbm.getDiseaseAll();
-//			org.isf.operation.manager.OperationBrowserManager obm = new org.isf.operation.manager.OperationBrowserManager();
-//			operation = obm.getOperation();
-			WardBrowserManager wbm = new WardBrowserManager();
-			try {
+				disease = dbm.getDiseaseAll();
 				ward = wbm.getWards();
+				opdList = opd.getOpdList(patient.getCode());
 			}catch(OHServiceException e){
-				ward = new ArrayList<Ward>();
 				if(e.getMessages() != null){
 					for(OHExceptionMessage msg : e.getMessages()){
 						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
 					}
 				}
 			}
-			OpdBrowserManager opd = new OpdBrowserManager();
-			opdList = opd.getOpdList(patient.getCode());
 		}
 		
 		

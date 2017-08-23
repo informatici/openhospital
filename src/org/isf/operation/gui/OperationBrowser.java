@@ -24,6 +24,8 @@ import org.isf.operation.manager.OperationBrowserManager;
 import org.isf.operation.model.Operation;
 import org.isf.opetype.manager.OperationTypeBrowserManager;
 import org.isf.opetype.model.OperationType;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -173,11 +175,18 @@ public class OperationBrowser extends ModalJFrame implements OperationEdit.Opera
 							MessageBundle.getMessage("angal.operation.deleteoperation")+" \""+m.getDescription()+"\" ?",
 							MessageBundle.getMessage("angal.hospital"),
 							JOptionPane.YES_NO_OPTION);
-					
-					if ((n == JOptionPane.YES_OPTION) && (manager.deleteOperation(m))){
-						pOperation.remove(table.getSelectedRow());
-						model.fireTableDataChanged();
-						table.updateUI();
+					try{
+						if ((n == JOptionPane.YES_OPTION) && (manager.deleteOperation(m))){
+							pOperation.remove(table.getSelectedRow());
+							model.fireTableDataChanged();
+							table.updateUI();
+						}
+					}catch(OHServiceException e){
+						if(e.getMessages() != null){
+							for(OHExceptionMessage msg : e.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
 					}
 				}
 			}
@@ -207,11 +216,27 @@ public class OperationBrowser extends ModalJFrame implements OperationEdit.Opera
 
 		public OperationBrowserModel(String s) {
 			OperationBrowserManager manager = new OperationBrowserManager();
-			pOperation = manager.getOperation(s);
+			try {
+				pOperation = manager.getOperation(s);
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 		}
 		public OperationBrowserModel() {
 			OperationBrowserManager manager = new OperationBrowserManager();
-			pOperation = manager.getOperation();
+			try {
+				pOperation = manager.getOperation();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			
 		}
 		public int getRowCount() {

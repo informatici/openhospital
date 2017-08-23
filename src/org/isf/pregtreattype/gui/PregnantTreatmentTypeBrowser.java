@@ -21,6 +21,8 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.pregtreattype.gui.PregnantTreatmentTypeEdit.PregnantTreatmentTypeListener;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -199,12 +201,19 @@ public class PregnantTreatmentTypeBrowser extends ModalJFrame implements Pregnan
 						int n = JOptionPane.showConfirmDialog(null,
 								MessageBundle.getMessage("angal.preagtreattype.deletetreatmenttype") + " \" "+dis.getDescription() + "\" ?",
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
-						
-						if ((n == JOptionPane.YES_OPTION)
-								&& (manager.deletePregnantTreatmentType(dis))) {
-							pPregnantTreatmentType.remove(jTable.getSelectedRow());
-							model.fireTableDataChanged();
-							jTable.updateUI();
+						try{
+							if ((n == JOptionPane.YES_OPTION)
+									&& (manager.deletePregnantTreatmentType(dis))) {
+								pPregnantTreatmentType.remove(jTable.getSelectedRow());
+								model.fireTableDataChanged();
+								jTable.updateUI();
+							}
+						}catch(OHServiceException e){
+							if(e.getMessages() != null){
+								for(OHExceptionMessage msg : e.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
 						}
 					}
 				}
@@ -235,7 +244,15 @@ class PregnantTreatmentTypeBrowserModel extends DefaultTableModel {
 
 		public PregnantTreatmentTypeBrowserModel() {
 			PregnantTreatmentTypeBrowserManager manager = new PregnantTreatmentTypeBrowserManager();
-			pPregnantTreatmentType = manager.getPregnantTreatmentType();
+			try {
+				pPregnantTreatmentType = manager.getPregnantTreatmentType();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 		}
 		
 		public int getRowCount() {

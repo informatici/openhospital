@@ -33,6 +33,8 @@ import org.isf.priceslist.model.PriceList;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.serviceprinting.manager.PrintManager;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.treetable.JTreeTable;
 
@@ -75,7 +77,7 @@ public class PricesBrowser extends ModalJFrame {
     
     private PriceNode opeNodes;
     private OperationBrowserManager operManager = new OperationBrowserManager();
-    private ArrayList<Operation> operArray = operManager.getOperation();
+    private ArrayList<Operation> operArray;
        
     private PriceNode medNodes;
     private MedicalBrowsingManager mediManager = new MedicalBrowsingManager();
@@ -86,6 +88,15 @@ public class PricesBrowser extends ModalJFrame {
     private ArrayList<PricesOthers> othArray = othManager.getOthers();
 	
 	public PricesBrowser() {
+		try {
+			operArray = operManager.getOperation();
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		initComponents();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -313,7 +324,15 @@ public class PricesBrowser extends ModalJFrame {
 		listArray = listManager.getLists();
 		priceArray = listManager.getPrices();
 		examArray = examManager.getExams();
-	    operArray = operManager.getOperation();
+	    try {
+			operArray = operManager.getOperation();
+	    }catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 	    mediArray = mediManager.getMedicals();
 	    othArray = othManager.getOthers();
 	}

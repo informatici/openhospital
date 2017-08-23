@@ -25,16 +25,20 @@ public class DeliveryTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<DeliveryType> deliveryTypes = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM DELIVERYTYPE ORDER BY DLT_DESC";
-		jpa.createQuery(query, DeliveryType.class, false);
-		List<DeliveryType> deliveryList = (List<DeliveryType>)jpa.getList();
-		deliveryTypes = new ArrayList<DeliveryType>(deliveryList);			
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM DELIVERYTYPE ORDER BY DLT_DESC";
+			jpa.createQuery(query, DeliveryType.class, false);
+			List<DeliveryType> deliveryList = (List<DeliveryType>)jpa.getList();
+			deliveryTypes = new ArrayList<DeliveryType>(deliveryList);			
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return deliveryTypes;
 	}
 
@@ -49,12 +53,16 @@ public class DeliveryTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		
-		jpa.beginTransaction();	
-		jpa.merge(deliveryType);
-    	jpa.commitTransaction();
-    	
+
+		try{
+			jpa.beginTransaction();	
+			jpa.merge(deliveryType);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}     	
 		return result;	
 	}
 
@@ -70,11 +78,15 @@ public class DeliveryTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(deliveryType);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(deliveryType);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;
 	}
 
@@ -89,13 +101,17 @@ public class DeliveryTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		
-		jpa.beginTransaction();	
-		DeliveryType objToRemove = (DeliveryType) jpa.find(DeliveryType.class, deliveryType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
+
+		try{
+			jpa.beginTransaction();	
+			DeliveryType objToRemove = (DeliveryType) jpa.find(DeliveryType.class, deliveryType.getCode());
+			jpa.remove(objToRemove);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;	
 	}
 
@@ -112,15 +128,19 @@ public class DeliveryTypeIoOperation {
 		DeliveryType deliveryType;
 		boolean result = false;
 		
-		
-		jpa.beginTransaction();	
-		deliveryType = (DeliveryType)jpa.find(DeliveryType.class, code);
-		if (deliveryType != null)
-		{
-			result = true;
-		}
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			deliveryType = (DeliveryType)jpa.find(DeliveryType.class, code);
+			if (deliveryType != null)
+			{
+				result = true;
+			}
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;	
 	}
 }

@@ -23,16 +23,20 @@ public class PregnantTreatmentTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<PregnantTreatmentType> pregnantTreatmentTypes = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM PREGNANTTREATMENTTYPE ORDER BY PTT_DESC";
-		jpa.createQuery(query, PregnantTreatmentType.class, false);
-		List<PregnantTreatmentType> pregnantTreatmentList = (List<PregnantTreatmentType>)jpa.getList();
-		pregnantTreatmentTypes = new ArrayList<PregnantTreatmentType>(pregnantTreatmentList);			
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM PREGNANTTREATMENTTYPE ORDER BY PTT_DESC";
+			jpa.createQuery(query, PregnantTreatmentType.class, false);
+			List<PregnantTreatmentType> pregnantTreatmentList = (List<PregnantTreatmentType>)jpa.getList();
+			pregnantTreatmentTypes = new ArrayList<PregnantTreatmentType>(pregnantTreatmentList);			
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return pregnantTreatmentTypes;
 	}
 	
@@ -49,11 +53,15 @@ public class PregnantTreatmentTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(pregnantTreatmentType);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(pregnantTreatmentType);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;
 	}
 	
@@ -69,12 +77,16 @@ public class PregnantTreatmentTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		
-		jpa.beginTransaction();	
-		jpa.merge(pregnantTreatmentType);
-    	jpa.commitTransaction();
-    	
+
+		try{
+			jpa.beginTransaction();	
+			jpa.merge(pregnantTreatmentType);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;	
 	}
 	
@@ -91,12 +103,16 @@ public class PregnantTreatmentTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();
-		PregnantTreatmentType objToRemove = (PregnantTreatmentType) jpa.find(PregnantTreatmentType.class, pregnantTreatmentType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();
+			PregnantTreatmentType objToRemove = (PregnantTreatmentType) jpa.find(PregnantTreatmentType.class, pregnantTreatmentType.getCode());
+			jpa.remove(objToRemove);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;	
 	}
 	
@@ -114,15 +130,19 @@ public class PregnantTreatmentTypeIoOperation {
 		PregnantTreatmentType pregnantTreatmentTyp;
 		boolean result = false;
 		
-		
-		jpa.beginTransaction();	
-		pregnantTreatmentTyp = (PregnantTreatmentType)jpa.find(PregnantTreatmentType.class, code);
-		if (pregnantTreatmentTyp != null)
-		{
-			result = true;
-		}
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			pregnantTreatmentTyp = (PregnantTreatmentType)jpa.find(PregnantTreatmentType.class, code);
+			if (pregnantTreatmentTyp != null)
+			{
+				result = true;
+			}
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;	
 	}
 }
