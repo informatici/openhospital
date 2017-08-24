@@ -642,7 +642,12 @@ public class PatientFolderBrowser extends ModalJFrame implements
 
 		public LabBrowserModel() {
 			org.isf.lab.manager.LabManager lbm = new org.isf.lab.manager.LabManager();
-			labList = lbm.getLaboratory(patient);
+			try {
+				labList = lbm.getLaboratory(patient);
+			} catch (OHServiceException e) {
+				labList = new ArrayList<Laboratory>();
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			}
 		}
 		
 		public int getRowCount() {

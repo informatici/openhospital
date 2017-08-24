@@ -290,9 +290,19 @@ public class LabNew extends JDialog implements SelectionListener {
 						
 						lab = examItems.get(i);
 						if (lab.getExam().getProcedure() == 1) {
-							result = labManager.newLabFirstProcedure(lab);
+							try {
+								result = labManager.newLabFirstProcedure(lab);
+							} catch (OHServiceException e1) {
+								result = false;
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
 						} else {
-							result = labManager.newLabSecondProcedure(lab, examResults.get(i));
+							try {
+								result = labManager.newLabSecondProcedure(lab, examResults.get(i));
+							} catch (OHServiceException e1) {
+								result = false;
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
 						}
 						if (!result) {
 							JOptionPane.showMessageDialog(null,

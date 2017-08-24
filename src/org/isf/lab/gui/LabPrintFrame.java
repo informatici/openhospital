@@ -5,7 +5,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -14,9 +13,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.lab.model.LaboratoryForPrint;
 import org.isf.serviceprinting.manager.PrintManager;
-import org.isf.generaldata.MessageBundle;
 
 public class LabPrintFrame extends JDialog{
 
@@ -41,7 +40,7 @@ public class LabPrintFrame extends JDialog{
 	
 	private List<LaboratoryForPrint> labList = null;
 	
-	public LabPrintFrame (JFrame owner, ArrayList<LaboratoryForPrint> labs) {
+	public LabPrintFrame (JFrame owner, List<LaboratoryForPrint> labs) {
 		super(owner, true);
 		initialize();
 		labList = labs;

@@ -602,14 +602,34 @@ public class LabEdit extends JDialog {
 					boolean result = false;
 					if (insert) {
 						if (examSelected.getProcedure() == 1)
-							result = manager.newLabFirstProcedure(lab);
+							try {
+								result = manager.newLabFirstProcedure(lab);
+							} catch (OHServiceException e1) {
+								result = false;
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
 						else if (examSelected.getProcedure() == 2)
-							result = manager.newLabSecondProcedure(lab,	labRow);
+							try {
+								result = manager.newLabSecondProcedure(lab,	labRow);
+							} catch (OHServiceException e1) {
+								result = false;
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
 					} else {
 						if (examSelected.getProcedure() == 1)
-							result = manager.editLabFirstProcedure(lab);
+							try {
+								result = manager.editLabFirstProcedure(lab);
+							} catch (OHServiceException e1) {
+								result = false;
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
 						else if (examSelected.getProcedure() == 2)
-							result = manager.editLabSecondProcedure(lab,	labRow);
+							try {
+								result = manager.editLabSecondProcedure(lab,	labRow);
+							} catch (OHServiceException e1) {
+								result = false;
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							}
 					}
 
 					if (!result)
@@ -663,8 +683,13 @@ public class LabEdit extends JDialog {
 		} else {
 			LabRowManager lRowManager = new LabRowManager();
 
-			ArrayList<LaboratoryRow> lRows = lRowManager.getLabRow(lab
-					.getCode());
+			ArrayList<LaboratoryRow> lRows;
+			try {
+				lRows = lRowManager.getLabRow(lab.getCode());
+			} catch (OHServiceException e) {
+				lRows = new ArrayList<LaboratoryRow>();
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			}
 			boolean find;
 			for (ExamRow r : eRows) {
 				find = false;
