@@ -139,7 +139,11 @@ public class PricesBrowser extends ModalJFrame {
 
 				public void actionPerformed(ActionEvent arg0) {
 					
-					new PrintManager("PriceList", listManager.convertPrice(listSelected, priceArray), 0);
+					try {
+						new PrintManager("PriceList", listManager.convertPrice(listSelected, priceArray), 0);
+					} catch (OHServiceException e) {
+						JOptionPane.showMessageDialog(PricesBrowser.this, e.getMessage());
+					}
 				}
 			});
 		}

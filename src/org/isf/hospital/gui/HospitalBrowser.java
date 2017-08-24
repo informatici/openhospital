@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.hospital.model.Hospital;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
@@ -56,7 +57,7 @@ public class HospitalBrowser extends ModalJFrame{
 	private JTextField emailJTextField;
 	private JTextField currencyCodJTextField;
 	private HospitalBrowsingManager manager;
-	private Hospital hospital;
+	private Hospital hospital = null;
 	private JButton EditJButton;
 	private JButton UpdateJButton;
 	private JButton ExitJButton;
@@ -65,7 +66,12 @@ public class HospitalBrowser extends ModalJFrame{
 	public HospitalBrowser(){
 		super();			
 		manager = new HospitalBrowsingManager();
-		hospital= manager.getHospital();
+		try {
+			hospital= manager.getHospital();
+		} catch (OHServiceException e) {
+			this.hospital = null;
+			JOptionPane.showMessageDialog(HospitalBrowser.this, e.getMessage());
+		}
 		initialize();
 		setVisible(true);
 		pack();
@@ -226,9 +232,11 @@ public class HospitalBrowser extends ModalJFrame{
 			hospital.setFax(faxJTextField.getText());
 			hospital.setEmail(emailJTextField.getText());
 			hospital.setCurrencyCod(currencyCodJTextField.getText());
-			manager.updateHospital(hospital);
+			
+			updateHospital(manager, hospital);
 		}
 	}
+	
 	public JPanel getJButtonPanel() {
 		if (jButtonPanel==null){
 			jButtonPanel= new JPanel();
@@ -284,7 +292,9 @@ public class HospitalBrowser extends ModalJFrame{
 					hospital.setFax(faxJTextField.getText());
 					hospital.setEmail(emailJTextField.getText());
 					hospital.setCurrencyCod(currencyCodJTextField.getText());
-					manager.updateHospital(hospital);
+					
+					updateHospital(manager, hospital);
+					
 					UpdateJButton.setEnabled(false);
 					EditJButton.setEnabled(true);
 				}
@@ -297,6 +307,12 @@ public class HospitalBrowser extends ModalJFrame{
 		return jButtonPanel;
 	}
 	
-	
+	private void updateHospital(HospitalBrowsingManager manager, Hospital hospital) {
+		try {
+			manager.updateHospital(hospital);
+		} catch (OHServiceException e) {
+			JOptionPane.showMessageDialog(HospitalBrowser.this, e.getMessage());
+		}
+	}
 }
 

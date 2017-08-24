@@ -1158,6 +1158,7 @@ public class WardPharmacy extends ModalJFrame implements
 
 				public void actionPerformed(ActionEvent arg0) {
 					
+					try {
 					if (jTabbedPaneWard.getSelectedIndex() == 0) {
 						new PrintManager("WardPharmacyOutcomes", wardManager.convertMovementWardForPrint(wardOutcomes), 0);
 					} else if (jTabbedPaneWard.getSelectedIndex() == 1) {
@@ -1165,6 +1166,9 @@ public class WardPharmacy extends ModalJFrame implements
 					} else if (jTabbedPaneWard.getSelectedIndex() == 2) {
 						new PrintManager("WardPharmacyDrugs", wardManager.convertWardDrugs(wardSelected, wardDrugs), 0);
 					} 
+					} catch (OHServiceException e) {
+						JOptionPane.showMessageDialog(WardPharmacy.this, e.getMessage());
+					}
 				}
 			});
 		}

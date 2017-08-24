@@ -50,9 +50,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import org.isf.accounting.gui.BillBrowser;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.hospital.gui.HospitalBrowser;
 import org.isf.hospital.manager.HospitalBrowsingManager;
+import org.isf.hospital.model.Hospital;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.manager.DateTextField;
@@ -507,7 +510,13 @@ public class MovStockBrowser extends ModalJFrame {
 			jTableTotal = new JTable();
 			
 			HospitalBrowsingManager hospitalManager = new HospitalBrowsingManager();
-			String currencyCod = hospitalManager.getHospitalCurrencyCod();
+			String currencyCod;
+			try {
+				currencyCod = hospitalManager.getHospitalCurrencyCod();
+			} catch (OHServiceException e) {
+				currencyCod = null;
+				JOptionPane.showMessageDialog(MovStockBrowser.this, e.getMessage());
+			}
 			
 			jTableTotal.setModel(new DefaultTableModel(
 					new Object[][] {

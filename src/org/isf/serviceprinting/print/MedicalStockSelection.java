@@ -442,7 +442,11 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 						return ;
 					}
 					ArrayList<Movement4Print> pMovements2 = convertToPrint(pMovements);
-					new PrintManager(path,pMovements2,format);
+					try {
+						new PrintManager(path,pMovements2,format);
+					} catch (OHServiceException e1) {
+						JOptionPane.showMessageDialog(MedicalStockSelection.this, e1.getMessage());
+					}
 				}
 			}
 		});

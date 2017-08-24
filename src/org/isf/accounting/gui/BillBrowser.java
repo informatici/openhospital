@@ -157,13 +157,20 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private ArrayList<BillPayments> paymentsPeriod;
 	private ArrayList<Bill> billFromPayments;
 	
-	private String currencyCod = new HospitalBrowsingManager().getHospitalCurrencyCod();
+	private String currencyCod = null;
 	
 	//Users
 	private String user = MainMenu.getUser();
 	private ArrayList<String> users;
 	
 	public BillBrowser() {
+		try {
+			this.currencyCod = new HospitalBrowsingManager().getHospitalCurrencyCod();
+		} catch (OHServiceException e1) {
+			this.currencyCod = null;
+			JOptionPane.showMessageDialog(BillBrowser.this, e1.getMessage());
+		}
+		
 		try {
 			users = billManager.getUsers();
 		}catch(OHServiceException e){
