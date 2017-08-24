@@ -46,14 +46,18 @@ public class LabIoOperations {
 		ArrayList<LaboratoryRow> laboratoryRows = new ArrayList<LaboratoryRow>();
 		LaboratoryRow laboratoryRow = null;
 				
-		
-		jpa.beginTransaction();
-		
-		laboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, code); 
-		laboratoryRows.add(laboratoryRow);
-		
-		jpa.commitTransaction();
+		try {
+			jpa.beginTransaction();
 
+			laboratoryRow = (LaboratoryRow) jpa.find(LaboratoryRow.class, code);
+			laboratoryRows.add(laboratoryRow);
+
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return laboratoryRows;
 	}
 
@@ -106,26 +110,29 @@ public class LabIoOperations {
 		ArrayList<Laboratory> laboritories = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM LABORATORY JOIN EXAM ON LAB_EXA_ID_A = EXA_ID_A";
-		query += " WHERE LAB_EXAM_DATE >= ? AND LAB_EXAM_DATE <= ?";
-		params.add(dateFrom);	
-		params.add(dateTo);
-		if (exam != null) 
-		{
-			query += " AND EXA_DESC = ?";
-			params.add(exam);
-		}
-		query += " ORDER BY LAB_EXAM_DATE";
-		jpa.createQuery(query, Laboratory.class, false);
-		jpa.setParameters(params, false);
-		List<Laboratory> laboratoryList = (List<Laboratory>)jpa.getList();
-		laboritories = new ArrayList<Laboratory>(laboratoryList);			
-		
-		jpa.commitTransaction();
+		try {
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM LABORATORY JOIN EXAM ON LAB_EXA_ID_A = EXA_ID_A";
+			query += " WHERE LAB_EXAM_DATE >= ? AND LAB_EXAM_DATE <= ?";
+			params.add(dateFrom);
+			params.add(dateTo);
+			if (exam != null) {
+				query += " AND EXA_DESC = ?";
+				params.add(exam);
+			}
+			query += " ORDER BY LAB_EXAM_DATE";
+			jpa.createQuery(query, Laboratory.class, false);
+			jpa.setParameters(params, false);
+			List<Laboratory> laboratoryList = (List<Laboratory>) jpa.getList();
+			laboritories = new ArrayList<Laboratory>(laboratoryList);
+
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return laboritories;
 	}
 	
@@ -143,20 +150,24 @@ public class LabIoOperations {
 		ArrayList<Laboratory> laboritories = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM (LABORATORY JOIN EXAM ON LAB_EXA_ID_A=EXA_ID_A)" +
-				 " LEFT JOIN LABORATORYROW ON LABR_LAB_ID = LAB_ID WHERE LAB_PAT_ID = ? " +
-				 " ORDER BY LAB_DATE, LAB_ID";
-		params.add(aPatient.getCode());			
-		jpa.createQuery(query, Laboratory.class, false);
-		jpa.setParameters(params, false);
-		List<Laboratory> laboratoryList = (List<Laboratory>)jpa.getList();
-		laboritories = new ArrayList<Laboratory>(laboratoryList);			
-		
-		jpa.commitTransaction();
+		try {
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM (LABORATORY JOIN EXAM ON LAB_EXA_ID_A=EXA_ID_A)"
+					+ " LEFT JOIN LABORATORYROW ON LABR_LAB_ID = LAB_ID WHERE LAB_PAT_ID = ? "
+					+ " ORDER BY LAB_DATE, LAB_ID";
+			params.add(aPatient.getCode());
+			jpa.createQuery(query, Laboratory.class, false);
+			jpa.setParameters(params, false);
+			List<Laboratory> laboratoryList = (List<Laboratory>) jpa.getList();
+			laboritories = new ArrayList<Laboratory>(laboratoryList);
+
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return laboritories;
 	}
 	
@@ -213,26 +224,29 @@ public class LabIoOperations {
 		ArrayList<LaboratoryForPrint> pLaboratory = new ArrayList<LaboratoryForPrint>();
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM (LABORATORY JOIN EXAM ON LAB_EXA_ID_A = EXA_ID_A)" +
-				       " JOIN EXAMTYPE ON EXC_ID_A = EXA_EXC_ID_A" +
-					   " WHERE LAB_DATE >= ? AND LAB_DATE <= ?";
-		params.add(dateFrom);	
-		params.add(dateTo);	
-		if (exam != null) 
-		{
-			query += " AND EXA_DESC LIKE ?";
-			params.add('%' + exam + '%');
+		try {
+			jpa.beginTransaction();
+
+			String query = "SELECT * FROM (LABORATORY JOIN EXAM ON LAB_EXA_ID_A = EXA_ID_A)"
+					+ " JOIN EXAMTYPE ON EXC_ID_A = EXA_EXC_ID_A" + " WHERE LAB_DATE >= ? AND LAB_DATE <= ?";
+			params.add(dateFrom);
+			params.add(dateTo);
+			if (exam != null) {
+				query += " AND EXA_DESC LIKE ?";
+				params.add('%' + exam + '%');
+			}
+			query += " ORDER BY EXC_DESC";
+			jpa.createQuery(query, Laboratory.class, false);
+			jpa.setParameters(params, false);
+			List<Laboratory> laboratoryList = (List<Laboratory>) jpa.getList();
+			laboritories = new ArrayList<Laboratory>(laboratoryList);
+
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		query += " ORDER BY EXC_DESC";
-		jpa.createQuery(query, Laboratory.class, false);
-		jpa.setParameters(params, false);
-		List<Laboratory> laboratoryList = (List<Laboratory>)jpa.getList();
-		laboritories = new ArrayList<Laboratory>(laboratoryList);			
-		
-		jpa.commitTransaction();
 		
 		for (Laboratory laboratory : laboritories) 
 		{
@@ -260,11 +274,15 @@ public class LabIoOperations {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(laboratory);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();
+			jpa.persist(laboratory);
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return laboratory.getCode();	
 	}
 	
@@ -308,12 +326,18 @@ public class LabIoOperations {
 		int newCode = newLaboratory(laboratory);
 		if (newCode > 0) 
 		{
-			jpa.beginTransaction();	
-			LaboratoryRow laboratoryRow = new LaboratoryRow();
-			laboratoryRow.setLabId(laboratory);
-			laboratoryRow.setDescription(labRow.get(0));	
-			jpa.persist(laboratoryRow);
-	    	jpa.commitTransaction();
+			try {
+				jpa.beginTransaction();
+				LaboratoryRow laboratoryRow = new LaboratoryRow();
+				laboratoryRow.setLabId(laboratory);
+				laboratoryRow.setDescription(labRow.get(0));
+				jpa.persist(laboratoryRow);
+				jpa.commitTransaction();
+			} catch (OHException e) {
+				// DbJpaUtil managed exception
+				jpa.rollbackTransaction();
+				throw e;
+			}
 
 			result = true;
 		}
@@ -334,11 +358,15 @@ public class LabIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(laboratory);
-    	jpa.commitTransaction();
-		
+		try {
+			jpa.beginTransaction();
+			jpa.merge(laboratory);
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 
@@ -356,20 +384,19 @@ public class LabIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Object> params = new ArrayList<Object>();
 		
-
-		jpa.beginTransaction();
 		try {
+			jpa.beginTransaction();
 			jpa.createQuery("DELETE FROM LABORATORYROW WHERE LABR_LAB_ID = ?", LaboratoryRow.class, false);
 			params.add(laboratory.getCode());
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
+			jpa.commitTransaction();
 		}  catch (OHException e) {
 			result = false;
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
 		}
-		
-		jpa.commitTransaction();
-		
 		return result;
 	}
 
@@ -390,12 +417,18 @@ public class LabIoOperations {
 		
 		if (result == true)
 		{		
-			jpa.beginTransaction();	
-			LaboratoryRow laboratoryRow = new LaboratoryRow();
-			laboratoryRow.setLabId(laboratory);
-			laboratoryRow.setDescription(labRow.get(0));	
-			jpa.persist(laboratoryRow);
-	    	jpa.commitTransaction();
+			try {
+				jpa.beginTransaction();
+				LaboratoryRow laboratoryRow = new LaboratoryRow();
+				laboratoryRow.setLabId(laboratory);
+				laboratoryRow.setDescription(labRow.get(0));
+				jpa.persist(laboratoryRow);
+				jpa.commitTransaction();
+			} catch (OHException e) {
+				// DbJpaUtil managed exception
+				jpa.rollbackTransaction();
+				throw e;
+			}
 		}
 		
 		return result;
@@ -426,13 +459,15 @@ public class LabIoOperations {
 				params.add(objToRemove.getCode());
 				jpa.setParameters(params, false);
 				jpa.executeUpdate();
+				jpa.remove(objToRemove);
+		    	jpa.commitTransaction();
 			}  catch (OHException e) {
+				//DbJpaUtil managed exception
+				jpa.rollbackTransaction();
 				result = false;
 				throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
 			}
 		}
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
 		
 		return result;
 	}

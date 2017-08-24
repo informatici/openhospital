@@ -2,6 +2,7 @@ package org.isf.lab.manager;
 
 import java.util.ArrayList;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.lab.service.LabIoOperations;
@@ -31,6 +32,10 @@ public class LabRowManager {
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch (Exception e) {
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null,
+					MessageBundle.getMessage("angal.lab.problemsoccuredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 }
