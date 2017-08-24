@@ -101,9 +101,21 @@ public class DiseaseBrowser extends ModalJFrame implements DiseaseEdit.DiseaseLi
 		DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
 		pbox = new JComboBox();
 		pbox.addItem(new DiseaseType("0", MessageBundle.getMessage("angal.disease.allm")));
-		ArrayList<DiseaseType> type = manager.getDiseaseType();	//for efficiency in the sequent for
-		for (DiseaseType elem : type) {
-			pbox.addItem(elem);
+		ArrayList<DiseaseType> type = null;
+		try {
+			type = manager.getDiseaseType();
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		//for efficiency in the sequent for
+		if(type != null){
+			for (DiseaseType elem : type) {
+				pbox.addItem(elem);
+			}
 		}
 		pbox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

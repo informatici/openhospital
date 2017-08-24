@@ -253,7 +253,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 	 */
 	private DiseaseTypeBrowserManager typeManager = new DiseaseTypeBrowserManager();
 	private DiseaseBrowserManager manager = new DiseaseBrowserManager();
-	private ArrayList<DiseaseType> types = typeManager.getDiseaseType();
+	private ArrayList<DiseaseType> types;
 	private ArrayList<Disease> diseasesOPD;
 	private ArrayList<Disease> diseasesAll;
 	private OpdBrowserManager opdManager = new OpdBrowserManager();
@@ -273,6 +273,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		opd=old;
 		insert=inserting;
 		try{
+			types = typeManager.getDiseaseType();
 			diseasesOPD = manager.getDiseaseOpd();
 			diseasesAll = manager.getDiseaseAll();
 			if(!insert) {
@@ -299,6 +300,26 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		this.opd = opd;
 		opdPatient = patient;
 		insert=inserting;
+		try{
+			types = typeManager.getDiseaseType();
+			diseasesOPD = manager.getDiseaseOpd();
+			diseasesAll = manager.getDiseaseAll();
+			if(!insert) {
+				if (opd.getPatient().getCode() != 0) { 
+					PatientBrowserManager patBrowser = new PatientBrowserManager();
+					opdPatient = patBrowser.getPatientAll(opd.getPatient().getCode());
+				} else { //old OPD has no PAT_ID => Create Patient from OPD
+					opdPatient = new Patient(opd);
+					opdPatient.setCode(0);
+				}
+			}
+		} catch (OHServiceException e) {
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		initialize();
 	}
 	

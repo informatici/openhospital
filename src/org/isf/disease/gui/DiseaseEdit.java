@@ -413,25 +413,33 @@ public class DiseaseEdit extends JDialog {
 	private JComboBox getTypeComboBox() {
 		if (typeComboBox == null) {
 			typeComboBox = new JComboBox();
-			if (insert) {
-				DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
-				ArrayList<DiseaseType> types = manager.getDiseaseType();
-				for (DiseaseType elem : types) {
-					typeComboBox.addItem(elem);
+			try{
+				if (insert) {
+					DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
+					ArrayList<DiseaseType> types = manager.getDiseaseType();
+					for (DiseaseType elem : types) {
+						typeComboBox.addItem(elem);
+					}
+				} else {
+					DiseaseType selectedDiseaseType=null;
+					DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
+					ArrayList<DiseaseType> types = manager.getDiseaseType();
+					for (DiseaseType elem : types) {
+						typeComboBox.addItem(elem);
+						if (disease.getType().equals(elem)) {
+							selectedDiseaseType = elem;
+						}
+					}
+					if (selectedDiseaseType!=null)
+						typeComboBox.setSelectedItem(selectedDiseaseType);
+					//typeComboBox.setEnabled(false);
 				}
-			} else {
-				DiseaseType selectedDiseaseType=null;
-				DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
-				ArrayList<DiseaseType> types = manager.getDiseaseType();
-				for (DiseaseType elem : types) {
-					typeComboBox.addItem(elem);
-					if (disease.getType().equals(elem)) {
-						selectedDiseaseType = elem;
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
 					}
 				}
-				if (selectedDiseaseType!=null)
-					typeComboBox.setSelectedItem(selectedDiseaseType);
-				//typeComboBox.setEnabled(false);
 			}
 			
 		}

@@ -696,12 +696,22 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 			jDiseaseTypeBox.setMaximumSize(new Dimension(300,50));
 			
 			DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
-			ArrayList<DiseaseType> types = manager.getDiseaseType();
+			ArrayList<DiseaseType> types = null;
+			try {
+				types = manager.getDiseaseType();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			
 			jDiseaseTypeBox.addItem(allType);
-			
-			for (DiseaseType elem : types) {
-				jDiseaseTypeBox.addItem(elem);
+			if(types != null){
+				for (DiseaseType elem : types) {
+					jDiseaseTypeBox.addItem(elem);
+				}
 			}
 			
 			jDiseaseTypeBox.addActionListener(new ActionListener() {
