@@ -210,7 +210,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	private String[] billColumnNames = {MessageBundle.getMessage("angal.newbill.item"), MessageBundle.getMessage("angal.newbill.qty"), MessageBundle.getMessage("angal.newbill.amount")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	private Object[] paymentClasses = {Date.class, Double.class};
 	
-	private String currencyCod = new HospitalBrowsingManager().getHospitalCurrencyCod();
+	private String currencyCod;
 	
 	//Prices and Lists (ALL)
 	private PriceListManager prcManager = new PriceListManager();
@@ -236,11 +236,13 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	private String user = MainMenu.getUser();
 	
 	public PatientBillEdit() {
+		initCurrencyCod();
 		PatientBillEdit newBill = new PatientBillEdit(null, new Bill(), true);
 		newBill.setVisible(true);
 	}
 	
 	public PatientBillEdit(JFrame owner, Patient patient) {
+		initCurrencyCod();
 		Bill bill = new Bill();
 		bill.setPatient(true);
 		bill.setPatient(patient);
@@ -252,6 +254,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	
 	public PatientBillEdit(JFrame owner, Bill bill, boolean inserting) {
 		super(owner, true);
+		initCurrencyCod();
 		this.insert = inserting;
 		setBill(bill);
 		initComponents();
@@ -261,6 +264,15 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 		setResizable(false);
 	}
 	
+	private void initCurrencyCod() {
+		try {
+			this.currencyCod = new HospitalBrowsingManager().getHospitalCurrencyCod();
+		} catch (OHServiceException e) {
+			this.currencyCod = null;
+			JOptionPane.showMessageDialog(PatientBillEdit.this, e.getMessage());
+		}
+	}
+
 	private void setBill(Bill bill) {
 		this.thisBill = bill;
 		billDate = bill.getDate();

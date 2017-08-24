@@ -20,6 +20,7 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.hospital.model.Hospital;
+import org.isf.utils.exception.OHServiceException;
 
 public class PrintManager {
 	public static final int toDisplay = 0;
@@ -28,7 +29,7 @@ public class PrintManager {
 
 	public static final int toPrint = 2;
 
-	public PrintManager(String filename, List<?> toPrint, int action) {
+	public PrintManager(String filename, List<?> toPrint, int action) throws OHServiceException {
 		
 		HashMap<String, Object> parameters = new HashMap<String, Object>();
 		HospitalBrowsingManager hospMan = new HospitalBrowsingManager();

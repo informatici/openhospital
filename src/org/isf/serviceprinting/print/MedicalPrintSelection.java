@@ -30,6 +30,7 @@ import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.Menu;
 import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
 
 public class MedicalPrintSelection extends JDialog implements ActionListener{
 	/**
@@ -243,7 +244,11 @@ public class MedicalPrintSelection extends JDialog implements ActionListener{
 					return;
 				}
 				pMedicals4Print = convertToPrint(pMedicals);
-				new PrintManager("rpt/pharmaceutical.jasper",pMedicals4Print,format);
+				try {
+					new PrintManager("rpt/pharmaceutical.jasper", pMedicals4Print,format);
+				} catch (OHServiceException e1) {
+					JOptionPane.showMessageDialog(MedicalPrintSelection.this, e1.getMessage());
+				}
 			}
 		});
 		return okButton;
