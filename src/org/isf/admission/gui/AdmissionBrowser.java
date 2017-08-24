@@ -392,22 +392,38 @@ public class AdmissionBrowser extends JDialog {
 
 		try {
 			diseaseOutList = dbm.getDiseaseIpdOut();
-			diseaseInList = dbm.getDiseaseIpdIn();
-			if (editing) {
-				admission = admMan.getCurrentAdmission(patient);
-				if (admission.getWard().getCode().equalsIgnoreCase("M")) {
-					viewingPregnancy = true;
-				} else {
-				}
-			} else {
-				admission = new Admission();
-			}
 		}catch(OHServiceException e){
 			if(e.getMessages() != null){
 				for(OHExceptionMessage msg : e.getMessages()){
 					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
 				}
 			}
+		}
+		try {
+			diseaseInList = dbm.getDiseaseIpdIn();
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		if (editing) {
+			try {
+				admission = admMan.getCurrentAdmission(patient);
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			if (admission.getWard().getCode().equalsIgnoreCase("M")) {
+				viewingPregnancy = true;
+			} else {
+			}
+		} else {
+			admission = new Admission();
 		}
 		initialize(parentFrame);
 		
@@ -438,7 +454,23 @@ public class AdmissionBrowser extends JDialog {
 
 		try {
 			diseaseOutList = dbm.getDiseaseIpdOut();
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		try {
 			diseaseInList = dbm.getDiseaseIpdIn();
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		try {
 			admission = admMan.getAdmission(anAdmission.getId());
 		}catch(OHServiceException e){
 			if(e.getMessages() != null){
@@ -2389,11 +2421,27 @@ public class AdmissionBrowser extends JDialog {
 								dispose();
 							}
 						} else {
-							try{
-								boolean recordUpdated = admMan.isAdmissionModified(admission); 
+								boolean recordUpdated = false;
+								try {
+									recordUpdated = admMan.isAdmissionModified(admission);
+								}catch(OHServiceException ex){
+									if(ex.getMessages() != null){
+										for(OHExceptionMessage msg : ex.getMessages()){
+											JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+										}
+									}
+								}
 								if (!recordUpdated) { 
 									// it was not updated
-									result = admMan.updateAdmission(admission);
+									try {
+										result = admMan.updateAdmission(admission);
+									}catch(OHServiceException ex){
+										if(ex.getMessages() != null){
+											for(OHExceptionMessage msg : ex.getMessages()){
+												JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+											}
+										}
+									}
 								} else { 
 									// it was updated by someone else
 									String message = MessageBundle.getMessage("angal.admission.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
@@ -2402,16 +2450,17 @@ public class AdmissionBrowser extends JDialog {
 
 									if (overWrite) {
 										// the user has confirmed he wants to overwrite the record
-										result = admMan.updateAdmission(admission);
+										try {
+											result = admMan.updateAdmission(admission);
+										}catch(OHServiceException ex){
+											if(ex.getMessages() != null){
+												for(OHExceptionMessage msg : ex.getMessages()){
+													JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+												}
+											}
+										}
 									}
 								}
-							}catch(OHServiceException ex){
-								if(ex.getMessages() != null){
-									for(OHExceptionMessage msg : ex.getMessages()){
-										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-									}
-								}
-							}
 							if (result) {
 								fireAdmissionUpdated(admission);
 								if (GeneralData.XMPPMODULEENABLED) {

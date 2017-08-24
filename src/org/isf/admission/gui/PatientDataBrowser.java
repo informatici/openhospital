@@ -474,10 +474,34 @@ class AdmissionBrowserModel extends DefaultTableModel {
 			WardBrowserManager wbm = new WardBrowserManager();
 			OpdBrowserManager opd = new OpdBrowserManager();
 			try {
-				admList = manager.getAdmissions(patient);
-				ward = wbm.getWards();
-				disease = dbm.getDiseaseAll();
 				opdList = opd.getOpdList(patient.getCode());
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			try {
+				admList = manager.getAdmissions(patient);
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			try {
+				ward = wbm.getWards();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			try {
+				disease = dbm.getDiseaseAll();
 			}catch(OHServiceException e){
 				if(e.getMessages() != null){
 					for(OHExceptionMessage msg : e.getMessages()){
