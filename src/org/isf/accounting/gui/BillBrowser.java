@@ -960,14 +960,30 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 			 * Bills in the period
 			 */
 			billPeriod = billManager.getBills(dateFrom, dateTo);
-			/*
-			 * Bills not in the period but with payments in the period
-			 */
-			billFromPayments = billManager.getBills(paymentsPeriod);
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		try {
 			/*
 			 * Payments in the period
 			 */
 			paymentsPeriod = billManager.getPayments(dateFrom, dateTo);
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		try {
+			/*
+			 * Bills not in the period but with payments in the period
+			 */
+			billFromPayments = billManager.getBills(paymentsPeriod);
 		}catch(OHServiceException e){
 			if(e.getMessages() != null){
 				for(OHExceptionMessage msg : e.getMessages()){
