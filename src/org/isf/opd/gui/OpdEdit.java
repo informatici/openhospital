@@ -238,13 +238,24 @@ public class OpdEdit extends JDialog implements ActionListener {
 			diseaseTypeBox.setMaximumSize(new Dimension(400,50));
 			DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
 			diseaseTypeBox.addItem(allType);
-			ArrayList<DiseaseType> types = manager.getDiseaseType();
-			for (DiseaseType elem : types) {
-				if (!insert && opd.getDiseaseType() != null){
-					if(opd.getDiseaseType().equals(elem.getCode())){
-						elem2=elem;}
+			ArrayList<DiseaseType> types = null;
+			try {
+				types = manager.getDiseaseType();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
 				}
-				diseaseTypeBox.addItem(elem);
+			}
+			if(types != null){
+				for (DiseaseType elem : types) {
+					if (!insert && opd.getDiseaseType() != null){
+						if(opd.getDiseaseType().equals(elem.getCode())){
+							elem2=elem;}
+					}
+					diseaseTypeBox.addItem(elem);
+				}
 			}
 			if (elem2!=null) { 
 				diseaseTypeBox.setSelectedItem(elem2);

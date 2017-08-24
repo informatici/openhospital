@@ -21,6 +21,8 @@ import org.isf.distype.manager.DiseaseTypeBrowserManager;
 import org.isf.distype.model.DiseaseType;
 import org.isf.distype.gui.DiseaseTypeBrowserEdit.DiseaseTypeListener;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 /**
  * Browsing of table DiseaseType
@@ -196,12 +198,19 @@ public class DiseaseTypeBrowser extends ModalJFrame implements DiseaseTypeListen
 						int n = JOptionPane.showConfirmDialog(null,
 								MessageBundle.getMessage("angal.distype.deletediseasetype") + " \" "+dis.getDescription() + "\" ?",
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
-						
-						if ((n == JOptionPane.YES_OPTION)
-								&& (manager.deleteDiseaseType(dis))) {
-							pDiseaseType.remove(jTable.getSelectedRow());
-							model.fireTableDataChanged();
-							jTable.updateUI();
+						try{
+							if ((n == JOptionPane.YES_OPTION)
+									&& (manager.deleteDiseaseType(dis))) {
+								pDiseaseType.remove(jTable.getSelectedRow());
+								model.fireTableDataChanged();
+								jTable.updateUI();
+							}
+						} catch (OHServiceException ex) {
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
 						}
 					}
 				}
@@ -235,7 +244,15 @@ class DiseaseTypeBrowserModel extends DefaultTableModel {
 
 		public DiseaseTypeBrowserModel() {
 			DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
-			pDiseaseType = manager.getDiseaseType();
+			try {
+				pDiseaseType = manager.getDiseaseType();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 		}
 		
 		public int getRowCount() {
