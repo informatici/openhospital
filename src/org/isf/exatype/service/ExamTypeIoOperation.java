@@ -22,16 +22,20 @@ public class ExamTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<ExamType> pexamtype = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM EXAMTYPE ORDER BY EXC_DESC";
-		jpa.createQuery(query, ExamType.class, false);
-		List<ExamType> examTypeList = (List<ExamType>)jpa.getList();
-		pexamtype = new ArrayList<ExamType>(examTypeList);			
-		
-		jpa.commitTransaction();
-
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM EXAMTYPE ORDER BY EXC_DESC";
+			jpa.createQuery(query, ExamType.class, false);
+			List<ExamType> examTypeList = (List<ExamType>)jpa.getList();
+			pexamtype = new ArrayList<ExamType>(examTypeList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return pexamtype;
 	}
 	
@@ -47,10 +51,15 @@ public class ExamTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(examType);
-    	jpa.commitTransaction();
+		try {
+			jpa.beginTransaction();	
+			jpa.merge(examType);
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
     	
 		return result;	
 	}
@@ -67,10 +76,15 @@ public class ExamTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(examType);
-    	jpa.commitTransaction();
+		try {
+			jpa.beginTransaction();	
+			jpa.persist(examType);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
     	
 		return result;	
 	}
@@ -87,11 +101,16 @@ public class ExamTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		ExamType objToRemove = (ExamType) jpa.find(ExamType.class, examType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
+		try {
+			jpa.beginTransaction();	
+			ExamType objToRemove = (ExamType) jpa.find(ExamType.class, examType.getCode());
+			jpa.remove(objToRemove);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
     	
 		return result;	
 	}
@@ -110,15 +129,19 @@ public class ExamTypeIoOperation {
 		ExamType examType;
 		boolean result = false;
 		
-		
-		jpa.beginTransaction();	
-		examType = (ExamType)jpa.find(ExamType.class, code);
-		if (examType != null)
-		{
-			result = true;
+		try {
+			jpa.beginTransaction();	
+			examType = (ExamType)jpa.find(ExamType.class, code);
+			if (examType != null)
+			{
+				result = true;
+			}
+	    	jpa.commitTransaction();
+		}  catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 }

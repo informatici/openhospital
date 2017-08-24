@@ -29,6 +29,7 @@ import org.isf.exatype.gui.ExamTypeEdit.ExamTypeListener;
 import org.isf.exatype.manager.ExamTypeBrowserManager;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.jobjects.ModalJFrame;
 
 
@@ -204,11 +205,21 @@ public class ExamTypeBrowser extends ModalJFrame implements ExamTypeListener{
 								MessageBundle.getMessage("angal.exatype.deleteexamtype")+"\" "+dis.getDescription() + "\" ?",
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
 						
-						if ((n == JOptionPane.YES_OPTION)
-								&& (manager.deleteExamType(dis))) {
-							pExamType.remove(jTable.getSelectedRow());
-							model.fireTableDataChanged();
-							jTable.updateUI();
+						if (n == JOptionPane.YES_OPTION) {
+							
+							boolean deleted;
+							try {
+								deleted = manager.deleteExamType(dis);
+							} catch (OHServiceException e) {
+								deleted = false;
+								JOptionPane.showMessageDialog(null, e.getMessage());
+							}
+							
+							if (true == deleted) {
+								pExamType.remove(jTable.getSelectedRow());
+								model.fireTableDataChanged();
+								jTable.updateUI();
+							}
 						}
 					}
 				}
@@ -237,7 +248,12 @@ class ExamTypeBrowserModel extends DefaultTableModel {
 
 		public ExamTypeBrowserModel() {
 			ExamTypeBrowserManager manager = new ExamTypeBrowserManager();
-			pExamType = manager.getExamType();
+			try {
+				pExamType = manager.getExamType();
+			} catch (OHServiceException e) {
+				pExamType = null;
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			}
 		}
 		
 		public int getRowCount() {
