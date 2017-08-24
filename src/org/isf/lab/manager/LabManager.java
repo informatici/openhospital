@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import org.isf.generaldata.MessageBundle;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryForPrint;
@@ -44,6 +42,10 @@ public class LabManager {
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch (Exception e) {
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null,
+					MessageBundle.getMessage("angal.lab.problemsoccuredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -60,6 +62,10 @@ public class LabManager {
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch (Exception e) {
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null,
+					MessageBundle.getMessage("angal.lab.problemsoccuredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -84,6 +90,10 @@ public class LabManager {
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch (Exception e) {
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null,
+					MessageBundle.getMessage("angal.lab.problemsoccuredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -106,6 +116,10 @@ public class LabManager {
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch (Exception e) {
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null,
+					MessageBundle.getMessage("angal.lab.problemsoccuredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -139,6 +153,10 @@ public class LabManager {
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch (Exception e) {
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null,
+					MessageBundle.getMessage("angal.lab.problemsoccuredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -155,6 +173,10 @@ public class LabManager {
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch (Exception e) {
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null,
+					MessageBundle.getMessage("angal.lab.problemsoccuredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -171,6 +193,10 @@ public class LabManager {
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch (Exception e) {
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null,
+					MessageBundle.getMessage("angal.lab.problemsoccuredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -187,6 +213,10 @@ public class LabManager {
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch (Exception e) {
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null,
+					MessageBundle.getMessage("angal.lab.problemsoccuredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -203,22 +233,21 @@ public class LabManager {
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch (Exception e) {
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null,
+					MessageBundle.getMessage("angal.lab.problemsoccuredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
-	private void setLabMultipleResults(List<LaboratoryForPrint> labs) {
+	private void setLabMultipleResults(List<LaboratoryForPrint> labs) throws OHServiceException {
 		LabRowManager rowManager = new LabRowManager();
 		List<LaboratoryRow> rows = null;
 		
 		for (LaboratoryForPrint lab : labs) {
 			String labResult = lab.getResult();
 			if (labResult.equalsIgnoreCase(MessageBundle.getMessage("angal.lab.multipleresults"))) {
-				try {
-					rows = rowManager.getLabRow(lab.getCode());
-				} catch (OHServiceException e) {
-					rows = new ArrayList<LaboratoryRow>();
-					JOptionPane.showMessageDialog(null, e.getMessage());
-				}
+				rows = rowManager.getLabRow(lab.getCode());
 				
 				if (rows == null || rows.size() == 0) {
 					lab.setResult(MessageBundle.getMessage("angal.lab.allnegative"));
