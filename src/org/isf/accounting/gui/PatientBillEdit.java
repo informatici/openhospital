@@ -210,7 +210,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	private String[] billColumnNames = {MessageBundle.getMessage("angal.newbill.item"), MessageBundle.getMessage("angal.newbill.qty"), MessageBundle.getMessage("angal.newbill.amount")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	private Object[] paymentClasses = {Date.class, Double.class};
 	
-	private String currencyCod = new HospitalBrowsingManager().getHospitalCurrencyCod();
+	private String currencyCod;
 	
 	//Prices and Lists (ALL)
 	private PriceListManager prcManager = new PriceListManager();
