@@ -157,7 +157,7 @@ public class DbJpaUtil
     {    
     	try {
     		System.out.println("Remove: " + entity);
-    		entityManager.remove(entity);  
+    		entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));  
 		} catch (IllegalArgumentException e) {
 			System.out.println("IllegalArgumentException");
 			System.out.println(e);

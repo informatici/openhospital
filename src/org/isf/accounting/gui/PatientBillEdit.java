@@ -214,12 +214,12 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	
 	//Prices and Lists (ALL)
 	private PriceListManager prcManager = new PriceListManager();
-	private ArrayList<Price> prcArray = prcManager.getPrices();
-	private ArrayList<PriceList> lstArray = prcManager.getLists();
+	private ArrayList<Price> prcArray;
+	private ArrayList<PriceList> lstArray;
 	
 	//PricesOthers (ALL)
 	private PricesOthersManager othManager = new PricesOthersManager();
-	private ArrayList<PricesOthers> othPrices = othManager.getOthers();
+	private ArrayList<PricesOthers> othPrices;
 
 	//Items and Payments (ALL)
 	private BillBrowserManager billManager = new BillBrowserManager();
@@ -238,6 +238,17 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	public PatientBillEdit() {
 		PatientBillEdit newBill = new PatientBillEdit(null, new Bill(), true);
 		newBill.setVisible(true);
+		try {
+			prcArray = prcManager.getPrices();
+			lstArray = prcManager.getLists();
+			othPrices = othManager.getOthers();
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 	}
 	
 	public PatientBillEdit(JFrame owner, Patient patient) {
@@ -248,11 +259,33 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 		PatientBillEdit newBill = new PatientBillEdit(owner, bill, true);
 		newBill.setPatientSelected(patient);
 		newBill.setVisible(true);
+		try {
+			prcArray = prcManager.getPrices();
+			lstArray = prcManager.getLists();
+			othPrices = othManager.getOthers();
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 	}
 	
 	public PatientBillEdit(JFrame owner, Bill bill, boolean inserting) {
 		super(owner, true);
 		this.insert = inserting;
+		try {
+			prcArray = prcManager.getPrices();
+			lstArray = prcManager.getLists();
+			othPrices = othManager.getOthers();
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		setBill(bill);
 		initComponents();
 		updateTotals();
@@ -267,6 +300,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 		try {
 			billItems = billManager.getItems(thisBill.getId());
 			payItems = billManager.getPayments(thisBill.getId());
+			othPrices = othManager.getOthers();
 		}catch(OHServiceException e){
 			if(e.getMessages() != null){
 				for(OHExceptionMessage msg : e.getMessages()){

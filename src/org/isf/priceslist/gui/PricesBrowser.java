@@ -67,8 +67,8 @@ public class PricesBrowser extends ModalJFrame {
 	private int[] columWidth = {400,150};
     
 	private PriceListManager listManager = new PriceListManager();
-	private ArrayList<PriceList> listArray = listManager.getLists();
-	private ArrayList<Price> priceArray = listManager.getPrices();
+	private ArrayList<PriceList> listArray;
+	private ArrayList<Price> priceArray;
 	private PriceList listSelected;
 	
 	private PriceNode examNodes;
@@ -85,11 +85,14 @@ public class PricesBrowser extends ModalJFrame {
     
     private PriceNode othNodes;
     private PricesOthersManager othManager = new PricesOthersManager();
-    private ArrayList<PricesOthers> othArray = othManager.getOthers();
+    private ArrayList<PricesOthers> othArray;
 	
 	public PricesBrowser() {
 		try {
 			operArray = operManager.getOperation();
+			listArray = listManager.getLists();
+			priceArray = listManager.getPrices();
+			othArray = othManager.getOthers();
 		}catch(OHServiceException e){
 			if(e.getMessages() != null){
 				for(OHExceptionMessage msg : e.getMessages()){
@@ -232,7 +235,16 @@ public class PricesBrowser extends ModalJFrame {
 						
 						ArrayList<Price> updateList = new ArrayList<Price>();
 						updateList = convertTreeToArray();
-						boolean updated = listManager.updatePrices(listSelected, updateList);
+						boolean updated = false;
+						try {
+							updated = listManager.updatePrices(listSelected, updateList);
+						}catch(OHServiceException e){
+							if(e.getMessages() != null){
+								for(OHExceptionMessage msg : e.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						}
 						
 						if (updated) {
 							JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.priceslist.listsaved")); //$NON-NLS-1$
@@ -321,11 +333,13 @@ public class PricesBrowser extends ModalJFrame {
 
 	private void updateFromDB() {
 		
-		listArray = listManager.getLists();
-		priceArray = listManager.getPrices();
-		examArray = examManager.getExams();
 	    try {
+	    	listArray = listManager.getLists();
+	    	priceArray = listManager.getPrices();
+	    	examArray = examManager.getExams();
 			operArray = operManager.getOperation();
+			mediArray = mediManager.getMedicals();
+			othArray = othManager.getOthers();
 	    }catch(OHServiceException e){
 			if(e.getMessages() != null){
 				for(OHExceptionMessage msg : e.getMessages()){
@@ -333,8 +347,6 @@ public class PricesBrowser extends ModalJFrame {
 				}
 			}
 		}
-	    mediArray = mediManager.getMedicals();
-	    othArray = othManager.getOthers();
 	}
 
 	private PriceNode getTreeContent() {
