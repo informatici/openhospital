@@ -54,7 +54,7 @@ public class HospitalIoOperations {
 	 */
 	public String getHospitalCurrencyCod() throws OHException
 	{
-		String query = "SELECT HOS_CURR_COD FROM HOSPITAL";
+		String query = "SELECT * FROM HOSPITAL";
 		String currencyCod = "";
 		
 		DbJpaUtil jpa = new DbJpaUtil();
@@ -62,8 +62,9 @@ public class HospitalIoOperations {
 		try {
 			jpa.beginTransaction();
 			
-			jpa.createQuery(query, String.class, false);
-			currencyCod = (String) jpa.getResult();
+			jpa.createQuery(query, Hospital.class, false);
+			Hospital hospital = (Hospital) jpa.getResult();
+			currencyCod = hospital.getCurrencyCod();
 			
 			jpa.commitTransaction();
 		} catch (OHException e) {
