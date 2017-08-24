@@ -274,8 +274,32 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		insert=inserting;
 		try{
 			types = typeManager.getDiseaseType();
+		} catch (OHServiceException e) {
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		try{
 			diseasesOPD = manager.getDiseaseOpd();
+		} catch (OHServiceException e) {
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		try{
 			diseasesAll = manager.getDiseaseAll();
+		} catch (OHServiceException e) {
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		try{
 			if(!insert) {
 				if (opd.getPatient().getCode() != 0) { 
 					PatientBrowserManager patBrowser = new PatientBrowserManager();
@@ -302,8 +326,32 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		insert=inserting;
 		try{
 			types = typeManager.getDiseaseType();
+		} catch (OHServiceException e) {
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		try{
 			diseasesOPD = manager.getDiseaseOpd();
+		} catch (OHServiceException e) {
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		try{
 			diseasesAll = manager.getDiseaseAll();
+		} catch (OHServiceException e) {
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		try{
 			if(!insert) {
 				if (opd.getPatient().getCode() != 0) { 
 					PatientBrowserManager patBrowser = new PatientBrowserManager();
