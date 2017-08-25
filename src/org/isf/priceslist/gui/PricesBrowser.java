@@ -73,7 +73,7 @@ public class PricesBrowser extends ModalJFrame {
 	
 	private PriceNode examNodes;
 	private ExamBrowsingManager examManager = new ExamBrowsingManager();
-    private ArrayList<Exam> examArray = examManager.getExams();
+    private ArrayList<Exam> examArray;
     
     private PriceNode opeNodes;
     private OperationBrowserManager operManager = new OperationBrowserManager();
@@ -89,6 +89,7 @@ public class PricesBrowser extends ModalJFrame {
 	
 	public PricesBrowser() {
 		try {
+			examArray = examManager.getExams();
 			operArray = operManager.getOperation();
 			listArray = listManager.getLists();
 			priceArray = listManager.getPrices();

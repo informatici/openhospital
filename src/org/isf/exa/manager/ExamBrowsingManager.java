@@ -6,14 +6,17 @@ package org.isf.exa.manager;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
 import org.isf.exa.model.Exam;
 import org.isf.exa.service.ExamIoOperations;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that provides gui separation from database operations and gives some
@@ -26,25 +29,34 @@ public class ExamBrowsingManager {
 
 	private ExamIoOperations ioOperations = Menu.getApplicationContext().getBean(ExamIoOperations.class);
 
+	private final Logger logger = LoggerFactory.getLogger(ExamBrowsingManager.class);
+	
 	/**
 	 * Returns the list of {@link Exam}s
 	 * @return the list of {@link Exam}s. It could be <code>null</code>
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Exam> getExams() {
+	public ArrayList<Exam> getExams() throws OHServiceException {
 		try {
 			return ioOperations.getExams();
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 	
 	/**
 	 * Returns the list of {@link Exam}s
 	 * @return the list of {@link Exam}s. It could be <code>null</code>
+	 * @throws OHServiceException 
 	 * @deprecated use getExam() instead
 	 */
-	public ArrayList<Exam> getExamsbyDesc() {
+	public ArrayList<Exam> getExamsbyDesc() throws OHServiceException {
 		return this.getExams();
 	}
 	
@@ -52,26 +64,38 @@ public class ExamBrowsingManager {
 	 * Returns the list of {@link Exam}s that matches passed description
 	 * @param description - the exam description
 	 * @return the list of {@link Exam}s. It could be <code>null</code>
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Exam> getExams(String description) {
+	public ArrayList<Exam> getExams(String description) throws OHServiceException {
 		try {
 			return ioOperations.getExamsByDesc(description);
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 	
 	/**
 	 * Returns the list of {@link ExamType}s
 	 * @return the list of {@link ExamType}s. It could be <code>null</code>
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<ExamType> getExamType() {
+	public ArrayList<ExamType> getExamType() throws OHServiceException {
 		try {
 			return ioOperations.getExamType();
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -82,13 +106,19 @@ public class ExamBrowsingManager {
 	 * 
 	 * @param the {@link Exam}
 	 * @return <code>true</code> if the Exam code has already been used, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 */
-	public boolean isKeyPresent(Exam exam) {
+	public boolean isKeyPresent(Exam exam) throws OHServiceException {
 		try {
 			return ioOperations.isKeyPresent(exam);
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -97,13 +127,19 @@ public class ExamBrowsingManager {
 	 * 
 	 * @param exam - the {@link Exam} to insert
 	 * @return <code>true</code> if the {@link Exam} has been inserted, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 */
-	public boolean newExam(Exam exam) {
+	public boolean newExam(Exam exam) throws OHServiceException {
 		try {
 			return ioOperations.newExam(exam);
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -113,8 +149,9 @@ public class ExamBrowsingManager {
 	 * 
 	 * @param exam -  the {@link Exam} to update
 	 * @return <code>true</code> if the existing {@link Exam} has been updated, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 */
-	public boolean updateExam(Exam exam) {
+	public boolean updateExam(Exam exam) throws OHServiceException {
 		return this.updateExam(exam, true);
 	}
 	
@@ -124,22 +161,20 @@ public class ExamBrowsingManager {
 	 * @param exam -  the {@link Exam} to update
 	 * @param check - if <code>true</code> check if the {@link Exam} has been modified since last read
 	 * @return <code>true</code> if the existing {@link Exam} has been updated, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 */
-	public boolean updateExam(Exam exam, boolean check) {
+	public boolean updateExam(Exam exam, boolean check) throws OHServiceException {
 		try {
-			if (!ioOperations.updateExam(exam, check)) {
-				int ok = JOptionPane.showConfirmDialog(null,
-						MessageBundle.getMessage("angal.exa.thedatahasbeenupdatedbysomeoneelse") + ".\n" + MessageBundle.getMessage("angal.exa.doyouwanttooverwritethedata") + "?",
-						MessageBundle.getMessage("angal.exa.select"), JOptionPane.YES_NO_OPTION);
-				if (ok != JOptionPane.OK_OPTION)
-					return false;
-				else 
-					return this.updateExam(exam, false);
-			} else 
-				return true;
+			boolean updated = ioOperations.updateExam(exam, check);
+			return updated;
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -147,13 +182,19 @@ public class ExamBrowsingManager {
 	 * Delete an {@link Exam}
 	 * @param exam - the {@link Exam} to delete
 	 * @return <code>true</code> if the {@link Exam} has been deleted, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 */
-	public boolean deleteExam(Exam exam) {
+	public boolean deleteExam(Exam exam) throws OHServiceException {
 		try {
 			return ioOperations.deleteExam(exam);
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 }
