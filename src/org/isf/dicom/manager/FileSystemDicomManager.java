@@ -10,15 +10,21 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.Vector;
 
 import javax.sql.rowset.serial.SerialBlob;
-import javax.swing.JOptionPane;
+import javax.sql.rowset.serial.SerialException;
 
 import org.isf.dicom.model.FileDicom;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manager for filesystem
@@ -28,6 +34,8 @@ import org.isf.generaldata.MessageBundle;
  */
 public class FileSystemDicomManager implements DicomManagerInterface {
 
+	private final Logger logger = LoggerFactory.getLogger(FileSystemDicomManager.class);
+	
 	private static String NOSERIE = "_NOSERIE";
 
 	/**
@@ -38,17 +46,18 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 
 	/**
 	 * Constructor
+	 * @throws OHServiceException 
 	 */
-	public FileSystemDicomManager(Properties externalPrp) {
+	public FileSystemDicomManager(Properties externalPrp) throws OHServiceException {
 		try {
 			dir = new File(externalPrp.getProperty("dicom.storage.filesystem"));
 
 			recourse(dir);
-
-		} catch (Exception ecc) {
-			JOptionPane.showMessageDialog(null, "FileSystemDicomManager " + MessageBundle.getMessage("angal.dicom.manager.nodir"));
-
-			System.exit(-100);
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					"FileSystemDicomManager " + MessageBundle.getMessage("angal.dicom.manager.nodir"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -58,8 +67,9 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 	 * @param idPaziente, the patient id
 	 * @param numeroSerie, the series number
 	 * @return
+	 * @throws OHServiceException 
 	 */
-	public Long[] getSerieDetail(int idPaziente, String numeroSerie) {
+	public Long[] getSerieDetail(int idPaziente, String numeroSerie) throws OHServiceException {
 		try {
 
 			// a volte numero di serie pu� essere NULL, � errato, ma aggiungo
@@ -94,8 +104,8 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 
 			return _Longs;
 		} catch (Exception ecc) {
-			ecc.printStackTrace();
-			return new Long[0];
+			throw new OHServiceException(ecc, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.dicom.manager.err") + " " + ecc.getMessage(), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -107,8 +117,9 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 	 * @param numeroSerie
 	 *            , the seres number to delete
 	 * @return, true if success
+	 * @throws OHServiceException 
 	 */
-	public boolean deleteSerie(int idPaziente, String numeroSerie) {
+	public boolean deleteSerie(int idPaziente, String numeroSerie) throws OHServiceException {
 		try {
 
 			// a volte numero di serie pu� essere NULL, � errato, ma aggiungo
@@ -128,8 +139,8 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 			return deleted && deleteFolder.delete();
 
 		} catch (Exception ecc) {
-			ecc.printStackTrace();
-			return false;
+			throw new OHServiceException(ecc, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.dicom.manager.err") + " " + ecc.getMessage(), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -138,8 +149,9 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 	 * 
 	 * @param, idFile
 	 * @return, FileDicomDettaglio
+	 * @throws OHServiceException 
 	 */
-	public FileDicom loadDettaglio(Long idFile, int idPaziente, String numeroSerie) {
+	public FileDicom loadDettaglio(Long idFile, int idPaziente, String numeroSerie) throws OHServiceException {
 		// a volte numero di serie pu� essere NULL, � errato, ma aggiungo questa
 		// linea per non creare eccezione
 		if (numeroSerie == null || numeroSerie.trim().length() == 0 || numeroSerie.equalsIgnoreCase("null"))
@@ -156,15 +168,17 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 	 * 
 	 * @param idFile
 	 * @return, details
+	 * @throws OHServiceException 
 	 */
-	public FileDicom loadDettaglio(long idFile, int idPaziente, String numeroSerie) {
+	public FileDicom loadDettaglio(long idFile, int idPaziente, String numeroSerie) throws OHServiceException {
 		try {
 			// System.out.println("FS loadDettaglio "+idFile+","+idPaziente+","+numeroSerie);
 			return loadData(idFile, idPaziente, numeroSerie);
+	
 		} catch (Exception ecc) {
-			ecc.printStackTrace();
+			throw new OHServiceException(ecc, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.dicom.manager.err") + " " + ecc.getMessage(), OHSeverityLevel.ERROR));
 		}
-		return null;
 	}
 
 	/**
@@ -172,8 +186,9 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 	 * 
 	 * @param idPaziente
 	 * @return
+	 * @throws OHServiceException 
 	 */
-	public FileDicom[] loadFilesPaziente(int idPaziente) {
+	public FileDicom[] loadFilesPaziente(int idPaziente) throws OHServiceException {
 		try {
 			// System.out.println("FS loadFilesPaziente "+idPaziente);
 			File df = getPatientDir(idPaziente);
@@ -189,9 +204,8 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 			return db;
 
 		} catch (Exception ecc) {
-			ecc.printStackTrace();
-
-			return new FileDicom[0];
+			throw new OHServiceException(ecc, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.dicom.manager.err") + " " + ecc.getMessage(), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -199,8 +213,9 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 	 * save the DICOM file and metadata
 	 * 
 	 * @param dicom
+	 * @throws OHServiceException 
 	 */
-	public void saveFile(FileDicom dicom) {
+	public void saveFile(FileDicom dicom) throws OHServiceException {
 		if (exist(dicom))
 			return;
 
@@ -258,57 +273,54 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 			blobAsBytes = blob.getBytes(1, blobLength);
 			save(thumn, blobAsBytes);
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ecc) {
+			throw new OHServiceException(ecc, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.dicom.manager.err") + " " + ecc.getMessage(), OHSeverityLevel.ERROR));
 		}
 	}
 
-	private FileDicom loadMetadata(long idFile, int idPaziente, String serie) throws IOException {
+	private FileDicom loadMetadata(long idFile, int idPaziente, String serie) throws SerialException, IOException, SQLException {
 		// System.out.println("loadMetadata "+idFile+","+idPaziente+","+series);
 		FileDicom rv = null;
 
+		rv = new FileDicom();
+		File sd = getSerieDir(idPaziente, serie, false);
+		rv.setFrameCount(getFramesCount(idPaziente, serie));
+		Properties p = loadMetadata(sd, idFile);
 		try {
-			rv = new FileDicom();
-			File sd = getSerieDir(idPaziente, serie, false);
-			rv.setFrameCount(getFramesCount(idPaziente, serie));
-			Properties p = loadMetadata(sd, idFile);
-			try {
-				rv.setIdFile(Long.parseLong(p.getProperty("idFile")));
-			} catch (Exception e) {
-			}
-
-			try {
-				rv.setPatId(Integer.parseInt(p.getProperty("patId")));
-			} catch (Exception e) {
-			}
-			rv.setFileName(p.getProperty("fileName"));
-			rv.setDicomAccessionNumber(p.getProperty("dicomAccessionNumber"));
-			rv.setDicomInstitutionName(p.getProperty("dicomInstitutionName"));
-			rv.setDicomPatientID(p.getProperty("dicomPatientID"));
-			rv.setDicomPatientName(p.getProperty("dicomPatientName"));
-			rv.setDicomPatientAddress(p.getProperty("dicomPatientAddress"));
-			rv.setDicomPatientAge(p.getProperty("dicomPatientAge"));
-			rv.setDicomPatientSex(p.getProperty("dicomPatientSex"));
-			rv.setDicomPatientBirthDate(p.getProperty("dicomPatientBirthDate"));
-			rv.setDicomStudyId(p.getProperty("dicomStudyId"));
-			rv.setDicomStudyDate(p.getProperty("dicomStudyDate"));
-			rv.setDicomStudyDescription(p.getProperty("dicomStudyDescription"));
-			rv.setDicomSeriesUID(p.getProperty("dicomSeriesUID"));
-			rv.setDicomSeriesInstanceUID(p.getProperty("dicomSeriesInstanceUID"));
-			rv.setDicomSeriesNumber(p.getProperty("dicomSeriesNumber"));
-			rv.setDicomSeriesDescriptionCodeSequence(p.getProperty("dicomSeriesDescriptionCodeSequence"));
-			rv.setDicomSeriesDate(p.getProperty("dicomSeriesDate"));
-			rv.setDicomSeriesDescription(p.getProperty("dicomSeriesDescription"));
-			rv.setDicomInstanceUID(p.getProperty("dicomInstanceUID"));
-			rv.setModality(p.getProperty("modality"));
-			rv.setDicomThumbnail(loadThumbnail(sd, idFile));
+			rv.setIdFile(Long.parseLong(p.getProperty("idFile")));
 		} catch (Exception e) {
-			rv = null;
 		}
+
+		try {
+			rv.setPatId(Integer.parseInt(p.getProperty("patId")));
+		} catch (Exception e) {
+		}
+		rv.setFileName(p.getProperty("fileName"));
+		rv.setDicomAccessionNumber(p.getProperty("dicomAccessionNumber"));
+		rv.setDicomInstitutionName(p.getProperty("dicomInstitutionName"));
+		rv.setDicomPatientID(p.getProperty("dicomPatientID"));
+		rv.setDicomPatientName(p.getProperty("dicomPatientName"));
+		rv.setDicomPatientAddress(p.getProperty("dicomPatientAddress"));
+		rv.setDicomPatientAge(p.getProperty("dicomPatientAge"));
+		rv.setDicomPatientSex(p.getProperty("dicomPatientSex"));
+		rv.setDicomPatientBirthDate(p.getProperty("dicomPatientBirthDate"));
+		rv.setDicomStudyId(p.getProperty("dicomStudyId"));
+		rv.setDicomStudyDate(p.getProperty("dicomStudyDate"));
+		rv.setDicomStudyDescription(p.getProperty("dicomStudyDescription"));
+		rv.setDicomSeriesUID(p.getProperty("dicomSeriesUID"));
+		rv.setDicomSeriesInstanceUID(p.getProperty("dicomSeriesInstanceUID"));
+		rv.setDicomSeriesNumber(p.getProperty("dicomSeriesNumber"));
+		rv.setDicomSeriesDescriptionCodeSequence(p.getProperty("dicomSeriesDescriptionCodeSequence"));
+		rv.setDicomSeriesDate(p.getProperty("dicomSeriesDate"));
+		rv.setDicomSeriesDescription(p.getProperty("dicomSeriesDescription"));
+		rv.setDicomInstanceUID(p.getProperty("dicomInstanceUID"));
+		rv.setModality(p.getProperty("modality"));
+		rv.setDicomThumbnail(loadThumbnail(sd, idFile));
 		return rv;
 	}
 
-	private FileDicom loadData(long idFile, int idPaziente, String serie) throws IOException {
+	private FileDicom loadData(long idFile, int idPaziente, String serie) throws IOException, SerialException, SQLException  {
 		// a volte numero di serie pu� essere NULL, � errato, ma aggiungo questa
 		// linea per non creare eccezione
 		if (serie == null || serie.trim().length() == 0 || serie.equalsIgnoreCase("null"))
@@ -353,10 +365,11 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 
 	/**
 	 * load image for thumnail
+	 * @throws SQLException 
+	 * @throws SerialException 
 	 */
-	private Blob loadThumbnail(File sd, long idFile) throws IOException {
+	private Blob loadThumbnail(File sd, long idFile) throws IOException, SerialException, SQLException {
 		// System.out.println("loadThumbnail "+sd.getAbsolutePath()+","+idFile);
-		try {
 			File fdc = new File(sd, idFile + ".thumn");
 			FileInputStream fis = new FileInputStream(fdc);
 			byte[] byteArray = new byte[fis.available()];
@@ -364,18 +377,15 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 			fis.close();
 			Blob blob = new SerialBlob(byteArray);
 			return blob;
-		} catch (Exception ecc) {
-			ecc.printStackTrace();
-			return null;
-		}
 	}
 
 	/**
 	 * load image for thumnail
+	 * @throws SQLException 
+	 * @throws SerialException 
 	 */
-	private Blob loadDicomData(File sd, long idFile) throws IOException {
+	private Blob loadDicomData(File sd, long idFile) throws IOException, SerialException, SQLException {
 		// System.out.println("loadDicomData "+sd.getAbsolutePath()+","+idFile);
-		try {
 			File fdc = new File(sd, idFile + ".data");
 			FileInputStream fis = new FileInputStream(fdc);
 			byte[] byteArray = new byte[fis.available()];
@@ -383,13 +393,9 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 			fis.close();
 			Blob blob = new SerialBlob(byteArray);
 			return blob;
-		} catch (Exception ecc) {
-			ecc.printStackTrace();
-			return null;
-		}
 	}
 
-	public boolean exist(FileDicom dicom) {
+	public boolean exist(FileDicom dicom) throws OHServiceException {
 		// System.out.println("exists "+dicom.getPatId()+" - "+dicom.getDicomSeriesNumber()+" - "+
 		// dicom.getDicomSeriesInstanceUID());
 		boolean rv = false;
@@ -416,6 +422,8 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 				i++;
 			}
 		} catch (Exception ecc) {
+			throw new OHServiceException(ecc, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.dicom.manager.err") + " " + ecc.getMessage(), OHSeverityLevel.ERROR));
 		}
 		return rv;
 	}

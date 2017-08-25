@@ -58,12 +58,12 @@ public class ExaminationBrowserManager {
 			 * create ready to return OHServiceException and keep existing error message
 			 */
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.patient.title"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.patient.title"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					MessageBundle.getMessage("angal.patient.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
@@ -76,12 +76,12 @@ public class ExaminationBrowserManager {
 			 * create ready to return OHServiceException and keep existing error message
 			 */
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.patient.title"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.patient.title"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					MessageBundle.getMessage("angal.patient.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
@@ -100,12 +100,12 @@ public class ExaminationBrowserManager {
 			 * create ready to return OHServiceException and keep existing error message
 			 */
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.patient.title"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.patient.title"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					MessageBundle.getMessage("angal.patient.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
@@ -118,12 +118,12 @@ public class ExaminationBrowserManager {
 			 * create ready to return OHServiceException and keep existing error message
 			 */
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.patient.title"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.patient.title"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					MessageBundle.getMessage("angal.patient.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
