@@ -29,39 +29,47 @@ public class MalnutritionIoOperation {
 		ArrayList<Malnutrition> malnutritions = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM MALNUTRITIONCONTROL WHERE MLN_ADM_ID = ? ORDER BY MLN_DATE_SUPP";
+			params.add(admissionId);
+			jpa.createQuery(query, Malnutrition.class, false);
+			jpa.setParameters(params, false);
+			List<Malnutrition> malnutritionList = (List<Malnutrition>)jpa.getList();
+			malnutritions = new ArrayList<Malnutrition>(malnutritionList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM MALNUTRITIONCONTROL WHERE MLN_ADM_ID = ? ORDER BY MLN_DATE_SUPP";
-		params.add(admissionId);
-		jpa.createQuery(query, Malnutrition.class, false);
-		jpa.setParameters(params, false);
-		List<Malnutrition> malnutritionList = (List<Malnutrition>)jpa.getList();
-		malnutritions = new ArrayList<Malnutrition>(malnutritionList);			
-		
-		jpa.commitTransaction();
-
 		return malnutritions;
 	}
 
 	/**
 	 * Stores a new {@link Malnutrition}. The malnutrition object is updated with the generated id.
 	 * @param malnutrition the malnutrition to store.
-	 * @return <code>true</code> if the malnutrition has been stored, <code>false</code> otherwise.
+	 * @return <code>true</code> if the malnutrition has been stored
 	 * @throws OHException if an error occurs storing the malnutrition.
 	 */
 	public boolean newMalnutrition(
 			Malnutrition malnutrition) throws OHException
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(malnutrition);
-    	jpa.commitTransaction();
-    	
-		return result;
+		try {
+			jpa.beginTransaction();	
+			jpa.persist(malnutrition);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
+		return true;
 	}
 
 	/**
@@ -77,38 +85,45 @@ public class MalnutritionIoOperation {
 		Malnutrition malnutrition = null;
 		int lock = -1;
 				
-		
-		jpa.beginTransaction();
-		
-		malnutrition = (Malnutrition)jpa.find(Malnutrition.class, malnutritionCode); 
-		if (malnutrition != null)
-		{
-			lock = malnutrition.getLock();
+		try {
+			jpa.beginTransaction();
+			
+			malnutrition = (Malnutrition)jpa.find(Malnutrition.class, malnutritionCode); 
+			if (malnutrition != null)
+			{
+				lock = malnutrition.getLock();
+			}
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		
-		jpa.commitTransaction();
-		
 		return lock;
 	}
 
 	/**
 	 * Updates the specified {@link Malnutrition}.
 	 * @param malnutrition the malnutrition to update.
-	 * @return <code>true</code> if the malnutrition has been updated, <code>false</code> otherwise.
+	 * @return <code>true</code> if the malnutrition has been updated
 	 * @throws OHException if an error occurs updating the malnutrition.
 	 */
 	public boolean updateMalnutrition(
 			Malnutrition malnutrition) throws OHException
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(malnutrition);
-    	jpa.commitTransaction();
-    	
-		return result;
+		try {
+			jpa.beginTransaction();	
+			jpa.merge(malnutrition);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
+		return true;
 	}
 	
 	/**
@@ -126,17 +141,22 @@ public class MalnutritionIoOperation {
 		ArrayList<Object> params = new ArrayList<Object>();
 		Malnutrition theMalnutrition = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM MALNUTRITIONCONTROL WHERE MLN_ADM_ID = ? ORDER BY MLN_DATE_SUPP DESC LIMIT 1";
-		params.add(patientID);
-		jpa.createQuery(query, Malnutrition.class, false);
-		jpa.setParameters(params, false);
-		List<Malnutrition> malnutritionList = (List<Malnutrition>)jpa.getList();
-		malnutritions = new ArrayList<Malnutrition>(malnutritionList);			
-		
-		jpa.commitTransaction();
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM MALNUTRITIONCONTROL WHERE MLN_ADM_ID = ? ORDER BY MLN_DATE_SUPP DESC LIMIT 1";
+			params.add(patientID);
+			jpa.createQuery(query, Malnutrition.class, false);
+			jpa.setParameters(params, false);
+			List<Malnutrition> malnutritionList = (List<Malnutrition>)jpa.getList();
+			malnutritions = new ArrayList<Malnutrition>(malnutritionList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		
 		try {
 			theMalnutrition = malnutritions.get(0);
@@ -159,11 +179,15 @@ public class MalnutritionIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.remove(malnutrition);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			jpa.remove(malnutrition);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 }

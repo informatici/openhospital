@@ -9,12 +9,14 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.malnutrition.manager.MalnutritionManager;
 import org.isf.malnutrition.model.Malnutrition;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.time.DateTextField;
 
 public class InsertMalnutrition extends JDialog {
@@ -166,14 +168,109 @@ public class InsertMalnutrition extends JDialog {
 				}else
 					maln.setDateConf(null);
 				if (inserting) {
-					if (manager.newMalnutrition(maln)) {
-						myDialog.dispose();
+					
+					if (true == isValidForInsert(maln)) {
+						boolean inserted;
+						
+						try {
+							inserted = manager.newMalnutrition(maln);
+						} catch (OHServiceException e) {
+							inserted = false;
+							JOptionPane.showMessageDialog(null, e.getMessage());
+						}
+						
+						if (true == inserted) {
+							myDialog.dispose();
+						}
 					}
+					
 				} else {
-					if (manager.updateMalnutrition(maln)) {
-						myDialog.dispose();
+					
+					if (true == isValidForUpdate(maln)) {
+						boolean updated;
+						
+						try {
+							updated = manager.updateMalnutrition(maln, true);
+							
+							if (false == updated) {
+								// failed because of valid lock, ask user if they want to update anyway
+								String msg = MessageBundle.getMessage("angal.malnutrition.thedatahasbeenupdatedbysomeoneelse") +
+										MessageBundle.getMessage("angal.malnutrition.doyouwanttooverwritethedata");
+								
+								int response = JOptionPane.showConfirmDialog(null, msg, MessageBundle.getMessage("angal.malnutrition.select"), JOptionPane.YES_NO_OPTION);
+								if (response == JOptionPane.YES_OPTION){
+									updated = manager.updateMalnutrition(maln, false);
+								}
+							}
+						} catch (OHServiceException e) {
+							// either the record was deleted during update by another user or the sql failed for some other reason
+							// so show the error message propagated up from the exception
+							updated = false;
+							JOptionPane.showMessageDialog(null, e.getMessage());
+						}
+						
+						if (true == updated) {
+							myDialog.dispose();
+						}
 					}
 				}
+			}
+
+			/**
+			 * Checks for update validity and shows error on failure
+			 * @param malnutrition
+			 * @return
+			 */
+			private boolean isValidForUpdate(Malnutrition malnutrition) {
+				if(malnutrition.getHeight()==0){
+					JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.malnutrition.insertcorrectvalueinheightfield"));
+					return false;
+				}
+
+				if(malnutrition.getWeight()==0){
+					JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.malnutrition.insertcorrectvalueinweightfield"));
+					return false;
+				}
+				
+				return true;
+			}
+
+			/**
+			 * Checks for insert validity and shows appropriate error on failure
+			 * @param malnutrition
+			 * @return
+			 */
+			private boolean isValidForInsert(Malnutrition malnutrition) {
+				if(malnutrition.getDateSupp()==null) {
+					JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.malnutrition.thedatatypemustbeindateofcontrol"));
+					return false;
+				}
+
+				if(malnutrition.getDateConf()==null) {
+					JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.malnutrition.thedatatypemustbeindateofthenextcontrol"));
+					return false;
+				}
+
+				if(malnutrition.getWeight()==0) {
+					JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.malnutrition.insertcorrectvalueinweightfield"));
+					return false;
+				}
+
+				if(malnutrition.getHeight()==0) {
+					JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.malnutrition.insertcorrectvalueinheightfield"));
+					return false;
+				}
+				
+				GregorianCalendar gc = new GregorianCalendar();
+				if((malnutrition.getDateSupp().get(GregorianCalendar.YEAR)>=gc.get(GregorianCalendar.YEAR))&&
+						(malnutrition.getDateSupp().get(GregorianCalendar.MONTH)>=gc.get(GregorianCalendar.MONTH))&&
+						(malnutrition.getDateSupp().get(GregorianCalendar.DAY_OF_MONTH)>gc.get(GregorianCalendar.DAY_OF_MONTH))){
+					
+					JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.malnutrition.thedateofthiscontrolwillbeafuturedate"));
+					return false;
+				}
+				
+				return true;
 			}
 		});
 		return okButton;

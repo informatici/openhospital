@@ -19,9 +19,10 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.admission.model.Admission;
+import org.isf.generaldata.MessageBundle;
 import org.isf.malnutrition.manager.MalnutritionManager;
 import org.isf.malnutrition.model.Malnutrition;
-import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
 
 public class MalnutritionBrowser extends JDialog {
 
@@ -171,11 +172,24 @@ public class MalnutritionBrowser extends JDialog {
 							MessageBundle.getMessage("angal.common.delete")+"?", MessageBundle.getMessage("angal.hospital"),
 							JOptionPane.YES_NO_OPTION);
 
-					if ((n == JOptionPane.YES_OPTION)
-							&& (manager.deleteMalnutrition(m))) {
-						pMaln.remove(table.getSelectedRow());
-						model.fireTableDataChanged();
-						table.updateUI();
+					if (n == JOptionPane.YES_OPTION) {	
+						if(m==null){
+							JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.common.pleaseselectarow"));
+						} else {
+							boolean deleted;
+							try {
+								deleted = manager.deleteMalnutrition(m);
+							} catch (OHServiceException e) {
+								deleted = false;
+								JOptionPane.showMessageDialog(null, e.getMessage());
+							}
+							
+							if (true == deleted) {
+								pMaln.remove(table.getSelectedRow());
+								model.fireTableDataChanged();
+								table.updateUI();
+							}
+						}
 					}
 				}
 			}
@@ -214,7 +228,18 @@ public class MalnutritionBrowser extends JDialog {
 
 		public MalnBrowsingModel(String s) {
 			MalnutritionManager manager = new MalnutritionManager();
-			pMaln = manager.getMalnutrition(s);
+			
+			pMaln = null;
+			
+			if (null != s && false == s.isEmpty()) {
+				try {
+					pMaln = manager.getMalnutrition(s);
+				} catch (OHServiceException e) {
+					JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.malnutrition.problemsoccuredwiththesqlistruction"));
+				}				
+			} else {
+				JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.malnutrition.nonameselected"));
+			}
 		}
 
 		public int getRowCount() {
