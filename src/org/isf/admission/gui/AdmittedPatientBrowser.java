@@ -40,13 +40,12 @@ import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
 import org.isf.disease.model.Disease;
 import org.isf.examination.gui.PatientExaminationEdit;
+import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.model.GenderPatientExamination;
 import org.isf.examination.model.PatientExamination;
-import org.isf.examination.service.ExaminationOperations;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
-import org.isf.menu.gui.Menu;
 import org.isf.opd.gui.OpdEditExtended;
 import org.isf.opd.model.Opd;
 import org.isf.patient.gui.PatientInsert;
@@ -55,7 +54,6 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.therapy.gui.TherapyEdit;
 import org.isf.utils.db.NormalizeString;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.BusyState;
@@ -533,19 +531,22 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 					Patient pat = patient.getPatient();
 					
 					PatientExamination patex;
-					ExaminationOperations examOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
+					ExaminationBrowserManager examManager = new ExaminationBrowserManager();
 					
 					PatientExamination lastPatex = null;
 					try {
-						lastPatex = examOperations.getLastByPatID(pat.getCode());
-					} catch (OHException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						lastPatex = examManager.getLastByPatID(pat.getCode());
+					}catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
 					}
 					if (lastPatex != null) {
-						patex = examOperations.getFromLastPatientExamination(lastPatex);
+						patex = examManager.getFromLastPatientExamination(lastPatex);
 					} else {
-						patex = examOperations.getDefaultPatientExamination(pat);
+						patex = examManager.getDefaultPatientExamination(pat);
 					}
 					
 					GenderPatientExamination gpatex = new GenderPatientExamination(patex, pat.getSex() == 'M');

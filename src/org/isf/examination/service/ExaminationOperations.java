@@ -59,18 +59,22 @@ public class ExaminationOperations {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		
-		
-		jpa.beginTransaction();
-		if (patex.getPex_ID() != 0)
-		{
-			jpa.merge(patex);			
+		try{
+			jpa.beginTransaction();
+			if (patex.getPex_ID() != 0)
+			{
+				jpa.merge(patex);			
+			}
+			else
+			{			
+				jpa.persist(patex);
+			}
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		else
-		{			
-			jpa.persist(patex);
-		}
-    	jpa.commitTransaction();
-    	
 		return;	
 	}
 
@@ -78,12 +82,17 @@ public class ExaminationOperations {
 			int ID) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
+		PatientExamination foundPatientExamination = null;
 		
-		
-		jpa.beginTransaction();	
-		PatientExamination foundPatientExamination = (PatientExamination)jpa.find(PatientExamination.class, ID);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			foundPatientExamination = (PatientExamination)jpa.find(PatientExamination.class, ID);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return foundPatientExamination;
 	}
 
@@ -104,19 +113,23 @@ public class ExaminationOperations {
 		ArrayList<PatientExamination> patExaminations = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 			
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM PATIENTEXAMINATION WHERE PEX_PAT_ID = ? ORDER BY PEX_DATE DESC LIMIT ?";
-		params.add(patID);
-		params.add(number);
-		jpa.createQuery(query, PatientExamination.class, false);
-		jpa.setParameters(params, false);
-		List<PatientExamination> patExaminationList = (List<PatientExamination>)jpa.getList();
-		patExaminations = new ArrayList<PatientExamination>(patExaminationList);			
-		
-		jpa.commitTransaction();
-		
+		try{
+			jpa.beginTransaction();
+
+			String query = "SELECT * FROM PATIENTEXAMINATION WHERE PEX_PAT_ID = ? ORDER BY PEX_DATE DESC LIMIT ?";
+			params.add(patID);
+			params.add(number);
+			jpa.createQuery(query, PatientExamination.class, false);
+			jpa.setParameters(params, false);
+			List<PatientExamination> patExaminationList = (List<PatientExamination>)jpa.getList();
+			patExaminations = new ArrayList<PatientExamination>(patExaminationList);			
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return patExaminations;
 	}
 
@@ -128,18 +141,22 @@ public class ExaminationOperations {
 		ArrayList<PatientExamination> patExaminations = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 			
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM PATIENTEXAMINATION WHERE PEX_PAT_ID = ? ORDER BY PEX_DATE DESC";
-		params.add(patID);
-		jpa.createQuery(query, PatientExamination.class, false);
-		jpa.setParameters(params, false);
-		List<PatientExamination> patExaminationList = (List<PatientExamination>)jpa.getList();
-		patExaminations = new ArrayList<PatientExamination>(patExaminationList);			
-		
-		jpa.commitTransaction();
-		
+		try{
+			jpa.beginTransaction();
+
+			String query = "SELECT * FROM PATIENTEXAMINATION WHERE PEX_PAT_ID = ? ORDER BY PEX_DATE DESC";
+			params.add(patID);
+			jpa.createQuery(query, PatientExamination.class, false);
+			jpa.setParameters(params, false);
+			List<PatientExamination> patExaminationList = (List<PatientExamination>)jpa.getList();
+			patExaminations = new ArrayList<PatientExamination>(patExaminationList);			
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return patExaminations;
 	}
 }
