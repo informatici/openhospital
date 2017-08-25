@@ -16,6 +16,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
@@ -26,6 +27,8 @@ import javax.swing.event.ListSelectionListener;
 import org.isf.dicom.manager.DicomManagerFactory;
 import org.isf.dicom.model.FileDicom;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 
 /**
  * Component for DICOM Thumnails composizion and visualizzation
@@ -126,7 +129,16 @@ public class ThumbnailViewGui extends JList {
 	}
 
 	private void loadDicomFromDB() {
-		FileDicom[] fdb = DicomManagerFactory.getManager().loadFilesPaziente(patID);
+		FileDicom[] fdb = null;
+		try {
+			fdb = DicomManagerFactory.getManager().loadFilesPaziente(patID);
+		}catch(OHServiceException ex){
+			if(ex.getMessages() != null){
+				for(OHExceptionMessage msg : ex.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		if (fdb == null)
 			fdb = new FileDicom[0];
 
