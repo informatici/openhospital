@@ -25,6 +25,7 @@ import javax.swing.JComboBox;
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.*;
 import org.isf.exatype.model.ExamType;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.generaldata.MessageBundle;
 
@@ -191,13 +192,46 @@ public class ExamEdit extends JDialog {
 						
 						boolean result = false;
 						if (insert) {
-							if (manager.isKeyPresent(exam)) {
+							
+							boolean keyPresent;
+							
+							try {
+								keyPresent = manager.isKeyPresent(exam);
+							} catch (OHServiceException e1) {
+								keyPresent = false;
+								JOptionPane.showMessageDialog(ExamEdit.this, e1.getMessage());
+							}
+							
+							if (true == keyPresent) {
 								JOptionPane.showMessageDialog(ExamEdit.this, MessageBundle.getMessage("angal.exa.changethecodebecauseisalreadyinuse"));
 								return;
 							}
-							result = manager.newExam(exam);
+							try {
+								result = manager.newExam(exam);
+							} catch (OHServiceException e1) {
+								result = false;
+								JOptionPane.showMessageDialog(ExamEdit.this, e1.getMessage());
+							}
 						} else {
-							result = manager.updateExam(exam);
+							try {
+								result = manager.updateExam(exam);
+								
+								if (false == result) {
+									String prompt = MessageBundle.getMessage("angal.exa.thedatahasbeenupdatedbysomeoneelse") + ".\n"
+											+ MessageBundle.getMessage("angal.exa.doyouwanttooverwritethedata") + "?";
+									
+									int ok = JOptionPane.showConfirmDialog(null,
+											prompt,
+											MessageBundle.getMessage("angal.exa.select"), JOptionPane.YES_NO_OPTION);
+									
+									if (JOptionPane.YES_OPTION == ok) {
+										manager.updateExam(exam, false);
+									}
+								}
+							} catch (OHServiceException e1) {
+								result = false;
+								JOptionPane.showMessageDialog(ExamEdit.this, e1.getMessage());
+							}
 						}
 						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exa.thedatacouldnotbesaved"));
 						else  dispose();
@@ -270,9 +304,17 @@ public class ExamEdit extends JDialog {
 			typeComboBox = new JComboBox();
 			if (insert) {
 				ExamBrowsingManager manager = new ExamBrowsingManager();
-				ArrayList<ExamType> types = manager.getExamType();
-				for (ExamType elem : types) {
-					typeComboBox.addItem(elem);
+				ArrayList<ExamType> types;
+				try {
+					types = manager.getExamType();
+				} catch (OHServiceException e) {
+					types = null;
+					JOptionPane.showMessageDialog(null, e.getMessage());
+				}
+				if (null != types) {
+					for (ExamType elem : types) {
+						typeComboBox.addItem(elem);
+					}
 				}
 			} else {
 				typeComboBox.addItem(exam.getExamtype());

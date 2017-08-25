@@ -162,11 +162,11 @@ public class LabNew extends JDialog implements SelectionListener {
 	
 	//Exams (ALL)
 	ExamBrowsingManager exaManager = new ExamBrowsingManager();
-	ArrayList<Exam> exaArray = exaManager.getExams();
+	ArrayList<Exam> exaArray;
 	
 	//Results (ALL)
 	ExamRowBrowsingManager examRowManager = new ExamRowBrowsingManager();
-	ArrayList<ExamRow> exaRowArray = examRowManager.getExamRow();
+	ArrayList<ExamRow> exaRowArray;
 	
 	//Arrays for this Patient
 	ArrayList<ArrayList<String>> examResults = new ArrayList<ArrayList<String>>();
@@ -174,6 +174,21 @@ public class LabNew extends JDialog implements SelectionListener {
 	
 	public LabNew(JFrame owner) {
 		super(owner, true);
+		
+		try {
+			exaArray = exaManager.getExams();
+		} catch (OHServiceException e) {
+			exaArray = null;
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
+		 try {
+			exaRowArray = examRowManager.getExamRow();
+		} catch (OHServiceException e) {
+			exaRowArray = null;
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+		
 		initComponents();
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(LabNew.DISPOSE_ON_CLOSE);

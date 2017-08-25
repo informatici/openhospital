@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import org.isf.exa.manager.ExamRowBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.generaldata.MessageBundle;
 
@@ -162,12 +163,19 @@ public class ExamRowEdit extends JDialog {
 						ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
 						examRow.setDescription(descriptionTextField.getText().toUpperCase());
 						examRow.setExamCode(exam);
-						manager.newExamRow(examRow);
-						ArrayList<ExamRow> key = manager.getExamRow(examRow.getExamCode().getCode(),examRow.getDescription());
-					//	if(key.size()>0){
-							examRow.setCode(key.get(0).getCode());
-							dispose();
-					//	}	
+						
+						try {
+							boolean inserted = manager.newExamRow(examRow);
+							
+							if (true == inserted) {
+								ArrayList<ExamRow> key = manager.getExamRow(examRow.getExamCode().getCode(),examRow.getDescription());
+								examRow.setCode(key.get(0).getCode());
+							}
+						} catch (OHServiceException e1) {
+							JOptionPane.showMessageDialog(null, e1.getMessage());
+						}
+						
+						dispose();
 					}
 				}
 			});
