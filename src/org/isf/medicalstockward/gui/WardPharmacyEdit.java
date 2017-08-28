@@ -348,7 +348,13 @@ private JButton getJButtonTrashMedical() {
 					movSelected.setUnits((String)jComboBoxType.getSelectedItem());
 					
 					MovWardBrowserManager manager = new MovWardBrowserManager();
-					boolean result = manager.updateMovementWard(movSelected);
+					boolean result;
+					try {
+						result = manager.updateMovementWard(movSelected);
+					} catch (OHServiceException e1) {
+						result = false;
+						JOptionPane.showMessageDialog(null, e1.getMessage());
+					}
 					if (result) {
 						fireMovementWardUpdated();
 					}

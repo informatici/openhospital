@@ -855,7 +855,12 @@ public class TherapyEdit extends JDialog {
 							// CALCULATING STOCK QUANTITIES
 							Medical med = medArray.get(medArray.indexOf(th.getMedical()));
 							actualQty = med.getInitialqty() + med.getInqty() - med.getOutqty(); // MAIN STORE
-							actualQty += wardManager.getCurrentQuantity(null, med); // ALL WARD STORES
+							try {
+								actualQty += wardManager.getCurrentQuantity(null, med);
+							} catch (OHServiceException e1) {
+								// don't add anything to actualQty, show error message on exception
+								JOptionPane.showMessageDialog(null, e1.getMessage());
+							} // ALL WARD STORES
 
 							// System.out.print("  (LAYING IN STOCK: "+actualQty+")");
 							// System.out.print("\n===========================\n");

@@ -252,14 +252,20 @@ public class WardPharmacyRectify extends JDialog {
 						if (quantity == 0.) return;
 						
 						MovWardBrowserManager wardMan = new MovWardBrowserManager();
-						boolean result = wardMan.newMovementWard(new MovementWard(
-								wardSelected, 
-								new GregorianCalendar(), 
-								false, null, 0, 0, 
-								reason, 
-								med, 
-								quantity,
-								MessageBundle.getMessage("angal.medicalstockward.rectify.pieces"))); //$NON-NLS-1$
+						boolean result;
+						try {
+							result = wardMan.newMovementWard(new MovementWard(
+									wardSelected, 
+									new GregorianCalendar(), 
+									false, null, 0, 0, 
+									reason, 
+									med, 
+									quantity,
+									MessageBundle.getMessage("angal.medicalstockward.rectify.pieces")));
+						} catch (OHServiceException e1) {
+							result = false;
+							JOptionPane.showMessageDialog(null, e1.getMessage());
+						} //$NON-NLS-1$
 						if (!result) {
 							
 							return;
