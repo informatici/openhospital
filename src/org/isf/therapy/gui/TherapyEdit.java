@@ -136,7 +136,7 @@ public class TherapyEdit extends JDialog {
 	private MedicalBrowsingManager medBrowser = new MedicalBrowsingManager();
 	private TherapyManager thManager = new TherapyManager();
 	private VisitManager vstManager = new VisitManager();
-	private ArrayList<Medical> medArray = medBrowser.getMedicals();
+	private ArrayList<Medical> medArray;
 	private ArrayList<Double> qtyArray = new ArrayList<Double>();
 	private ArrayList<Therapy> therapies = new ArrayList<Therapy>();
 	private ArrayList<TherapyRow> thRows = new ArrayList<TherapyRow>();
@@ -144,6 +144,12 @@ public class TherapyEdit extends JDialog {
 
 	public TherapyEdit(JFrame owner, Patient patient, boolean admitted) {
 		super(owner, true);
+		try {
+			this.medArray = medBrowser.getMedicals();
+		} catch (OHServiceException e1) {
+			this.medArray = null;
+			JOptionPane.showMessageDialog(null, e1.getMessage());
+		}
 		this.patient = patient;
 		this.admitted = admitted;
 		initComponents();
@@ -806,7 +812,13 @@ public class TherapyEdit extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 
 					MedicalBrowsingManager medManager = new MedicalBrowsingManager();
-					ArrayList<Medical> medArray = medManager.getMedicals();
+					ArrayList<Medical> medArray;
+					try {
+						medArray = medManager.getMedicals();
+					} catch (OHServiceException e1) {
+						medArray = null;
+						JOptionPane.showMessageDialog(null, e1.getMessage());
+					}
 
 					MovWardBrowserManager wardManager = new MovWardBrowserManager();
 

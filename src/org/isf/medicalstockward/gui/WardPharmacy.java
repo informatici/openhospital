@@ -726,7 +726,13 @@ public class WardPharmacy extends ModalJFrame implements
 			jComboBoxMedicals.setPreferredSize(new Dimension(filterWidth, 24));
 		}
 		MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
-		ArrayList<Medical> medicals = medicalManager.getMedicals();
+		ArrayList<Medical> medicals;
+		try {
+			medicals = medicalManager.getMedicals();
+		} catch (OHServiceException e) {
+			medicals = null;
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
 		jComboBoxMedicals.addItem(MessageBundle.getMessage("angal.medicalstockward.allmedicals"));
 		MedicalType medicalType;
 		if (jComboBoxTypes.getSelectedItem() instanceof String) {
@@ -734,12 +740,14 @@ public class WardPharmacy extends ModalJFrame implements
 		} else {
 			medicalType = (MedicalType) jComboBoxTypes.getSelectedItem();
 		}
-		for (Medical aMedical : medicals) {
-			boolean ok = true;
-			if (medicalType != null)
-				ok = ok && aMedical.getType().equals(medicalType);
-			if (ok)
-				jComboBoxMedicals.addItem(aMedical);
+		if (null != medicals) {
+			for (Medical aMedical : medicals) {
+				boolean ok = true;
+				if (medicalType != null)
+					ok = ok && aMedical.getType().equals(medicalType);
+				if (ok)
+					jComboBoxMedicals.addItem(aMedical);
+			}
 		}
 		return jComboBoxMedicals;
 	}

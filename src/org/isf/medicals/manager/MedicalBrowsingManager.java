@@ -6,13 +6,18 @@ package org.isf.medicals.manager;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
+//import javax.swing.JOptionPane;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
 import org.isf.medicals.service.MedicalsIoOperations;
 import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that provides gui separation from database operations and gives some
@@ -23,6 +28,8 @@ import org.isf.utils.exception.OHException;
  */
 public class MedicalBrowsingManager {
 
+	private final Logger logger = LoggerFactory.getLogger(MedicalBrowsingManager.class);
+	
 	private MedicalsIoOperations ioOperations = Menu.getApplicationContext().getBean(MedicalsIoOperations.class);
 	
 	/**
@@ -30,13 +37,23 @@ public class MedicalBrowsingManager {
 	 * In case of error a message error is shown and a <code>null</code> value is returned.
 	 * @param code the medical code.
 	 * @return the retrieved medical.
+	 * @throws OHServiceException 
 	 */
-	public Medical getMedical(int code) {
+	public Medical getMedical(int code) throws OHServiceException {
 		try {
 			return ioOperations.getMedical(code);
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -44,150 +61,178 @@ public class MedicalBrowsingManager {
 	 * Returns all the medicals.
 	 * In case of error a message error is shown and a <code>null</code> value is returned.
 	 * @return all the medicals.
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Medical> getMedicals() {
+	public ArrayList<Medical> getMedicals() throws OHServiceException {
 		try {
 			return ioOperations.getMedicals();
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
 	/**
 	 * Returns all the medicals with the specified description.
-	 * In case of error a message error is shown and a <code>null</code> value is returned.
 	 * @param description the medical description.
 	 * @return all the medicals with the specified description.
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Medical> getMedicals(String description) {
+	public ArrayList<Medical> getMedicals(String description) throws OHServiceException {
 		try {
 			return ioOperations.getMedicals(description);
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
 	/**
 	 * Return all the medicals with the specified criteria.
-	 * In case of error a message error is shown and a <code>null</code> value is returned.
 	 * @param description the medical description or <code>null</code>
 	 * @param type the medical type or <code>null</code>.
 	 * @param expiring <code>true</code> to include only expiring medicals.
 	 * @return the retrieved medicals.
+	 * @throws OHServiceException
 	 */
-	public ArrayList<Medical> getMedicals(String description, String type, boolean expiring) {
+	public ArrayList<Medical> getMedicals(String description, String type, boolean expiring) throws OHServiceException {
 		try {
 			return ioOperations.getMedicals(description, type, expiring);
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
 	/**
 	 * Saves the specified {@link Medical}. The medical is updated with the generated id.
 	 * In case of wrong parameters values a message error is shown and a <code>false</code> value is returned.
-	 * In case of error a message error is shown and a <code>false</code> value is returned.
 	 * @param medical the medical to store.
 	 * @return <code>true</code> if the medical has been stored, <code>false</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public boolean newMedical(Medical medical) {
-
-		if(medical.getMinqty()<0){
-			JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicals.minquantitycannotbelessthan0"));
-			return false;
-		}
-
-		if(medical.getDescription().equalsIgnoreCase("")){
-			JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicals.inseravaliddescription"));
-			return false;
-		}
-
+	public boolean newMedical(Medical medical) throws OHServiceException {
 		try {
-			boolean medicalExists = ioOperations.medicalExists(medical);
-			if (medicalExists) {
-				JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicals.thetypemedicalyouinsertedwasalreadyinuse"));
-				return false;
-			} else return ioOperations.newMedical(medical);
+			if (true == ioOperations.medicalExists(medical)) {
+				throw new OHException(MessageBundle.getMessage("angal.medicals.thetypemedicalyouinsertedwasalreadyinuse"));
+			} else {
+				return ioOperations.newMedical(medical);
+			}
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
 	/**
 	 * Updates the specified medical.
-	 * In case of wrong parameters values a message error is shown and a <code>false</code> value is returned.
-	 * In case of concurrent modification an overwrite request is made.
-	 * In case of already deleted medical an error message is shown.
-	 * In case of error a message error is shown and a <code>false</code> value is returned.
 	 * @param medical the medical to update.
-	 * @return <code>true</code> if updated, <code>false</code> otherwise.
+	 * @return <code>true</code> if update is successful, false if abortIfLocked == true and the record is locked. Otherwise throws an OHServiceException
+	 * @throws OHServiceException 
 	 */
-	public boolean updateMedical(Medical medical) {
-
-		if(medical.getMinqty()<0){
-			JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicals.minquantitycannotbelessthan0"));
-			return false;
-		}
-
+	public boolean updateMedical(Medical medical, boolean abortIfLocked) throws OHServiceException {
 		try {
-			
 			boolean medicalExists = ioOperations.medicalExists(medical);
+			
 			if (medicalExists) {
-				JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicals.thetypemedicalyouinsertedwasalreadyinuse"));
-				return false;
+				throw new OHException(MessageBundle.getMessage("angal.medicals.thetypemedicalyouinsertedwasalreadyinuse"));
 			}
 			
 			int lock = ioOperations.getMedicalLock(medical.getCode());
 			if (lock>=0) {
 				//ok the record is present, it was not deleted
 				if (lock!=medical.getLock()) {
-					//it was updated by someone else
-					String msg = MessageBundle.getMessage("angal.medicals.thedatahasbeenupdatedbysomeoneelse") +
-							MessageBundle.getMessage("angal.medicals.doyouwanttooverwritethedata");
-					int response = JOptionPane.showConfirmDialog(null, msg, MessageBundle.getMessage("angal.medicals.select"), JOptionPane.YES_NO_OPTION);
-					if (response== JOptionPane.OK_OPTION) {
+					if (true == abortIfLocked) {
+						return false;
+					} else {
 						return ioOperations.updateMedical(medical);
-					} else return false;
+					}
 				} else {
 					//ok it was not updated
 					return ioOperations.updateMedical(medical);
 				}
-
 			} else {
 				//the record was deleted since the last read
-				JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicals.couldntfindthedataithasprobablybeendeleted"));
-				return false;
+				throw new OHException(MessageBundle.getMessage("angal.medicals.couldntfindthedataithasprobablybeendeleted"));
 			}
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
-
 	}
 
 	/**
 	 * Deletes the specified medical.
-	 * If the medical is involved in stock movement an error message is shown.
-	 * In case of error a message error is shown and a <code>false</code> value is returned.
 	 * @param medical the medical to delete.
 	 * @return <code>true</code> if the medical has been deleted.
+	 * @throws OHServiceException
 	 */
-	public boolean deleteMedical(Medical medical) {
+	public boolean deleteMedical(Medical medical) throws OHServiceException {
 		try {
 			boolean inStockMovement = ioOperations.isMedicalReferencedInStockMovement(medical.getCode());
 
 			if(inStockMovement){
-				JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicals.therearestockmovementsreferredtothismedical"));
-				return false;
+				throw new OHException(MessageBundle.getMessage("angal.medicals.therearestockmovementsreferredtothismedical"));
 			}
+			
 			return ioOperations.deleteMedical(medical);
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 }

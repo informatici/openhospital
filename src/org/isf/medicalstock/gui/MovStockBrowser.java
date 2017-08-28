@@ -50,12 +50,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import org.isf.accounting.gui.BillBrowser;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
-import org.isf.hospital.gui.HospitalBrowser;
 import org.isf.hospital.manager.HospitalBrowsingManager;
-import org.isf.hospital.model.Hospital;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.manager.DateTextField;
@@ -385,10 +382,18 @@ public class MovStockBrowser extends ModalJFrame {
 		medicalBox.setMinimumSize(new Dimension(150, 25));
 		medicalBox.setPreferredSize(new Dimension(150, 25));
 		MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
-		ArrayList<Medical> medical = medicalManager.getMedicals();
+		ArrayList<Medical> medical;
+		try {
+			medical = medicalManager.getMedicals();
+		} catch (OHServiceException e1) {
+			medical = null;
+			JOptionPane.showMessageDialog(null, e1.getMessage());
+		}
 		medicalBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));
-		for (Medical aMedical : medical) {
-			medicalBox.addItem(aMedical);
+		if (null != medical) {
+			for (Medical aMedical : medical) {
+				medicalBox.addItem(aMedical);
+			}
 		}
 		medicalBox.addMouseListener(new MouseListener() {
 			public void mouseExited(MouseEvent e) {

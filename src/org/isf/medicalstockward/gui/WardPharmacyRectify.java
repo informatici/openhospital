@@ -21,6 +21,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -36,6 +37,7 @@ import org.isf.medicalstockward.manager.MovWardBrowserManager;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.ward.model.Ward;
 
 public class WardPharmacyRectify extends JDialog {
@@ -82,7 +84,7 @@ public class WardPharmacyRectify extends JDialog {
 	
 	//Medicals (ALL)
 	private MedicalBrowsingManager medManager = new MedicalBrowsingManager();
-	private ArrayList<Medical> medicals = medManager.getMedicals();
+	private ArrayList<Medical> medicals;
 	private HashMap<String, Medical> medicalMap; //map medicals by their prod_code
 	private HashMap<Integer, Double> wardMap; //map quantities by their medical_id
 	
@@ -101,14 +103,23 @@ public class WardPharmacyRectify extends JDialog {
 	}
 
 	public WardPharmacyRectify() {
+		initMedicals();
 		initComponents();
 	}
 	
+	private void initMedicals() {
+		try {
+			this.medicals = medManager.getMedicals();
+		} catch (OHServiceException e) {
+			this.medicals = null;
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+	}
+
 	/**
 	 * Create the dialog.
 	 */
 	public WardPharmacyRectify(JFrame owner, Ward ward, ArrayList<MedicalWard> drugs) {
-		
 		super(owner, true);
 		wardMap = new HashMap<Integer, Double>();
 		for (MedicalWard medWard : drugs) {
@@ -124,6 +135,7 @@ public class WardPharmacyRectify extends JDialog {
 			medicalMap.put(med.getProd_code(), med);
 		}
 		wardSelected = ward;
+		initMedicals();
 		initComponents();
 	}
 	

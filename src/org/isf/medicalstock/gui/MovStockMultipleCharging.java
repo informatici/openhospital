@@ -56,6 +56,7 @@ import org.isf.supplier.model.Supplier;
 import org.isf.supplier.service.SupplierOperations;
 import org.isf.utils.db.NormalizeString;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
@@ -128,13 +129,21 @@ public class MovStockMultipleCharging extends JDialog {
 
 	private void initialize() {
 		MedicalBrowsingManager medMan = new MedicalBrowsingManager();
-		ArrayList<Medical> medicals = medMan.getMedicals();
+		ArrayList<Medical> medicals;
+		try {
+			medicals = medMan.getMedicals();
+		} catch (OHServiceException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			medicals = null;
+		}
 
 		medicalMap = new HashMap<String, Medical>();
-		for (Medical med : medicals) {
-			String key = med.getProd_code();
-			if (key.equals("")) key = med.getCode().toString(); //$NON-NLS-1$
-			medicalMap.put(key, med);
+		if (null != medicals) {
+			for (Medical med : medicals) {
+				String key = med.getProd_code();
+				if (key.equals("")) key = med.getCode().toString(); //$NON-NLS-1$
+				medicalMap.put(key, med);
+			}
 		}
 		units = new ArrayList<Integer>();
 	}

@@ -43,7 +43,6 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
-import org.isf.medicals.service.MedicalsIoOperations;
 import org.isf.menu.gui.Menu;
 import org.isf.patient.model.Patient;
 import org.isf.patient.service.PatientIoOperations;
@@ -51,6 +50,7 @@ import org.isf.therapy.manager.TherapyManager;
 import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.jobjects.IconButton;
 import org.isf.utils.time.TimeTools;
 import org.joda.time.DateTime;
@@ -74,7 +74,7 @@ public class TherapyEntryForm extends JDialog {
 	 * Managers
 	 */
 	private MedicalBrowsingManager medBrowser = new MedicalBrowsingManager();
-	private ArrayList<Medical> medArray = medBrowser.getMedicals();
+	private ArrayList<Medical> medArray = null;
 
 	/*
 	 * Constants
@@ -137,6 +137,12 @@ public class TherapyEntryForm extends JDialog {
 	 */
 	public TherapyEntryForm(JDialog owner, int patID, Therapy th) {
 		super(owner, true);
+		try {
+			this.medArray = medBrowser.getMedicals();
+		} catch (OHServiceException e) {
+			this.medArray = new ArrayList<Medical>();
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
 		this.therapy = th;
 		this.patID = patID;
 

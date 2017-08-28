@@ -140,13 +140,22 @@ public class MovStockMultipleDischarging extends JDialog {
 
 	private void initialize() {
 		MedicalBrowsingManager medMan = new MedicalBrowsingManager();
-		ArrayList<Medical> medicals = medMan.getMedicals();
+		
+		ArrayList<Medical> medicals;
+		try {
+			medicals = medMan.getMedicals();
+		} catch (OHServiceException e) {
+			medicals = null;
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
 
 		medicalMap = new HashMap<String, Medical>();
-		for (Medical med : medicals) {
-			String key = med.getProd_code();
-			if (key.equals("")) key = med.getCode().toString(); //$NON-NLS-1$
-			medicalMap.put(key, med);
+		if (null != medicals) {
+			for (Medical med : medicals) {
+				String key = med.getProd_code();
+				if (key.equals("")) key = med.getCode().toString(); //$NON-NLS-1$
+				medicalMap.put(key, med);
+			}
 		}
 
 		units = new ArrayList<Integer>();

@@ -43,6 +43,7 @@ import org.isf.menu.gui.MainMenu;
 import org.isf.stat.manager.GenericReportFromDateToDate;
 import org.isf.stat.manager.GenericReportPharmaceuticalOrder;
 import org.isf.utils.excel.ExcelExporter;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.jobjects.JMonthYearChooser;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.slf4j.Logger;
@@ -199,18 +200,28 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 	                        JOptionPane.PLAIN_MESSAGE);				
 					return;									
 				}else {
-				MedicalBrowsingManager manager = new MedicalBrowsingManager();
-				Medical m = (Medical)(((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
-				int n = JOptionPane.showConfirmDialog(
-                        null,
-                        MessageBundle.getMessage("angal.medicals.deletemedical") + " \""+m.getDescription()+"\" ?",
-                        MessageBundle.getMessage("angal.hospital"),
-                        JOptionPane.YES_NO_OPTION);
-
-				if ((n == JOptionPane.YES_OPTION) && (manager.deleteMedical(m))){
-					pMedicals.remove(table.getSelectedRow());
-					model.fireTableDataChanged();
-					table.updateUI();
+					MedicalBrowsingManager manager = new MedicalBrowsingManager();
+					Medical m = (Medical)(((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
+					int n = JOptionPane.showConfirmDialog(
+	                        null,
+	                        MessageBundle.getMessage("angal.medicals.deletemedical") + " \""+m.getDescription()+"\" ?",
+	                        MessageBundle.getMessage("angal.hospital"),
+	                        JOptionPane.YES_NO_OPTION);
+	
+					if ((n == JOptionPane.YES_OPTION)){
+						boolean deleted;
+						try {
+							deleted = (manager.deleteMedical(m));
+						} catch (OHServiceException e) {
+							deleted = false;
+							JOptionPane.showMessageDialog(null, e.getMessage());
+						}
+						
+						if (true == deleted) {
+							pMedicals.remove(table.getSelectedRow());
+							model.fireTableDataChanged();
+							table.updateUI();
+						}
 					}
 				}
 			}
@@ -367,11 +378,21 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 
 		public MedicalBrowsingModel(String s) {
 			MedicalBrowsingManager manager = new MedicalBrowsingManager();
-			pMedicals = manager.getMedicals(s);
+			try {
+				pMedicals = manager.getMedicals(s);
+			} catch (OHServiceException e) {
+				pMedicals = null;
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			}
 		}
 		public MedicalBrowsingModel() {
 			MedicalBrowsingManager manager = new MedicalBrowsingManager();
-			pMedicals = manager.getMedicals();
+			try {
+				pMedicals = manager.getMedicals();
+			} catch (OHServiceException e) {
+				pMedicals = null;
+				JOptionPane.showMessageDialog(null, e.getMessage());;
+			}
 		}
  
 		

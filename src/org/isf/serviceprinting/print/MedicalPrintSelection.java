@@ -152,10 +152,18 @@ public class MedicalPrintSelection extends JDialog implements ActionListener{
 	private JComboBox getMedicalBox() {
 		medicalBox = new JComboBox();
 		MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
-		ArrayList<Medical> medical = medicalManager.getMedicals();
+		ArrayList<Medical> medical;
+		try {
+			medical = medicalManager.getMedicals();
+		} catch (OHServiceException e1) {
+			medical = null;
+			JOptionPane.showMessageDialog(null, e1.getMessage());
+		}
 		medicalBox.addItem("All");
-		for (Medical aMedical : medical) {
-			medicalBox.addItem(aMedical);
+		if (null != medical) {
+			for (Medical aMedical : medical) {
+				medicalBox.addItem(aMedical);
+			}
 		}
 		medicalBox.addMouseListener(new MouseListener() {
 			public void mouseExited(MouseEvent e) {}
