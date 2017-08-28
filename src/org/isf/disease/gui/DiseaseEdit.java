@@ -299,8 +299,8 @@ public class DiseaseEdit extends JDialog {
 									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
 								}
 							}
+							return;
 						}
-						return;
 					}
 					
 					disease.setType((DiseaseType)typeComboBox.getSelectedItem());
