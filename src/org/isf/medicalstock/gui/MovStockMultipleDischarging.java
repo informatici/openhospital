@@ -270,7 +270,13 @@ public class MovStockMultipleDischarging extends JDialog {
 	
 						// Lot (PreparationDate && ExpiringDate)
 						MovStockInsertingManager movBrowser = new MovStockInsertingManager();
-						ArrayList<Lot> lots = movBrowser.getLotByMedical(med);
+						ArrayList<Lot> lots;
+						try {
+							lots = movBrowser.getLotByMedical(med);
+						} catch (OHServiceException e1) {
+							lots = null;
+							JOptionPane.showMessageDialog(null, e1.getMessage());
+						}
 						Lot lot = null;
 						if (!isAutomaticLot()) {
 							lot = chooseLot(lots);
@@ -881,7 +887,13 @@ public class MovStockMultipleDischarging extends JDialog {
 		// Check the Date
 		GregorianCalendar thisDate = new GregorianCalendar();
 		thisDate.setTime(jDateChooser.getDate());
-		GregorianCalendar lastDate = manager.getLastMovementDate();
+		GregorianCalendar lastDate;
+		try {
+			lastDate = manager.getLastMovementDate();
+		} catch (OHServiceException e) {
+			lastDate = null;
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
 		if (lastDate != null && thisDate.compareTo(lastDate) < 0) {
 			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.datebeforelastmovement") + format(lastDate) + MessageBundle.getMessage("angal.medicalstock.multipledischarging.notallowed")); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
@@ -892,9 +904,16 @@ public class MovStockMultipleDischarging extends JDialog {
 		if (refNo.equals("")) { //$NON-NLS-1$
 			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.pleaseinsertareferencenumber")); //$NON-NLS-1$
 			return false;
-		} else if (manager.refNoExists(refNo)) {
-				JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.theinsertedreferencenumberalreadyexists")); //$NON-NLS-1$
+		} else {
+			try {
+				if (manager.refNoExists(refNo)) {
+					JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.theinsertedreferencenumberalreadyexists")); //$NON-NLS-1$
+					return false;
+				}
+			} catch (OHServiceException e) {
+				JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, e.getMessage());
 				return false;
+			}
 		}
 		
 		// Check destination
@@ -928,21 +947,28 @@ public class MovStockMultipleDischarging extends JDialog {
 		ArrayList<Movement> movements = model.getMovements();
 		int movSize = movements.size();
 		MovStockInsertingManager movManager = new MovStockInsertingManager();
-		int index = movManager.newMultipleDischargingMovements(movements);
-		
-		if (index < movSize) {
-			jTableMovements.getSelectionModel().setSelectionInterval(index, index);
-			ok = false;
-		} else {
-			if (isXmpp()) {
-				if(shareWith.isEnabled()&& (!(((String)shareWith.getSelectedItem())==MessageBundle.getMessage("angal.medicalstock.multipledischarging.sharealertwithnobody")))){ //$NON-NLS-1$
-					CommunicationFrame frame= (CommunicationFrame)CommunicationFrame.getFrame();
-					for (Medical med : pool) {
-						frame.sendMessage(MessageBundle.getMessage("angal.medicalstock.multipledischarging.alert") + med.getDescription() + MessageBundle.getMessage("angal.medicalstock.multipledischarging.isabouttoend"), (String)shareWith.getSelectedItem(), false); //$NON-NLS-1$ //$NON-NLS-2$
+		int index;
+		try {
+			index = movManager.newMultipleDischargingMovements(movements);
+			
+			if (index < movSize) {
+				jTableMovements.getSelectionModel().setSelectionInterval(index, index);
+				ok = false;
+			} else {
+				if (isXmpp()) {
+					if(shareWith.isEnabled()&& (!(((String)shareWith.getSelectedItem())==MessageBundle.getMessage("angal.medicalstock.multipledischarging.sharealertwithnobody")))){ //$NON-NLS-1$
+						CommunicationFrame frame= (CommunicationFrame)CommunicationFrame.getFrame();
+						for (Medical med : pool) {
+							frame.sendMessage(MessageBundle.getMessage("angal.medicalstock.multipledischarging.alert") + med.getDescription() + MessageBundle.getMessage("angal.medicalstock.multipledischarging.isabouttoend"), (String)shareWith.getSelectedItem(), false); //$NON-NLS-1$ //$NON-NLS-2$
+						}
 					}
 				}
 			}
+		} catch (OHServiceException e) {
+			ok = false;
+			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
+		
 		return ok;
 	}
 

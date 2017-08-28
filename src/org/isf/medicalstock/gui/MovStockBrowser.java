@@ -919,9 +919,13 @@ public class MovStockBrowser extends ModalJFrame {
 				GregorianCalendar lotPrepTo, GregorianCalendar lotDueFrom,
 				GregorianCalendar lotDueTo) {
 			MovBrowserManager manager = new MovBrowserManager();
-			moves = manager.getMovements(medicalCode, medicalType, ward,
-					movType, movFrom, movTo, lotPrepFrom, lotPrepTo,
-					lotDueFrom, lotDueTo);
+			try {
+				moves = manager.getMovements(medicalCode, medicalType, ward,
+						movType, movFrom, movTo, lotPrepFrom, lotPrepTo,
+						lotDueFrom, lotDueTo);
+			} catch (OHServiceException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			}
 			updateTotals();
 		}
 

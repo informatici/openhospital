@@ -897,14 +897,19 @@ public class WardPharmacy extends ModalJFrame implements
 
 		public IncomesModel() {
 			wardIncomes = new ArrayList<Movement>();
-			listMovementCentral = movManager.getMovements(wardSelected.getCode(), dateFrom, dateTo);
-
-			for (Movement mov : listMovementCentral) {
-				if (mov.getWard().getDescription() != null) {
-					if (mov.getWard().equals(wardSelected)) {
-						wardIncomes.add(mov);
+			try {
+				listMovementCentral = movManager.getMovements(wardSelected.getCode(), dateFrom, dateTo);
+				
+				for (Movement mov : listMovementCentral) {
+					if (mov.getWard().getDescription() != null) {
+						if (mov.getWard().equals(wardSelected)) {
+							wardIncomes.add(mov);
+						}
 					}
 				}
+			} catch (OHServiceException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage());
+				e.printStackTrace();
 			}
 		}
 
