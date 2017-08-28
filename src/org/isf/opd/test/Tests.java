@@ -78,7 +78,7 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
+    	//jpa.destroy();
     	testOpd = null;
     	testOpdContext = null;
     	testPatient = null;
@@ -332,6 +332,7 @@ public class Tests
 		testPatientContext.saveAll(jpa);
 		testDiseaseContext.saveAll(jpa);
 		testDiseaseTypeContext.saveAll(jpa);
+		testDiseaseContext.addMissingKey(jpa);
         		
         return;
     }

@@ -71,6 +71,10 @@ public class Patient {
 	@NotNull
 	@Column(name="PAT_SNAME")
 	private String secondName;
+
+	@NotNull
+	@Column(name="PAT_NAME")
+	private String name;
 	
 	@Column(name="PAT_BDATE")
 	private Date birthDate;
@@ -155,6 +159,7 @@ public class Patient {
 		
 		this.firstName = "";
 		this.secondName = ""; 
+		this.name = this.firstName + " " + this.secondName;
 		this.birthDate = null;
 		this.age = 0;
 		this.agetype = "";
@@ -180,6 +185,7 @@ public class Patient {
 		
 		this.firstName = opd.getfirstName();
 		this.secondName = opd.getsecondName(); 
+		this.name = this.firstName + " " + this.secondName;
 		this.birthDate = null;
 		this.age = opd.getAge();
 		this.agetype = "";
@@ -204,6 +210,7 @@ public class Patient {
 			String bloodType, char economicStatut, char parentTogether, int lock, String personalCode) { //Changed EduLev with bloodType
 		this.firstName = firstName;
 		this.secondName = secondName;
+		this.name = this.firstName + " " + this.secondName;
 		this.birthDate = birthDate;
 		this.age = age;
 		this.agetype = agetype;
@@ -300,6 +307,7 @@ public class Patient {
 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
+		this.name = this.firstName + " " + this.secondName;
 	}
 
 	public int getLock() {
@@ -324,6 +332,7 @@ public class Patient {
 
 	public void setSecondName(String secondName) {
 		this.secondName = secondName;
+		this.name = this.firstName + " " + this.secondName;
 	}
 
 	public char getSex() {
@@ -351,7 +360,7 @@ public class Patient {
 	}
 	
 	public String getName() {
-		return getFirstName() + " " + getSecondName();
+		return this.name;
 	}
 
 	public char getHasInsurance() {
