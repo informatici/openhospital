@@ -38,6 +38,8 @@ import org.isf.dicom.manager.DicomManagerFactory;
 import org.isf.dicom.model.FileDicom;
 import org.isf.generaldata.MessageBundle;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 
 /**
  * 
@@ -97,8 +99,17 @@ public class DicomViewGui extends JPanel {
 
 		// System.out.println("DicomViewGui "+idPaziente+" "+numeroSerie);
 
-		if (patID >= 0)
-			frames = DicomManagerFactory.getManager().getSerieDetail(patID, serieNumber);
+		if (patID >= 0){
+			try {
+				frames = DicomManagerFactory.getManager().getSerieDetail(patID, serieNumber);
+			}catch(OHServiceException ex){
+				if(ex.getMessages() != null){
+					for(OHExceptionMessage msg : ex.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+		}
 
 		// System.out.println("DicomViewGui "+immagini);
 
@@ -122,8 +133,17 @@ public class DicomViewGui extends JPanel {
 			return;
 		// System.out.println("notificaCambiamento "+idPaziente+" "+numeroSerie);
 
-		if (patID >= 0)
-			frames = DicomManagerFactory.getManager().getSerieDetail(patID, serieNumber);
+		if (patID >= 0){
+			try {
+				frames = DicomManagerFactory.getManager().getSerieDetail(patID, serieNumber);
+			}catch(OHServiceException ex){
+				if(ex.getMessages() != null){
+					for(OHExceptionMessage msg : ex.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+		}
 
 		// System.out.println("notificaCambiamento "+immagini);
 
@@ -447,8 +467,16 @@ public class DicomViewGui extends JPanel {
 	 */
 	private void refreshFrame() {
 		Long id = frames[frameIndex];
-		tmpDbFile = DicomManagerFactory.getManager().loadDettaglio(id, patID, serieNumber);
-		getImageFromDicom(tmpDbFile);
+		try {
+			tmpDbFile = DicomManagerFactory.getManager().loadDettaglio(id, patID, serieNumber);
+			getImageFromDicom(tmpDbFile);
+		}catch(OHServiceException ex){
+			if(ex.getMessages() != null){
+				for(OHExceptionMessage msg : ex.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 	}
 
 	/**
