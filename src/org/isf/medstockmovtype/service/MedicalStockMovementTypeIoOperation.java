@@ -26,16 +26,20 @@ public class MedicalStockMovementTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<MovementType> medicaldsrstockmovtypes = null;
 				
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM MEDICALDSRSTOCKMOVTYPE ORDER BY MMVT_DESC";
+			jpa.createQuery(query, MovementType.class, false);
+			List<MovementType> movementTypeList = (List<MovementType>)jpa.getList();
+			medicaldsrstockmovtypes = new ArrayList<MovementType>(movementTypeList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM MEDICALDSRSTOCKMOVTYPE ORDER BY MMVT_DESC";
-		jpa.createQuery(query, MovementType.class, false);
-		List<MovementType> movementTypeList = (List<MovementType>)jpa.getList();
-		medicaldsrstockmovtypes = new ArrayList<MovementType>(movementTypeList);			
-		
-		jpa.commitTransaction();
-
 		return medicaldsrstockmovtypes;
 	}
 
@@ -51,11 +55,14 @@ public class MedicalStockMovementTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(medicaldsrstockmovType);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			jpa.merge(medicaldsrstockmovType);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 
@@ -71,11 +78,14 @@ public class MedicalStockMovementTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
+		try {
 		jpa.beginTransaction();	
 		jpa.persist(medicaldsrstockmovType);
     	jpa.commitTransaction();
-    	
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 
@@ -91,13 +101,16 @@ public class MedicalStockMovementTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		MovementType objToRemove = (MovementType) jpa.find(MovementType.class, medicaldsrstockmovType.getCode());
-
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			MovementType objToRemove = (MovementType) jpa.find(MovementType.class, medicaldsrstockmovType.getCode());
+	
+			jpa.remove(objToRemove);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 
@@ -114,15 +127,18 @@ public class MedicalStockMovementTypeIoOperation {
 		MovementType medicaldsrstockmovType;
 		boolean result = false;
 		
-		
-		jpa.beginTransaction();	
-		medicaldsrstockmovType = (MovementType)jpa.find(MovementType.class, code);
-		if (medicaldsrstockmovType != null)
-		{
-			result = true;
+		try {
+			jpa.beginTransaction();	
+			medicaldsrstockmovType = (MovementType)jpa.find(MovementType.class, code);
+			if (medicaldsrstockmovType != null)
+			{
+				result = true;
+			}
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
 		}
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 }
