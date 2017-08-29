@@ -103,10 +103,17 @@ public class OperationBrowser extends ModalJFrame implements OperationEdit.Opera
 		OperationTypeBrowserManager manager = new OperationTypeBrowserManager();
 		pbox = new JComboBox();
 		pbox.addItem(MessageBundle.getMessage("angal.operation.allm"));
-		ArrayList<OperationType> type = manager.getOperationType();	//for efficiency in the sequent for
-		for (OperationType elem : type) {
-			pbox.addItem(elem);
+		ArrayList<OperationType> type;
+		try {
+			type = manager.getOperationType();
+			for (OperationType elem : type) {
+				pbox.addItem(elem);
+			}
+		} catch (OHServiceException e1) {
+			type = null;
+			OHServiceExceptionUtil.showMessages(e1);
 		}
+		
 		pbox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				pSelection=pbox.getSelectedItem().toString();

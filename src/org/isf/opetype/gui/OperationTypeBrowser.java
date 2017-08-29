@@ -21,6 +21,8 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.opetype.gui.OperationTypeEdit.OperationTypeListener;
 import org.isf.opetype.manager.OperationTypeBrowserManager;
 import org.isf.opetype.model.OperationType;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -200,11 +202,22 @@ public class OperationTypeBrowser extends ModalJFrame implements OperationTypeLi
 								MessageBundle.getMessage("angal.opetype.deleteoperationtype")+" \" "+dis.getDescription() + "\" ?",
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
 						
-						if ((n == JOptionPane.YES_OPTION)
-								&& (manager.deleteOperationType(dis))) {
-							pOperationType.remove(jTable.getSelectedRow());
-							model.fireTableDataChanged();
-							jTable.updateUI();
+						if (n == JOptionPane.YES_OPTION) {
+							
+							boolean deleted;
+							
+							try {
+								deleted = manager.deleteOperationType(dis);
+							} catch (OHServiceException e) {
+								deleted = false;
+								OHServiceExceptionUtil.showMessages(e);
+							}
+							
+							if (true == deleted) {
+								pOperationType.remove(jTable.getSelectedRow());
+								model.fireTableDataChanged();
+								jTable.updateUI();
+							}
 						}
 					}
 				}
@@ -234,7 +247,12 @@ class OperationTypeBrowserModel extends DefaultTableModel {
 
 		public OperationTypeBrowserModel() {
 			OperationTypeBrowserManager manager = new OperationTypeBrowserManager();
-			pOperationType = manager.getOperationType();
+			try {
+				pOperationType = manager.getOperationType();
+			} catch (OHServiceException e) {
+				OHServiceExceptionUtil.showMessages(e);
+				pOperationType = null;
+			}
 		}
 		
 		public int getRowCount() {

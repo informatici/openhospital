@@ -431,9 +431,16 @@ public class OperationEdit extends JDialog {
 			typeComboBox = new JComboBox();
 			if (insert) {
 				OperationTypeBrowserManager manager = new OperationTypeBrowserManager();
-				ArrayList<OperationType> types = manager.getOperationType();
-				for (OperationType elem : types) {
-					typeComboBox.addItem(elem);
+				ArrayList<OperationType> types;
+				try {
+					types = manager.getOperationType();
+					
+					for (OperationType elem : types) {
+						typeComboBox.addItem(elem);
+					}
+				} catch (OHServiceException e) {
+					OHServiceExceptionUtil.showMessages(e);
+					types = null;
 				}
 			} else {
 				typeComboBox.addItem(operation.getType());
