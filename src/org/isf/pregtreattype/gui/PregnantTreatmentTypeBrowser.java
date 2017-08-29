@@ -22,7 +22,7 @@ import org.isf.pregtreattype.gui.PregnantTreatmentTypeEdit.PregnantTreatmentType
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -209,11 +209,7 @@ public class PregnantTreatmentTypeBrowser extends ModalJFrame implements Pregnan
 								jTable.updateUI();
 							}
 						}catch(OHServiceException e){
-							if(e.getMessages() != null){
-								for(OHExceptionMessage msg : e.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(e);
 						}
 					}
 				}
@@ -247,11 +243,7 @@ class PregnantTreatmentTypeBrowserModel extends DefaultTableModel {
 			try {
 				pPregnantTreatmentType = manager.getPregnantTreatmentType();
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		
