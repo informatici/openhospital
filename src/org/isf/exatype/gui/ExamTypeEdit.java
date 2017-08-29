@@ -23,13 +23,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
-import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.jobjects.*;
-
-
 import org.isf.exatype.manager.ExamTypeBrowserManager;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class ExamTypeEdit extends JDialog{
 
@@ -230,7 +229,7 @@ public class ExamTypeEdit extends JDialog{
 							found = manager.codeControl(key);
 						} catch (OHServiceException e1) {
 							found = false;
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							OHServiceExceptionUtil.showMessages(e1);
 						}
 						
 						if (true == found) {
@@ -262,7 +261,7 @@ public class ExamTypeEdit extends JDialog{
 							result = manager.newExamType(examType);
 						} catch (OHServiceException e1) {
 							result = false;
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							OHServiceExceptionUtil.showMessages(e1);
 						}
 						if (result) {
                            fireExamInserted();
@@ -278,7 +277,7 @@ public class ExamTypeEdit extends JDialog{
 								result = manager.updateExamType(examType);
 							} catch (OHServiceException e1) {
 								result = false;
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 						if (result) {
 							fireExamUpdated();

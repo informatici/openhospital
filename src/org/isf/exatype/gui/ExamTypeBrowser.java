@@ -30,6 +30,7 @@ import org.isf.exatype.manager.ExamTypeBrowserManager;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 
@@ -212,7 +213,7 @@ public class ExamTypeBrowser extends ModalJFrame implements ExamTypeListener{
 								deleted = manager.deleteExamType(dis);
 							} catch (OHServiceException e) {
 								deleted = false;
-								JOptionPane.showMessageDialog(null, e.getMessage());
+								OHServiceExceptionUtil.showMessages(e);
 							}
 							
 							if (true == deleted) {
@@ -252,7 +253,7 @@ class ExamTypeBrowserModel extends DefaultTableModel {
 				pExamType = manager.getExamType();
 			} catch (OHServiceException e) {
 				pExamType = null;
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		
