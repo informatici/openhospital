@@ -38,6 +38,7 @@ import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.ward.model.Ward;
 
 public class WardPharmacyRectify extends JDialog {
@@ -252,14 +253,23 @@ public class WardPharmacyRectify extends JDialog {
 						if (quantity == 0.) return;
 						
 						MovWardBrowserManager wardMan = new MovWardBrowserManager();
-						boolean result = wardMan.newMovementWard(new MovementWard(
-								wardSelected, 
-								new GregorianCalendar(), 
-								false, null, 0, 0, 
-								reason, 
-								med, 
-								quantity,
-								MessageBundle.getMessage("angal.medicalstockward.rectify.pieces"))); //$NON-NLS-1$
+						boolean result = false;
+						try {
+							result = wardMan.newMovementWard(new MovementWard(
+									wardSelected, 
+									new GregorianCalendar(), 
+									false, null, 0, 0, 
+									reason, 
+									med, 
+									quantity,
+									MessageBundle.getMessage("angal.medicalstockward.rectify.pieces")));
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						} //$NON-NLS-1$
 						if (!result) {
 							
 							return;

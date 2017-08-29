@@ -961,7 +961,15 @@ public class WardPharmacy extends ModalJFrame implements
 
 		public OutcomesModel() {
 			wardOutcomes = new ArrayList<MovementWard>();
-			listMovementWardFromTo = wardManager.getMovementWard(wardSelected.getCode(), dateFrom, dateTo);
+			try {
+				listMovementWardFromTo = wardManager.getMovementWard(wardSelected.getCode(), dateFrom, dateTo);
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 
 			Medical medicalSelected;
 			if (jComboBoxMedicals.getSelectedItem() instanceof String) {
@@ -1099,7 +1107,15 @@ public class WardPharmacy extends ModalJFrame implements
 		int newQty;
 
 		public DrugsModel() {
-			wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
+			try {
+				wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 		}
 
 		public int getRowCount() {

@@ -40,6 +40,8 @@ import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.ward.model.Ward;
 
 public class WardPharmacyNew extends JDialog implements SelectionListener {
@@ -442,7 +444,16 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 							e1.printStackTrace();
 						}
 						
-						boolean result = wardManager.newMovementWard(oneMovementWard);
+						boolean result = false;
+						try {
+							result = wardManager.newMovementWard(oneMovementWard);
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						}
 						if (result) {
 							fireMovementWardInserted();
 						}
@@ -472,7 +483,16 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 							}
 						}
 						
-						boolean result = wardManager.newMovementWard(manyMovementWard);
+						boolean result = false;
+						try {
+							result = wardManager.newMovementWard(manyMovementWard);
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						}
 						if (result) {
 							fireMovementWardInserted();
 						}

@@ -49,14 +49,11 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
-import org.isf.medicalstockward.manager.MovWardBrowserManager;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
-import org.isf.sms.service.SmsOperations;
 import org.isf.therapy.manager.TherapyManager;
 import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.JAgenda;
@@ -183,7 +180,15 @@ public class TherapyEdit extends JDialog {
 		/*
 		 * Rows in the therapies table
 		 */
-		thRows = thManager.getTherapyRows(patient.getCode());
+		try {
+			thRows = thManager.getTherapyRows(patient.getCode());
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		
 		/*
 		 * HashTable of the rows
@@ -198,12 +203,28 @@ public class TherapyEdit extends JDialog {
 		/*
 		 * Therapy(s) related to the rows in the therapies table
 		 */
-		therapies = thManager.getTherapies(thRows);
+		try {
+			therapies = thManager.getTherapies(thRows);
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		
 		/*
 		 * Visit(s) in the visits table
 		 */
-		visits = vstManager.getVisits(patient.getCode());
+		try {
+			visits = vstManager.getVisits(patient.getCode());
+		} catch (OHServiceException e) {
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		
 		/*
 		 * HashTable of the visits
@@ -402,7 +423,16 @@ public class TherapyEdit extends JDialog {
 						visit.setPatient(patient);
 						
 						VisitManager vstManager = new VisitManager();
-						int visitID = vstManager.newVisit(visit);
+						int visitID = 0;
+						try {
+							visitID = vstManager.newVisit(visit);
+						} catch (OHServiceException e1) {
+							if(e1.getMessages() != null){
+								for(OHExceptionMessage msg : e1.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						}
 						if (visitID > 0) {
 							visit.setVisitID(visitID);
 							visits.add(visit);
@@ -630,13 +660,14 @@ public class TherapyEdit extends JDialog {
 									MessageBundle.getMessage("angal.therapy.notherapies"),
 									JOptionPane.CANCEL_OPTION); //$NON-NLS-1$
 							if (ok == JOptionPane.YES_OPTION) {
-								thManager.deleteAllTherapies(patient.getCode());
-								SmsOperations smsOp = new SmsOperations();
 								try {
-									smsOp.deleteByModuleModuleID("therapy", String.valueOf(patient.getCode()));
-								} catch (OHException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
+									thManager.deleteAllTherapies(patient.getCode());
+								} catch (OHServiceException ex) {
+									if(ex.getMessages() != null){
+										for(OHExceptionMessage msg : ex.getMessages()){
+											JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+										}
+									}
 								}
 							} else return;
 						} else {
@@ -671,30 +702,31 @@ public class TherapyEdit extends JDialog {
 					/*
 					 * Check visits before save.
 					 */
-					if (visitModified) {
-						if (visits.isEmpty()) {
-							ok = JOptionPane.showConfirmDialog(
-									TherapyEdit.this,
-									MessageBundle.getMessage("angal.therapy.deleteallvisitsfor") + " " + patient.getName(),
-									MessageBundle.getMessage("angal.therapy.novisits"),
-									JOptionPane.CANCEL_OPTION); //$NON-NLS-1$
-							if (ok == JOptionPane.YES_OPTION) {
-								vstManager.deleteAllVisits(patient.getCode());
-								SmsOperations smsOp = new SmsOperations();
-								try {
-									smsOp.deleteByModuleModuleID("visit", String.valueOf(patient.getCode()));
-								} catch (OHException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-							} else 	return;
-						} else {
-							if (vstManager.newVisits(visits)) {
-								JOptionPane.showMessageDialog(TherapyEdit.this,
-										MessageBundle.getMessage("angal.therapy.patientvisitssaved")); //$NON-NLS-1$
+					try {
+						if (visitModified) {
+							if (visits.isEmpty()) {
+								ok = JOptionPane.showConfirmDialog(
+										TherapyEdit.this,
+										MessageBundle.getMessage("angal.therapy.deleteallvisitsfor") + " " + patient.getName(),
+										MessageBundle.getMessage("angal.therapy.novisits"),
+										JOptionPane.CANCEL_OPTION); //$NON-NLS-1$
+								if (ok == JOptionPane.YES_OPTION) {
+									vstManager.deleteAllVisits(patient.getCode());
+								} else 	return;
 							} else {
-								JOptionPane.showMessageDialog(TherapyEdit.this,
-										MessageBundle.getMessage("angal.therapy.patientvisitscouldnotbesaved")); //$NON-NLS-1$
+								if (vstManager.newVisits(visits)) {
+									JOptionPane.showMessageDialog(TherapyEdit.this,
+											MessageBundle.getMessage("angal.therapy.patientvisitssaved")); //$NON-NLS-1$
+								} else {
+									JOptionPane.showMessageDialog(TherapyEdit.this,
+											MessageBundle.getMessage("angal.therapy.patientvisitscouldnotbesaved")); //$NON-NLS-1$
+								}
+							}
+						}
+					} catch (OHServiceException ex) {
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
 							}
 						}
 					}
@@ -712,12 +744,20 @@ public class TherapyEdit extends JDialog {
 					}
 					
 					if (saveTherapies) {
-						if (thManager.newTherapies(thRows)) {
-							JOptionPane.showMessageDialog(TherapyEdit.this,
-									MessageBundle.getMessage("angal.therapy.therapiesplansaved"));
-						} else {
-							JOptionPane.showMessageDialog(TherapyEdit.this,
-									MessageBundle.getMessage("angal.therapy.therapiesplancouldnotbesaved"));
+						try {
+							if (thManager.newTherapies(thRows)) {
+								JOptionPane.showMessageDialog(TherapyEdit.this,
+										MessageBundle.getMessage("angal.therapy.therapiesplansaved"));
+							} else {
+								JOptionPane.showMessageDialog(TherapyEdit.this,
+										MessageBundle.getMessage("angal.therapy.therapiesplancouldnotbesaved"));
+							}
+						} catch (OHServiceException ex) {
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
 						}
 					}
 					
@@ -811,61 +851,23 @@ public class TherapyEdit extends JDialog {
 
 				public void actionPerformed(ActionEvent e) {
 
-					MedicalBrowsingManager medManager = new MedicalBrowsingManager();
-					ArrayList<Medical> medArray;
-					try {
-						medArray = medManager.getMedicals();
-					} catch (OHServiceException e1) {
-						medArray = null;
-						JOptionPane.showMessageDialog(null, e1.getMessage());
-					}
-
-					MovWardBrowserManager wardManager = new MovWardBrowserManager();
-
-					ArrayList<Medical> medOutStock = new ArrayList<Medical>();
-
-					Double neededQty = 0.;
-					Double actualQty = 0.;
 					available = true;
-
-					for (Therapy th : therapies) {
-
-						// CALCULATING NEEDINGS
-						Double qty = th.getQty();
-						int freq = th.getFreqInDay();
-						GregorianCalendar now = new GregorianCalendar();
-						GregorianCalendar todayDate = new GregorianCalendar(now
-								.get(GregorianCalendar.YEAR), now
-								.get(GregorianCalendar.MONTH), now
-								.get(GregorianCalendar.DAY_OF_MONTH));
-
-						// todayDate.set(2010, 0, 1);
-						int dayCount = 0;
-						for (GregorianCalendar date : th.getDates()) {
-							if (date.after(todayDate) || date.equals(todayDate))
-								dayCount++;
-						}
-
-						if (dayCount != 0) {
-
-							neededQty = qty * freq * dayCount;
-
-							//System.out.print(th.getMedical().getCode() + ": " + neededQty);
-
-							// CALCULATING STOCK QUANTITIES
-							Medical med = medArray.get(medArray.indexOf(th.getMedical()));
-							actualQty = med.getInitialqty() + med.getInqty() - med.getOutqty(); // MAIN STORE
-							actualQty += wardManager.getCurrentQuantity(null, med); // ALL WARD STORES
-
-							// System.out.print("  (LAYING IN STOCK: "+actualQty+")");
-							// System.out.print("\n===========================\n");
-
-							if (neededQty > actualQty) {
-								available = false;
-								medOutStock.add(med);
+					ArrayList<Medical> medOutStock = null;
+					try {
+						medOutStock = thManager.getMedicalsOutOfStock(therapies);
+					} catch (OHServiceException ex) {
+						available = false;
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
 							}
 						}
 					}
+					if(medOutStock != null 
+							&& !medOutStock.isEmpty()){
+						available = false;
+					}
+					
 					checked = true;
 					updateCheckLabel();
 					showMedOutOfStock(medOutStock);
@@ -938,7 +940,16 @@ public class TherapyEdit extends JDialog {
 					if (thRow != null && thRow.getTherapyID() != 0) {
 	
 						thRows.add(thRow); // FOR DB;
-						Therapy thisTherapy = thManager.createTherapy(thRow);
+						Therapy thisTherapy = null;
+						try {
+							thisTherapy = thManager.createTherapy(thRow);
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						}
 						therapies.add(thisTherapy); // FOR GUI
 						hashTableTherapy.put(thRow.getTherapyID(), thisTherapy);
 						hashTableThRow.put(thRow.getTherapyID(), thRow);
@@ -991,7 +1002,17 @@ public class TherapyEdit extends JDialog {
 						
 						//Rewrite all the therapies
 						thRows.add(thRow); // FOR DB;
-						therapies.add(thManager.createTherapy(thRow)); // FOR GUI
+						Therapy thisTherapy = null;
+						try {
+							thisTherapy = thManager.createTherapy(thRow);
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						}
+						therapies.add(thisTherapy); // FOR GUI
 						checked = false;
 						therapyModified = true;
 						saveButton.setEnabled(true);
