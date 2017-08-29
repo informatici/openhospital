@@ -25,9 +25,10 @@ import javax.swing.JTextField;
 import org.isf.exa.manager.ExamRowBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
-import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class ExamRowEdit extends JDialog {
 
@@ -172,7 +173,7 @@ public class ExamRowEdit extends JDialog {
 								examRow.setCode(key.get(0).getCode());
 							}
 						} catch (OHServiceException e1) {
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							OHServiceExceptionUtil.showMessages(e1);
 						}
 						
 						dispose();

@@ -10,24 +10,29 @@
 
 package org.isf.exa.gui;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.util.*;
+import java.util.ArrayList;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JFrame;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.BoxLayout;
 import javax.swing.JTextField;
-import javax.swing.JComboBox;
+
 import org.isf.exa.manager.ExamBrowsingManager;
-import org.isf.exa.model.*;
+import org.isf.exa.model.Exam;
 import org.isf.exatype.model.ExamType;
-import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class ExamEdit extends JDialog {
 
@@ -199,7 +204,7 @@ public class ExamEdit extends JDialog {
 								keyPresent = manager.isKeyPresent(exam);
 							} catch (OHServiceException e1) {
 								keyPresent = false;
-								JOptionPane.showMessageDialog(ExamEdit.this, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 							
 							if (true == keyPresent) {
@@ -210,7 +215,7 @@ public class ExamEdit extends JDialog {
 								result = manager.newExam(exam);
 							} catch (OHServiceException e1) {
 								result = false;
-								JOptionPane.showMessageDialog(ExamEdit.this, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 						} else {
 							try {
@@ -230,7 +235,7 @@ public class ExamEdit extends JDialog {
 								}
 							} catch (OHServiceException e1) {
 								result = false;
-								JOptionPane.showMessageDialog(ExamEdit.this, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 						}
 						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exa.thedatacouldnotbesaved"));
@@ -309,7 +314,7 @@ public class ExamEdit extends JDialog {
 					types = manager.getExamType();
 				} catch (OHServiceException e) {
 					types = null;
-					JOptionPane.showMessageDialog(null, e.getMessage());
+					OHServiceExceptionUtil.showMessages(e);
 				}
 				if (null != types) {
 					for (ExamType elem : types) {

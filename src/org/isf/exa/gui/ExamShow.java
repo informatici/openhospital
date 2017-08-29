@@ -30,6 +30,7 @@ import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
 public class ExamShow extends JDialog {
 
@@ -177,7 +178,7 @@ public class ExamShow extends JDialog {
 									table.updateUI();
 								}
 							} catch (OHServiceException e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 						}
 					}
@@ -201,7 +202,7 @@ class ExamRowBrowsingModel extends DefaultTableModel {
 				pExamRow = manager.getExamRow(aCode);
 			} catch (OHServiceException e) {
 				pExamRow = null;
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		

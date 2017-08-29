@@ -33,6 +33,7 @@ import org.isf.exa.model.Exam;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 public class ExamBrowser extends ModalJFrame{
@@ -90,6 +91,7 @@ public class ExamBrowser extends ModalJFrame{
 			type = manager.getExamType();	//for efficiency in the sequent for
 		} catch (OHServiceException e1) {
 			type = null;
+			OHServiceExceptionUtil.showMessages(e1);
 		}
 		if (null != type) {
 			for (ExamType elem : type) {
@@ -190,7 +192,7 @@ public class ExamBrowser extends ModalJFrame{
 						deleted = manager.deleteExam(e);
 					} catch (OHServiceException e1) {
 						deleted = false;
-						JOptionPane.showMessageDialog(null, e1.getMessage());
+						OHServiceExceptionUtil.showMessages(e1);
 					}
 					
 					if (true == deleted) {
@@ -251,7 +253,7 @@ public class ExamBrowser extends ModalJFrame{
 				pExam = manager.getExams(s);
 			} catch (OHServiceException e) {
 				pExam = null;
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		public ExamBrowsingModel() {
@@ -260,7 +262,7 @@ public class ExamBrowser extends ModalJFrame{
 				pExam = manager.getExams();
 			} catch (OHServiceException e) {
 				pExam = null;
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		public int getRowCount() {
