@@ -37,6 +37,7 @@ import org.isf.patient.model.Patient;
 import org.isf.patvac.manager.PatVacManager;
 import org.isf.patvac.model.PatientVaccine;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
@@ -111,7 +112,12 @@ public class PatVacEdit extends JDialog {
 
 	private int getPatientVaccineYMaxProg() {
 		PatVacManager manager = new PatVacManager();
-		return manager.getProgYear(0);
+		try {
+			return manager.getProgYear(0);
+		} catch (OHServiceException e) {
+			OHServiceExceptionUtil.showMessages(e);
+			return 0;
+		}
 	}
 
 	/**
@@ -712,13 +718,24 @@ public class PatVacEdit extends JDialog {
 					patVac.setPatSex(selectedPatient.getSex());
 					patVac.setPatAge(selectedPatient.getAge());
 
-					boolean result = false;
+					boolean result;
 					PatVacManager manager = new PatVacManager();
 					// handling db insert/update
 					if (insert) {
-						result = manager.newPatientVaccine(patVac);
+						
+						try {
+							result = manager.newPatientVaccine(patVac);
+						} catch (OHServiceException e1) {
+							OHServiceExceptionUtil.showMessages(e1);
+							result = false;
+						}
 					} else {
-						result = manager.updatePatientVaccine(patVac);
+						try {
+							result = manager.updatePatientVaccine(patVac);
+						} catch (OHServiceException e1) {
+							OHServiceExceptionUtil.showMessages(e1);
+							result = false;
+						}
 					}
 
 					if (!result)
