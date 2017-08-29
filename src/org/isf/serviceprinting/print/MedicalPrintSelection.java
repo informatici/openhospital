@@ -31,6 +31,7 @@ import org.isf.menu.gui.Menu;
 import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
 public class MedicalPrintSelection extends JDialog implements ActionListener{
 	/**
@@ -186,11 +187,20 @@ public class MedicalPrintSelection extends JDialog implements ActionListener{
 	private JComboBox getMedicalTypeBox() {
 		medicalTypeBox = new JComboBox();
 		MedicalTypeBrowserManager medicalManager = new MedicalTypeBrowserManager();
-		ArrayList<MedicalType> medical = medicalManager.getMedicalType();
+		ArrayList<MedicalType> medical;
+		
 		medicalTypeBox.addItem("All");
-		for (MedicalType aMedicalType : medical) {
-			medicalTypeBox.addItem(aMedicalType);
+		
+		try {
+			medical = medicalManager.getMedicalType();
+			
+			for (MedicalType aMedicalType : medical) {
+				medicalTypeBox.addItem(aMedicalType);
+			}
+		} catch (OHServiceException e1) {
+			OHServiceExceptionUtil.showMessages(e1);
 		}
+		
 		medicalTypeBox.addMouseListener(new MouseListener() {
 			public void mouseExited(MouseEvent e) {
 			}

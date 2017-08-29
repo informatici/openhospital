@@ -136,10 +136,19 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
 		pbox = new JComboBox();
 		pbox.addItem(MessageBundle.getMessage("angal.medicals.allm"));
-		ArrayList<MedicalType> type = manager.getMedicalType();	//for efficiency in the sequent for
-		for (MedicalType elem : type) {
-			pbox.addItem(elem);
+		ArrayList<MedicalType> type;
+		try {
+			type = manager.getMedicalType();
+		
+			//for efficiency in the sequent for
+			for (MedicalType elem : type) {
+				pbox.addItem(elem);
+			}
+		} catch (OHServiceException e1) {
+			type = null;
+			OHServiceExceptionUtil.showMessages(e1);
 		}
+		
 		pbox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				pSelection=pbox.getSelectedItem().toString();

@@ -702,11 +702,20 @@ public class WardPharmacy extends ModalJFrame implements
 			jComboBoxTypes.setMaximumSize(new Dimension(filterWidth, 24));
 			jComboBoxTypes.setPreferredSize(new Dimension(filterWidth, 24));
 			MedicalTypeBrowserManager medicalManager = new MedicalTypeBrowserManager();
-			ArrayList<MedicalType> medicalTypes = medicalManager.getMedicalType();
+			ArrayList<MedicalType> medicalTypes;
+			
 			jComboBoxTypes.addItem(MessageBundle.getMessage("angal.medicalstockward.alltypes"));
-			for (MedicalType aMedicalType : medicalTypes) {
-				jComboBoxTypes.addItem(aMedicalType);
+			
+			try {
+				medicalTypes = medicalManager.getMedicalType();
+				
+				for (MedicalType aMedicalType : medicalTypes) {
+					jComboBoxTypes.addItem(aMedicalType);
+				}
+			} catch (OHServiceException e) {
+				OHServiceExceptionUtil.showMessages(e);
 			}
+			
 			jComboBoxTypes.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent arg0) {

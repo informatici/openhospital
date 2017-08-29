@@ -21,6 +21,8 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.medtype.gui.MedicalTypeBrowserEdit.MedicalTypeListener;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -232,7 +234,12 @@ class MedicalTypeBrowserModel extends DefaultTableModel {
 
 		public MedicalTypeBrowserModel() {
 			MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
-			pMedicalType = manager.getMedicalType();
+			try {
+				pMedicalType = manager.getMedicalType();
+			} catch (OHServiceException e) {
+				pMedicalType = null;
+				OHServiceExceptionUtil.showMessages(e);
+			}
 		}
 		
 		public int getRowCount() {
