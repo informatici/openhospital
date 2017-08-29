@@ -57,6 +57,7 @@ import org.isf.supplier.service.SupplierOperations;
 import org.isf.utils.db.NormalizeString;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
@@ -133,7 +134,7 @@ public class MovStockMultipleCharging extends JDialog {
 		try {
 			medicals = medMan.getMedicals();
 		} catch (OHServiceException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 			medicals = null;
 		}
 
@@ -461,7 +462,7 @@ public class MovStockMultipleCharging extends JDialog {
 				movTypes = movMan.getMedicaldsrstockmovType();
 			} catch (OHServiceException e) {
 				movTypes = null;
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 			if (null != movTypes) {
 				for (MovementType movType : movTypes) {
@@ -581,7 +582,7 @@ public class MovStockMultipleCharging extends JDialog {
 			lots = movBrowser.getLotByMedical(med);
 		} catch (OHServiceException e) {
 			lots = new ArrayList<Lot>();
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		Lot lot = null;
 		if (!lots.isEmpty()) {
@@ -798,7 +799,7 @@ public class MovStockMultipleCharging extends JDialog {
 			lastDate = manager.getLastMovementDate();
 		} catch (OHServiceException e) {
 			lastDate = null;
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		if (lastDate != null && thisDate.compareTo(lastDate) < 0) {
 			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.datebeforelastmovement") + format(lastDate) + MessageBundle.getMessage("angal.medicalstock.multiplecharging.notallowed")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -817,7 +818,7 @@ public class MovStockMultipleCharging extends JDialog {
 					return false;
 				}
 			} catch (OHServiceException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 				return false;
 			}
 		
@@ -877,7 +878,7 @@ public class MovStockMultipleCharging extends JDialog {
 			}
 		} catch (OHServiceException e) {
 			ok = false;
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		
 		return ok;

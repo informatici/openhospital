@@ -66,7 +66,7 @@ import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
 import org.isf.utils.excel.ExcelExporter;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
@@ -363,11 +363,7 @@ public class MovStockBrowser extends ModalJFrame {
 			wardList = wbm.getWards();
 		}catch(OHServiceException e){
 			wardList = new ArrayList<Ward>();
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		for (org.isf.ward.model.Ward elem : wardList) {
 			wardBox.addItem(elem);
@@ -387,7 +383,7 @@ public class MovStockBrowser extends ModalJFrame {
 			medical = medicalManager.getMedicals();
 		} catch (OHServiceException e1) {
 			medical = null;
-			JOptionPane.showMessageDialog(null, e1.getMessage());
+			OHServiceExceptionUtil.showMessages(e1);
 		}
 		medicalBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));
 		if (null != medical) {
@@ -459,7 +455,7 @@ public class MovStockBrowser extends ModalJFrame {
 			type = typeManager.getMedicaldsrstockmovType();
 		} catch (OHServiceException e1) {
 			type = null;
-			JOptionPane.showMessageDialog(null, e1.getMessage());
+			OHServiceExceptionUtil.showMessages(e1);
 		}
 		typeBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));
 		if (null != type) {
@@ -528,7 +524,7 @@ public class MovStockBrowser extends ModalJFrame {
 				currencyCod = hospitalManager.getHospitalCurrencyCod();
 			} catch (OHServiceException e) {
 				currencyCod = null;
-				JOptionPane.showMessageDialog(MovStockBrowser.this, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 			
 			jTableTotal.setModel(new DefaultTableModel(
@@ -932,7 +928,7 @@ public class MovStockBrowser extends ModalJFrame {
 						movType, movFrom, movTo, lotPrepFrom, lotPrepTo,
 						lotDueFrom, lotDueTo);
 			} catch (OHServiceException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 			updateTotals();
 		}

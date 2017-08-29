@@ -55,7 +55,7 @@ import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.utils.db.NormalizeString;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
@@ -146,7 +146,7 @@ public class MovStockMultipleDischarging extends JDialog {
 			medicals = medMan.getMedicals();
 		} catch (OHServiceException e) {
 			medicals = null;
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 
 		medicalMap = new HashMap<String, Medical>();
@@ -275,7 +275,7 @@ public class MovStockMultipleDischarging extends JDialog {
 							lots = movBrowser.getLotByMedical(med);
 						} catch (OHServiceException e1) {
 							lots = null;
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							OHServiceExceptionUtil.showMessages(e1);
 						}
 						Lot lot = null;
 						if (!isAutomaticLot()) {
@@ -499,7 +499,7 @@ public class MovStockMultipleDischarging extends JDialog {
 				movTypes = movMan.getMedicaldsrstockmovType();
 			} catch (OHServiceException e) {
 				movTypes = null;
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 			if (null != movTypes) {
 				for (MovementType movType : movTypes) {
@@ -744,11 +744,7 @@ public class MovStockMultipleDischarging extends JDialog {
 				wards = wardMan.getWards();
 			}catch(OHServiceException e){
 				wards = new ArrayList<Ward>();
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+				OHServiceExceptionUtil.showMessages(e);
 			}
 			for (Ward ward : wards) {
 				if (GeneralData.INTERNALPHARMACIES) {
@@ -900,7 +896,7 @@ public class MovStockMultipleDischarging extends JDialog {
 			lastDate = manager.getLastMovementDate();
 		} catch (OHServiceException e) {
 			lastDate = null;
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		if (lastDate != null && thisDate.compareTo(lastDate) < 0) {
 			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.datebeforelastmovement") + format(lastDate) + MessageBundle.getMessage("angal.medicalstock.multipledischarging.notallowed")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -919,7 +915,7 @@ public class MovStockMultipleDischarging extends JDialog {
 					return false;
 				}
 			} catch (OHServiceException e) {
-				JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 				return false;
 			}
 		}
@@ -974,7 +970,7 @@ public class MovStockMultipleDischarging extends JDialog {
 			}
 		} catch (OHServiceException e) {
 			ok = false;
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		
 		return ok;
