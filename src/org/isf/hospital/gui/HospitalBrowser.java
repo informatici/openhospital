@@ -19,6 +19,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.hospital.model.Hospital;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
@@ -70,7 +71,7 @@ public class HospitalBrowser extends ModalJFrame{
 			hospital= manager.getHospital();
 		} catch (OHServiceException e) {
 			this.hospital = null;
-			JOptionPane.showMessageDialog(HospitalBrowser.this, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		initialize();
 		setVisible(true);
@@ -311,7 +312,7 @@ public class HospitalBrowser extends ModalJFrame{
 		try {
 			manager.updateHospital(hospital);
 		} catch (OHServiceException e) {
-			JOptionPane.showMessageDialog(HospitalBrowser.this, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 	}
 }
