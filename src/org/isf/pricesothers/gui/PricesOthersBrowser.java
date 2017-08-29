@@ -21,7 +21,7 @@ import org.isf.pricesothers.gui.PricesOthersEdit.PricesOthersListener;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 public class PricesOthersBrowser extends ModalJFrame implements PricesOthersListener {
@@ -122,11 +122,7 @@ public class PricesOthersBrowser extends ModalJFrame implements PricesOthersList
 							try {
 								result = pOthersManager.deleteOther(pOthers);
 							}catch(OHServiceException e){
-								if(e.getMessages() != null){
-									for(OHExceptionMessage msg : e.getMessages()){
-										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-									}
-								}
+								OHServiceExceptionUtil.showMessages(e);
 							}
 							
 							if (result) {
@@ -243,11 +239,7 @@ class PricesOthersBrowserModel extends DefaultTableModel {
 			try {
 				pOthersArray = pOthersManager.getOthers();
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		public int getRowCount() {

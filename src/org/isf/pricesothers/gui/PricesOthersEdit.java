@@ -23,7 +23,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class PricesOthersEdit extends JDialog {
@@ -168,11 +168,7 @@ public class PricesOthersEdit extends JDialog {
 							}
 						}
 					}catch(OHServiceException e){
-						if(e.getMessages() != null){
-							for(OHExceptionMessage msg : e.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
+						OHServiceExceptionUtil.showMessages(e);
 					}
 					if (!result) {
 						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.pricesothers.thedatacouldnotbesaved")); //$NON-NLS-1$
