@@ -20,6 +20,7 @@ import org.isf.medicals.model.Medical;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoDoubleTextField;
 import org.isf.utils.jobjects.VoIntegerTextField;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -218,7 +219,7 @@ public class MedicalEdit extends JDialog {
 								try {
 									result = manager.newMedical(medical);
 								} catch (OHServiceException e1) {
-									JOptionPane.showMessageDialog(null, e1.getMessage());
+									OHServiceExceptionUtil.showMessages(e1);
 								}					
 								if (result) {
 									dispose();
@@ -245,7 +246,7 @@ public class MedicalEdit extends JDialog {
 									}	
 								}
 							} catch (OHServiceException e1) {
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 						}
 						if (!result)

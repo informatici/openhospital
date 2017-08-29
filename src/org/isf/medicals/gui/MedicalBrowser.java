@@ -44,6 +44,7 @@ import org.isf.stat.manager.GenericReportFromDateToDate;
 import org.isf.stat.manager.GenericReportPharmaceuticalOrder;
 import org.isf.utils.excel.ExcelExporter;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.JMonthYearChooser;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.slf4j.Logger;
@@ -214,7 +215,7 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 							deleted = (manager.deleteMedical(m));
 						} catch (OHServiceException e) {
 							deleted = false;
-							JOptionPane.showMessageDialog(null, e.getMessage());
+							OHServiceExceptionUtil.showMessages(e);
 						}
 						
 						if (true == deleted) {
@@ -382,7 +383,7 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 				pMedicals = manager.getMedicals(s);
 			} catch (OHServiceException e) {
 				pMedicals = null;
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		public MedicalBrowsingModel() {
@@ -391,7 +392,7 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 				pMedicals = manager.getMedicals();
 			} catch (OHServiceException e) {
 				pMedicals = null;
-				JOptionPane.showMessageDialog(null, e.getMessage());;
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
  
