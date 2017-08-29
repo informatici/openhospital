@@ -20,6 +20,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
@@ -229,7 +230,7 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 						codeControl = manager.codeControl(key);
 					} catch (OHServiceException e1) {
 						codeControl = false;
-						JOptionPane.showMessageDialog(null, e1.getMessage());
+						OHServiceExceptionUtil.showMessages(e1);
 					}
 					
 					if (true == codeControl){
@@ -270,7 +271,7 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 							result = manager.newMedicaldsrstockmovType(medicaldsrstockmovType);
 						} catch (OHServiceException e1) {
 							result = false;
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							OHServiceExceptionUtil.showMessages(e1);
 						}
 						if (result) {
                            fireMedicaldsrstockmovInserted(medicaldsrstockmovType);
@@ -286,7 +287,7 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 								result = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
 							} catch (OHServiceException e1) {
 								result = false;
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 						if (result) {
 							fireMedicaldsrstockmovUpdated();

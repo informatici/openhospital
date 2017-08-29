@@ -22,6 +22,7 @@ import org.isf.medstockmovtype.gui.MedicaldsrstockmovTypeBrowserEdit.Medicaldsrs
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -208,7 +209,7 @@ public class MedicaldsrstockmovTypeBrowser extends ModalJFrame implements Medica
 								deleted = manager.deleteMedicaldsrstockmovType(dis);
 							} catch (OHServiceException e) {
 								deleted = false;
-								JOptionPane.showMessageDialog(null, e.getMessage());
+								OHServiceExceptionUtil.showMessages(e);
 							}
 							
 							if (true == deleted) {
@@ -253,7 +254,7 @@ class MedicaldsrstockmovTypeBrowserModel extends DefaultTableModel {
 				pMedicaldsrstockmovType = manager.getMedicaldsrstockmovType();
 			} catch (OHServiceException e) {
 				pMedicaldsrstockmovType = null;
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		
