@@ -454,10 +454,18 @@ public class MovStockBrowser extends ModalJFrame {
 		typeBox = new JComboBox();
 		typeBox.setPreferredSize(new Dimension(130,25));
 		MedicaldsrstockmovTypeBrowserManager typeManager = new MedicaldsrstockmovTypeBrowserManager();
-		ArrayList<MovementType> type = typeManager.getMedicaldsrstockmovType();
+		ArrayList<MovementType> type;
+		try {
+			type = typeManager.getMedicaldsrstockmovType();
+		} catch (OHServiceException e1) {
+			type = null;
+			JOptionPane.showMessageDialog(null, e1.getMessage());
+		}
 		typeBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));
-		for (MovementType movementType : type) {
-			typeBox.addItem(movementType);
+		if (null != type) {
+			for (MovementType movementType : type) {
+				typeBox.addItem(movementType);
+			}
 		}
 		typeBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

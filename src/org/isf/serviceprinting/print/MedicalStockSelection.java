@@ -318,10 +318,18 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 	private JComboBox getMovementTypeBox() {
 		movTypeBox = new JComboBox();
 		MedicaldsrstockmovTypeBrowserManager typeManager = new MedicaldsrstockmovTypeBrowserManager();
-		ArrayList<MovementType> type = typeManager.getMedicaldsrstockmovType();
+		ArrayList<MovementType> type;
+		try {
+			type = typeManager.getMedicaldsrstockmovType();
+		} catch (OHServiceException e1) {
+			type = null;
+			JOptionPane.showMessageDialog(null, e1.getMessage());
+		}
 		movTypeBox.addItem("All");
-		for (MovementType movementType : type) {
-			movTypeBox.addItem(movementType);
+		if (null != type) {
+			for (MovementType movementType : type) {
+				movTypeBox.addItem(movementType);
+			}
 		}
 		movTypeBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

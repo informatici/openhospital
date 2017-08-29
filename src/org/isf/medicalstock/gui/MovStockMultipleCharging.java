@@ -456,10 +456,18 @@ public class MovStockMultipleCharging extends JDialog {
 		if (jComboBoxChargeType == null) {
 			jComboBoxChargeType = new JComboBox();
 			MedicaldsrstockmovTypeBrowserManager movMan = new MedicaldsrstockmovTypeBrowserManager();
-			ArrayList<MovementType> movTypes = movMan.getMedicaldsrstockmovType();
-			for (MovementType movType : movTypes) {
-				if (movType.getType().contains("+")) //$NON-NLS-1$
-					jComboBoxChargeType.addItem(movType);
+			ArrayList<MovementType> movTypes;
+			try {
+				movTypes = movMan.getMedicaldsrstockmovType();
+			} catch (OHServiceException e) {
+				movTypes = null;
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			}
+			if (null != movTypes) {
+				for (MovementType movType : movTypes) {
+					if (movType.getType().contains("+")) //$NON-NLS-1$
+						jComboBoxChargeType.addItem(movType);
+				}
 			}
 		}
 		return jComboBoxChargeType;

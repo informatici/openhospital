@@ -494,10 +494,18 @@ public class MovStockMultipleDischarging extends JDialog {
 		if (jComboBoxDischargeType == null) {
 			jComboBoxDischargeType = new JComboBox();
 			MedicaldsrstockmovTypeBrowserManager movMan = new MedicaldsrstockmovTypeBrowserManager();
-			ArrayList<MovementType> movTypes = movMan.getMedicaldsrstockmovType();
-			for (MovementType movType : movTypes) {
-				if (movType.getType().equals("-")) //$NON-NLS-1$
-					jComboBoxDischargeType.addItem(movType);
+			ArrayList<MovementType> movTypes;
+			try {
+				movTypes = movMan.getMedicaldsrstockmovType();
+			} catch (OHServiceException e) {
+				movTypes = null;
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			}
+			if (null != movTypes) {
+				for (MovementType movType : movTypes) {
+					if (movType.getType().equals("-")) //$NON-NLS-1$
+						jComboBoxDischargeType.addItem(movType);
+				}
 			}
 		}
 		return jComboBoxDischargeType;
