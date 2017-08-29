@@ -129,8 +129,6 @@ public class MedicalStockWardIoOperations
 		try {
 			jpa.beginTransaction();		
 
-			jpa.beginTransaction();
-			
 			query = "SELECT SUM(MMV_QTY) MAIN FROM MEDICALDSRSTOCKMOV M WHERE MMV_MMVT_ID_A = 'testDisc' AND MMV_MDSR_ID = ? ";
 			params.add(medical.getCode());
 			if (ward!=null) {
@@ -160,8 +158,6 @@ public class MedicalStockWardIoOperations
 		Double dischargeQuantity = 0.0;
 				
 		try {
-			jpa.beginTransaction();		
-
 			jpa.beginTransaction();
 			
 			query = "SELECT SUM(MMVN_MDSR_QTY) DISCHARGE FROM MEDICALDSRSTOCKMOVWARD WHERE MMVN_MDSR_ID = ?";

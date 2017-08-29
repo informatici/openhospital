@@ -55,7 +55,7 @@ import org.isf.therapy.manager.TherapyManager;
 import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.JAgenda;
 import org.isf.utils.jobjects.JAgenda.AgendaDayObject;
 import org.isf.visits.gui.InsertVisit;
@@ -145,7 +145,7 @@ public class TherapyEdit extends JDialog {
 			this.medArray = medBrowser.getMedicals();
 		} catch (OHServiceException e1) {
 			this.medArray = null;
-			JOptionPane.showMessageDialog(null, e1.getMessage());
+			OHServiceExceptionUtil.showMessages(e1);
 		}
 		this.patient = patient;
 		this.admitted = admitted;
@@ -183,11 +183,7 @@ public class TherapyEdit extends JDialog {
 		try {
 			thRows = thManager.getTherapyRows(patient.getCode());
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		
 		/*
@@ -206,11 +202,7 @@ public class TherapyEdit extends JDialog {
 		try {
 			therapies = thManager.getTherapies(thRows);
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		
 		/*
@@ -219,11 +211,7 @@ public class TherapyEdit extends JDialog {
 		try {
 			visits = vstManager.getVisits(patient.getCode());
 		} catch (OHServiceException e) {
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		
 		/*
@@ -427,11 +415,7 @@ public class TherapyEdit extends JDialog {
 						try {
 							visitID = vstManager.newVisit(visit);
 						} catch (OHServiceException e1) {
-							if(e1.getMessages() != null){
-								for(OHExceptionMessage msg : e1.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(e1);
 						}
 						if (visitID > 0) {
 							visit.setVisitID(visitID);
@@ -574,11 +558,7 @@ public class TherapyEdit extends JDialog {
 								try{
 									patManager.updatePatient(patient);
 								}catch(OHServiceException ex){
-									if(ex.getMessages() != null){
-										for(OHExceptionMessage msg : ex.getMessages()){
-											JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-										}
-									}
+									OHServiceExceptionUtil.showMessages(ex);
 								}
 							}
 						} else return;
@@ -663,11 +643,7 @@ public class TherapyEdit extends JDialog {
 								try {
 									thManager.deleteAllTherapies(patient.getCode());
 								} catch (OHServiceException ex) {
-									if(ex.getMessages() != null){
-										for(OHExceptionMessage msg : ex.getMessages()){
-											JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-										}
-									}
+									OHServiceExceptionUtil.showMessages(ex);
 								}
 							} else return;
 						} else {
@@ -724,11 +700,7 @@ public class TherapyEdit extends JDialog {
 							}
 						}
 					} catch (OHServiceException ex) {
-						if(ex.getMessages() != null){
-							for(OHExceptionMessage msg : ex.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
+						OHServiceExceptionUtil.showMessages(ex);
 					}
 					
 					if (!therapyModified && !visitModified) {
@@ -753,11 +725,7 @@ public class TherapyEdit extends JDialog {
 										MessageBundle.getMessage("angal.therapy.therapiesplancouldnotbesaved"));
 							}
 						} catch (OHServiceException ex) {
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(ex);
 						}
 					}
 					
@@ -857,11 +825,7 @@ public class TherapyEdit extends JDialog {
 						medOutStock = thManager.getMedicalsOutOfStock(therapies);
 					} catch (OHServiceException ex) {
 						available = false;
-						if(ex.getMessages() != null){
-							for(OHExceptionMessage msg : ex.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
+						OHServiceExceptionUtil.showMessages(ex);
 					}
 					if(medOutStock != null 
 							&& !medOutStock.isEmpty()){
@@ -944,11 +908,7 @@ public class TherapyEdit extends JDialog {
 						try {
 							thisTherapy = thManager.createTherapy(thRow);
 						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(ex);
 						}
 						therapies.add(thisTherapy); // FOR GUI
 						hashTableTherapy.put(thRow.getTherapyID(), thisTherapy);
@@ -1006,11 +966,7 @@ public class TherapyEdit extends JDialog {
 						try {
 							thisTherapy = thManager.createTherapy(thRow);
 						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(ex);
 						}
 						therapies.add(thisTherapy); // FOR GUI
 						checked = false;
