@@ -22,17 +22,20 @@ public class OperationTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<OperationType> operationTypes = null;
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT OCL_ID_A, OCL_DESC FROM OPERATIONTYPE ORDER BY OCL_DESC";
-		jpa.createQuery(query, OperationType.class, false);
-		List<OperationType> operationTypeList = (List<OperationType>)jpa.getList();
-		operationTypes = new ArrayList<OperationType>(operationTypeList);	
-		
-		jpa.commitTransaction();
 
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT OCL_ID_A, OCL_DESC FROM OPERATIONTYPE ORDER BY OCL_DESC";
+			jpa.createQuery(query, OperationType.class, false);
+			List<OperationType> operationTypeList = (List<OperationType>)jpa.getList();
+			operationTypes = new ArrayList<OperationType>(operationTypeList);	
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return operationTypes;
 	}
 	
@@ -49,11 +52,14 @@ public class OperationTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(operationType);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			jpa.persist(operationType);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 	
@@ -70,11 +76,15 @@ public class OperationTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
+		try {
+			jpa.beginTransaction();	
+			jpa.merge(operationType);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		
-		jpa.beginTransaction();	
-		jpa.merge(operationType);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 	
@@ -91,12 +101,15 @@ public class OperationTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		OperationType objToRemove = (OperationType) jpa.find(OperationType.class, operationType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			OperationType objToRemove = (OperationType) jpa.find(OperationType.class, operationType.getCode());
+			jpa.remove(objToRemove);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 	
@@ -113,15 +126,19 @@ public class OperationTypeIoOperation {
 		OperationType operationType;
 		boolean result = false;
 		
-		
-		jpa.beginTransaction();	
-		operationType = (OperationType)jpa.find(OperationType.class, code);
-		if (operationType != null)
-		{
-			result = true;
+		try {
+			jpa.beginTransaction();	
+			operationType = (OperationType)jpa.find(OperationType.class, code);
+			if (operationType != null)
+			{
+				result = true;
+			}
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
 		}
-    	jpa.commitTransaction();
-    	
+		
 		return result;
 	}
 }
