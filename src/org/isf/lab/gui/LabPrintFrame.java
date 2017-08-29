@@ -11,13 +11,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.lab.model.LaboratoryForPrint;
 import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
 public class LabPrintFrame extends JDialog{
 
@@ -110,7 +110,7 @@ public class LabPrintFrame extends JDialog{
 					try {
 						new PrintManager("Laboratory",labList,printTypeSelected);
 					} catch (OHServiceException e) {
-						JOptionPane.showMessageDialog(LabPrintFrame.this, e.getMessage());
+						OHServiceExceptionUtil.showMessages(e);
 					}
 					dispose();
 				}

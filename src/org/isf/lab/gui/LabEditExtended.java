@@ -53,7 +53,7 @@ import org.isf.lab.model.LaboratoryRow;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
 
@@ -382,11 +382,7 @@ public class LabEditExtended extends JDialog {
 			try {
 				pat = patBrowser.getPatient();
 			} catch (OHServiceException e) {
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		if (patientComboBox == null) {
@@ -402,11 +398,7 @@ public class LabEditExtended extends JDialog {
 					jTextPatientSrc.setText(String.valueOf(labPat.getCode()));
 					jTextPatientSrc.setEnabled(false);
 				} catch (OHServiceException e) {
-					if(e.getMessages() != null){
-						for(OHExceptionMessage msg : e.getMessages()){
-							JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-						}
-					}
+					OHServiceExceptionUtil.showMessages(e);
 				}
 				return patientComboBox;
 			}
@@ -426,11 +418,7 @@ public class LabEditExtended extends JDialog {
 						try {
 							admission = admMan.getCurrentAdmission(labPat);
 						}catch(OHServiceException e){
-							if(e.getMessages() != null){
-								for(OHExceptionMessage msg : e.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(e);
 						}
 						inPatientCheckBox.setSelected(admission != null ? true : false);
 					}
@@ -513,6 +501,7 @@ public class LabEditExtended extends JDialog {
 				exams = manager.getExams();
 			} catch (OHServiceException e) {
 				exams = null;
+				OHServiceExceptionUtil.showMessages(e);
 			}
 			examComboBox.addItem(MessageBundle.getMessage("angal.lab.selectanexam"));
 			
@@ -708,14 +697,14 @@ public class LabEditExtended extends JDialog {
 								result = manager.newLabFirstProcedure(lab);
 							} catch (OHServiceException e1) {
 								result = false;
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 						else if (examSelected.getProcedure() == 2)
 							try {
 								result = manager.newLabSecondProcedure(lab,	labRow);
 							} catch (OHServiceException e1) {
 								result = false;
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 					}
 					else {
@@ -724,14 +713,14 @@ public class LabEditExtended extends JDialog {
 								result = manager.editLabFirstProcedure(lab);
 							} catch (OHServiceException e1) {
 								result = false;
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 						else if (examSelected.getProcedure() == 2)
 							try {
 								result = manager.editLabSecondProcedure(lab, labRow);
 							} catch (OHServiceException e1) {
 								result = false;
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 					}
 
@@ -770,7 +759,7 @@ public class LabEditExtended extends JDialog {
 			rows = rowManager.getExamRow(examSelected.getCode());
 		} catch (OHServiceException e) {
 			rows = null;
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		if (null != rows) {
 			for (ExamRow r : rows) {
@@ -793,7 +782,7 @@ public class LabEditExtended extends JDialog {
 		try {
 			eRows = eRowManager.getExamRow(examId);
 		} catch (OHServiceException e1) {
-			JOptionPane.showMessageDialog(null, e1.getMessage());
+			OHServiceExceptionUtil.showMessages(e1);
 		}
 		if (insert) {
 			if (null != eRows) {
@@ -808,7 +797,7 @@ public class LabEditExtended extends JDialog {
 				lRows = lRowManager.getLabRow(lab.getCode());
 			} catch (OHServiceException e) {
 				lRows = new ArrayList<LaboratoryRow>();
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 			boolean find;
 			if (null != eRows) {

@@ -53,7 +53,7 @@ import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.time.RememberDates;
 
 import com.toedter.calendar.JDateChooser;
@@ -179,14 +179,14 @@ public class LabNew extends JDialog implements SelectionListener {
 			exaArray = exaManager.getExams();
 		} catch (OHServiceException e) {
 			exaArray = null;
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		
 		 try {
 			exaRowArray = examRowManager.getExamRow();
 		} catch (OHServiceException e) {
 			exaRowArray = null;
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		
 		initComponents();
@@ -309,14 +309,14 @@ public class LabNew extends JDialog implements SelectionListener {
 								result = labManager.newLabFirstProcedure(lab);
 							} catch (OHServiceException e1) {
 								result = false;
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 						} else {
 							try {
 								result = labManager.newLabSecondProcedure(lab, examResults.get(i));
 							} catch (OHServiceException e1) {
 								result = false;
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 						}
 						if (!result) {
@@ -339,11 +339,7 @@ public class LabNew extends JDialog implements SelectionListener {
 		try {
 			adm = man.getCurrentAdmission(patientSelected);
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		return (adm==null?"R":"I");					
 	}

@@ -46,6 +46,7 @@ import org.isf.lab.model.LaboratoryForPrint;
 import org.isf.menu.gui.MainMenu;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoDateTextField;
 
@@ -182,7 +183,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 							new LabPrintFrame(myFrame, labs); 
 						}
 					} catch (OHServiceException e) {
-						JOptionPane.showMessageDialog(null, e.getMessage());
+						OHServiceExceptionUtil.showMessages(e);
 					}
 					
 				}
@@ -294,7 +295,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 								deleted = manager.deleteLaboratory(lab);
 							} catch (OHServiceException e) {
 								deleted = false;
-								JOptionPane.showMessageDialog(null, e.getMessage());
+								OHServiceExceptionUtil.showMessages(e);
 							}
 							
 							if (true == deleted) {
@@ -389,7 +390,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 				type = managerExams.getExams();
 			} catch (OHServiceException e1) {
 				type = null;
-				JOptionPane.showMessageDialog(null, e1.getMessage());
+				OHServiceExceptionUtil.showMessages(e1);
 			} // for
 			// efficiency
 			// in
@@ -488,7 +489,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 				pLabs = manager.getLaboratory(exam, dateFrom, dateTo);
 			} catch (OHServiceException e) {
 				pLabs = new ArrayList<Laboratory>();
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 
@@ -498,7 +499,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 				pLabs = manager.getLaboratory();
 			} catch (OHServiceException e) {
 				pLabs = new ArrayList<Laboratory>();
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 
