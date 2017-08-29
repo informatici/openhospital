@@ -40,6 +40,7 @@ import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.ward.model.Ward;
 
@@ -448,7 +449,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 							result = wardManager.newMovementWard(oneMovementWard);
 						} catch (OHServiceException e1) {
 							result = false;
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							OHServiceExceptionUtil.showMessages(e1);
 						}
 						if (result) {
 							fireMovementWardInserted();
@@ -484,7 +485,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 							result = wardManager.newMovementWard(manyMovementWard);
 						} catch (OHServiceException e1) {
 							result = false;
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							OHServiceExceptionUtil.showMessages(e1);
 						}
 						if (result) {
 							fireMovementWardInserted();
