@@ -26,12 +26,8 @@ import org.slf4j.LoggerFactory;
 public class MovWardBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(MovWardBrowserManager.class);
-	
-	private MedicalStockWardIoOperations ioOperations;
+	private MedicalStockWardIoOperations ioOperations=Menu.getApplicationContext().getBean(MedicalStockWardIoOperations.class);
 
-	public MovWardBrowserManager(){
-		ioOperations=Menu.getApplicationContext().getBean(MedicalStockWardIoOperations.class);
-	}
 
 	/**
 	 * Gets all the {@link MovementWard}s.
@@ -46,13 +42,13 @@ public class MovWardBrowserManager {
 			 * create ready to return OHServiceException and keep existing error message
 			 */
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -70,13 +66,13 @@ public class MovWardBrowserManager {
 			 * create ready to return OHServiceException and keep existing error message
 			 */
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -96,13 +92,13 @@ public class MovWardBrowserManager {
 			 * create ready to return OHServiceException and keep existing error message
 			 */
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -120,13 +116,13 @@ public class MovWardBrowserManager {
 			 * create ready to return OHServiceException and keep existing error message
 			 */
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -144,13 +140,13 @@ public class MovWardBrowserManager {
 			 * create ready to return OHServiceException and keep existing error message
 			 */
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -168,13 +164,13 @@ public class MovWardBrowserManager {
 			 * create ready to return OHServiceException and keep existing error message
 			 */
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -192,13 +188,13 @@ public class MovWardBrowserManager {
 			 * create ready to return OHServiceException and keep existing error message
 			 */
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -217,13 +213,13 @@ public class MovWardBrowserManager {
 			 * create ready to return OHServiceException and keep existing error message
 			 */
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.medicalstock.ward"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
 		}
 	}
 

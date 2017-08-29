@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.isf.generaldata.MessageBundle;
 import org.isf.sms.model.Sms;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
@@ -38,18 +37,22 @@ public class SmsOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();
-		if (sms.getSmsId() > 0)
-		{
-			jpa.merge(sms);			
+		try{
+			jpa.beginTransaction();
+			if (sms.getSmsId() > 0)
+			{
+				jpa.merge(sms);			
+			}
+			else
+			{			
+				jpa.persist(sms);
+			}
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		else
-		{			
-			jpa.persist(sms);
-		}
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 	
@@ -63,12 +66,17 @@ public class SmsOperations {
 			int ID) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
+		Sms foundSms = null;
 		
-		
-		jpa.beginTransaction();	
-		Sms foundSms = (Sms)jpa.find(Sms.class, ID);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			foundSms = (Sms)jpa.find(Sms.class, ID);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return foundSms;
 	}
 	
@@ -86,21 +94,25 @@ public class SmsOperations {
 		ArrayList<Sms> sms = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM SMS" +
-						" WHERE DATE(SMS_DATE_SCHED) BETWEEN ? AND ?" +
-						" ORDER BY SMS_DATE_SCHED ASC";
-		jpa.createQuery(query, Sms.class, false);
-		params.add(new Timestamp(dateFrom.getTime()));
-		params.add(new Timestamp(dateTo.getTime()));
-		jpa.setParameters(params, false);
-		List<Sms> smsList = (List<Sms>)jpa.getList();
-		sms = new ArrayList<Sms>(smsList);			
-		
-		jpa.commitTransaction();
-		
+		try{
+			jpa.beginTransaction();
+
+			String query = "SELECT * FROM SMS" +
+					" WHERE DATE(SMS_DATE_SCHED) BETWEEN ? AND ?" +
+					" ORDER BY SMS_DATE_SCHED ASC";
+			jpa.createQuery(query, Sms.class, false);
+			params.add(new Timestamp(dateFrom.getTime()));
+			params.add(new Timestamp(dateTo.getTime()));
+			jpa.setParameters(params, false);
+			List<Sms> smsList = (List<Sms>)jpa.getList();
+			sms = new ArrayList<Sms>(smsList);			
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return sms;
 	}
 	
@@ -117,23 +129,27 @@ public class SmsOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Sms> sms = null;
 		ArrayList<Object> params = new ArrayList<Object>();
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM SMS" +
-						" WHERE DATE(SMS_DATE_SCHED) BETWEEN ? AND ?" +
-						" AND SMS_DATE_SENT IS NULL " +
-						" ORDER BY SMS_DATE_SCHED ASC";
-		jpa.createQuery(query, Sms.class, false);
-		params.add(new Timestamp(dateFrom.getTime()));
-		params.add(new Timestamp(dateTo.getTime()));
-		jpa.setParameters(params, false);
-		List<Sms> smsList = (List<Sms>)jpa.getList();
-		sms = new ArrayList<Sms>(smsList);			
-		
-		jpa.commitTransaction();
-		
+
+		try{
+			jpa.beginTransaction();
+
+			String query = "SELECT * FROM SMS" +
+					" WHERE DATE(SMS_DATE_SCHED) BETWEEN ? AND ?" +
+					" AND SMS_DATE_SENT IS NULL " +
+					" ORDER BY SMS_DATE_SCHED ASC";
+			jpa.createQuery(query, Sms.class, false);
+			params.add(new Timestamp(dateFrom.getTime()));
+			params.add(new Timestamp(dateTo.getTime()));
+			jpa.setParameters(params, false);
+			List<Sms> smsList = (List<Sms>)jpa.getList();
+			sms = new ArrayList<Sms>(smsList);			
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return sms;
 	}
 	
@@ -148,18 +164,22 @@ public class SmsOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Sms> sms = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM SMS" +
-						" WHERE SMS_DATE_SENT IS NULL " +
-						" ORDER BY SMS_DATE_SCHED ASC";
-		jpa.createQuery(query, Sms.class, false);
-		List<Sms> smsList = (List<Sms>)jpa.getList();
-		sms = new ArrayList<Sms>(smsList);			
-		
-		jpa.commitTransaction();
-		
+		try{
+			jpa.beginTransaction();
+
+			String query = "SELECT * FROM SMS" +
+					" WHERE SMS_DATE_SENT IS NULL " +
+					" ORDER BY SMS_DATE_SCHED ASC";
+			jpa.createQuery(query, Sms.class, false);
+			List<Sms> smsList = (List<Sms>)jpa.getList();
+			sms = new ArrayList<Sms>(smsList);			
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return sms;
 	}
 
@@ -173,12 +193,16 @@ public class SmsOperations {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		
-		
-		jpa.beginTransaction();
-		Sms objToRemove = (Sms) jpa.find(Sms.class, sms.getSmsId());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();
+			Sms objToRemove = (Sms) jpa.find(Sms.class, sms.getSmsId());
+			jpa.remove(objToRemove);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return;	
 	}
 
@@ -194,11 +218,10 @@ public class SmsOperations {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Object> params = new ArrayList<Object>();
-        		
-		
-		jpa.beginTransaction();		
 
 		try {
+			jpa.beginTransaction();		
+
 			String query = "DELETE FROM SMS" +
 					" WHERE SMS_MOD = ? AND SMS_MOD_ID = ?" +
 					" AND SMS_DATE_SENT IS NULL";
@@ -207,12 +230,13 @@ public class SmsOperations {
 			params.add(moduleID);
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
-		}  catch (OHException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 	
 
-		jpa.commitTransaction();	
-		
+			jpa.commitTransaction();	
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}		
         return;
 	}
 }

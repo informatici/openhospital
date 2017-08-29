@@ -43,14 +43,11 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
-import org.isf.menu.gui.Menu;
-import org.isf.patient.model.Patient;
-import org.isf.patient.service.PatientIoOperations;
 import org.isf.therapy.manager.TherapyManager;
 import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.IconButton;
 import org.isf.utils.time.TimeTools;
 import org.joda.time.DateTime;
@@ -764,19 +761,18 @@ public class TherapyEntryForm extends JDialog {
 					String note = noteTextArea.getText();
 					boolean notify = false;
 					boolean sms = false;
-					
-					PatientIoOperations patientIoOperations = Menu.getApplicationContext().getBean(PatientIoOperations.class);
-					Patient patient = null;
-					try {
-						patient = patientIoOperations.getPatient(patID);
-					} catch (OHException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					thRow = new TherapyRow(therapyID, patient, startDate, endDate, medical, qty, unitID, freqInDay, freqInPeriod, note, notify, sms);
-										
+
 					TherapyManager thManager = new TherapyManager();
-					therapyID = thManager.newTherapy(thRow);
+					try {
+						thRow = thManager.newTherapy(therapyID, patID, startDate, endDate, medical, qty, unitID, freqInDay, freqInPeriod, note, notify, sms);
+						therapyID = thRow.getTherapyID();
+					}catch(OHServiceException e){
+						if(e.getMessages() != null){
+							for(OHExceptionMessage msg : e.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
+					}
 					if (therapyID > 0) {
 						thRow.setTherapyID(therapyID);
 					}
