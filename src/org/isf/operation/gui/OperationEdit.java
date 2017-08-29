@@ -33,7 +33,7 @@ import org.isf.operation.model.Operation;
 import org.isf.opetype.manager.OperationTypeBrowserManager;
 import org.isf.opetype.model.OperationType;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 /**
@@ -335,11 +335,7 @@ public class OperationEdit extends JDialog {
 						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.operation.thedatacouldnotbesaved"));
 						else  dispose();
 					}catch(OHServiceException ex){
-						if(ex.getMessages() != null){
-							for(OHExceptionMessage msg : ex.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
+						OHServiceExceptionUtil.showMessages(ex);
 					}
 				}
 			});
