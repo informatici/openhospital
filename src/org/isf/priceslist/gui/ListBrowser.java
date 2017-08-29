@@ -22,7 +22,7 @@ import org.isf.priceslist.gui.ListEdit.ListListener;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.PriceList;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 public class ListBrowser extends ModalJFrame  implements ListListener{
@@ -31,11 +31,7 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 		try {
 			listArray = listManager.getLists();
 		}catch(OHServiceException ex){
-			if(ex.getMessages() != null){
-				for(OHExceptionMessage msg : ex.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+			OHServiceExceptionUtil.showMessages(ex);
 		}
 		jTablePriceLists.setModel(new ListBrowserModel());
 	}
@@ -134,11 +130,7 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 								}
 							}
 						}catch(OHServiceException e){
-							if(e.getMessages() != null){
-								for(OHExceptionMessage msg : e.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(e);
 						}
 					}
 				}
@@ -250,11 +242,7 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 											MessageBundle.getMessage("angal.priceslist.thedatacouldnotbesaved"));
 								}
 							}catch(OHServiceException e){
-								if(e.getMessages() != null){
-									for(OHExceptionMessage msg : e.getMessages()){
-										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-									}
-								}
+								OHServiceExceptionUtil.showMessages(e);
 							}
 
 						} else return;
@@ -359,11 +347,7 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 			try {
 				listArray = listManager.getLists();
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		public int getRowCount() {

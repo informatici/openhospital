@@ -34,7 +34,7 @@ import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.treetable.JTreeTable;
 
@@ -96,11 +96,7 @@ public class PricesBrowser extends ModalJFrame {
 			priceArray = listManager.getPrices();
 			othArray = othManager.getOthers();
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		initComponents();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -144,7 +140,7 @@ public class PricesBrowser extends ModalJFrame {
 					try {
 						new PrintManager("PriceList", listManager.convertPrice(listSelected, priceArray), 0);
 					} catch (OHServiceException e) {
-						JOptionPane.showMessageDialog(PricesBrowser.this, e.getMessage());
+						OHServiceExceptionUtil.showMessages(e, PricesBrowser.this);
 					}
 				}
 			});
@@ -245,11 +241,7 @@ public class PricesBrowser extends ModalJFrame {
 						try {
 							updated = listManager.updatePrices(listSelected, updateList);
 						}catch(OHServiceException e){
-							if(e.getMessages() != null){
-								for(OHExceptionMessage msg : e.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(e);
 						}
 						
 						if (updated) {
@@ -347,11 +339,7 @@ public class PricesBrowser extends ModalJFrame {
 			mediArray = mediManager.getMedicals();
 			othArray = othManager.getOthers();
 	    }catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+	    	OHServiceExceptionUtil.showMessages(e);
 		}
 	}
 
