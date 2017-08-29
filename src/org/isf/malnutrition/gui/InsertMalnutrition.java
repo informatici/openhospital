@@ -17,6 +17,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.malnutrition.manager.MalnutritionManager;
 import org.isf.malnutrition.model.Malnutrition;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.time.DateTextField;
 
 public class InsertMalnutrition extends JDialog {
@@ -176,7 +177,7 @@ public class InsertMalnutrition extends JDialog {
 							inserted = manager.newMalnutrition(maln);
 						} catch (OHServiceException e) {
 							inserted = false;
-							JOptionPane.showMessageDialog(null, e.getMessage());
+							OHServiceExceptionUtil.showMessages(e);
 						}
 						
 						if (true == inserted) {
@@ -206,7 +207,7 @@ public class InsertMalnutrition extends JDialog {
 							// either the record was deleted during update by another user or the sql failed for some other reason
 							// so show the error message propagated up from the exception
 							updated = false;
-							JOptionPane.showMessageDialog(null, e.getMessage());
+							OHServiceExceptionUtil.showMessages(e);
 						}
 						
 						if (true == updated) {

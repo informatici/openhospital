@@ -23,6 +23,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.malnutrition.manager.MalnutritionManager;
 import org.isf.malnutrition.model.Malnutrition;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
 public class MalnutritionBrowser extends JDialog {
 
@@ -181,7 +182,7 @@ public class MalnutritionBrowser extends JDialog {
 								deleted = manager.deleteMalnutrition(m);
 							} catch (OHServiceException e) {
 								deleted = false;
-								JOptionPane.showMessageDialog(null, e.getMessage());
+								OHServiceExceptionUtil.showMessages(e);
 							}
 							
 							if (true == deleted) {
@@ -235,7 +236,7 @@ public class MalnutritionBrowser extends JDialog {
 				try {
 					pMaln = manager.getMalnutrition(s);
 				} catch (OHServiceException e) {
-					JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.malnutrition.problemsoccuredwiththesqlistruction"));
+					OHServiceExceptionUtil.showMessages(e);
 				}				
 			} else {
 				JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.malnutrition.nonameselected"));
