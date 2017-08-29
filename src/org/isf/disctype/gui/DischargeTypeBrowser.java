@@ -22,6 +22,7 @@ import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.model.DischargeType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -213,7 +214,7 @@ public class DischargeTypeBrowser extends ModalJFrame implements DischargeTypeLi
 								deleted = manager.deleteDischargeType(dis);
 							} catch (OHServiceException e) {
 								deleted = false;
-								JOptionPane.showMessageDialog(null, e.getMessage());
+								OHServiceExceptionUtil.showMessages(e);
 							}
 							
 							if (true == deleted) {
@@ -254,7 +255,7 @@ class DischargeTypeBrowserModel extends DefaultTableModel {
 				pDischargeType = manager.getDischargeType();
 			} catch (OHServiceException e) {
 				pDischargeType = null;
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		

@@ -19,6 +19,7 @@ import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.model.DischargeType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class DischargeTypeBrowserEdit extends JDialog{
@@ -216,7 +217,7 @@ public class DischargeTypeBrowserEdit extends JDialog{
 							codeExists = manager.codeControl(key);
 						} catch (OHServiceException e1) {
 							codeExists = false;
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							OHServiceExceptionUtil.showMessages(e1);
 						}
 						
 						if (true == codeExists){
@@ -250,7 +251,7 @@ public class DischargeTypeBrowserEdit extends JDialog{
 							result = manager.newDischargeType(dischargeType);
 						} catch (OHServiceException e1) {
 							result = false;
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							OHServiceExceptionUtil.showMessages(e1);
 						}
 						if (result) {
                            fireDischargeInserted(dischargeType);
@@ -266,7 +267,7 @@ public class DischargeTypeBrowserEdit extends JDialog{
 								result = manager.updateDischargeType(dischargeType);
 							} catch (OHServiceException e1) {
 								result = false;
-								JOptionPane.showMessageDialog(null, e1.getMessage());
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 						if (result) {
 							fireDischargeUpdated();
