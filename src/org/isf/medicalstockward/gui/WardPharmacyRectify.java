@@ -21,7 +21,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -38,6 +37,7 @@ import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.ward.model.Ward;
 
 public class WardPharmacyRectify extends JDialog {
@@ -112,7 +112,7 @@ public class WardPharmacyRectify extends JDialog {
 			this.medicals = medManager.getMedicals();
 		} catch (OHServiceException e) {
 			this.medicals = null;
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 	}
 
@@ -131,8 +131,10 @@ public class WardPharmacyRectify extends JDialog {
 			}
 		}
 		medicalMap = new HashMap<String, Medical>();
-		for (Medical med : medicals) {
-			medicalMap.put(med.getProd_code(), med);
+		if (null != medicals) {
+			for (Medical med : medicals) {
+				medicalMap.put(med.getProd_code(), med);
+			}
 		}
 		wardSelected = ward;
 		initMedicals();
@@ -264,7 +266,7 @@ public class WardPharmacyRectify extends JDialog {
 									MessageBundle.getMessage("angal.medicalstockward.rectify.pieces")));
 						} catch (OHServiceException e1) {
 							result = false;
-							JOptionPane.showMessageDialog(null, e1.getMessage());
+							OHServiceExceptionUtil.showMessages(e1);
 						} //$NON-NLS-1$
 						if (!result) {
 							

@@ -62,7 +62,7 @@ import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.excel.ExcelExporter;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.ward.manager.WardBrowserManager;
@@ -731,7 +731,7 @@ public class WardPharmacy extends ModalJFrame implements
 			medicals = medicalManager.getMedicals();
 		} catch (OHServiceException e) {
 			medicals = null;
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		jComboBoxMedicals.addItem(MessageBundle.getMessage("angal.medicalstockward.allmedicals"));
 		MedicalType medicalType;
@@ -821,11 +821,7 @@ public class WardPharmacy extends ModalJFrame implements
 				wardList = wardManager.getWards();
 			}catch(OHServiceException e){
 				wardList = new ArrayList<Ward>();
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+				OHServiceExceptionUtil.showMessages(e);
 			}
 			jComboBoxWard.addItem(MessageBundle.getMessage("angal.medicalstockward.selectaward"));
 			for (Ward ward : wardList) {
@@ -908,7 +904,7 @@ public class WardPharmacy extends ModalJFrame implements
 					}
 				}
 			} catch (OHServiceException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 				e.printStackTrace();
 			}
 		}
@@ -969,7 +965,7 @@ public class WardPharmacy extends ModalJFrame implements
 			try {
 				listMovementWardFromTo = wardManager.getMovementWard(wardSelected.getCode(), dateFrom, dateTo);
 			} catch (OHServiceException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 				listMovementWardFromTo = new ArrayList<MovementWard>();
 			}
 
@@ -1112,7 +1108,7 @@ public class WardPharmacy extends ModalJFrame implements
 			try {
 				wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
 			} catch (OHServiceException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage());
+				OHServiceExceptionUtil.showMessages(e);
 				wardDrugs = new ArrayList<MedicalWard>();
 			}
 		}
@@ -1190,7 +1186,7 @@ public class WardPharmacy extends ModalJFrame implements
 						new PrintManager("WardPharmacyDrugs", wardManager.convertWardDrugs(wardSelected, wardDrugs), 0);
 					} 
 					} catch (OHServiceException e) {
-						JOptionPane.showMessageDialog(WardPharmacy.this, e.getMessage());
+						OHServiceExceptionUtil.showMessages(e);
 					}
 				}
 			});
