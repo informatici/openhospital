@@ -27,14 +27,12 @@ public class OHServiceExceptionUtil {
 	public static void showMessages(OHServiceException e, Component parentComponent) {
 		if (null != e.getMessages()) {
 			for(OHExceptionMessage msg : e.getMessages()){
+				String message = msg.getMessage();				
 				String title = msg.getTitle();
-				String message = msg.getMessage();
-				
 				if (null == title) {
 					title = "";
-				} else {
-					title = msg.getTitle();
 				}
+				
 				int messageType = msg.getLevel().getSwingSeverity();
 				JOptionPane.showMessageDialog(parentComponent, message, title, messageType);
 			}
