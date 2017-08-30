@@ -22,7 +22,7 @@ import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
@@ -388,11 +388,7 @@ public class WardEdit extends JDialog {
 								return;
 							}
 						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(ex);
 						}
 					}
 					if (descriptionTextField.getText().trim().equals("")) {
@@ -462,11 +458,7 @@ public class WardEdit extends JDialog {
 						try {
 							result = manager.newWard(ward);
 						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(ex);
 						}
 						if (result) {
 							fireWardInserted();
@@ -486,11 +478,7 @@ public class WardEdit extends JDialog {
 								result = manager.updateWard(ward);
 							}
 						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(ex);
 						}
 						if (result) {
 							fireWardUpdated();

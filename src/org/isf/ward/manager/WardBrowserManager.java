@@ -3,8 +3,6 @@ package org.isf.ward.manager;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
@@ -136,8 +134,8 @@ public class WardBrowserManager {
 	 */
 	public boolean updateWard(Ward ward) throws OHServiceException {
 		boolean isConfirmedOverwriteRecord = true;
+		int admitted_patients_in_ward = getCurrentOccupation(ward);
 		try {
-			int admitted_patients_in_ward = getCurrentOccupation(ward);
 			if (ward.getBeds() < admitted_patients_in_ward) {
 				String message = MessageBundle.getMessagePattern("angal.ward.pattern.patientsarestilladmittedinward", admitted_patients_in_ward);
 				throw new OHException(message);
@@ -224,7 +222,7 @@ public class WardBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -233,13 +231,23 @@ public class WardBrowserManager {
 	 * In case of error a message error is shown and a <code>false</code> value is returned.
 	 * @param code the code to check.
 	 * @return <code>true</code> if it is already used, <code>false</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public boolean maternityControl() {
+	public boolean maternityControl() throws OHServiceException {
 		try {
 			return ioOperations.isMaternityPresent();
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -263,7 +271,7 @@ public class WardBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
 		}
 	}
 	

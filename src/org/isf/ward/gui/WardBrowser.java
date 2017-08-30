@@ -19,7 +19,7 @@ import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
@@ -95,16 +95,12 @@ public class WardBrowser extends ModalJFrame implements WardEdit.WardListener {
 		myFrame = this;
 		//check if in the db maternity ward exists
 		WardBrowserManager manager = new WardBrowserManager();
-		if(!manager.maternityControl()) {
-			try {
+		try {
+			if(!manager.maternityControl()) {
 				manager.newWard(new Ward("M",MessageBundle.getMessage("angal.admission.maternity"),"234/52544","54324/5424","maternity@stluke.org",20,3,2,false,false,true,0));
-			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
 			}
+		}catch(OHServiceException e){
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		initialize();
 		setVisible(true);
@@ -247,11 +243,7 @@ public class WardBrowser extends ModalJFrame implements WardEdit.WardListener {
 								table.updateUI();
 							}
 						}catch(OHServiceException e){
-							if(e.getMessages() != null){
-								for(OHExceptionMessage msg : e.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(e);
 						}
 					}
 				}
@@ -329,11 +321,7 @@ public class WardBrowser extends ModalJFrame implements WardEdit.WardListener {
 				pWard = manager.getWards();
 			}catch(OHServiceException e){
 				pWard = new ArrayList<Ward>();
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		public int getRowCount() {
