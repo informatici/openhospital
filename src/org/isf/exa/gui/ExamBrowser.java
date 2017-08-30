@@ -32,6 +32,8 @@ import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 public class ExamBrowser extends ModalJFrame{
@@ -84,9 +86,17 @@ public class ExamBrowser extends ModalJFrame{
 		ExamBrowsingManager manager = new ExamBrowsingManager();
 		pbox = new JComboBox();
 		pbox.addItem(MessageBundle.getMessage("angal.exa.all"));
-		ArrayList<ExamType> type = manager.getExamType();	//for efficiency in the sequent for
-		for (ExamType elem : type) {
-			pbox.addItem(elem);
+		ArrayList<ExamType> type;
+		try {
+			type = manager.getExamType();	//for efficiency in the sequent for
+		} catch (OHServiceException e1) {
+			type = null;
+			OHServiceExceptionUtil.showMessages(e1);
+		}
+		if (null != type) {
+			for (ExamType elem : type) {
+				pbox.addItem(elem);
+			}
 		}
 		pbox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -175,10 +185,21 @@ public class ExamBrowser extends ModalJFrame{
                         "\n?",
                         MessageBundle.getMessage("angal.hospital"),
                         JOptionPane.YES_NO_OPTION);
-				if ((n == JOptionPane.YES_OPTION) && (manager.deleteExam(e))){
-					pExam.remove(table.getSelectedRow());
-					model.fireTableDataChanged();
-					table.updateUI();
+				if ((n == JOptionPane.YES_OPTION)){
+					boolean deleted;
+					
+					try {
+						deleted = manager.deleteExam(e);
+					} catch (OHServiceException e1) {
+						deleted = false;
+						OHServiceExceptionUtil.showMessages(e1);
+					}
+					
+					if (true == deleted) {
+						pExam.remove(table.getSelectedRow());
+						model.fireTableDataChanged();
+						table.updateUI();
+					}
 				}
 			}
 		});
@@ -228,11 +249,21 @@ public class ExamBrowser extends ModalJFrame{
 
 		public ExamBrowsingModel(String s) {
 			ExamBrowsingManager manager = new ExamBrowsingManager();
-			pExam = manager.getExams(s);
+			try {
+				pExam = manager.getExams(s);
+			} catch (OHServiceException e) {
+				pExam = null;
+				OHServiceExceptionUtil.showMessages(e);
+			}
 		}
 		public ExamBrowsingModel() {
 			ExamBrowsingManager manager = new ExamBrowsingManager();
-			pExam = manager.getExams();
+			try {
+				pExam = manager.getExams();
+			} catch (OHServiceException e) {
+				pExam = null;
+				OHServiceExceptionUtil.showMessages(e);
+			}
 		}
 		public int getRowCount() {
 			if (pExam == null)

@@ -54,6 +54,8 @@ import org.isf.medicalstock.model.Movement;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.utils.db.NormalizeString;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
@@ -138,13 +140,22 @@ public class MovStockMultipleDischarging extends JDialog {
 
 	private void initialize() {
 		MedicalBrowsingManager medMan = new MedicalBrowsingManager();
-		ArrayList<Medical> medicals = medMan.getMedicals();
+		
+		ArrayList<Medical> medicals;
+		try {
+			medicals = medMan.getMedicals();
+		} catch (OHServiceException e) {
+			medicals = null;
+			OHServiceExceptionUtil.showMessages(e);
+		}
 
 		medicalMap = new HashMap<String, Medical>();
-		for (Medical med : medicals) {
-			String key = med.getProd_code();
-			if (key.equals("")) key = med.getCode().toString(); //$NON-NLS-1$
-			medicalMap.put(key, med);
+		if (null != medicals) {
+			for (Medical med : medicals) {
+				String key = med.getProd_code();
+				if (key.equals("")) key = med.getCode().toString(); //$NON-NLS-1$
+				medicalMap.put(key, med);
+			}
 		}
 
 		units = new ArrayList<Integer>();
@@ -259,7 +270,13 @@ public class MovStockMultipleDischarging extends JDialog {
 	
 						// Lot (PreparationDate && ExpiringDate)
 						MovStockInsertingManager movBrowser = new MovStockInsertingManager();
-						ArrayList<Lot> lots = movBrowser.getLotByMedical(med);
+						ArrayList<Lot> lots;
+						try {
+							lots = movBrowser.getLotByMedical(med);
+						} catch (OHServiceException e1) {
+							lots = null;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
 						Lot lot = null;
 						if (!isAutomaticLot()) {
 							lot = chooseLot(lots);
@@ -477,10 +494,18 @@ public class MovStockMultipleDischarging extends JDialog {
 		if (jComboBoxDischargeType == null) {
 			jComboBoxDischargeType = new JComboBox();
 			MedicaldsrstockmovTypeBrowserManager movMan = new MedicaldsrstockmovTypeBrowserManager();
-			ArrayList<MovementType> movTypes = movMan.getMedicaldsrstockmovType();
-			for (MovementType movType : movTypes) {
-				if (movType.getType().equals("-")) //$NON-NLS-1$
-					jComboBoxDischargeType.addItem(movType);
+			ArrayList<MovementType> movTypes;
+			try {
+				movTypes = movMan.getMedicaldsrstockmovType();
+			} catch (OHServiceException e) {
+				movTypes = null;
+				OHServiceExceptionUtil.showMessages(e);
+			}
+			if (null != movTypes) {
+				for (MovementType movType : movTypes) {
+					if (movType.getType().equals("-")) //$NON-NLS-1$
+						jComboBoxDischargeType.addItem(movType);
+				}
 			}
 		}
 		return jComboBoxDischargeType;
@@ -714,7 +739,13 @@ public class MovStockMultipleDischarging extends JDialog {
 			jComboBoxDestination = new JComboBox();
 			jComboBoxDestination.addItem(""); //$NON-NLS-1$
 			WardBrowserManager wardMan = new WardBrowserManager();
-			ArrayList<Ward> wards = wardMan.getWards();
+			ArrayList<Ward> wards;
+			try {
+				wards = wardMan.getWards();
+			}catch(OHServiceException e){
+				wards = new ArrayList<Ward>();
+				OHServiceExceptionUtil.showMessages(e);
+			}
 			for (Ward ward : wards) {
 				if (GeneralData.INTERNALPHARMACIES) {
 					if (ward.isPharmacy())
@@ -860,7 +891,13 @@ public class MovStockMultipleDischarging extends JDialog {
 		// Check the Date
 		GregorianCalendar thisDate = new GregorianCalendar();
 		thisDate.setTime(jDateChooser.getDate());
-		GregorianCalendar lastDate = manager.getLastMovementDate();
+		GregorianCalendar lastDate;
+		try {
+			lastDate = manager.getLastMovementDate();
+		} catch (OHServiceException e) {
+			lastDate = null;
+			OHServiceExceptionUtil.showMessages(e);
+		}
 		if (lastDate != null && thisDate.compareTo(lastDate) < 0) {
 			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.datebeforelastmovement") + format(lastDate) + MessageBundle.getMessage("angal.medicalstock.multipledischarging.notallowed")); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
@@ -871,9 +908,16 @@ public class MovStockMultipleDischarging extends JDialog {
 		if (refNo.equals("")) { //$NON-NLS-1$
 			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.pleaseinsertareferencenumber")); //$NON-NLS-1$
 			return false;
-		} else if (manager.refNoExists(refNo)) {
-				JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.theinsertedreferencenumberalreadyexists")); //$NON-NLS-1$
+		} else {
+			try {
+				if (manager.refNoExists(refNo)) {
+					JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.theinsertedreferencenumberalreadyexists")); //$NON-NLS-1$
+					return false;
+				}
+			} catch (OHServiceException e) {
+				OHServiceExceptionUtil.showMessages(e);
 				return false;
+			}
 		}
 		
 		// Check destination
@@ -907,21 +951,28 @@ public class MovStockMultipleDischarging extends JDialog {
 		ArrayList<Movement> movements = model.getMovements();
 		int movSize = movements.size();
 		MovStockInsertingManager movManager = new MovStockInsertingManager();
-		int index = movManager.newMultipleDischargingMovements(movements);
-		
-		if (index < movSize) {
-			jTableMovements.getSelectionModel().setSelectionInterval(index, index);
-			ok = false;
-		} else {
-			if (isXmpp()) {
-				if(shareWith.isEnabled()&& (!(((String)shareWith.getSelectedItem())==MessageBundle.getMessage("angal.medicalstock.multipledischarging.sharealertwithnobody")))){ //$NON-NLS-1$
-					CommunicationFrame frame= (CommunicationFrame)CommunicationFrame.getFrame();
-					for (Medical med : pool) {
-						frame.sendMessage(MessageBundle.getMessage("angal.medicalstock.multipledischarging.alert") + med.getDescription() + MessageBundle.getMessage("angal.medicalstock.multipledischarging.isabouttoend"), (String)shareWith.getSelectedItem(), false); //$NON-NLS-1$ //$NON-NLS-2$
+		int index;
+		try {
+			index = movManager.newMultipleDischargingMovements(movements);
+			
+			if (index < movSize) {
+				jTableMovements.getSelectionModel().setSelectionInterval(index, index);
+				ok = false;
+			} else {
+				if (isXmpp()) {
+					if(shareWith.isEnabled()&& (!(((String)shareWith.getSelectedItem())==MessageBundle.getMessage("angal.medicalstock.multipledischarging.sharealertwithnobody")))){ //$NON-NLS-1$
+						CommunicationFrame frame= (CommunicationFrame)CommunicationFrame.getFrame();
+						for (Medical med : pool) {
+							frame.sendMessage(MessageBundle.getMessage("angal.medicalstock.multipledischarging.alert") + med.getDescription() + MessageBundle.getMessage("angal.medicalstock.multipledischarging.isabouttoend"), (String)shareWith.getSelectedItem(), false); //$NON-NLS-1$ //$NON-NLS-2$
+						}
 					}
 				}
 			}
+		} catch (OHServiceException e) {
+			ok = false;
+			OHServiceExceptionUtil.showMessages(e);
 		}
+		
 		return ok;
 	}
 

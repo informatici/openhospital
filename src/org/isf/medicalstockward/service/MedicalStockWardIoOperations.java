@@ -42,50 +42,54 @@ public class MedicalStockWardIoOperations
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Object> params = new ArrayList<Object>();
 		ArrayList<MovementWard> movements = null;
-				
-		
-		jpa.beginTransaction();
-		
-		StringBuilder query = new StringBuilder();
-		
-		query.append("SELECT * FROM ((((MEDICALDSRSTOCKMOVWARD LEFT JOIN " +
-						"(PATIENT LEFT JOIN (SELECT PEX_PAT_ID, PEX_HEIGHT AS PAT_HEIGHT, PEX_WEIGHT AS PAT_WEIGHT FROM PATIENTEXAMINATION GROUP BY PEX_PAT_ID ORDER BY PEX_DATE DESC) AS HW ON PAT_ID = HW.PEX_PAT_ID) ON MMVN_PAT_ID = PAT_ID) JOIN " +
-						"WARD ON MMVN_WRD_ID_A = WRD_ID_A)) JOIN " +
-						"MEDICALDSR ON MMVN_MDSR_ID = MDSR_ID) JOIN " +
-						"MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ");
-		if (wardId!=null || dateFrom!=null || dateTo!=null) 
-		{
-			query.append("WHERE ");
-		}
-		if (wardId != null && !wardId.equals("")) 
-		{
-			if (params.size() != 0) 
+
+		try{
+			jpa.beginTransaction();
+
+			StringBuilder query = new StringBuilder();
+
+			query.append("SELECT * FROM ((((MEDICALDSRSTOCKMOVWARD LEFT JOIN " +
+					"(PATIENT LEFT JOIN (SELECT PEX_PAT_ID, PEX_HEIGHT AS PAT_HEIGHT, PEX_WEIGHT AS PAT_WEIGHT FROM PATIENTEXAMINATION GROUP BY PEX_PAT_ID ORDER BY PEX_DATE DESC) AS HW ON PAT_ID = HW.PEX_PAT_ID) ON MMVN_PAT_ID = PAT_ID) JOIN " +
+					"WARD ON MMVN_WRD_ID_A = WRD_ID_A)) JOIN " +
+					"MEDICALDSR ON MMVN_MDSR_ID = MDSR_ID) JOIN " +
+					"MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ");
+			if (wardId!=null || dateFrom!=null || dateTo!=null) 
 			{
-				query.append("AND ");
+				query.append("WHERE ");
 			}
-			query.append("WRD_ID_A = ? ");
-			params.add(wardId);
-		}
-		if ((dateFrom != null) && (dateTo != null)) 
-		{
-			if (params.size() != 0) 
+			if (wardId != null && !wardId.equals("")) 
 			{
-				query.append("AND ");
+				if (params.size() != 0) 
+				{
+					query.append("AND ");
+				}
+				query.append("WRD_ID_A = ? ");
+				params.add(wardId);
 			}
-			query.append("MMVN_DATE > ? AND MMVN_DATE < ?");
-			params.add(dateFrom);
-			params.add(dateTo);
+			if ((dateFrom != null) && (dateTo != null)) 
+			{
+				if (params.size() != 0) 
+				{
+					query.append("AND ");
+				}
+				query.append("MMVN_DATE > ? AND MMVN_DATE < ?");
+				params.add(dateFrom);
+				params.add(dateTo);
+			}
+
+			query.append(" ORDER BY MMVN_DATE ASC");
+
+			jpa.createQuery(query.toString(), MovementWard.class, false);
+			jpa.setParameters(params, false);
+			List<MovementWard> movementList = (List<MovementWard>)jpa.getList();
+			movements = new ArrayList<MovementWard>(movementList);			
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		
-		query.append(" ORDER BY MMVN_DATE ASC");
-				
-		jpa.createQuery(query.toString(), MovementWard.class, false);
-		jpa.setParameters(params, false);
-		List<MovementWard> movementList = (List<MovementWard>)jpa.getList();
-		movements = new ArrayList<MovementWard>(movementList);			
-		
-		jpa.commitTransaction();
-		
 		return movements;
 	}
 
@@ -122,10 +126,9 @@ public class MedicalStockWardIoOperations
 		String query = null;
 		Double mainQuantity = 0.0;
 				
-
-		jpa.beginTransaction();		
-		
 		try {
+			jpa.beginTransaction();		
+
 			query = "SELECT SUM(MMV_QTY) MAIN FROM MEDICALDSRSTOCKMOV M WHERE MMV_MMVT_ID_A = 'testDisc' AND MMV_MDSR_ID = ? ";
 			params.add(medical.getCode());
 			if (ward!=null) {
@@ -135,12 +138,13 @@ public class MedicalStockWardIoOperations
 			jpa.createQuery(query, null, false);
 			jpa.setParameters(params, false);
 			mainQuantity = (Double)jpa.getResult();
-		}  catch (OHException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 				
-	
-		jpa.commitTransaction();		
 
+			jpa.commitTransaction();		
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return mainQuantity != null ? mainQuantity : 0.0;	
 	}
 
@@ -153,10 +157,9 @@ public class MedicalStockWardIoOperations
 		String query = null;
 		Double dischargeQuantity = 0.0;
 				
-
-		jpa.beginTransaction();		
-		
 		try {
+			jpa.beginTransaction();
+			
 			query = "SELECT SUM(MMVN_MDSR_QTY) DISCHARGE FROM MEDICALDSRSTOCKMOVWARD WHERE MMVN_MDSR_ID = ?";
 			params.add(medical.getCode());
 			if (ward!=null) {
@@ -166,12 +169,13 @@ public class MedicalStockWardIoOperations
 			jpa.createQuery(query, null, false);
 			jpa.setParameters(params, false);
 			dischargeQuantity = (Double)jpa.getResult();
-		}  catch (OHException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 				
-	
-		jpa.commitTransaction();		
 
+			jpa.commitTransaction();		
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return dischargeQuantity != null ? dischargeQuantity : 0.0;	
 	}
 
@@ -187,12 +191,16 @@ public class MedicalStockWardIoOperations
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(movement);
-		updateStockWardQuantity(jpa, movement);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(movement);
+			updateStockWardQuantity(jpa, movement);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 
@@ -229,11 +237,15 @@ public class MedicalStockWardIoOperations
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(movement);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.merge(movement);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 
@@ -249,11 +261,15 @@ public class MedicalStockWardIoOperations
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.remove(movement);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.remove(movement);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 
@@ -275,7 +291,7 @@ public class MedicalStockWardIoOperations
 		boolean result = true;
 		
 		try {
-		
+			jpa.beginTransaction();
 			ArrayList<Object> params = new ArrayList<Object>(3);
 			String query = "SELECT * FROM MEDICALDSRWARD WHERE MDSRWRD_WRD_ID_A = ? AND MDSRWRD_MDSR_ID = ?";
 			jpa.createQuery(query, MovementWard.class, false);
@@ -298,10 +314,10 @@ public class MedicalStockWardIoOperations
 			params.add(medical);
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
-		
+			jpa.commitTransaction();
 		}  catch (Exception e) {
 			if (e.getCause().getClass().equals(NoResultException.class)) {
-				
+				jpa.beginTransaction();
 				//insert
 				ArrayList<Object> parameters = new ArrayList<Object>(3);
 				String query = "INSERT INTO MEDICALDSRWARD (MDSRWRD_WRD_ID_A, MDSRWRD_MDSR_ID, MDSRWRD_IN_QTI, MDSRWRD_OUT_QTI) " +
@@ -312,9 +328,9 @@ public class MedicalStockWardIoOperations
 				parameters.add(-qty);
 				jpa.setParameters(parameters, false);
 				jpa.executeUpdate();
-				
+				jpa.commitTransaction();
 			} else {
-				result = false;
+				jpa.rollbackTransaction();
 				throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
 			}
 			
@@ -337,10 +353,9 @@ public class MedicalStockWardIoOperations
 		String query = null;
 		ArrayList<MedicalWard> medicalWards = new ArrayList<MedicalWard>();
 		
-				
-		jpa.beginTransaction();		
-		
 		try {
+			jpa.beginTransaction();		
+
 			query = "SELECT mw FROM MedicalWard mw WHERE mw.id.ward_id=?";
 			jpa.createQuery(query, MedicalWard.class, true);
 			params.add(wardId);
@@ -355,11 +370,13 @@ public class MedicalStockWardIoOperations
 				MedicalWard medicalWard = new MedicalWard(medical, (double)qty);
 				medicalWards.add(medicalWard);
 			}
-		}  catch (OHException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 				
-	
-		jpa.commitTransaction();
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}				
 
 		return medicalWards;
 	}

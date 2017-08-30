@@ -29,6 +29,8 @@ import org.isf.exa.manager.ExamRowBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
 public class ExamShow extends JDialog {
 
@@ -160,16 +162,24 @@ public class ExamShow extends JDialog {
 					}else {
 						ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
 						ExamRow row = (ExamRow)(((ExamRowBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
-					int n = JOptionPane.showConfirmDialog(
+						int n = JOptionPane.showConfirmDialog(
 	                        null,
 	                        MessageBundle.getMessage("angal.exa.deletemedicalrow")+" \""+row.getDescription()+"\" ?",
 	                        MessageBundle.getMessage("angal.hospital"),
 	                        JOptionPane.YES_NO_OPTION);
 
-					if ((n == JOptionPane.YES_OPTION) && (manager.deleteExamRow(row))){
-						pExamRow.remove(table.getSelectedRow());
-						model.fireTableDataChanged();
-						table.updateUI();
+						if ((n == JOptionPane.YES_OPTION)){
+							try {
+								boolean deleted = manager.deleteExamRow(row);
+								
+								if (true == deleted) {
+									pExamRow.remove(table.getSelectedRow());
+									model.fireTableDataChanged();
+									table.updateUI();
+								}
+							} catch (OHServiceException e1) {
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						}
 					}
 				}
@@ -188,7 +198,12 @@ class ExamRowBrowsingModel extends DefaultTableModel {
 
 		public ExamRowBrowsingModel(String aCode) {
 			ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
-			pExamRow = manager.getExamRow(aCode);
+			try {
+				pExamRow = manager.getExamRow(aCode);
+			} catch (OHServiceException e) {
+				pExamRow = null;
+				OHServiceExceptionUtil.showMessages(e);
+			}
 		}
 		
 		public int getRowCount() {

@@ -39,26 +39,30 @@ public class ExamIoOperations {
 		ArrayList<ExamRow> examrows = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM EXAMROW";
-		if (aExamCode != null) {
-			query += " WHERE EXR_EXA_ID_A = ?";
-			params.add(aExamCode);
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM EXAMROW";
+			if (aExamCode != null) {
+				query += " WHERE EXR_EXA_ID_A = ?";
+				params.add(aExamCode);
+			}
+			if (aDescription != null) {
+				query += " AND EXR_DESC = ?";
+				params.add(aDescription);
+			}
+			query += " ORDER BY EXR_EXA_ID_A, EXR_DESC";
+			jpa.createQuery(query, ExamRow.class, false);
+			jpa.setParameters(params, false);
+			List<ExamRow> examRowList = (List<ExamRow>)jpa.getList();
+			examrows = new ArrayList<ExamRow>(examRowList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		if (aDescription != null) {
-			query += " AND EXR_DESC = ?";
-			params.add(aDescription);
-		}
-		query += " ORDER BY EXR_EXA_ID_A, EXR_DESC";
-		jpa.createQuery(query, ExamRow.class, false);
-		jpa.setParameters(params, false);
-		List<ExamRow> examRowList = (List<ExamRow>)jpa.getList();
-		examrows = new ArrayList<ExamRow>(examRowList);			
-		
-		jpa.commitTransaction();
-
 		return examrows;
 	}
 
@@ -86,22 +90,26 @@ public class ExamIoOperations {
 		ArrayList<Exam> exams = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM EXAM JOIN EXAMTYPE ON EXA_EXC_ID_A = EXC_ID_A";
-		if (description != null) {
-			query += " WHERE EXC_DESC LIKE ?";
-			params.add('%'+description+'%');
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM EXAM JOIN EXAMTYPE ON EXA_EXC_ID_A = EXC_ID_A";
+			if (description != null) {
+				query += " WHERE EXC_DESC LIKE ?";
+				params.add('%'+description+'%');
+			}
+			query += " ORDER BY EXC_DESC, EXA_DESC";
+			jpa.createQuery(query, Exam.class, false);
+			jpa.setParameters(params, false);
+			List<Exam> examList = (List<Exam>)jpa.getList();
+			exams = new ArrayList<Exam>(examList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		query += " ORDER BY EXC_DESC, EXA_DESC";
-		jpa.createQuery(query, Exam.class, false);
-		jpa.setParameters(params, false);
-		List<Exam> examList = (List<Exam>)jpa.getList();
-		exams = new ArrayList<Exam>(examList);			
-		
-		jpa.commitTransaction();
-
 		return exams;
 	}
 
@@ -116,16 +124,20 @@ public class ExamIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<ExamType> examTypes = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT EXC_ID_A, EXC_DESC FROM EXAMTYPE ORDER BY EXC_DESC";
-		jpa.createQuery(query, ExamType.class, false);
-		List<ExamType> examTypeList = (List<ExamType>)jpa.getList();
-		examTypes = new ArrayList<ExamType>(examTypeList);			
-		
-		jpa.commitTransaction();
-
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT EXC_ID_A, EXC_DESC FROM EXAMTYPE ORDER BY EXC_DESC";
+			jpa.createQuery(query, ExamType.class, false);
+			List<ExamType> examTypeList = (List<ExamType>)jpa.getList();
+			examTypes = new ArrayList<ExamType>(examTypeList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return examTypes;
 	}
 
@@ -142,11 +154,15 @@ public class ExamIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(exam);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			jpa.persist(exam);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 
@@ -163,11 +179,15 @@ public class ExamIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(examRow);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			jpa.persist(examRow);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 
@@ -185,23 +205,27 @@ public class ExamIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		if (check) 
-		{ 
-			Exam foundExam = (Exam)jpa.find(Exam.class, exam.getCode()); 
-			if (foundExam == null)
-			{
-				throw new OHException(MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"));		
-			}
-			else if (foundExam.getLock() != exam.getLock())
-			{
-				result = false;
-			}		
-		}	
-		jpa.merge(exam);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			if (check) 
+			{ 
+				Exam foundExam = (Exam)jpa.find(Exam.class, exam.getCode()); 
+				if (foundExam == null)
+				{
+					throw new OHException(MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"));		
+				}
+				else if (foundExam.getLock() != exam.getLock())
+				{
+					result = false;
+				}		
+			}	
+			jpa.merge(exam);
+	    	jpa.commitTransaction();
+	} catch (OHException e) {
+		// DbJpaUtil managed exception
+		jpa.rollbackTransaction();
+		throw e;
+	}
 		return result;	
 	}
 
@@ -217,11 +241,10 @@ public class ExamIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;		
 		ArrayList<Object> params = new ArrayList<Object>();
-        		
-		
-		jpa.beginTransaction();
-		
+
 		try {
+			jpa.beginTransaction();
+			
 			jpa.createQuery("DELETE FROM EXAMROW WHERE EXR_EXA_ID_A = ?", ExamRow.class, false);
 			params.add(exam.getCode());
 			jpa.setParameters(params, false);
@@ -230,13 +253,14 @@ public class ExamIoOperations {
 			Exam examToRemove = (Exam) jpa.find(Exam.class, exam.getCode());
 			jpa.remove(examToRemove);
 			
-		}  catch (OHException e) {
+			jpa.commitTransaction();	
+		} catch (OHException e) {
 			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 	
-
-		jpa.commitTransaction();	
-	    	
+			
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 
@@ -252,11 +276,15 @@ public class ExamIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.remove(examRow);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			jpa.remove(examRow);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}    	
 		return result;	
 	}
 
@@ -275,15 +303,19 @@ public class ExamIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = false;
 		
-		
-		jpa.beginTransaction();	
-		Exam foundExam = (Exam)jpa.find(Exam.class, exam.getCode());
-		if (foundExam != null)
-		{
-			result = true;
+		try {
+			jpa.beginTransaction();	
+			Exam foundExam = (Exam)jpa.find(Exam.class, exam.getCode());
+			if (foundExam != null)
+			{
+				result = true;
+			}
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			// DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 	

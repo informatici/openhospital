@@ -21,6 +21,8 @@ import org.isf.dicom.gui.DicomLoader;
 import org.isf.dicom.gui.ThumbnailViewGui;
 import org.isf.dicom.model.FileDicom;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 
 /**
  * Magager for DICOM Files
@@ -210,7 +212,15 @@ public class SourceFiles extends Thread {
 			dicomFileDetail.setPatId(paziente);
 			dicomFileDetail.setDicomThumbnail(scaled);
 			dicomFileDetail.setModality(modality);
-			DicomManagerFactory.getManager().saveFile(dicomFileDetail);
+			try{
+				DicomManagerFactory.getManager().saveFile(dicomFileDetail);
+			}catch(OHServiceException ex){
+				if(ex.getMessages() != null){
+					for(OHExceptionMessage msg : ex.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 
 		} catch (Exception ecc) {
 			ecc.printStackTrace();

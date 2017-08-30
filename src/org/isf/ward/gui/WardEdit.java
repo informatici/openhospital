@@ -21,6 +21,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
@@ -375,17 +377,19 @@ public class WardEdit extends JDialog {
 							return;
 						}
 						WardBrowserManager manager = new WardBrowserManager();
-						
-						if (manager.codeControl(key)) {
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.ward.codealreadyinuse"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							
-							return;
+						try{
+							if (manager.codeControl(key)) {
+								JOptionPane.showMessageDialog(				
+										null,
+										MessageBundle.getMessage("angal.ward.codealreadyinuse"),
+										MessageBundle.getMessage("angal.hospital"),
+										JOptionPane.PLAIN_MESSAGE);
+
+								return;
+							}
+						}catch(OHServiceException ex){
+							OHServiceExceptionUtil.showMessages(ex);
 						}
-						
 					}
 					if (descriptionTextField.getText().trim().equals("")) {
 						JOptionPane.showMessageDialog(				
@@ -451,13 +455,31 @@ public class WardEdit extends JDialog {
 					
 					boolean result = false;
 					if (insert) {      // inserting
-						result = manager.newWard(ward);
+						try {
+							result = manager.newWard(ward);
+						}catch(OHServiceException ex){
+							OHServiceExceptionUtil.showMessages(ex);
+						}
 						if (result) {
 							fireWardInserted();
 						}
 					}
-					else {                          // updating
-						result = manager.updateWard(ward);
+					else {   
+						try{// updating
+							boolean isLocked = manager.isLockWard(ward);
+							boolean isConfirmedOverwriteRecord = false;
+							if (isLocked) {
+								isConfirmedOverwriteRecord = (JOptionPane.showConfirmDialog(null, 
+										MessageBundle.getMessage("angal.ward.thedatahasbeenupdatedbysomeoneelse") + ". " +
+												MessageBundle.getMessage("angal.ward.doyouwanttooverwritethedata") + "?", 
+												MessageBundle.getMessage("angal.ward.select"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION);
+							}
+							if(!isLocked || isConfirmedOverwriteRecord){
+								result = manager.updateWard(ward);
+							}
+						}catch(OHServiceException ex){
+							OHServiceExceptionUtil.showMessages(ex);
+						}
 						if (result) {
 							fireWardUpdated();
 						}

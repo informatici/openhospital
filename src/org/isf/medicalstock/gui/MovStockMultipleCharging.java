@@ -56,6 +56,8 @@ import org.isf.supplier.model.Supplier;
 import org.isf.supplier.service.SupplierOperations;
 import org.isf.utils.db.NormalizeString;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
@@ -128,13 +130,21 @@ public class MovStockMultipleCharging extends JDialog {
 
 	private void initialize() {
 		MedicalBrowsingManager medMan = new MedicalBrowsingManager();
-		ArrayList<Medical> medicals = medMan.getMedicals();
+		ArrayList<Medical> medicals;
+		try {
+			medicals = medMan.getMedicals();
+		} catch (OHServiceException e) {
+			OHServiceExceptionUtil.showMessages(e);
+			medicals = null;
+		}
 
 		medicalMap = new HashMap<String, Medical>();
-		for (Medical med : medicals) {
-			String key = med.getProd_code();
-			if (key.equals("")) key = med.getCode().toString(); //$NON-NLS-1$
-			medicalMap.put(key, med);
+		if (null != medicals) {
+			for (Medical med : medicals) {
+				String key = med.getProd_code();
+				if (key.equals("")) key = med.getCode().toString(); //$NON-NLS-1$
+				medicalMap.put(key, med);
+			}
 		}
 		units = new ArrayList<Integer>();
 	}
@@ -447,10 +457,18 @@ public class MovStockMultipleCharging extends JDialog {
 		if (jComboBoxChargeType == null) {
 			jComboBoxChargeType = new JComboBox();
 			MedicaldsrstockmovTypeBrowserManager movMan = new MedicaldsrstockmovTypeBrowserManager();
-			ArrayList<MovementType> movTypes = movMan.getMedicaldsrstockmovType();
-			for (MovementType movType : movTypes) {
-				if (movType.getType().contains("+")) //$NON-NLS-1$
-					jComboBoxChargeType.addItem(movType);
+			ArrayList<MovementType> movTypes;
+			try {
+				movTypes = movMan.getMedicaldsrstockmovType();
+			} catch (OHServiceException e) {
+				movTypes = null;
+				OHServiceExceptionUtil.showMessages(e);
+			}
+			if (null != movTypes) {
+				for (MovementType movType : movTypes) {
+					if (movType.getType().contains("+")) //$NON-NLS-1$
+						jComboBoxChargeType.addItem(movType);
+				}
 			}
 		}
 		return jComboBoxChargeType;
@@ -559,7 +577,13 @@ public class MovStockMultipleCharging extends JDialog {
 
 	protected Lot chooseLot(Medical med) {
 		MovStockInsertingManager movBrowser = new MovStockInsertingManager();
-		ArrayList<Lot> lots = movBrowser.getLotByMedical(med);
+		ArrayList<Lot> lots;
+		try {
+			lots = movBrowser.getLotByMedical(med);
+		} catch (OHServiceException e) {
+			lots = new ArrayList<Lot>();
+			OHServiceExceptionUtil.showMessages(e);
+		}
 		Lot lot = null;
 		if (!lots.isEmpty()) {
 			JTable lotTable = new JTable(new StockMovModel(lots));
@@ -770,7 +794,13 @@ public class MovStockMultipleCharging extends JDialog {
 		// Check the Date
 		GregorianCalendar thisDate = new GregorianCalendar();
 		thisDate.setTime(jDateChooser.getDate());
-		GregorianCalendar lastDate = manager.getLastMovementDate();
+		GregorianCalendar lastDate;
+		try {
+			lastDate = manager.getLastMovementDate();
+		} catch (OHServiceException e) {
+			lastDate = null;
+			OHServiceExceptionUtil.showMessages(e);
+		}
 		if (lastDate != null && thisDate.compareTo(lastDate) < 0) {
 			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.datebeforelastmovement") + format(lastDate) + MessageBundle.getMessage("angal.medicalstock.multiplecharging.notallowed")); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
@@ -781,10 +811,16 @@ public class MovStockMultipleCharging extends JDialog {
 		if (refNo.equals("")) { //$NON-NLS-1$
 			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertareferencenumber")); //$NON-NLS-1$
 			return false;
-		} else if (manager.refNoExists(refNo)) {
-				JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.theinsertedreferencenumberalreadyexists")); //$NON-NLS-1$
+		} else
+			try {
+				if (manager.refNoExists(refNo)) {
+					JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.theinsertedreferencenumberalreadyexists")); //$NON-NLS-1$
+					return false;
+				}
+			} catch (OHServiceException e) {
+				OHServiceExceptionUtil.showMessages(e);
 				return false;
-		}
+			}
 		
 		// Check supplier
 		Object supplier = jComboBoxSupplier.getSelectedItem();
@@ -832,12 +868,19 @@ public class MovStockMultipleCharging extends JDialog {
 		MovStockInsertingManager movManager = new MovStockInsertingManager();
 		ArrayList<Movement> movements = model.getMovements();
 		int movSize = movements.size();
-		int index = movManager.newMultipleChargingMovements(movements);
-		
-		if (index < movSize) {
-			jTableMovements.getSelectionModel().setSelectionInterval(index, index);
+		int index;
+		try {
+			index = movManager.newMultipleChargingMovements(movements);
+			
+			if (index < movSize) {
+				jTableMovements.getSelectionModel().setSelectionInterval(index, index);
+				ok = false;
+			}
+		} catch (OHServiceException e) {
 			ok = false;
+			OHServiceExceptionUtil.showMessages(e);
 		}
+		
 		return ok;
 	}
 

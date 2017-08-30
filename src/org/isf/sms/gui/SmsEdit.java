@@ -35,9 +35,9 @@ import org.isf.menu.gui.MainMenu;
 import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
+import org.isf.sms.manager.SmsManager;
 import org.isf.sms.model.Sms;
-import org.isf.sms.service.SmsOperations;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.jobjects.JDateAndTimeChooserDialog;
 
 import com.toedter.calendar.JDateChooser;
@@ -71,6 +71,8 @@ public class SmsEdit extends JDialog implements SelectionListener {
 	
 	private final int MAX_LENGHT = 160;
 	private final String NUMBER_REGEX = "^\\+?\\d+$"; //$NON-NLS-1$
+	
+	private SmsManager smsManager = new SmsManager();
 	
 	/**
 	 * Launch the application.
@@ -299,10 +301,10 @@ public class SmsEdit extends JDialog implements SelectionListener {
 								smsToSend.setSmsText(part);
 								smsToSend.setModule("smsmanager");
 								smsToSend.setModuleID(null);
-								SmsOperations smsOp = new SmsOperations();
+								
 								try {
-									smsOp.saveOrUpdate(smsToSend);
-								} catch (OHException e1) {
+									smsManager.saveOrUpdate(smsToSend);
+								} catch (OHServiceException e1) {
 									// TODO Auto-generated catch block
 									e1.printStackTrace();
 								}
@@ -315,10 +317,9 @@ public class SmsEdit extends JDialog implements SelectionListener {
 						smsToSend.setSmsUser(MainMenu.getUser());
 						smsToSend.setSmsText(text);
 						smsToSend.setModule("smsmanager");
-						SmsOperations smsOp = new SmsOperations();
 						try {
-							smsOp.saveOrUpdate(smsToSend);
-						} catch (OHException e1) {
+							smsManager.saveOrUpdate(smsToSend);
+						} catch (OHServiceException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}

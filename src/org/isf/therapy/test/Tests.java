@@ -173,7 +173,8 @@ public class Tests
 			jpa.persist(patient);
 			jpa.commitTransaction();
 			TherapyRow therapyRow = testTherapyRow.setup(patient, medical, true);
-			id = ioOperations.newTherapy(therapyRow);
+			therapyRow = ioOperations.newTherapy(therapyRow);
+			id = therapyRow.getTherapyID();
 			
 			_checkTherapyRowIntoDb(id);
 		} 

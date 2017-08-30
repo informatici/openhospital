@@ -25,16 +25,20 @@ public class AdmissionTypeIoOperation
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<AdmissionType> padmissiontype = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM ADMISSIONTYPE ORDER BY ADMT_DESC";
-		jpa.createQuery(query, AdmissionType.class, false);
-		List<AdmissionType> admissionTypeList = (List<AdmissionType>)jpa.getList();
-		padmissiontype = new ArrayList<AdmissionType>(admissionTypeList);			
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM ADMISSIONTYPE ORDER BY ADMT_DESC";
+			jpa.createQuery(query, AdmissionType.class, false);
+			List<AdmissionType> admissionTypeList = (List<AdmissionType>)jpa.getList();
+			padmissiontype = new ArrayList<AdmissionType>(admissionTypeList);			
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return padmissiontype;
 	}
 
@@ -50,11 +54,15 @@ public class AdmissionTypeIoOperation
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(admissionType);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.merge(admissionType);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 
@@ -70,11 +78,15 @@ public class AdmissionTypeIoOperation
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(admissionType);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(admissionType);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 
@@ -89,12 +101,16 @@ public class AdmissionTypeIoOperation
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		jpa.beginTransaction();	
-		AdmissionType objToRemove = (AdmissionType) jpa.find(AdmissionType.class, admissionType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			AdmissionType objToRemove = (AdmissionType) jpa.find(AdmissionType.class, admissionType.getCode());
+			jpa.remove(objToRemove);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 
@@ -111,15 +127,19 @@ public class AdmissionTypeIoOperation
 		AdmissionType admissionType;
 		boolean result = false;
 		
-		
-		jpa.beginTransaction();	
-		admissionType = (AdmissionType)jpa.find(AdmissionType.class, code);
-		if (admissionType != null)
-		{
-			result = true;
+		try{
+			jpa.beginTransaction();	
+			admissionType = (AdmissionType)jpa.find(AdmissionType.class, code);
+			if (admissionType != null)
+			{
+				result = true;
+			}
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 }

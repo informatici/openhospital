@@ -35,6 +35,9 @@ import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class WardPharmacyEdit extends JDialog {
@@ -175,7 +178,12 @@ public class WardPharmacyEdit extends JDialog {
 				
 				public void actionPerformed(ActionEvent e) {
 					jComboBoxPatients.removeAllItems();
-					pat = patBrowser.getPatientWithHeightAndWeight(jTextFieldSearchPatient.getText());
+					try {
+						pat = patBrowser.getPatientWithHeightAndWeight(jTextFieldSearchPatient.getText());
+					}catch(OHServiceException ex){
+						OHServiceExceptionUtil.showMessages(ex);
+						pat = new ArrayList<Patient>();
+					}
 					getJComboBoxPatients(jTextFieldSearchPatient.getText());
 				}
 			});
@@ -337,7 +345,13 @@ private JButton getJButtonTrashMedical() {
 					movSelected.setUnits((String)jComboBoxType.getSelectedItem());
 					
 					MovWardBrowserManager manager = new MovWardBrowserManager();
-					boolean result = manager.updateMovementWard(movSelected);
+					boolean result;
+					try {
+						result = manager.updateMovementWard(movSelected);
+					} catch (OHServiceException e1) {
+						result = false;
+						OHServiceExceptionUtil.showMessages(e1);
+					}
 					if (result) {
 						fireMovementWardUpdated();
 					}

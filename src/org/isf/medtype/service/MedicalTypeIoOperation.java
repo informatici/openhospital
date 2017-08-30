@@ -26,16 +26,19 @@ public class MedicalTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<MedicalType> medicaltypes = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM MEDICALDSRTYPE ORDER BY MDSRT_DESC";
-		jpa.createQuery(query, MedicalType.class, false);
-		List<MedicalType> medicalTypeList = (List<MedicalType>)jpa.getList();
-		medicaltypes = new ArrayList<MedicalType>(medicalTypeList);			
-		
-		jpa.commitTransaction();
-
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM MEDICALDSRTYPE ORDER BY MDSRT_DESC";
+			jpa.createQuery(query, MedicalType.class, false);
+			List<MedicalType> medicalTypeList = (List<MedicalType>)jpa.getList();
+			medicaltypes = new ArrayList<MedicalType>(medicalTypeList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return medicaltypes;
 	}
 
@@ -51,11 +54,14 @@ public class MedicalTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(medicalType);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			jpa.merge(medicalType);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 
@@ -71,11 +77,14 @@ public class MedicalTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(medicalType);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			jpa.persist(medicalType);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 
@@ -91,12 +100,15 @@ public class MedicalTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		MedicalType objToRemove = (MedicalType) jpa.find(MedicalType.class, medicalType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			MedicalType objToRemove = (MedicalType) jpa.find(MedicalType.class, medicalType.getCode());
+			jpa.remove(objToRemove);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 
@@ -113,15 +125,18 @@ public class MedicalTypeIoOperation {
 		MedicalType medicalType;
 		boolean result = false;
 		
-		
-		jpa.beginTransaction();	
-		medicalType = (MedicalType)jpa.find(MedicalType.class, code);
-		if (medicalType != null)
-		{
-			result = true;
+		try {
+			jpa.beginTransaction();	
+			medicalType = (MedicalType)jpa.find(MedicalType.class, code);
+			if (medicalType != null)
+			{
+				result = true;
+			}
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
 		}
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 }

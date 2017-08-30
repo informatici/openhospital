@@ -60,28 +60,32 @@ public class AdmissionIoOperations
 		ArrayList<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
 		ArrayList<Object> params = new ArrayList<Object>();
 		
-		
-		jpa.beginTransaction();
-		
-		String[] terms = _calculateAdmittedPatientsTerms(searchTerms);
-		String query = _calculateAdmittedPatientsQuery(terms);
-		params = _calculateAdmittedPatientParameters(terms);
-		
-		Query q = jpa.getEntityManager().createNativeQuery(query,"AdmittedPatient");
-		jpa.createQuery(query, null, false);
-		jpa.setParameters(params, false);
-		List<Object[]> admittedPatientsList = (List<Object[]>)q.getResultList();
-		Iterator<Object[]> it = admittedPatientsList.iterator();
-		while (it.hasNext()) {
-			Object[] object = it.next();
-			Patient patient = (Patient) object[0];
-			Admission admission = (Admission) object[1];
-			AdmittedPatient admittedPatient = new AdmittedPatient(patient, admission);
-			admittedPatients.add(admittedPatient);
-		}
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String[] terms = _calculateAdmittedPatientsTerms(searchTerms);
+			String query = _calculateAdmittedPatientsQuery(terms);
+			params = _calculateAdmittedPatientParameters(terms);
+
+			Query q = jpa.getEntityManager().createNativeQuery(query,"AdmittedPatient");
+			jpa.createQuery(query, null, false);
+			jpa.setParameters(params, false);
+			List<Object[]> admittedPatientsList = (List<Object[]>)q.getResultList();
+			Iterator<Object[]> it = admittedPatientsList.iterator();
+			while (it.hasNext()) {
+				Object[] object = it.next();
+				Patient patient = (Patient) object[0];
+				Admission admission = (Admission) object[1];
+				AdmittedPatient admittedPatient = new AdmittedPatient(patient, admission);
+				admittedPatients.add(admittedPatient);
+			}
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 	
 		return admittedPatients;
 	}
     
@@ -166,13 +170,14 @@ public class AdmissionIoOperations
 			params.add(patient.getCode());
 			jpa.setParameters(params, false);
 			admission = (Admission)jpa.getResult();		
+			jpa.commitTransaction();
 			
 		} catch (Exception e) {
+			jpa.rollbackTransaction();
 			if (e.getCause().getClass().equals(NoResultException.class))
 				return null;
 			else throw new OHException(e.getCause().getMessage(), e.getCause());
 		} finally {
-			jpa.commitTransaction();
 		}
 
 		return admission;
@@ -191,17 +196,21 @@ public class AdmissionIoOperations
 		Admission admission = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM ADMISSION WHERE ADM_ID=?";
-		jpa.createQuery(query, Admission.class, false);
-		params.add(id);
-		jpa.setParameters(params, false);
-		admission = (Admission)jpa.getResult();		
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM ADMISSION WHERE ADM_ID=?";
+			jpa.createQuery(query, Admission.class, false);
+			params.add(id);
+			jpa.setParameters(params, false);
+			admission = (Admission)jpa.getResult();		
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 	
 		return admission;
 	}
 
@@ -219,18 +228,22 @@ public class AdmissionIoOperations
 		ArrayList<Admission> padmission = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM ADMISSION WHERE ADM_PAT_ID=? and ADM_DELETED='N' ORDER BY ADM_DATE_ADM ASC";
-		jpa.createQuery(query, Admission.class, false);
-		params.add(patient.getCode());
-		jpa.setParameters(params, false);
-		List<Admission> admissionList = (List<Admission>)jpa.getList();
-		padmission = new ArrayList<Admission>(admissionList);			
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM ADMISSION WHERE ADM_PAT_ID=? and ADM_DELETED='N' ORDER BY ADM_DATE_ADM ASC";
+			jpa.createQuery(query, Admission.class, false);
+			params.add(patient.getCode());
+			jpa.setParameters(params, false);
+			List<Admission> admissionList = (List<Admission>)jpa.getList();
+			padmission = new ArrayList<Admission>(admissionList);			
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 	
 		return padmission;
 	}
 	
@@ -246,11 +259,15 @@ public class AdmissionIoOperations
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(admission);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(admission);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 	
 		return result;
 	}
 
@@ -280,15 +297,19 @@ public class AdmissionIoOperations
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = false;
 				
-		
-		jpa.beginTransaction();	
-		Admission foundAdmission = (Admission)jpa.find(Admission.class, admission.getId()); 
-		if (foundAdmission.getLock() != admission.getLock())
-		{
-			result = true;
-		}		
-    	jpa.commitTransaction();
-
+		try{
+			jpa.beginTransaction();	
+			Admission foundAdmission = (Admission)jpa.find(Admission.class, admission.getId()); 
+			if (foundAdmission.getLock() != admission.getLock())
+			{
+				result = true;
+			}		
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 	
 		return result;
 	}
 
@@ -303,12 +324,16 @@ public class AdmissionIoOperations
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		
-		jpa.beginTransaction();	
-		jpa.merge(admission);
-    	jpa.commitTransaction();
-    	
+
+		try{
+			jpa.beginTransaction();	
+			jpa.merge(admission);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 	
 		return result;
 	}
 
@@ -323,16 +348,20 @@ public class AdmissionIoOperations
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<AdmissionType> padmissiontype = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM ADMISSIONTYPE";
-		jpa.createQuery(query, AdmissionType.class, false);
-		List<AdmissionType> admissionTypeList = (List<AdmissionType>)jpa.getList();
-		padmissiontype = new ArrayList<AdmissionType>(admissionTypeList);			
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM ADMISSIONTYPE";
+			jpa.createQuery(query, AdmissionType.class, false);
+			List<AdmissionType> admissionTypeList = (List<AdmissionType>)jpa.getList();
+			padmissiontype = new ArrayList<AdmissionType>(admissionTypeList);			
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 	
 		return padmissiontype;
 	}
 
@@ -347,16 +376,20 @@ public class AdmissionIoOperations
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<DischargeType> dischargeTypes = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM DISCHARGETYPE";
-		jpa.createQuery(query, DischargeType.class, false);
-		List<DischargeType> dischargeList = (List<DischargeType>)jpa.getList();
-		dischargeTypes = new ArrayList<DischargeType>(dischargeList);			
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM DISCHARGETYPE";
+			jpa.createQuery(query, DischargeType.class, false);
+			List<DischargeType> dischargeList = (List<DischargeType>)jpa.getList();
+			dischargeTypes = new ArrayList<DischargeType>(dischargeList);			
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 	
 		return dischargeTypes;
 	}
 
@@ -389,13 +422,13 @@ public class AdmissionIoOperations
 			admission = (Admission)jpa.getResult();	
 			if (admission != null) next = admission.getYProg() + 1; 
 				
+			jpa.commitTransaction();
 		} catch (Exception e) {
+			jpa.rollbackTransaction();
 			if (e.getCause().getClass().equals(NoResultException.class))
 				return next;
 			else throw new OHException(e.getCause().getMessage(), e.getCause());
 			
-		} finally {
-			jpa.commitTransaction();
 		}
 		
 		return next;
@@ -455,14 +488,18 @@ public class AdmissionIoOperations
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		
-		jpa.beginTransaction();	
-		Admission foundAdmission = (Admission)jpa.find(Admission.class, admissionId);  
-		foundAdmission.setDeleted("Y");
-		jpa.merge(foundAdmission);
-    	jpa.commitTransaction();
-    	
+
+		try{
+			jpa.beginTransaction();	
+			Admission foundAdmission = (Admission)jpa.find(Admission.class, admissionId);  
+			foundAdmission.setDeleted("Y");
+			jpa.merge(foundAdmission);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 	
 		return result;
 	}
 
@@ -491,13 +528,13 @@ public class AdmissionIoOperations
 			jpa.setParameters(params, false);
 			admissionList = (List<Admission>)jpa.getList();		
 			
+			jpa.commitTransaction();
 		} catch (Exception e) {
+			jpa.rollbackTransaction();
 			if (e.getCause().getClass().equals(NoResultException.class))
 				return 0;
 			else throw new OHException(e.getCause().getMessage(), e.getCause());
 			
-		} finally {
-			jpa.commitTransaction();
 		}
 
 		return admissionList.size();
@@ -514,14 +551,18 @@ public class AdmissionIoOperations
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		
-		jpa.beginTransaction();	
-		Patient foundPatient = (Patient)jpa.find(Patient.class, patientId);  
-		foundPatient.setPhoto(null);;
-		jpa.merge(foundPatient);
-    	jpa.commitTransaction();
-    	
+
+		try{
+			jpa.beginTransaction();	
+			Patient foundPatient = (Patient)jpa.find(Patient.class, patientId);  
+			foundPatient.setPhoto(null);;
+			jpa.merge(foundPatient);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 	
 		return result;
 	}
 }

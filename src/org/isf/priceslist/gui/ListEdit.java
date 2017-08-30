@@ -19,8 +19,9 @@ import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.priceslist.manager.PriceListManager;
-import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.PriceList;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class ListEdit extends JDialog {
@@ -143,18 +144,21 @@ public class ListEdit extends JDialog {
 					
 					PriceListManager listManager = new PriceListManager();
 					boolean result = false;
-
-					if (insert) {      // inserting
-						result = listManager.newList(list);
-						if (result) {
-							fireListInserted();
+					try{
+						if (insert) {      // inserting
+							result = listManager.newList(list);
+							if (result) {
+								fireListInserted();
+							}
 						}
-					}
-					else {             // updating
-						result = listManager.updateList(list);
-						if (result) {
-							fireListUpdated();
+						else {             // updating
+							result = listManager.updateList(list);
+							if (result) {
+								fireListUpdated();
+							}
 						}
+					}catch(OHServiceException e){
+						OHServiceExceptionUtil.showMessages(e);
 					}
 					if (!result) JOptionPane.showMessageDialog(
 											null,

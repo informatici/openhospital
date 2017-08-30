@@ -23,16 +23,20 @@ public class DischargeTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<DischargeType> dischargeTypes = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM DISCHARGETYPE ORDER BY DIST_DESC";
-		jpa.createQuery(query, DischargeType.class, false);
-		List<DischargeType> dischargeList = (List<DischargeType>)jpa.getList();
-		dischargeTypes = new ArrayList<DischargeType>(dischargeList);			
-		
-		jpa.commitTransaction();
-		
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM DISCHARGETYPE ORDER BY DIST_DESC";
+			jpa.createQuery(query, DischargeType.class, false);
+			List<DischargeType> dischargeList = (List<DischargeType>)jpa.getList();
+			dischargeTypes = new ArrayList<DischargeType>(dischargeList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return dischargeTypes;
 	}
 
@@ -43,18 +47,20 @@ public class DischargeTypeIoOperation {
 	 * @return true - if the existing DischargeType has been updated
 	 * @throws OHException
 	 */
-	public boolean UpdateDischargeType(
+	public boolean updateDischargeType(
 			DischargeType dischargeType) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		boolean result = true;
-		
-
-		jpa.beginTransaction();	
-		jpa.merge(dischargeType);
-    	jpa.commitTransaction();
-   	
-		return result;	
+		try {		
+			jpa.beginTransaction();	
+			jpa.merge(dischargeType);
+	    	jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
+		return true;	
 	}
 
 	/**
@@ -68,14 +74,16 @@ public class DischargeTypeIoOperation {
 			DischargeType dischargeType) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		boolean result = true;
-
-		
-		jpa.beginTransaction();	
-		jpa.persist(dischargeType);
-    	jpa.commitTransaction();
-    	
-		return result;
+		try {
+			jpa.beginTransaction();	
+			jpa.persist(dischargeType);
+	    	jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
+		return true;
 	}
 
 	/**
@@ -89,22 +97,24 @@ public class DischargeTypeIoOperation {
 			DischargeType dischargeType) throws OHException
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		boolean result = true;
-		
-		
-		jpa.beginTransaction();
-		DischargeType objToRemove = (DischargeType) jpa.find(DischargeType.class, dischargeType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
-		return result;	
+		try {
+			jpa.beginTransaction();
+			DischargeType objToRemove = (DischargeType) jpa.find(DischargeType.class, dischargeType.getCode());
+			jpa.remove(objToRemove);
+	    	jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
+		return true;	
 	}
 
 	/**
 	 * method that check if a DischargeType already exists
 	 * 
 	 * @param code
-	 * @return true - if the DischargeType already exists
+	 * @return true - if the DischargeType already exists; false otherwise
 	 * @throws OHException 
 	 */
 	public boolean isCodePresent(
@@ -114,15 +124,19 @@ public class DischargeTypeIoOperation {
 		DischargeType dischargeType;
 		boolean result = false;
 		
-		
-		jpa.beginTransaction();	
-		dischargeType = (DischargeType)jpa.find(DischargeType.class, code);
-		if (dischargeType != null)
-		{
-			result = true;
+		try {
+			jpa.beginTransaction();	
+			dischargeType = (DischargeType)jpa.find(DischargeType.class, code);
+			if (dischargeType != null)
+			{
+				result = true;
+			}
+	    	jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 }

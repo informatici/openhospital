@@ -33,6 +33,8 @@ import org.isf.priceslist.model.PriceList;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.serviceprinting.manager.PrintManager;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.treetable.JTreeTable;
 
@@ -65,27 +67,37 @@ public class PricesBrowser extends ModalJFrame {
 	private int[] columWidth = {400,150};
     
 	private PriceListManager listManager = new PriceListManager();
-	private ArrayList<PriceList> listArray = listManager.getLists();
-	private ArrayList<Price> priceArray = listManager.getPrices();
+	private ArrayList<PriceList> listArray;
+	private ArrayList<Price> priceArray;
 	private PriceList listSelected;
 	
 	private PriceNode examNodes;
 	private ExamBrowsingManager examManager = new ExamBrowsingManager();
-    private ArrayList<Exam> examArray = examManager.getExams();
+    private ArrayList<Exam> examArray;
     
     private PriceNode opeNodes;
     private OperationBrowserManager operManager = new OperationBrowserManager();
-    private ArrayList<Operation> operArray = operManager.getOperation();
+    private ArrayList<Operation> operArray;
        
     private PriceNode medNodes;
     private MedicalBrowsingManager mediManager = new MedicalBrowsingManager();
-    private ArrayList<Medical> mediArray = mediManager.getMedicals();
+    private ArrayList<Medical> mediArray;
     
     private PriceNode othNodes;
     private PricesOthersManager othManager = new PricesOthersManager();
-    private ArrayList<PricesOthers> othArray = othManager.getOthers();
+    private ArrayList<PricesOthers> othArray;
 	
 	public PricesBrowser() {
+		try {
+			mediArray = mediManager.getMedicals();
+			examArray = examManager.getExams();
+			operArray = operManager.getOperation();
+			listArray = listManager.getLists();
+			priceArray = listManager.getPrices();
+			othArray = othManager.getOthers();
+		}catch(OHServiceException e){
+			OHServiceExceptionUtil.showMessages(e);
+		}
 		initComponents();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -125,7 +137,11 @@ public class PricesBrowser extends ModalJFrame {
 
 				public void actionPerformed(ActionEvent arg0) {
 					
-					new PrintManager("PriceList", listManager.convertPrice(listSelected, priceArray), 0);
+					try {
+						new PrintManager("PriceList", listManager.convertPrice(listSelected, priceArray), 0);
+					} catch (OHServiceException e) {
+						OHServiceExceptionUtil.showMessages(e, PricesBrowser.this);
+					}
 				}
 			});
 		}
@@ -221,7 +237,12 @@ public class PricesBrowser extends ModalJFrame {
 						
 						ArrayList<Price> updateList = new ArrayList<Price>();
 						updateList = convertTreeToArray();
-						boolean updated = listManager.updatePrices(listSelected, updateList);
+						boolean updated = false;
+						try {
+							updated = listManager.updatePrices(listSelected, updateList);
+						}catch(OHServiceException e){
+							OHServiceExceptionUtil.showMessages(e);
+						}
 						
 						if (updated) {
 							JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.priceslist.listsaved")); //$NON-NLS-1$
@@ -310,12 +331,16 @@ public class PricesBrowser extends ModalJFrame {
 
 	private void updateFromDB() {
 		
-		listArray = listManager.getLists();
-		priceArray = listManager.getPrices();
-		examArray = examManager.getExams();
-	    operArray = operManager.getOperation();
-	    mediArray = mediManager.getMedicals();
-	    othArray = othManager.getOthers();
+	    try {
+	    	listArray = listManager.getLists();
+	    	priceArray = listManager.getPrices();
+	    	examArray = examManager.getExams();
+			operArray = operManager.getOperation();
+			mediArray = mediManager.getMedicals();
+			othArray = othManager.getOthers();
+	    }catch(OHServiceException e){
+	    	OHServiceExceptionUtil.showMessages(e);
+		}
 	}
 
 	private PriceNode getTreeContent() {

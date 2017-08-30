@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.LockTimeoutException;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -15,6 +16,7 @@ import javax.persistence.Query;
 import javax.persistence.QueryTimeoutException;
 import javax.persistence.RollbackException;
 import javax.persistence.TransactionRequiredException;
+import javax.transaction.Transaction;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHException;
@@ -155,7 +157,7 @@ public class DbJpaUtil
     {    
     	try {
     		System.out.println("Remove: " + entity);
-    		entityManager.remove(entity);  
+    		entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));  
 		} catch (IllegalArgumentException e) {
 			System.out.println("IllegalArgumentException");
 			System.out.println(e);
@@ -177,7 +179,9 @@ public class DbJpaUtil
     {
     	try {
     		if (getEntityManager() == null) open();
-			entityManager.getTransaction().begin();
+    		if(!entityManager.getTransaction().isActive()){
+    			entityManager.getTransaction().begin();
+    		}
 					
 		} catch (IllegalStateException e) {
 			System.out.println("IllegalStateException");
@@ -488,5 +492,30 @@ public class DbJpaUtil
 		}
     	
     	return;
+    }
+
+	   /**
+     * method to rollback a JPA transactions
+       * @throws OHException 
+     */
+    public void rollbackTransaction() throws OHException
+    {
+        try {
+        	EntityTransaction tx = entityManager.getTransaction();
+        	if(tx != null && tx.isActive()){
+        		entityManager.getTransaction().rollback();
+        	}
+            entityManager.clear();
+        } catch (IllegalStateException e) {
+            System.out.println("IllegalStateException");
+            System.out.println(e);
+            throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+        } catch (RollbackException e) {
+            System.out.println("RollbackException");
+            System.out.println(e);
+            throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+        }
+        
+        return;
     }
 }

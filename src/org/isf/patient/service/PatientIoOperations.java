@@ -18,7 +18,6 @@ package org.isf.patient.service;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,11 +25,18 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.isf.generaldata.MessageBundle;
+import org.isf.accounting.model.Bill;
+import org.isf.admission.model.Admission;
+import org.isf.examination.model.PatientExamination;
+import org.isf.lab.model.Laboratory;
+import org.isf.medicalstockward.model.MovementWard;
+import org.isf.opd.model.Opd;
 import org.isf.patient.model.Patient;
+import org.isf.patvac.model.PatientVaccine;
+import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.isf.visits.model.Visit;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -48,15 +54,19 @@ public class PatientIoOperations
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Patient> pPatient = null;
 				
-		
-		jpa.beginTransaction();
-		
-		jpa.createQuery("SELECT * FROM PATIENT WHERE (PAT_DELETED='N' OR PAT_DELETED IS NULL) ORDER BY PAT_NAME", Patient.class, false);
-		List<Patient> patients = (List<Patient>)jpa.getList();
-		pPatient = new ArrayList<Patient>(patients);			
-		
-		jpa.commitTransaction();
-			
+		try{
+			jpa.beginTransaction();
+
+			jpa.createQuery("SELECT * FROM PATIENT WHERE (PAT_DELETED='N' OR PAT_DELETED IS NULL) ORDER BY PAT_NAME", Patient.class, false);
+			List<Patient> patients = (List<Patient>)jpa.getList();
+			pPatient = new ArrayList<Patient>(patients);			
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return pPatient;
 	}
 
@@ -77,16 +87,18 @@ public class PatientIoOperations
 		String query = _getPatientsWithHeightAndWeightQuery(words);
 		ArrayList<Object> params = _getPatientsWithHeightAndWeightParameters(words);
 		
-		
-		jpa.beginTransaction();		
-
-		jpa.createQuery(query, Patient.class, false);
-		jpa.setParameters(params, false);
-		List<Patient> patients = (List<Patient>)jpa.getList();
-		pPatient = new ArrayList<Patient>(patients);			
-		
-		jpa.commitTransaction();	
-		
+		try{
+			jpa.beginTransaction();		
+			jpa.createQuery(query, Patient.class, false);
+			jpa.setParameters(params, false);
+			List<Patient> patients = (List<Patient>)jpa.getList();
+			pPatient = new ArrayList<Patient>(patients);			
+			jpa.commitTransaction();	
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return pPatient;
 	}
 	
@@ -152,20 +164,24 @@ public class PatientIoOperations
 		ArrayList<Object> params = new ArrayList<Object>();
 		Patient patient = null;	
 		
-		
-		jpa.beginTransaction();		
+		try{
+			jpa.beginTransaction();		
 
-		jpa.createQuery("SELECT * FROM PATIENT WHERE PAT_NAME = ? AND (PAT_DELETED='N' OR PAT_DELETED IS NULL) ORDER BY PAT_SNAME,PAT_FNAME", Patient.class, false);
-		params.add(name);
-		jpa.setParameters(params, false);
-		List<Patient> patients = (List<Patient>)jpa.getList();
-		if (patients.size() > 0)
-		{			
-			patient = patients.get(patients.size()-1);			
+			jpa.createQuery("SELECT * FROM PATIENT WHERE PAT_NAME = ? AND (PAT_DELETED='N' OR PAT_DELETED IS NULL) ORDER BY PAT_SNAME,PAT_FNAME", Patient.class, false);
+			params.add(name);
+			jpa.setParameters(params, false);
+			List<Patient> patients = (List<Patient>)jpa.getList();
+			if (patients.size() > 0)
+			{			
+				patient = patients.get(patients.size()-1);			
+			}
+
+			jpa.commitTransaction();	
+		}catch(OHException e){
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		
-		jpa.commitTransaction();	
-		
 		return patient;
 	}
 
@@ -184,20 +200,24 @@ public class PatientIoOperations
 		ArrayList<Object> params = new ArrayList<Object>();
 		Patient patient = null;	
 		
-		
-		jpa.beginTransaction();		
+		try{
+			jpa.beginTransaction();		
 
-		jpa.createQuery("SELECT * FROM PATIENT WHERE PAT_ID = ? AND (PAT_DELETED='N' OR PAT_DELETED IS NULL)", Patient.class, false);
-		params.add(code);
-		jpa.setParameters(params, false);
-		List<Patient> patients = (List<Patient>)jpa.getList();
-		if (patients.size() > 0)
-		{			
-			patient = patients.get(patients.size()-1);			
+			jpa.createQuery("SELECT * FROM PATIENT WHERE PAT_ID = ? AND (PAT_DELETED='N' OR PAT_DELETED IS NULL)", Patient.class, false);
+			params.add(code);
+			jpa.setParameters(params, false);
+			List<Patient> patients = (List<Patient>)jpa.getList();
+			if (patients.size() > 0)
+			{			
+				patient = patients.get(patients.size()-1);			
+			}
+
+			jpa.commitTransaction();	
+		}catch(OHException e){
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		
-		jpa.commitTransaction();	
-		
 		return patient;
 	}
 
@@ -215,21 +235,25 @@ public class PatientIoOperations
 		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		Patient patient = null;	
-		
-		
-		jpa.beginTransaction();		
 
-		jpa.createQuery("SELECT * FROM PATIENT WHERE PAT_ID = ?", Patient.class, false);
-		params.add(code);
-		jpa.setParameters(params, false);
-		List<Patient> patients = (List<Patient>)jpa.getList();
-		if (patients.size() > 0)
-		{			
-			patient = patients.get(patients.size()-1);			
+		try{
+			jpa.beginTransaction();		
+
+			jpa.createQuery("SELECT * FROM PATIENT WHERE PAT_ID = ?", Patient.class, false);
+			params.add(code);
+			jpa.setParameters(params, false);
+			List<Patient> patients = (List<Patient>)jpa.getList();
+			if (patients.size() > 0)
+			{			
+				patient = patients.get(patients.size()-1);			
+			}
+
+			jpa.commitTransaction();	
+		}catch(OHException e){
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		
-		jpa.commitTransaction();	
-		
 		return patient;
 	}
 
@@ -278,64 +302,23 @@ public class PatientIoOperations
 			Patient patient) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil();
-		boolean result = true;
-		
-//		try {
-//				ArrayList<Object> params = new ArrayList<Object>();
-//				String query = "INSERT INTO PATIENT (PAT_NAME, PAT_FNAME, PAT_SNAME, PAT_BDATE, PAT_AGE, PAT_AGETYPE, PAT_SEX, PAT_ADDR, PAT_CITY, PAT_NEXT_KIN, PAT_TELE, PAT_MOTH_NAME, PAT_MOTH, PAT_FATH_NAME, PAT_FATH, PAT_BTYPE, PAT_ESTA, PAT_PTOGE, PAT_NOTE, PAT_TAXCODE, PAT_PHOTO) " +
-//				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-//			jpa.createQuery(query, Patient.class, false);
-//			params = _addNewPatientParameters(patient);
-//			jpa.setParameters(params, false);
-//			jpa.executeUpdate();
-//			
-//		}  catch (OHException e) {
-//			result = false;
-//			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-//		} finally {
-//			jpa.commitTransaction();
-//		}
-		
-		jpa.beginTransaction();	
-		jpa.persist(patient);
-		jpa.commitTransaction();
-
-		return result;
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(patient);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
+		return true;
 	}
 	
-	private ArrayList<Object> _addNewPatientParameters(
-			Patient patient) throws OHException 
-	{
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-		
-		params.add(patient.getName());
-		params.add(patient.getFirstName());
-		params.add(patient.getSecondName());
-		params.add(patient.getBirthDate());
-		params.add(patient.getAge());
-		params.add(patient.getAgetype());
-		params.add(String.valueOf(patient.getSex()));
-		params.add(patient.getAddress());
-		params.add(patient.getCity());
-		params.add(patient.getNextKin());
-		params.add(patient.getTelephone());
-		params.add(patient.getMother_name());
-		params.add(String.valueOf(patient.getMother()));
-		params.add(patient.getFather_name());
-		params.add(String.valueOf(patient.getFather()));
-		params.add(patient.getBloodType());
-		params.add(String.valueOf(patient.getHasInsurance()));
-		params.add(String.valueOf(patient.getParentTogether()));
-		params.add(patient.getNote());
-		params.add(patient.getTaxCode());
-		params.add(createPatientPhotoInputStream(patient.getPhoto()));
-
-		return params;
-	}
 
 	/**
-	 * 
+	 *
+
+ 
 	 * method that update an existing {@link Patient} in the db
 	 * 
 	 * @param patient - the {@link Patient} to update
@@ -351,29 +334,24 @@ public class PatientIoOperations
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		int lock = 0;
-		boolean result = true;
-				
-
-		lock = _getUpdatePatientLock(patient.getCode(), check);
-
-		jpa.beginTransaction();		
 		
 		try {
+			lock = _getUpdatePatientLock(patient.getCode(), check);
+			jpa.beginTransaction();		
 			query = "UPDATE PATIENT SET PAT_FNAME = ?, PAT_SNAME = ?, PAT_NAME  = ?, PAT_BDATE = ?, PAT_AGE = ?, PAT_AGETYPE = ?, PAT_SEX = ?, PAT_ADDR = ?, PAT_CITY = ?, PAT_NEXT_KIN = ?, PAT_TELE = ?, PAT_MOTH = ?, PAT_MOTH_NAME = ?, PAT_FATH = ?, PAT_FATH_NAME = ?, PAT_BTYPE = ?, PAT_ESTA = ?, PAT_PTOGE = ?, PAT_NOTE = ?, PAT_TAXCODE = ?, PAT_LOCK = ?, PAT_PHOTO = ? WHERE PAT_ID = ?";
 			jpa.createQuery(query, Patient.class, false);
 			params = _addUpdatePatientParameters(patient, lock);
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
-			
 			_updatePatientLock(patient, check, lock);
+			jpa.commitTransaction();			
 		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		} 				
-	
-		jpa.commitTransaction();			
 
-		return result;
+		return true;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -385,22 +363,22 @@ public class PatientIoOperations
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		int lock = 0;
-
-		
-		jpa.beginTransaction();		
-
-		if (check == true) 
-		{ 
-			query = "SELECT * FROM PATIENT WHERE PAT_ID = ?";
-			jpa.createQuery(query, Patient.class, false);
-			params.add(code);
-			jpa.setParameters(params, false);
-			List<Patient> patients = (List<Patient>)jpa.getList();
-			lock = patients.get(0).getLock();
+		try{
+			if (check == true) 
+			{ 
+				jpa.beginTransaction();		
+				query = "SELECT * FROM PATIENT WHERE PAT_ID = ?";
+				jpa.createQuery(query, Patient.class, false);
+				params.add(code);
+				jpa.setParameters(params, false);
+				List<Patient> patients = (List<Patient>)jpa.getList();
+				lock = patients.get(0).getLock();
+				jpa.commitTransaction();
+			}
+		}catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
 		}
-				
-		jpa.commitTransaction();
-		
 		return lock;
 	}
 	
@@ -464,25 +442,22 @@ public class PatientIoOperations
 		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
-		boolean result = true;
-				
 
-		jpa.beginTransaction();		
-		
 		try {
+			jpa.beginTransaction();		
 			query = "UPDATE PATIENT SET PAT_DELETED = 'Y' WHERE PAT_ID = ?";
 			jpa.createQuery(query, Patient.class, false);
 			params.add(patient.getCode());
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();			
+			jpa.commitTransaction();
 		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		} 				
-	
-		jpa.commitTransaction();
-		
-		return result;
+
+		return true;
 	}
 
 	/**
@@ -501,10 +476,8 @@ public class PatientIoOperations
 		String query = null;
 		boolean result = false;
 				
-
-		jpa.beginTransaction();		
-		
 		try {
+			jpa.beginTransaction();		
 			query = "SELECT * FROM PATIENT WHERE PAT_NAME = ? AND PAT_DELETED='N'";
 			jpa.createQuery(query, Patient.class, false);
 			params.add(name);
@@ -514,11 +487,12 @@ public class PatientIoOperations
 			{
 				result = true;	
 			}
+			jpa.commitTransaction();
 		}  catch (OHException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		} 				
-	
-		jpa.commitTransaction();
 
 		return result;
 	}
@@ -534,119 +508,150 @@ public class PatientIoOperations
 		DbJpaUtil jpa = new DbJpaUtil();
 		String query = null;
 		Integer code = 0;
-				
 
-		jpa.beginTransaction();		
-		
+
 		try {
+			jpa.beginTransaction();		
 			query = "SELECT MAX(PAT_ID) FROM PATIENT";
 			jpa.createQuery(query, null, false);
 			code = (Integer)jpa.getResult();
+			jpa.commitTransaction();
 		}  catch (OHException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		} 				
-	
-		jpa.commitTransaction();
 
 		return code+1;
 	}
 
-	/**
-	 * method that merge all clinic details under the same PAT_ID
-	 * 
-	 * @param mergedPatient
-	 * @param patient2
-	 * @return true - if no OHExceptions occurred
-	 * @throws OHException 
-	 */
-	public boolean mergePatientHistory(
-			Patient mergedPatient, 
-			Patient patient2) throws OHException {
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		int mergedID = mergedPatient.getCode();
-		int obsoleteID = patient2.getCode();
-		String query = "";
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-		// ADMISSION HISTORY
-		query = "UPDATE ADMISSION SET ADM_PAT_ID = ? WHERE ADM_PAT_ID = ?";
-		params.clear();
-		params.add(mergedID);
-		params.add(obsoleteID);
-		dbQuery.setDataWithParams(query, params, false);
-		
-		// EXAMINATION HISTORY
-		query = "UPDATE PATIENTEXAMINATION SET PEX_PAT_ID = ? WHERE PEX_PAT_ID = ?";
-		params.clear();
-		params.add(mergedID);
-		params.add(obsoleteID);
-		dbQuery.setDataWithParams(query, params, false);
-		
-		// LABORATORY HISTORY
-		query = "UPDATE LABORATORY SET LAB_PAT_ID = ?, LAB_PAT_NAME = ?, LAB_AGE = ?, LAB_SEX = ? WHERE LAB_PAT_ID = ?";
-		params.clear();
-		params.add(mergedID);
-		params.add(mergedPatient.getName());
-		params.add(mergedPatient.getAge());
-		params.add(String.valueOf(mergedPatient.getSex()));
-		params.add(obsoleteID);
-		dbQuery.setDataWithParams(query, params, false);
+	 /**
+     * method that merge all clinic details under the same PAT_ID
+     * 
+     * @param mergedPatient
+     * @param patient2
+     * @return true - if no OHExceptions occurred
+     * @throws OHException 
+     */
+    public boolean mergePatientHistory(
+            Patient mergedPatient, 
+            Patient patient2) throws OHException {
 
-		// OPD HISTORY
-		query = "UPDATE OPD SET OPD_PAT_ID = ?, OPD_AGE = ?, OPD_SEX = ? WHERE OPD_PAT_ID = ?";
-		params.clear();
-		params.add(mergedID);
-		params.add(mergedPatient.getAge());
-		params.add(String.valueOf(mergedPatient.getSex()));
-		params.add(obsoleteID);
-		dbQuery.setDataWithParams(query, params, false);
+        DbJpaUtil jpa = new DbJpaUtil(); 
+        int mergedID = mergedPatient.getCode();
+        int obsoleteID = patient2.getCode();
+        ArrayList<Object> params = new ArrayList<Object>();
+        String query = "";
 
-		// BILLS HISTORY
-		query = "UPDATE BILLS SET BLL_ID_PAT = ?, BLL_PAT_NAME = ? WHERE BLL_ID_PAT = ?";
-		params.clear();
-		params.add(mergedID);
-		params.add(mergedPatient.getName());
-		params.add(obsoleteID);
-		dbQuery.setDataWithParams(query, params, false);
+        try{
 
-		// MEDICALDSRSTOCKMOVWARD HISTORY
-		query = "UPDATE MEDICALDSRSTOCKMOVWARD SET MMVN_PAT_ID = ? WHERE MMVN_PAT_ID = ?";
-		params.clear();
-		params.add(mergedID);
-		params.add(obsoleteID);
-		dbQuery.setDataWithParams(query, params, false);
-		
-		// THERAPY HISTORY
-		query = "UPDATE THERAPIES SET THR_PAT_ID = ? WHERE THR_PAT_ID = ?";
-		params.clear();
-		params.add(mergedID);
-		params.add(obsoleteID);
-		dbQuery.setDataWithParams(query, params, false);
-		
-		// VISITS HISTORY
-		query = "UPDATE VISITS SET VST_PAT_ID = ? WHERE VST_PAT_ID = ?";
-		params.clear();
-		params.add(mergedID);
-		params.add(obsoleteID);
-		dbQuery.setDataWithParams(query, params, false);
-		
-		// PATIENTVACCINE HISTORY
-		query = "UPDATE PATIENTVACCINE SET PAV_PAT_ID = ? WHERE PAV_PAT_ID = ?";
-		params.clear();
-		params.add(mergedID);
-		params.add(obsoleteID);
-		dbQuery.setDataWithParams(query, params, false);
-		
-		// DELETE OLD PATIENT (patient2)
-		query = "UPDATE PATIENT SET PAT_DELETED = 'Y' WHERE PAT_ID = ?";
-		params.clear();
-		params.add(obsoleteID);
-		
-		// FINAL CHECK
-		boolean result = dbQuery.setDataWithParams(query, params, false);
-		if (result) dbQuery.commit();
-		else dbQuery.rollback();
-		
-		return result;
-	}
+            jpa.beginTransaction();
+
+            // ADMISSION HISTORY
+            query = "UPDATE ADMISSION SET ADM_PAT_ID = ? WHERE ADM_PAT_ID = ?";
+            params.clear();
+            params.add(mergedID);
+            params.add(obsoleteID);
+            jpa.createQuery(query, Admission.class, false);
+            jpa.setParameters(params, false);
+            jpa.executeUpdate();
+
+            // EXAMINATION HISTORY
+            query = "UPDATE PATIENTEXAMINATION SET PEX_PAT_ID = ? WHERE PEX_PAT_ID = ?";
+            params.clear();
+            params.add(mergedID);
+            params.add(obsoleteID);
+            jpa.createQuery(query, PatientExamination.class, false);
+            jpa.setParameters(params, false);
+            jpa.executeUpdate();
+
+            // LABORATORY HISTORY
+            query = "UPDATE LABORATORY SET LAB_PAT_ID = ?, LAB_PAT_NAME = ?, LAB_AGE = ?, LAB_SEX = ? WHERE LAB_PAT_ID = ?";
+            params.clear();
+            params.add(mergedID);
+            params.add(mergedPatient.getName());
+            params.add(mergedPatient.getAge());
+            params.add(String.valueOf(mergedPatient.getSex()));
+            params.add(obsoleteID);
+            jpa.createQuery(query, Laboratory.class, false);
+            jpa.setParameters(params, false);
+            jpa.executeUpdate();
+
+            // OPD HISTORY
+            query = "UPDATE OPD SET OPD_PAT_ID = ?, OPD_AGE = ?, OPD_SEX = ? WHERE OPD_PAT_ID = ?";
+            params.clear();
+            params.add(mergedID);
+            params.add(mergedPatient.getAge());
+            params.add(String.valueOf(mergedPatient.getSex()));
+            params.add(obsoleteID);
+            jpa.createQuery(query, Opd.class, false);
+            jpa.setParameters(params, false);
+            jpa.executeUpdate();
+
+            // BILLS HISTORY
+            query = "UPDATE BILLS SET BLL_ID_PAT = ?, BLL_PAT_NAME = ? WHERE BLL_ID_PAT = ?";
+            params.clear();
+            params.add(mergedID);
+            params.add(mergedPatient.getName());
+            params.add(obsoleteID);
+            jpa.createQuery(query, Bill.class, false);
+            jpa.setParameters(params, false);
+            jpa.executeUpdate();
+
+            // MEDICALDSRSTOCKMOVWARD HISTORY
+            query = "UPDATE MEDICALDSRSTOCKMOVWARD SET MMVN_PAT_ID = ? WHERE MMVN_PAT_ID = ?";
+            params.clear();
+            params.add(mergedID);
+            params.add(obsoleteID);
+            jpa.createQuery(query, MovementWard.class, false);
+            jpa.setParameters(params, false);
+            jpa.executeUpdate();
+
+            // THERAPY HISTORY
+            query = "UPDATE THERAPIES SET THR_PAT_ID = ? WHERE THR_PAT_ID = ?";
+            params.clear();
+            params.add(mergedID);
+            params.add(obsoleteID);
+            jpa.createQuery(query, TherapyRow.class, false);
+            jpa.setParameters(params, false);
+            jpa.executeUpdate();
+
+            // VISITS HISTORY
+            query = "UPDATE VISITS SET VST_PAT_ID = ? WHERE VST_PAT_ID = ?";
+            params.clear();
+            params.add(mergedID);
+            params.add(obsoleteID);
+            jpa.createQuery(query, Visit.class, false);
+            jpa.setParameters(params, false);
+            jpa.executeUpdate();
+
+            // PATIENTVACCINE HISTORY
+            query = "UPDATE PATIENTVACCINE SET PAV_PAT_ID = ? WHERE PAV_PAT_ID = ?";
+            params.clear();
+            params.add(mergedID);
+            params.add(obsoleteID);
+            jpa.createQuery(query, PatientVaccine.class, false);
+            jpa.setParameters(params, false);
+            jpa.executeUpdate();
+
+            // DELETE OLD PATIENT (patient2)
+            query = "UPDATE PATIENT SET PAT_DELETED = 'Y' WHERE PAT_ID = ?";
+            params.clear();
+            params.add(obsoleteID);
+            jpa.createQuery(query, Patient.class, false);
+            jpa.setParameters(params, false);
+            jpa.executeUpdate();
+
+            jpa.merge(mergedPatient);
+            
+            jpa.commitTransaction();
+
+        }catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
+        return true;
+    }
+
 }

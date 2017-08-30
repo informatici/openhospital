@@ -55,6 +55,8 @@ import org.isf.menu.gui.MainMenu;
 import org.isf.stat.manager.GenericReportBill;
 import org.isf.stat.manager.GenericReportFromDateToDate;
 import org.isf.stat.manager.GenericReportUserInDate;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.joda.time.DateTime;
@@ -155,13 +157,33 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private ArrayList<BillPayments> paymentsPeriod;
 	private ArrayList<Bill> billFromPayments;
 	
-	private String currencyCod = new HospitalBrowsingManager().getHospitalCurrencyCod();
+	private String currencyCod = null;
 	
 	//Users
 	private String user = MainMenu.getUser();
-	private ArrayList<String> users = billManager.getUsers();
+	private ArrayList<String> users;
 	
 	public BillBrowser() {
+		try {
+			this.currencyCod = new HospitalBrowsingManager().getHospitalCurrencyCod();
+		} catch (OHServiceException e1) {
+			this.currencyCod = null;
+			if(e1.getMessages() != null){
+				for(OHExceptionMessage msg : e1.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		
+		try {
+			users = billManager.getUsers();
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		updateDataSet();
 		initComponents();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -592,7 +614,15 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 									JOptionPane.YES_NO_OPTION);
 						}
 						if (ok == JOptionPane.YES_OPTION) {
-							billManager.deleteBill(deleteBill);
+							try{
+								billManager.deleteBill(deleteBill);
+							}catch(OHServiceException ex){
+								if(ex.getMessages() != null){
+									for(OHExceptionMessage msg : ex.getMessages()){
+										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+									}
+								}
+							}
 						}
 					} catch (Exception ex) {
 						JOptionPane.showMessageDialog(null,
@@ -925,28 +955,58 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	}
 	
 	private void updateDataSet(GregorianCalendar dateFrom, GregorianCalendar dateTo) {
-		/*
-		 * Bills in the period
-		 */
-		billPeriod = billManager.getBills(dateFrom, dateTo);
-		
-		/*
-		 * Payments in the period
-		 */
-		paymentsPeriod = billManager.getPayments(dateFrom, dateTo);
-		
-		/*
-		 * Bills not in the period but with payments in the period
-		 */
-		billFromPayments = billManager.getBills(paymentsPeriod);
+		try {
+			/*
+			 * Bills in the period
+			 */
+			billPeriod = billManager.getBills(dateFrom, dateTo);
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		try {
+			/*
+			 * Payments in the period
+			 */
+			paymentsPeriod = billManager.getPayments(dateFrom, dateTo);
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
+		try {
+			/*
+			 * Bills not in the period but with payments in the period
+			 */
+			billFromPayments = billManager.getBills(paymentsPeriod);
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 	}
 	
 	private void updateTotals() {
-		ArrayList<Bill> billToday;
-		ArrayList<BillPayments> paymentsToday;
+		ArrayList<Bill> billToday = null;
+		ArrayList<BillPayments> paymentsToday = null;
 		if (MainMenu.getUser().equals("admin")) {
-			billToday = billManager.getBills(dateToday0, dateToday24);
-			paymentsToday = billManager.getPayments(dateToday0, dateToday24);
+			try {
+				billToday = billManager.getBills(dateToday0, dateToday24);
+				paymentsToday = billManager.getPayments(dateToday0, dateToday24);
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 		} else {
 			billToday = billPeriod;
 			paymentsToday = paymentsPeriod;
@@ -984,24 +1044,27 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 		}
 		
 		//Bills in today contribute for Not Paid Today (balance)
-		for (Bill bill : billToday) {
-			if (!bill.getStatus().equals("D")) {
-				BigDecimal balance = new BigDecimal(Double.toString(bill.getBalance()));
-				balanceToday = balanceToday.add(balance);
+		if(billToday != null){
+			for (Bill bill : billToday) {
+				if (!bill.getStatus().equals("D")) {
+					BigDecimal balance = new BigDecimal(Double.toString(bill.getBalance()));
+					balanceToday = balanceToday.add(balance);
+				}
 			}
 		}
 		
 		//Payments in today contribute for Paid Today (total)
-		for (BillPayments payment : paymentsToday) {
-			if (notDeletedBills.contains(payment.getBill().getId())) {
-				BigDecimal payAmount = new BigDecimal(Double.toString(payment.getAmount()));
-				String payUser = payment.getUser();
-				totalToday = totalToday.add(payAmount);
-				if (!GeneralData.SINGLEUSER && payUser.equals(user))
-					userToday = userToday.add(payAmount);
+		if(paymentsToday != null){
+			for (BillPayments payment : paymentsToday) {
+				if (notDeletedBills.contains(payment.getBill().getId())) {
+					BigDecimal payAmount = new BigDecimal(Double.toString(payment.getAmount()));
+					String payUser = payment.getUser();
+					totalToday = totalToday.add(payAmount);
+					if (!GeneralData.SINGLEUSER && payUser.equals(user))
+						userToday = userToday.add(payAmount);
+				}
 			}
 		}
-		
 		jTableToday.setValueAt(totalToday, 0, 2);
 		jTableToday.setValueAt(balanceToday, 0, 5);
 		jTablePeriod.setValueAt(totalPeriod, 0, 2);
@@ -1057,7 +1120,16 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 			}
 			
 			if (status.equals("O")) {
-				tableArray = billManager.getPendingBills(0);
+				try {
+					tableArray = billManager.getPendingBills(0);
+				}catch(OHServiceException e){
+					tableArray = new ArrayList<Bill>();
+					if(e.getMessages() != null){
+						for(OHExceptionMessage msg : e.getMessages()){
+							JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+						}
+					}
+				}
 				
 			} else if (status.equals("ALL")) {
 				

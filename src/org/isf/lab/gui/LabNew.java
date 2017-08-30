@@ -52,6 +52,8 @@ import org.isf.lab.model.Laboratory;
 import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.time.RememberDates;
 
 import com.toedter.calendar.JDateChooser;
@@ -160,11 +162,11 @@ public class LabNew extends JDialog implements SelectionListener {
 	
 	//Exams (ALL)
 	ExamBrowsingManager exaManager = new ExamBrowsingManager();
-	ArrayList<Exam> exaArray = exaManager.getExams();
+	ArrayList<Exam> exaArray;
 	
 	//Results (ALL)
 	ExamRowBrowsingManager examRowManager = new ExamRowBrowsingManager();
-	ArrayList<ExamRow> exaRowArray = examRowManager.getExamRow();
+	ArrayList<ExamRow> exaRowArray;
 	
 	//Arrays for this Patient
 	ArrayList<ArrayList<String>> examResults = new ArrayList<ArrayList<String>>();
@@ -172,6 +174,21 @@ public class LabNew extends JDialog implements SelectionListener {
 	
 	public LabNew(JFrame owner) {
 		super(owner, true);
+		
+		try {
+			exaArray = exaManager.getExams();
+		} catch (OHServiceException e) {
+			exaArray = null;
+			OHServiceExceptionUtil.showMessages(e);
+		}
+		
+		 try {
+			exaRowArray = examRowManager.getExamRow();
+		} catch (OHServiceException e) {
+			exaRowArray = null;
+			OHServiceExceptionUtil.showMessages(e);
+		}
+		
 		initComponents();
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(LabNew.DISPOSE_ON_CLOSE);
@@ -288,9 +305,19 @@ public class LabNew extends JDialog implements SelectionListener {
 						
 						lab = examItems.get(i);
 						if (lab.getExam().getProcedure() == 1) {
-							result = labManager.newLabFirstProcedure(lab);
+							try {
+								result = labManager.newLabFirstProcedure(lab);
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						} else {
-							result = labManager.newLabSecondProcedure(lab, examResults.get(i));
+							try {
+								result = labManager.newLabSecondProcedure(lab, examResults.get(i));
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						}
 						if (!result) {
 							JOptionPane.showMessageDialog(null,
@@ -309,7 +336,11 @@ public class LabNew extends JDialog implements SelectionListener {
 	private String getIsAdmitted() {
 		AdmissionBrowserManager man = new AdmissionBrowserManager();
 		Admission adm = new Admission();
-		adm = man.getCurrentAdmission(patientSelected);
+		try {
+			adm = man.getCurrentAdmission(patientSelected);
+		}catch(OHServiceException e){
+			OHServiceExceptionUtil.showMessages(e);
+		}
 		return (adm==null?"R":"I");					
 	}
 

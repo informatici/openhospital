@@ -22,6 +22,8 @@ import javax.swing.event.EventListenerList;
 import org.isf.generaldata.MessageBundle;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class PricesOthersEdit extends JDialog {
@@ -152,18 +154,21 @@ public class PricesOthersEdit extends JDialog {
 					
 					PricesOthersManager pOtherManager = new PricesOthersManager();
 					boolean result = false;
-	
-					if (insert) {      // inserting
-						result = pOtherManager.newOther(pOther);
-						if (result) {
-							fireOtherInserted();
+					try{
+						if (insert) {      // inserting
+							result = pOtherManager.newOther(pOther);
+							if (result) {
+								fireOtherInserted();
+							}
 						}
-					}
-					else {             // updating
-						result = pOtherManager.updateOther(pOther);
-						if (result) {
-							fireOtherUpdated();
+						else {             // updating
+							result = pOtherManager.updateOther(pOther);
+							if (result) {
+								fireOtherUpdated();
+							}
 						}
+					}catch(OHServiceException e){
+						OHServiceExceptionUtil.showMessages(e);
 					}
 					if (!result) {
 						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.pricesothers.thedatacouldnotbesaved")); //$NON-NLS-1$
