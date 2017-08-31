@@ -127,7 +127,6 @@ public class MedicalStockWardIoOperations
 		Double mainQuantity = 0.0;
 				
 		try {
-			jpa.beginTransaction();		
 
 			query = "SELECT SUM(MMV_QTY) MAIN FROM MEDICALDSRSTOCKMOV M WHERE MMV_MMVT_ID_A = 'testDisc' AND MMV_MDSR_ID = ? ";
 			params.add(medical.getCode());
@@ -139,7 +138,6 @@ public class MedicalStockWardIoOperations
 			jpa.setParameters(params, false);
 			mainQuantity = (Double)jpa.getResult();
 
-			jpa.commitTransaction();		
 		}catch (OHException e) {
 			//DbJpaUtil managed exception
 			jpa.rollbackTransaction();
@@ -158,7 +156,6 @@ public class MedicalStockWardIoOperations
 		Double dischargeQuantity = 0.0;
 				
 		try {
-			jpa.beginTransaction();
 			
 			query = "SELECT SUM(MMVN_MDSR_QTY) DISCHARGE FROM MEDICALDSRSTOCKMOVWARD WHERE MMVN_MDSR_ID = ?";
 			params.add(medical.getCode());
@@ -170,7 +167,6 @@ public class MedicalStockWardIoOperations
 			jpa.setParameters(params, false);
 			dischargeQuantity = (Double)jpa.getResult();
 
-			jpa.commitTransaction();		
 		}catch (OHException e) {
 			//DbJpaUtil managed exception
 			jpa.rollbackTransaction();
@@ -291,7 +287,7 @@ public class MedicalStockWardIoOperations
 		boolean result = true;
 		
 		try {
-			jpa.beginTransaction();
+
 			ArrayList<Object> params = new ArrayList<Object>(3);
 			String query = "SELECT * FROM MEDICALDSRWARD WHERE MDSRWRD_WRD_ID_A = ? AND MDSRWRD_MDSR_ID = ?";
 			jpa.createQuery(query, MovementWard.class, false);
@@ -314,10 +310,10 @@ public class MedicalStockWardIoOperations
 			params.add(medical);
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
-			jpa.commitTransaction();
+			
 		}  catch (Exception e) {
 			if (e.getCause().getClass().equals(NoResultException.class)) {
-				jpa.beginTransaction();
+
 				//insert
 				ArrayList<Object> parameters = new ArrayList<Object>(3);
 				String query = "INSERT INTO MEDICALDSRWARD (MDSRWRD_WRD_ID_A, MDSRWRD_MDSR_ID, MDSRWRD_IN_QTI, MDSRWRD_OUT_QTI) " +
@@ -328,7 +324,7 @@ public class MedicalStockWardIoOperations
 				parameters.add(-qty);
 				jpa.setParameters(parameters, false);
 				jpa.executeUpdate();
-				jpa.commitTransaction();
+
 			} else {
 				jpa.rollbackTransaction();
 				throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
