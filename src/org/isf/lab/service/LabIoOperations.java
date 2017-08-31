@@ -452,21 +452,29 @@ public class LabIoOperations {
 		
 		Laboratory objToRemove = (Laboratory) jpa.find(Laboratory.class, aLaboratory.getCode());
 		
-		if (objToRemove.getExam().getProcedure() == 2) 
-		{
-			try {
-				jpa.createQuery("DELETE FROM LABORATORYROW WHERE LABR_LAB_ID = ?", LaboratoryRow.class, false);
-				params.add(objToRemove.getCode());
-				jpa.setParameters(params, false);
-				jpa.executeUpdate();
-				jpa.remove(objToRemove);
-		    	jpa.commitTransaction();
-			}  catch (OHException e) {
-				//DbJpaUtil managed exception
-				jpa.rollbackTransaction();
-				result = false;
-				throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		try {
+			if (objToRemove.getExam().getProcedure() == 2) 
+			{
+				try {
+					jpa.createQuery("DELETE FROM LABORATORYROW WHERE LABR_LAB_ID = ?", LaboratoryRow.class, false);
+					params.add(objToRemove.getCode());
+					jpa.setParameters(params, false);
+					jpa.executeUpdate();
+				}  catch (OHException e) {
+					//DbJpaUtil managed exception
+					jpa.rollbackTransaction();
+					result = false;
+					throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+				}
 			}
+			jpa.remove(objToRemove);
+	    	jpa.commitTransaction();
+	    	
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			result = false;
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
 		}
 		
 		return result;
