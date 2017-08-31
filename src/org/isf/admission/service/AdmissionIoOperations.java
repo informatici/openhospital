@@ -29,6 +29,7 @@ import org.isf.admission.model.AdmittedPatient;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.disctype.model.DischargeType;
 import org.isf.generaldata.GeneralData;
+import org.isf.generaldata.MessageBundle;
 import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
@@ -68,8 +69,17 @@ public class AdmissionIoOperations
 			params = _calculateAdmittedPatientParameters(terms);
 
 			Query q = jpa.getEntityManager().createNativeQuery(query,"AdmittedPatient");
-			jpa.createQuery(query, null, false);
-			jpa.setParameters(params, false);
+			//jpa.createQuery(query, null, false);
+			//jpa.setParameters(params, false);
+			try {
+				for (int i=0; i < params.size(); i++) 
+				{
+					q.setParameter((i + 1), params.get(i));	
+	    		}
+			} catch (IllegalArgumentException e) {
+				jpa.rollbackTransaction();
+				throw e;
+			}
 			List<Object[]> admittedPatientsList = (List<Object[]>)q.getResultList();
 			Iterator<Object[]> it = admittedPatientsList.iterator();
 			while (it.hasNext()) {
