@@ -14,13 +14,21 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@SpringApplicationConfiguration(org.isf.utils.db.SpringDataConfiguration.class)
 public class Tests  
 {
 	private static DbJpaUtil jpa;
 	private static TestDiseaseType testDiseaseType;
 	private static TestDiseaseTypeContext testDiseaseTypeContext;
-		
+
+    @Autowired
+    DiseaseTypeIoOperation diseaseTypeIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -56,7 +64,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
     	testDiseaseType = null;
     	testDiseaseTypeContext = null;
 
@@ -108,14 +115,13 @@ public class Tests
 	public void testIoGetDiseaseType()  
 	{
 		String code = "";
-		DiseaseTypeIoOperation ioOperations = new DiseaseTypeIoOperation();
 		
 		
 		try 
 		{		
 			code = _setupTestDiseaseType(false);
 			DiseaseType foundDiseaseType = (DiseaseType)jpa.find(DiseaseType.class, code); 
-			ArrayList<DiseaseType> diseaseTypes = ioOperations.getDiseaseTypes();
+			ArrayList<DiseaseType> diseaseTypes = diseaseTypeIoOperation.getDiseaseTypes();
 			
 			assertEquals(foundDiseaseType.getDescription(), diseaseTypes.get(diseaseTypes.size()-1).getDescription());
 		} 
@@ -132,7 +138,6 @@ public class Tests
 	public void testIoUpdateDiseaseType() 
 	{
 		String code = "";
-		DiseaseTypeIoOperation ioOperations = new DiseaseTypeIoOperation();
 		boolean result = false;
 		
 		
@@ -141,7 +146,7 @@ public class Tests
 			code = _setupTestDiseaseType(false);
 			DiseaseType foundDiseaseType = (DiseaseType)jpa.find(DiseaseType.class, code); 
 			foundDiseaseType.setDescription("Update");
-			result = ioOperations.updateDiseaseType(foundDiseaseType);
+			result = diseaseTypeIoOperation.updateDiseaseType(foundDiseaseType);
 			DiseaseType updateDiseaseType = (DiseaseType)jpa.find(DiseaseType.class, code); 
 			
 			assertEquals(true, result);
@@ -159,14 +164,13 @@ public class Tests
 	@Test
 	public void testIoNewDiseaseType() 
 	{
-		DiseaseTypeIoOperation ioOperations = new DiseaseTypeIoOperation();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			DiseaseType diseaseType = testDiseaseType.setup(true);
-			result = ioOperations.newDiseaseType(diseaseType);
+			result = diseaseTypeIoOperation.newDiseaseType(diseaseType);
 			
 			assertEquals(true, result);
 			_checkDiseaseTypeIntoDb(diseaseType.getCode());
@@ -181,22 +185,18 @@ public class Tests
 	}
 
 	@Test
-	public void testIoDeleteDiseaseType() 
+	public void testIoIsCodePresent()
 	{
 		String code = "";
-		DiseaseTypeIoOperation ioOperations = new DiseaseTypeIoOperation();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestDiseaseType(false);
-			DiseaseType foundDiseaseType = (DiseaseType)jpa.find(DiseaseType.class, code); 
-			result = ioOperations.deleteDiseaseType(foundDiseaseType);
+			result = diseaseTypeIoOperation.isCodePresent(code);
 			
 			assertEquals(true, result);
-			DiseaseType deletedDiseaseType = (DiseaseType)jpa.find(DiseaseType.class, code); 
-			assertEquals(null, deletedDiseaseType);
 		} 
 		catch (Exception e) 
 		{
@@ -208,19 +208,20 @@ public class Tests
 	}
 
 	@Test
-	public void testIoIsCodePresent()
+	public void testIoDeleteDiseaseType() 
 	{
 		String code = "";
-		DiseaseTypeIoOperation ioOperations = new DiseaseTypeIoOperation();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestDiseaseType(false);
-			result = ioOperations.isCodePresent(code);
-			
-			assertEquals(true, result);
+			DiseaseType foundDiseaseType = (DiseaseType)jpa.find(DiseaseType.class, code); 
+			result = diseaseTypeIoOperation.deleteDiseaseType(foundDiseaseType);
+
+			result = diseaseTypeIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

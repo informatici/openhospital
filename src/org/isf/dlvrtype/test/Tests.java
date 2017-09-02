@@ -14,18 +14,28 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+
+@RunWith(SpringRunner.class)
+@SpringApplicationConfiguration(org.isf.utils.db.SpringDataConfiguration.class)
 public class Tests  
 {
 	private static DbJpaUtil jpa;
 	private static TestDeliveryType testDeliveryType;
 	private static TestDeliveryTypeContext testDeliveryTypeContext;
-		
+
+    @Autowired
+    DeliveryTypeIoOperation deliveryTypeIoOperation;
+	
 	
 	@BeforeClass
     public static void setUpClass()  
-    {
-    	jpa = new DbJpaUtil();
+    {			
+		jpa = new DbJpaUtil();
     	testDeliveryType = new TestDeliveryType();
     	testDeliveryTypeContext = new TestDeliveryTypeContext();
     	
@@ -34,7 +44,7 @@ public class Tests
 
     @Before
     public void setUp() throws OHException
-    {
+    {    	
         jpa.open();
         
         _saveContext();
@@ -56,14 +66,13 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
     	testDeliveryType = null;
     	testDeliveryTypeContext = null;
 
     	return;
     }
 	
-		
+    
 	@Test
 	public void testDeliveryTypeGets() 
 	{
@@ -103,19 +112,15 @@ public class Tests
 		
 		return;
 	}
-	
+	        
 	@Test
 	public void testIoGetDeliveryType() 
-	{
-		String code = "";
-		DeliveryTypeIoOperation ioOperations = new DeliveryTypeIoOperation();
-		
-		
+	{	
 		try 
 		{		
-			code = _setupTestDeliveryType(false);
+			String code = _setupTestDeliveryType(false);
 			DeliveryType foundDeliveryType = (DeliveryType)jpa.find(DeliveryType.class, code); 
-			ArrayList<DeliveryType> deliveryTypes = ioOperations.getDeliveryType();
+			ArrayList<DeliveryType> deliveryTypes = deliveryTypeIoOperation.getDeliveryType();
 			
 			assertEquals(foundDeliveryType.getDescription(), deliveryTypes.get(deliveryTypes.size()-1).getDescription());
 		} 
@@ -132,7 +137,6 @@ public class Tests
 	public void testIoUpdateDeliveryType() 
 	{
 		String code = "";
-		DeliveryTypeIoOperation ioOperations = new DeliveryTypeIoOperation();
 		boolean result = false;
 		
 		
@@ -141,7 +145,8 @@ public class Tests
 			code = _setupTestDeliveryType(false);
 			DeliveryType foundDeliveryType = (DeliveryType)jpa.find(DeliveryType.class, code); 
 			foundDeliveryType.setDescription("Update");
-			result = ioOperations.updateDeliveryType(foundDeliveryType);
+			result = deliveryTypeIoOperation.updateDeliveryType(foundDeliveryType);
+			jpa.flush();
 			DeliveryType updateDeliveryType = (DeliveryType)jpa.find(DeliveryType.class, code); 
 			
 			assertEquals(true, result);
@@ -159,14 +164,13 @@ public class Tests
 	@Test
 	public void testIoNewDeliveryType() 
 	{
-		DeliveryTypeIoOperation ioOperations = new DeliveryTypeIoOperation();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			DeliveryType deliveryType = testDeliveryType.setup(true);
-			result = ioOperations.newDeliveryType(deliveryType);
+			result = deliveryTypeIoOperation.newDeliveryType(deliveryType);
 			
 			assertEquals(true, result);
 			_checkDeliveryTypeIntoDb(deliveryType.getCode());
@@ -179,12 +183,34 @@ public class Tests
 		
 		return;
 	}
+	
+	@Test
+	public void testIoIsCodePresent()  
+	{
+		String code = "";
+		boolean result = false;
+		
 
+		try 
+		{		
+			code = _setupTestDeliveryType(false);
+			result = deliveryTypeIoOperation.isCodePresent(code);
+			
+			assertEquals(true, result);
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("==> Test Exception: " + e);		
+			assertEquals(true, false);
+		}
+		
+		return;
+	}
+	
 	@Test
 	public void testIoDeleteDeliveryType() 
 	{
 		String code = "";
-		DeliveryTypeIoOperation ioOperations = new DeliveryTypeIoOperation();
 		boolean result = false;
 		
 
@@ -192,34 +218,9 @@ public class Tests
 		{		
 			code = _setupTestDeliveryType(false);
 			DeliveryType foundDeliveryType = (DeliveryType)jpa.find(DeliveryType.class, code); 
-			result = ioOperations.deleteDeliveryType(foundDeliveryType);
-			
+			result = deliveryTypeIoOperation.deleteDeliveryType(foundDeliveryType);
 			assertEquals(true, result);
-			DeliveryType deletedDeliveryType = (DeliveryType)jpa.find(DeliveryType.class, code); 
-			assertEquals(null, deletedDeliveryType);
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("==> Test Exception: " + e);		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}
-
-	@Test
-	public void testIoIsCodePresent()  
-	{
-		String code = "";
-		DeliveryTypeIoOperation ioOperations = new DeliveryTypeIoOperation();
-		boolean result = false;
-		
-
-		try 
-		{		
-			code = _setupTestDeliveryType(false);
-			result = ioOperations.isCodePresent(code);
-			
+			result = deliveryTypeIoOperation.isCodePresent(code);
 			assertEquals(true, result);
 		} 
 		catch (Exception e) 
@@ -230,7 +231,7 @@ public class Tests
 		
 		return;
 	}
-		
+	
 	
 	private void _saveContext() throws OHException 
     {	
