@@ -110,7 +110,7 @@ public class OpdIoOperations {
 				query += " AND OPD_NEW_PAT = ?";
 				params.add(newPatient);
 			}
-			query += " AND OPD_DATE_VIS BETWEEN ? AND ?";
+			query += " AND OPD_DATE_VIS BETWEEN DATE(?) AND DATE(?)";
 			params.add(dateFrom);
 			params.add(dateTo);
 			query += " ORDER BY OPD_DATE_VIS";
