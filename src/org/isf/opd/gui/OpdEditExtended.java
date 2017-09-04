@@ -1593,7 +1593,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 							}
 							if (!recordUpdated || overWrite) {
 								// the user has confirmed he wants to overwrite the record
-								opdManager.updateOpd(opd);
+								result = opdManager.updateOpd(opd);
 							}
 
 							if (result) {
