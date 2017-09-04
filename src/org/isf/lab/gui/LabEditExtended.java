@@ -794,7 +794,7 @@ public class LabEditExtended extends JDialog {
 
 			ArrayList<LaboratoryRow> lRows;
 			try {
-				lRows = lRowManager.getLabRow(lab.getCode());
+				lRows = lRowManager.getLabRowByLabId(lab.getCode());
 			} catch (OHServiceException e) {
 				lRows = new ArrayList<LaboratoryRow>();
 				OHServiceExceptionUtil.showMessages(e);

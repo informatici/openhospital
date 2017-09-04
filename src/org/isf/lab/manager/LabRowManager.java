@@ -26,9 +26,9 @@ public class LabRowManager {
 	 * @return the list of {@link LaboratoryRow}s. It could be <code>empty</code>
 	 * @throws OHServiceException 
 	 */
-	public ArrayList<LaboratoryRow> getLabRow(Integer code) throws OHServiceException{
+	public ArrayList<LaboratoryRow> getLabRowByLabId(Integer code) throws OHServiceException{
 		try {
-			return ioOperations.getLabRow(code);
+			return ioOperations.getLabRowByLabId(code);
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));

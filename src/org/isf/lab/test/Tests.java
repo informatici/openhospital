@@ -183,7 +183,7 @@ public class Tests
 	}
 
 	@Test
-	public void testIoGetLabRow() 
+	public void testIoGetLabRowByLabId() 
 	{
 		int id = 0;
 		LabIoOperations ioOperations = new LabIoOperations();
@@ -193,9 +193,9 @@ public class Tests
 		{		
 			id = _setupTestLaboratoryRow(false);
 			LaboratoryRow foundLaboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, id); 
-			ArrayList<LaboratoryRow> laboratoryRows = ioOperations.getLabRow(id);
+			ArrayList<LaboratoryRow> laboratoryRows = ioOperations.getLabRowByLabId(foundLaboratoryRow.getLabId().getCode());
 			
-			assertEquals(foundLaboratoryRow.getCode(), laboratoryRows.get(0).getCode());
+			assertEquals(true, laboratoryRows.contains(foundLaboratoryRow));
 		} 
 		catch (Exception e) 
 		{
@@ -389,7 +389,7 @@ public class Tests
 			code = _setupTestLaboratoryRow(false);
 			LaboratoryRow foundLaboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, code); 
 			labRow.add("Update");
-			result = ioOperations.editLabSecondProcedure(foundLaboratoryRow.getLabId(), labRow);
+			result = ioOperations.updateLabSecondProcedure(foundLaboratoryRow.getLabId(), labRow);
 			LaboratoryRow updateLaboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, (code + 1)); 
 			
 			assertEquals(true, result);

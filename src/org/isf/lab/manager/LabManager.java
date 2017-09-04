@@ -209,7 +209,7 @@ public class LabManager {
 	 */
 	public boolean editLabSecondProcedure(Laboratory laboratory, ArrayList<String> labRow) throws OHServiceException {
 		try {
-			return ioOperations.editLabSecondProcedure(laboratory, labRow);
+			return ioOperations.updateLabSecondProcedure(laboratory, labRow);
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
@@ -247,7 +247,7 @@ public class LabManager {
 		for (LaboratoryForPrint lab : labs) {
 			String labResult = lab.getResult();
 			if (labResult.equalsIgnoreCase(MessageBundle.getMessage("angal.lab.multipleresults"))) {
-				rows = rowManager.getLabRow(lab.getCode());
+				rows = rowManager.getLabRowByLabId(lab.getCode());
 				
 				if (rows == null || rows.size() == 0) {
 					lab.setResult(MessageBundle.getMessage("angal.lab.allnegative"));

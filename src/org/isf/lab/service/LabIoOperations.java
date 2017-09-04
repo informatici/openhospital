@@ -39,18 +39,21 @@ public class LabIoOperations {
 	 * @return the list of {@link LaboratoryRow}s. It could be <code>empty</code>
 	 * @throws OHException
 	 */
-	public ArrayList<LaboratoryRow> getLabRow(
+	@SuppressWarnings("unchecked")
+	public ArrayList<LaboratoryRow> getLabRowByLabId(
 			Integer code) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<LaboratoryRow> laboratoryRows = new ArrayList<LaboratoryRow>();
-		LaboratoryRow laboratoryRow = null;
+		ArrayList<Object> params = new ArrayList<Object>();
 				
 		try {
 			jpa.beginTransaction();
-
-			laboratoryRow = (LaboratoryRow) jpa.find(LaboratoryRow.class, code);
-			laboratoryRows.add(laboratoryRow);
+			
+			jpa.createQuery("FROM LaboratoryRow lr WHERE lr.laboratory.code = ?", LaboratoryRow.class, true);
+			params.add(code);
+			jpa.setParameters(params, false);
+			laboratoryRows = (ArrayList<LaboratoryRow>) jpa.getList();
 
 			jpa.commitTransaction();
 		} catch (OHException e) {
@@ -60,7 +63,7 @@ public class LabIoOperations {
 		}
 		return laboratoryRows;
 	}
-
+	
 	/*
 	 * NO LONGER USED
 	 * 
@@ -407,9 +410,9 @@ public class LabIoOperations {
 	 * @return <code>true</code> if the exam has been updated with all its results, <code>false</code> otherwise
 	 * @throws OHException
 	 */
-	public boolean editLabSecondProcedure(
+	public boolean updateLabSecondProcedure(
 			Laboratory laboratory, 
-			ArrayList<String> labRow) throws OHException 
+			ArrayList<String> labRows) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = updateLabFirstProcedure(laboratory);
@@ -419,10 +422,12 @@ public class LabIoOperations {
 		{		
 			try {
 				jpa.beginTransaction();
-				LaboratoryRow laboratoryRow = new LaboratoryRow();
-				laboratoryRow.setLabId(laboratory);
-				laboratoryRow.setDescription(labRow.get(0));
-				jpa.persist(laboratoryRow);
+				for (String labRow : labRows) {
+					LaboratoryRow laboratoryRow = new LaboratoryRow();
+					laboratoryRow.setLabId(laboratory);
+					laboratoryRow.setDescription(labRow);
+					jpa.persist(laboratoryRow);
+				}
 				jpa.commitTransaction();
 			} catch (OHException e) {
 				// DbJpaUtil managed exception
