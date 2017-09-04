@@ -278,10 +278,9 @@
 			<systemPath>${project.basedir}/lib/v4l4j.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>com.lowagie</groupId>
-			<artifactId>itext</artifactId>
-			<version>4.2.2</version>
-			<type>pom</type>
+		    <groupId>com.lowagie</groupId>
+		    <artifactId>itext</artifactId>
+		    <version>1.02b</version>
 		</dependency>
 		<dependency>
 			<groupId>jasperreports</groupId>
