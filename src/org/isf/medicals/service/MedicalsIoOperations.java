@@ -191,9 +191,10 @@ public class MedicalsIoOperations {
 		try {
 			jpa.beginTransaction();
 
-			String query = "SELECT * FROM MEDICALDSR WHERE MDSR_MDSRT_ID_A = ? AND MDSR_DESC = ?";
+			String query = "SELECT * FROM MEDICALDSR WHERE MDSR_MDSRT_ID_A = ? AND MDSR_DESC = ? AND MDSR_ID <> ?";
 			params.add(medical.getType().getCode());
 			params.add(medical.getDescription());
+			params.add(medical.getCode());
 			jpa.createQuery(query, Medical.class, false);
 			jpa.setParameters(params, false);
 			Medical foundMedical = (Medical) jpa.getResult();

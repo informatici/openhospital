@@ -163,6 +163,7 @@ public class MedicalBrowsingManager {
 	/**
 	 * Updates the specified medical.
 	 * @param medical the medical to update.
+	 * @param abortIfLocked - if <code>false</code> the {@link Medical} will be overwritten when already updated from someone else.
 	 * @return <code>true</code> if update is successful, false if abortIfLocked == true and the record is locked. Otherwise throws an OHServiceException
 	 * @throws OHServiceException 
 	 */
