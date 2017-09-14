@@ -15,6 +15,7 @@ import org.isf.medicals.model.*;
 import org.isf.medicalstock.model.Movement;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -29,6 +30,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MedicalsIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * Retrieves the specified {@link Medical}.
@@ -39,7 +42,7 @@ public class MedicalsIoOperations {
 	public Medical getMedical(
 			int code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Medical medical = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -77,7 +80,7 @@ public class MedicalsIoOperations {
 	public ArrayList<Medical> getMedicals(
 			String description) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Medical> medicals = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -114,7 +117,7 @@ public class MedicalsIoOperations {
 			String type, 
 			boolean expiring) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Medical> medicals = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -170,7 +173,6 @@ public class MedicalsIoOperations {
 	 */
 	public boolean medicalExists(Medical medical) throws OHException {
 		
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = false;
 		ArrayList<Object> params = new ArrayList<Object>();
 
@@ -204,7 +206,6 @@ public class MedicalsIoOperations {
 	 * @throws OHException if an error occurs storing the medical.
 	 */
 	public boolean newMedical(Medical medical) throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 
 		jpa.beginTransaction();
@@ -223,7 +224,7 @@ public class MedicalsIoOperations {
 	public int getMedicalLock(
 			int code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Medical medical = null;
 		int lock = -1;
 				
@@ -248,7 +249,6 @@ public class MedicalsIoOperations {
 	 * @throws OHException if an error occurs during the update.
 	 */
 	public boolean updateMedical(Medical medical) throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 		
 		medical.setLock(new Integer(medical.getLock().intValue() + 1));
@@ -275,7 +275,6 @@ public class MedicalsIoOperations {
 	public boolean isMedicalReferencedInStockMovement(
 			int code) throws OHException 
  {
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = false;
 		ArrayList<Object> params = new ArrayList<Object>();
 
@@ -313,7 +312,7 @@ public class MedicalsIoOperations {
 	public boolean deleteMedical(
 			Medical medical) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		

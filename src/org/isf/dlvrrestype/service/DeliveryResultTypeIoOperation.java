@@ -6,6 +6,7 @@ import java.util.List;
 import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DeliveryResultTypeIoOperation {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * Returns all stored {@link DeliveryResultType}s.
@@ -22,7 +25,7 @@ public class DeliveryResultTypeIoOperation {
     @SuppressWarnings("unchecked")
 	public ArrayList<DeliveryResultType> getDeliveryResultType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<DeliveryResultType> deliveryresultTypes = null;
 				
 		
@@ -47,7 +50,7 @@ public class DeliveryResultTypeIoOperation {
 	public boolean updateDeliveryResultType(
 			DeliveryResultType deliveryResultType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -67,7 +70,7 @@ public class DeliveryResultTypeIoOperation {
 	public boolean newDeliveryResultType(
 			DeliveryResultType deliveryResultType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -87,7 +90,7 @@ public class DeliveryResultTypeIoOperation {
 	public boolean deleteDeliveryResultType(
 			DeliveryResultType deliveryResultType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -108,7 +111,7 @@ public class DeliveryResultTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		DeliveryResultType deliveryResultType;
 		boolean result = false;
 		

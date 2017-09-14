@@ -10,6 +10,7 @@ import org.isf.generaldata.ExaminationParameters;
 import org.isf.supplier.model.Supplier;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SupplierOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * 
@@ -35,7 +38,7 @@ public class SupplierOperations {
 	public boolean saveOrUpdate(
 			Supplier supplier) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -62,7 +65,7 @@ public class SupplierOperations {
 	public Supplier getByID(
 			int ID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		
 		
 		jpa.beginTransaction();	
@@ -80,7 +83,7 @@ public class SupplierOperations {
 	@SuppressWarnings("unchecked")
 	public List<Supplier> getAll() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Supplier> suppliers = null;
 			
 		
@@ -104,7 +107,7 @@ public class SupplierOperations {
 	@SuppressWarnings("unchecked")
 	public List<Supplier> getList() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Supplier> suppliers = null;
 			
 		

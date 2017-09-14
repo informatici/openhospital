@@ -18,10 +18,13 @@ import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ExamIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * Returns a list of {@link ExamRow}s that matches passed exam code and description
@@ -35,7 +38,7 @@ public class ExamIoOperations {
 			String aExamCode, 
 			String aDescription) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<ExamRow> examrows = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -82,7 +85,7 @@ public class ExamIoOperations {
 	public ArrayList<Exam> getExamsByDesc(
 			String description) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Exam> exams = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -113,7 +116,7 @@ public class ExamIoOperations {
     @SuppressWarnings("unchecked")
 	public ArrayList<ExamType> getExamType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<ExamType> examTypes = null;
 				
 		
@@ -139,7 +142,7 @@ public class ExamIoOperations {
 	public boolean newExam(
 			Exam exam) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -160,7 +163,7 @@ public class ExamIoOperations {
 	public boolean newExamRow(
 			ExamRow examRow) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -182,7 +185,7 @@ public class ExamIoOperations {
 			Exam exam, 
 			boolean check) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -214,7 +217,7 @@ public class ExamIoOperations {
 	public boolean deleteExam(
 			Exam exam) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;		
 		ArrayList<Object> params = new ArrayList<Object>();
         		
@@ -249,7 +252,7 @@ public class ExamIoOperations {
 	public boolean deleteExamRow(
 			ExamRow examRow) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -272,7 +275,7 @@ public class ExamIoOperations {
 	public boolean isKeyPresent(
 			Exam exam) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = false;
 		
 		

@@ -15,6 +15,7 @@ import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.isf.medicalstockward.model.MedicalWard;
 
@@ -27,6 +28,8 @@ import org.isf.medicalstockward.model.MedicalWard;
  */
 @Component
 public class MedicalStockIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 	
 	public enum MovementOrder {
 		DATE, WARD, PHARMACEUTICAL_TYPE, TYPE;
@@ -50,7 +53,7 @@ public class MedicalStockIoOperations {
 	public List<Integer> getMedicalsFromLot(
 			String lotCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 				
 		
@@ -241,7 +244,7 @@ public class MedicalStockIoOperations {
 			Movement movement, 
 			String lotCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 				
 		
@@ -262,7 +265,7 @@ public class MedicalStockIoOperations {
 	 */
 	protected String generateLotCode() throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Random random = new Random();
 		long candidateCode = 0;
 		Lot lot = null;
@@ -296,7 +299,7 @@ public class MedicalStockIoOperations {
 	public boolean lotExists(
 			String lotCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Lot lot = null;
 		boolean result = false;
 		
@@ -331,7 +334,7 @@ public class MedicalStockIoOperations {
 			String lotCode, 
 			Lot lot) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = false;
 
 		
@@ -407,7 +410,7 @@ public class MedicalStockIoOperations {
 			int medicalCode, 
 			double incrementQuantity) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 				
 		
@@ -432,7 +435,7 @@ public class MedicalStockIoOperations {
 			int medicalCode, 
 			double incrementQuantity) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 				
 		
@@ -460,7 +463,7 @@ public class MedicalStockIoOperations {
 			int medicalCode, 
 			int quantity) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 				
 		
@@ -520,7 +523,7 @@ public class MedicalStockIoOperations {
 			GregorianCalendar dateFrom, 
 			GregorianCalendar dateTo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		ArrayList<Movement> movements = null;
 				
@@ -591,7 +594,7 @@ public class MedicalStockIoOperations {
 			GregorianCalendar lotDueFrom, 
 			GregorianCalendar lotDueTo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		ArrayList<Movement> movements = null;
 		String query = "";
@@ -712,7 +715,7 @@ public class MedicalStockIoOperations {
 			String lotCode,
 			MovementOrder order) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		ArrayList<Movement> movements = null;
 		String query = "";
@@ -812,7 +815,7 @@ public class MedicalStockIoOperations {
 	public ArrayList<Lot> getLotsByMedical(
 			Medical medical) throws Exception 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Lot> lots = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -873,7 +876,6 @@ public class MedicalStockIoOperations {
 	 */
 	public GregorianCalendar getLastMovementDate() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		String query = null;
 		GregorianCalendar gc = new GregorianCalendar();
 				
@@ -909,7 +911,6 @@ public class MedicalStockIoOperations {
 	public boolean refNoExists(
 			String refNo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		String query = null;
 		boolean result = false;
 		ArrayList<Object> params = new ArrayList<Object>();
@@ -946,7 +947,7 @@ public class MedicalStockIoOperations {
 	public ArrayList<Movement> getMovementsByReference(
 			String refNo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		ArrayList<Movement> movements = null;
 		String query = "";

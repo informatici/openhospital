@@ -6,6 +6,7 @@ import java.util.List;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class WardIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * Retrieves the number of patients currently admitted in the {@link Ward}
@@ -28,7 +31,7 @@ public class WardIoOperations {
 	public int getCurrentOccupation(
 			Ward ward) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Ward> wards = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -55,7 +58,7 @@ public class WardIoOperations {
     @SuppressWarnings("unchecked")
 	public ArrayList<Ward> getWardsNoMaternity() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Ward> wards = null;
 				
 		
@@ -81,7 +84,7 @@ public class WardIoOperations {
 	public ArrayList<Ward> getWards(
 			String wardID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Ward> wards = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -117,7 +120,7 @@ public class WardIoOperations {
 	public boolean newWard(
 			Ward ward) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -138,7 +141,7 @@ public class WardIoOperations {
 	public boolean updateWard(
 			Ward ward) throws OHException
 	{				
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		jpa.beginTransaction();	
@@ -158,7 +161,7 @@ public class WardIoOperations {
 	public boolean deleteWard(
 			Ward ward) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		Ward wardToRemove = (Ward) jpa.find(Ward.class, ward.getCode());
@@ -179,7 +182,7 @@ public class WardIoOperations {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Ward ward;
 		boolean result = false;
 		
@@ -217,7 +220,7 @@ public class WardIoOperations {
 	public boolean isLockWard(
 			Ward ward) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean isLockWard = false;
 				
 

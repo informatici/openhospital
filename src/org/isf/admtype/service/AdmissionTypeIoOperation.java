@@ -6,6 +6,7 @@ import java.util.List;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class AdmissionTypeIoOperation 
 {
+	
+	@Autowired
+	private DbJpaUtil jpa;
 	/**
 	 * Returns all the available {@link AdmissionType}s.
 	 * @return a list of admission types.
@@ -22,7 +26,7 @@ public class AdmissionTypeIoOperation
     @SuppressWarnings("unchecked")
 	public ArrayList<AdmissionType> getAdmissionType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<AdmissionType> padmissiontype = null;
 				
 		
@@ -47,7 +51,7 @@ public class AdmissionTypeIoOperation
 	public boolean updateAdmissionType(
 			AdmissionType admissionType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -67,7 +71,7 @@ public class AdmissionTypeIoOperation
 	public boolean newAdmissionType(
 			AdmissionType admissionType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -87,7 +91,7 @@ public class AdmissionTypeIoOperation
 	public boolean deleteAdmissionType(
 			AdmissionType admissionType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		jpa.beginTransaction();	
@@ -107,7 +111,7 @@ public class AdmissionTypeIoOperation
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		AdmissionType admissionType;
 		boolean result = false;
 		

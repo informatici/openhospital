@@ -6,6 +6,7 @@ import java.util.List;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MedicalStockMovementTypeIoOperation {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * Retrieves all the stored {@link MovementType}.
@@ -23,7 +26,7 @@ public class MedicalStockMovementTypeIoOperation {
     @SuppressWarnings("unchecked")
 	public ArrayList<MovementType> getMedicaldsrstockmovType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<MovementType> medicaldsrstockmovtypes = null;
 				
 		
@@ -48,7 +51,7 @@ public class MedicalStockMovementTypeIoOperation {
 	public boolean updateMedicaldsrstockmovType(
 			MovementType medicaldsrstockmovType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -68,7 +71,7 @@ public class MedicalStockMovementTypeIoOperation {
 	public boolean newMedicaldsrstockmovType(
 			MovementType medicaldsrstockmovType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -88,7 +91,7 @@ public class MedicalStockMovementTypeIoOperation {
 	public boolean deleteMedicaldsrstockmovType(
 			MovementType medicaldsrstockmovType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -110,7 +113,7 @@ public class MedicalStockMovementTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		MovementType medicaldsrstockmovType;
 		boolean result = false;
 		

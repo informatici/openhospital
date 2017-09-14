@@ -6,10 +6,13 @@ import java.util.List;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PriceOthersIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * return the list of {@link PriceOthers}s in the DB
@@ -21,7 +24,7 @@ public class PriceOthersIoOperations {
 	public ArrayList<PricesOthers> getOthers() throws OHException 
 	{
 
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<PricesOthers> pricesOthers = null;
 				
 		
@@ -47,7 +50,7 @@ public class PriceOthersIoOperations {
 	public boolean newOthers(
 			PricesOthers other) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -68,7 +71,7 @@ public class PriceOthersIoOperations {
 	public boolean deleteOthers(
 			PricesOthers other) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -90,7 +93,7 @@ public class PriceOthersIoOperations {
 	public boolean updateOther(
 			PricesOthers other) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		

@@ -14,11 +14,14 @@ import org.isf.menu.model.UserMenuItem;
 import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MenuIoOperations 
 {
+	@Autowired
+	private DbJpaUtil jpa;
 	/**
 	 * returns the list of {@link User}s
 	 * 
@@ -28,7 +31,7 @@ public class MenuIoOperations
 	@SuppressWarnings("unchecked")
 	public ArrayList<User> getUser() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<User> users = null;
 				
 		
@@ -55,7 +58,7 @@ public class MenuIoOperations
 	public ArrayList<User> getUser(
 			String groupID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<User> users = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -83,7 +86,7 @@ public class MenuIoOperations
 	public String getUsrInfo(
 			String userName) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		User user = null;
 				
 		
@@ -105,7 +108,7 @@ public class MenuIoOperations
 	@SuppressWarnings("unchecked")
 	public ArrayList<UserGroup> getUserGroup() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<UserGroup> users = null;
 				
 		
@@ -131,7 +134,7 @@ public class MenuIoOperations
 	public boolean isUserNamePresent(
 			String userName) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean present = false;
 		
 		
@@ -159,7 +162,7 @@ public class MenuIoOperations
 			String groupName) throws OHException 
 	{
 
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean present = false;
 		
 		
@@ -186,7 +189,7 @@ public class MenuIoOperations
 	public boolean newUser(
 			User user) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -207,7 +210,6 @@ public class MenuIoOperations
 	public boolean updateUser(
 			User user) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		boolean result = true;
@@ -242,7 +244,6 @@ public class MenuIoOperations
 	public boolean updatePassword(
 			User user) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		boolean result = true;
@@ -277,7 +278,7 @@ public class MenuIoOperations
 	public boolean deleteUser(
 			User user) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -299,7 +300,7 @@ public class MenuIoOperations
 	public ArrayList<UserMenuItem> getMenu(
 			User aUser) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		ArrayList<UserMenuItem> menu = null;
 				
@@ -344,7 +345,7 @@ public class MenuIoOperations
 	public ArrayList<UserMenuItem> getGroupMenu(
 			UserGroup aGroup) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		ArrayList<UserMenuItem> menu = null;
 				
@@ -394,7 +395,6 @@ public class MenuIoOperations
 	public boolean _deleteGroupMenu(
 			UserGroup aGroup) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		boolean result = true;
@@ -423,7 +423,6 @@ public class MenuIoOperations
 			UserMenuItem item, 
 			boolean insert) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		boolean result = true;
@@ -459,7 +458,7 @@ public class MenuIoOperations
 	public boolean deleteGroup(
 			UserGroup aGroup) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
 		
@@ -492,7 +491,7 @@ public class MenuIoOperations
 	public boolean newUserGroup(
 			UserGroup aGroup) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -513,7 +512,6 @@ public class MenuIoOperations
 	public boolean updateUserGroup(
 			UserGroup aGroup) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		boolean result = true;

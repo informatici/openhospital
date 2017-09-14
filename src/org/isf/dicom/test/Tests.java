@@ -12,9 +12,11 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class Tests  
 {
+	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestDicom testFileDicom;
 	private static TestDicomContext testFileDicomContext;
@@ -23,7 +25,7 @@ public class Tests
 	@BeforeClass
     public static void setUpClass()  
     {
-    	jpa = new DbJpaUtil();
+    	
     	testFileDicom = new TestDicom();
     	testFileDicomContext = new TestDicomContext();
     	

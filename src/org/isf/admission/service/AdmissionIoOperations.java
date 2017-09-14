@@ -32,11 +32,14 @@ import org.isf.generaldata.GeneralData;
 import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AdmissionIoOperations 
 {
+	@Autowired
+	private DbJpaUtil jpa;
 	/**
 	 * Returns all patients with ward in which they are admitted.
 	 * @return the patient list with associated ward.
@@ -56,7 +59,7 @@ public class AdmissionIoOperations
 	public ArrayList<AdmittedPatient> getAdmittedPatients(
 			String searchTerms) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
 		ArrayList<Object> params = new ArrayList<Object>();
 		
@@ -153,7 +156,7 @@ public class AdmissionIoOperations
 	public Admission getCurrentAdmission(
 			Patient patient) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Admission admission = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -187,7 +190,7 @@ public class AdmissionIoOperations
 	public Admission getAdmission(
 			int id) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Admission admission = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -215,7 +218,7 @@ public class AdmissionIoOperations
 	public ArrayList<Admission> getAdmissions(
 			Patient patient) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Admission> padmission = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -243,7 +246,7 @@ public class AdmissionIoOperations
 	public boolean newAdmission(
 			Admission admission) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -277,7 +280,7 @@ public class AdmissionIoOperations
 	public boolean hasAdmissionModified(
 			Admission admission) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = false;
 				
 		
@@ -301,7 +304,7 @@ public class AdmissionIoOperations
 	public boolean updateAdmission(
 			Admission admission) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -320,7 +323,7 @@ public class AdmissionIoOperations
     @SuppressWarnings("unchecked")
 	public ArrayList<AdmissionType> getAdmissionType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<AdmissionType> padmissiontype = null;
 				
 		
@@ -344,7 +347,7 @@ public class AdmissionIoOperations
     @SuppressWarnings("unchecked")
 	public ArrayList<DischargeType> getDischargeType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<DischargeType> dischargeTypes = null;
 				
 		
@@ -371,7 +374,7 @@ public class AdmissionIoOperations
 			String wardId) throws OHException 
 	{
 		int next = 1;
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Admission admission = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 		
@@ -453,7 +456,7 @@ public class AdmissionIoOperations
 	public boolean setDeleted(
 			int admissionId) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -477,7 +480,7 @@ public class AdmissionIoOperations
 			String wardId) throws OHException 
 	{
     	List<Admission> admissionList;
-    	DbJpaUtil jpa = new DbJpaUtil(); 
+    	
 		ArrayList<Object> params = new ArrayList<Object>();
 		
 		String query = "SELECT * FROM ADMISSION WHERE ADM_IN = 1 AND ADM_WRD_ID_A = ? AND ADM_DELETED = 'N'";
@@ -512,7 +515,7 @@ public class AdmissionIoOperations
 	public boolean deletePatientPhoto(
 			int patientId) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		

@@ -8,10 +8,13 @@ import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.isf.visits.model.Visit;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class VisitsIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * returns the list of all {@link Visit}s related to a patID
@@ -24,7 +27,7 @@ public class VisitsIoOperations {
 	public ArrayList<Visit> getVisits(
 			Integer patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Visit> visitList = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
@@ -58,7 +61,7 @@ public class VisitsIoOperations {
 	public int newVisit(
 			Visit visit) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		
 		
 		jpa.beginTransaction();	
@@ -78,7 +81,7 @@ public class VisitsIoOperations {
 	public boolean deleteAllVisits(
 			int patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		

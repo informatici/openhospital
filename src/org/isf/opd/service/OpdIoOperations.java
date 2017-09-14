@@ -11,6 +11,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.opd.model.Opd;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /*----------------------------------------------------
@@ -33,6 +34,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OpdIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 	
 	/**
 	 * return all OPDs of today or one week ago
@@ -81,7 +84,7 @@ public class OpdIoOperations {
 			char sex,
 			char newPatient) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Opd> opds = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -136,7 +139,7 @@ public class OpdIoOperations {
 	public ArrayList<Opd> getOpdList(
 			int patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Opd> opds = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = "";
@@ -170,7 +173,7 @@ public class OpdIoOperations {
 	public boolean newOpd(
 			Opd opd) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		opd.setDate(new Date());
 		
@@ -190,7 +193,7 @@ public class OpdIoOperations {
 	public boolean hasOpdModified(
 			Opd opd) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Opd foundOpd;
 		boolean result = false;
 		
@@ -213,7 +216,7 @@ public class OpdIoOperations {
 	public boolean updateOpd(
 			Opd opd) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		opd.setLock(opd.getLock()+1);
@@ -235,7 +238,7 @@ public class OpdIoOperations {
 	public boolean deleteOpd(
 			Opd opd) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -256,7 +259,6 @@ public class OpdIoOperations {
 	public int getProgYear(
 			int year) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		Integer progYear = 0;
@@ -292,7 +294,7 @@ public class OpdIoOperations {
 	public Opd getLastOpd(
 			int patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = "";
 				

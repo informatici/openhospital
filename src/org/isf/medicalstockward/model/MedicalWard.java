@@ -9,6 +9,7 @@ import javax.persistence.Transient;
 import org.isf.medicals.model.Medical;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /*------------------------------------------
  * Medical Ward - model for the medical entity
@@ -22,6 +23,10 @@ import org.isf.utils.exception.OHException;
 @Table(name="MEDICALDSRWARD")
 public class MedicalWard implements Comparable<Object> 
 {	
+	@Autowired
+	@Transient
+	private DbJpaUtil jpa;
+	
 	@EmbeddedId 
 	MedicalWardId id;
 	
@@ -66,7 +71,7 @@ public class MedicalWard implements Comparable<Object>
 	}
 	
 	public Medical getMedical() throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 				
 		
 		jpa.beginTransaction();	
@@ -89,7 +94,7 @@ public class MedicalWard implements Comparable<Object>
 	}
 	
 	public int compareTo(Object anObject) {
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Medical medical;
 				
 		

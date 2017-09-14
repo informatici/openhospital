@@ -16,6 +16,7 @@ import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class MedicalStockWardIoOperations 
 {
+	@Autowired
+	private DbJpaUtil jpa;
 	/**
 	 * Get all {@link MovementWard}s with the specified criteria.
 	 * @param wardId the ward id.
@@ -39,7 +42,7 @@ public class MedicalStockWardIoOperations
 			GregorianCalendar dateTo) throws OHException 
 	{
 
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		ArrayList<MovementWard> movements = null;
 				
@@ -100,7 +103,6 @@ public class MedicalStockWardIoOperations
 			Ward ward, 
 			Medical medical) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		Double mainQuantity = 0.0;
 		Double dischargeQuantity = 0.0;
 		int currentQuantity = 0;
@@ -184,7 +186,7 @@ public class MedicalStockWardIoOperations
 	public boolean newMovementWard(
 			MovementWard movement) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -226,7 +228,7 @@ public class MedicalStockWardIoOperations
 	public boolean updateMovementWard(
 			MovementWard movement) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -246,7 +248,7 @@ public class MedicalStockWardIoOperations
 	public boolean deleteMovementWard(
 			MovementWard movement) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -332,7 +334,6 @@ public class MedicalStockWardIoOperations
 	public ArrayList<MedicalWard> getMedicalsWard(
 			char wardId) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		ArrayList<MedicalWard> medicalWards = new ArrayList<MedicalWard>();

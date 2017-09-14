@@ -23,6 +23,7 @@ import javax.persistence.NoResultException;
 import org.isf.disease.model.Disease;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,6 +34,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DiseaseIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * Gets a {@link Disease} with the specified code.
@@ -43,7 +46,7 @@ public class DiseaseIoOperations {
 	public Disease getDiseaseByCode(
 			int code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Disease disease = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -77,7 +80,7 @@ public class DiseaseIoOperations {
 			boolean ipdIn, 
 			boolean ipdOut) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Disease> diseases = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -157,7 +160,7 @@ public class DiseaseIoOperations {
 	public boolean newDisease(
 			Disease disease) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -177,7 +180,7 @@ public class DiseaseIoOperations {
 	public boolean updateDisease(
 			Disease disease) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -198,7 +201,7 @@ public class DiseaseIoOperations {
 	public boolean hasDiseaseModified(
 			Disease disease) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Disease foundDisease = (Disease)jpa.find(Disease.class, disease.getCode());
 		boolean result = false;
 		
@@ -220,7 +223,7 @@ public class DiseaseIoOperations {
 	public boolean deleteDisease(
 			Disease disease) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -243,7 +246,7 @@ public class DiseaseIoOperations {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Disease foundDisease = (Disease)jpa.find(Disease.class, code);
 		boolean present = false;
 
@@ -267,7 +270,6 @@ public class DiseaseIoOperations {
 			String description, 
 			String typeCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		Disease foundDisease = null;
 		boolean present = false;
 		ArrayList<Object> params = new ArrayList<Object>();

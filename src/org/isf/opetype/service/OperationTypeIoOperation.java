@@ -6,10 +6,13 @@ import java.util.List;
 import org.isf.opetype.model.OperationType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OperationTypeIoOperation {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * return the list of {@link OperationType}s
@@ -20,7 +23,7 @@ public class OperationTypeIoOperation {
     @SuppressWarnings("unchecked")
 	public ArrayList<OperationType> getOperationType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<OperationType> operationTypes = null;
 				
 		
@@ -46,7 +49,7 @@ public class OperationTypeIoOperation {
 	public boolean newOperationType(
 			OperationType operationType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -67,7 +70,7 @@ public class OperationTypeIoOperation {
 	public boolean updateOperationType(
 			OperationType operationType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -88,7 +91,7 @@ public class OperationTypeIoOperation {
 	public boolean deleteOperationType(
 			OperationType operationType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -109,7 +112,7 @@ public class OperationTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		OperationType operationType;
 		boolean result = false;
 		

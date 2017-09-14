@@ -6,6 +6,7 @@ import java.util.List;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.isf.vaccine.model.Vaccine;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class VaccineIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * returns the list of {@link Vaccine}s based on vaccine type code
@@ -33,7 +36,7 @@ public class VaccineIoOperations {
 	public ArrayList<Vaccine> getVaccine(
 			String vaccineTypeCode) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Vaccine> pvaccine = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 			
@@ -66,7 +69,7 @@ public class VaccineIoOperations {
 	public boolean newVaccine(
 			Vaccine vaccine) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		jpa.beginTransaction();	
@@ -87,7 +90,7 @@ public class VaccineIoOperations {
 			Vaccine vaccine) throws OHException 
 	{
 
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Vaccine foundVaccine = (Vaccine)jpa.find(Vaccine.class, vaccine.getCode());
 		boolean result = false;
 		
@@ -110,7 +113,7 @@ public class VaccineIoOperations {
 	public boolean updateVaccine(
 			Vaccine vaccine) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		vaccine.setLock(vaccine.getLock()+1);
@@ -132,7 +135,7 @@ public class VaccineIoOperations {
 	public boolean deleteVaccine(
 			Vaccine vaccine) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -154,7 +157,7 @@ public class VaccineIoOperations {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Vaccine vaccine;
 		boolean result = false;
 		

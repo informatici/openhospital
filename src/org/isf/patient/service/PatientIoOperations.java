@@ -31,11 +31,14 @@ import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PatientIoOperations 
 {
+	@Autowired
+	private DbJpaUtil jpa;
 	/**
 	 * method that returns the full list of Patients not logically deleted
 	 * 
@@ -45,7 +48,7 @@ public class PatientIoOperations
 	@SuppressWarnings("unchecked")
 	public ArrayList<Patient> getPatients() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Patient> pPatient = null;
 				
 		
@@ -71,7 +74,6 @@ public class PatientIoOperations
 	public ArrayList<Patient> getPatientsWithHeightAndWeight(
 			String regex) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Patient> pPatient = null;	
 		String[] words = _getPatientsWithHeightAndWeightRegex(regex);
 		String query = _getPatientsWithHeightAndWeightQuery(words);
@@ -148,7 +150,6 @@ public class PatientIoOperations
 	public Patient getPatient(
 			String name) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		Patient patient = null;	
 		
@@ -180,7 +181,6 @@ public class PatientIoOperations
 	public Patient getPatient(
 			Integer code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		Patient patient = null;	
 		
@@ -212,7 +212,6 @@ public class PatientIoOperations
 	public Patient getPatientAll(
 			Integer code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		Patient patient = null;	
 		
@@ -277,7 +276,6 @@ public class PatientIoOperations
 	public boolean newPatient(
 			Patient patient) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 		
 //		try {
@@ -347,7 +345,6 @@ public class PatientIoOperations
 			Patient patient, 
 			boolean check) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		int lock = 0;
@@ -381,7 +378,6 @@ public class PatientIoOperations
 			Integer code, 
 			boolean check) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		int lock = 0;
@@ -461,7 +457,6 @@ public class PatientIoOperations
 	public boolean deletePatient(
 			Patient patient) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		boolean result = true;
@@ -496,7 +491,6 @@ public class PatientIoOperations
 	public boolean isPatientPresent(
 			String name) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 		boolean result = false;
@@ -531,7 +525,6 @@ public class PatientIoOperations
 	 */
 	public int getNextPatientCode() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		String query = null;
 		Integer code = 0;
 				

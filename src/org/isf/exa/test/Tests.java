@@ -18,9 +18,11 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class Tests  
 {
+	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestExam testExam;
 	private static TestExamRow testExamRow;
@@ -33,7 +35,7 @@ public class Tests
 	@BeforeClass
     public static void setUpClass()  
     {
-    	jpa = new DbJpaUtil();
+    	
     	testExam = new TestExam();
     	testExamType = new TestExamType();
     	testExamRow = new TestExamRow();

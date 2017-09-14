@@ -10,6 +10,7 @@ import org.isf.hospital.model.Hospital;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class HospitalIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 	
 	/**
 	 * Reads from database hospital informations
@@ -31,7 +34,7 @@ public class HospitalIoOperations {
     @SuppressWarnings("unchecked")
 	public Hospital getHospital() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Hospital> hospitals = null;
 				
 		
@@ -81,7 +84,7 @@ public class HospitalIoOperations {
 	public boolean updateHospital(
 			Hospital hospital) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		hospital.setLock(hospital.getLock()+1);

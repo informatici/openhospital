@@ -6,10 +6,13 @@ import java.util.List;
 import org.isf.disctype.model.DischargeType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DischargeTypeIoOperation {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * method that returns all DischargeTypes in a list
@@ -20,7 +23,7 @@ public class DischargeTypeIoOperation {
     @SuppressWarnings("unchecked")
 	public ArrayList<DischargeType> getDischargeType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<DischargeType> dischargeTypes = null;
 				
 		
@@ -46,7 +49,7 @@ public class DischargeTypeIoOperation {
 	public boolean UpdateDischargeType(
 			DischargeType dischargeType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 
@@ -67,7 +70,7 @@ public class DischargeTypeIoOperation {
 	public boolean newDischargeType(
 			DischargeType dischargeType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 
 		
@@ -88,7 +91,7 @@ public class DischargeTypeIoOperation {
 	public boolean deleteDischargeType(
 			DischargeType dischargeType) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -110,7 +113,7 @@ public class DischargeTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		DischargeType dischargeType;
 		boolean result = false;
 		
