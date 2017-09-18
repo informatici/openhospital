@@ -6,6 +6,7 @@ import java.util.List;
 import org.isf.distype.model.DiseaseType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DiseaseTypeIoOperation {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * Returns all the stored {@link DiseaseType}s.
@@ -22,7 +25,7 @@ public class DiseaseTypeIoOperation {
     @SuppressWarnings("unchecked")
 	public ArrayList<DiseaseType> getDiseaseTypes() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<DiseaseType> diseaseTypes = null;
 				
 		
@@ -47,7 +50,7 @@ public class DiseaseTypeIoOperation {
 	public boolean updateDiseaseType(
 			DiseaseType diseaseType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -67,7 +70,7 @@ public class DiseaseTypeIoOperation {
 	public boolean newDiseaseType(
 			DiseaseType diseaseType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -87,7 +90,7 @@ public class DiseaseTypeIoOperation {
 	public boolean deleteDiseaseType(
 			DiseaseType diseaseType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -108,7 +111,7 @@ public class DiseaseTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		DiseaseType diseaseType;
 		boolean result = false;
 		

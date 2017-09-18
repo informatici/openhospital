@@ -14,10 +14,13 @@ import java.util.List;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.isf.vactype.model.VaccineType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class VacTypeIoOperation {
+	@Autowired
+	private DbJpaUtil jpa;
 	
 	/**
 	 * returns all {@link VaccineType}s from DB	
@@ -28,7 +31,7 @@ public class VacTypeIoOperation {
     @SuppressWarnings("unchecked")
 	public ArrayList<VaccineType> getVaccineType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<VaccineType> pvaccineType = null;
 				
 		
@@ -54,7 +57,7 @@ public class VacTypeIoOperation {
 	public boolean newVaccineType(
 			VaccineType vaccineType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -75,7 +78,7 @@ public class VacTypeIoOperation {
 	public boolean updateVaccineType(
 			VaccineType vaccineType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -96,7 +99,7 @@ public class VacTypeIoOperation {
 	public boolean deleteVaccineType(
 			VaccineType vaccineType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -119,7 +122,7 @@ public class VacTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		VaccineType vaccineType;
 		boolean result = false;
 		

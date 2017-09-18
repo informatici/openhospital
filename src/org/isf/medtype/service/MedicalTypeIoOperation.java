@@ -6,6 +6,7 @@ import java.util.List;
 import org.isf.medtype.model.MedicalType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MedicalTypeIoOperation {
+	@Autowired
+	private DbJpaUtil jpa;
 
 
 	/**
@@ -23,7 +26,7 @@ public class MedicalTypeIoOperation {
     @SuppressWarnings("unchecked")
 	public ArrayList<MedicalType> getMedicalTypes() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<MedicalType> medicaltypes = null;
 				
 		
@@ -48,7 +51,7 @@ public class MedicalTypeIoOperation {
 	public boolean updateMedicalType(
 			MedicalType medicalType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -68,7 +71,7 @@ public class MedicalTypeIoOperation {
 	public boolean newMedicalType(
 			MedicalType medicalType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -88,7 +91,7 @@ public class MedicalTypeIoOperation {
 	public boolean deleteMedicalType(
 			MedicalType medicalType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -109,7 +112,7 @@ public class MedicalTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		MedicalType medicalType;
 		boolean result = false;
 		

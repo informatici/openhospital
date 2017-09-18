@@ -13,6 +13,7 @@ import org.isf.generaldata.ExaminationParameters;
 import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ExaminationOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	public ExaminationOperations() {
 	}
@@ -57,7 +60,7 @@ public class ExaminationOperations {
 	public void saveOrUpdate(
 			PatientExamination patex) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		
 		
 		jpa.beginTransaction();
@@ -77,7 +80,7 @@ public class ExaminationOperations {
 	public PatientExamination getByID(
 			int ID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		
 		
 		jpa.beginTransaction();	
@@ -100,7 +103,7 @@ public class ExaminationOperations {
 			int patID, 
 			int number) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<PatientExamination> patExaminations = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 			
@@ -124,7 +127,7 @@ public class ExaminationOperations {
 	public ArrayList<PatientExamination> getByPatID(
 			int patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<PatientExamination> patExaminations = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 			

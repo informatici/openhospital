@@ -28,10 +28,13 @@ import org.isf.lab.model.LaboratoryRow;
 import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LabIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * Return a list of results ({@link LaboratoryRow}s) for passed lab entry.
@@ -42,7 +45,7 @@ public class LabIoOperations {
 	public ArrayList<LaboratoryRow> getLabRow(
 			Integer code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<LaboratoryRow> laboratoryRows = new ArrayList<LaboratoryRow>();
 		LaboratoryRow laboratoryRow = null;
 				
@@ -102,7 +105,7 @@ public class LabIoOperations {
 			GregorianCalendar dateFrom, 
 			GregorianCalendar dateTo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Laboratory> laboritories = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -139,7 +142,7 @@ public class LabIoOperations {
 	public ArrayList<Laboratory> getLaboratory(
 			Patient aPatient) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Laboratory> laboritories = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -208,7 +211,7 @@ public class LabIoOperations {
 			GregorianCalendar dateFrom, 
 			GregorianCalendar dateTo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Laboratory> laboritories = null;
 		ArrayList<LaboratoryForPrint> pLaboratory = new ArrayList<LaboratoryForPrint>();
 		ArrayList<Object> params = new ArrayList<Object>();
@@ -258,7 +261,7 @@ public class LabIoOperations {
 	private Integer newLaboratory(
 			Laboratory laboratory) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		
 		
 		jpa.beginTransaction();	
@@ -302,7 +305,7 @@ public class LabIoOperations {
 			ArrayList<String> labRow) throws OHException 
 	{
 		boolean result = false;
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		
 		
 		int newCode = newLaboratory(laboratory);
@@ -331,7 +334,7 @@ public class LabIoOperations {
 	private boolean updateLaboratory(
 			Laboratory laboratory) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -353,7 +356,7 @@ public class LabIoOperations {
 			Laboratory laboratory) throws OHException 
 	{
 		boolean result = updateLaboratory(laboratory);
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		
 
@@ -384,7 +387,7 @@ public class LabIoOperations {
 			Laboratory laboratory, 
 			ArrayList<String> labRow) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = updateLabFirstProcedure(laboratory);
 		
 		
@@ -412,7 +415,7 @@ public class LabIoOperations {
 			Laboratory aLaboratory) throws OHException 
 	{
 		ArrayList<Object> params = new ArrayList<Object>();
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		jpa.beginTransaction();

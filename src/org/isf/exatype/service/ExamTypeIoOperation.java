@@ -6,10 +6,13 @@ import java.util.List;
 import org.isf.exatype.model.ExamType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ExamTypeIoOperation {
+	@Autowired
+	private DbJpaUtil jpa;
 	
 	/**
 	 * Return the list of {@link ExamType}s.
@@ -19,7 +22,7 @@ public class ExamTypeIoOperation {
     @SuppressWarnings("unchecked")
 	public ArrayList<ExamType> getExamType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<ExamType> pexamtype = null;
 				
 		
@@ -44,7 +47,7 @@ public class ExamTypeIoOperation {
 	public boolean updateExamType(
 			ExamType examType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -64,7 +67,7 @@ public class ExamTypeIoOperation {
 	public boolean newExamType(
 			ExamType examType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -84,7 +87,7 @@ public class ExamTypeIoOperation {
 	public boolean deleteExamType(
 			ExamType examType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -106,7 +109,7 @@ public class ExamTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ExamType examType;
 		boolean result = false;
 		

@@ -7,10 +7,13 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TherapyIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * insert a new {@link TherapyRow} (therapy) in the DB
@@ -23,7 +26,7 @@ public class TherapyIoOperations {
 	public int newTherapy(
 			TherapyRow thRow) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		
 		
 		jpa.beginTransaction();	
@@ -46,7 +49,7 @@ public class TherapyIoOperations {
 	public ArrayList<TherapyRow> getTherapyRows(
 			int patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<TherapyRow> therapyList = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
@@ -80,7 +83,7 @@ public class TherapyIoOperations {
 	public boolean deleteAllTherapies(
 			int patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		

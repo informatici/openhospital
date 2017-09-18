@@ -6,10 +6,13 @@ import java.util.List;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PregnantTreatmentTypeIoOperation {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * return the list of {@link PregnantTreatmentType}s
@@ -20,7 +23,7 @@ public class PregnantTreatmentTypeIoOperation {
     @SuppressWarnings("unchecked")
 	public ArrayList<PregnantTreatmentType> getPregnantTreatmentType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<PregnantTreatmentType> pregnantTreatmentTypes = null;
 				
 		
@@ -46,7 +49,7 @@ public class PregnantTreatmentTypeIoOperation {
 	public boolean newPregnantTreatmentType(
 			PregnantTreatmentType pregnantTreatmentType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -67,7 +70,7 @@ public class PregnantTreatmentTypeIoOperation {
 	public boolean updatePregnantTreatmentType(
 			PregnantTreatmentType pregnantTreatmentType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -88,7 +91,7 @@ public class PregnantTreatmentTypeIoOperation {
 	public boolean deletePregnantTreatmentType(
 			PregnantTreatmentType pregnantTreatmentType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -110,7 +113,7 @@ public class PregnantTreatmentTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		PregnantTreatmentType pregnantTreatmentTyp;
 		boolean result = false;
 		

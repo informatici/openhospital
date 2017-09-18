@@ -17,6 +17,7 @@ import org.isf.operation.model.Operation;
 import org.isf.opetype.model.OperationType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,6 +28,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class OperationIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 	
 	/**
 	 * return the {@link Operation}s whose type matches specified string
@@ -39,7 +42,7 @@ public class OperationIoOperations {
 	public ArrayList<Operation> getOperation(
 			String typeDescription) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Operation> operations = null;
 		String query = null;
 		ArrayList<Object> params = new ArrayList<Object>();
@@ -78,7 +81,7 @@ public class OperationIoOperations {
 	public boolean newOperation(
 			Operation operation) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -98,7 +101,7 @@ public class OperationIoOperations {
 	public boolean hasOperationModified(
 			Operation operation) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Operation foundOperation = (Operation)jpa.find(Operation.class, operation.getCode());
 		boolean result = false;
 		
@@ -121,7 +124,7 @@ public class OperationIoOperations {
 	public boolean updateOperation(
 			Operation operation) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -142,7 +145,7 @@ public class OperationIoOperations {
 	public boolean deleteOperation(
 			Operation operation) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -163,7 +166,7 @@ public class OperationIoOperations {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Operation foundOperation = (Operation)jpa.find(Operation.class, code);
 		boolean present = false;
 
@@ -188,7 +191,6 @@ public class OperationIoOperations {
 			String description, 
 			String typeCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		Operation foundOperation = null;
 		boolean present = false;
 		ArrayList<Object> params = new ArrayList<Object>();

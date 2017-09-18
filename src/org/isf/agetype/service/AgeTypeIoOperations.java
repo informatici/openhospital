@@ -6,6 +6,7 @@ import java.util.List;
 import org.isf.agetype.model.AgeType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AgeTypeIoOperations 
 {
+	@Autowired
+	private DbJpaUtil jpa;
 	/**
 	 * Returns all available age types.
 	 * @return a list of {@link AgeType}.
@@ -23,7 +26,7 @@ public class AgeTypeIoOperations
     @SuppressWarnings("unchecked")
 	public ArrayList<AgeType> getAgeType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<AgeType> padmissiontype = null;
 				
 		
@@ -48,7 +51,7 @@ public class AgeTypeIoOperations
 	public boolean updateAgeType(
 			ArrayList<AgeType> ageTypes) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -71,7 +74,7 @@ public class AgeTypeIoOperations
 	public AgeType getAgeTypeByCode(
 			int index) throws OHException 
 	{	
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		String code = "";
 		AgeType ageType = null;
 				

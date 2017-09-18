@@ -10,6 +10,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List; 
@@ -18,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 public class Tests 
 {	
+	@Autowired
 	private static DbJpaUtil jpa;	
 	private static TestPatient testPatient;
 	private static TestPatientContext testPatientContext;
@@ -26,7 +28,7 @@ public class Tests
     @BeforeClass
     public static void setUpClass()  
     {
-    	jpa = new DbJpaUtil();
+    	
     	testPatient = new TestPatient();
     	testPatientContext = new TestPatientContext();
 

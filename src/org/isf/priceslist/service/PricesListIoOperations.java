@@ -8,10 +8,13 @@ import org.isf.priceslist.model.Price;
 import org.isf.priceslist.model.PriceList;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PricesListIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * return the list of {@link List}s in the DB
@@ -21,7 +24,7 @@ public class PricesListIoOperations {
 	 */
 	@SuppressWarnings("unchecked")
 	public ArrayList<PriceList> getLists() throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<PriceList> pList = null;
 				
 		
@@ -44,7 +47,7 @@ public class PricesListIoOperations {
 	 */
 	@SuppressWarnings("unchecked")
 	public ArrayList<Price> getPrices() throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Price> pPrice = null;
 				
 		
@@ -70,7 +73,6 @@ public class PricesListIoOperations {
 	public boolean updatePrices(
 			PriceList list, 
 			ArrayList<Price> prices) throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 		
 		
@@ -160,7 +162,6 @@ public class PricesListIoOperations {
 	 */
 	public boolean newList(
 			PriceList list) throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
@@ -206,7 +207,6 @@ public class PricesListIoOperations {
 	 */
 	public boolean updateList(
 			PriceList list) throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
@@ -257,7 +257,6 @@ public class PricesListIoOperations {
 	 */
 	public boolean deleteList(
 			PriceList list) throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 
 		
@@ -307,7 +306,6 @@ public class PricesListIoOperations {
 			double factor, 
 			double step) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = false;
 		
 				

@@ -9,6 +9,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.dicom.model.FileDicom;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,6 +29,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DicomIoOperations 
 {
+	@Autowired
+	private DbJpaUtil jpa;
 	/**
 	 * Load a list of idfile for series
 	 * 
@@ -41,7 +44,7 @@ public class DicomIoOperations
 			int idPaziente, 
 			String numeroSerie) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 				
 		
@@ -79,7 +82,7 @@ public class DicomIoOperations
 			int idPaziente, 
 			String numeroSerie) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
@@ -134,7 +137,7 @@ public class DicomIoOperations
 			String numeroSerie) throws OHException 
 	{
 
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		FileDicom dicom = null;
 				
 		
@@ -159,7 +162,7 @@ public class DicomIoOperations
 			int idPaziente) throws OHException 
 	{
 
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 				
 		
@@ -197,7 +200,7 @@ public class DicomIoOperations
 	public boolean exist(
 			FileDicom dicom) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
 				
 		
@@ -261,7 +264,7 @@ public class DicomIoOperations
 	public void saveFile(
 			FileDicom dicom) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		
 		
 		jpa.beginTransaction();	

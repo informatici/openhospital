@@ -17,10 +17,13 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.patvac.model.PatientVaccine;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PatVacIoOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * returns all {@link PatientVaccine}s of today or one week ago
@@ -69,7 +72,7 @@ public class PatVacIoOperations {
 			int ageTo) throws OHException 
 	{
 		
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<PatientVaccine> patientVaccines = null;
 		StringBuilder query = new StringBuilder();
 		ArrayList<Object> params = new ArrayList<Object>();
@@ -137,7 +140,7 @@ public class PatVacIoOperations {
 			PatientVaccine patVac) throws OHException 
 	{
 
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -158,7 +161,7 @@ public class PatVacIoOperations {
 	public boolean updatePatientVaccine(
 			PatientVaccine patVac) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -179,7 +182,7 @@ public class PatVacIoOperations {
 	public boolean deletePatientVaccine(
 			PatientVaccine patVac) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -201,7 +204,6 @@ public class PatVacIoOperations {
 	public int getProgYear(
 			int year) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		StringBuilder query = new StringBuilder();
 		Integer progYear = 0;

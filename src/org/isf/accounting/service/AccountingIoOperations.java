@@ -11,13 +11,18 @@ import org.isf.accounting.model.BillPayments;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Persistence class for Accounting module.
  */
 @Component
 public class AccountingIoOperations {
+	
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * Returns all the pending {@link Bill}s for the specified patient.
@@ -29,7 +34,7 @@ public class AccountingIoOperations {
 	public ArrayList<Bill> getPendingBills(
 			int patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Bill> pendingBills = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -65,7 +70,7 @@ public class AccountingIoOperations {
     @SuppressWarnings("unchecked")
 	public ArrayList<Bill> getBills() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Bill> bills = null;
 				
 		
@@ -90,7 +95,7 @@ public class AccountingIoOperations {
 	public Bill getBill(
 			int billID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Bill bill = null;
 				
 		
@@ -111,7 +116,7 @@ public class AccountingIoOperations {
     @SuppressWarnings("unchecked")
 	public ArrayList<String> getUsers() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<String> userIds = null;
 				
 		
@@ -138,7 +143,7 @@ public class AccountingIoOperations {
 	public ArrayList<BillItems> getItems(
 			int billID) throws OHException 
 	{		
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<BillItems> pendingBillItems = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -177,7 +182,7 @@ public class AccountingIoOperations {
 			GregorianCalendar dateFrom, 
 			GregorianCalendar dateTo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<BillPayments> payments = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -210,7 +215,7 @@ public class AccountingIoOperations {
 	public ArrayList<BillPayments> getPayments(
 			int billID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<BillPayments> payments = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -266,7 +271,7 @@ public class AccountingIoOperations {
 	public int newBill(
 			Bill newBill) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		
 		
 		jpa.beginTransaction();	
@@ -287,7 +292,6 @@ public class AccountingIoOperations {
 			Bill bill,
 			ArrayList<BillItems> billItems) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 		
 		
@@ -383,7 +387,6 @@ public class AccountingIoOperations {
 			Bill bill, 
 			ArrayList<BillPayments> payItems) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 		
 		
@@ -475,7 +478,6 @@ public class AccountingIoOperations {
 	public boolean updateBill(
 			Bill updateBill) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
@@ -543,7 +545,6 @@ public class AccountingIoOperations {
 	public boolean deleteBill(
 			Bill deleteBill) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
@@ -578,7 +579,7 @@ public class AccountingIoOperations {
 			GregorianCalendar dateFrom, 
 			GregorianCalendar dateTo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Bill> bills = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -608,7 +609,7 @@ public class AccountingIoOperations {
 	public ArrayList<Bill> getBills(
 			ArrayList<BillPayments> payments) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Bill> bills = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -650,7 +651,7 @@ public class AccountingIoOperations {
 	public ArrayList<BillPayments> getPayments(
 			ArrayList<Bill> bills) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<BillPayments> payments = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				

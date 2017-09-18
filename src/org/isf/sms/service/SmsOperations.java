@@ -12,6 +12,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.sms.model.Sms;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SmsOperations {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * 
@@ -35,7 +38,7 @@ public class SmsOperations {
 	public boolean saveOrUpdate(
 			Sms sms) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -62,7 +65,7 @@ public class SmsOperations {
 	public Sms getByID(
 			int ID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		
 		
 		jpa.beginTransaction();	
@@ -82,7 +85,7 @@ public class SmsOperations {
 			Date dateFrom, 
 			Date dateTo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Sms> sms = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -114,7 +117,7 @@ public class SmsOperations {
 			Date dateFrom, 
 			Date dateTo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Sms> sms = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -145,7 +148,7 @@ public class SmsOperations {
 	@SuppressWarnings("unchecked")
 	public List<Sms> getList() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Sms> sms = null;
 				
 		
@@ -171,7 +174,7 @@ public class SmsOperations {
 	public void delete(
 			Sms sms) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		
 		
 		jpa.beginTransaction();
@@ -192,7 +195,7 @@ public class SmsOperations {
 			String module, 
 			String moduleID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Object> params = new ArrayList<Object>();
         		
 		

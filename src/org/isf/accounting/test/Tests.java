@@ -23,10 +23,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 public class Tests  
 {
-	private static DbJpaUtil jpa;
+	@Autowired
+	private DbJpaUtil jpa;
 	private static TestBill testBill;
 	private static TestBillItems testBillItems;
 	private static TestBillPayments testBillPayments;
@@ -42,7 +47,7 @@ public class Tests
 	@BeforeClass
     public static void setUpClass()  
     {
-    	jpa = new DbJpaUtil();
+    	
     	testBill = new TestBill();
     	testBillItems = new TestBillItems();
     	testBillPayments = new TestBillPayments();
@@ -81,7 +86,7 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
+    	//jpa.destroy();
     	testBill = null;
     	testBillItems = null;
     	testBillPayments = null;

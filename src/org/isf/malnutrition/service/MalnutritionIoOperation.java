@@ -7,6 +7,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.malnutrition.model.Malnutrition;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MalnutritionIoOperation {
+	@Autowired
+	private DbJpaUtil jpa;
 
 	/**
 	 * Returns all the available {@link Malnutrition} for the specified admission id.
@@ -25,7 +28,7 @@ public class MalnutritionIoOperation {
 	public ArrayList<Malnutrition> getMalnutritions(
 			String admissionId) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Malnutrition> malnutritions = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
@@ -53,7 +56,7 @@ public class MalnutritionIoOperation {
 	public boolean newMalnutrition(
 			Malnutrition malnutrition) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -73,7 +76,7 @@ public class MalnutritionIoOperation {
 	public int getMalnutritionLock(
 			int malnutritionCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		Malnutrition malnutrition = null;
 		int lock = -1;
 				
@@ -100,7 +103,7 @@ public class MalnutritionIoOperation {
 	public boolean updateMalnutrition(
 			Malnutrition malnutrition) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
@@ -121,7 +124,7 @@ public class MalnutritionIoOperation {
 	public Malnutrition getLastMalnutrition(
 			int patientID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		ArrayList<Malnutrition> malnutritions = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 		Malnutrition theMalnutrition = null;
@@ -156,7 +159,7 @@ public class MalnutritionIoOperation {
 	public boolean deleteMalnutrition(
 			Malnutrition malnutrition) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		
 		boolean result = true;
 		
 		
