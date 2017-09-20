@@ -1,4 +1,4 @@
-package org.isf.examination.repository;
+package org.isf.examination.service;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package org.isf.medicals.repository;
+package org.isf.medicals.service;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package org.isf.admtype.repository;
+package org.isf.admtype.service;
 
 import java.util.List;
 

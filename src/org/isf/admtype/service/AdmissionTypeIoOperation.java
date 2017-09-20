@@ -3,15 +3,16 @@ package org.isf.admtype.service;
 import java.util.ArrayList;
 
 import org.isf.admtype.model.AdmissionType;
-import org.isf.admtype.repository.AdmissionTypeIoOperationRepository;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Persistence class for admtype module.
  */
 @Component
+@Transactional
 public class AdmissionTypeIoOperation 
 {
 
@@ -40,7 +41,8 @@ public class AdmissionTypeIoOperation
 		boolean result = true;
 	
 		
-		repository.save(admissionType);
+		AdmissionType savedAdmissionType = repository.save(admissionType);
+		result = (savedAdmissionType != null);
 		
 		return result;
 	}
@@ -57,7 +59,8 @@ public class AdmissionTypeIoOperation
 		boolean result = true;
 	
 		
-		repository.save(admissionType);
+		AdmissionType savedAdmissionType = repository.save(admissionType);
+		result = (savedAdmissionType != null);
 		
 		return result;
 	}

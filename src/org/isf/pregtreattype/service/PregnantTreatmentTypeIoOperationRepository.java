@@ -1,4 +1,4 @@
-package org.isf.pregtreattype.repository;
+package org.isf.pregtreattype.service;
 
 import java.util.List;
 

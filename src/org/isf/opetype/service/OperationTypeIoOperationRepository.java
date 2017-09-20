@@ -1,4 +1,4 @@
-package org.isf.opetype.repository;
+package org.isf.opetype.service;
 
 import java.util.List;
 

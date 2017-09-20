@@ -1,16 +1,18 @@
 package org.isf.medtype.service;
 
 import java.util.ArrayList;
+
 import org.isf.medtype.model.MedicalType;
-import org.isf.medtype.repository.MedicalTypeIoOperationRepository;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Persistence class for the medical type module.
  */
 @Component
+@Transactional
 public class MedicalTypeIoOperation {
 
 	@Autowired
@@ -37,8 +39,9 @@ public class MedicalTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(medicalType);
+
+		MedicalType savedMedicalType = repository.save(medicalType);
+		result = (savedMedicalType != null);
 		
 		return result;
 	}
@@ -54,8 +57,9 @@ public class MedicalTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(medicalType);
+
+		MedicalType savedMedicalType = repository.save(medicalType);
+		result = (savedMedicalType != null);
 		
 		return result;
 	}

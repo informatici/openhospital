@@ -1,16 +1,18 @@
 package org.isf.distype.service;
 
 import java.util.ArrayList;
+
 import org.isf.distype.model.DiseaseType;
-import org.isf.distype.repository.DiseaseTypeIoOperationRepository;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Persistence class for the DisType module.
  */
 @Component
+@Transactional
 public class DiseaseTypeIoOperation {
 
 	@Autowired
@@ -37,8 +39,9 @@ public class DiseaseTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(diseaseType);
+
+		DiseaseType savedDiseaseType = repository.save(diseaseType);
+		result = (savedDiseaseType != null);
 		
 		return result;
 	}
@@ -55,7 +58,8 @@ public class DiseaseTypeIoOperation {
 		boolean result = true;
 	
 		
-		repository.save(diseaseType);
+		DiseaseType savedDiseaseType = repository.save(diseaseType);
+		result = (savedDiseaseType != null);
 		
 		return result;
 	}

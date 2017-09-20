@@ -1,22 +1,20 @@
 package org.isf.medstockmovtype.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import org.isf.exatype.model.ExamType;
-import org.isf.exatype.repository.ExamTypeIoOperationRepository;
 import org.isf.medstockmovtype.model.MovementType;
-import org.isf.medstockmovtype.repository.MedicalStockMovementTypeIoOperationRepository;
-import org.isf.utils.db.DbJpaUtil;
+
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Persistence class for the medstockmovtype module.
  *
  */
 @Component
+@Transactional
 public class MedicalStockMovementTypeIoOperation {
 
 	@Autowired
@@ -27,7 +25,6 @@ public class MedicalStockMovementTypeIoOperation {
 	 * @return all the stored {@link MovementType}s.
 	 * @throws OHException if an error occurs retrieving the medical stock movement types.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<MovementType> getMedicaldsrstockmovType() throws OHException 
 	{
 		return new ArrayList<MovementType>(repository.findAllByOrderByDescriptionAsc()); 	
@@ -44,8 +41,9 @@ public class MedicalStockMovementTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(medicaldsrstockmovType);
+
+		MovementType savedMedicaldsrstockmovType = repository.save(medicaldsrstockmovType);
+		result = (savedMedicaldsrstockmovType != null);
 		
 		return result;
 	}
@@ -61,8 +59,9 @@ public class MedicalStockMovementTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(medicaldsrstockmovType);
+
+		MovementType savedMedicaldsrstockmovType = repository.save(medicaldsrstockmovType);
+		result = (savedMedicaldsrstockmovType != null);
 		
 		return result;
 	}

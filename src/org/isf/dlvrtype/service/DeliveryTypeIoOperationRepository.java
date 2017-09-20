@@ -1,4 +1,4 @@
-package org.isf.dlvrtype.repository;
+package org.isf.dlvrtype.service;
 
 import org.isf.dlvrtype.model.DeliveryType;
 import org.springframework.data.jpa.repository.JpaRepository;

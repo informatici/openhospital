@@ -3,12 +3,13 @@ package org.isf.disctype.service;
 import java.util.ArrayList;
 
 import org.isf.disctype.model.DischargeType;
-import org.isf.disctype.repository.DischargeTypeIoOperationRepository;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class DischargeTypeIoOperation {
 
 	@Autowired
@@ -38,7 +39,8 @@ public class DischargeTypeIoOperation {
 		boolean result = true;
 	
 		
-		repository.save(dischargeType);
+		DischargeType savedDischargeType = repository.save(dischargeType);
+		result = (savedDischargeType != null);
 		
 		return result;
 	}
@@ -56,7 +58,8 @@ public class DischargeTypeIoOperation {
 		boolean result = true;
 	
 		
-		repository.save(dischargeType);
+		DischargeType savedDischargeType = repository.save(dischargeType);
+		result = (savedDischargeType != null);
 		
 		return result;
 	}

@@ -6,13 +6,14 @@
 package org.isf.medicals.service;
 
 import java.util.ArrayList;
+
 import org.isf.medicals.model.*;
-import org.isf.medicals.repository.MedicalsIoOperationRepository;
 import org.isf.medicalstock.model.Movement;
-import org.isf.medicalstock.repository.MovementIoOperationRepository;
+import org.isf.medicalstock.service.MedicalStockIoOperationRepository;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -25,12 +26,13 @@ import org.springframework.stereotype.Component;
  * 			- column pieces per packet
  */
 @Component
+@Transactional
 public class MedicalsIoOperations 
 {
 	@Autowired
 	private MedicalsIoOperationRepository repository;
 	@Autowired	
-	private MovementIoOperationRepository mRovepository;
+	private MedicalStockIoOperationRepository mRovepository;
 	
 	/**
 	 * Retrieves the specified {@link Medical}.
@@ -179,8 +181,9 @@ public class MedicalsIoOperations
 	{
 		boolean result = true;
 		
-		
-		repository.save(medical);
+
+		Medical savedMedical = repository.save(medical);
+		result = (savedMedical != null);
 
 		return result;
 	}
@@ -216,8 +219,9 @@ public class MedicalsIoOperations
 	{
 		boolean result = true;
 		
-		
-		repository.save(medical);
+
+		Medical savedMedical = repository.save(medical);
+		result = (savedMedical != null);
 
 		return result;
 	}

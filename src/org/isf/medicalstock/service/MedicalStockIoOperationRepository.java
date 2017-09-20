@@ -1,4 +1,4 @@
-package org.isf.medicalstock.repository;
+package org.isf.medicalstock.service;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
-public interface MovementIoOperationRepository extends JpaRepository<Movement, Integer> {    
+public interface MedicalStockIoOperationRepository extends JpaRepository<Movement, Integer> {    
     @Query(value = "select * from MEDICALDSRSTOCKMOV where MMV_MDSR_ID = :code", nativeQuery= true)
     public Movement findOneStockWhereCode(@Param("code") Integer code);
     

@@ -1,4 +1,4 @@
-package org.isf.vactype.repository;
+package org.isf.vactype.service;
 
 import java.util.List;
 

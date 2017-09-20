@@ -1,13 +1,15 @@
 package org.isf.pregtreattype.service;
 
 import java.util.ArrayList;
+
 import org.isf.pregtreattype.model.PregnantTreatmentType;
-import org.isf.pregtreattype.repository.PregnantTreatmentTypeIoOperationRepository;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class PregnantTreatmentTypeIoOperation {
 
 	@Autowired
@@ -37,8 +39,9 @@ public class PregnantTreatmentTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(pregnantTreatmentType);
+
+		PregnantTreatmentType savedPregnantTreatmentType = repository.save(pregnantTreatmentType);
+		result = (savedPregnantTreatmentType != null);
 		
 		return result;
 	}
@@ -55,8 +58,9 @@ public class PregnantTreatmentTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(pregnantTreatmentType);
+
+		PregnantTreatmentType savedPregnantTreatmentType = repository.save(pregnantTreatmentType);
+		result = (savedPregnantTreatmentType != null);
 		
 		return result;
 	}

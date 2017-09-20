@@ -1,13 +1,15 @@
 package org.isf.opetype.service;
 
 import java.util.ArrayList;
+
 import org.isf.opetype.model.OperationType;
-import org.isf.opetype.repository.OperationTypeIoOperationRepository;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class OperationTypeIoOperation {
 
 	@Autowired
@@ -36,8 +38,9 @@ public class OperationTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(operationType);
+
+		OperationType savedOperationType = repository.save(operationType);
+		result = (savedOperationType != null);
 		
 		return result;
 	}
@@ -54,8 +57,9 @@ public class OperationTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(operationType);
+
+		OperationType savedOperationType = repository.save(operationType);
+		result = (savedOperationType != null);
 		
 		return result;
 	}

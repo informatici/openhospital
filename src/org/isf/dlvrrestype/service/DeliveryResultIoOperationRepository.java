@@ -1,4 +1,4 @@
-package org.isf.dlvrrestype.repository;
+package org.isf.dlvrrestype.service;
 
 import java.util.List;
 

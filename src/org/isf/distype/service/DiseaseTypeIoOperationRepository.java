@@ -1,4 +1,4 @@
-package org.isf.distype.repository;
+package org.isf.distype.service;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package org.isf.medtype.repository;
+package org.isf.medtype.service;
 
 import java.util.List;
 

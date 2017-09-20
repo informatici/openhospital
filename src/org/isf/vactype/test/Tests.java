@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
-import org.isf.exatype.service.ExamTypeIoOperation;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.isf.vactype.model.VaccineType;
@@ -17,11 +16,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+
 @RunWith(SpringRunner.class)
-@SpringApplicationConfiguration(org.isf.utils.db.SpringDataConfiguration.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;

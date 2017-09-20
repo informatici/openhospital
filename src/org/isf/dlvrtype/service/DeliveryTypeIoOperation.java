@@ -3,16 +3,17 @@ package org.isf.dlvrtype.service;
 import java.util.ArrayList;
 
 import org.isf.dlvrtype.model.DeliveryType;
-import org.isf.dlvrtype.repository.DeliveryTypeIoOperationRepository;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
  * The persistence class for the DeliveryType module.
  */
 @Component
+@Transactional
 public class DeliveryTypeIoOperation {
 	
 	@Autowired
@@ -39,8 +40,9 @@ public class DeliveryTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(deliveryType);
+
+		DeliveryType savedDeliveryType = repository.save(deliveryType);
+		result = (savedDeliveryType != null);
 		
 		return result;
 	}
@@ -56,8 +58,9 @@ public class DeliveryTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(deliveryType);
+
+		DeliveryType savedDeliveryType = repository.save(deliveryType);
+		result = (savedDeliveryType != null);
 		
 		return result;
 	}

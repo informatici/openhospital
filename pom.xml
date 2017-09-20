@@ -524,6 +524,11 @@
 			<version>4.3.10.RELEASE</version>
 			<scope>test</scope>
 		</dependency>  
+		<dependency>
+ 			<groupId>org.springframework</groupId>
+ 		<artifactId>spring-tx</artifactId>
+ 			<version>4.3.10.RELEASE</version>
+ 		</dependency>
     	<dependency>
         	<groupId>org.springframework.data</groupId>
         	<artifactId>spring-data-jpa</artifactId>

@@ -9,12 +9,13 @@ package org.isf.operation.service;
  -----------------------------------------------------------*/
 
 import java.util.ArrayList;
+
 import org.isf.operation.model.Operation;
-import org.isf.operation.repository.OperationIoOperationRepository;
 import org.isf.opetype.model.OperationType;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class offers the io operations for recovering and managing
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
  * @author Rick, Vero, pupo
  */
 @Component
+@Transactional
 public class OperationIoOperations {
 
 	@Autowired
@@ -65,8 +67,9 @@ public class OperationIoOperations {
 	{
 		boolean result = true;
 	
-		
-		repository.save(operation);
+
+		Operation savedOperation = repository.save(operation);
+		result = (savedOperation != null);
     	
 		return result;
 	}
@@ -106,7 +109,8 @@ public class OperationIoOperations {
 	
 		
 		operation.setLock(operation.getLock()+1);
-		repository.save(operation);
+		Operation savedOperation = repository.save(operation);
+		result = (savedOperation != null);
     	
 		return result;
 	}

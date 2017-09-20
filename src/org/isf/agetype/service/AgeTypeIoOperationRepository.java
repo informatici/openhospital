@@ -1,4 +1,4 @@
-package org.isf.agetype.repository;
+package org.isf.agetype.service;
 
 import java.util.List;
 

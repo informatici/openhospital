@@ -18,10 +18,10 @@ package org.isf.disease.service;
 import java.util.ArrayList;
 
 import org.isf.disease.model.Disease;
-import org.isf.disease.repository.DiseaseIoOperationRepository;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class offers the io operations for recovering and managing
@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
  * @author Rick, Vero
  */
 @Component
+@Transactional
 public class DiseaseIoOperations {
 
 	@Autowired
@@ -191,7 +192,8 @@ public class DiseaseIoOperations {
 		boolean result = true;
 	
 		
-		repository.save(disease);
+		Disease savedDisease = repository.save(disease);
+		result = (savedDisease != null);
 		
 		return result;
 	}
@@ -209,7 +211,8 @@ public class DiseaseIoOperations {
 	
 		
 		disease.setLock(disease.getLock() + 1);
-		repository.save(disease);
+		Disease savedDisease = repository.save(disease);
+		result = (savedDisease != null);
 		
 		return result;
 	}

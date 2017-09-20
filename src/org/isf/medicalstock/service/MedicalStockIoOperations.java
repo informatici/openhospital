@@ -6,19 +6,18 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
 
-import org.isf.examination.repository.ExaminationIoOperationRepository;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
-import org.isf.medicalstock.repository.MovementIoOperationRepository;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.isf.medicalstockward.model.MedicalWard;
 
 /**
@@ -29,10 +28,11 @@ import org.isf.medicalstockward.model.MedicalWard;
  * 			- added complete Ward and Movement construction in getMovement()
  */
 @Component
+@Transactional
 public class MedicalStockIoOperations {
 
 	@Autowired
-	private MovementIoOperationRepository repository;
+	private MedicalStockIoOperationRepository repository;
 	
 	public enum MovementOrder {
 		DATE, WARD, PHARMACEUTICAL_TYPE, TYPE;
@@ -52,7 +52,6 @@ public class MedicalStockIoOperations {
 	 * @return the ids of medicals referencing the specified lot.
 	 * @throws OHException if an error occurs retrieving the referencing medicals.
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Integer> getMedicalsFromLot(
 			String lotCode) throws OHException
 	{

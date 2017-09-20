@@ -3,12 +3,13 @@ package org.isf.exatype.service;
 import java.util.ArrayList;
 
 import org.isf.exatype.model.ExamType;
-import org.isf.exatype.repository.ExamTypeIoOperationRepository;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class ExamTypeIoOperation {
 
 	@Autowired
@@ -35,8 +36,9 @@ public class ExamTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(examType);
+
+		ExamType savedExamType = repository.save(examType);
+		result = (savedExamType != null);
 		
 		return result;
 	}

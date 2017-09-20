@@ -9,13 +9,15 @@ package org.isf.vactype.service;
 
 
 import java.util.ArrayList;
+
 import org.isf.utils.exception.OHException;
 import org.isf.vactype.model.VaccineType;
-import org.isf.vactype.repository.VaccineTypeIoOperationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class VacTypeIoOperation {
 
 	@Autowired
@@ -44,8 +46,9 @@ public class VacTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(vaccineType);
+
+		VaccineType savedVaccineType = repository.save(vaccineType);
+		result = (savedVaccineType != null);
 		
 		return result;
 	}
@@ -62,8 +65,9 @@ public class VacTypeIoOperation {
 	{
 		boolean result = true;
 	
-		
-		repository.save(vaccineType);
+
+		VaccineType savedVaccineType = repository.save(vaccineType);
+		result = (savedVaccineType != null);
 		
 		return result;
 	}

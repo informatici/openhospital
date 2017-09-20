@@ -1,4 +1,4 @@
-package org.isf.medstockmovtype.repository;
+package org.isf.medstockmovtype.service;
 
 import java.util.List;
 

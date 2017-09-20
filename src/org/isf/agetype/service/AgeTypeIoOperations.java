@@ -1,18 +1,21 @@
 package org.isf.agetype.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.agetype.model.AgeType;
-import org.isf.agetype.repository.AgeTypeIoOperationRepository;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 
 /**
  * Persistence class for agetype module.
  *
  */
 @Component
+@Transactional
 public class AgeTypeIoOperations 
 {
 	@Autowired
@@ -40,7 +43,8 @@ public class AgeTypeIoOperations
 		boolean result = true;
 	
 		
-		repository.save(ageType);
+		List<AgeType> savedAgeType = repository.save(ageType);
+		result = (savedAgeType != null);
 		
 		return result;
 	}

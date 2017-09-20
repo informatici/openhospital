@@ -1,4 +1,4 @@
-package org.isf.disease.repository;
+package org.isf.disease.service;
 
 import java.util.ArrayList;
 import java.util.List;

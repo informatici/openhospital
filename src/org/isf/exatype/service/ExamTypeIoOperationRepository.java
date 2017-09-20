@@ -1,4 +1,4 @@
-package org.isf.exatype.repository;
+package org.isf.exatype.service;
 
 import java.util.List;
 
