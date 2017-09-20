@@ -3,7 +3,6 @@ package org.isf.dlvrrestype.test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.isf.distype.service.DiseaseTypeIoOperation;
 import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.dlvrrestype.service.DeliveryResultTypeIoOperation;
 import org.isf.utils.db.DbJpaUtil;

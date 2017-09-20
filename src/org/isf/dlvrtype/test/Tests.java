@@ -221,7 +221,7 @@ public class Tests
 			result = deliveryTypeIoOperation.deleteDeliveryType(foundDeliveryType);
 			assertEquals(true, result);
 			result = deliveryTypeIoOperation.isCodePresent(code);
-			assertEquals(true, result);
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

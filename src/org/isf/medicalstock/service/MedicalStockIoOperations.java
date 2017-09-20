@@ -6,15 +6,18 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
 
+import org.isf.examination.repository.ExaminationIoOperationRepository;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
+import org.isf.medicalstock.repository.MovementIoOperationRepository;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.isf.medicalstockward.model.MedicalWard;
 
@@ -27,6 +30,9 @@ import org.isf.medicalstockward.model.MedicalWard;
  */
 @Component
 public class MedicalStockIoOperations {
+
+	@Autowired
+	private MovementIoOperationRepository repository;
 	
 	public enum MovementOrder {
 		DATE, WARD, PHARMACEUTICAL_TYPE, TYPE;
@@ -50,23 +56,8 @@ public class MedicalStockIoOperations {
 	public List<Integer> getMedicalsFromLot(
 			String lotCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
-				
+		List<Integer> medicalIds = repository.findAllByLot(lotCode);
 		
-		jpa.beginTransaction();
-		
-		String query = "select distinct MDSR_ID from " +
-				"((MEDICALDSRSTOCKMOVTYPE join MEDICALDSRSTOCKMOV on MMVT_ID_A = MMV_MMVT_ID_A) " +
-				"join MEDICALDSR  on MMV_MDSR_ID=MDSR_ID ) " +
-				"join MEDICALDSRLOT on MMV_LT_ID_A=LT_ID_A where LT_ID_A=?";
-		params.add(lotCode);
-		jpa.createQuery(query, null, false);
-		jpa.setParameters(params, false);
-		List<Integer> medicalIds = (List<Integer>)jpa.getList();			
-		
-		jpa.commitTransaction();
-
 		return medicalIds;
 	}
 	

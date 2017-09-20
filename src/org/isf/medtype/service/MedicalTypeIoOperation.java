@@ -1,11 +1,10 @@
 package org.isf.medtype.service;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import org.isf.medtype.model.MedicalType;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.medtype.repository.MedicalTypeIoOperationRepository;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,29 +13,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class MedicalTypeIoOperation {
 
+	@Autowired
+	private MedicalTypeIoOperationRepository repository;
 
 	/**
 	 * Retrieves all the stored {@link MedicalType}s.
 	 * @return the stored medical types.
 	 * @throws OHException if an error occurs retrieving the medical types.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<MedicalType> getMedicalTypes() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<MedicalType> medicaltypes = null;
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM MEDICALDSRTYPE ORDER BY MDSRT_DESC";
-		jpa.createQuery(query, MedicalType.class, false);
-		List<MedicalType> medicalTypeList = (List<MedicalType>)jpa.getList();
-		medicaltypes = new ArrayList<MedicalType>(medicalTypeList);			
-		
-		jpa.commitTransaction();
-
-		return medicaltypes;
+		return new ArrayList<MedicalType>(repository.findAllByOrderByDescriptionAsc()); 
 	}
 
 	/**
@@ -48,14 +35,11 @@ public class MedicalTypeIoOperation {
 	public boolean updateMedicalType(
 			MedicalType medicalType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
+		repository.save(medicalType);
 		
-		jpa.beginTransaction();	
-		jpa.merge(medicalType);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 
@@ -68,15 +52,12 @@ public class MedicalTypeIoOperation {
 	public boolean newMedicalType(
 			MedicalType medicalType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
+		repository.save(medicalType);
 		
-		jpa.beginTransaction();	
-		jpa.persist(medicalType);
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 
 	/**
@@ -88,15 +69,11 @@ public class MedicalTypeIoOperation {
 	public boolean deleteMedicalType(
 			MedicalType medicalType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
+		repository.delete(medicalType);
 		
-		jpa.beginTransaction();	
-		MedicalType objToRemove = (MedicalType) jpa.find(MedicalType.class, medicalType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 
@@ -109,19 +86,11 @@ public class MedicalTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		MedicalType medicalType;
-		boolean result = false;
+		boolean result = true;
+	
 		
+		result = repository.exists(code);
 		
-		jpa.beginTransaction();	
-		medicalType = (MedicalType)jpa.find(MedicalType.class, code);
-		if (medicalType != null)
-		{
-			result = true;
-		}
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 }

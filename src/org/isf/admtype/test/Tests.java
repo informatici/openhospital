@@ -9,7 +9,6 @@ import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.admtype.service.AdmissionTypeIoOperation;
-import org.isf.dlvrtype.service.DeliveryTypeIoOperation;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

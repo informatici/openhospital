@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-import org.isf.dlvrrestype.service.DeliveryResultTypeIoOperation;
 import org.isf.exatype.model.ExamType;
 import org.isf.exatype.service.ExamTypeIoOperation;
 import org.junit.After;
@@ -19,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
 
 @RunWith(SpringRunner.class)
 @SpringApplicationConfiguration(org.isf.utils.db.SpringDataConfiguration.class)

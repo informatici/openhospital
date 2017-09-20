@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.isf.admtype.model.AdmissionType;
 import org.isf.admtype.repository.AdmissionTypeIoOperationRepository;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

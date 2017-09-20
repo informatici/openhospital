@@ -1,13 +1,9 @@
 package org.isf.exatype.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import org.isf.dlvrrestype.model.DeliveryResultType;
-import org.isf.dlvrrestype.repository.DeliveryResultIoOperationRepository;
 import org.isf.exatype.model.ExamType;
 import org.isf.exatype.repository.ExamTypeIoOperationRepository;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +19,6 @@ public class ExamTypeIoOperation {
 	 * @return the list of {@link ExamType}s.
 	 * @throws OHException
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<ExamType> getExamType() throws OHException 
 	{
 		return new ArrayList<ExamType>(repository.findAllByOrderByDescriptionAsc()); 	

@@ -4,7 +4,6 @@ package org.isf.disease.test;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
@@ -18,7 +17,14 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+
+@RunWith(SpringRunner.class)
+@SpringApplicationConfiguration(org.isf.utils.db.SpringDataConfiguration.class)
 public class Tests  
 {
 	private static DbJpaUtil jpa;
@@ -26,7 +32,10 @@ public class Tests
 	private static TestDiseaseType testDiseaseType;
 	private static TestDiseaseContext testDiseaseContext;
 	private static TestDiseaseTypeContext testDiseaseTypeContext;
-		
+
+    @Autowired
+    DiseaseIoOperations diseaseIoOperation;
+    
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -64,7 +73,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
     	testDisease = null;
     	testDiseaseType = null;
     	testDiseaseContext = null;
@@ -118,13 +126,12 @@ public class Tests
 	public void testIoGetDiseaseByCode()  
 	{
 		String code = "";
-		DiseaseIoOperations ioOperations = new DiseaseIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestDisease(false);
-			Disease foundDisease = ioOperations.getDiseaseByCode(Integer.parseInt(code));
+			Disease foundDisease = diseaseIoOperation.getDiseaseByCode(Integer.parseInt(code));
 			
 			testDisease.check(foundDisease);
 		} 
@@ -141,14 +148,13 @@ public class Tests
 	public void testIoGetDiseases() 
 	{
 		String code = "";
-		DiseaseIoOperations ioOperations = new DiseaseIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestDisease(false);
 			Disease foundDisease = (Disease)jpa.find(Disease.class, code); 
-			ArrayList<Disease> diseases = ioOperations.getDiseases(foundDisease.getType().getCode(), false, false, false);
+			ArrayList<Disease> diseases = diseaseIoOperation.getDiseases(foundDisease.getType().getCode(), false, false, false);
 			
 			assertEquals(foundDisease.getDescription(), diseases.get(0).getDescription());
 		} 
@@ -164,7 +170,6 @@ public class Tests
 	@Test
 	public void testIoNewDisease() 
 	{
-		DiseaseIoOperations ioOperations = new DiseaseIoOperations();
 		boolean result = false; 
 		
 		
@@ -177,7 +182,7 @@ public class Tests
 			Disease disease = testDisease.setup(diseaseType, true);
 			jpa.persist(diseaseType);
 			jpa.commitTransaction();
-			result = ioOperations.newDisease(disease);
+			result = diseaseIoOperation.newDisease(disease);
 			
 			assertEquals(true, result);
 			_checkDiseaseIntoDb(disease.getCode());
@@ -195,7 +200,6 @@ public class Tests
 	public void testIoUpdateDisease()
 	{
 		String code = "";
-		DiseaseIoOperations ioOperations = new DiseaseIoOperations();
 		boolean result = false;
 		
 		
@@ -205,7 +209,7 @@ public class Tests
 			Disease foundDisease = (Disease)jpa.find(Disease.class, code); 
 			int lock = foundDisease.getLock().intValue();
 			foundDisease.setDescription("Update");
-			result = ioOperations.updateDisease(foundDisease);
+			result = diseaseIoOperation.updateDisease(foundDisease);
 			Disease updateDisease = (Disease)jpa.find(Disease.class, code); 
 			
 			assertEquals(true, result);
@@ -225,7 +229,6 @@ public class Tests
 	public void testIoHasDiseaseModified() 
 	{
 		String code = "";
-		DiseaseIoOperations ioOperations = new DiseaseIoOperations();
 		boolean result = false;
 		
 		
@@ -233,7 +236,7 @@ public class Tests
 		{		
 			code = _setupTestDisease(false);
 			Disease foundDisease = (Disease)jpa.find(Disease.class, code);
-			result = ioOperations.hasDiseaseModified(foundDisease);
+			result = diseaseIoOperation.hasDiseaseModified(foundDisease);
 			
 			assertEquals(false, result);
 		} 
@@ -250,7 +253,6 @@ public class Tests
 	public void testIoDeleteDisease() 
 	{
 		String code = "";
-		DiseaseIoOperations ioOperations = new DiseaseIoOperations();
 		boolean result = false;
 		
 		
@@ -258,7 +260,7 @@ public class Tests
 		{		
 			code = _setupTestDisease(false);
 			Disease foundDisease = (Disease)jpa.find(Disease.class, code); 
-			result = ioOperations.deleteDisease(foundDisease);
+			result = diseaseIoOperation.deleteDisease(foundDisease);
 			
 			assertEquals(true, result);
 			assertEquals(false, foundDisease.getIpdInInclude());
@@ -278,14 +280,13 @@ public class Tests
 	public void testIoIsCodePresent() 
 	{
 		String code = "";
-		DiseaseIoOperations ioOperations = new DiseaseIoOperations();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestDisease(false);
-			result = ioOperations.isCodePresent(code);
+			result = diseaseIoOperation.isCodePresent(code);
 			
 			assertEquals(true, result);
 		} 
@@ -302,7 +303,6 @@ public class Tests
 	public void testIoIsDescriptionPresent() 
 	{
 		String code = "";
-		DiseaseIoOperations ioOperations = new DiseaseIoOperations();
 		boolean result = false;
 		
 
@@ -310,7 +310,7 @@ public class Tests
 		{		
 			code = _setupTestDisease(false);
 			Disease foundDisease = (Disease)jpa.find(Disease.class, code); 
-			result = ioOperations.isDescriptionPresent(foundDisease.getDescription(), foundDisease.getType().getCode());
+			result = diseaseIoOperation.isDescriptionPresent(foundDisease.getDescription(), foundDisease.getType().getCode());
 			
 			assertEquals(true, result);
 		} 
@@ -322,6 +322,7 @@ public class Tests
 		
 		return;
 	}
+	
 	
 	private void _saveContext() throws OHException 
     {	
