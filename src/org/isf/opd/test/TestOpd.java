@@ -13,7 +13,6 @@ import org.isf.utils.exception.OHException;
 
 public class TestOpd 
 {	
-    private int code = 999999999;
 	private GregorianCalendar visitDate = new GregorianCalendar(1984, Calendar.AUGUST, 14);
 	private int age = 9;
 	private char sex = 'F';
@@ -43,7 +42,6 @@ public class TestOpd
 		{
 			// Create Opd with all parameters 
 			opd = new Opd(prog_year, sex, age, disease, lock);
-			opd.setCode(code);
 			opd.setVisitDate(visitDate);
 			opd.setNote(note);
 			opd.setNewPatient(newPatient); 
@@ -63,7 +61,6 @@ public class TestOpd
 			Disease disease,
 			Opd opd) 
 	{	
-		opd.setCode(code);
 		opd.setVisitDate(visitDate);
 		opd.setAge(age);
 		opd.setSex(sex);
@@ -86,7 +83,6 @@ public class TestOpd
 			Opd opd) 
 	{		
     	System.out.println("Check Opd: " + opd.getCode());
-    	assertEquals(code, opd.getCode());
     	assertEquals(visitDate, opd.getVisitDate());
     	assertEquals(age, opd.getAge());
     	assertEquals(sex, opd.getSex());
