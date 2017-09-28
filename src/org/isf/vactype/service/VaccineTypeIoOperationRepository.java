@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface VaccineTypeIoOperationRepository extends JpaRepository<VaccineType, String> {
-    public List<VaccineType> findAllOrderByDescriptionAsc();
+    public List<VaccineType> findAllByOrderByDescriptionAsc();
 }

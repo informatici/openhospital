@@ -75,7 +75,7 @@ public class MedicalsIoOperations
 		}
 		else
 		{
-			medicals = (ArrayList<Medical>)repository.findAllOrderByDescription();
+			medicals = (ArrayList<Medical>)repository.findAllByOrderByDescription();
 		}
 		
 		return medicals;
@@ -143,7 +143,7 @@ public class MedicalsIoOperations
 				}
 				else
 				{
-					medicals = (ArrayList<Medical>)repository.findAllOrderByTypeAndDescritpion();					
+					medicals = (ArrayList<Medical>)repository.findAllByOrderByTypeAndDescritpion();					
 				}				
 			}			
 		}  

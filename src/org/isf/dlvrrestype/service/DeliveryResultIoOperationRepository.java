@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface DeliveryResultIoOperationRepository extends JpaRepository<DeliveryResultType, String> {
-    public List<DeliveryResultType> findAllOrderByDescriptionAsc();
+    public List<DeliveryResultType> findAllByOrderByDescriptionAsc();
 }

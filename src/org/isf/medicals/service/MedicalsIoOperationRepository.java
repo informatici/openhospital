@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface MedicalsIoOperationRepository extends JpaRepository<Medical, Integer> {
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A order BY MDSR_DESC", nativeQuery= true)
-    public List<Medical> findAllOrderByDescription();    
+    public List<Medical> findAllByOrderByDescription();    
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A where MDSRT_DESC like :description order BY MDSR_DESC", nativeQuery= true)
     public List<Medical> findAllWhereDescriptionOrderByDescription(@Param("description") String description );    
     
@@ -29,7 +29,7 @@ public interface MedicalsIoOperationRepository extends JpaRepository<Medical, In
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A where ((MDSR_INI_STOCK_QTI+MDSR_IN_QTI-MDSR_OUT_QTI)<MDSR_MIN_STOCK_QTI) order BY MDSR_MDSRT_ID_A, MDSR_DESC", nativeQuery= true)
     public List<Medical> findAllWhereExpiringOrderByTypeAndDescritpion();  
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A order BY MDSR_MDSRT_ID_A, MDSR_DESC", nativeQuery= true)
-    public List<Medical> findAllOrderByTypeAndDescritpion();  
+    public List<Medical> findAllByOrderByTypeAndDescritpion();  
     
     @Query(value = "SELECT * FROM MEDICALDSR WHERE MDSR_MDSRT_ID_A = :type AND MDSR_DESC = :description", nativeQuery= true)
     public Medical findOneWhereDescriptionAndType(@Param("description") String description, @Param("type") String type);   

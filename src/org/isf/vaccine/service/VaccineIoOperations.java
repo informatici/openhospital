@@ -6,6 +6,7 @@ import org.isf.utils.exception.OHException;
 import org.isf.vaccine.model.Vaccine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class offers the io operations for recovering and managing
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
+@Transactional
 public class VaccineIoOperations {
 
 	@Autowired
@@ -42,7 +44,7 @@ public class VaccineIoOperations {
 		}
 		else
 		{
-			pvaccine = new ArrayList<Vaccine>(repository.findAllOrderByDescriptionAsc()); 
+			pvaccine = new ArrayList<Vaccine>(repository.findAllByOrderByDescriptionAsc()); 
 		}
 		
 		return pvaccine;

@@ -6,6 +6,7 @@ import org.isf.dicom.model.FileDicom;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Manager for hybernate database communication
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Component;
  * 
  *------------------------------------------*/
 @Component
+@Transactional
 public class DicomIoOperations 
 {
 	@Autowired
@@ -66,7 +68,7 @@ public class DicomIoOperations
 		boolean result = true;
         
 
-		repository.deleteWhereIdAndNumber((long)idPaziente, numeroSerie);
+		repository.deleteByIdAndNumber((long)idPaziente, numeroSerie);
 				
         return result;
 	}
@@ -157,5 +159,23 @@ public class DicomIoOperations
 		repository.save(dicom);
 		
 		return;
+	}
+
+	/**
+	 * checks if the code is already in use
+	 *
+	 * @param code - the DICOM code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
+	 */
+	public boolean isCodePresent(
+			Long code) throws OHException
+	{
+		boolean result = true;
+	
+		
+		result = repository.exists(code);
+		
+		return result;	
 	}
 }

@@ -22,7 +22,7 @@ public class ExamTypeIoOperation {
 	 */
 	public ArrayList<ExamType> getExamType() throws OHException 
 	{
-		return new ArrayList<ExamType>(repository.findAllOrderByDescriptionAsc()); 	
+		return new ArrayList<ExamType>(repository.findAllByOrderByDescriptionAsc()); 	
 	}
 	
 	/**

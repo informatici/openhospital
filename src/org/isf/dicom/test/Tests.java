@@ -149,8 +149,8 @@ public class Tests
 			result = dicomIoOperation.deleteSerie(foundFileDicom.getPatId(), foundFileDicom.getDicomSeriesNumber());
 			
 			assertEquals(true, result);
-			FileDicom deletedFileDicom = (FileDicom)jpa.find(FileDicom.class, code); 
-			assertEquals(null, deletedFileDicom);
+			result = dicomIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

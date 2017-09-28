@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface AgeTypeIoOperationRepository extends JpaRepository<AgeType, String> {
-    public List<AgeType> findAllOrderByCodeAsc();	
+    public List<AgeType> findAllByOrderByCodeAsc();	
     public AgeType findOneByCode(String code);
 }

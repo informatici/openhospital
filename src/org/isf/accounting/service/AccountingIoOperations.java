@@ -21,13 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional
 public class AccountingIoOperations {	
+	
 	@Autowired
 	private AccountingBillIoOperationRepository billRepository;
 	@Autowired
 	private AccountingBillPaymentIoOperationRepository billPaymentRepository;
 	@Autowired
 	private AccountingBillItemsIoOperationRepository billItemsRepository;
-
+	
 	
 	/**
 	 * Returns all the pending {@link Bill}s for the specified patient.
@@ -48,7 +49,7 @@ public class AccountingIoOperations {
 	 * @throws OHException if an error occurs retrieving the bills.
 	 */
 	public ArrayList<Bill> getBills() throws OHException {
-		return new ArrayList<Bill>(billRepository.findAllOrderByDateDesc());
+		return new ArrayList<Bill>(billRepository.findAllByOrderByDateDesc());
 	}
 	
 	/**
@@ -66,7 +67,6 @@ public class AccountingIoOperations {
 	 * @return a list of user id.
 	 * @throws OHException if an error occurs retrieving the users list.
 	 */
-    @SuppressWarnings("unchecked")
     public ArrayList<String> getUsers() throws OHException {
 
 		return new ArrayList<String>(billPaymentRepository.findUserDistinctByOrderByUserAsc());
@@ -89,7 +89,7 @@ public class AccountingIoOperations {
 		}
 		else
 		{
-			billItems = new ArrayList<BillItems>(billItemsRepository.findAllOrderByIdAsc()); 
+			billItems = new ArrayList<BillItems>(billItemsRepository.findAllByOrderByIdAsc()); 
 		}
 
 		return billItems;
