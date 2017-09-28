@@ -26,7 +26,7 @@ public class AdmissionTypeIoOperation
 	 */
 	public ArrayList<AdmissionType> getAdmissionType() throws OHException 
 	{
-		return new ArrayList<AdmissionType>(repository.findAllByOrderByDescriptionAsc());
+		return new ArrayList<AdmissionType>(repository.findAllOrderByDescriptionAsc());
 	}
 
 	/**

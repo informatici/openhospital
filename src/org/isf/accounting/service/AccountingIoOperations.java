@@ -48,7 +48,7 @@ public class AccountingIoOperations {
 	 * @throws OHException if an error occurs retrieving the bills.
 	 */
 	public ArrayList<Bill> getBills() throws OHException {
-		return new ArrayList<Bill>(billRepository.findAllByOrderByDateDesc());
+		return new ArrayList<Bill>(billRepository.findAllOrderByDateDesc());
 	}
 	
 	/**
@@ -89,7 +89,7 @@ public class AccountingIoOperations {
 		}
 		else
 		{
-			billItems = new ArrayList<BillItems>(billItemsRepository.findAllByOrderByIdAsc()); 
+			billItems = new ArrayList<BillItems>(billItemsRepository.findAllOrderByIdAsc()); 
 		}
 
 		return billItems;

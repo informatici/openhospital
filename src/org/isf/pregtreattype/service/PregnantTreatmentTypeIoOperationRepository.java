@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface PregnantTreatmentTypeIoOperationRepository extends JpaRepository<PregnantTreatmentType, String> {
-    public List<PregnantTreatmentType> findAllByOrderByDescriptionAsc();
+    public List<PregnantTreatmentType> findAllOrderByDescriptionAsc();
 }

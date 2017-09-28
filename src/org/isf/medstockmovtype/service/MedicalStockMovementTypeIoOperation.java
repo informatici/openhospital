@@ -27,7 +27,7 @@ public class MedicalStockMovementTypeIoOperation {
 	 */
 	public ArrayList<MovementType> getMedicaldsrstockmovType() throws OHException 
 	{
-		return new ArrayList<MovementType>(repository.findAllByOrderByDescriptionAsc()); 	
+		return new ArrayList<MovementType>(repository.findAllOrderByDescriptionAsc()); 	
 	}
 
 	/**

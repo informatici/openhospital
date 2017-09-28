@@ -1,14 +1,10 @@
 package org.isf.dicom.service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
-import org.isf.generaldata.MessageBundle;
 import org.isf.dicom.model.FileDicom;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,6 +24,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class DicomIoOperations 
 {
+	@Autowired
+	private DicomIoOperationRepository repository;
+	
 	/**
 	 * Load a list of idfile for series
 	 * 
@@ -36,34 +35,19 @@ public class DicomIoOperations
 	 * @return
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public Long[] getSerieDetail(
 			int idPaziente, 
 			String numeroSerie) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM DICOM" +
-					   " WHERE DM_PAT_ID = ?" +
-					   " AND DM_FILE_SER_NUMBER = ?" +
-					   " ORDER BY DM_FILE_NOME";		
-		jpa.createQuery(query, FileDicom.class, false);
-		params.add(idPaziente);
-		params.add(numeroSerie);
-		jpa.setParameters(params, false);
-		List<FileDicom> dicomList = (List<FileDicom>)jpa.getList();
+		List<FileDicom> dicomList  = repository.findAllWhereIdAndNumberByOrderNameAsc((long)idPaziente, numeroSerie);
 		Long[] dicomIdArray = new Long[dicomList.size()];	
+		
+		
 		for (int i=0; i<dicomList.size(); i++)
 		{
 			dicomIdArray[i] = dicomList.get(i).getIdFile();
 		}
 		
-		jpa.commitTransaction();
-
 		return dicomIdArray;
 	}
 
@@ -79,26 +63,11 @@ public class DicomIoOperations
 			int idPaziente, 
 			String numeroSerie) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
-        		
-		
-		jpa.beginTransaction();		
+        
 
-		try {
-			jpa.createQuery("DELETE FROM DICOM WHERE DM_PAT_ID = ? AND DM_FILE_SER_NUMBER = ?", FileDicom.class, false);
-			params.add(idPaziente);
-			params.add(numeroSerie);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 	
-
-		jpa.commitTransaction();	
-		
+		repository.deleteWhereIdAndNumber((long)idPaziente, numeroSerie);
+				
         return result;
 	}
 
@@ -133,17 +102,8 @@ public class DicomIoOperations
 			int idPaziente, 
 			String numeroSerie) throws OHException 
 	{
-
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		FileDicom dicom = null;
+		FileDicom dicom = repository.findOne(idFile);
 				
-		
-		jpa.beginTransaction();
-		
-		dicom = (FileDicom)jpa.find(FileDicom.class, idFile); 
-		
-		jpa.commitTransaction();
-
 		return dicom;
 	}
 
@@ -154,32 +114,17 @@ public class DicomIoOperations
 	 * @return
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public FileDicom[] loadFilesPaziente(
 			int idPaziente) throws OHException 
 	{
+		List<FileDicom> dicomList = repository.findAllWhereIdGroupByUid((long) idPaziente);
 
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM DICOM" +
-					   " WHERE DM_PAT_ID = ?" +
-					   " GROUP BY DM_FILE_SER_INST_UID";		
-		jpa.createQuery(query, FileDicom.class, false);
-		params.add(idPaziente);
-		jpa.setParameters(params, false);
-		List<FileDicom> dicomList = (List<FileDicom>)jpa.getList();
 		FileDicom[] dicoms = new FileDicom[dicomList.size()];	
 		for (int i=0; i<dicomList.size(); i++)
 		{
 			dicoms[i] = dicomList.get(i);
 		}
 		
-		jpa.commitTransaction();
-
 		return dicoms;
 	}
 
@@ -192,64 +137,12 @@ public class DicomIoOperations
 	 * @return true if file exist
 	 * @throws OHException 
 	 */
-
-	@SuppressWarnings("unchecked")
 	public boolean exist(
 			FileDicom dicom) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM DICOM" +
-					   " WHERE DM_PAT_ID = ?" +
-					   " AND DM_FILE_SER_NUMBER = ?" +
-					   " AND DM_FILE_INST_UID = ?";		
-		jpa.createQuery(query, FileDicom.class, false);
-		params.add(dicom.getPatId());
-		params.add(dicom.getDicomSeriesNumber());
-		params.add(dicom.getDicomInstanceUID());
-		jpa.setParameters(params, false);
-		List<FileDicom> dicomList = (List<FileDicom>)jpa.getList();
-		
-		jpa.commitTransaction();
-
+		List<FileDicom> dicomList = repository.findAllWhereIdAndFileAndUid((long) dicom.getPatId(), dicom.getDicomSeriesNumber(), dicom.getDicomInstanceUID());
+	
 		return (dicomList.size() > 0);
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-	private static void getImagesCounts(
-			Vector immagini, 
-			DbJpaUtil jpa) 
-	{
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-		
-		if (immagini != null && immagini.size() != 0)
-		{	
-			try {	
-				String serie = "";
-				for (int i = 0; i < immagini.size(); i++) {
-					String query = "SELECT * FROM DICOM" +
-							   " AND DM_FILE_SER_NUMBER = ?" +
-							   " GROUP BY DM_FILE_SER_INST_UID";		
-					jpa.createQuery(query, FileDicom.class, false);
-					params.add(((FileDicom)immagini.elementAt(i)).getDicomSeriesNumber());
-					jpa.setParameters(params, false);
-					List<FileDicom> dicomList = (List<FileDicom>)jpa.getList();	
-					Iterator<FileDicom> dicomIterator = dicomList.iterator();
-					while (dicomIterator.hasNext()) 
-					{
-						FileDicom dicom = dicomIterator.next();
-						dicom.setFrameCount(dicomList.size());						
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	/**
@@ -261,13 +154,8 @@ public class DicomIoOperations
 	public void saveFile(
 			FileDicom dicom) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		repository.save(dicom);
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(dicom);
-    	jpa.commitTransaction();
-    	
-    	return;
+		return;
 	}
 }

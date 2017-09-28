@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface AdmissionTypeIoOperationRepository extends JpaRepository<AdmissionType, String> {
-    public List<AdmissionType> findAllByOrderByDescriptionAsc();	
+    public List<AdmissionType> findAllOrderByDescriptionAsc();	
 }

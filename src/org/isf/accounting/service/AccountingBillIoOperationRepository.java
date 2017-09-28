@@ -11,6 +11,6 @@ public interface AccountingBillIoOperationRepository extends JpaRepository<Bill,
 	
 	List<Bill> findByStatusAndPatient_codeOrderByDateDesc(String status, int patientId);
 	
-	List<Bill> findAllByOrderByDateDesc();
+	List<Bill> findAllOrderByDateDesc();
 	
 }

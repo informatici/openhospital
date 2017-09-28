@@ -16,6 +16,5 @@ public interface MedicalStockIoOperationRepository extends JpaRepository<Movemen
 		"((MEDICALDSRSTOCKMOVTYPE join MEDICALDSRSTOCKMOV on MMVT_ID_A = MMV_MMVT_ID_A) " +
 		"join MEDICALDSR  on MMV_MDSR_ID=MDSR_ID ) " +
 		"join MEDICALDSRLOT on MMV_LT_ID_A=LT_ID_A where LT_ID_A=:lot", nativeQuery= true)
-    public List<Integer> findAllByLot(@Param("lot") String lot);
-    
+    public List<Integer> findAllByLot(@Param("lot") String lot);    
 }

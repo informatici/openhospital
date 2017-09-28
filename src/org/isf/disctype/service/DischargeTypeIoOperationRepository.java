@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface DischargeTypeIoOperationRepository extends JpaRepository<DischargeType, String> {
-    public List<DischargeType> findAllByOrderByDescriptionAsc();
+    public List<DischargeType> findAllOrderByDescriptionAsc();
 }

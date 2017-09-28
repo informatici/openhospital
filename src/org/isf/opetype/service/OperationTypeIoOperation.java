@@ -23,7 +23,7 @@ public class OperationTypeIoOperation {
 	 */
 	public ArrayList<OperationType> getOperationType() throws OHException 
 	{
-		return new ArrayList<OperationType>(repository.findAllByOrderByDescriptionAsc()); 
+		return new ArrayList<OperationType>(repository.findAllOrderByDescriptionAsc()); 
 	}
 	
 	/**

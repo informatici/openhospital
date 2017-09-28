@@ -23,7 +23,7 @@ public class DischargeTypeIoOperation {
 	 */
 	public ArrayList<DischargeType> getDischargeType() throws OHException 
 	{
-		return new ArrayList<DischargeType>(repository.findAllByOrderByDescriptionAsc());
+		return new ArrayList<DischargeType>(repository.findAllOrderByDescriptionAsc());
 	}
 
 	/**

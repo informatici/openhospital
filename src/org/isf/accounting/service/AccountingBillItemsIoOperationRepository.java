@@ -9,5 +9,5 @@ public interface AccountingBillItemsIoOperationRepository extends JpaRepository<
 	
 	List<BillItems> findByBill_idOrderByIdAsc(int billId);
 		
-	List<BillItems> findAllByOrderByIdAsc();
+	List<BillItems> findAllOrderByIdAsc();
 }
