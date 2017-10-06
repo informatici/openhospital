@@ -290,7 +290,7 @@ public class MedicalStockWardIoOperations
 
 			ArrayList<Object> params = new ArrayList<Object>(3);
 			String query = "SELECT * FROM MEDICALDSRWARD WHERE MDSRWRD_WRD_ID_A = ? AND MDSRWRD_MDSR_ID = ?";
-			jpa.createQuery(query, MovementWard.class, false);
+			jpa.createQuery(query, MedicalWard.class, false);
 			params.add(ward);
 			params.add(medical);
 			jpa.setParameters(params, false);
@@ -305,7 +305,7 @@ public class MedicalStockWardIoOperations
 				query = "UPDATE MEDICALDSRWARD SET MDSRWRD_OUT_QTI = MDSRWRD_OUT_QTI + ? WHERE MDSRWRD_WRD_ID_A = ? AND MDSRWRD_MDSR_ID = ?";
 				params.add(qty);
 			}
-			jpa.createQuery(query, MovementWard.class, false);
+			jpa.createQuery(query, MedicalWard.class, false);
 			params.add(ward);
 			params.add(medical);
 			jpa.setParameters(params, false);
@@ -318,7 +318,7 @@ public class MedicalStockWardIoOperations
 				ArrayList<Object> parameters = new ArrayList<Object>(3);
 				String query = "INSERT INTO MEDICALDSRWARD (MDSRWRD_WRD_ID_A, MDSRWRD_MDSR_ID, MDSRWRD_IN_QTI, MDSRWRD_OUT_QTI) " +
 						"VALUES (?, ?, ?, '0')";
-				jpa.createQuery(query, MovementWard.class, false);
+				jpa.createQuery(query, MedicalWard.class, false);
 				parameters.add(ward);
 				parameters.add(medical);
 				parameters.add(-qty);
