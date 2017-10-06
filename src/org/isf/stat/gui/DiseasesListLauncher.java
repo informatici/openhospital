@@ -15,7 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.stat.manager.DiseasesList;
+import org.isf.stat.gui.report.DiseasesList;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
