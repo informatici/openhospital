@@ -598,9 +598,16 @@ public class PatVacBrowser extends ModalJFrame {
 			vaccineTypeComboBox.addItem(new VaccineType("", MessageBundle.getMessage("angal.patvac.allvaccinetype")));			
 			
 			VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
-			ArrayList<VaccineType> types = manager.getVaccineType();
-            for (VaccineType elem : types) {
-            	    vaccineTypeComboBox.addItem(elem);
+			ArrayList<VaccineType> types = null;
+			try {
+				types = manager.getVaccineType();
+			} catch (OHServiceException e1) {
+				OHServiceExceptionUtil.showMessages(e1);
+			}
+			if(types != null){
+				for (VaccineType elem : types) {
+					vaccineTypeComboBox.addItem(elem);
+				}
 			}
             
             vaccineTypeComboBox.addActionListener(new ActionListener() {
