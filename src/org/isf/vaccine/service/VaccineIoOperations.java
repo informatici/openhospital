@@ -36,23 +36,27 @@ public class VaccineIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Vaccine> pvaccine = null;
 		ArrayList<Object> params = new ArrayList<Object>();
-			
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM VACCINE JOIN VACCINETYPE ON VAC_VACT_ID_A = VACT_ID_A";
-		if (vaccineTypeCode != null) {
-			query += " WHERE VAC_VACT_ID_A = ?";
-			params.add(vaccineTypeCode);
-		}
-		query += " ORDER BY VAC_DESC";
-		jpa.createQuery(query, Vaccine.class, false);
-		jpa.setParameters(params, false);
-		List<Vaccine> vaccineList = (List<Vaccine>)jpa.getList();
-		pvaccine = new ArrayList<Vaccine>(vaccineList);			
-		
-		jpa.commitTransaction();
-		
+
+        try{
+            jpa.beginTransaction();
+
+            String query = "SELECT * FROM VACCINE JOIN VACCINETYPE ON VAC_VACT_ID_A = VACT_ID_A";
+            if (vaccineTypeCode != null) {
+                query += " WHERE VAC_VACT_ID_A = ?";
+                params.add(vaccineTypeCode);
+            }
+            query += " ORDER BY VAC_DESC";
+            jpa.createQuery(query, Vaccine.class, false);
+            jpa.setParameters(params, false);
+            List<Vaccine> vaccineList = (List<Vaccine>)jpa.getList();
+            pvaccine = new ArrayList<Vaccine>(vaccineList);
+
+            jpa.commitTransaction();
+        }catch (OHException e) {
+            //DbJpaUtil managed exception
+            jpa.rollbackTransaction();
+            throw e;
+        }
 		return pvaccine;
 	}
 
@@ -68,11 +72,15 @@ public class VaccineIoOperations {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		jpa.beginTransaction();	
-		jpa.persist(vaccine);
-    	jpa.commitTransaction();
-    	
+        try{
+            jpa.beginTransaction();
+            jpa.persist(vaccine);
+            jpa.commitTransaction();
+        }catch (OHException e) {
+            //DbJpaUtil managed exception
+            jpa.rollbackTransaction();
+            throw e;
+        }
 		return result;	
 	}
 	
@@ -86,17 +94,24 @@ public class VaccineIoOperations {
 	public boolean hasVaccineModified(
 			Vaccine vaccine) throws OHException 
 	{
+		DbJpaUtil jpa = new DbJpaUtil();
+        boolean result = false;
+        try{
+            jpa.beginTransaction();
+            Vaccine foundVaccine = (Vaccine)jpa.find(Vaccine.class, vaccine.getCode());
+            if (foundVaccine.getLock() != vaccine.getLock())
+            {
+                result = true;
+            }
+            jpa.commitTransaction();
+        }catch (OHException e) {
+            //DbJpaUtil managed exception
+            jpa.rollbackTransaction();
+            throw e;
+        }
 
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		Vaccine foundVaccine = (Vaccine)jpa.find(Vaccine.class, vaccine.getCode());
-		boolean result = false;
-		
-		
-		if (foundVaccine.getLock() != vaccine.getLock())
-		{
-			result = true;
-		}
-		
+
+
 		return result;
 	}
 
@@ -112,13 +127,17 @@ public class VaccineIoOperations {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		vaccine.setLock(vaccine.getLock()+1);
-		
-		jpa.beginTransaction();	
-		jpa.merge(vaccine);
-    	jpa.commitTransaction();
-    	
+        try{
+            vaccine.setLock(vaccine.getLock()+1);
+
+            jpa.beginTransaction();
+            jpa.merge(vaccine);
+            jpa.commitTransaction();
+        }catch (OHException e) {
+            //DbJpaUtil managed exception
+            jpa.rollbackTransaction();
+            throw e;
+        }
 		return result;	
 	}
 
@@ -134,13 +153,17 @@ public class VaccineIoOperations {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		
-		jpa.beginTransaction();
-		Vaccine vaccineToRemove = (Vaccine) jpa.find(Vaccine.class, vaccine.getCode());
-		jpa.remove(vaccineToRemove);
-    	jpa.commitTransaction();
-    	
+
+        try{
+            jpa.beginTransaction();
+            Vaccine vaccineToRemove = (Vaccine) jpa.find(Vaccine.class, vaccine.getCode());
+            jpa.remove(vaccineToRemove);
+            jpa.commitTransaction();
+        }catch (OHException e) {
+            //DbJpaUtil managed exception
+            jpa.rollbackTransaction();
+            throw e;
+        }
 		return result;	
 	}
 
@@ -157,16 +180,20 @@ public class VaccineIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		Vaccine vaccine;
 		boolean result = false;
-		
-		
-		jpa.beginTransaction();	
-		vaccine = (Vaccine)jpa.find(Vaccine.class, code);
-		if (vaccine != null)
-		{
-			result = true;
-		}
-    	jpa.commitTransaction();
-    	
+
+        try{
+            jpa.beginTransaction();
+            vaccine = (Vaccine)jpa.find(Vaccine.class, code);
+            if (vaccine != null)
+            {
+                result = true;
+            }
+            jpa.commitTransaction();
+        }catch (OHException e) {
+            //DbJpaUtil managed exception
+            jpa.rollbackTransaction();
+            throw e;
+        }
 		return result;	
 	}
 }

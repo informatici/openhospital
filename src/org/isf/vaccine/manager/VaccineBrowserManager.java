@@ -7,8 +7,13 @@ import javax.swing.JOptionPane;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.vaccine.model.Vaccine;
 import org.isf.vaccine.service.VaccineIoOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that provides gui separation from database operations and gives some
@@ -23,6 +28,7 @@ import org.isf.vaccine.service.VaccineIoOperations;
  */
 public class VaccineBrowserManager {
 
+    private final Logger logger = LoggerFactory.getLogger(VaccineBrowserManager.class);
 	private VaccineIoOperations ioOperations = Menu.getApplicationContext().getBean(VaccineIoOperations.class);
 
 	/**
@@ -30,7 +36,7 @@ public class VaccineBrowserManager {
 	 *
 	 * @return the list of {@link Vaccine}s
 	 */
-	public ArrayList<Vaccine> getVaccine() {
+	public ArrayList<Vaccine> getVaccine() throws OHServiceException {
 		return getVaccine(null);
 	}
 
@@ -40,13 +46,22 @@ public class VaccineBrowserManager {
 	 * @param vaccineTypeCode - the type code.
 	 * @return the list of {@link Vaccine}s
 	 */
-	public ArrayList<Vaccine> getVaccine(String vaccineTypeCode) {
+	public ArrayList<Vaccine> getVaccine(String vaccineTypeCode) throws OHServiceException {
 		try {
 			return ioOperations.getVaccine(vaccineTypeCode);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
-		}
+        } catch (OHException e) {
+				/*Already cached exception with OH specific error message -
+				 * create ready to return OHServiceException and keep existing error message
+				 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -55,44 +70,69 @@ public class VaccineBrowserManager {
 	 * @param vaccine - the item to insert
 	 * @return <code>true</code> if the item has been inserted, <code>false</code> otherwise
 	 */
-	public boolean newVaccine(Vaccine vaccine) {
+	public boolean newVaccine(Vaccine vaccine) throws OHServiceException {
 		try {
 			return ioOperations.newVaccine(vaccine);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
+        } catch (OHException e) {
+				/*Already cached exception with OH specific error message -
+				 * create ready to return OHServiceException and keep existing error message
+				 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        }
 	}
-	
+
+    /**
+     * updates the specified {@link Vaccine} object.
+     * @param vaccine - the {@link Vaccine} object to update.
+     * @return <code>true</code> if has been updated, <code>false</code> otherwise.
+     */
+    public boolean hasVaccineModified(Vaccine vaccine) throws OHServiceException {
+        try {
+            return ioOperations.hasVaccineModified(vaccine);
+        } catch (OHException e) {
+				/*Already cached exception with OH specific error message -
+				 * create ready to return OHServiceException and keep existing error message
+				 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
+        }
+    }
+
 	/**
 	 * updates the specified {@link Vaccine} object.
 	 * @param vaccine - the {@link Vaccine} object to update.
 	 * @return <code>true</code> if has been updated, <code>false</code> otherwise.
 	 */
-	public boolean updateVaccine(Vaccine vaccine){
-		try {
-			boolean recordUpdated = ioOperations.hasVaccineModified(vaccine);
-
-			if (!recordUpdated) { 
-				// it was not updated
-				return ioOperations.updateVaccine(vaccine);
-			} else { 
-				// it was updated by someone else
-				String message = MessageBundle.getMessage("angal.admission.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
-				int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
-				boolean overWrite = response== JOptionPane.OK_OPTION;
-
-				if (overWrite) {
-					// the user has confirmed he wants to overwrite the record
-					return ioOperations.updateVaccine(vaccine);
-				}
-			}
-			return false;
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
-	}
+	public boolean updateVaccine(Vaccine vaccine) throws OHServiceException {
+        try {
+            return ioOperations.updateVaccine(vaccine);
+        } catch (OHException e) {
+				/*Already cached exception with OH specific error message -
+				 * create ready to return OHServiceException and keep existing error message
+				 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        }
+    }
 	
 	/**
 	 * deletes a {@link Vaccine} in the DB
@@ -100,13 +140,22 @@ public class VaccineBrowserManager {
 	 * @param vaccine - the item to delete
 	 * @return <code>true</code> if the item has been deleted, <code>false</code> otherwise
 	 */
-	public boolean deleteVaccine(Vaccine vaccine) {
+	public boolean deleteVaccine(Vaccine vaccine) throws OHServiceException {
 		try {
 			return ioOperations.deleteVaccine(vaccine);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
+        } catch (OHException e) {
+				/*Already cached exception with OH specific error message -
+				 * create ready to return OHServiceException and keep existing error message
+				 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -115,12 +164,21 @@ public class VaccineBrowserManager {
 	 * @param code - the vaccine code
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
 	 */
-	public boolean codeControl(String code) {
+	public boolean codeControl(String code) throws OHServiceException {
 		try {
 			return ioOperations.isCodePresent(code);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
+        } catch (OHException e) {
+				/*Already cached exception with OH specific error message -
+				 * create ready to return OHServiceException and keep existing error message
+				 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
+        }
 	}
 }

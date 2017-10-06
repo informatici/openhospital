@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public class VaccineTypeBrowserManager {
 	
-			private final Logger logger = LoggerFactory.getLogger(TherapyManager.class);
+    private final Logger logger = LoggerFactory.getLogger(VaccineTypeBrowserManager.class);
 	
 		private VacTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(VacTypeIoOperation.class);
 		

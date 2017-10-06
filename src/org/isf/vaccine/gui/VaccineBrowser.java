@@ -266,12 +266,15 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 								MessageBundle.getMessage("angal.vaccine.deletevaccine") + " \""+m.getDescription()+"\" ?",
 								MessageBundle.getMessage("angal.hospital"),
 								JOptionPane.YES_NO_OPTION);
-
-						if ((n == JOptionPane.YES_OPTION) && (manager.deleteVaccine(m))){
-							pVaccine.remove(table.getSelectedRow());
-							model.fireTableDataChanged();
-							table.updateUI();
-						}
+                        try{
+                            if ((n == JOptionPane.YES_OPTION) && (manager.deleteVaccine(m))){
+                                pVaccine.remove(table.getSelectedRow());
+                                model.fireTableDataChanged();
+                                table.updateUI();
+                            }
+                        } catch (OHServiceException e) {
+                            OHServiceExceptionUtil.showMessages(e);
+                        }
 					}
 				}
 			});
@@ -336,14 +339,22 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 
 		public VaccineBrowserModel() {
 			VaccineBrowserManager manager = new VaccineBrowserManager();
-			pVaccine  = manager.getVaccine();
-		}
+            try {
+                pVaccine  = manager.getVaccine();
+            } catch (OHServiceException e) {
+                OHServiceExceptionUtil.showMessages(e);
+            }
+        }
 		
 		
 		public VaccineBrowserModel(String vaccineType) {
 			VaccineBrowserManager manager = new VaccineBrowserManager();
-			pVaccine = manager.getVaccine(vaccineType);
-		}
+            try {
+                pVaccine = manager.getVaccine(vaccineType);
+            } catch (OHServiceException e) {
+                OHServiceExceptionUtil.showMessages(e);
+            }
+        }
 		
 		public int getRowCount() {
 			if (pVaccine == null)
