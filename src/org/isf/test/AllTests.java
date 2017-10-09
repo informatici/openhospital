@@ -36,13 +36,13 @@ import org.junit.runners.Suite.SuiteClasses;
 	org.isf.pregtreattype.test.Tests.class,	
 //	org.isf.priceslist.test.Tests.class,
 //	org.isf.pricesothers.test.Tests.class,
-//	org.isf.sms.test.Tests.class,
-//	org.isf.supplier.test.Tests.class,
-//	org.isf.therapy.test.Tests.class,
+	org.isf.sms.test.Tests.class,
+	org.isf.supplier.test.Tests.class,
+	org.isf.therapy.test.Tests.class,
 	org.isf.vaccine.test.Tests.class,	
 	org.isf.vactype.test.Tests.class,
-//	org.isf.visits.test.Tests.class,
-//	org.isf.ward.test.Tests.class
+	org.isf.visits.test.Tests.class,
+	org.isf.ward.test.Tests.class
 	})
 public class AllTests {
 
