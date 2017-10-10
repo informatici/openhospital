@@ -11,6 +11,8 @@ import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.*;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
 /*----------------------------------------------------------
  * modification history
@@ -37,10 +39,20 @@ class PrivilegeTree extends JDialog {
 		//setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		
 		UserBrowsingManager manager = new UserBrowsingManager();
-		ArrayList<UserMenuItem> myMenu = manager.getGroupMenu(aGroup);
-		ArrayList<UserMenuItem> rootMenu = manager.getGroupMenu(new UserGroup("admin",""));
+        ArrayList<UserMenuItem> myMenu = null;
+        try {
+            myMenu = manager.getGroupMenu(aGroup);
+        } catch (OHServiceException e) {
+            OHServiceExceptionUtil.showMessages(e);
+        }
+        ArrayList<UserMenuItem> rootMenu = null;
+        try {
+            rootMenu = manager.getGroupMenu(new UserGroup("admin",""));
+        } catch (OHServiceException e) {
+            OHServiceExceptionUtil.showMessages(e);
+        }
 
-		UserMenuItem menuRoot = new UserMenuItem("main", "main", "main", "",
+        UserMenuItem menuRoot = new UserMenuItem("main", "main", "main", "",
 				'M', "", "", true, 1, true);
 		// the root 
 		root = new DefaultMutableTreeNode(menuRoot);
@@ -52,7 +64,7 @@ class PrivilegeTree extends JDialog {
 		ArrayList<UserMenuItem> junkMenu = new ArrayList<UserMenuItem>();
 		
 		//cycle to process the whole rootMenu
-		while (!rootMenu.isEmpty()) {
+		while (rootMenu != null && !rootMenu.isEmpty()) {
 			Iterator<UserMenuItem> it = rootMenu.iterator();
 			while (it.hasNext()) {
 				UserMenuItem umi = it.next();
@@ -166,8 +178,12 @@ class PrivilegeTree extends JDialog {
 					if (!umi.getCode().equals("main")) newUserMenu.add(umi);
 				}	
 				UserBrowsingManager manager = new UserBrowsingManager();
-				manager.setGroupMenu(aGroup, newUserMenu);
-				dispose();
+                try {
+                    manager.setGroupMenu(aGroup, newUserMenu);
+                } catch (OHServiceException e1) {
+                    OHServiceExceptionUtil.showMessages(e1);
+                }
+                dispose();
 			}
 		};
 
