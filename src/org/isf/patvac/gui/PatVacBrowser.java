@@ -598,9 +598,16 @@ public class PatVacBrowser extends ModalJFrame {
 			vaccineTypeComboBox.addItem(new VaccineType("", MessageBundle.getMessage("angal.patvac.allvaccinetype")));			
 			
 			VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
-			ArrayList<VaccineType> types = manager.getVaccineType();
-            for (VaccineType elem : types) {
-            	    vaccineTypeComboBox.addItem(elem);
+			ArrayList<VaccineType> types = null;
+			try {
+				types = manager.getVaccineType();
+			} catch (OHServiceException e1) {
+				OHServiceExceptionUtil.showMessages(e1);
+			}
+			if(types != null){
+				for (VaccineType elem : types) {
+					vaccineTypeComboBox.addItem(elem);
+				}
 			}
             
             vaccineTypeComboBox.addActionListener(new ActionListener() {
@@ -632,16 +639,21 @@ public class PatVacBrowser extends ModalJFrame {
 			
 		ArrayList<Vaccine> allVac = null ;
 		vaccineComboBox.addItem( new Vaccine ( "", MessageBundle.getMessage("angal.patvac.allvaccine"),new VaccineType ("",""), (Integer) null));
-		if (((VaccineType)vaccineTypeComboBox.getSelectedItem()).getDescription().equals(MessageBundle.getMessage("angal.patvac.allvaccinetype"))){
-			allVac = manager.getVaccine();
-		}else{
-			allVac = manager.getVaccine( ((VaccineType)vaccineTypeComboBox.getSelectedItem()).getCode());
-		};
-		
-		for (Vaccine elem : allVac) {
-			vaccineComboBox.addItem(elem);
-		}
+        try {
+            if (((VaccineType)vaccineTypeComboBox.getSelectedItem()).getDescription().equals(MessageBundle.getMessage("angal.patvac.allvaccinetype"))){
+                allVac = manager.getVaccine();
+            }else{
+                allVac = manager.getVaccine( ((VaccineType)vaccineTypeComboBox.getSelectedItem()).getCode());
+            }
+        } catch (OHServiceException e) {
+            OHServiceExceptionUtil.showMessages(e);
+        }
 
+        if(allVac != null) {
+            for (Vaccine elem : allVac) {
+                vaccineComboBox.addItem(elem);
+            }
+        }
 	    return vaccineComboBox;
 	}
 	

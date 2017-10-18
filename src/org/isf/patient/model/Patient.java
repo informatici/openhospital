@@ -511,27 +511,27 @@ public class Patient {
 	public String getInformations() {
 		int i = 0;
 		StringBuffer infoBfr = new StringBuffer();
-		if (!city.equals("")) {
+		if (city != null && !city.equals("")) {
 			infoBfr.append(i > 0 ? " - " : "");
 			infoBfr.append(city);
 			i++;
 		}
-		if (!address.equals("")) {
+		if (address != null && !address.equals("")) {
 			infoBfr.append(i > 0 ? " - " : "");
 			infoBfr.append(address);
 			i++;
 		}
-		if (!telephone.equals("")) {
+		if (telephone != null && !telephone.equals("")) {
 			infoBfr.append(i > 0 ? " - " : "");
 			infoBfr.append(telephone);
 			i++;
 		}
-		if (!note.equals("")) {
+		if (note != null && !note.equals("")) {
 			infoBfr.append(i > 0 ? " - " : "");
 			infoBfr.append(note);
 			i++;
 		}
-		if (!taxCode.equals("")) {
+		if (taxCode != null && !taxCode.equals("")) {
 			infoBfr.append(i > 0 ? " - " : "");
 			infoBfr.append(taxCode);
 			i++;

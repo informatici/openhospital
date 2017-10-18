@@ -1,13 +1,11 @@
 package org.isf.supplier.gui;
 
-import java.awt.AWTEvent;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.List;
+import org.isf.generaldata.MessageBundle;
+import org.isf.supplier.manager.SupplierBrowserManager;
+import org.isf.supplier.model.Supplier;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.ModalJFrame;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,12 +14,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-
-import org.isf.generaldata.MessageBundle;
-import org.isf.supplier.model.Supplier;
-import org.isf.supplier.service.SupplierOperations;
-import org.isf.utils.exception.OHException;
-import org.isf.utils.jobjects.ModalJFrame;
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.List;
 
 /**
  * This class shows a list of suppliers.
@@ -216,7 +216,7 @@ public class SupplierBrowser extends ModalJFrame implements SupplierEdit.Supplie
 								JOptionPane.PLAIN_MESSAGE);				
 						return;							
 					}else {
-						SupplierOperations supManager = new SupplierOperations();
+                        SupplierBrowserManager supManager = new SupplierBrowserManager();
 						Supplier m = (Supplier)(((SupplierBrowserModel) model).getValueAt(table.getSelectedRow(), -1));
 						if (m.getSupDeleted().equals('Y')) return;
 						int n = JOptionPane.showConfirmDialog(
@@ -229,10 +229,9 @@ public class SupplierBrowser extends ModalJFrame implements SupplierEdit.Supplie
 							m.setSupDeleted('Y');
 							try {
 								supManager.saveOrUpdate(m);
-							} catch (OHException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+                            } catch (OHServiceException e) {
+                                OHServiceExceptionUtil.showMessages(e);
+                            }
 							model.fireTableDataChanged();
 							table.updateUI();
 						}
@@ -305,13 +304,12 @@ public class SupplierBrowser extends ModalJFrame implements SupplierEdit.Supplie
 		private static final long serialVersionUID = 1L;
 
 		public SupplierBrowserModel() {
-			SupplierOperations ioOperations = new SupplierOperations();
+			SupplierBrowserManager supplierBrowserManager = new SupplierBrowserManager();
 			try {
-				pSupplier = ioOperations.getAll();
-			} catch (OHException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				pSupplier = supplierBrowserManager.getAll();
+            } catch (OHServiceException e) {
+                OHServiceExceptionUtil.showMessages(e);
+            }
 		}
 		public int getRowCount() {
 			if (pSupplier == null)

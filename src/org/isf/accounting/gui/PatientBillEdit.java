@@ -58,7 +58,7 @@ import org.isf.priceslist.model.Price;
 import org.isf.priceslist.model.PriceList;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
-import org.isf.stat.manager.GenericReportBill;
+import org.isf.stat.gui.report.GenericReportBill;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.time.RememberDates;

@@ -1,5 +1,44 @@
 package org.isf.medicalstock.gui;
 
+import com.toedter.calendar.JDateChooser;
+import org.apache.log4j.PropertyConfigurator;
+import org.isf.generaldata.GeneralData;
+import org.isf.generaldata.MessageBundle;
+import org.isf.medicals.manager.MedicalBrowsingManager;
+import org.isf.medicals.model.Medical;
+import org.isf.medicalstock.manager.MovStockInsertingManager;
+import org.isf.medicalstock.model.Lot;
+import org.isf.medicalstock.model.Movement;
+import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
+import org.isf.medstockmovtype.model.MovementType;
+import org.isf.supplier.manager.SupplierBrowserManager;
+import org.isf.supplier.model.Supplier;
+import org.isf.utils.db.NormalizeString;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.BusyState;
+import org.isf.utils.jobjects.RequestFocusListener;
+import org.isf.utils.jobjects.TextPrompt;
+import org.isf.utils.jobjects.TextPrompt.Show;
+
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -22,48 +61,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-
-import org.apache.log4j.PropertyConfigurator;
-import org.isf.generaldata.GeneralData;
-import org.isf.generaldata.MessageBundle;
-import org.isf.medicals.manager.MedicalBrowsingManager;
-import org.isf.medicals.model.Medical;
-import org.isf.medicalstock.manager.MovStockInsertingManager;
-import org.isf.medicalstock.model.Lot;
-import org.isf.medicalstock.model.Movement;
-import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
-import org.isf.medstockmovtype.model.MovementType;
-import org.isf.supplier.model.Supplier;
-import org.isf.supplier.service.SupplierOperations;
-import org.isf.utils.db.NormalizeString;
-import org.isf.utils.exception.OHException;
-import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.jobjects.BusyState;
-import org.isf.utils.jobjects.RequestFocusListener;
-import org.isf.utils.jobjects.TextPrompt;
-import org.isf.utils.jobjects.TextPrompt.Show;
-
-import com.toedter.calendar.JDateChooser;
 
 public class MovStockMultipleCharging extends JDialog {
 	/**
@@ -643,17 +640,18 @@ public class MovStockMultipleCharging extends JDialog {
 		if (jComboBoxSupplier == null) {
 			jComboBoxSupplier = new JComboBox();
 			jComboBoxSupplier.addItem(""); //$NON-NLS-1$
-			SupplierOperations supOp = new SupplierOperations();
+			SupplierBrowserManager supplierBrowserManager = new SupplierBrowserManager();
 			ArrayList<Supplier> suppliers = null;
 			try {
-				suppliers = (ArrayList<Supplier>) supOp.getList();
-			} catch (OHException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			for (Supplier sup : suppliers) {
-				jComboBoxSupplier.addItem(sup);
-			}
+				suppliers = (ArrayList<Supplier>) supplierBrowserManager.getList();
+            } catch (OHServiceException e) {
+                OHServiceExceptionUtil.showMessages(e);
+            }
+            if(suppliers != null) {
+                for (Supplier sup : suppliers) {
+                    jComboBoxSupplier.addItem(sup);
+                }
+            }
 		}
 		return jComboBoxSupplier;
 	}

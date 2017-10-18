@@ -219,7 +219,7 @@ public class MovementWard
 	    if (this.hashCode == 0) {
 	        final int m = 23;
 	        int c = 133;
-	        
+
 	        c = m * c + code;
 	        
 	        this.hashCode = c;

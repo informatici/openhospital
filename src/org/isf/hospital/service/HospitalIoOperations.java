@@ -28,18 +28,16 @@ public class HospitalIoOperations {
 	public Hospital getHospital() throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Hospital> hospitals = null;
-				
+
 		try {
 			jpa.beginTransaction();
 
 			String query = "SELECT * FROM HOSPITAL";
 			jpa.createQuery(query, Hospital.class, false);
-			List<Hospital> hospitalList = (List<Hospital>) jpa.getList();
-			hospitals = new ArrayList<Hospital>(hospitalList);
+            Hospital hospital = (Hospital) jpa.getResult();
 
 			jpa.commitTransaction();
-			return hospitals.get(0);	
+			return hospital;
 		} catch (OHException e) {
 			//DbJpaUtil managed exception
 			jpa.rollbackTransaction();
