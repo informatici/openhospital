@@ -10,18 +10,26 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List; 
 
 import static org.junit.Assert.assertEquals;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests 
 {	
 	private static DbJpaUtil jpa;	
 	private static TestPatient testPatient;
 	private static TestPatientContext testPatientContext;
-	
+
+    @Autowired
+    PatientIoOperations patientIoOperation;
 
     @BeforeClass
     public static void setUpClass()  
@@ -57,8 +65,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
-
     	return;
     }
     
@@ -105,14 +111,11 @@ public class Tests
 	
 	@Test
 	public void testIoGetPatients() 
-	{
-		PatientIoOperations ioOperations = new PatientIoOperations();
-
-		
+	{		
 		try 
 		{		
 			_setupTestPatient(false);
-			ArrayList<Patient> patients = ioOperations.getPatients();
+			ArrayList<Patient> patients = patientIoOperation.getPatients();
 			
 			testPatient.check( patients.get(patients.size()-1));
 		} 
@@ -127,15 +130,12 @@ public class Tests
 	
 	@Test
 	public void testIoGetPatientsWithHeightAndWeight() 
-	{
-		PatientIoOperations ioOperations = new PatientIoOperations();
-		
-		
+	{	
 		try 
 		{		
 			_setupTestPatient(false);
 			// Pay attention that query return with PAT_ID descendant
-			ArrayList<Patient> patients = ioOperations.getPatientsWithHeightAndWeight(null);
+			ArrayList<Patient> patients = patientIoOperation.getPatientsWithHeightAndWeight(null);
 
 			testPatient.check(patients.get(0));
 		} 
@@ -150,15 +150,12 @@ public class Tests
 	
 	@Test
 	public void testIoGetPatientsWithHeightAndWeightRegEx() 
-	{
-		PatientIoOperations ioOperations = new PatientIoOperations();
-		
-		
+	{	
 		try 
 		{	
 			Integer code = _setupTestPatient(false);
 			Patient foundPatient = (Patient)jpa.find(Patient.class, code); 
-			ArrayList<Patient> patients = ioOperations.getPatientsWithHeightAndWeight(foundPatient.getFirstName());
+			ArrayList<Patient> patients = patientIoOperation.getPatientsWithHeightAndWeight(foundPatient.getFirstName());
 			
 			testPatient.check(patients.get(0));
 		} 
@@ -173,15 +170,12 @@ public class Tests
 
 	@Test
 	public void testIoGetPatientFromName() 
-	{
-		PatientIoOperations ioOperations = new PatientIoOperations();
-		
-		
+	{	
 		try 
 		{	
 			Integer code = _setupTestPatient(false);
 			Patient foundPatient = (Patient)jpa.find(Patient.class, code); 
-			Patient patient = ioOperations.getPatient(foundPatient.getName());
+			Patient patient = patientIoOperation.getPatient(foundPatient.getName());
 			
 			assertEquals(foundPatient.getName(), patient.getName());
 		} 
@@ -196,15 +190,12 @@ public class Tests
 	
 	@Test
 	public void testIoGetPatientFromCode() 
-	{
-		PatientIoOperations ioOperations = new PatientIoOperations();
-		
-		
+	{	
 		try 
 		{		
 			Integer code = _setupTestPatient(false);
 			Patient foundPatient = (Patient)jpa.find(Patient.class, code); 
-			Patient patient = ioOperations.getPatient(code);
+			Patient patient = patientIoOperation.getPatient(code);
 
 			assertEquals(foundPatient.getName(), patient.getName());
 		} 
@@ -219,13 +210,10 @@ public class Tests
 	
 	@Test
 	public void testIoGetPatientAll() 
-	{
-		PatientIoOperations ioOperations = new PatientIoOperations();
-		
-		
+	{	
 		try 
 		{		
-			Patient patient = ioOperations.getPatientAll(testPatientContext.getAllSaved().get(0).getCode());
+			Patient patient = patientIoOperation.getPatientAll(testPatientContext.getAllSaved().get(0).getCode());
 			
 			
 			assertEquals(testPatientContext.getAllSaved().get(0).getName(), patient.getName());
@@ -241,14 +229,11 @@ public class Tests
 	
 	@Test
 	public void testNewPatient() 
-	{
-		PatientIoOperations ioOperations = new PatientIoOperations();
-
-		
+	{		
 		try 
 		{		
 			Patient patient = testPatient.setup(true);;
-			boolean result = ioOperations.newPatient(patient);
+			boolean result = patientIoOperation.newPatient(patient);
 			
 			assertEquals(true, result);
 		} 
@@ -264,7 +249,6 @@ public class Tests
 	@Test
 	public void testUpdatePatientFalse() 
 	{
-		PatientIoOperations ioOperations = new PatientIoOperations();
 		int lock = 0;
 		
 		
@@ -273,7 +257,7 @@ public class Tests
 			Integer code = _setupTestPatient(false);
 			Patient patient = (Patient)jpa.find(Patient.class, code); 
 			lock = patient.getLock();
-			boolean result = ioOperations.updatePatient(patient, false);
+			boolean result = patientIoOperation.updatePatient(patient, false);
 			
 			assertEquals(true, result);
 			assertEquals(lock, patient.getLock());
@@ -290,7 +274,6 @@ public class Tests
 	@Test
 	public void testUpdatePatientTrue() 
 	{
-		PatientIoOperations ioOperations = new PatientIoOperations();
 		int lock = 0;
 		
 		
@@ -299,7 +282,7 @@ public class Tests
 			Integer code = _setupTestPatient(false);
 			Patient patient = (Patient)jpa.find(Patient.class, code); 
 			lock = patient.getLock();
-			boolean result = ioOperations.updatePatient(patient, true);
+			boolean result = patientIoOperation.updatePatient(patient, true);
 			
 			assertEquals(true, result);
 			assertEquals((lock + 1), patient.getLock());
@@ -315,15 +298,12 @@ public class Tests
 	
 	@Test
 	public void testDeletePatient() 
-	{
-		PatientIoOperations ioOperations = new PatientIoOperations();
-		
-		
+	{		
 		try 
 		{		
 			Integer code = _setupTestPatient(false);
 			Patient patient = (Patient)jpa.find(Patient.class, code); 
-			boolean result = ioOperations.deletePatient(patient);
+			boolean result = patientIoOperation.deletePatient(patient);
 			Patient deletedPatient = _getDeletedPatient(code);
 			
 			assertEquals(true, result);
@@ -340,15 +320,12 @@ public class Tests
 	
 	@Test
 	public void testIsPatientPresent() 
-	{
-		PatientIoOperations ioOperations = new PatientIoOperations();
-		
-		
+	{	
 		try 
 		{		
 			Integer code = _setupTestPatient(false);
 			Patient foundPatient = (Patient)jpa.find(Patient.class, code); 
-			boolean result = ioOperations.isPatientPresent(foundPatient.getName());
+			boolean result = patientIoOperation.isPatientPresent(foundPatient.getName());
 			
 			assertEquals(true, result);
 		} 
@@ -364,16 +341,15 @@ public class Tests
 	@Test
 	public void testGetNextPatientCode() 
 	{
-		PatientIoOperations ioOperations = new PatientIoOperations();
 		Integer code = 0;
 		Integer max = 0;
 		
 		
 		try 
 		{		
-			code = ioOperations.getNextPatientCode();
+			code = patientIoOperation.getNextPatientCode();
 			max = testPatientContext.getMaxCode();
-			assertEquals(max+1, code);
+			assertEquals(max+1, code, 0.1);
 		} 
 		catch (Exception e) 
 		{
