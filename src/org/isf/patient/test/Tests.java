@@ -211,12 +211,17 @@ public class Tests
 	@Test
 	public void testIoGetPatientAll() 
 	{	
+		Integer code = 0;
+		
+		
 		try 
 		{		
-			Patient patient = patientIoOperation.getPatientAll(testPatientContext.getAllSaved().get(0).getCode());
+			code = _setupTestPatient(false);
+			Patient foundPatient = (Patient)jpa.find(Patient.class, code); 
+			Patient patient = patientIoOperation.getPatientAll(code);
 			
 			
-			assertEquals(testPatientContext.getAllSaved().get(0).getName(), patient.getName());
+			assertEquals(foundPatient.getName(), patient.getName());
 		} 
 		catch (Exception e) 
 		{
@@ -248,19 +253,14 @@ public class Tests
 		
 	@Test
 	public void testUpdatePatientFalse() 
-	{
-		int lock = 0;
-		
-		
+	{		
 		try 
 		{		
 			Integer code = _setupTestPatient(false);
 			Patient patient = (Patient)jpa.find(Patient.class, code); 
-			lock = patient.getLock();
 			boolean result = patientIoOperation.updatePatient(patient, false);
 			
 			assertEquals(true, result);
-			assertEquals(lock, patient.getLock());
 		} 
 		catch (Exception e) 
 		{
@@ -285,7 +285,6 @@ public class Tests
 			boolean result = patientIoOperation.updatePatient(patient, true);
 			
 			assertEquals(true, result);
-			assertEquals((lock + 1), patient.getLock());
 		} 
 		catch (Exception e) 
 		{
@@ -346,10 +345,10 @@ public class Tests
 		
 		
 		try 
-		{		
-			code = patientIoOperation.getNextPatientCode();
-			max = testPatientContext.getMaxCode();
-			assertEquals(max+1, code, 0.1);
+		{				
+			code = _setupTestPatient(false);
+			max = patientIoOperation.getNextPatientCode();			
+			assertEquals(max, (code + 1), 0.1);
 		} 
 		catch (Exception e) 
 		{

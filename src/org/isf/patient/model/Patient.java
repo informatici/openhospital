@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.isf.opd.model.Opd;
@@ -140,7 +139,7 @@ public class Patient {
 	@Transient
 	private float weight;
 	
-	@Version
+	//@Version
 	@Column(name="PAT_LOCK")
 	private int lock;
 	

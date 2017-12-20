@@ -1,5 +1,11 @@
 package org.isf.patient.service;
 
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 /*------------------------------------------
  * IoOperations - dB operations for the patient entity
  * -----------------------------------------
@@ -17,7 +23,8 @@ package org.isf.patient.service;
 
 import java.util.ArrayList;
 
-import org.isf.generaldata.MessageBundle;
+import javax.imageio.ImageIO;
+
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,11 +65,19 @@ public class PatientIoOperations
 	public ArrayList<Patient> getPatientsWithHeightAndWeight(
 			String regex) throws OHException 
 	{
-
-		ArrayList<Patient> pPatient = null;
+		ArrayList<Integer> pPatientCode = null;
+		ArrayList<Patient> pPatient = new ArrayList<Patient>();
 		
 		
-		pPatient = new ArrayList<Patient>(repository.findAllPatientsWithHeightAndWeight(regex));			
+		pPatientCode = new ArrayList<Integer>(repository.findAllByHeightAndWeight(regex));			
+		for (int i=0; i<pPatientCode.size(); i++)
+		{
+			Integer code = pPatientCode.get(i);
+			Patient patient = repository.findOne(code);
+			
+			
+			pPatient.add(i, patient);
+		}
 					
 		return pPatient;
 	}	
@@ -169,21 +184,50 @@ public class PatientIoOperations
 			boolean check) throws OHException 
 	{
 		int lock = 0;
-		boolean result = true;
+		boolean result = false;
 				
 
 		lock = _getUpdatePatientLock(patient.getCode(), check);
-	
-		
-		try {
-			repository.updatePatientLock(patient, lock);
-
-		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 				
+		if (repository.updateLockByCode(
+				patient.getFirstName(), patient.getSecondName(), patient.getName(),
+				patient.getBirthDate(), patient.getAge(), patient.getAgetype(), patient.getSex(), patient.getAddress(), patient.getCity(),
+				patient.getNextKin(), patient.getTelephone(), patient.getMother(), patient.getMother_name(),
+				patient.getFather(), patient.getFather_name(), patient.getBloodType(), patient.getHasInsurance(), patient.getParentTogether(),
+				patient.getNote(), patient.getTaxCode(), (lock + 1), _createPatientPhotoInputStream(patient.getPhoto()),
+				patient.getCode()) > 0)
+		{
+			result = true;
+		}
 	
 		return result;
+	}
+	
+	private byte[] _createPatientPhotoInputStream(
+			Image anImage) 
+	{
+		byte[] byteArray = null;
+		
+		try {
+			// Paint the image onto the buffered image
+			BufferedImage bu = new BufferedImage(anImage.getWidth(null), anImage.getHeight(null), BufferedImage.TYPE_INT_RGB);
+			Graphics g = bu.createGraphics();
+			g.drawImage(anImage, 0, 0, null);
+			g.dispose();
+			// Create the ByteArrayOutputStream
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+
+			ImageIO.write(bu, "jpg", outStream);
+			System.out.println("dimensione output stream: " + outStream.size());
+			
+			if (outStream != null) byteArray = outStream.toByteArray();
+			
+		} catch (IOException ioe) {
+			//TODO: handle exception
+		} catch (Exception ioe) {
+			//TODO: handle exception
+		}
+		
+		return byteArray;
 	}
 	
 	private int _getUpdatePatientLock(
@@ -217,12 +261,12 @@ public class PatientIoOperations
 		boolean result = false;
 		int updates = 0;
 		
-		
+	
 		updates = repository.updateDeleted(patient.getCode());
 		if (updates > 0)
 		{
 			result = true;
-		}
+		} 
 		
 		return result;
 	}
@@ -297,6 +341,25 @@ public class PatientIoOperations
 			result = true;
 		}
 		
+		
 		return result;
+	}
+
+	/**
+	 * checks if the code is already in use
+	 *
+	 * @param code - the patient code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
+	 */
+	public boolean isCodePresent(
+			Integer code) throws OHException
+	{
+		boolean result = true;
+	
+		
+		result = repository.exists(code);
+		
+		return result;	
 	}
 }
