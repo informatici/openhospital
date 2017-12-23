@@ -16,7 +16,7 @@ public class TestPatientVaccine
 	private int code = 0;
 	private int progr = 10;
 	private GregorianCalendar vaccineDate = new GregorianCalendar(1984, Calendar.AUGUST, 14);
-    private Integer lock = 0;
+    private int lock = 0;
     
 			
 	public PatientVaccine setup(

@@ -32,7 +32,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	org.isf.operation.test.Tests.class,
 	org.isf.opetype.test.Tests.class,	
 	org.isf.patient.test.Tests.class,
-//	org.isf.patvac.test.Tests.class,
+	org.isf.patvac.test.Tests.class,
 	org.isf.pregtreattype.test.Tests.class,	
 	org.isf.priceslist.test.Tests.class,
 	org.isf.pricesothers.test.Tests.class,
