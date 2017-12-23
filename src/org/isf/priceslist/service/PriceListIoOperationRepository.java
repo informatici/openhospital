@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 public interface PriceListIoOperationRepository extends JpaRepository<PriceList, Integer> {
-    /*
+    
 	@Modifying
     @Query(value = "INSERT INTO PRICELISTS (LST_CODE, LST_NAME, LST_DESC, LST_CURRENCY) VALUES (:code,:name,:description,:currency)", nativeQuery= true)
     public void insertPriceList(
@@ -21,7 +21,7 @@ public interface PriceListIoOperationRepository extends JpaRepository<PriceList,
     public int updatePriceList(
     		@Param("code") String code, @Param("name") String name, 
     		@Param("description") String description, @Param("currency") String currency, @Param("id") Integer id); 
-*/
+
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM PRICELISTS WHERE LST_ID = :id", nativeQuery= true)

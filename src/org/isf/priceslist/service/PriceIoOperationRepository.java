@@ -3,7 +3,6 @@ package org.isf.priceslist.service;
 import java.util.List;
 
 import org.isf.priceslist.model.Price;
-import org.isf.priceslist.model.PriceList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface PriceIoOperationRepository extends JpaRepository<Price, Integer> {
     public List<Price> findAllByOrderByDescriptionAsc();    
-	public List<Price> findAllWhereList(PriceList id);
+	
+    @Query(value = "SELECT * FROM PRICES WHERE PRC_LST_ID = :id", nativeQuery= true)
+    public List<Price> findAllWhereList(@Param("id") Integer id);
 
     @Modifying
     @Transactional

@@ -21,7 +21,7 @@ public interface PatientIoOperationRepository extends JpaRepository<Patient, Int
     @Query(value = "SELECT * FROM PATIENT WHERE PAT_ID = :id AND (PAT_DELETED='N' OR PAT_DELETED IS NULL)", nativeQuery= true)
     public List<Patient> findAllWhereIdAndDeleted(@Param("id") Integer id);
     
-    @Query(value = "SELECT * FROM PATIENT WHERE PAT_ID = ?", nativeQuery= true)
+    @Query(value = "SELECT * FROM PATIENT WHERE PAT_ID = :id", nativeQuery= true)
     public List<Patient> findAllWhereId(@Param("id") Integer id);
     
     @Modifying

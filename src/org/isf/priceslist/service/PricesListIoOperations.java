@@ -77,7 +77,7 @@ public class PricesListIoOperations {
 		boolean result = true;
 
 		
-		//priceRepository.deleteWhereList(id);
+		priceRepository.deleteWhereList(id);
         				
         return result;
     }
@@ -91,10 +91,10 @@ public class PricesListIoOperations {
 		
 		for (Price price : prices) 
 		{
-//			priceRepository.insertPrice(
-//					list.getId(), price.getGroup(), price.getItem(),
-//					price.getDesc(),
-//					price.getPrice());
+			priceRepository.insertPrice(
+					list.getId(), price.getGroup(), price.getItem(),
+					price.getDesc(),
+					price.getPrice());
 		}
 		
         return result;
@@ -112,7 +112,7 @@ public class PricesListIoOperations {
 		boolean result = true;
         		
 		
-//		repository.insertPriceList(list.getCode(), list.getName(), list.getDescription(), list.getCurrency());
+		repository.insertPriceList(list.getCode(), list.getName(), list.getDescription(), list.getCurrency());
 		
 		return result;
 	}
@@ -129,10 +129,10 @@ public class PricesListIoOperations {
 		boolean result = false;
         				
 
-//		if (repository.updatePriceList(list.getCode(), list.getName(), list.getDescription(), list.getCurrency(), list.getId()) > 0)
-//		{
-//			result = true;
-//		}		
+		if (repository.updatePriceList(list.getCode(), list.getName(), list.getDescription(), list.getCurrency(), list.getId()) > 0)
+		{
+			result = true;
+		}		
 		
 		return result;
 	}
@@ -185,7 +185,7 @@ public class PricesListIoOperations {
 		boolean result = true; 			
 
 		
-		/*List<Price> Prices = (List<Price>)priceRepository.findAllWhereList(list.getId());
+		List<Price> Prices = (List<Price>)priceRepository.findAllWhereList(list.getId());
 		for (Price price: Prices) 
 		{    
 			Price newPrice = new Price();
@@ -204,7 +204,7 @@ public class PricesListIoOperations {
 			}
 			newPrice.setItem(price.getItem());			
 			priceRepository.save(newPrice);
-	    }  */      			
+	    }        			
 		
         return result;
     }

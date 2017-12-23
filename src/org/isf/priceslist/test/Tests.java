@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-import org.isf.vaccine.service.VaccineIoOperations;
 import org.isf.priceslist.model.Price;
 import org.isf.priceslist.model.PriceList;
 import org.isf.priceslist.service.PricesListIoOperations;

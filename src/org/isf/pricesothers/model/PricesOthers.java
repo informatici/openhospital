@@ -32,11 +32,11 @@ public class PricesOthers
 
 	@NotNull
 	@Column(name="OTH_CODE")  
-    private String Code;
+    private String code;
 
 	@NotNull
 	@Column(name="OTH_DESC") 
-    private String Description;
+    private String description;
 
 	@NotNull
 	@Column(name="OTH_OPD_INCLUDE") 
@@ -66,8 +66,8 @@ public class PricesOthers
     public PricesOthers(String code, String desc, boolean opdInclude,
 			boolean ipdInclude, boolean discharge, boolean undefined) {
 		super();
-		Code = code;
-		Description = desc;
+		this.code = code;
+		this.description = desc;
 		this.opdInclude = opdInclude;
 		this.ipdInclude = ipdInclude;
 		this.discharge = discharge;
@@ -78,8 +78,8 @@ public class PricesOthers
 			boolean ipdInclude, boolean discharge, boolean undefined) {
 		super();
 		this.id = id;
-		Code = code;
-		Description = desc;
+		this.code = code;
+		this.description = desc;
 		this.opdInclude = opdInclude;
 		this.ipdInclude = ipdInclude;
 		this.discharge = discharge;
@@ -90,8 +90,8 @@ public class PricesOthers
 			boolean opdInclude, boolean ipdInclude, boolean daily, boolean discharge, boolean undefined) {
 		super();
 		this.id = id;
-		Code = code;
-		Description = description;
+		this.code = code;
+		this.description = description;
 		this.opdInclude = opdInclude;
 		this.ipdInclude = ipdInclude;
 		this.daily = daily;
@@ -108,19 +108,19 @@ public class PricesOthers
 	}
 	
 	public String getCode() {
-		return Code;
+		return this.code;
 	}
 	
 	public void setCode(String code) {
-		Code = code;
+		this.code = code;
 	}
 	
 	public String getDescription() {
-		return Description;
+		return this.description;
 	}
 	
 	public void setDescription(String desc) {
-		Description = desc;
+		this.description = desc;
 	}
 	
 	public boolean isOpdInclude() {
@@ -165,7 +165,7 @@ public class PricesOthers
 
 	@Override
 	public String toString() {
-		return Description;
+		return this.description;
 	}
 	
 	@Override
