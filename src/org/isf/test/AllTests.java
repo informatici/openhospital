@@ -16,7 +16,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	org.isf.distype.test.Tests.class,	
 	org.isf.dlvrrestype.test.Tests.class,
 	org.isf.dlvrtype.test.Tests.class,
-//	org.isf.exa.test.Tests.class,
+	org.isf.exa.test.Tests.class,
 	org.isf.examination.test.Tests.class,	
 	org.isf.exatype.test.Tests.class,	
 //	org.isf.hospital.test.Tests.class,

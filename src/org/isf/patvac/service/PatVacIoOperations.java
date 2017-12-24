@@ -83,7 +83,6 @@ public class PatVacIoOperations {
 			
 			pPatientVaccine.add(i, patientVaccine);
 		}
-		
 
 		return pPatientVaccine;
 	}
