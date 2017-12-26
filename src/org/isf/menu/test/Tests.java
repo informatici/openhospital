@@ -17,7 +17,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
@@ -30,6 +36,9 @@ public class Tests
 	private static TestGroupMenuContext testGroupMenuContext;
 	private static TestGroupMenu testGroupMenu;
 		
+
+    @Autowired
+    MenuIoOperations menuIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -71,8 +80,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
-
     	return;
     }
 	
@@ -242,14 +249,13 @@ public class Tests
 	public void testIoGetUser() 
 	{
 		String code = "";
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestUser(false);
 			User foundUser = (User)jpa.find(User.class, code); 
-			ArrayList<User> users = ioOperations.getUser();
+			ArrayList<User> users = menuIoOperation.getUser();
 			
 			assertEquals(foundUser.getDesc(), users.get(users.size()-1).getDesc());
 		} 
@@ -266,14 +272,13 @@ public class Tests
 	public void testIoGetUserFromId() 
 	{
 		String code = "";
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestUser(false);
 			User foundUser = (User)jpa.find(User.class, code); 
-			ArrayList<User> users = ioOperations.getUser(foundUser.getUserGroupName().getCode());
+			ArrayList<User> users = menuIoOperation.getUser(foundUser.getUserGroupName().getCode());
 			
 			assertEquals(foundUser.getDesc(), users.get(users.size()-1).getDesc());
 		} 
@@ -290,14 +295,13 @@ public class Tests
 	public void testIoGetUserInfo() 
 	{
 		String code = "";
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestUser(false);
 			User foundUser = (User)jpa.find(User.class, code); 
-			String description = ioOperations.getUsrInfo(foundUser.getUserName());
+			String description = menuIoOperation.getUsrInfo(foundUser.getUserName());
 			
 			assertEquals(foundUser.getDesc(), description);
 		} 
@@ -314,14 +318,13 @@ public class Tests
 	public void testIoGetUserGroup() 
 	{
 		String code = "";
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestUserGroup(false);
 			UserGroup foundUserGroup = (UserGroup)jpa.find(UserGroup.class, code); 
-			ArrayList<UserGroup> userGroups = ioOperations.getUserGroup();
+			ArrayList<UserGroup> userGroups = menuIoOperation.getUserGroup();
 			
 			assertEquals(foundUserGroup.getDesc(), userGroups.get(userGroups.size()-1).getDesc());
 		} 
@@ -338,14 +341,13 @@ public class Tests
 	public void testIoIsUserNamePresent() 
 	{
 		String code = "admin";
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestUser(false);
-			result = ioOperations.isUserNamePresent(code);
+			result = menuIoOperation.isUserNamePresent(code);
 			
 			assertEquals(true, result);
 		} 
@@ -362,14 +364,13 @@ public class Tests
 	public void testIoIsGroupNamePresent() 
 	{
 		String code = "";
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestUserGroup(false);
-			result = ioOperations.isGroupNamePresent(code);
+			result = menuIoOperation.isGroupNamePresent(code);
 			
 			assertEquals(true, result);
 		} 
@@ -385,7 +386,6 @@ public class Tests
 	@Test
 	public void testIoNewUser() 
 	{
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		boolean result = false; 
 		
 		
@@ -397,7 +397,7 @@ public class Tests
 			User user = testUser.setup(userGroup, false);
 			jpa.persist(userGroup);
 			jpa.commitTransaction();
-			result = ioOperations.newUser(user);
+			result = menuIoOperation.newUser(user);
 			
 			assertEquals(true, result);
 			_checkUserIntoDb(user.getUserName());
@@ -415,7 +415,6 @@ public class Tests
 	public void testIoUpdateUser()
 	{
 		String code = "";
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		boolean result = false;
 		
 		
@@ -424,7 +423,7 @@ public class Tests
 			code = _setupTestUser(false);
 			User foundUser = (User)jpa.find(User.class, code); 
 			foundUser.setDesc("Update");
-			result = ioOperations.updateUser(foundUser);
+			result = menuIoOperation.updateUser(foundUser);
 			User updateUser = (User)jpa.find(User.class, code); 
 			
 			assertEquals(true, result);
@@ -443,7 +442,6 @@ public class Tests
 	public void updatePassword()
 	{
 		String code = "";
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		boolean result = false;
 		
 		
@@ -452,7 +450,7 @@ public class Tests
 			code = _setupTestUser(false);
 			User foundUser = (User)jpa.find(User.class, code); 
 			foundUser.setPasswd("Update");
-			result = ioOperations.updatePassword(foundUser);
+			result = menuIoOperation.updatePassword(foundUser);
 			User updateDisease = (User)jpa.find(User.class, code); 
 			
 			assertEquals(true, result);
@@ -471,7 +469,6 @@ public class Tests
 	public void testIoDeleteDisease() 
 	{
 		String code = "";
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		boolean result = false;
 		
 		
@@ -479,7 +476,7 @@ public class Tests
 		{		
 			code = _setupTestUser(false);
 			User foundUser = (User)jpa.find(User.class, code); 
-			result = ioOperations.deleteUser(foundUser);
+			result = menuIoOperation.deleteUser(foundUser);
 			
 			assertEquals(true, result);
 		} 
@@ -494,10 +491,7 @@ public class Tests
 		
 	@Test
 	public void testIoGetMenu() 
-	{
-		MenuIoOperations ioOperations = new MenuIoOperations();
-		
-		
+	{		
 		try 
 		{		
 			jpa.beginTransaction();	
@@ -511,7 +505,7 @@ public class Tests
 			jpa.persist(groupMenu);
 			jpa.commitTransaction();
 			 
-			ArrayList<UserMenuItem> menus = ioOperations.getMenu(user);
+			ArrayList<UserMenuItem> menus = menuIoOperation.getMenu(user);
 			
 			assertEquals(menuItem.getCode(), menus.get(menus.size()-1).getCode());
 		} 
@@ -526,10 +520,7 @@ public class Tests
 	
 	@Test
 	public void testIoGetGroupMenu() 
-	{
-		MenuIoOperations ioOperations = new MenuIoOperations();
-		
-		
+	{		
 		try 
 		{		
 			jpa.beginTransaction();	
@@ -543,7 +534,7 @@ public class Tests
 			jpa.persist(groupMenu);
 			jpa.commitTransaction();
 			 
-			ArrayList<UserMenuItem> menus = ioOperations.getGroupMenu(userGroup);
+			ArrayList<UserMenuItem> menus = menuIoOperation.getGroupMenu(userGroup);
 			
 			assertEquals(menuItem.getCode(), menus.get(menus.size()-1).getCode());
 		} 
@@ -569,7 +560,6 @@ public class Tests
 	public void testIoDeleteUserGroup() 
 	{
 		String code = "";
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		boolean result = false;
 		
 
@@ -577,11 +567,9 @@ public class Tests
 		{		
 			code = _setupTestUserGroup(false);
 			UserGroup foundUserGroup = (UserGroup)jpa.find(UserGroup.class, code); 
-			result = ioOperations.deleteGroup(foundUserGroup);
+			result = menuIoOperation.deleteGroup(foundUserGroup);
 			
-			assertEquals(true, result);
-			UserGroup deletedUserGroup = (UserGroup)jpa.find(UserGroup.class, code); 
-			assertEquals(null, deletedUserGroup);
+			assertEquals(true, result);			
 		} 
 		catch (Exception e) 
 		{
@@ -595,14 +583,13 @@ public class Tests
 	@Test
 	public void testIoNewUserGroup() 
 	{
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		boolean result = false; 
 		
 		
 		try 
 		{						
 			UserGroup userGroup= testUserGroup.setup(false);
-			result = ioOperations.newUserGroup(userGroup);
+			result = menuIoOperation.newUserGroup(userGroup);
 			
 			assertEquals(true, result);
 			_checkUserGroupIntoDb(userGroup.getCode());
@@ -620,7 +607,6 @@ public class Tests
 	public void testIoUpdateUserGroup()
 	{
 		String code = "";
-		MenuIoOperations ioOperations = new MenuIoOperations();
 		boolean result = false;
 		
 		
@@ -629,7 +615,7 @@ public class Tests
 			code = _setupTestUserGroup(false);
 			UserGroup foundUserGroup = (UserGroup)jpa.find(UserGroup.class, code); 
 			foundUserGroup.setDesc("Update");;
-			result = ioOperations.updateUserGroup(foundUserGroup);
+			result = menuIoOperation.updateUserGroup(foundUserGroup);
 			UserGroup updateUserGroup = (UserGroup)jpa.find(UserGroup.class, code); 
 			
 			assertEquals(true, result);

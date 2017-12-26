@@ -27,7 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
 //	org.isf.medicalstockward.test.Tests.class,	
 	org.isf.medstockmovtype.test.Tests.class,
 	org.isf.medtype.test.Tests.class,
-//	org.isf.menu.test.Tests.class,
+	org.isf.menu.test.Tests.class,
 //	org.isf.opd.test.Tests.class,	
 	org.isf.operation.test.Tests.class,
 	org.isf.opetype.test.Tests.class,	
