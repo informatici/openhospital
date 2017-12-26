@@ -230,7 +230,7 @@ class MovementIoOperationRepositoryImpl implements MovementIoOperationRepository
 			} 
 			else if (medicalTypeCode == null) 
 			{
-				query += "(MDSR_DESC like %" + medicalDescription + "%) ";
+				query += "(MDSR_DESC like \"%" + medicalDescription + "%\") ";
 				paramQuery = true;
 			}
 		}
@@ -240,7 +240,7 @@ class MovementIoOperationRepositoryImpl implements MovementIoOperationRepository
 			{
 				query += "and ";
 			}
-			query += "(LT_ID_A like %" + lotCode + "%) ";
+			query += "(LT_ID_A like \"%" + lotCode + "%\") ";
 			paramQuery = true;
 		}
 		if ((movFrom != null) && (movTo != null)) 
