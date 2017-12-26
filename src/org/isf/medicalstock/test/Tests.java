@@ -34,7 +34,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
@@ -52,7 +58,9 @@ public class Tests
 	private static TestWardContext testWardContext;
 	private static TestSupplier testSupplier;
 	private static TestSupplierContext testSupplierContext;
-		
+
+    @Autowired
+    MedicalStockIoOperations medicalStockIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -102,7 +110,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
     	testLot = null;
     	testLotContext = null;
     	testMovement = null;
@@ -206,14 +213,13 @@ public class Tests
 	public void testIoGetMedicalsFromLot() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			List<Integer> medicalIds = ioOperations.getMedicalsFromLot(foundMovement.getLot().getCode());
+			List<Integer> medicalIds = medicalStockIoOperation.getMedicalsFromLot(foundMovement.getLot().getCode());
 
 			assertEquals(foundMovement.getMedical().getCode(), medicalIds.get(0));
 		} 
@@ -230,14 +236,13 @@ public class Tests
 	public void testIoGetLotsByMedical() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			List<Lot> lots = ioOperations.getLotsByMedical(foundMovement.getMedical());
+			List<Lot> lots = medicalStockIoOperation.getLotsByMedical(foundMovement.getMedical());
 
 			assertEquals(foundMovement.getLot().getCode(), lots.get(0).getCode());
 		} 
@@ -254,14 +259,13 @@ public class Tests
 	public void testIoNewAutomaticDischargingMovement() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			boolean result = ioOperations.newAutomaticDischargingMovement(foundMovement);
+			boolean result = medicalStockIoOperation.newAutomaticDischargingMovement(foundMovement);
 
 			assertEquals(true, result);
 		} 
@@ -278,14 +282,13 @@ public class Tests
 	public void testIoNewMovement() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			boolean result = ioOperations.newMovement(foundMovement);
+			boolean result = medicalStockIoOperation.newMovement(foundMovement);
 
 			assertEquals(true, result);
 		} 
@@ -302,14 +305,13 @@ public class Tests
 	public void testIoPrepareChargingMovement() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			boolean result = ioOperations.prepareChargingMovement(foundMovement);
+			boolean result = medicalStockIoOperation.prepareChargingMovement(foundMovement);
 
 			assertEquals(true, result);
 		} 
@@ -326,14 +328,13 @@ public class Tests
 	public void testIoPrepareDischargingMovement() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			boolean result = ioOperations.prepareDischargingwMovement(foundMovement);
+			boolean result = medicalStockIoOperation.prepareDischargingwMovement(foundMovement);
 
 			assertEquals(true, result);
 		} 
@@ -351,13 +352,12 @@ public class Tests
 	{
 		String code = "";
 		boolean result = false;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestLot(false);
-			result = ioOperations.lotExists(code);
+			result = medicalStockIoOperation.lotExists(code);
 			
 			assertEquals(true, result);
 		} 
@@ -374,14 +374,13 @@ public class Tests
 	public void testIoGetMovements() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			ArrayList<Movement> movements = ioOperations.getMovements();
+			ArrayList<Movement> movements = medicalStockIoOperation.getMovements();
 
 			assertEquals(foundMovement.getCode(), movements.get(0).getCode());
 		} 
@@ -398,7 +397,6 @@ public class Tests
 	public void testIoGetMovementsWihParameters() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		GregorianCalendar now = new GregorianCalendar();
 		GregorianCalendar fromDate = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);
 		GregorianCalendar toDate = new GregorianCalendar(now.get(Calendar.YEAR), 3, 3);
@@ -408,7 +406,7 @@ public class Tests
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			ArrayList<Movement> movements = ioOperations.getMovements(
+			ArrayList<Movement> movements = medicalStockIoOperation.getMovements(
 					foundMovement.getWard().getCode(),
 					fromDate,
 					toDate);
@@ -428,7 +426,6 @@ public class Tests
 	public void testIoGetMovementsWihAllParameters() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		GregorianCalendar now = new GregorianCalendar();
 		GregorianCalendar fromDate = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);
 		GregorianCalendar toDate = new GregorianCalendar(now.get(Calendar.YEAR), 3, 3);
@@ -438,7 +435,7 @@ public class Tests
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			ArrayList<Movement> movements = ioOperations.getMovements(
+			ArrayList<Movement> movements = medicalStockIoOperation.getMovements(
 					foundMovement.getMedical().getCode(),
 					foundMovement.getMedical().getType().getCode(),
 					foundMovement.getWard().getCode(), 
@@ -465,7 +462,6 @@ public class Tests
 	public void testIoGetMovementForPrint() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		GregorianCalendar now = new GregorianCalendar();
 		GregorianCalendar fromDate = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);
 		GregorianCalendar toDate = new GregorianCalendar(now.get(Calendar.YEAR), 3, 3);
@@ -476,7 +472,7 @@ public class Tests
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			ArrayList<Movement> movements = ioOperations.getMovementForPrint(												
+			ArrayList<Movement> movements = medicalStockIoOperation.getMovementForPrint(												
 												foundMovement.getMedical().getDescription(), 
 												null,
 												foundMovement.getWard().getCode(),
@@ -502,14 +498,13 @@ public class Tests
 	public void testIoGetLastMovementDate() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			GregorianCalendar gc = ioOperations.getLastMovementDate();
+			GregorianCalendar gc = medicalStockIoOperation.getLastMovementDate();
 
 			assertEquals(foundMovement.getDate(), gc);
 		} 
@@ -526,14 +521,13 @@ public class Tests
 	public void testIoRefNoExists() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			boolean result = ioOperations.refNoExists(foundMovement.getRefNo());
+			boolean result = medicalStockIoOperation.refNoExists(foundMovement.getRefNo());
 
 			assertEquals(true, result);
 		} 
@@ -550,14 +544,13 @@ public class Tests
 	public void testIoGetMovementsByReference() 
 	{
 		int code = 0;
-		MedicalStockIoOperations ioOperations = new MedicalStockIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			ArrayList<Movement> movements = ioOperations.getMovementsByReference(foundMovement.getRefNo() );
+			ArrayList<Movement> movements = medicalStockIoOperation.getMovementsByReference(foundMovement.getRefNo() );
 
 			assertEquals(foundMovement.getCode(), movements.get(0).getCode());
 		} 

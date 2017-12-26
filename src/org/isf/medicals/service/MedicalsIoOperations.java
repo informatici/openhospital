@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import org.isf.medicals.model.*;
 import org.isf.medicalstock.model.Movement;
-import org.isf.medicalstock.service.MedicalStockIoOperationRepository;
+import org.isf.medicalstock.service.MovementIoOperationRepository;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ public class MedicalsIoOperations
 	@Autowired
 	private MedicalsIoOperationRepository repository;
 	@Autowired	
-	private MedicalStockIoOperationRepository mRovepository;
+	private MovementIoOperationRepository mRovepository;
 	
 	/**
 	 * Retrieves the specified {@link Medical}.

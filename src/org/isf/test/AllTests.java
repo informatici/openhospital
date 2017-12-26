@@ -23,7 +23,7 @@ import org.junit.runners.Suite.SuiteClasses;
 //	org.isf.lab.test.Tests.class,
 //	org.isf.malnutrition.test.Tests.class,
 	org.isf.medicals.test.Tests.class,
-//	org.isf.medicalstock.test.Tests.class,
+	org.isf.medicalstock.test.Tests.class,
 //	org.isf.medicalstockward.test.Tests.class,	
 	org.isf.medstockmovtype.test.Tests.class,
 	org.isf.medtype.test.Tests.class,

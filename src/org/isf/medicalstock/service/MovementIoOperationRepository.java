@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
-public interface MedicalStockIoOperationRepository extends JpaRepository<Movement, Integer> {    
+public interface MovementIoOperationRepository extends JpaRepository<Movement, Integer>, MovementIoOperationRepositoryCustom {    
     @Query(value = "select * from MEDICALDSRSTOCKMOV where MMV_MDSR_ID = :code", nativeQuery= true)
     public Movement findOneStockWhereCode(@Param("code") Integer code);
     
@@ -17,4 +17,13 @@ public interface MedicalStockIoOperationRepository extends JpaRepository<Movemen
 		"join MEDICALDSR  on MMV_MDSR_ID=MDSR_ID ) " +
 		"join MEDICALDSRLOT on MMV_LT_ID_A=LT_ID_A where LT_ID_A=:lot", nativeQuery= true)
     public List<Integer> findAllByLot(@Param("lot") String lot);    
+    
+    @Query(value = "SELECT * FROM (" +
+			"(MEDICALDSRSTOCKMOVTYPE join MEDICALDSRSTOCKMOV on MMVT_ID_A = MMV_MMVT_ID_A) " +
+			"JOIN (MEDICALDSR join MEDICALDSRTYPE on MDSR_MDSRT_ID_A=MDSRT_ID_A) on MMV_MDSR_ID=MDSR_ID ) " +
+			"LEFT JOIN MEDICALDSRLOT on MMV_LT_ID_A=LT_ID_A " +
+			"LEFT JOIN WARD ON MMV_WRD_ID_A = WRD_ID_A " +
+			"WHERE MMV_REFNO = :refNo " +
+			"ORDER BY MMV_DATE DESC, MMV_REFNO DESC", nativeQuery= true)
+    public List<Movement> findAllByRefNo(@Param("refNo") String refNo);    
 }
