@@ -1,17 +1,14 @@
 package org.isf.opd.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
-
-import javax.persistence.NoResultException;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.opd.model.Opd;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /*----------------------------------------------------
  * (org.isf.opd.service)IoOperations - services for opd class
@@ -32,7 +29,11 @@ import org.springframework.stereotype.Component;
  *------------------------------------------*/
 
 @Component
+@Transactional
 public class OpdIoOperations {
+
+	@Autowired
+	private OpdIoOperationRepository repository;
 	
 	/**
 	 * return all OPDs of today or one week ago
@@ -52,6 +53,7 @@ public class OpdIoOperations {
 		{
 			dateFrom.add(GregorianCalendar.WEEK_OF_YEAR,-1);
 		}
+		
 		return getOpdList(MessageBundle.getMessage("angal.opd.alltype"),MessageBundle.getMessage("angal.opd.alldisease"),dateFrom,dateTo,0,0,'A','A');
 	}
 	
@@ -70,7 +72,6 @@ public class OpdIoOperations {
 	 * @return the list of OPDs. It could be <code>empty</code>.
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<Opd> getOpdList(
 			String diseaseTypeCode,
 			String diseaseCode, 
@@ -81,47 +82,23 @@ public class OpdIoOperations {
 			char sex,
 			char newPatient) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Opd> opds = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
+		ArrayList<Integer> pOpdCode = null;
+		ArrayList<Opd> pOpd = new ArrayList<Opd>();
 		
-		jpa.beginTransaction();
 		
-		String query = "SELECT * FROM OPD LEFT JOIN PATIENT ON OPD_PAT_ID = PAT_ID LEFT JOIN DISEASE ON OPD_DIS_ID_A = DIS_ID_A LEFT JOIN DISEASETYPE ON DIS_DCL_ID_A = DCL_ID_A WHERE 1";
-		if (!(diseaseTypeCode.equals(MessageBundle.getMessage("angal.opd.alltype")))) {
-			query += " AND DIS_DCL_ID_A = ?";
-			params.add(diseaseTypeCode);
+		pOpdCode = new ArrayList<Integer>(repository.findAllOpdWhereParams(
+				diseaseTypeCode, diseaseCode, dateFrom, dateTo,
+				ageFrom, ageTo, sex, newPatient));			
+		for (int i=0; i<pOpdCode.size(); i++)
+		{
+			Integer code = pOpdCode.get(i);
+			Opd opd = repository.findOne(code);
+			
+			
+			pOpd.add(i, opd);
 		}
-		if(!diseaseCode.equals(MessageBundle.getMessage("angal.opd.alldisease"))) {
-			query += " AND DIS_ID_A = ?";
-			params.add(diseaseCode);
-		}
-		if (ageFrom != 0 || ageTo != 0) {
-			query += " AND OPD_AGE BETWEEN ? AND ?";
-			params.add(ageFrom);
-			params.add(ageTo);
-		}
-		if (sex != 'A') {
-			query += " AND OPD_SEX = ?";
-			params.add(String.valueOf(sex));
-		}
-		if (newPatient != 'A') {
-			query += " AND OPD_NEW_PAT = ?";
-			params.add(newPatient);
-		}
-		query += " AND OPD_DATE_VIS BETWEEN ? AND ?";
-		params.add(dateFrom);
-		params.add(dateTo);
-		query += " ORDER BY OPD_DATE_VIS";
-		jpa.createQuery(query, Opd.class, false);
-		jpa.setParameters(params, false);	
-		List<Opd> opdList = (List<Opd>)jpa.getList();
-		opds = new ArrayList<Opd>(opdList);			
 		
-		jpa.commitTransaction();
-		
-		return opds;
+		return pOpd;	
 	}
 	
 	/**
@@ -132,32 +109,19 @@ public class OpdIoOperations {
 	 * 		   the whole list of {@link Opd}s if <code>0</code> is passed.
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<Opd> getOpdList(
 			int patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Opd> opds = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-		String query = "";
-				
+		ArrayList<Opd> opdList = null;
 		
-		jpa.beginTransaction();		
 		
 		if (patID == 0) {
-			query = "SELECT * FROM OPD LEFT JOIN PATIENT ON OPD_PAT_ID = PAT_ID ORDER BY OPD_PROG_YEAR DESC";
+			opdList = (ArrayList<Opd>) repository.findAllByOrderByProgYearDesc();
 		} else {
-			query = "SELECT * FROM OPD LEFT JOIN PATIENT ON OPD_PAT_ID = PAT_ID WHERE OPD_PAT_ID = ? ORDER BY OPD_PROG_YEAR DESC";
-			params.add(patID);
+			opdList = (ArrayList<Opd>) repository.findAllWherePatIdByOrderByProgYearDesc(patID);
 		}
-		jpa.createQuery(query, Opd.class, false);
-		jpa.setParameters(params, false);	
-		List<Opd> opdList = (List<Opd>)jpa.getList();
-		opds = new ArrayList<Opd>(opdList);			
 		
-		jpa.commitTransaction();
-		
-		return opds;
+		return opdList;
 	}
 		
 	/**
@@ -170,14 +134,12 @@ public class OpdIoOperations {
 	public boolean newOpd(
 			Opd opd) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		opd.setDate(new Date());
+	
+
+		Opd savedOpd = repository.save(opd);
+		result = (savedOpd != null);
 		
-		jpa.beginTransaction();	
-		jpa.persist(opd);
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 	
@@ -190,16 +152,13 @@ public class OpdIoOperations {
 	public boolean hasOpdModified(
 			Opd opd) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		Opd foundOpd;
 		boolean result = false;
+		Opd foundOpd;
 		
-
-    	jpa.beginTransaction();	
-		foundOpd = (Opd)jpa.find(Opd.class, opd.getCode());
+	
+		foundOpd = repository.findOne(opd.getCode());
 		result = foundOpd.getLock() != opd.getLock();
-    	jpa.commitTransaction(); 
-		
+    			
 		return result;
 	}
 	
@@ -213,16 +172,13 @@ public class OpdIoOperations {
 	public boolean updateOpd(
 			Opd opd) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
+
+		Opd savedOpd = repository.save(opd);
+		result = (savedOpd != null);
 		
-		opd.setLock(opd.getLock()+1);
-		
-		jpa.beginTransaction();	
-		jpa.merge(opd);
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 	
 	/**
@@ -235,14 +191,11 @@ public class OpdIoOperations {
 	public boolean deleteOpd(
 			Opd opd) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
+		repository.delete(opd);
 		
-		jpa.beginTransaction();	
-		jpa.remove(opd);
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 	
@@ -256,29 +209,15 @@ public class OpdIoOperations {
 	public int getProgYear(
 			int year) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
-		ArrayList<Object> params = new ArrayList<Object>();
-		String query = null;
 		Integer progYear = 0;
-				
-
-		jpa.beginTransaction();		
+			
 		
-		try {
-			query = "SELECT MAX(OPD_PROG_YEAR) FROM OPD";
-			if (year != 0) {
-				query += " WHERE YEAR(OPD_DATE) = ?";
-				params.add(year);
-			}
-			jpa.createQuery(query, null, false);
-			jpa.setParameters(params, false);	
-			progYear = (Integer)jpa.getResult();
-		} catch (OHException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			jpa.commitTransaction();
+		if (year == 0) {
+			progYear = repository.findMaxProgYear();
+		} else {
+			progYear = repository.findMaxProgYearWhereDate(year);
 		}
-		
+				
 		return progYear == null ? new Integer(0) : progYear;
 	}
 	
@@ -292,30 +231,29 @@ public class OpdIoOperations {
 	public Opd getLastOpd(
 			int patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
-		String query = "";
-				
+		ArrayList<Opd> opdList = null;
 		
-		Opd opd;
-		try {
-			jpa.beginTransaction();		
-			
-			query = "SELECT * FROM OPD LEFT JOIN PATIENT ON OPD_PAT_ID = PAT_ID WHERE OPD_PAT_ID = ? ORDER BY OPD_DATE DESC LIMIT 1";
-			jpa.createQuery(query, Opd.class, false);
-			params.add(patID);
-			jpa.setParameters(params, false);	
-			opd = (Opd)jpa.getResult();			
-			
-		} catch (Exception e) {
-			if (e.getCause().getClass().equals(NoResultException.class))
-				return null;
-			else throw new OHException(e.getCause().getMessage(), e.getCause());
-			
-		} finally {
-			jpa.commitTransaction();
-		}
 		
-		return opd;
+		opdList = (ArrayList<Opd>) repository.findAllWherePatIdByOrderByDateDescLimit1(patID);
+		
+		return opdList.get(0);
 	}	
+
+	/**
+	 * checks if the code is already in use
+	 *
+	 * @param code - the opd code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
+	 */
+	public boolean isCodePresent(
+			Integer code) throws OHException
+	{
+		boolean result = true;
+	
+		
+		result = repository.exists(code);
+		
+		return result;	
+	}
 }
