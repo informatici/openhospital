@@ -28,7 +28,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
@@ -42,7 +48,9 @@ public class Tests
 	private static TestExamContext testExamContext;
 	private static TestExamTypeContext testExamTypeContext;
 	private static TestPatientContext testPatientContext;
-		
+
+    @Autowired
+    LabIoOperations labIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -86,7 +94,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
     	testLaboratory = null;
     	testLaboratoryRow = null;
     	testLaboratoryContext = null;
@@ -186,14 +193,13 @@ public class Tests
 	public void testIoGetLabRow() 
 	{
 		int id = 0;
-		LabIoOperations ioOperations = new LabIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestLaboratoryRow(false);
 			LaboratoryRow foundLaboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, id); 
-			ArrayList<LaboratoryRow> laboratoryRows = ioOperations.getLabRow(id);
+			ArrayList<LaboratoryRow> laboratoryRows = labIoOperation.getLabRow(id);
 			
 			assertEquals(foundLaboratoryRow.getCode(), laboratoryRows.get(0).getCode());
 		} 
@@ -210,14 +216,13 @@ public class Tests
 	public void testIoGetLaboratory() 
 	{
 		int id = 0;
-		LabIoOperations ioOperations = new LabIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestLaboratory(false);
 			Laboratory foundLaboratory = (Laboratory)jpa.find(Laboratory.class, id); 
-			ArrayList<Laboratory> laboratories = ioOperations.getLaboratory(foundLaboratory.getExam().getDescription(), foundLaboratory.getExamDate(), foundLaboratory.getExamDate());
+			ArrayList<Laboratory> laboratories = labIoOperation.getLaboratory(foundLaboratory.getExam().getDescription(), foundLaboratory.getExamDate(), foundLaboratory.getExamDate());
 			
 			assertEquals(foundLaboratory.getCode(), laboratories.get(0).getCode());
 		} 
@@ -234,14 +239,13 @@ public class Tests
 	public void testIoGetLaboratoryFromPatient() 
 	{
 		int id = 0;
-		LabIoOperations ioOperations = new LabIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestLaboratoryRow(false);
 			LaboratoryRow foundLaboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, id); 
-			ArrayList<Laboratory> laboratories = ioOperations.getLaboratory(foundLaboratoryRow.getLabId().getPatId());
+			ArrayList<Laboratory> laboratories = labIoOperation.getLaboratory(foundLaboratoryRow.getLabId().getPatId());
 			
 			assertEquals(foundLaboratoryRow.getLabId().getCode(), laboratories.get(0).getCode());
 		} 
@@ -258,14 +262,13 @@ public class Tests
 	public void testIoGetLaboratoryForPrint() 
 	{
 		int id = 0;
-		LabIoOperations ioOperations = new LabIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestLaboratory(false);
 			Laboratory foundLaboratory = (Laboratory)jpa.find(Laboratory.class, id); 
-			ArrayList<LaboratoryForPrint> laboratories = ioOperations.getLaboratoryForPrint(foundLaboratory.getExam().getDescription(), foundLaboratory.getDate(), foundLaboratory.getDate());
+			ArrayList<LaboratoryForPrint> laboratories = labIoOperation.getLaboratoryForPrint(foundLaboratory.getExam().getDescription(), foundLaboratory.getDate(), foundLaboratory.getDate());
 			
 			assertEquals(foundLaboratory.getCode(), laboratories.get(0).getCode());
 		} 
@@ -281,7 +284,6 @@ public class Tests
 	@Test
 	public void testIoNewLabFirstProcedure() 
 	{
-		LabIoOperations ioOperations = new LabIoOperations();
 		boolean result = false;
 		
 		
@@ -297,7 +299,7 @@ public class Tests
 			jpa.commitTransaction();
 			
 			Laboratory laboratory = testLaboratory.setup(exam, patient, false);;
-			result = ioOperations.newLabFirstProcedure(laboratory);
+			result = labIoOperation.newLabFirstProcedure(laboratory);
 			
 			assertEquals(true, result);
 			_checkLaboratoryIntoDb(laboratory.getCode());
@@ -314,7 +316,6 @@ public class Tests
 	@Test
 	public void testIoNewLabSecondProcedure() 
 	{
-		LabIoOperations ioOperations = new LabIoOperations();
 		boolean result = false;
 		ArrayList<String> labRow = new ArrayList<String>();
 		
@@ -332,7 +333,7 @@ public class Tests
 			
 			Laboratory laboratory = testLaboratory.setup(exam, patient, false);
 			labRow.add("TestLabRow");
-			result = ioOperations.newLabSecondProcedure(laboratory, labRow);
+			result = labIoOperation.newLabSecondProcedure(laboratory, labRow);
 			
 			assertEquals(true, result);
 			_checkLaboratoryIntoDb(laboratory.getCode());
@@ -350,7 +351,6 @@ public class Tests
 	public void testIoUpdateLaboratory() 
 	{
 		int code = 0;
-		LabIoOperations ioOperations = new LabIoOperations();
 		boolean result = false;
 		
 		
@@ -359,7 +359,7 @@ public class Tests
 			code = _setupTestLaboratory(false);
 			Laboratory foundlaboratory = (Laboratory)jpa.find(Laboratory.class, code); 
 			foundlaboratory.setNote("Update");
-			result = ioOperations.updateLabFirstProcedure(foundlaboratory);
+			result = labIoOperation.updateLabFirstProcedure(foundlaboratory);
 			Laboratory updateLaboratory = (Laboratory)jpa.find(Laboratory.class, code); 
 			
 			assertEquals(true, result);
@@ -379,7 +379,6 @@ public class Tests
 	public void testIoEditLabSecondProcedure() 
 	{
 		int code = 0;
-		LabIoOperations ioOperations = new LabIoOperations();
 		ArrayList<String> labRow = new ArrayList<String>();
 		boolean result = false;
 		
@@ -389,7 +388,7 @@ public class Tests
 			code = _setupTestLaboratoryRow(false);
 			LaboratoryRow foundLaboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, code); 
 			labRow.add("Update");
-			result = ioOperations.editLabSecondProcedure(foundLaboratoryRow.getLabId(), labRow);
+			result = labIoOperation.editLabSecondProcedure(foundLaboratoryRow.getLabId(), labRow);
 			LaboratoryRow updateLaboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, (code + 1)); 
 			
 			assertEquals(true, result);
@@ -408,7 +407,6 @@ public class Tests
 	public void testIoDeleteLaboratory() 
 	{
 		int code = 0;
-		LabIoOperations ioOperations = new LabIoOperations();
 		boolean result = false;
 		
 
@@ -416,11 +414,11 @@ public class Tests
 		{		
 			code = _setupTestLaboratory(false);
 			Laboratory foundLaboratory = (Laboratory)jpa.find(Laboratory.class, code); 
-			result = ioOperations.deleteLaboratory(foundLaboratory);
+			result = labIoOperation.deleteLaboratory(foundLaboratory);
 			
 			assertEquals(true, result);
-			Laboratory deletedLaboratory = (Laboratory)jpa.find(Laboratory.class, code); 
-			assertEquals(null, deletedLaboratory);
+			result = labIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{
@@ -468,6 +466,7 @@ public class Tests
 		jpa.beginTransaction();	
 		laboratory = testLaboratory.setup(exam, patient, usingSet);
 		jpa.persist(examType);
+		exam.setProcedure(2);
 		jpa.persist(exam);
 		jpa.persist(patient);
 		jpa.persist(laboratory);
