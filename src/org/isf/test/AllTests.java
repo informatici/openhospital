@@ -19,7 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	org.isf.exa.test.Tests.class,
 	org.isf.examination.test.Tests.class,	
 	org.isf.exatype.test.Tests.class,	
-//	org.isf.hospital.test.Tests.class,
+	org.isf.hospital.test.Tests.class,
 	org.isf.lab.test.Tests.class,
 	org.isf.malnutrition.test.Tests.class,
 	org.isf.medicals.test.Tests.class,

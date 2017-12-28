@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 public interface LabRowIoOperationRepository extends JpaRepository<LaboratoryRow, Integer> {
 
 	@Modifying
-    @Query(value = "DELETE FROM LABORATORYROW WHERE LABR_LAB_ID = :id", nativeQuery= true)
 	@Transactional
+    @Query(value = "DELETE FROM LABORATORYROW WHERE LABR_LAB_ID = :id", nativeQuery= true)
 	public void deleteWhereLab(@Param("id") Integer id);
         
 }

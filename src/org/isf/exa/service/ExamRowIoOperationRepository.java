@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 
 public interface ExamRowIoOperationRepository extends JpaRepository<ExamRow, Integer> {
@@ -19,7 +20,8 @@ public interface ExamRowIoOperationRepository extends JpaRepository<ExamRow, Int
     public List<ExamRow> findAllWhereIdAndDescriptionByOrderIdAndDescriptionAsc(@Param("code") String code, @Param("description") String description);
     
 
-    @Query(value = "DELETE FROM EXAMROW WHERE EXR_EXA_ID_A = :code", nativeQuery= true)
     @Modifying 
+    @Transactional
+    @Query(value = "DELETE FROM EXAMROW WHERE EXR_EXA_ID_A = :code", nativeQuery= true)
     public void deleteWhereCode(@Param("code") String code);    
 }

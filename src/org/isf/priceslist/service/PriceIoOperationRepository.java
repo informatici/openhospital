@@ -22,6 +22,7 @@ public interface PriceIoOperationRepository extends JpaRepository<Price, Integer
     public void deleteWhereList(@Param("listId") Integer listId);
     
     @Modifying
+    @Transactional
     @Query(value = "INSERT INTO PRICES (PRC_LST_ID, PRC_GRP, PRC_ITEM, PRC_DESC, PRC_PRICE) VALUES (:listId,:group,:item,:description,:price)", nativeQuery= true)
     public void insertPrice(
     		@Param("listId") Integer listId, @Param("group") String group, @Param("item") String item, 
