@@ -230,6 +230,39 @@ public class Patient {
 		this.weight = 0;
 		this.lock = lock;
 	}
+		
+	public Patient(int code, String firstName, String secondName, String name, Date birthDate, int age, String agetype, char sex,
+			String address, String city, String nextKin, String telephone, String note,
+			String mother_name, char mother, String father_name, char father,
+			String bloodType, char economicStatut, char parentTogether, String taxCode,
+			float height, float weight, int lock, Blob photo, Image photoImage) { //Changed EduLev with bloodType
+		this.code = code;
+		this.firstName = firstName;
+		this.secondName = secondName;
+		this.name = name;
+		this.birthDate = birthDate;
+		this.age = age;
+		this.agetype = agetype;
+		this.sex = sex;
+		this.address = address;
+		this.city = city;
+		this.nextKin = nextKin;
+		this.telephone = telephone;
+		this.note = note;
+		this.mother_name = mother_name;
+		this.mother = mother;
+		this.father_name = father_name;
+		this.father = father;
+		this.hasInsurance = economicStatut;
+		this.bloodType = bloodType;
+		this.parentTogether = parentTogether;
+		this.taxCode = taxCode;
+		this.height = height;
+		this.weight = weight;
+		this.lock = lock;
+		this.photo = photo;
+		this.photoImage = photoImage;
+	}
 
 	public String getAddress() {
 		return address;
