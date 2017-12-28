@@ -6,7 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ 
-//	org.isf.accounting.test.Tests.class,
+	org.isf.accounting.test.Tests.class,
 	org.isf.admission.test.Tests.class,
 	org.isf.admtype.test.Tests.class,
 	org.isf.agetype.test.Tests.class,
