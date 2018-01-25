@@ -589,12 +589,16 @@ class AdmissionBrowserModel extends DefaultTableModel {
 					}
 				} else {
 					int z = r - admList.size();
-					id = opdList.get(z).getDisease3().getCode();
-					if (id == null){
-						id = opdList.get(z).getDisease2().getCode();
-						if (id == null){
-							id = "";
+					Disease dis = opdList.get(z).getDisease3();
+					if (dis == null){
+						dis = opdList.get(z).getDisease2();
+						if (dis == null){
+							id = opdList.get(z).getDisease().getCode();
+						} else {
+							id = dis.getCode();
 						}
+					} else {
+						id = dis.getCode();
 					}
 				}
 				for (Disease elem : disease) {
