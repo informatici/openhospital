@@ -1202,6 +1202,9 @@ public class AdmissionBrowser extends JDialog {
 			dateInFieldCal.addPropertyChangeListener("date", new PropertyChangeListener() {
 				
 				public void propertyChange(PropertyChangeEvent evt) {
+					Date newValue = (Date) evt.getNewValue();
+					dateInFieldCal.setDate(newValue);
+					dateIn.setTime(newValue);
 					updateBedDays();
 				}
 			});
@@ -1560,8 +1563,10 @@ public class AdmissionBrowser extends JDialog {
 	
 	private void updateBedDays() {
 		try {
-			int bedDays = TimeTools.getDaysBetweenDates(dateInFieldCal.getDate(), dateOutFieldCal.getDate(), true);
-			if (bedDays == 0) bedDays = 1;
+			Date admission = dateInFieldCal.getDate();
+			Date discharge = dateOutFieldCal.getDate();
+			int bedDays = TimeTools.getDaysBetweenDates(admission, discharge, false);
+			if (bedDays == 0) bedDays++;
 			bedDaysTextField.setText(String.valueOf(bedDays));
 		} catch (Exception e) {
 			bedDaysTextField.setText("");
