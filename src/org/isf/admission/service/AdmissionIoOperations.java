@@ -1,5 +1,11 @@
 package org.isf.admission.service;
 
+import java.awt.Image;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
+
 /*----------------------------------------------------------
  * modification history
  * ====================
@@ -21,6 +27,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -29,7 +36,6 @@ import org.isf.admission.model.AdmittedPatient;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.disctype.model.DischargeType;
 import org.isf.generaldata.GeneralData;
-import org.isf.generaldata.MessageBundle;
 import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
@@ -42,8 +48,10 @@ public class AdmissionIoOperations
 	 * Returns all patients with ward in which they are admitted.
 	 * @return the patient list with associated ward.
 	 * @throws OHException if an error occurs during database request.
+	 * @throws SQLException 
+	 * @throws IOException 
 	 */
-	public ArrayList<AdmittedPatient> getAdmittedPatients() throws OHException {
+	public ArrayList<AdmittedPatient> getAdmittedPatients() throws OHException, IOException, SQLException {
 		return getAdmittedPatients(null);
 	}
 
@@ -52,10 +60,12 @@ public class AdmissionIoOperations
 	 * @param searchTerms the search terms to use for filter the patient list, <code>null</code> if no filter have to be applied.
 	 * @return the filtered patient list.
 	 * @throws OHException if an error occurs during database request.
+	 * @throws IOException 
+	 * @throws SQLException 
 	 */
     @SuppressWarnings({ "unchecked" })
 	public ArrayList<AdmittedPatient> getAdmittedPatients(
-			String searchTerms) throws OHException 
+			String searchTerms) throws OHException, IOException, SQLException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
@@ -85,6 +95,14 @@ public class AdmissionIoOperations
 			while (it.hasNext()) {
 				Object[] object = it.next();
 				Patient patient = (Patient) object[0];
+				Blob photoBlob = patient.getBlobPhoto();
+				if (photoBlob != null) {
+					BufferedInputStream is = new BufferedInputStream(photoBlob.getBinaryStream());
+					Image image = ImageIO.read(is);
+					patient.setPhoto(image);
+				} else {
+					patient.setPhoto(null);
+				}
 				Admission admission = (Admission) object[1];
 				AdmittedPatient admittedPatient = new AdmittedPatient(patient, admission);
 				admittedPatients.add(admittedPatient);
@@ -95,7 +113,7 @@ public class AdmissionIoOperations
 			//DbJpaUtil managed exception
 			jpa.rollbackTransaction();
 			throw e;
-		} 	
+		}
 		return admittedPatients;
 	}
     

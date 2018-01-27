@@ -13,6 +13,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,6 +22,7 @@ import java.util.EventListener;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -486,13 +488,13 @@ public class PatientInsertExtended extends JDialog {
 
 							patient.setNote(jNoteTextArea.getText().trim());
 
-//							try {
-//								Image photo = ImageIO.read(new File(photoPanel.getPhotoFilePath()));
-//								patient.setPhoto(photo);
-//							} catch (IOException ioe) {
-//								// the photo didn't change
-//								logger.debug("Patient photo not changed");
-//							}
+							try {
+								Image photo = ImageIO.read(new File(photoPanel.getPhotoFilePath()));
+								patient.setPhoto(photo);
+							} catch (IOException ioe) {
+								// the photo didn't change
+								//logger.debug("Patient photo not changed");
+							}
 
 							BusyState.setBusyState(PatientInsertExtended.this, true);
 							try{
@@ -582,13 +584,13 @@ public class PatientInsertExtended extends JDialog {
 						}
 						patient.setNote(jNoteTextArea.getText().trim());
 
-//						try {
-//							Image photo = ImageIO.read(new File(photoPanel.getPhotoFilePath()));
-//							patient.setPhoto(photo);
-//						} catch (IOException ioe) {
-//							// the photo didn't change
-//							logger.debug("Patient photo not changed");
-//						}
+						try {
+							Image photo = ImageIO.read(new File(photoPanel.getPhotoFilePath()));
+							patient.setPhoto(photo);
+						} catch (IOException ioe) {
+							// the photo didn't change
+							//logger.debug("Patient photo not changed");
+						}
 
 						BusyState.setBusyState(PatientInsertExtended.this, true);
 						try{

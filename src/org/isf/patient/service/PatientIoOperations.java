@@ -18,8 +18,11 @@ package org.isf.patient.service;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,10 +158,12 @@ public class PatientIoOperations
 	 * @param name
 	 * @return the Patient that match specified name
 	 * @throws OHException
+	 * @throws IOException 
+	 * @throws SQLException 
 	 */
 	@SuppressWarnings("unchecked")
 	public Patient getPatient(
-			String name) throws OHException 
+			String name) throws OHException, IOException, SQLException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
@@ -173,7 +178,60 @@ public class PatientIoOperations
 			List<Patient> patients = (List<Patient>)jpa.getList();
 			if (patients.size() > 0)
 			{			
-				patient = patients.get(patients.size()-1);			
+				patient = patients.get(patients.size()-1);
+				Blob photoBlob = patient.getBlobPhoto();
+				if (photoBlob != null) {
+					BufferedInputStream is = new BufferedInputStream(photoBlob.getBinaryStream());
+					Image image = ImageIO.read(is);
+					patient.setPhoto(image);
+				} else {
+					patient.setPhoto(null);
+				}
+			}
+
+			jpa.commitTransaction();	
+		}catch(OHException e){
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
+		return patient;
+	}
+	
+	/**
+	 * Retrieve patient's photo for the specified patient
+	 * 
+	 * @param patient - the specified patient
+	 * @return {@link Patient} with photo (if any)
+	 * @throws OHException
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	@SuppressWarnings("unchecked")
+	public Patient getPatientPhoto(
+			Patient patient) throws OHException, IOException, SQLException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		ArrayList<Object> params = new ArrayList<Object>();
+		
+		try{
+			jpa.beginTransaction();		
+
+			jpa.createQuery("SELECT * FROM PATIENT WHERE PAT_ID = ?", Patient.class, false);
+			params.add(patient.getCode());
+			jpa.setParameters(params, false);
+			List<Patient> patients = (List<Patient>)jpa.getList();
+			if (patients.size() > 0)
+			{			
+				patient = patients.get(patients.size()-1);
+				Blob photoBlob = patient.getBlobPhoto();
+				if (photoBlob != null) {
+					BufferedInputStream is = new BufferedInputStream(photoBlob.getBinaryStream());
+					Image image = ImageIO.read(is);
+					patient.setPhoto(image);
+				} else {
+					patient.setPhoto(null);
+				}
 			}
 
 			jpa.commitTransaction();	
@@ -191,10 +249,12 @@ public class PatientIoOperations
 	 * @param code
 	 * @return the Patient
 	 * @throws OHException
+	 * @throws IOException 
+	 * @throws SQLException 
 	 */
 	@SuppressWarnings("unchecked")
 	public Patient getPatient(
-			Integer code) throws OHException 
+			Integer code) throws OHException
 	{
 		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
@@ -209,7 +269,7 @@ public class PatientIoOperations
 			List<Patient> patients = (List<Patient>)jpa.getList();
 			if (patients.size() > 0)
 			{			
-				patient = patients.get(patients.size()-1);			
+				patient = patients.get(patients.size()-1);
 			}
 
 			jpa.commitTransaction();	
@@ -220,17 +280,19 @@ public class PatientIoOperations
 		}
 		return patient;
 	}
-
+	
 	/**
 	 * get a Patient by his/her ID, even if he/her has been logically deleted
 	 * 
 	 * @param code
 	 * @return the list of Patients
 	 * @throws OHException
+	 * @throws SQLException 
+	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
 	public Patient getPatientAll(
-			Integer code) throws OHException 
+			Integer code) throws OHException, SQLException, IOException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
@@ -245,7 +307,15 @@ public class PatientIoOperations
 			List<Patient> patients = (List<Patient>)jpa.getList();
 			if (patients.size() > 0)
 			{			
-				patient = patients.get(patients.size()-1);			
+				patient = patients.get(patients.size()-1);
+				Blob photoBlob = patient.getBlobPhoto();
+				if (photoBlob != null) {
+					BufferedInputStream is = new BufferedInputStream(photoBlob.getBinaryStream());
+					Image image = ImageIO.read(is);
+					patient.setPhoto(image);
+				} else {
+					patient.setPhoto(null);
+				}
 			}
 
 			jpa.commitTransaction();	

@@ -1,5 +1,7 @@
 package org.isf.patient.manager;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -171,6 +173,31 @@ public class PatientBrowserManager {
 	public Patient getPatient(Integer code) throws OHServiceException {
 		try {
 			return ioOperations.getPatient(code);
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+		}
+	}
+	
+	/**
+	 * Retrieve patient's photo for the specified patient
+	 * 
+	 * @param patient - the specified patient
+	 * @return {@link Patient} with photo (if any)
+	 * @throws OHServiceException
+	 */
+	public Patient getPatientPhoto(Patient patient) throws OHServiceException {
+		try {
+			return ioOperations.getPatientPhoto(patient);
 		}  catch(OHException e){
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
