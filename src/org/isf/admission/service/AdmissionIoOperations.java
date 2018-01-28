@@ -428,12 +428,12 @@ public class AdmissionIoOperations
 	 * @return the next prog.
 	 * @throws OHException if an error occurs retrieving the value.
 	 */
+	@SuppressWarnings("unchecked")
 	public int getNextYProg(
 			String wardId) throws OHException 
 	{
 		int next = 1;
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		Admission admission = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 		
 		String query = "SELECT * FROM ADMISSION " +
@@ -447,8 +447,11 @@ public class AdmissionIoOperations
 			jpa.createQuery(query, Admission.class, false);
 			params = _calculateNextYProgParameters(wardId);
 			jpa.setParameters(params, false);
-			admission = (Admission)jpa.getResult();	
-			if (admission != null) next = admission.getYProg() + 1; 
+			ArrayList<Admission> admissions = (ArrayList<Admission>) jpa.getList();
+			
+			if (admissions != null && !admissions.isEmpty()) { 
+				next = admissions.get(0).getYProg() + 1;
+			}
 				
 			jpa.commitTransaction();
 		} catch (Exception e) {

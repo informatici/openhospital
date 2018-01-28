@@ -2060,7 +2060,7 @@ public class AdmissionBrowser extends JDialog {
 								int yes = JOptionPane.showConfirmDialog(null, MessageBundle.getMessage("angal.admission.diagnosisoutsameasdiagnosisin"));
 								if (yes == JOptionPane.YES_OPTION) {
 									if (diseaseOutList.contains(diseaseInBox.getSelectedItem()))
-										admission.getDiseaseOut1().setCode(admission.getDiseaseIn().getCode());
+										admission.setDiseaseOut1(admission.getDiseaseIn());
 									else {
 										JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseselectavaliddiagnosisout"));
 										return;
