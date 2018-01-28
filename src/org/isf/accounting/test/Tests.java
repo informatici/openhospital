@@ -230,7 +230,7 @@ public class Tests
 			Bill foundBill = (Bill)jpa.find(Bill.class, id); 
 			ArrayList<Bill> bills = ioOperations.getPendingBills(0);
 			
-			assertEquals(foundBill.getAmount(), bills.get(0).getAmount(), 0.1);
+			assertEquals(true, bills.contains(foundBill));
 		} 
 		catch (Exception e) 
 		{
