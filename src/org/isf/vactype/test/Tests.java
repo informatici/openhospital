@@ -14,20 +14,28 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestVaccineType testVaccineType;
 	private static TestVaccineTypeContext testVaccineTypeContext;
-		
+
+    @Autowired
+    VacTypeIoOperation vaccineTypeIoOperation;
+    
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testVaccineType = new TestVaccineType();
     	testVaccineTypeContext = new TestVaccineTypeContext();
     	
@@ -58,8 +66,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
-
     	return;
     }
 	
@@ -108,14 +114,13 @@ public class Tests
 	public void testIoGetVaccineType() 
 	{
 		String code = "";
-		VacTypeIoOperation ioOperations = new VacTypeIoOperation();
 		
 		
 		try 
 		{		
 			code = _setupTestVaccineType(false);
 			VaccineType foundVaccineType = (VaccineType)jpa.find(VaccineType.class, code); 
-			ArrayList<VaccineType> vaccineTypes = ioOperations.getVaccineType();
+			ArrayList<VaccineType> vaccineTypes = vaccineTypeIoOperation.getVaccineType();
 			
 			assertEquals(foundVaccineType.getDescription(), vaccineTypes.get(vaccineTypes.size()-1).getDescription());
 		} 
@@ -132,7 +137,6 @@ public class Tests
 	public void testIoUpdateVaccineType() 
 	{
 		String code = "";
-		VacTypeIoOperation ioOperations = new VacTypeIoOperation();
 		boolean result = false;
 		
 		
@@ -141,7 +145,7 @@ public class Tests
 			code = _setupTestVaccineType(false);
 			VaccineType foundVaccineType = (VaccineType)jpa.find(VaccineType.class, code); 
 			foundVaccineType.setDescription("Update");
-			result = ioOperations.updateVaccineType(foundVaccineType);
+			result = vaccineTypeIoOperation.updateVaccineType(foundVaccineType);
 			VaccineType updateVaccineType = (VaccineType)jpa.find(VaccineType.class, code); 
 			
 			assertEquals(true, result);
@@ -159,14 +163,13 @@ public class Tests
 	@Test
 	public void testIoNewVaccineType() 
 	{
-		VacTypeIoOperation ioOperations = new VacTypeIoOperation();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			VaccineType vaccineType = testVaccineType.setup(true);
-			result = ioOperations.newVaccineType(vaccineType);
+			result = vaccineTypeIoOperation.newVaccineType(vaccineType);
 			
 			assertEquals(true, result);
 			_checkVaccineTypeIntoDb(vaccineType.getCode());
@@ -181,22 +184,18 @@ public class Tests
 	}
 
 	@Test
-	public void testIoDeleteVaccineType() 
+	public void testIoIsCodePresent() 
 	{
 		String code = "";
-		VacTypeIoOperation ioOperations = new VacTypeIoOperation();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestVaccineType(false);
-			VaccineType foundVaccineType = (VaccineType)jpa.find(VaccineType.class, code); 
-			result = ioOperations.deleteVaccineType(foundVaccineType);
+			result = vaccineTypeIoOperation.isCodePresent(code);
 			
 			assertEquals(true, result);
-			VaccineType deletedVaccineType = (VaccineType)jpa.find(VaccineType.class, code); 
-			assertEquals(null, deletedVaccineType);
 		} 
 		catch (Exception e) 
 		{
@@ -208,19 +207,21 @@ public class Tests
 	}
 
 	@Test
-	public void testIoIsCodePresent() 
+	public void testIoDeleteVaccineType() 
 	{
 		String code = "";
-		VacTypeIoOperation ioOperations = new VacTypeIoOperation();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestVaccineType(false);
-			result = ioOperations.isCodePresent(code);
+			VaccineType foundVaccineType = (VaccineType)jpa.find(VaccineType.class, code); 
+			result = vaccineTypeIoOperation.deleteVaccineType(foundVaccineType);
 			
 			assertEquals(true, result);
+			result = vaccineTypeIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

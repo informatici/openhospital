@@ -1,49 +1,36 @@
 package org.isf.malnutrition.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.malnutrition.model.Malnutrition;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Persistence class for the malnutrition module.
  */
 @Component
+@Transactional
 public class MalnutritionIoOperation {
-	@Autowired
-	private DbJpaUtil jpa;
 
+	@Autowired
+	private MalnutritionIoOperationRepository repository;
+	
 	/**
 	 * Returns all the available {@link Malnutrition} for the specified admission id.
 	 * @param admissionId the admission id
 	 * @return the retrieved malnutrition.
 	 * @throws OHException if an error occurs retrieving the malnutrition list.
 	 */
-    @SuppressWarnings("unchecked")
-	public ArrayList<Malnutrition> getMalnutritions(
+    public ArrayList<Malnutrition> getMalnutritions(
 			String admissionId) throws OHException
 	{
-		
-		ArrayList<Malnutrition> malnutritions = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM MALNUTRITIONCONTROL WHERE MLN_ADM_ID = ? ORDER BY MLN_DATE_SUPP";
-		params.add(admissionId);
-		jpa.createQuery(query, Malnutrition.class, false);
-		jpa.setParameters(params, false);
-		List<Malnutrition> malnutritionList = (List<Malnutrition>)jpa.getList();
-		malnutritions = new ArrayList<Malnutrition>(malnutritionList);			
-		
-		jpa.commitTransaction();
+		ArrayList<Malnutrition> malnutritions = (ArrayList<Malnutrition>) repository.findAllWhereAdmissionByOrderDate(admissionId);
 
+		
 		return malnutritions;
 	}
 
@@ -56,14 +43,12 @@ public class MalnutritionIoOperation {
 	public boolean newMalnutrition(
 			Malnutrition malnutrition) throws OHException
 	{
-		
 		boolean result = true;
+	
+
+		Malnutrition savedMalnutrition = repository.save(malnutrition);
+		result = (savedMalnutrition != null);
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(malnutrition);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 
@@ -76,21 +61,15 @@ public class MalnutritionIoOperation {
 	public int getMalnutritionLock(
 			int malnutritionCode) throws OHException
 	{
+		int lock = 0;		
+		Malnutrition malnutrition = repository.findOne(malnutritionCode);
 		
-		Malnutrition malnutrition = null;
-		int lock = -1;
-				
 		
-		jpa.beginTransaction();
-		
-		malnutrition = (Malnutrition)jpa.find(Malnutrition.class, malnutritionCode); 
 		if (malnutrition != null)
 		{
 			lock = malnutrition.getLock();
 		}
-		
-		jpa.commitTransaction();
-		
+				
 		return lock;
 	}
 
@@ -103,14 +82,12 @@ public class MalnutritionIoOperation {
 	public boolean updateMalnutrition(
 			Malnutrition malnutrition) throws OHException
 	{
-		
 		boolean result = true;
+	
+
+		Malnutrition savedMalnutrition = repository.save(malnutrition);
+		result = (savedMalnutrition != null);
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(malnutrition);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 	
@@ -120,26 +97,12 @@ public class MalnutritionIoOperation {
 	 * @return the last {@link Malnutrition} for specified patient ID. <code>null</code> if none.
 	 * @throws OHException
 	 */
-    @SuppressWarnings("unchecked")
 	public Malnutrition getLastMalnutrition(
 			int patientID) throws OHException 
 	{
-		
-		ArrayList<Malnutrition> malnutritions = null;
-		ArrayList<Object> params = new ArrayList<Object>();
+		ArrayList<Malnutrition> malnutritions = (ArrayList<Malnutrition>) repository.findAllWhereAdmissionByOrderDateLimit1(patientID);
 		Malnutrition theMalnutrition = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM MALNUTRITIONCONTROL WHERE MLN_ADM_ID = ? ORDER BY MLN_DATE_SUPP DESC LIMIT 1";
-		params.add(patientID);
-		jpa.createQuery(query, Malnutrition.class, false);
-		jpa.setParameters(params, false);
-		List<Malnutrition> malnutritionList = (List<Malnutrition>)jpa.getList();
-		malnutritions = new ArrayList<Malnutrition>(malnutritionList);			
-		
-		jpa.commitTransaction();
 		
 		try {
 			theMalnutrition = malnutritions.get(0);
@@ -159,14 +122,29 @@ public class MalnutritionIoOperation {
 	public boolean deleteMalnutrition(
 			Malnutrition malnutrition) throws OHException 
 	{
-		
 		boolean result = true;
+	
 		
+		repository.delete(malnutrition);
 		
-		jpa.beginTransaction();	
-		jpa.remove(malnutrition);
-    	jpa.commitTransaction();
-    	
+		return result;
+	}
+
+	/**
+	 * checks if the code is already in use
+	 *
+	 * @param code - the malnutrition code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
+	 */
+	public boolean isCodePresent(
+			Integer code) throws OHException
+	{
+		boolean result = true;
+	
+		
+		result = repository.exists(code);
+		
 		return result;	
 	}
 }

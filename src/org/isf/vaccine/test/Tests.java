@@ -17,22 +17,28 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestVaccine testVaccine;
 	private static TestVaccineContext testVaccineContext;
 	private static TestVaccineType testVaccineType;
 	private static TestVaccineTypeContext testVaccineTypeContext;
-		
+
+    @Autowired
+    VaccineIoOperations vaccineIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testVaccine = new TestVaccine();
     	testVaccineContext = new TestVaccineContext();
     	testVaccineType = new TestVaccineType();
@@ -65,7 +71,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
     	testVaccine = null;
     	testVaccineContext = null;
     	testVaccineType = null;
@@ -119,14 +124,13 @@ public class Tests
 	public void testIoGetVaccine() 
 	{
 		String code = "";
-		VaccineIoOperations ioOperations = new VaccineIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestVaccine(false);
 			Vaccine foundVaccine = (Vaccine)jpa.find(Vaccine.class, code); 
-			ArrayList<Vaccine> vaccines = ioOperations.getVaccine(foundVaccine.getVaccineType().getCode());
+			ArrayList<Vaccine> vaccines = vaccineIoOperation.getVaccine(foundVaccine.getVaccineType().getCode());
 			
 			assertEquals(foundVaccine.getDescription(), vaccines.get(vaccines.size()-1).getDescription());
 		} 
@@ -143,7 +147,6 @@ public class Tests
 	public void testIoUpdateVaccine() 
 	{
 		String code = "";
-		VaccineIoOperations ioOperations = new VaccineIoOperations();
 		boolean result = false;
 		
 		
@@ -152,7 +155,7 @@ public class Tests
 			code = _setupTestVaccine(false);
 			Vaccine foundVaccine = (Vaccine)jpa.find(Vaccine.class, code); 
 			foundVaccine.setDescription("Update");
-			result = ioOperations.updateVaccine(foundVaccine);
+			result = vaccineIoOperation.updateVaccine(foundVaccine);
 			Vaccine updateVaccine = (Vaccine)jpa.find(Vaccine.class, code); 
 			
 			assertEquals(true, result);
@@ -170,7 +173,6 @@ public class Tests
 	@Test
 	public void testIoNewVaccine() 
 	{
-		VaccineIoOperations ioOperations = new VaccineIoOperations();
 		boolean result = false;
 		
 		
@@ -182,7 +184,7 @@ public class Tests
 			jpa.commitTransaction();
 	    	
 			Vaccine vaccine = testVaccine.setup(vaccineType, true);
-			result = ioOperations.newVaccine(vaccine);
+			result = vaccineIoOperation.newVaccine(vaccine);
 			
 			assertEquals(true, result);
 			_checkVaccineIntoDb(vaccine.getCode());
@@ -200,7 +202,6 @@ public class Tests
 	public void testIoDeleteVaccine() 
 	{
 		String code = "";
-		VaccineIoOperations ioOperations = new VaccineIoOperations();
 		boolean result = false;
 		
 
@@ -208,11 +209,11 @@ public class Tests
 		{		
 			code = _setupTestVaccine(false);
 			Vaccine foundVaccine = (Vaccine)jpa.find(Vaccine.class, code); 
-			result = ioOperations.deleteVaccine(foundVaccine);
+			result = vaccineIoOperation.deleteVaccine(foundVaccine);
 			
 			assertEquals(true, result);
-			Vaccine deletedVaccine = (Vaccine)jpa.find(Vaccine.class, code); 
-			assertEquals(null, deletedVaccine);
+			result = vaccineIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{
@@ -227,14 +228,13 @@ public class Tests
 	public void testIoIsCodePresent() 
 	{
 		String code = "";
-		VaccineIoOperations ioOperations = new VaccineIoOperations();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestVaccine(false);
-			result = ioOperations.isCodePresent(code);
+			result = vaccineIoOperation.isCodePresent(code);
 			
 			assertEquals(true, result);
 		} 

@@ -23,11 +23,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestTherapy testTherapyRow;
 	private static TestTherapyContext testTherapyRowContext;
@@ -37,12 +41,14 @@ public class Tests
 	private static TestMedicalTypeContext testMedicalTypeContext;
 	private static TestPatient testPatient;
 	private static TestPatientContext testPatientContext;
-		
+
+    @Autowired
+    TherapyIoOperations therapyIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testTherapyRow = new TestTherapy();
     	testTherapyRowContext = new TestTherapyContext();
     	testPatient = new TestPatient();
@@ -79,7 +85,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
     	testTherapyRow = null;
     	testTherapyRowContext = null;
     	testPatient = null;
@@ -137,14 +142,13 @@ public class Tests
 	public void testIoGetTherapyRow() 
 	{
 		int id = 0;
-		TherapyIoOperations ioOperations = new TherapyIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestTherapyRow(false);
 			TherapyRow foundTherapyRow = (TherapyRow)jpa.find(TherapyRow.class, id); 
-			ArrayList<TherapyRow> therapyRows = ioOperations.getTherapyRows(foundTherapyRow.getPatID().getCode());
+			ArrayList<TherapyRow> therapyRows = therapyIoOperation.getTherapyRows(foundTherapyRow.getPatID().getCode());
 			
 			assertEquals(foundTherapyRow.getNote(), therapyRows.get(therapyRows.size()-1).getNote());
 		} 
@@ -160,7 +164,6 @@ public class Tests
 	@Test
 	public void testIoNewTherapyRow() 
 	{
-		TherapyIoOperations ioOperations = new TherapyIoOperations();
 		int id = 0;		
 							
 		
@@ -175,7 +178,7 @@ public class Tests
 			jpa.persist(patient);
 			jpa.commitTransaction();
 			TherapyRow therapyRow = testTherapyRow.setup(patient, medical, true);
-			id = ioOperations.newTherapy(therapyRow);
+			id = therapyIoOperation.newTherapy(therapyRow);
 			
 			_checkTherapyRowIntoDb(id);
 		} 
@@ -192,7 +195,6 @@ public class Tests
 	public void testIoDeleteTherapyRow() 
 	{
 		int id = 0;
-		TherapyIoOperations ioOperations = new TherapyIoOperations();
 		boolean result = false;
 		
 
@@ -200,11 +202,11 @@ public class Tests
 		{		
 			id = _setupTestTherapyRow(false);
 			TherapyRow foundTherapyRow = (TherapyRow)jpa.find(TherapyRow.class, id); 
-			result = ioOperations.deleteAllTherapies(foundTherapyRow.getPatID().getCode());
-			
+			result = therapyIoOperation.deleteAllTherapies(foundTherapyRow.getPatID().getCode());
+
 			assertEquals(true, result);
-			TherapyRow deletedTherapyRow = (TherapyRow)jpa.find(TherapyRow.class, id); 
-			assertEquals(null, deletedTherapyRow);
+			result = therapyIoOperation.isCodePresent(id);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

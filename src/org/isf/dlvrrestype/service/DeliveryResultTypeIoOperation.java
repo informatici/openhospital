@@ -1,44 +1,31 @@
 package org.isf.dlvrrestype.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.dlvrrestype.model.DeliveryResultType;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Persistence class for DeliveryResultType module.
  */
 @Component
+@Transactional
 public class DeliveryResultTypeIoOperation {
+	
 	@Autowired
-	private DbJpaUtil jpa;
+	private DeliveryResultIoOperationRepository repository;
 
 	/**
 	 * Returns all stored {@link DeliveryResultType}s.
 	 * @return the stored {@link DeliveryResultType}s.
 	 * @throws OHException if an error occurs retrieving the stored delivery result types.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<DeliveryResultType> getDeliveryResultType() throws OHException 
 	{
-		
-		ArrayList<DeliveryResultType> deliveryresultTypes = null;
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM DELIVERYRESULTTYPE ORDER BY DRT_DESC";
-		jpa.createQuery(query, DeliveryResultType.class, false);
-		List<DeliveryResultType> deliveryResultList = (List<DeliveryResultType>)jpa.getList();
-		deliveryresultTypes = new ArrayList<DeliveryResultType>(deliveryResultList);			
-		
-		jpa.commitTransaction();
-
-		return deliveryresultTypes;
+		return new ArrayList<DeliveryResultType>(repository.findAllByOrderByDescriptionAsc()); 		
 	}
 
 	/**
@@ -50,15 +37,13 @@ public class DeliveryResultTypeIoOperation {
 	public boolean updateDeliveryResultType(
 			DeliveryResultType deliveryResultType) throws OHException 
 	{
-		
 		boolean result = true;
+	
+
+		DeliveryResultType savedDeliveryResultType = repository.save(deliveryResultType);
+		result = (savedDeliveryResultType != null);
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(deliveryResultType);
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 
 	/**
@@ -70,14 +55,12 @@ public class DeliveryResultTypeIoOperation {
 	public boolean newDeliveryResultType(
 			DeliveryResultType deliveryResultType) throws OHException 
 	{
-		
 		boolean result = true;
+	
+
+		DeliveryResultType savedDeliveryResultType = repository.save(deliveryResultType);
+		result = (savedDeliveryResultType != null);
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(deliveryResultType);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 
@@ -90,16 +73,12 @@ public class DeliveryResultTypeIoOperation {
 	public boolean deleteDeliveryResultType(
 			DeliveryResultType deliveryResultType) throws OHException 
 	{
-		
 		boolean result = true;
+	
 		
+		repository.delete(deliveryResultType);
 		
-		jpa.beginTransaction();	
-		DeliveryResultType objToRemove = (DeliveryResultType) jpa.find(DeliveryResultType.class, deliveryResultType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 
 	/**
@@ -111,19 +90,11 @@ public class DeliveryResultTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException 
 	{
+		boolean result = true;
+	
 		
-		DeliveryResultType deliveryResultType;
-		boolean result = false;
+		result = repository.exists(code);
 		
-		
-		jpa.beginTransaction();	
-		deliveryResultType = (DeliveryResultType)jpa.find(DeliveryResultType.class, code);
-		if (deliveryResultType != null)
-		{
-			result = true;
-		}
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 }

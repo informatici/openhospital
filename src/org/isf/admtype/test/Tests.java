@@ -14,20 +14,27 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestAdmissionType testAdmissionType;
 	private static TestAdmissionTypeContext testAdmissionTypeContext;
-		
+
+    @Autowired
+    AdmissionTypeIoOperation admissionTypeIoOperation;
+    
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testAdmissionType = new TestAdmissionType();
     	testAdmissionTypeContext = new TestAdmissionTypeContext();
     	
@@ -58,7 +65,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
     	testAdmissionType = null;
     	testAdmissionTypeContext = null;
 
@@ -108,16 +114,12 @@ public class Tests
 	
 	@Test
 	public void testIoGetAdmissionType() 
-	{
-		String code = "";
-		AdmissionTypeIoOperation ioOperations = new AdmissionTypeIoOperation();
-		
-		
+	{		
 		try 
 		{		
-			code = _setupTestAdmissionType(false);
+			String code = _setupTestAdmissionType(false);
 			AdmissionType foundAdmissionType = (AdmissionType)jpa.find(AdmissionType.class, code); 
-			ArrayList<AdmissionType> admissionTypes = ioOperations.getAdmissionType();
+			ArrayList<AdmissionType> admissionTypes = admissionTypeIoOperation.getAdmissionType();
 			
 			assertEquals(foundAdmissionType.getDescription(), admissionTypes.get(admissionTypes.size()-1).getDescription());
 		} 
@@ -134,7 +136,6 @@ public class Tests
 	public void testIoUpdateAdmissionType() 
 	{
 		String code = "";
-		AdmissionTypeIoOperation ioOperations = new AdmissionTypeIoOperation();
 		boolean result = false;
 		
 		
@@ -143,7 +144,7 @@ public class Tests
 			code = _setupTestAdmissionType(false);
 			AdmissionType foundAdmissionType = (AdmissionType)jpa.find(AdmissionType.class, code); 
 			foundAdmissionType.setDescription("Update");
-			result = ioOperations.updateAdmissionType(foundAdmissionType);
+			result = admissionTypeIoOperation.updateAdmissionType(foundAdmissionType);
 			AdmissionType updateAdmissionType = (AdmissionType)jpa.find(AdmissionType.class, code); 
 			
 			assertEquals(true, result);
@@ -161,14 +162,13 @@ public class Tests
 	@Test
 	public void testIoNewAdmissionType() 
 	{
-		AdmissionTypeIoOperation ioOperations = new AdmissionTypeIoOperation();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			AdmissionType admissionType = testAdmissionType.setup(true);
-			result = ioOperations.newAdmissionType(admissionType);
+			result = admissionTypeIoOperation.newAdmissionType(admissionType);
 			
 			assertEquals(true, result);
 			_checkAdmissionTypeIntoDb(admissionType.getCode());
@@ -183,44 +183,16 @@ public class Tests
 	}
 
 	@Test
-	public void testIoDeleteAdmissionType() 
-	{
-		String code = "";
-		AdmissionTypeIoOperation ioOperations = new AdmissionTypeIoOperation();
-		boolean result = false;
-		
-
-		try 
-		{		
-			code = _setupTestAdmissionType(false);
-			AdmissionType foundAdmissionType = (AdmissionType)jpa.find(AdmissionType.class, code); 
-			result = ioOperations.deleteAdmissionType(foundAdmissionType);
-			
-			assertEquals(true, result);
-			AdmissionType deletedAdmissionType = (AdmissionType)jpa.find(AdmissionType.class, code); 
-			assertEquals(null, deletedAdmissionType);
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("==> Test Exception: " + e);		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}
-
-	@Test
 	public void testIoIsCodePresent() 
 	{
 		String code = "";
-		AdmissionTypeIoOperation ioOperations = new AdmissionTypeIoOperation();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestAdmissionType(false);
-			result = ioOperations.isCodePresent(code);
+			result = admissionTypeIoOperation.isCodePresent(code);
 		} 
 		catch (Exception e) 
 		{
@@ -229,6 +201,32 @@ public class Tests
 		}
 		
 		assertEquals(true, result);
+		
+		return;
+	}
+
+	@Test
+	public void testIoDeleteAdmissionType() 
+	{
+		String code = "";
+		boolean result = false;
+		
+
+		try 
+		{		
+			code = _setupTestAdmissionType(false);
+			AdmissionType foundAdmissionType = (AdmissionType)jpa.find(AdmissionType.class, code); 
+			result = admissionTypeIoOperation.deleteAdmissionType(foundAdmissionType);
+			
+			assertEquals(true, result);
+			result = admissionTypeIoOperation.isCodePresent(code);
+			assertEquals(false, result);			
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("==> Test Exception: " + e);		
+			assertEquals(true, false);
+		}
 		
 		return;
 	}

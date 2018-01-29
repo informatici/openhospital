@@ -1,13 +1,12 @@
 package org.isf.vaccine.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.isf.vaccine.model.Vaccine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class offers the io operations for recovering and managing
@@ -21,10 +20,12 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
+@Transactional
 public class VaccineIoOperations {
-	@Autowired
-	private DbJpaUtil jpa;
 
+	@Autowired
+	private VaccineIoOperationRepository repository;
+	
 	/**
 	 * returns the list of {@link Vaccine}s based on vaccine type code
 	 *
@@ -32,29 +33,19 @@ public class VaccineIoOperations {
 	 * @return the list of {@link Vaccine}s
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<Vaccine> getVaccine(
 			String vaccineTypeCode) throws OHException 
 	{
-		
 		ArrayList<Vaccine> pvaccine = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-			
+
 		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM VACCINE JOIN VACCINETYPE ON VAC_VACT_ID_A = VACT_ID_A";
 		if (vaccineTypeCode != null) {
-			query += " WHERE VAC_VACT_ID_A = ?";
-			params.add(vaccineTypeCode);
+			pvaccine = new ArrayList<Vaccine>(repository.findAllWhereIdByOrderDescriptionAsc(vaccineTypeCode));
 		}
-		query += " ORDER BY VAC_DESC";
-		jpa.createQuery(query, Vaccine.class, false);
-		jpa.setParameters(params, false);
-		List<Vaccine> vaccineList = (List<Vaccine>)jpa.getList();
-		pvaccine = new ArrayList<Vaccine>(vaccineList);			
-		
-		jpa.commitTransaction();
+		else
+		{
+			pvaccine = new ArrayList<Vaccine>(repository.findAllByOrderByDescriptionAsc()); 
+		}
 		
 		return pvaccine;
 	}
@@ -69,14 +60,13 @@ public class VaccineIoOperations {
 	public boolean newVaccine(
 			Vaccine vaccine) throws OHException
 	{
-		
 		boolean result = true;
+	
+
+		Vaccine savedVaccine = repository.save(vaccine);
+		result = (savedVaccine != null);
 		
-		jpa.beginTransaction();	
-		jpa.persist(vaccine);
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 	
 	/**
@@ -89,10 +79,8 @@ public class VaccineIoOperations {
 	public boolean hasVaccineModified(
 			Vaccine vaccine) throws OHException 
 	{
-
-		
-		Vaccine foundVaccine = (Vaccine)jpa.find(Vaccine.class, vaccine.getCode());
 		boolean result = false;
+		Vaccine foundVaccine = repository.findOne(vaccine.getCode());
 		
 		
 		if (foundVaccine.getLock() != vaccine.getLock())
@@ -113,16 +101,14 @@ public class VaccineIoOperations {
 	public boolean updateVaccine(
 			Vaccine vaccine) throws OHException
 	{
-		
 		boolean result = true;
-		
+	
+
 		vaccine.setLock(vaccine.getLock()+1);
+		Vaccine savedVaccine = repository.save(vaccine);
+		result = (savedVaccine != null);
 		
-		jpa.beginTransaction();	
-		jpa.merge(vaccine);
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 
 	/**
@@ -135,15 +121,11 @@ public class VaccineIoOperations {
 	public boolean deleteVaccine(
 			Vaccine vaccine) throws OHException
 	{
-		
 		boolean result = true;
+	
 		
+		repository.delete(vaccine);
 		
-		jpa.beginTransaction();
-		Vaccine vaccineToRemove = (Vaccine) jpa.find(Vaccine.class, vaccine.getCode());
-		jpa.remove(vaccineToRemove);
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 
@@ -157,19 +139,11 @@ public class VaccineIoOperations {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
+		boolean result = true;
+	
 		
-		Vaccine vaccine;
-		boolean result = false;
+		result = repository.exists(code);
 		
-		
-		jpa.beginTransaction();	
-		vaccine = (Vaccine)jpa.find(Vaccine.class, code);
-		if (vaccine != null)
-		{
-			result = true;
-		}
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 }

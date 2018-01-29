@@ -10,22 +10,30 @@ package org.isf.exa.service;
  *------------------------------------------*/
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.exatype.model.ExamType;
+import org.isf.exatype.service.ExamTypeIoOperationRepository;
 import org.isf.generaldata.MessageBundle;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class ExamIoOperations {
-	@Autowired
-	private DbJpaUtil jpa;
 
+	@Autowired
+	private ExamIoOperationRepository repository;
+	
+	@Autowired
+	private ExamRowIoOperationRepository rowRepository;
+	
+	@Autowired
+	private ExamTypeIoOperationRepository typeRepository;
+	
 	/**
 	 * Returns a list of {@link ExamRow}s that matches passed exam code and description
 	 * @param aExamCode - the exam code
@@ -33,34 +41,28 @@ public class ExamIoOperations {
 	 * @return the list of {@link ExamRow}s
 	 * @throws OHException
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<ExamRow> getExamRow(
 			String aExamCode, 
 			String aDescription) throws OHException 
 	{
-		
-		ArrayList<ExamRow> examrows = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM EXAMROW";
-		if (aExamCode != null) {
-			query += " WHERE EXR_EXA_ID_A = ?";
-			params.add(aExamCode);
+    	ArrayList<ExamRow> examrows = null;
+    	
+    	
+		if (aExamCode != null) 
+		{
+			if (aDescription != null) 
+			{
+				examrows = (ArrayList<ExamRow>) rowRepository.findAllWhereIdAndDescriptionByOrderIdAndDescriptionAsc(aExamCode, aDescription); 	
+			}
+			else
+			{
+				examrows = (ArrayList<ExamRow>) rowRepository.findAllWhereIdByOrderIdAndDescriptionAsc(aExamCode); 	
+			}
 		}
-		if (aDescription != null) {
-			query += " AND EXR_DESC = ?";
-			params.add(aDescription);
+		else
+		{
+			examrows = (ArrayList<ExamRow>) rowRepository.findAllByOrderIdAndDescriptionAsc(); 	
 		}
-		query += " ORDER BY EXR_EXA_ID_A, EXR_DESC";
-		jpa.createQuery(query, ExamRow.class, false);
-		jpa.setParameters(params, false);
-		List<ExamRow> examRowList = (List<ExamRow>)jpa.getList();
-		examrows = new ArrayList<ExamRow>(examRowList);			
-		
-		jpa.commitTransaction();
 
 		return examrows;
 	}
@@ -81,30 +83,31 @@ public class ExamIoOperations {
 	 * @return the list of {@link Exam}s
 	 * @throws OHException
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<Exam> getExamsByDesc(
 			String description) throws OHException 
-	{
-		
-		ArrayList<Exam> exams = null;
-		ArrayList<Object> params = new ArrayList<Object>();
+	{ 
+		ArrayList<String> examIds = null;
+		ArrayList<Exam> exams = new ArrayList<Exam>();
 				
 		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM EXAM JOIN EXAMTYPE ON EXA_EXC_ID_A = EXC_ID_A";
-		if (description != null) {
-			query += " WHERE EXC_DESC LIKE ?";
-			params.add('%'+description+'%');
+		if (description != null) 
+		{
+			examIds = (ArrayList<String>) repository.findAllWhereDescriptionByOrderDescriptionAsc(description);	
 		}
-		query += " ORDER BY EXC_DESC, EXA_DESC";
-		jpa.createQuery(query, Exam.class, false);
-		jpa.setParameters(params, false);
-		List<Exam> examList = (List<Exam>)jpa.getList();
-		exams = new ArrayList<Exam>(examList);			
+		else
+		{
+			examIds = (ArrayList<String>) repository.findAllByOrderDescriptionAsc();			
+		}		
 		
-		jpa.commitTransaction();
-
+		for (int i=0; i<examIds.size(); i++)
+		{
+			String code = examIds.get(i);
+			Exam exam = repository.findOne(code);
+			
+			
+			exams.add(i, exam);
+		}
+	
 		return exams;
 	}
 
@@ -113,22 +116,11 @@ public class ExamIoOperations {
 	 * @return the list of {@link ExamType}s
 	 * @throws OHException
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<ExamType> getExamType() throws OHException 
 	{
-		
-		ArrayList<ExamType> examTypes = null;
+		ArrayList<ExamType> examTypes = (ArrayList<ExamType>) typeRepository.findAllByOrderByDescriptionAsc();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT EXC_ID_A, EXC_DESC FROM EXAMTYPE ORDER BY EXC_DESC";
-		jpa.createQuery(query, ExamType.class, false);
-		List<ExamType> examTypeList = (List<ExamType>)jpa.getList();
-		examTypes = new ArrayList<ExamType>(examTypeList);			
-		
-		jpa.commitTransaction();
-
+	
 		return examTypes;
 	}
 
@@ -142,14 +134,12 @@ public class ExamIoOperations {
 	public boolean newExam(
 			Exam exam) throws OHException 
 	{
-		
 		boolean result = true;
+	
+
+		Exam savedExam = repository.save(exam);
+		result = (savedExam != null);
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(exam);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 
@@ -163,14 +153,12 @@ public class ExamIoOperations {
 	public boolean newExamRow(
 			ExamRow examRow) throws OHException 
 	{
-		
 		boolean result = true;
+	
+
+		ExamRow savedExamRow = rowRepository.save(examRow);
+		result = (savedExamRow != null);
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(examRow);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 
@@ -185,14 +173,12 @@ public class ExamIoOperations {
 			Exam exam, 
 			boolean check) throws OHException 
 	{
-		
 		boolean result = true;
 		
 		
-		jpa.beginTransaction();	
 		if (check) 
 		{ 
-			Exam foundExam = (Exam)jpa.find(Exam.class, exam.getCode()); 
+			Exam foundExam = repository.findOne(exam.getCode()); 
 			if (foundExam == null)
 			{
 				throw new OHException(MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"));		
@@ -202,8 +188,7 @@ public class ExamIoOperations {
 				result = false;
 			}		
 		}	
-		jpa.merge(exam);
-    	jpa.commitTransaction();
+		repository.save(exam);
     	
 		return result;	
 	}
@@ -217,29 +202,12 @@ public class ExamIoOperations {
 	public boolean deleteExam(
 			Exam exam) throws OHException 
 	{
-		
 		boolean result = true;		
-		ArrayList<Object> params = new ArrayList<Object>();
-        		
+	
 		
-		jpa.beginTransaction();
+		rowRepository.deleteWhereCode(exam.getCode());
+		repository.delete(exam);
 		
-		try {
-			jpa.createQuery("DELETE FROM EXAMROW WHERE EXR_EXA_ID_A = ?", ExamRow.class, false);
-			params.add(exam.getCode());
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-			
-			Exam examToRemove = (Exam) jpa.find(Exam.class, exam.getCode());
-			jpa.remove(examToRemove);
-			
-		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 	
-
-		jpa.commitTransaction();	
-	    	
 		return result;	
 	}
 
@@ -252,14 +220,11 @@ public class ExamIoOperations {
 	public boolean deleteExamRow(
 			ExamRow examRow) throws OHException 
 	{
-		
 		boolean result = true;
+	
 		
+		rowRepository.delete(examRow);
 		
-		jpa.beginTransaction();	
-		jpa.remove(examRow);
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 
@@ -275,19 +240,16 @@ public class ExamIoOperations {
 	public boolean isKeyPresent(
 			Exam exam) throws OHException 
 	{
-		
 		boolean result = false;
+		Exam foundExam = repository.findOne(exam.getCode());
 		
 		
-		jpa.beginTransaction();	
-		Exam foundExam = (Exam)jpa.find(Exam.class, exam.getCode());
 		if (foundExam != null)
 		{
 			result = true;
 		}
-    	jpa.commitTransaction();
-    	
-		return result;	
+		
+		return result;
 	}
 	
 	/**
@@ -308,5 +270,41 @@ public class ExamIoOperations {
 		}
 		
 		return result;
+	}
+
+	/**
+	 * checks if the code is already in use
+	 *
+	 * @param code - the exam code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
+	 */
+	public boolean isCodePresent(
+			String code) throws OHException
+	{
+		boolean result = true;
+	
+		
+		result = repository.exists(code);
+		
+		return result;	
+	}
+
+	/**
+	 * checks if the code is already in use
+	 *
+	 * @param code - the exam row code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
+	 */
+	public boolean isRowPresent(
+			Integer code) throws OHException
+	{
+		boolean result = true;
+	
+		
+		result = rowRepository.exists(code);
+		
+		return result;	
 	}
 }

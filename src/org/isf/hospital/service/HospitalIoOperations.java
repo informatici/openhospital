@@ -1,17 +1,11 @@
 package org.isf.hospital.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-
-import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.model.Hospital;
-import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class offers the io operations for recovering and
@@ -21,9 +15,11 @@ import org.springframework.stereotype.Component;
  * 
  */
 @Component
+@Transactional
 public class HospitalIoOperations {
+
 	@Autowired
-	private DbJpaUtil jpa;
+	private HospitalIoOperationRepository repository;
 	
 	/**
 	 * Reads from database hospital informations
@@ -31,21 +27,10 @@ public class HospitalIoOperations {
 	 * @return {@link Hospital} object
 	 * @throws OHException 
 	 */
-    @SuppressWarnings("unchecked")
 	public Hospital getHospital() throws OHException 
 	{
-		
-		ArrayList<Hospital> hospitals = null;
+		ArrayList<Hospital> hospitals = (ArrayList<Hospital>) repository.findAll();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM HOSPITAL";
-		jpa.createQuery(query, Hospital.class, false);
-		List<Hospital> hospitalList = (List<Hospital>)jpa.getList();
-		hospitals = new ArrayList<Hospital>(hospitalList);			
-		
-		jpa.commitTransaction();
 
 		return hospitals.get(0);
 	}
@@ -57,20 +42,8 @@ public class HospitalIoOperations {
 	 */
 	public String getHospitalCurrencyCod() throws OHException
 	{
-		String query = "SELECT HOS_CURR_COD FROM HOSPITAL";
-		String currencyCod = "";
-		
-		DbQueryLogger dbQuery = new DbQueryLogger();
-		try {	
-			ResultSet resultSet = dbQuery.getData(query, true);
-			if (resultSet.first()) {
-				currencyCod = resultSet.getString("HOS_CURR_COD");
-			}
-		} catch (SQLException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
-			dbQuery.releaseConnection();
-		}
+		String currencyCod = repository.findHospitalCurrent();
+	
 		
 		return currencyCod;
 	}
@@ -84,14 +57,11 @@ public class HospitalIoOperations {
 	public boolean updateHospital(
 			Hospital hospital) throws OHException 
 	{
-		
 		boolean result = true;
-		
-		hospital.setLock(hospital.getLock()+1);
-		
-		jpa.beginTransaction();	
-		jpa.merge(hospital);
-    	jpa.commitTransaction();
+	
+
+		Hospital savedHospital = repository.save(hospital);
+		result = (savedHospital != null);
 		
 		return result;
 	} 

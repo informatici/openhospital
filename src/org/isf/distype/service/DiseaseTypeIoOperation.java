@@ -1,44 +1,31 @@
 package org.isf.distype.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.distype.model.DiseaseType;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Persistence class for the DisType module.
  */
 @Component
+@Transactional
 public class DiseaseTypeIoOperation {
-	@Autowired
-	private DbJpaUtil jpa;
 
+	@Autowired
+	private DiseaseTypeIoOperationRepository repository;
+	
 	/**
 	 * Returns all the stored {@link DiseaseType}s.
 	 * @return a list of disease type.
 	 * @throws OHException if an error occurs retrieving the diseases list.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<DiseaseType> getDiseaseTypes() throws OHException 
 	{
-		
-		ArrayList<DiseaseType> diseaseTypes = null;
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM DISEASETYPE ORDER BY DCL_DESC";
-		jpa.createQuery(query, DiseaseType.class, false);
-		List<DiseaseType> diseaseTypeList = (List<DiseaseType>)jpa.getList();
-		diseaseTypes = new ArrayList<DiseaseType>(diseaseTypeList);			
-		
-		jpa.commitTransaction();
-
-		return diseaseTypes;
+		return new ArrayList<DiseaseType>(repository.findAllByOrderByDescriptionAsc());
 	}
 
 	/**
@@ -50,15 +37,13 @@ public class DiseaseTypeIoOperation {
 	public boolean updateDiseaseType(
 			DiseaseType diseaseType) throws OHException 
 	{
-		
 		boolean result = true;
+	
+
+		DiseaseType savedDiseaseType = repository.save(diseaseType);
+		result = (savedDiseaseType != null);
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(diseaseType);
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 
 	/**
@@ -70,14 +55,12 @@ public class DiseaseTypeIoOperation {
 	public boolean newDiseaseType(
 			DiseaseType diseaseType) throws OHException 
 	{
-		
 		boolean result = true;
+	
 		
+		DiseaseType savedDiseaseType = repository.save(diseaseType);
+		result = (savedDiseaseType != null);
 		
-		jpa.beginTransaction();	
-		jpa.persist(diseaseType);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 
@@ -90,16 +73,12 @@ public class DiseaseTypeIoOperation {
 	public boolean deleteDiseaseType(
 			DiseaseType diseaseType) throws OHException 
 	{
-		
 		boolean result = true;
+	
 		
+		repository.delete(diseaseType);
 		
-		jpa.beginTransaction();	
-		DiseaseType objToRemove = (DiseaseType) jpa.find(DiseaseType.class, diseaseType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 
 	/**
@@ -111,19 +90,11 @@ public class DiseaseTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
+		boolean result = true;
+	
 		
-		DiseaseType diseaseType;
-		boolean result = false;
+		result = repository.exists(code);
 		
-		
-		jpa.beginTransaction();	
-		diseaseType = (DiseaseType)jpa.find(DiseaseType.class, code);
-		if (diseaseType != null)
-		{
-			result = true;
-		}
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 }

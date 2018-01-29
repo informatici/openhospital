@@ -42,11 +42,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired; 
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner; 
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestMedical testMedical;
 	private static TestMedicalContext testMedicalContext;
@@ -68,12 +72,14 @@ public class Tests
 	private static TestSupplierContext testSupplierContext;
 	private static TestLot testLot;
 	private static TestLotContext testLotContext;
-		
+
+    @Autowired
+    MedicalStockWardIoOperations medicalIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testMedical = new TestMedical();
     	testMedicalContext = new TestMedicalContext();
     	testMedicalType = new TestMedicalType();
@@ -122,7 +128,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
     	testMedical = null;
     	testMedicalContext = null;
     	testMedicalType = null;
@@ -232,7 +237,6 @@ public class Tests
 	public void testIoGetWardMovements() 
 	{
 		int code = 0;
-		MedicalStockWardIoOperations ioOperations = new MedicalStockWardIoOperations();
 		GregorianCalendar now = new GregorianCalendar();
 		GregorianCalendar fromDate = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);
 		GregorianCalendar toDate = new GregorianCalendar(now.get(Calendar.YEAR), 3, 3);
@@ -242,7 +246,7 @@ public class Tests
 		{		
 			code = _setupTestMovementWard(false);
 			MovementWard foundMovement = (MovementWard)jpa.find(MovementWard.class, code); 
-			ArrayList<MovementWard> movements = ioOperations.getWardMovements(
+			ArrayList<MovementWard> movements = medicalIoOperation.getWardMovements(
 					foundMovement.getWard().getCode(),
 					fromDate,
 					toDate);
@@ -260,10 +264,7 @@ public class Tests
 	
 	@Test
 	public void testIoGetCurrentQuantity() 
-	{
-		MedicalStockWardIoOperations ioOperations = new MedicalStockWardIoOperations();
-		
-		
+	{	
 		try 
 		{		
 			MedicalType medicalType = testMedicalType.setup(false);
@@ -290,7 +291,7 @@ public class Tests
 			jpa.persist(movement);
 			jpa.commitTransaction();
 			
-			int quantity = ioOperations.getCurrentQuantity(
+			int quantity = medicalIoOperation.getCurrentQuantity(
 					ward,
 					medical);
 
@@ -308,7 +309,6 @@ public class Tests
 	@Test
 	public void testIoNewMovementWard() 
 	{
-		MedicalStockWardIoOperations ioOperations = new MedicalStockWardIoOperations();
 		boolean result = false;
 		
 		
@@ -328,7 +328,7 @@ public class Tests
 			jpa.persist(patient);
 			jpa.commitTransaction();
 			movementWard = testMovementWard.setup(ward, patient, medical, false);
-			result = ioOperations.newMovementWard(movementWard);
+			result = medicalIoOperation.newMovementWard(movementWard);
 			
 			assertEquals(true, result);
 			_checkMovemetnWardIntoDb(movementWard.getCode());
@@ -346,7 +346,6 @@ public class Tests
 	public void testIoUpdateMovementWard()
 	{
 		int code = 0;
-		MedicalStockWardIoOperations ioOperations = new MedicalStockWardIoOperations();
 		boolean result = false;
 		
 		
@@ -355,7 +354,7 @@ public class Tests
 			code = _setupTestMovementWard(false);
 			MovementWard foundMovementWard = (MovementWard)jpa.find(MovementWard.class, code); 
 			foundMovementWard.setDescription("Update");
-			result = ioOperations.updateMovementWard(foundMovementWard);
+			result = medicalIoOperation.updateMovementWard(foundMovementWard);
 			MovementWard updateMovementWard = (MovementWard)jpa.find(MovementWard.class, code); 
 			
 			assertEquals(true, result);
@@ -374,7 +373,6 @@ public class Tests
 	public void testIoDeleteMovementWard() 
 	{
 		int code = 0;
-		MedicalStockWardIoOperations ioOperations = new MedicalStockWardIoOperations();
 		boolean result = false;
 		
 
@@ -382,11 +380,9 @@ public class Tests
 		{		
 			code = _setupTestMovementWard(false);
 			MovementWard foundMovementWard = (MovementWard)jpa.find(MovementWard.class, code); 
-			result = ioOperations.deleteMovementWard(foundMovementWard);
+			result = medicalIoOperation.deleteMovementWard(foundMovementWard);
 			
 			assertEquals(true, result);
-			MovementWard deletedMovementWard = (MovementWard)jpa.find(MovementWard.class, code); 
-			assertEquals(null, deletedMovementWard);
 		} 
 		catch (Exception e) 
 		{
@@ -401,16 +397,14 @@ public class Tests
 	public void testIoGetMedicalsWard()
 	{
 		MedicalWardId code = new MedicalWardId();
-		MedicalStockWardIoOperations ioOperations = new MedicalStockWardIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestMedicalWard(false);
 			MedicalWard foundMedicalWard = (MedicalWard)jpa.find(MedicalWard.class, code); 
-			ArrayList<MedicalWard> medicalWards = ioOperations.getMedicalsWard(foundMedicalWard.getId().getWardId());
-
-			assertEquals(foundMedicalWard.getInQuantity()-foundMedicalWard.getOutQuantity(), medicalWards.get(0).getQty());
+			ArrayList<MedicalWard> medicalWards = medicalIoOperation.getMedicalsWard(foundMedicalWard.getId().getWardId());			
+			assertEquals((double)(foundMedicalWard.getInQuantity()-foundMedicalWard.getOutQuantity()), medicalWards.get(0).getQty(), 0.1);
 		} 
 		catch (Exception e) 
 		{

@@ -17,22 +17,28 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestVisit testVisit;
 	private static TestVisitContext testVisitContext;
 	private static TestPatient testPatient;
 	private static TestPatientContext testPatientContext;
-		
+
+    @Autowired
+    VisitsIoOperations visitsIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testVisit = new TestVisit();
     	testVisitContext = new TestVisitContext();
     	testPatient = new TestPatient();
@@ -65,13 +71,12 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
+    	//jpa.destroy();
     	testVisit = null;
     	testVisitContext = null;
     	testPatient = null;
     	testPatientContext = null;
     	
-
     	return;
     }
 	
@@ -120,14 +125,13 @@ public class Tests
 	public void testIoGetVisit() 
 	{
 		int id = 0;
-		VisitsIoOperations ioOperations = new VisitsIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestVisit(false);
 			Visit foundVisit = (Visit)jpa.find(Visit.class, id); 
-			ArrayList<Visit> visits = ioOperations.getVisits(foundVisit.getPatient().getCode());
+			ArrayList<Visit> visits = visitsIoOperation.getVisits(foundVisit.getPatient().getCode());
 			
 			assertEquals(foundVisit.getDate(), visits.get(visits.size()-1).getDate());
 		} 
@@ -143,7 +147,6 @@ public class Tests
 	@Test
 	public void testIoNewVisit() 
 	{
-		VisitsIoOperations ioOperations = new VisitsIoOperations();
 		int id = 0;		
 							
 		
@@ -154,7 +157,7 @@ public class Tests
 			jpa.persist(patient);
 			jpa.commitTransaction();
 			Visit visit = testVisit.setup(patient, true);
-			id = ioOperations.newVisit(visit);
+			id = visitsIoOperation.newVisit(visit);
 			
 			_checkVisitIntoDb(id);
 		} 
@@ -171,7 +174,6 @@ public class Tests
 	public void testIoDeleteVisit() 
 	{
 		int id = 0;
-		VisitsIoOperations ioOperations = new VisitsIoOperations();
 		boolean result = false;
 		
 
@@ -179,11 +181,11 @@ public class Tests
 		{		
 			id = _setupTestVisit(false);
 			Visit foundVisit = (Visit)jpa.find(Visit.class, id); 
-			result = ioOperations.deleteAllVisits(foundVisit.getPatient().getCode());
-			
+			result = visitsIoOperation.deleteAllVisits(foundVisit.getPatient().getCode());
+
 			assertEquals(true, result);
-			Visit deletedVisit = (Visit)jpa.find(Visit.class, id); 
-			assertEquals(null, deletedVisit);
+			result = visitsIoOperation.isCodePresent(id);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

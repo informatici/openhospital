@@ -1,42 +1,29 @@
 package org.isf.opetype.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.opetype.model.OperationType;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class OperationTypeIoOperation {
-	@Autowired
-	private DbJpaUtil jpa;
 
+	@Autowired
+	private OperationTypeIoOperationRepository repository;
+	
 	/**
 	 * return the list of {@link OperationType}s
 	 * 
 	 * @return the list of {@link OperationType}s. It could be <code>empty</code> or <code>null</code>.
 	 * @throws OHException 
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<OperationType> getOperationType() throws OHException 
 	{
-		
-		ArrayList<OperationType> operationTypes = null;
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT OCL_ID_A, OCL_DESC FROM OPERATIONTYPE ORDER BY OCL_DESC";
-		jpa.createQuery(query, OperationType.class, false);
-		List<OperationType> operationTypeList = (List<OperationType>)jpa.getList();
-		operationTypes = new ArrayList<OperationType>(operationTypeList);	
-		
-		jpa.commitTransaction();
-
-		return operationTypes;
+		return new ArrayList<OperationType>(repository.findAllByOrderByDescriptionAsc()); 
 	}
 	
 	/**
@@ -49,14 +36,12 @@ public class OperationTypeIoOperation {
 	public boolean newOperationType(
 			OperationType operationType) throws OHException 
 	{
-		
 		boolean result = true;
+	
+
+		OperationType savedOperationType = repository.save(operationType);
+		result = (savedOperationType != null);
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(operationType);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 	
@@ -70,14 +55,12 @@ public class OperationTypeIoOperation {
 	public boolean updateOperationType(
 			OperationType operationType) throws OHException 
 	{
-		
 		boolean result = true;
+	
+
+		OperationType savedOperationType = repository.save(operationType);
+		result = (savedOperationType != null);
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(operationType);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 	
@@ -91,15 +74,11 @@ public class OperationTypeIoOperation {
 	public boolean deleteOperationType(
 			OperationType operationType) throws OHException 
 	{
-		
 		boolean result = true;
+	
 		
+		repository.delete(operationType);
 		
-		jpa.beginTransaction();	
-		OperationType objToRemove = (OperationType) jpa.find(OperationType.class, operationType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 	
@@ -112,19 +91,11 @@ public class OperationTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
+		boolean result = true;
+	
 		
-		OperationType operationType;
-		boolean result = false;
+		result = repository.exists(code);
 		
-		
-		jpa.beginTransaction();	
-		operationType = (OperationType)jpa.find(OperationType.class, code);
-		if (operationType != null)
-		{
-			result = true;
-		}
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 }

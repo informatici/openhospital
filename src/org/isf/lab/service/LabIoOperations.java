@@ -19,23 +19,22 @@ package org.isf.lab.service;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.List;
-
-import org.isf.generaldata.MessageBundle;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryForPrint;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.patient.model.Patient;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LabIoOperations {
-	@Autowired
-	private DbJpaUtil jpa;
 
+	@Autowired
+	private LabIoOperationRepository repository;
+	@Autowired
+	private LabRowIoOperationRepository rowRepository;
+	
 	/**
 	 * Return a list of results ({@link LaboratoryRow}s) for passed lab entry.
 	 * @param code - the {@link Laboratory} record ID.
@@ -45,18 +44,12 @@ public class LabIoOperations {
 	public ArrayList<LaboratoryRow> getLabRow(
 			Integer code) throws OHException 
 	{
-		
 		ArrayList<LaboratoryRow> laboratoryRows = new ArrayList<LaboratoryRow>();
-		LaboratoryRow laboratoryRow = null;
-				
+		LaboratoryRow laboratoryRow = rowRepository.findOne(code);
 		
-		jpa.beginTransaction();
 		
-		laboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, code); 
 		laboratoryRows.add(laboratoryRow);
 		
-		jpa.commitTransaction();
-
 		return laboratoryRows;
 	}
 
@@ -99,35 +92,22 @@ public class LabIoOperations {
 	 * @return the list of {@link Laboratory}s 
 	 * @throws OHException
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<Laboratory> getLaboratory(
 			String exam,	
 			GregorianCalendar dateFrom, 
 			GregorianCalendar dateTo) throws OHException 
-	{
-		
-		ArrayList<Laboratory> laboritories = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM LABORATORY JOIN EXAM ON LAB_EXA_ID_A = EXA_ID_A";
-		query += " WHERE LAB_EXAM_DATE >= ? AND LAB_EXAM_DATE <= ?";
-		params.add(dateFrom);	
-		params.add(dateTo);
-		if (exam != null) 
-		{
-			query += " AND EXA_DESC = ?";
-			params.add(exam);
-		}
-		query += " ORDER BY LAB_EXAM_DATE";
-		jpa.createQuery(query, Laboratory.class, false);
-		jpa.setParameters(params, false);
-		List<Laboratory> laboratoryList = (List<Laboratory>)jpa.getList();
-		laboritories = new ArrayList<Laboratory>(laboratoryList);			
-		
-		jpa.commitTransaction();
+	{	
+    	ArrayList<Laboratory> laboritories = null;
+	
+	
+    	if (exam != null) 
+    	{
+    		laboritories = (ArrayList<Laboratory>) repository.findAllWhereDatesAndExamByOrderExamDate(dateFrom, dateTo, exam);
+    	}
+    	else
+    	{
+    		laboritories = (ArrayList<Laboratory>) repository.findAllWhereDatesByOrderExamDate(dateFrom, dateTo);
+    	}
 
 		return laboritories;
 	}
@@ -138,27 +118,13 @@ public class LabIoOperations {
 	 * @return the list of {@link Laboratory}s related to the {@link Patient}.
 	 * @throws OHException
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<Laboratory> getLaboratory(
 			Patient aPatient) throws OHException 
 	{
-		
 		ArrayList<Laboratory> laboritories = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
+	
 		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM (LABORATORY JOIN EXAM ON LAB_EXA_ID_A=EXA_ID_A)" +
-				 " LEFT JOIN LABORATORYROW ON LABR_LAB_ID = LAB_ID WHERE LAB_PAT_ID = ? " +
-				 " ORDER BY LAB_DATE, LAB_ID";
-		params.add(aPatient.getCode());			
-		jpa.createQuery(query, Laboratory.class, false);
-		jpa.setParameters(params, false);
-		List<Laboratory> laboratoryList = (List<Laboratory>)jpa.getList();
-		laboritories = new ArrayList<Laboratory>(laboratoryList);			
-		
-		jpa.commitTransaction();
+		laboritories = (ArrayList<Laboratory>) repository.findAllWherePatientByOrderDateAndId(aPatient.getCode());
 
 		return laboritories;
 	}
@@ -205,37 +171,23 @@ public class LabIoOperations {
 	 * @return the list of {@link LaboratoryForPrint}s 
 	 * @throws OHException
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<LaboratoryForPrint> getLaboratoryForPrint(
 			String exam, 
 			GregorianCalendar dateFrom, 
 			GregorianCalendar dateTo) throws OHException 
 	{
-		
-		ArrayList<Laboratory> laboritories = null;
 		ArrayList<LaboratoryForPrint> pLaboratory = new ArrayList<LaboratoryForPrint>();
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM (LABORATORY JOIN EXAM ON LAB_EXA_ID_A = EXA_ID_A)" +
-				       " JOIN EXAMTYPE ON EXC_ID_A = EXA_EXC_ID_A" +
-					   " WHERE LAB_DATE >= ? AND LAB_DATE <= ?";
-		params.add(dateFrom);	
-		params.add(dateTo);	
-		if (exam != null) 
-		{
-			query += " AND EXA_DESC LIKE ?";
-			params.add('%' + exam + '%');
-		}
-		query += " ORDER BY EXC_DESC";
-		jpa.createQuery(query, Laboratory.class, false);
-		jpa.setParameters(params, false);
-		List<Laboratory> laboratoryList = (List<Laboratory>)jpa.getList();
-		laboritories = new ArrayList<Laboratory>(laboratoryList);			
-		
-		jpa.commitTransaction();
+    	ArrayList<Laboratory> laboritories = null;
+	
+	
+    	if (exam != null) 
+    	{
+    		laboritories = (ArrayList<Laboratory>) repository.findAllWhereDatesAndExamForPrint(dateFrom, dateTo, exam);
+    	}
+    	else
+    	{
+    		laboritories = (ArrayList<Laboratory>) repository.findAllWhereDatesForPrint(dateFrom, dateTo);
+    	}
 		
 		for (Laboratory laboratory : laboritories) 
 		{
@@ -261,14 +213,10 @@ public class LabIoOperations {
 	private Integer newLaboratory(
 			Laboratory laboratory) throws OHException 
 	{
+		Laboratory savedLaboratory = repository.save(laboratory);
 		
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(laboratory);
-    	jpa.commitTransaction();
-    	
-		return laboratory.getCode();	
+		return savedLaboratory.getCode();	
 	}
 	
 	/**
@@ -307,16 +255,15 @@ public class LabIoOperations {
 		boolean result = false;
 		
 		
-		
 		int newCode = newLaboratory(laboratory);
 		if (newCode > 0) 
 		{
-			jpa.beginTransaction();	
 			LaboratoryRow laboratoryRow = new LaboratoryRow();
 			laboratoryRow.setLabId(laboratory);
 			laboratoryRow.setDescription(labRow.get(0));	
-			jpa.persist(laboratoryRow);
-	    	jpa.commitTransaction();
+
+			LaboratoryRow savedLaboratoryRow = rowRepository.save(laboratoryRow);
+			result = (savedLaboratoryRow != null);
 
 			result = true;
 		}
@@ -334,13 +281,11 @@ public class LabIoOperations {
 	private boolean updateLaboratory(
 			Laboratory laboratory) throws OHException 
 	{
-		
 		boolean result = true;
+
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(laboratory);
-    	jpa.commitTransaction();
+		Laboratory savedLaboratory = repository.save(laboratory);
+		result = (savedLaboratory != null);
 		
 		return result;
 	}
@@ -356,22 +301,9 @@ public class LabIoOperations {
 			Laboratory laboratory) throws OHException 
 	{
 		boolean result = updateLaboratory(laboratory);
+				
 		
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-
-		jpa.beginTransaction();
-		try {
-			jpa.createQuery("DELETE FROM LABORATORYROW WHERE LABR_LAB_ID = ?", LaboratoryRow.class, false);
-			params.add(laboratory.getCode());
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		}
-		
-		jpa.commitTransaction();
+		rowRepository.deleteWhereLab(laboratory.getCode());
 		
 		return result;
 	}
@@ -387,18 +319,15 @@ public class LabIoOperations {
 			Laboratory laboratory, 
 			ArrayList<String> labRow) throws OHException 
 	{
-		
 		boolean result = updateLabFirstProcedure(laboratory);
 		
 		
 		if (result == true)
 		{		
-			jpa.beginTransaction();	
 			LaboratoryRow laboratoryRow = new LaboratoryRow();
 			laboratoryRow.setLabId(laboratory);
 			laboratoryRow.setDescription(labRow.get(0));	
-			jpa.persist(laboratoryRow);
-	    	jpa.commitTransaction();
+			rowRepository.save(laboratoryRow);
 		}
 		
 		return result;
@@ -414,29 +343,34 @@ public class LabIoOperations {
 	public boolean deleteLaboratory(
 			Laboratory aLaboratory) throws OHException 
 	{
-		ArrayList<Object> params = new ArrayList<Object>();
-		
 		boolean result = true;
+		Laboratory objToRemove = repository.findOne(aLaboratory.getCode());
 		
-		jpa.beginTransaction();
-		
-		Laboratory objToRemove = (Laboratory) jpa.find(Laboratory.class, aLaboratory.getCode());
 		
 		if (objToRemove.getExam().getProcedure() == 2) 
 		{
-			try {
-				jpa.createQuery("DELETE FROM LABORATORYROW WHERE LABR_LAB_ID = ?", LaboratoryRow.class, false);
-				params.add(objToRemove.getCode());
-				jpa.setParameters(params, false);
-				jpa.executeUpdate();
-			}  catch (OHException e) {
-				result = false;
-				throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-			}
+			rowRepository.deleteWhereLab(objToRemove.getCode());
 		}
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
 		
 		return result;
+	}
+
+	/**
+	 * checks if the code is already in use
+	 *
+	 * @param code - the laboratory code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
+	 */
+	public boolean isCodePresent(
+			Integer code) throws OHException
+	{
+		boolean result = true;
+		Laboratory objToCheck = repository.findOne(code);
+	
+		
+		result = rowRepository.exists(objToCheck.getCode());
+		
+		return result;	
 	}
 }

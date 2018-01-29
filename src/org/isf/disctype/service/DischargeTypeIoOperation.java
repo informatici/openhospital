@@ -1,42 +1,29 @@
 package org.isf.disctype.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.disctype.model.DischargeType;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class DischargeTypeIoOperation {
-	@Autowired
-	private DbJpaUtil jpa;
 
+	@Autowired
+	private DischargeTypeIoOperationRepository repository;
+	
 	/**
 	 * method that returns all DischargeTypes in a list
 	 * 
 	 * @return the list of all DischargeTypes
 	 * @throws OHException
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<DischargeType> getDischargeType() throws OHException 
 	{
-		
-		ArrayList<DischargeType> dischargeTypes = null;
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM DISCHARGETYPE ORDER BY DIST_DESC";
-		jpa.createQuery(query, DischargeType.class, false);
-		List<DischargeType> dischargeList = (List<DischargeType>)jpa.getList();
-		dischargeTypes = new ArrayList<DischargeType>(dischargeList);			
-		
-		jpa.commitTransaction();
-		
-		return dischargeTypes;
+		return new ArrayList<DischargeType>(repository.findAllByOrderByDescriptionAsc());
 	}
 
 	/**
@@ -49,15 +36,13 @@ public class DischargeTypeIoOperation {
 	public boolean UpdateDischargeType(
 			DischargeType dischargeType) throws OHException 
 	{
-		
 		boolean result = true;
+	
 		
-
-		jpa.beginTransaction();	
-		jpa.merge(dischargeType);
-    	jpa.commitTransaction();
-   	
-		return result;	
+		DischargeType savedDischargeType = repository.save(dischargeType);
+		result = (savedDischargeType != null);
+		
+		return result;
 	}
 
 	/**
@@ -70,14 +55,12 @@ public class DischargeTypeIoOperation {
 	public boolean newDischargeType(
 			DischargeType dischargeType) throws OHException 
 	{
-		
 		boolean result = true;
-
+	
 		
-		jpa.beginTransaction();	
-		jpa.persist(dischargeType);
-    	jpa.commitTransaction();
-    	
+		DischargeType savedDischargeType = repository.save(dischargeType);
+		result = (savedDischargeType != null);
+		
 		return result;
 	}
 
@@ -91,16 +74,12 @@ public class DischargeTypeIoOperation {
 	public boolean deleteDischargeType(
 			DischargeType dischargeType) throws OHException
 	{
-		
 		boolean result = true;
+	
 		
+		repository.delete(dischargeType);
 		
-		jpa.beginTransaction();
-		DischargeType objToRemove = (DischargeType) jpa.find(DischargeType.class, dischargeType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 
 	/**
@@ -113,19 +92,11 @@ public class DischargeTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException 
 	{
+		boolean result = true;
+	
 		
-		DischargeType dischargeType;
-		boolean result = false;
+		result = repository.exists(code);
 		
-		
-		jpa.beginTransaction();	
-		dischargeType = (DischargeType)jpa.find(DischargeType.class, code);
-		if (dischargeType != null)
-		{
-			result = true;
-		}
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 }
