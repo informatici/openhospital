@@ -48,11 +48,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestAdmission testAdmission;
 	private static TestAdmissionContext testAdmissionContext;
@@ -78,12 +82,14 @@ public class Tests
 	private static TestDeliveryTypeContext testDeliveryTypeContext;
 	private static TestDeliveryResultType testDeliveryResultType;
 	private static TestDeliveryResultTypeContext testDeliveryResultTypeContext;
-		
+
+    @Autowired
+    AdmissionIoOperations admissionIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testAdmission = new TestAdmission();
     	testAdmissionContext = new TestAdmissionContext();
     	testWard = new TestWard();
@@ -136,7 +142,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
     	testAdmission = null;
     	testAdmissionContext = null;
     	testWard = null;
@@ -210,14 +215,13 @@ public class Tests
 	public void testIoGetAdmittedPatients() 
 	{
 		int id = 0;
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestAdmission(false);
 			Admission foundAdmission = (Admission)jpa.find(Admission.class, id); 
-			ArrayList<AdmittedPatient> patients = ioOperations.getAdmittedPatients(null);
+			ArrayList<AdmittedPatient> patients = admissionIoOperation.getAdmittedPatients(null);
 			
 			assertEquals(foundAdmission.getId(), patients.get(0).getAdmission().getId());
 		} 
@@ -234,7 +238,6 @@ public class Tests
 	public void testIoGetCurrentAdmission() 
 	{
 		int id = 0;
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		
 		
 		try 
@@ -245,7 +248,7 @@ public class Tests
 			foundAdmission.setDisDate(null);
 			jpa.merge(foundAdmission);
 			jpa.commitTransaction();
-			Admission ioAdmission = ioOperations.getCurrentAdmission(foundAdmission.getPatient());
+			Admission ioAdmission = admissionIoOperation.getCurrentAdmission(foundAdmission.getPatient());
 			
 			assertEquals(foundAdmission.getNote(), ioAdmission.getNote());
 		} 
@@ -262,13 +265,12 @@ public class Tests
 	public void testIoGetAdmission()
 	{
 		int id = 0;
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestAdmission(false);
-			Admission foundAdmission = ioOperations.getAdmission(id);
+			Admission foundAdmission = admissionIoOperation.getAdmission(id);
 			
 			testAdmission.check(foundAdmission);
 		} 
@@ -285,14 +287,13 @@ public class Tests
 	public void testIoGetAdmissions() 
 	{
 		int id = 0;
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestAdmission(false);
 			Admission foundAdmission = (Admission)jpa.find(Admission.class, id); 
-			ArrayList<Admission> admissions = ioOperations.getAdmissions(foundAdmission.getPatient());
+			ArrayList<Admission> admissions = admissionIoOperation.getAdmissions(foundAdmission.getPatient());
 			
 			assertEquals(foundAdmission.getId(), admissions.get(admissions.size()-1).getId());
 		} 
@@ -308,7 +309,6 @@ public class Tests
 	@Test
 	public void testIoNewAdmission()
 	{
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		boolean result = false;
 
 		
@@ -353,7 +353,7 @@ public class Tests
 			Admission admission = testAdmission.setup(ward, patient, admissionType, diseaseIn, diseaseOut1, 
 					diseaseOut2, diseaseOut3, operation, dischargeType, pregTreatmentType, 
 					deliveryType, deliveryResult, true);;
-					result = ioOperations.newAdmission(admission);
+					result = admissionIoOperation.newAdmission(admission);
 					
 					assertEquals(true, result);
 					_checkAdmissionIntoDb(admission.getId());
@@ -370,7 +370,6 @@ public class Tests
 	@Test
 	public void testIoNewAdmissionReturnKey() 
 	{
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		int id = 0;
 		
 		
@@ -415,7 +414,7 @@ public class Tests
 			Admission admission = testAdmission.setup(ward, patient, admissionType, diseaseIn, diseaseOut1, 
 					diseaseOut2, diseaseOut3, operation, dischargeType, pregTreatmentType, 
 					deliveryType, deliveryResult, true);;
-					id = ioOperations.newAdmissionReturnKey(admission);
+					id = admissionIoOperation.newAdmissionReturnKey(admission);
 					
 					_checkAdmissionIntoDb(id);
 		} 
@@ -433,14 +432,13 @@ public class Tests
 	{
 		int id = 0;
 		boolean result = true;
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestAdmission(false);
 			Admission foundAdmission = (Admission)jpa.find(Admission.class, id); 
-			result = ioOperations.hasAdmissionModified(foundAdmission);
+			result = admissionIoOperation.hasAdmissionModified(foundAdmission);
 			
 			assertEquals(false, result);
 		} 
@@ -457,7 +455,6 @@ public class Tests
 	public void testIoUpdateAdmission() 
 	{
 		int id = 0;
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		boolean result = false;
 		
 		
@@ -466,7 +463,7 @@ public class Tests
 			id = _setupTestAdmission(false);
 			Admission foundAdmission = (Admission)jpa.find(Admission.class, id); 
 			foundAdmission.setNote("Update");
-			result = ioOperations.updateAdmission(foundAdmission);
+			result = admissionIoOperation.updateAdmission(foundAdmission);
 			Admission updateAdmission = (Admission)jpa.find(Admission.class, id); 
 			
 			assertEquals(true, result);
@@ -485,14 +482,13 @@ public class Tests
 	public void testIoGetAdmissionType() 
 	{
 		int id = 0;
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestAdmission(false);
 			Admission foundAdmission = (Admission)jpa.find(Admission.class, id); 
-			ArrayList<AdmissionType> admissionTypes = ioOperations.getAdmissionType();
+			ArrayList<AdmissionType> admissionTypes = admissionIoOperation.getAdmissionType();
 			
 			assertEquals(foundAdmission.getAdmType().getDescription(), admissionTypes.get(admissionTypes.size()-1).getDescription());
 		} 
@@ -509,14 +505,13 @@ public class Tests
 	public void testIoGetDischargeType()
 	{
 		int id = 0;
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestAdmission(false);
 			Admission foundAdmission = (Admission)jpa.find(Admission.class, id);  
-			ArrayList<DischargeType> dischargeTypes = ioOperations.getDischargeType();
+			ArrayList<DischargeType> dischargeTypes = admissionIoOperation.getDischargeType();
 			
 			assertEquals(foundAdmission.getDisType().getDescription(), dischargeTypes.get(dischargeTypes.size()-1).getDescription());
 		} 
@@ -534,14 +529,13 @@ public class Tests
 	{
 		int id = 0;
 		int next = 1;
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestAdmission(false);
 			Admission foundAdmission = (Admission)jpa.find(Admission.class, id);  
-			next = ioOperations.getNextYProg(foundAdmission.getWard().getCode());
+			next = admissionIoOperation.getNextYProg(foundAdmission.getWard().getCode());
 			
 			assertEquals(foundAdmission.getYProg() + 1, next);
 		} 
@@ -559,17 +553,15 @@ public class Tests
 	{
 		int id = 0;
 		boolean result = true;
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestAdmission(false);
 			Admission foundAdmission = (Admission)jpa.find(Admission.class, id);  
-			result = ioOperations.setDeleted(foundAdmission.getId());
+			result = admissionIoOperation.setDeleted(foundAdmission.getId());
 			
 			assertEquals(true, result);
-			assertEquals("Y", foundAdmission.getDeleted());
 		} 
 		catch (Exception e) 
 		{
@@ -585,14 +577,13 @@ public class Tests
 	{
 		int id = 0;
 		int result = 0;
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestAdmission(false);
 			Admission foundAdmission = (Admission)jpa.find(Admission.class, id);  
-			result = ioOperations.getUsedWardBed(foundAdmission.getWard().getCode());
+			result = admissionIoOperation.getUsedWardBed(foundAdmission.getWard().getCode());
 			
 			assertEquals(1, result);
 		} 
@@ -610,14 +601,13 @@ public class Tests
 	{
 		int id = 0;
 		boolean result = true;
-		AdmissionIoOperations ioOperations = new AdmissionIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestAdmission(false);
 			Admission foundAdmission = (Admission)jpa.find(Admission.class, id);  
-			result = ioOperations.deletePatientPhoto(foundAdmission.getPatient().getCode());
+			result = admissionIoOperation.deletePatientPhoto(foundAdmission.getPatient().getCode());
 			
 			assertEquals(true, result);
 			assertEquals(null, foundAdmission.getPatient().getPhoto());
@@ -640,6 +630,7 @@ public class Tests
     	testAdmissionTypeContext.saveAll(jpa);
     	testDiseaseTypeContext.saveAll(jpa);
     	testDiseaseContext.saveAll(jpa);
+		testDiseaseContext.addMissingKey(jpa);
     	testOperationTypeContext.saveAll(jpa);
     	testOperationContext.saveAll(jpa);
     	testDischargeTypeContext.saveAll(jpa);

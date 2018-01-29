@@ -13,20 +13,26 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestHospital testHospital;
 	private static TestHospitalContext testHospitalContext;
-		
+
+    @Autowired
+    HospitalIoOperations hospitalIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testHospital = new TestHospital();
     	testHospitalContext = new TestHospitalContext();
     	
@@ -57,7 +63,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
     	testHospital = null;
     	testHospitalContext = null;
 
@@ -109,7 +114,6 @@ public class Tests
 	public void testIoUpdateHospital() 
 	{
 		String code = "";
-		HospitalIoOperations ioOperations = new HospitalIoOperations();
 		boolean result = false;
 		
 		
@@ -118,7 +122,7 @@ public class Tests
 			code = _setupTestHospital(false);
 			Hospital foundHospital = (Hospital)jpa.find(Hospital.class, code); 
 			foundHospital.setDescription("Update");
-			result = ioOperations.updateHospital(foundHospital);
+			result = hospitalIoOperation.updateHospital(foundHospital);
 			Hospital updateHospital = (Hospital)jpa.find(Hospital.class, code); 
 			
 			assertEquals(true, result);

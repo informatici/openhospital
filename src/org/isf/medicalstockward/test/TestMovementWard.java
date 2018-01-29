@@ -76,7 +76,7 @@ public class TestMovementWard
     	assertEquals(isPatient, movementWard.isPatient());
     	assertEquals(quantity, movementWard.getQuantity());
     	assertEquals(units, movementWard.getUnits());
-    	assertEquals(weight, movementWard.getWeight());
+    	assertEquals(weight, movementWard.getWeight(), 0.1);
 		
 		return;
 	}

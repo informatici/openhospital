@@ -8,16 +8,16 @@ import javax.swing.JOptionPane;
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
-import org.isf.accounting.service.AccountingIoOperationsNew;
+import org.isf.accounting.service.AccountingIoOperations;
 import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 
 public class BillBrowserManager {
 
-	private AccountingIoOperationsNew ioOperations;
+	private AccountingIoOperations ioOperations;
 
 	public BillBrowserManager() {
-		ioOperations = Menu.getApplicationContext().getBean(AccountingIoOperationsNew.class);
+		ioOperations = Menu.getApplicationContext().getBean(AccountingIoOperations.class);
 	}
 
 	/**

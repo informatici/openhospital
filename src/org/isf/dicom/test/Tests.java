@@ -12,20 +12,26 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestDicom testFileDicom;
 	private static TestDicomContext testFileDicomContext;
-		
+
+    @Autowired
+    DicomIoOperations dicomIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testFileDicom = new TestDicom();
     	testFileDicomContext = new TestDicomContext();
     	
@@ -56,7 +62,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
     	testFileDicom = null;
     	testFileDicomContext = null;
 
@@ -110,14 +115,13 @@ public class Tests
 	public void testIoGetSerieDetail() 
 	{
 		long code = 0;
-		DicomIoOperations ioOperations = new DicomIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestFileDicom(false);
 			FileDicom foundFileDicom = (FileDicom)jpa.find(FileDicom.class, code); 
-			Long[] dicoms = ioOperations.getSerieDetail(foundFileDicom.getPatId(), foundFileDicom.getDicomSeriesNumber());
+			Long[] dicoms = dicomIoOperation.getSerieDetail(foundFileDicom.getPatId(), foundFileDicom.getDicomSeriesNumber());
 			
 			assertEquals(1, dicoms.length);
 		} 
@@ -135,7 +139,6 @@ public class Tests
 	public void testIoDeleteSerie() 
 	{
 		long code = 0;
-		DicomIoOperations ioOperations = new DicomIoOperations();
 		boolean result = false;
 		
 
@@ -143,11 +146,11 @@ public class Tests
 		{		
 			code = _setupTestFileDicom(false);
 			FileDicom foundFileDicom = (FileDicom)jpa.find(FileDicom.class, code); 
-			result = ioOperations.deleteSerie(foundFileDicom.getPatId(), foundFileDicom.getDicomSeriesNumber());
+			result = dicomIoOperation.deleteSerie(foundFileDicom.getPatId(), foundFileDicom.getDicomSeriesNumber());
 			
 			assertEquals(true, result);
-			FileDicom deletedFileDicom = (FileDicom)jpa.find(FileDicom.class, code); 
-			assertEquals(null, deletedFileDicom);
+			result = dicomIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{
@@ -163,14 +166,13 @@ public class Tests
 	public void testIoLoadDettaglio() 
 	{
 		long code = 0;
-		DicomIoOperations ioOperations = new DicomIoOperations();
 		
 
 		try 
 		{		
 			code = _setupTestFileDicom(false);
 			FileDicom foundFileDicom = (FileDicom)jpa.find(FileDicom.class, code); 
-			FileDicom dicom = ioOperations.loadDettaglio(foundFileDicom.getIdFile(), foundFileDicom.getPatId(), foundFileDicom.getDicomSeriesNumber());
+			FileDicom dicom = dicomIoOperation.loadDettaglio(foundFileDicom.getIdFile(), foundFileDicom.getPatId(), foundFileDicom.getDicomSeriesNumber());
 			
 			assertEquals(foundFileDicom.getDicomSeriesDescription(), dicom.getDicomSeriesDescription());
 		} 
@@ -188,14 +190,13 @@ public class Tests
 	public void testIoLoadFilesPaziente() 
 	{
 		long code = 0;
-		DicomIoOperations ioOperations = new DicomIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestFileDicom(false);
 			FileDicom foundFileDicom = (FileDicom)jpa.find(FileDicom.class, code); 
-			FileDicom[] dicoms = ioOperations.loadFilesPaziente(foundFileDicom.getPatId());
+			FileDicom[] dicoms = dicomIoOperation.loadFilesPaziente(foundFileDicom.getPatId());
 
 			assertEquals(foundFileDicom.getDicomSeriesDescription(), dicoms[0].getDicomSeriesDescription());
 		} 
@@ -213,7 +214,6 @@ public class Tests
 	public void testIoExist() 
 	{
 		long code = 0;
-		DicomIoOperations ioOperations = new DicomIoOperations();
 		boolean result = false;
 		
 
@@ -221,7 +221,7 @@ public class Tests
 		{		
 			code = _setupTestFileDicom(false);
 			FileDicom foundFileDicom = (FileDicom)jpa.find(FileDicom.class, code); 
-			result = ioOperations.exist(foundFileDicom);
+			result = dicomIoOperation.exist(foundFileDicom);
 
 			assertEquals(true, result);
 		} 
@@ -234,21 +234,12 @@ public class Tests
 		
 		return;
 	}
-		
-	
-	@Test
-	public void testIoGetImagesCounts() 
-	{
-		//TODO: function not yet ported to JPA. The test has to fail
-		assertEquals(true, false);
-	}
 	
 		
 	@Test
 	public void testIoSaveFile() 
 	{
 		long code = 0;
-		DicomIoOperations ioOperations = new DicomIoOperations();
 			
 		
 		try 
@@ -256,7 +247,7 @@ public class Tests
 			code = _setupTestFileDicom(false);
 			FileDicom foundFileDicom = (FileDicom)jpa.find(FileDicom.class, code); 
 			foundFileDicom.setDicomSeriesDescription("Update");
-			ioOperations.saveFile(foundFileDicom);
+			dicomIoOperation.saveFile(foundFileDicom);
 			FileDicom updateFileDicom = (FileDicom)jpa.find(FileDicom.class, code); 
 			
 			assertEquals("Update", updateFileDicom.getDicomSeriesDescription());

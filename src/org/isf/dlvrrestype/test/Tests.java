@@ -12,20 +12,27 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestDeliveryResultType testDeliveryResultType;
 	private static TestDeliveryResultTypeContext testDeliveryResultTypeContext;
-		
 	
+    @Autowired
+    DeliveryResultTypeIoOperation deliveryResultTypeIoOperation;
+    
+    
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testDeliveryResultType = new TestDeliveryResultType();
     	testDeliveryResultTypeContext = new TestDeliveryResultTypeContext();
     	
@@ -56,7 +63,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
     	testDeliveryResultType = null;
     	testDeliveryResultTypeContext = null;
 
@@ -129,7 +135,6 @@ public class Tests
 	public void testIoUpdateDeliveryResultType() 
 	{
 		String code = "";
-		DeliveryResultTypeIoOperation ioOperations = new DeliveryResultTypeIoOperation();
 		boolean result = false;
 		
 		
@@ -138,7 +143,7 @@ public class Tests
 			code = _setupTestDeliveryResultType(false);
 			DeliveryResultType foundDeliveryResultType = (DeliveryResultType)jpa.find(DeliveryResultType.class, code); 
 			foundDeliveryResultType.setDescription("Update");
-			result = ioOperations.updateDeliveryResultType(foundDeliveryResultType);
+			result = deliveryResultTypeIoOperation.updateDeliveryResultType(foundDeliveryResultType);
 			DeliveryResultType updateDeliveryResultType = (DeliveryResultType)jpa.find(DeliveryResultType.class, code); 
 			
 			assertEquals(true, result);
@@ -156,14 +161,13 @@ public class Tests
 	@Test
 	public void testIoNewDeliveryResultType() 
 	{
-		DeliveryResultTypeIoOperation ioOperations = new DeliveryResultTypeIoOperation();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			DeliveryResultType deliveryResultType = testDeliveryResultType.setup(true);
-			result = ioOperations.newDeliveryResultType(deliveryResultType);
+			result = deliveryResultTypeIoOperation.newDeliveryResultType(deliveryResultType);
 			
 			assertEquals(true, result);
 			_checkDeliveryResultTypeIntoDb(deliveryResultType.getCode());
@@ -178,22 +182,18 @@ public class Tests
 	}
 
 	@Test
-	public void testIoDeleteDeliveryResultType() 
+	public void testIoIsCodePresent() 
 	{
 		String code = "";
-		DeliveryResultTypeIoOperation ioOperations = new DeliveryResultTypeIoOperation();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestDeliveryResultType(false);
-			DeliveryResultType foundDeliveryResultType = (DeliveryResultType)jpa.find(DeliveryResultType.class, code); 
-			result = ioOperations.deleteDeliveryResultType(foundDeliveryResultType);
+			result = deliveryResultTypeIoOperation.isCodePresent(code);
 			
 			assertEquals(true, result);
-			DeliveryResultType deletedDeliveryResultType = (DeliveryResultType)jpa.find(DeliveryResultType.class, code); 
-			assertEquals(null, deletedDeliveryResultType);
 		} 
 		catch (Exception e) 
 		{
@@ -205,19 +205,20 @@ public class Tests
 	}
 
 	@Test
-	public void testIoIsCodePresent() 
+	public void testIoDeleteDeliveryResultType() 
 	{
 		String code = "";
-		DeliveryResultTypeIoOperation ioOperations = new DeliveryResultTypeIoOperation();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestDeliveryResultType(false);
-			result = ioOperations.isCodePresent(code);
+			DeliveryResultType foundDeliveryResultType = (DeliveryResultType)jpa.find(DeliveryResultType.class, code); 
+			result = deliveryResultTypeIoOperation.deleteDeliveryResultType(foundDeliveryResultType);
 			
-			assertEquals(true, result);
+			result = deliveryResultTypeIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

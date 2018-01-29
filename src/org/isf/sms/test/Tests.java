@@ -16,20 +16,26 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestSms testSms;
 	private static TestSmsContext testSmsContext;
-		
+
+    @Autowired
+    SmsOperations smsIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testSms = new TestSms();
     	testSmsContext = new TestSmsContext();
     	
@@ -60,8 +66,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
-
     	return;
     }
 	
@@ -109,14 +113,13 @@ public class Tests
 	@Test
 	public void testSmsSaveOrUpdate() 
 	{		
-		SmsOperations ioOperations = new SmsOperations();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			Sms sms = testSms.setup(true);
-			result = ioOperations.saveOrUpdate(sms);
+			result = smsIoOperation.saveOrUpdate(sms);
 			
 			assertEquals(true, result);
 			_checksmsIntoDb(sms.getSmsId());
@@ -133,14 +136,13 @@ public class Tests
 	@Test
 	public void testSmsGetByID() 
 	{	
-		SmsOperations ioOperations = new SmsOperations();
 		int code = 0;
 		
 		
 		try 
 		{		
 			code = _setupTestSms(false);
-			Sms foundSms = ioOperations.getByID(code);
+			Sms foundSms = smsIoOperation.getByID(code);
 			
 			_checksmsIntoDb(foundSms.getSmsId());
 		} 
@@ -157,7 +159,6 @@ public class Tests
 	public void testSmsGetAll() 
 	{		
 		int code = 0;
-		SmsOperations ioOperations = new SmsOperations();
 		Date smsDateStart = new GregorianCalendar(2011, 9, 6).getTime();
 		Date smsDateEnd = new GregorianCalendar(2011, 9, 9).getTime();
 		
@@ -166,7 +167,7 @@ public class Tests
 		{		
 			code = _setupTestSms(false);
 			Sms foundSms = (Sms)jpa.find(Sms.class, code); 
-			List<Sms> sms = ioOperations.getAll(smsDateStart, smsDateEnd);			
+			List<Sms> sms = smsIoOperation.getAll(smsDateStart, smsDateEnd);			
 			
 			assertEquals(foundSms.getSmsText(), sms.get(0).getSmsText());
 		} 
@@ -183,14 +184,13 @@ public class Tests
 	public void testSmsGetList() 
 	{	
 		int code = 0;
-		SmsOperations ioOperations = new SmsOperations();
 		 
 		
 		try 
 		{		
 			code = _setupTestSms(false);
 			Sms foundSms = (Sms)jpa.find(Sms.class, code); 
-			List<Sms> sms = ioOperations.getList();			
+			List<Sms> sms = smsIoOperation.getList();			
 			
 			assertEquals(foundSms.getSmsText(), sms.get(0).getSmsText());
 		} 
@@ -207,17 +207,16 @@ public class Tests
 	public void testIoDeleteSms() 
 	{
 		int code = 0;
-		SmsOperations ioOperations = new SmsOperations();
 		
 
 		try 
 		{		
 			code = _setupTestSms(false);
 			Sms foundSms = (Sms)jpa.find(Sms.class, code); 
-			ioOperations.delete(foundSms);
+			smsIoOperation.delete(foundSms);
 			
-			Sms deletedSms = (Sms)jpa.find(Sms.class, code); 
-			assertEquals(null, deletedSms);
+			boolean result = smsIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{
@@ -233,19 +232,18 @@ public class Tests
 	public void testIoDeleteByModuleModuleID() 
 	{
 		int code = 0;
-		SmsOperations ioOperations = new SmsOperations();
 		
 
 		try 
 		{		
 			code = _setupTestSms(false);
 			Sms foundSms = (Sms)jpa.find(Sms.class, code); 
-			ioOperations.deleteByModuleModuleID(
+			smsIoOperation.deleteByModuleModuleID(
 					foundSms.getModule(), 
 					foundSms.getModuleID());
-			
-			Sms deletedSms = (Sms)jpa.find(Sms.class, code); 
-			assertEquals(null, deletedSms);
+
+			boolean result = smsIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

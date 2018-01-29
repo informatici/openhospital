@@ -1,21 +1,21 @@
 package org.isf.visits.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import org.isf.generaldata.MessageBundle;
 import org.isf.patient.model.Patient;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.isf.visits.model.Visit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class VisitsIoOperations {
-	@Autowired
-	private DbJpaUtil jpa;
 
+	@Autowired
+	private VisitsIoOperationRepository repository;
+	
 	/**
 	 * returns the list of all {@link Visit}s related to a patID
 	 * 
@@ -23,32 +23,21 @@ public class VisitsIoOperations {
 	 * @return the list of {@link Visit}s
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<Visit> getVisits(
 			Integer patID) throws OHException 
 	{
+		ArrayList<Visit> visits = null;
+
 		
-		ArrayList<Visit> visitList = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-		String query = null;
-				
-		
-		jpa.beginTransaction();
-		
-		query = "SELECT * FROM VISITS";
 		if (patID != 0) {
-			query += " WHERE VST_PAT_ID = ?";
-			params.add(patID);
+			visits = new ArrayList<Visit>(repository.findAllWherePatientByOrderPatientAndDateAsc(patID));
 		}
-		query += " ORDER BY VST_PAT_ID, VST_DATE";
-		jpa.createQuery(query, Visit.class, false);
-		jpa.setParameters(params, false);
-		List<Visit> therapyLists = (List<Visit>)jpa.getList();
-		visitList = new ArrayList<Visit>(therapyLists);			
+		else
+		{
+			visits = new ArrayList<Visit>(repository.findAllByOrderPatientAndDateAsc()); 
+		}
 		
-		jpa.commitTransaction();
-		
-		return visitList;
+		return visits;
 	}
 
 	/**
@@ -60,15 +49,10 @@ public class VisitsIoOperations {
 	 */
 	public int newVisit(
 			Visit visit) throws OHException 
-	{
-		
-		
-		
-		jpa.beginTransaction();	
-		jpa.persist(visit);
-    	jpa.commitTransaction();
-    	
-		return visit.getVisitID();
+	{		
+		Visit savedVisit = repository.save(visit);
+		    	
+		return savedVisit.getVisitID();
 	}
 	
 	/**
@@ -81,25 +65,29 @@ public class VisitsIoOperations {
 	public boolean deleteAllVisits(
 			int patID) throws OHException 
 	{
-		
-		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
-        		
+
 		
-		jpa.beginTransaction();		
-
-		try {
-			jpa.createQuery("DELETE FROM VISITS WHERE VST_PAT_ID = ?", Visit.class, false);
-			params.add(patID);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 	
-
-		jpa.commitTransaction();	
+		repository.deleteWherePatient(patID);
 		
         return result;
+	}
+
+	/**
+	 * checks if the code is already in use
+	 *
+	 * @param code - the visit code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
+	 */
+	public boolean isCodePresent(
+			Integer code) throws OHException
+	{
+		boolean result = true;
+	
+		
+		result = repository.exists(code);
+		
+		return result;	
 	}
 }

@@ -55,11 +55,11 @@ public class UserGroup
 	
 	@Override
 	public boolean equals(Object anObject) {
-		return (anObject == null) || !(anObject instanceof User) ? false
+		return (anObject == null) || !(anObject instanceof UserGroup) ? false
 				: (getCode().equalsIgnoreCase(
-						((User) anObject).getUserName()) && getDesc()
+						((UserGroup) anObject).getCode()) && getDesc()
 						.equalsIgnoreCase(
-								((User) anObject).getDesc()));
+								((UserGroup) anObject).getDesc()));
 	}
 
 	@Override

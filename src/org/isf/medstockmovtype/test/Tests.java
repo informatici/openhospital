@@ -14,20 +14,27 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestMovementType testMovementType;
 	private static TestMovementTypeContext testMovementTypeContext;
-		
+
+    @Autowired
+    MedicalStockMovementTypeIoOperation medicalStockMovementTypeIoOperation;
+    
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testMovementType = new TestMovementType();
     	testMovementTypeContext = new TestMovementTypeContext();
     	
@@ -58,8 +65,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
-
     	return;
     }
 	
@@ -108,14 +113,13 @@ public class Tests
 	public void testIoGetMovementType() 
 	{
 		String code = "";
-		MedicalStockMovementTypeIoOperation ioOperations = new MedicalStockMovementTypeIoOperation();
 		
 		
 		try 
 		{		
 			code = _setupTestMovementType(false);
 			MovementType foundMovementType = (MovementType)jpa.find(MovementType.class, code); 
-			ArrayList<MovementType> movementTypes = ioOperations.getMedicaldsrstockmovType();
+			ArrayList<MovementType> movementTypes = medicalStockMovementTypeIoOperation.getMedicaldsrstockmovType();
 			
 			assertEquals(foundMovementType.getDescription(), movementTypes.get(movementTypes.size()-1).getDescription());
 		} 
@@ -132,7 +136,6 @@ public class Tests
 	public void testIoUpdateMovementType() 
 	{
 		String code = "";
-		MedicalStockMovementTypeIoOperation ioOperations = new MedicalStockMovementTypeIoOperation();
 		boolean result = false;
 		
 		
@@ -141,7 +144,7 @@ public class Tests
 			code = _setupTestMovementType(false);
 			MovementType foundMovementType = (MovementType)jpa.find(MovementType.class, code); 
 			foundMovementType.setDescription("Update");
-			result = ioOperations.updateMedicaldsrstockmovType(foundMovementType);
+			result = medicalStockMovementTypeIoOperation.updateMedicaldsrstockmovType(foundMovementType);
 			MovementType updateMovementType = (MovementType)jpa.find(MovementType.class, code); 
 			
 			assertEquals(true, result);
@@ -159,14 +162,13 @@ public class Tests
 	@Test
 	public void testIoNewMovementType() 
 	{
-		MedicalStockMovementTypeIoOperation ioOperations = new MedicalStockMovementTypeIoOperation();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			MovementType movementType = testMovementType.setup(true);
-			result = ioOperations.newMedicaldsrstockmovType(movementType);
+			result = medicalStockMovementTypeIoOperation.newMedicaldsrstockmovType(movementType);
 			
 			assertEquals(true, result);
 			_checkMovementTypeIntoDb(movementType.getCode());
@@ -181,22 +183,18 @@ public class Tests
 	}
 
 	@Test
-	public void testIoDeleteMovementType() 
+	public void testIoIsCodePresent() 
 	{
 		String code = "";
-		MedicalStockMovementTypeIoOperation ioOperations = new MedicalStockMovementTypeIoOperation();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestMovementType(false);
-			MovementType foundMovementType = (MovementType)jpa.find(MovementType.class, code); 
-			result = ioOperations.deleteMedicaldsrstockmovType(foundMovementType);
+			result = medicalStockMovementTypeIoOperation.isCodePresent(code);
 			
 			assertEquals(true, result);
-			MovementType deletedMovementType = (MovementType)jpa.find(MovementType.class, code); 
-			assertEquals(null, deletedMovementType);
 		} 
 		catch (Exception e) 
 		{
@@ -208,19 +206,21 @@ public class Tests
 	}
 
 	@Test
-	public void testIoIsCodePresent() 
+	public void testIoDeleteMovementType() 
 	{
 		String code = "";
-		MedicalStockMovementTypeIoOperation ioOperations = new MedicalStockMovementTypeIoOperation();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestMovementType(false);
-			result = ioOperations.isCodePresent(code);
+			MovementType foundMovementType = (MovementType)jpa.find(MovementType.class, code); 
+			result = medicalStockMovementTypeIoOperation.deleteMedicaldsrstockmovType(foundMovementType);
 			
 			assertEquals(true, result);
+			result = medicalStockMovementTypeIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

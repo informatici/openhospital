@@ -8,20 +8,22 @@ import java.util.List;
 
 import org.isf.generaldata.ExaminationParameters;
 import org.isf.supplier.model.Supplier;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Mwithi
  * 
  */
 @Component
+@Transactional
 public class SupplierOperations {
-	@Autowired
-	private DbJpaUtil jpa;
 
+	@Autowired
+	private SupplierIoOperationRepository repository;
+	
 	/**
 	 * 
 	 */
@@ -38,22 +40,13 @@ public class SupplierOperations {
 	public boolean saveOrUpdate(
 			Supplier supplier) throws OHException 
 	{
-		
 		boolean result = true;
+	
+
+		Supplier savedSupplier = repository.save(supplier);
+		result = (savedSupplier != null);
 		
-		
-		jpa.beginTransaction();
-		if (supplier.getSupId() != null)
-		{
-			jpa.merge(supplier);			
-		}
-		else
-		{			
-			jpa.persist(supplier);
-		}
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 
 	/**
@@ -65,12 +58,7 @@ public class SupplierOperations {
 	public Supplier getByID(
 			int ID) throws OHException 
 	{
-		
-		
-		
-		jpa.beginTransaction();	
-		Supplier foundSupplier = (Supplier)jpa.find(Supplier.class, ID);
-    	jpa.commitTransaction();
+		Supplier foundSupplier = repository.findOne(ID);
     	
 		return foundSupplier;
 	}
@@ -80,21 +68,9 @@ public class SupplierOperations {
 	 * @return supList - the list of {@link Supplier}s
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Supplier> getAll() throws OHException 
 	{
-		
-		ArrayList<Supplier> suppliers = null;
-			
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM SUPPLIER";
-		jpa.createQuery(query, Supplier.class, false);
-		List<Supplier> suppliersList = (List<Supplier>)jpa.getList();
-		suppliers = new ArrayList<Supplier>(suppliersList);			
-		
-		jpa.commitTransaction();
+		ArrayList<Supplier> suppliers = (ArrayList<Supplier>)repository.findAll();
 		
 		return suppliers;
 	}
@@ -104,21 +80,9 @@ public class SupplierOperations {
 	 * @return supList - the list of {@link Supplier}s
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Supplier> getList() throws OHException 
 	{
-		
-		ArrayList<Supplier> suppliers = null;
-			
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM SUPPLIER WHERE SUP_DELETED = 'N'";
-		jpa.createQuery(query, Supplier.class, false);
-		List<Supplier> suppliersList = (List<Supplier>)jpa.getList();
-		suppliers = new ArrayList<Supplier>(suppliersList);			
-		
-		jpa.commitTransaction();
+		ArrayList<Supplier> suppliers = (ArrayList<Supplier>)repository.findAllWhereNotDeleted();
 		
 		return suppliers;
 	}

@@ -1,42 +1,30 @@
 package org.isf.pregtreattype.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.pregtreattype.model.PregnantTreatmentType;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class PregnantTreatmentTypeIoOperation {
-	@Autowired
-	private DbJpaUtil jpa;
 
+	@Autowired
+	private PregnantTreatmentTypeIoOperationRepository repository;
+	
+	
 	/**
 	 * return the list of {@link PregnantTreatmentType}s
 	 * 
 	 * @return the list of {@link PregnantTreatmentType}s
 	 * @throws OHException 
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<PregnantTreatmentType> getPregnantTreatmentType() throws OHException 
 	{
-		
-		ArrayList<PregnantTreatmentType> pregnantTreatmentTypes = null;
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM PREGNANTTREATMENTTYPE ORDER BY PTT_DESC";
-		jpa.createQuery(query, PregnantTreatmentType.class, false);
-		List<PregnantTreatmentType> pregnantTreatmentList = (List<PregnantTreatmentType>)jpa.getList();
-		pregnantTreatmentTypes = new ArrayList<PregnantTreatmentType>(pregnantTreatmentList);			
-		
-		jpa.commitTransaction();
-
-		return pregnantTreatmentTypes;
+		return new ArrayList<PregnantTreatmentType>(repository.findAllByOrderByDescriptionAsc()); 
 	}
 	
 	/**
@@ -49,14 +37,12 @@ public class PregnantTreatmentTypeIoOperation {
 	public boolean newPregnantTreatmentType(
 			PregnantTreatmentType pregnantTreatmentType) throws OHException 
 	{
-		
 		boolean result = true;
+	
+
+		PregnantTreatmentType savedPregnantTreatmentType = repository.save(pregnantTreatmentType);
+		result = (savedPregnantTreatmentType != null);
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(pregnantTreatmentType);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 	
@@ -70,15 +56,13 @@ public class PregnantTreatmentTypeIoOperation {
 	public boolean updatePregnantTreatmentType(
 			PregnantTreatmentType pregnantTreatmentType) throws OHException 
 	{
-		
 		boolean result = true;
+	
+
+		PregnantTreatmentType savedPregnantTreatmentType = repository.save(pregnantTreatmentType);
+		result = (savedPregnantTreatmentType != null);
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(pregnantTreatmentType);
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 	
 	/**
@@ -91,16 +75,12 @@ public class PregnantTreatmentTypeIoOperation {
 	public boolean deletePregnantTreatmentType(
 			PregnantTreatmentType pregnantTreatmentType) throws OHException 
 	{
-		
 		boolean result = true;
+	
 		
+		repository.delete(pregnantTreatmentType);
 		
-		jpa.beginTransaction();
-		PregnantTreatmentType objToRemove = (PregnantTreatmentType) jpa.find(PregnantTreatmentType.class, pregnantTreatmentType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 	
 	/**
@@ -113,19 +93,11 @@ public class PregnantTreatmentTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
+		boolean result = true;
+	
 		
-		PregnantTreatmentType pregnantTreatmentTyp;
-		boolean result = false;
+		result = repository.exists(code);
 		
-		
-		jpa.beginTransaction();	
-		pregnantTreatmentTyp = (PregnantTreatmentType)jpa.find(PregnantTreatmentType.class, code);
-		if (pregnantTreatmentTyp != null)
-		{
-			result = true;
-		}
-    	jpa.commitTransaction();
-    	
-		return result;	
+		return result;
 	}
 }

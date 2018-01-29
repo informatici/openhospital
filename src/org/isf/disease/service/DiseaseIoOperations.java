@@ -16,15 +16,12 @@ package org.isf.disease.service;
  *------------------------------------------*/
 
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.NoResultException;
 
 import org.isf.disease.model.Disease;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class offers the io operations for recovering and managing
@@ -33,10 +30,12 @@ import org.springframework.stereotype.Component;
  * @author Rick, Vero
  */
 @Component
+@Transactional
 public class DiseaseIoOperations {
-	@Autowired
-	private DbJpaUtil jpa;
 
+	@Autowired
+	private DiseaseIoOperationRepository repository;
+	
 	/**
 	 * Gets a {@link Disease} with the specified code.
 	 * @param code the disease code.
@@ -46,22 +45,7 @@ public class DiseaseIoOperations {
 	public Disease getDiseaseByCode(
 			int code) throws OHException 
 	{
-		
-		Disease disease = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM DISEASE JOIN DISEASETYPE ON DIS_DCL_ID_A = DCL_ID_A WHERE DIS_ID_A = ?";
-		jpa.createQuery(query, Disease.class, false);
-		params.add(code);
-		jpa.setParameters(params, false);
-		disease = (Disease)jpa.getResult();		
-		
-		jpa.commitTransaction();
-
-		return disease;
+		return repository.findOneByCode(code);
 	}
 	
 	/**
@@ -73,82 +57,127 @@ public class DiseaseIoOperations {
 	 * @return the retrieved diseases.
 	 * @throws OHException if an error occurs retrieving the diseases.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<Disease> getDiseases(
 			String disTypeCode, 
 			boolean opd, 
 			boolean ipdIn, 
 			boolean ipdOut) throws OHException 
 	{
-		
 		ArrayList<Disease> diseases = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
+    	
 		
-		jpa.beginTransaction();
-		
-		String query = _calculateGetDiseasesQuery(disTypeCode, opd, ipdIn, ipdOut); 
-		jpa.createQuery(query, Disease.class, false);		
 		if (disTypeCode != null) 
 		{
-			params.add(disTypeCode);		
-			jpa.setParameters(params, false);
-		}
-		List<Disease> diseaseList = (List<Disease>)jpa.getList();
-		diseases = new ArrayList<Disease>(diseaseList);			
-		
-		jpa.commitTransaction();
+			if (opd) 
+			{
+				if (ipdIn) 
+				{
+					if (ipdOut)
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByDiseaseTypeCodeAndOpdAndIpdInAndIpdOut(disTypeCode));
+					}
+					else
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByDiseaseTypeCodeAndOpdAndIpdIn(disTypeCode));						
+					}
+				}
+				else
+				{
+					if (ipdOut)
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByDiseaseTypeCodeAndOpdAndIpdOut(disTypeCode));
+					}
+					else
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByDiseaseTypeCodeAndOpd(disTypeCode));						
+					}					
+				}
+			}		
+			else
+			{
 
-		return diseases;
-	}
-	
-	private String _calculateGetDiseasesQuery(
-			String disTypeCode, 
-			boolean opd, 
-			boolean ipdIn, 
-			boolean ipdOut) 
-	{		
-		String selectClause = "SELECT * FROM DISEASE JOIN DISEASETYPE ON DIS_DCL_ID_A = DCL_ID_A";			
-		String whereClause = "";
-		if (disTypeCode != null) 
-		{
-			whereClause= " where DCL_ID_A like ?";
-		}		
-		if (opd) 
-		{
-			whereClause = _initWherClause(whereClause);
-			whereClause +=" (DIS_OPD_INCLUDE=1 or DIS_OPD_INCLUDE is null) ";
-		}		
-		if (ipdIn) 
-		{
-			whereClause = _initWherClause(whereClause);
-			whereClause +=" (DIS_IPD_IN_INCLUDE=1 or DIS_IPD_IN_INCLUDE is null) ";
-		}		
-		if (ipdOut) 
-		{
-			whereClause = _initWherClause(whereClause);
-			whereClause +=" (DIS_IPD_OUT_INCLUDE=1 or DIS_IPD_OUT_INCLUDE is null) ";
-		}		
-		String orderClause = " order BY DIS_DESC";
-		
-		String query = selectClause + whereClause + orderClause;
-
-		return query;
-	}
-	
-	private String _initWherClause(
-			String whereClause)
-	{		
-		if (whereClause.equals("")) 
-		{
-			whereClause =" where "; 
+				if (ipdIn) 
+				{
+					if (ipdOut)
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByDiseaseTypeCodeAndIpdInAndIpdOut(disTypeCode));
+						
+					}
+					else
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByDiseaseTypeCodeAndIpdIn(disTypeCode));						
+					}
+				}
+				else
+				{
+					if (ipdOut)
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByDiseaseTypeCodeAndIpdOut(disTypeCode));
+					}
+					else
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByDiseaseTypeCode(disTypeCode));						
+					}					
+				}
+			}
 		}
 		else
 		{
-			whereClause +=" and  "; 
+			if (opd) 
+			{
+				if (ipdIn) 
+				{
+					if (ipdOut)
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByOpdAndIpdInAndIpdOut());
+					}
+					else
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByOpdAndIpdIn());						
+					}
+				}
+				else
+				{
+					if (ipdOut)
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByOpdAndIpdOut());
+					}
+					else
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByOpd());						
+					}					
+				}
+			}		
+			else
+			{
+
+				if (ipdIn) 
+				{
+					if (ipdOut)
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByIpdInAndIpdOut());
+						
+					}
+					else
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByIpdIn());						
+					}
+				}
+				else
+				{
+					if (ipdOut)
+					{
+						diseases = (ArrayList<Disease>)(repository.findAllByIpdOut());
+					}
+					else
+					{
+						diseases = (ArrayList<Disease>)(repository.findAll());						
+					}					
+				}
+			}
 		}
-		
-		return whereClause;
+
+		return diseases;
 	}
 	
 	/**
@@ -160,14 +189,12 @@ public class DiseaseIoOperations {
 	public boolean newDisease(
 			Disease disease) throws OHException
 	{
-		
 		boolean result = true;
+	
 		
+		Disease savedDisease = repository.save(disease);
+		result = (savedDisease != null);
 		
-		jpa.beginTransaction();	
-		jpa.persist(disease);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 
@@ -180,15 +207,13 @@ public class DiseaseIoOperations {
 	public boolean updateDisease(
 			Disease disease) throws OHException 
 	{
-		
 		boolean result = true;
+	
 		
-		
-		jpa.beginTransaction();	
 		disease.setLock(disease.getLock() + 1);
-		jpa.merge(disease);
-    	jpa.commitTransaction();
-    	
+		Disease savedDisease = repository.save(disease);
+		result = (savedDisease != null);
+		
 		return result;
 	}
 
@@ -200,9 +225,8 @@ public class DiseaseIoOperations {
 	 */
 	public boolean hasDiseaseModified(
 			Disease disease) throws OHException
-	{
-		
-		Disease foundDisease = (Disease)jpa.find(Disease.class, disease.getCode());
+	{ 
+		Disease foundDisease = repository.findOne(disease.getCode()); 
 		boolean result = false;
 		
 		
@@ -223,17 +247,14 @@ public class DiseaseIoOperations {
 	public boolean deleteDisease(
 			Disease disease) throws OHException
 	{
-		
 		boolean result = true;
+	
 		
-		
-		jpa.beginTransaction();	
 		disease.setOpdInclude(false);
 		disease.setIpdInInclude(false);
 		disease.setIpdOutInclude(false);
-		jpa.merge(disease);
-    	jpa.commitTransaction();
-    	
+		repository.save(disease);
+		
 		return result;
 	}
 
@@ -246,17 +267,12 @@ public class DiseaseIoOperations {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
+		boolean result = true;
+	
 		
-		Disease foundDisease = (Disease)jpa.find(Disease.class, code);
-		boolean present = false;
-
+		result = repository.exists(code);
 		
-		if (foundDisease != null)
-		{
-			present = true;
-		}
-		
-		return present;
+		return result;
 	}
 
 	/**
@@ -270,32 +286,13 @@ public class DiseaseIoOperations {
 			String description, 
 			String typeCode) throws OHException
 	{
-		Disease foundDisease = null;
 		boolean present = false;
-		ArrayList<Object> params = new ArrayList<Object>();
 		
-		try {
-			jpa.beginTransaction();
-			
-			String query = "SELECT * FROM DISEASE WHERE DIS_DESC = ? AND DIS_DCL_ID_A = ?";
-			jpa.createQuery(query, Disease.class, false);
-			params.add(description);
-			params.add(typeCode);
-			jpa.setParameters(params, false);
-			foundDisease = (Disease)jpa.getResult();		
-			
-			if (foundDisease != null && foundDisease.getDescription().compareTo(description) == 0)
-			{
-				present = true;
-			}
-			
-		} catch (Exception e) {
-			if (e.getCause().getClass().equals(NoResultException.class))
-				return false;
-			else throw new OHException(e.getCause().getMessage(), e.getCause());
-			
-		} finally {
-			jpa.commitTransaction();
+		
+		Disease foundDisease = repository.findOneByDescriptionAndTypeCode(description, typeCode);			
+		if (foundDisease != null && foundDisease.getDescription().compareTo(description) == 0)
+		{
+			present = true;
 		}
 		
 		return present;

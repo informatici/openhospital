@@ -1,20 +1,19 @@
 package org.isf.therapy.service;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import org.isf.generaldata.MessageBundle;
 import org.isf.therapy.model.TherapyRow;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class TherapyIoOperations {
-	@Autowired
-	private DbJpaUtil jpa;
 
+	@Autowired
+	private TherapyIoOperationRepository repository;
+	
 	/**
 	 * insert a new {@link TherapyRow} (therapy) in the DB
 	 * 
@@ -26,14 +25,9 @@ public class TherapyIoOperations {
 	public int newTherapy(
 			TherapyRow thRow) throws OHException 
 	{
+		TherapyRow savedVaccine = repository.save(thRow);
 		
-		
-		
-		jpa.beginTransaction();	
-		jpa.persist(thRow);
-    	jpa.commitTransaction();
-    	
-		return thRow.getTherapyID();
+		return savedVaccine.getTherapyID();
 	}
 
 	/**
@@ -45,30 +39,19 @@ public class TherapyIoOperations {
 	 * @return the list of {@link TherapyRow}s (therapies)
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<TherapyRow> getTherapyRows(
 			int patID) throws OHException 
 	{
-		
 		ArrayList<TherapyRow> therapyList = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-		String query = null;
-				
+
 		
-		jpa.beginTransaction();
-		
-		query = "SELECT * FROM THERAPIES JOIN (MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A) ON THR_MDSR_ID = MDSR_ID";
 		if (patID != 0) {
-			query += " WHERE THR_PAT_ID = ?";
-			params.add(patID);
+			therapyList = new ArrayList<TherapyRow>(repository.findAllWherePatientByOrderPatientAndIdAsc(patID));
 		}
-		query += " ORDER BY THR_PAT_ID, THR_ID";
-		jpa.createQuery(query, TherapyRow.class, false);
-		jpa.setParameters(params, false);
-		List<TherapyRow> therapyLists = (List<TherapyRow>)jpa.getList();
-		therapyList = new ArrayList<TherapyRow>(therapyLists);			
-		
-		jpa.commitTransaction();
+		else
+		{
+			therapyList = new ArrayList<TherapyRow>(repository.findAllByOrderPatientAndIdAsc()); 
+		}
 		
 		return therapyList;
 	}
@@ -83,25 +66,29 @@ public class TherapyIoOperations {
 	public boolean deleteAllTherapies(
 			int patID) throws OHException 
 	{
-		
-		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
-        		
+	
 		
-		jpa.beginTransaction();		
-
-		try {
-			jpa.createQuery("DELETE FROM THERAPIES WHERE THR_PAT_ID = ?", TherapyRow.class, false);
-			params.add(patID);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 	
-
-		jpa.commitTransaction();	
+		repository.deleteWherePatient(patID);
 		
-        return result;
+		return result;	
+	}
+
+	/**
+	 * checks if the code is already in use
+	 *
+	 * @param code - the therapy code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
+	 */
+	public boolean isCodePresent(
+			Integer code) throws OHException
+	{
+		boolean result = true;
+	
+		
+		result = repository.exists(code);
+		
+		return result;	
 	}
 }

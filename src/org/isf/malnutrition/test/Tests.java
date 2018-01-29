@@ -50,11 +50,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
-	@Autowired
 	private static DbJpaUtil jpa;
 	private static TestAdmission testAdmission;
 	private static TestAdmissionContext testAdmissionContext;
@@ -82,12 +86,14 @@ public class Tests
 	private static TestDeliveryResultTypeContext testDeliveryResultTypeContext;
 	private static TestMalnutrition testMalnutrition;
 	private static TestMalnutritionContext testMalnutritionContext;
-		
+
+    @Autowired
+    MalnutritionIoOperation malnutritionIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	
+    	jpa = new DbJpaUtil();
     	testAdmission = new TestAdmission();
     	testAdmissionContext = new TestAdmissionContext();
     	testWard = new TestWard();
@@ -142,7 +148,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
     	testAdmission = null;
     	testAdmissionContext = null;
     	testWard = null;
@@ -218,14 +223,13 @@ public class Tests
 	public void testIoGetMalnutrition() 
 	{
 		int code = 0;
-		MalnutritionIoOperation ioOperations = new MalnutritionIoOperation();
 		
 		
 		try 
 		{		
 			code = _setupTestMalnutrition(false);
 			Malnutrition foundMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code); 
-			ArrayList<Malnutrition> malnutritions = ioOperations.getMalnutritions(String.valueOf(foundMalnutrition.getAdmission().getId()));
+			ArrayList<Malnutrition> malnutritions = malnutritionIoOperation.getMalnutritions(String.valueOf(foundMalnutrition.getAdmission().getId()));
 			
 			assertEquals(code, malnutritions.get(malnutritions.size()-1).getCode());
 		} 
@@ -242,14 +246,13 @@ public class Tests
 	public void testIoGetMalnutritionLock() 
 	{
 		int code = 0;
-		MalnutritionIoOperation ioOperations = new MalnutritionIoOperation();
 		
 		
 		try 
 		{		
 			code = _setupTestMalnutrition(false);
 			Malnutrition foundMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code); 
-			int lock = ioOperations.getMalnutritionLock(code);
+			int lock = malnutritionIoOperation.getMalnutritionLock(code);
 			
 			assertEquals(foundMalnutrition.getLock(), lock);
 		} 
@@ -266,14 +269,13 @@ public class Tests
 	public void testIoGetLastMalnutrition() 
 	{
 		int code = 0;
-		MalnutritionIoOperation ioOperations = new MalnutritionIoOperation();
 		
 		
 		try 
 		{		
 			code = _setupTestMalnutrition(false);
 			Malnutrition foundMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code); 
-			Malnutrition malnutrition = ioOperations.getLastMalnutrition(foundMalnutrition.getAdmission().getId());
+			Malnutrition malnutrition = malnutritionIoOperation.getLastMalnutrition(foundMalnutrition.getAdmission().getId());
 			
 			assertEquals(code, malnutrition.getCode());
 		} 
@@ -290,7 +292,6 @@ public class Tests
 	public void testIoUpdateMalnutrition() 
 	{
 		int code = 0;
-		MalnutritionIoOperation ioOperations = new MalnutritionIoOperation();
 		boolean result = false;
 		
 		
@@ -299,11 +300,11 @@ public class Tests
 			code = _setupTestMalnutrition(false);
 			Malnutrition foundMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code); 
 			foundMalnutrition.setHeight(200);
-			result = ioOperations.updateMalnutrition(foundMalnutrition);
+			result = malnutritionIoOperation.updateMalnutrition(foundMalnutrition);
 			Malnutrition updateMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code); 
 			
 			assertEquals(true, result);
-			assertEquals(200, updateMalnutrition.getHeight());
+			assertEquals(200.0, updateMalnutrition.getHeight(), 0.000001d);
 		} 
 		catch (Exception e) 
 		{
@@ -317,7 +318,6 @@ public class Tests
 	@Test
 	public void testIoNewMalnutrition() 
 	{
-		MalnutritionIoOperation ioOperations = new MalnutritionIoOperation();
 		boolean result = false;
 		
 		
@@ -363,7 +363,7 @@ public class Tests
 			jpa.commitTransaction();
 						
 			Malnutrition malnutrition = testMalnutrition.setup(admission, true);
-			result = ioOperations.newMalnutrition(malnutrition);
+			result = malnutritionIoOperation.newMalnutrition(malnutrition);
 			
 			assertEquals(true, result);
 			_checkMalnutritionIntoDb(malnutrition.getCode());
@@ -381,7 +381,6 @@ public class Tests
 	public void testIoDeleteMalnutrition() 
 	{
 		int code = 0;
-		MalnutritionIoOperation ioOperations = new MalnutritionIoOperation();
 		boolean result = false;
 		
 
@@ -389,11 +388,11 @@ public class Tests
 		{		
 			code = _setupTestMalnutrition(false);
 			Malnutrition foundMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code); 
-			result = ioOperations.deleteMalnutrition(foundMalnutrition);
+			result = malnutritionIoOperation.deleteMalnutrition(foundMalnutrition);
 			
 			assertEquals(true, result);
-			Malnutrition deletedMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code); 
-			assertEquals(null, deletedMalnutrition);
+			result = malnutritionIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{
@@ -414,6 +413,7 @@ public class Tests
     	testAdmissionTypeContext.saveAll(jpa);
     	testDiseaseTypeContext.saveAll(jpa);
     	testDiseaseContext.saveAll(jpa);
+		testDiseaseContext.addMissingKey(jpa);
     	testOperationTypeContext.saveAll(jpa);
     	testOperationContext.saveAll(jpa);
     	testDischargeTypeContext.saveAll(jpa);
