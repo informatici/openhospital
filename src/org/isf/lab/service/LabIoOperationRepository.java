@@ -15,7 +15,7 @@ public interface LabIoOperationRepository extends JpaRepository<Laboratory, Inte
     		+ "WHERE LAB_EXAM_DATE >= :dateFrom AND LAB_EXAM_DATE <= :dateTo ORDER BY LAB_EXAM_DATE", nativeQuery= true)
     public List<Laboratory> findAllWhereDatesByOrderExamDate(
     		@Param("dateFrom") GregorianCalendar dateFrom,
-    		@Param("dateFrom") GregorianCalendar dateTo);
+    		@Param("dateTo") GregorianCalendar dateTo);
     @Query(value = "SELECT * FROM LABORATORY JOIN EXAM ON LAB_EXA_ID_A = EXA_ID_A "
     		+ "WHERE LAB_EXAM_DATE >= :dateFrom AND LAB_EXAM_DATE <= :dateTo AND EXA_DESC = :exam ORDER BY LAB_EXAM_DATE", nativeQuery= true)
     public List<Laboratory> findAllWhereDatesAndExamByOrderExamDate(
