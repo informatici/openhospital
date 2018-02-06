@@ -228,7 +228,7 @@ public class MenuIoOperations
 			umi.setShortcut((Character) object[4]);
 			umi.setMySubmenu((String) object[5]);
 			umi.setMyClass((String) object[6]);
-			umi.setASubMenu((Character)object[7] == '1' ? true : false);
+			umi.setASubMenu((Character)object[7] == 'Y' ? true : false);
 			umi.setPosition((Integer) object[8]);
 			umi.setActive(active == 'Y' ? true : false);
 			menu.add(umi);
