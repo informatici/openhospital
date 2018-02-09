@@ -41,12 +41,12 @@ import org.isf.lab.gui.LabEdit.LabEditListener;
 import org.isf.lab.gui.LabEditExtended.LabEditExtendedListener;
 import org.isf.lab.gui.LabNew.LabListener;
 import org.isf.lab.manager.LabManager;
-import org.isf.lab.manager.LabRowManager;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryForPrint;
-import org.isf.lab.model.LaboratoryRow;
 import org.isf.menu.gui.MainMenu;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoDateTextField;
 
@@ -171,33 +171,21 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 			printTableButton.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent arg0) {
-					LabRowManager rowManager = new LabRowManager();
-					ArrayList<LaboratoryRow> rows = null;
-					typeSelected = ((Exam) comboExams.getSelectedItem())
-							.toString();
-					if (typeSelected.equalsIgnoreCase(MessageBundle.getMessage("angal.lab.all")))
+					typeSelected = ((Exam) comboExams.getSelectedItem()).toString();
+					if (typeSelected.equalsIgnoreCase(MessageBundle.getMessage("angal.lab.all"))) {
 						typeSelected = null;
-					ArrayList<LaboratoryForPrint> labs = manager
-							.getLaboratoryForPrint(typeSelected, dateFrom
-									.getDate(), dateTo.getDate());
-					for (int i = 0; i < labs.size(); i++) {
-						if (labs.get(i).getResult().equalsIgnoreCase(
-								MessageBundle.getMessage("angal.lab.multipleresults"))) {
-							rows = rowManager.getLabRow(labs.get(i).getCode());
-							
-							if (rows == null || rows.size() == 0) {
-								labs.get(i).setResult(MessageBundle.getMessage("angal.lab.allnegative"));
-							} else {
-								labs.get(i).setResult(MessageBundle.getMessage("angal.lab.positive")+" : "+rows.get(0).getDescription());
-								for (int j=1;j<rows.size();j++) {
-									labs.get(i).setResult(
-											labs.get(i).getResult() + ","
-													+ rows.get(j).getDescription());
-								}
-							}
-						}
 					}
-					if (!labs.isEmpty()) new LabPrintFrame(myFrame, labs);
+					
+					try {
+						ArrayList<LaboratoryForPrint> labs;
+						labs = manager.getLaboratoryForPrint(typeSelected, dateFrom.getDate(), dateTo.getDate());
+						if (!labs.isEmpty()) {
+							new LabPrintFrame(myFrame, labs); 
+						}
+					} catch (OHServiceException e) {
+						OHServiceExceptionUtil.showMessages(e);
+					}
+					
 				}
 
 			});
@@ -300,12 +288,21 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 								"\n ?",
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
 
-						if ((n == JOptionPane.YES_OPTION)
-								&& (manager.deleteLaboratory(lab))) {
-							pLabs.remove(pLabs.size() - jTable.getSelectedRow()
-									- 1);
-							model.fireTableDataChanged();
-							jTable.updateUI();
+						if (n == JOptionPane.YES_OPTION) {
+							boolean deleted;
+							
+							try {
+								deleted = manager.deleteLaboratory(lab);
+							} catch (OHServiceException e) {
+								deleted = false;
+								OHServiceExceptionUtil.showMessages(e);
+							}
+							
+							if (true == deleted) {
+								pLabs.remove(pLabs.size() - jTable.getSelectedRow() - 1);
+								model.fireTableDataChanged();
+								jTable.updateUI();
+							}
 						}
 					}
 				}
@@ -388,12 +385,20 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 			comboExams.setPreferredSize(new Dimension(200, 30));
 			comboExams.addItem(new Exam("", MessageBundle.getMessage("angal.lab.all"), new ExamType("", ""), 0, "",
 					0));
-			ArrayList<Exam> type = managerExams.getExams(); // for
+			ArrayList<Exam> type;
+			try {
+				type = managerExams.getExams();
+			} catch (OHServiceException e1) {
+				type = null;
+				OHServiceExceptionUtil.showMessages(e1);
+			} // for
 			// efficiency
 			// in
 			// the sequent for
-			for (Exam elem : type) {
-				comboExams.addItem(elem);
+			if (null != type) {
+				for (Exam elem : type) {
+					comboExams.addItem(elem);
+				}
 			}
 			comboExams.addActionListener(new ActionListener() {
 
@@ -480,12 +485,22 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		private LabManager manager = new LabManager();
 
 		public LabBrowsingModel(String exam, GregorianCalendar dateFrom, GregorianCalendar dateTo) {
-			pLabs = manager.getLaboratory(exam, dateFrom, dateTo);
+			try {
+				pLabs = manager.getLaboratory(exam, dateFrom, dateTo);
+			} catch (OHServiceException e) {
+				pLabs = new ArrayList<Laboratory>();
+				OHServiceExceptionUtil.showMessages(e);
+			}
 		}
 
 		public LabBrowsingModel() {
 			LabManager manager = new LabManager();
-			pLabs = manager.getLaboratory();
+			try {
+				pLabs = manager.getLaboratory();
+			} catch (OHServiceException e) {
+				pLabs = new ArrayList<Laboratory>();
+				OHServiceExceptionUtil.showMessages(e);
+			}
 		}
 
 		public int getRowCount() {

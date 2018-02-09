@@ -21,6 +21,8 @@ import org.isf.admtype.gui.AdmissionTypeBrowserEdit.LaboratoryTypeListener;
 import org.isf.admtype.manager.AdmissionTypeBrowserManager;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -197,12 +199,19 @@ public class AdmissionTypeBrowser extends ModalJFrame implements LaboratoryTypeL
 						int n = JOptionPane.showConfirmDialog(null,
 								MessageBundle.getMessage("angal.admtype.deleterow")+ " \""+dis.getDescription() + "\" ?",
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
-						
-						if ((n == JOptionPane.YES_OPTION)
-								&& (manager.deleteAdmissionType(dis))) {
-							pAdmissionType.remove(jTable.getSelectedRow());
-							model.fireTableDataChanged();
-							jTable.updateUI();
+						try{
+							if ((n == JOptionPane.YES_OPTION)
+									&& (manager.deleteAdmissionType(dis))) {
+								pAdmissionType.remove(jTable.getSelectedRow());
+								model.fireTableDataChanged();
+								jTable.updateUI();
+							}
+						}catch(OHServiceException e){
+							if(e.getMessages() != null){
+								for(OHExceptionMessage msg : e.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
 						}
 					}
 				}
@@ -231,7 +240,15 @@ class AdmissionTypeBrowserModel extends DefaultTableModel {
 
 		public AdmissionTypeBrowserModel() {
 			AdmissionTypeBrowserManager manager = new AdmissionTypeBrowserManager();
-			pAdmissionType = manager.getAdmissionType();
+			try {
+				pAdmissionType = manager.getAdmissionType();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 		}
 		
 		public int getRowCount() {

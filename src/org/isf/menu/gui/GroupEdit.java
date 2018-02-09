@@ -16,6 +16,8 @@ import javax.swing.event.*;
 import org.isf.menu.manager.*;
 import org.isf.menu.model.*;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
 public class GroupEdit extends JDialog {
 
@@ -206,14 +208,22 @@ public class GroupEdit extends JDialog {
 					boolean result = false;
 					if (insert) {      // inserting
 						//System.out.println("saving... "+group);
-						result = manager.newUserGroup(group);
-						if (result) {
+                        try {
+                            result = manager.newUserGroup(group);
+                        } catch (OHServiceException e1) {
+                            OHServiceExceptionUtil.showMessages(e1);
+                        }
+                        if (result) {
                            fireGroupInserted(group);
                         }
                     }
                     else {                          // updating
-						result = manager.updateUserGroup(group);
-						if (result) {
+                        try {
+                            result = manager.updateUserGroup(group);
+                        } catch (OHServiceException e1) {
+                            OHServiceExceptionUtil.showMessages(e1);
+                        }
+                        if (result) {
 							fireGroupUpdated();
                         }
 					}

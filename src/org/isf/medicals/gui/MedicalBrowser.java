@@ -40,9 +40,11 @@ import org.isf.medicals.model.Medical;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
-import org.isf.stat.manager.GenericReportFromDateToDate;
-import org.isf.stat.manager.GenericReportPharmaceuticalOrder;
+import org.isf.stat.gui.report.GenericReportFromDateToDate;
+import org.isf.stat.gui.report.GenericReportPharmaceuticalOrder;
 import org.isf.utils.excel.ExcelExporter;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.JMonthYearChooser;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.slf4j.Logger;
@@ -134,10 +136,19 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
 		pbox = new JComboBox();
 		pbox.addItem(MessageBundle.getMessage("angal.medicals.allm"));
-		ArrayList<MedicalType> type = manager.getMedicalType();	//for efficiency in the sequent for
-		for (MedicalType elem : type) {
-			pbox.addItem(elem);
+		ArrayList<MedicalType> type;
+		try {
+			type = manager.getMedicalType();
+		
+			//for efficiency in the sequent for
+			for (MedicalType elem : type) {
+				pbox.addItem(elem);
+			}
+		} catch (OHServiceException e1) {
+			type = null;
+			OHServiceExceptionUtil.showMessages(e1);
 		}
+		
 		pbox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				pSelection=pbox.getSelectedItem().toString();
@@ -199,18 +210,28 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 	                        JOptionPane.PLAIN_MESSAGE);				
 					return;									
 				}else {
-				MedicalBrowsingManager manager = new MedicalBrowsingManager();
-				Medical m = (Medical)(((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
-				int n = JOptionPane.showConfirmDialog(
-                        null,
-                        MessageBundle.getMessage("angal.medicals.deletemedical") + " \""+m.getDescription()+"\" ?",
-                        MessageBundle.getMessage("angal.hospital"),
-                        JOptionPane.YES_NO_OPTION);
-
-				if ((n == JOptionPane.YES_OPTION) && (manager.deleteMedical(m))){
-					pMedicals.remove(table.getSelectedRow());
-					model.fireTableDataChanged();
-					table.updateUI();
+					MedicalBrowsingManager manager = new MedicalBrowsingManager();
+					Medical m = (Medical)(((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
+					int n = JOptionPane.showConfirmDialog(
+	                        null,
+	                        MessageBundle.getMessage("angal.medicals.deletemedical") + " \""+m.getDescription()+"\" ?",
+	                        MessageBundle.getMessage("angal.hospital"),
+	                        JOptionPane.YES_NO_OPTION);
+	
+					if ((n == JOptionPane.YES_OPTION)){
+						boolean deleted;
+						try {
+							deleted = (manager.deleteMedical(m));
+						} catch (OHServiceException e) {
+							deleted = false;
+							OHServiceExceptionUtil.showMessages(e);
+						}
+						
+						if (true == deleted) {
+							pMedicals.remove(table.getSelectedRow());
+							model.fireTableDataChanged();
+							table.updateUI();
+						}
 					}
 				}
 			}
@@ -367,11 +388,21 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 
 		public MedicalBrowsingModel(String s) {
 			MedicalBrowsingManager manager = new MedicalBrowsingManager();
-			pMedicals = manager.getMedicals(s);
+			try {
+				pMedicals = manager.getMedicals(s);
+			} catch (OHServiceException e) {
+				pMedicals = null;
+				OHServiceExceptionUtil.showMessages(e);
+			}
 		}
 		public MedicalBrowsingModel() {
 			MedicalBrowsingManager manager = new MedicalBrowsingManager();
-			pMedicals = manager.getMedicals();
+			try {
+				pMedicals = manager.getMedicals();
+			} catch (OHServiceException e) {
+				pMedicals = null;
+				OHServiceExceptionUtil.showMessages(e);
+			}
 		}
  
 		

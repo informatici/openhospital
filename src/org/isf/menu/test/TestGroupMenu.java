@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestGroupMenu 
 {	
-    private Integer code = 1;
+    private Integer code = 999;
     private String userGroup = "TestDescription";
     private String menuItem = "TestDescription";
     private char active = 'Y';

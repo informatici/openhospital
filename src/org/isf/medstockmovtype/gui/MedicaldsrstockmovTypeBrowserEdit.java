@@ -15,12 +15,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
-import org.isf.utils.jobjects.*;
 
-
+import org.isf.generaldata.MessageBundle;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
-import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 
@@ -224,7 +225,15 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 						return;	
 					}
 					if(insert){
-					if (manager.codeControl(key)){
+					boolean codeControl;
+					try {
+						codeControl = manager.codeControl(key);
+					} catch (OHServiceException e1) {
+						codeControl = false;
+						OHServiceExceptionUtil.showMessages(e1);
+					}
+					
+					if (true == codeControl){
 						JOptionPane.showMessageDialog(				
 								null,
 								MessageBundle.getMessage("angal.medstockmovtype.codealreadyinuse"),
@@ -256,9 +265,14 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 					medicaldsrstockmovType.setDescription(descriptionTextField.getText());
 					medicaldsrstockmovType.setCode(codeTextField.getText());
 					medicaldsrstockmovType.setType(key2);
-					boolean result = false;
+					boolean result;
 					if (insert) {      // inserting
-						result = manager.newMedicaldsrstockmovType(medicaldsrstockmovType);
+						try {
+							result = manager.newMedicaldsrstockmovType(medicaldsrstockmovType);
+						} catch (OHServiceException e1) {
+							result = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
 						if (result) {
                            fireMedicaldsrstockmovInserted(medicaldsrstockmovType);
                         }
@@ -269,7 +283,12 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
                     	if (descriptionTextField.getText().equals(lastdescription)){
     						dispose();	
     					}else{
-    						result = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
+    						try {
+								result = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						if (result) {
 							fireMedicaldsrstockmovUpdated();
                         }

@@ -28,6 +28,8 @@ import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
 import org.isf.sms.service.SmsSender;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.xmpp.gui.CommunicationFrame;
 import org.isf.xmpp.service.Server;
@@ -140,9 +142,13 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 
 		// get menu items
 		UserBrowsingManager manager = new UserBrowsingManager();
-		myMenu = manager.getMenu(myUser);
+        try {
+            myMenu = manager.getMenu(myUser);
+        } catch (OHServiceException e) {
+            OHServiceExceptionUtil.showMessages(e);
+        }
 
-		// start connection with xmpp server if is enabled
+        // start connection with xmpp server if is enabled
 		if (flag_Xmpp) {
 			try {
 				Server.getInstance().login(myUser.getUserName(), myUser.getPasswd());

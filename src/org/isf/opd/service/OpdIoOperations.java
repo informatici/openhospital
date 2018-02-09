@@ -85,42 +85,46 @@ public class OpdIoOperations {
 		ArrayList<Opd> opds = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM OPD LEFT JOIN PATIENT ON OPD_PAT_ID = PAT_ID LEFT JOIN DISEASE ON OPD_DIS_ID_A = DIS_ID_A LEFT JOIN DISEASETYPE ON DIS_DCL_ID_A = DCL_ID_A WHERE 1";
-		if (!(diseaseTypeCode.equals(MessageBundle.getMessage("angal.opd.alltype")))) {
-			query += " AND DIS_DCL_ID_A = ?";
-			params.add(diseaseTypeCode);
-		}
-		if(!diseaseCode.equals(MessageBundle.getMessage("angal.opd.alldisease"))) {
-			query += " AND DIS_ID_A = ?";
-			params.add(diseaseCode);
-		}
-		if (ageFrom != 0 || ageTo != 0) {
-			query += " AND OPD_AGE BETWEEN ? AND ?";
-			params.add(ageFrom);
-			params.add(ageTo);
-		}
-		if (sex != 'A') {
-			query += " AND OPD_SEX = ?";
-			params.add(String.valueOf(sex));
-		}
-		if (newPatient != 'A') {
-			query += " AND OPD_NEW_PAT = ?";
-			params.add(newPatient);
-		}
-		query += " AND OPD_DATE_VIS BETWEEN ? AND ?";
-		params.add(dateFrom);
-		params.add(dateTo);
-		query += " ORDER BY OPD_DATE_VIS";
-		jpa.createQuery(query, Opd.class, false);
-		jpa.setParameters(params, false);	
-		List<Opd> opdList = (List<Opd>)jpa.getList();
-		opds = new ArrayList<Opd>(opdList);			
-		
-		jpa.commitTransaction();
-		
+		try{
+			jpa.beginTransaction();
+
+			String query = "SELECT * FROM OPD LEFT JOIN PATIENT ON OPD_PAT_ID = PAT_ID LEFT JOIN DISEASE ON OPD_DIS_ID_A = DIS_ID_A LEFT JOIN DISEASETYPE ON DIS_DCL_ID_A = DCL_ID_A WHERE 1";
+			if (!(diseaseTypeCode.equals(MessageBundle.getMessage("angal.opd.alltype")))) {
+				query += " AND DIS_DCL_ID_A = ?";
+				params.add(diseaseTypeCode);
+			}
+			if(!diseaseCode.equals(MessageBundle.getMessage("angal.opd.alldisease"))) {
+				query += " AND DIS_ID_A = ?";
+				params.add(diseaseCode);
+			}
+			if (ageFrom != 0 || ageTo != 0) {
+				query += " AND OPD_AGE BETWEEN ? AND ?";
+				params.add(ageFrom);
+				params.add(ageTo);
+			}
+			if (sex != 'A') {
+				query += " AND OPD_SEX = ?";
+				params.add(String.valueOf(sex));
+			}
+			if (newPatient != 'A') {
+				query += " AND OPD_NEW_PAT = ?";
+				params.add(newPatient);
+			}
+			query += " AND OPD_DATE_VIS BETWEEN DATE(?) AND DATE(?)";
+			params.add(dateFrom);
+			params.add(dateTo);
+			query += " ORDER BY OPD_DATE_VIS";
+			jpa.createQuery(query, Opd.class, false);
+			jpa.setParameters(params, false);	
+			List<Opd> opdList = (List<Opd>)jpa.getList();
+			opds = new ArrayList<Opd>(opdList);			
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return opds;
 	}
 	
@@ -141,22 +145,26 @@ public class OpdIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = "";
 				
-		
-		jpa.beginTransaction();		
-		
-		if (patID == 0) {
-			query = "SELECT * FROM OPD LEFT JOIN PATIENT ON OPD_PAT_ID = PAT_ID ORDER BY OPD_PROG_YEAR DESC";
-		} else {
-			query = "SELECT * FROM OPD LEFT JOIN PATIENT ON OPD_PAT_ID = PAT_ID WHERE OPD_PAT_ID = ? ORDER BY OPD_PROG_YEAR DESC";
-			params.add(patID);
-		}
-		jpa.createQuery(query, Opd.class, false);
-		jpa.setParameters(params, false);	
-		List<Opd> opdList = (List<Opd>)jpa.getList();
-		opds = new ArrayList<Opd>(opdList);			
-		
-		jpa.commitTransaction();
-		
+		try{
+			jpa.beginTransaction();		
+
+			if (patID == 0) {
+				query = "SELECT * FROM OPD LEFT JOIN PATIENT ON OPD_PAT_ID = PAT_ID ORDER BY OPD_PROG_YEAR DESC";
+			} else {
+				query = "SELECT * FROM OPD LEFT JOIN PATIENT ON OPD_PAT_ID = PAT_ID WHERE OPD_PAT_ID = ? ORDER BY OPD_PROG_YEAR DESC";
+				params.add(patID);
+			}
+			jpa.createQuery(query, Opd.class, false);
+			jpa.setParameters(params, false);	
+			List<Opd> opdList = (List<Opd>)jpa.getList();
+			opds = new ArrayList<Opd>(opdList);			
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return opds;
 	}
 		
@@ -173,11 +181,15 @@ public class OpdIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		opd.setDate(new Date());
-		
-		jpa.beginTransaction();	
-		jpa.persist(opd);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(opd);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;	
 	}
 	
@@ -194,12 +206,16 @@ public class OpdIoOperations {
 		Opd foundOpd;
 		boolean result = false;
 		
-
-    	jpa.beginTransaction();	
-		foundOpd = (Opd)jpa.find(Opd.class, opd.getCode());
-		result = foundOpd.getLock() != opd.getLock();
-    	jpa.commitTransaction(); 
-		
+		try{
+			jpa.beginTransaction();	
+			foundOpd = (Opd)jpa.find(Opd.class, opd.getCode());
+			result = foundOpd.getLock() != opd.getLock();
+			jpa.commitTransaction(); 
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;
 	}
 	
@@ -217,11 +233,15 @@ public class OpdIoOperations {
 		boolean result = true;
 		
 		opd.setLock(opd.getLock()+1);
-		
-		jpa.beginTransaction();	
-		jpa.merge(opd);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.merge(opd);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;	
 	}
 	
@@ -238,11 +258,15 @@ public class OpdIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.remove(opd);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.remove(opd);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;	
 	}
 	
@@ -261,10 +285,9 @@ public class OpdIoOperations {
 		String query = null;
 		Integer progYear = 0;
 				
+		try{
+			jpa.beginTransaction();		
 
-		jpa.beginTransaction();		
-		
-		try {
 			query = "SELECT MAX(OPD_PROG_YEAR) FROM OPD";
 			if (year != 0) {
 				query += " WHERE YEAR(OPD_DATE) = ?";
@@ -273,12 +296,12 @@ public class OpdIoOperations {
 			jpa.createQuery(query, null, false);
 			jpa.setParameters(params, false);	
 			progYear = (Integer)jpa.getResult();
-		} catch (OHException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
 			jpa.commitTransaction();
-		}
-		
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 		
 		return progYear == null ? new Integer(0) : progYear;
 	}
 	
@@ -306,15 +329,15 @@ public class OpdIoOperations {
 			params.add(patID);
 			jpa.setParameters(params, false);	
 			opd = (Opd)jpa.getResult();			
-			
-		} catch (Exception e) {
+			jpa.commitTransaction();
+
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
 			if (e.getCause().getClass().equals(NoResultException.class))
 				return null;
-			else throw new OHException(e.getCause().getMessage(), e.getCause());
-			
-		} finally {
-			jpa.commitTransaction();
-		}
+			else throw e;
+		} 
 		
 		return opd;
 	}	

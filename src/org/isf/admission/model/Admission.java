@@ -45,6 +45,7 @@ entities={
             @FieldResult(name="code", column="PAT_ID"),
             @FieldResult(name="firstName", column="PAT_FNAME"), 
             @FieldResult(name="secondName", column="PAT_SNAME"),
+            @FieldResult(name="name", column="PAT_NAME"),
             @FieldResult(name="birthDate", column="PAT_BDATE"),
             @FieldResult(name="age", column="PAT_AGE"),
             @FieldResult(name="agetype", column="PAT_AGETYPE"),

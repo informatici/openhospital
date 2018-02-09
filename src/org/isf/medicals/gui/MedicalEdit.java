@@ -19,6 +19,8 @@ import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoDoubleTextField;
 import org.isf.utils.jobjects.VoIntegerTextField;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -213,14 +215,38 @@ public class MedicalEdit extends JDialog {
 						medical.setMinqty(Double.valueOf(minQtiField.getText()));
 						boolean result = false;
 						if (insert) { // inserting
-							result = manager.newMedical(medical);
-							if (result) {
-								dispose();
-							}
+							if (true == isValidForInsert(medical)) {
+								try {
+									result = manager.newMedical(medical);
+								} catch (OHServiceException e1) {
+									OHServiceExceptionUtil.showMessages(e1);
+								}					
+								if (result) {
+									dispose();
+								}
+							}							
 						} else { // updating
-							result = manager.updateMedical(medical);
-							if (result) {
-								dispose();
+							try {
+								if (true == isValidForUpdate(medical)) {
+									
+									result = manager.updateMedical(medical, true);
+									
+									if (false == result) {
+										// update failed due to lock -- record was updated by someone else
+										String msg = MessageBundle.getMessage("angal.medicals.thedatahasbeenupdatedbysomeoneelse") +
+												MessageBundle.getMessage("angal.medicals.doyouwanttooverwritethedata");
+										int response = JOptionPane.showConfirmDialog(null, msg, MessageBundle.getMessage("angal.medicals.select"), JOptionPane.YES_NO_OPTION);
+										if (response== JOptionPane.OK_OPTION) {
+											result = manager.updateMedical(medical, false);
+										}
+									}
+									
+									if (result) {
+										dispose();
+									}	
+								}
+							} catch (OHServiceException e1) {
+								OHServiceExceptionUtil.showMessages(e1);
 							}
 						}
 						if (!result)
@@ -233,6 +259,41 @@ public class MedicalEdit extends JDialog {
 								null, 
 								MessageBundle.getMessage("angal.medicals.insertavalidvalue"));
 					}
+				}
+
+				
+				/**
+				 * Check for update validity and show appropriate error on false
+				 * @param medical
+				 * @return
+				 */
+				private boolean isValidForUpdate(Medical medical) {
+					if(medical.getMinqty()<0){
+						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicals.minquantitycannotbelessthan0"));
+						return false;
+					}
+					
+					return true;
+				}
+
+
+				/**
+				 * Check insert validity and show appropriate error on false
+				 * @param medical
+				 * @return
+				 */
+				private boolean isValidForInsert(Medical medical) {
+					if(medical.getMinqty()<0){
+						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicals.minquantitycannotbelessthan0"));
+						return false;
+					}
+
+					if(medical.getDescription().equalsIgnoreCase("")){
+						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicals.inseravaliddescription"));
+						return false;
+					}
+					
+					return true;
 				}
 			});
 		}
@@ -302,9 +363,16 @@ public class MedicalEdit extends JDialog {
 			typeComboBox = new JComboBox();
 			if (insert) {
 				MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
-				ArrayList<MedicalType> types = manager.getMedicalType();
-				for (MedicalType elem : types) {
-					typeComboBox.addItem(elem);
+				ArrayList<MedicalType> types;
+				try {
+					types = manager.getMedicalType();
+					
+					for (MedicalType elem : types) {
+						typeComboBox.addItem(elem);
+					}
+				} catch (OHServiceException e) {
+					OHServiceExceptionUtil.showMessages(e);
+					
 				}
 			} else {
 				typeComboBox.addItem(medical.getType());

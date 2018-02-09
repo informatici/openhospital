@@ -15,21 +15,23 @@ import java.util.EventListener;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JLabel;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 
 public class PatientInsert extends JDialog implements ActionListener{
 	
@@ -273,17 +275,25 @@ public class PatientInsert extends JDialog implements ActionListener{
 									JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patient.insertvalidage"));
 								} else {
 									String name= jSecondNameTextField.getText()+" "+jFirstNameTextField.getText();
-									if (manager.isPatientPresent(name)) {										
-										switch (JOptionPane.showConfirmDialog(null, 
-												MessageBundle.getMessage("angal.patient.thepatientisalreadypresent") + ". /n" +
-												MessageBundle.getMessage("angal.patient.doyouwanttocontinue") + "?", 
-												MessageBundle.getMessage("angal.patient.select"), JOptionPane.YES_NO_OPTION)) {
-										case JOptionPane.OK_OPTION:
-											ok=true;
-											break;
-										case JOptionPane.NO_OPTION:
-											ok=false;
-											break;									
+									try{
+										if (manager.isPatientPresent(name)) {										
+											switch (JOptionPane.showConfirmDialog(null, 
+													MessageBundle.getMessage("angal.patient.thepatientisalreadypresent") + ". /n" +
+															MessageBundle.getMessage("angal.patient.doyouwanttocontinue") + "?", 
+															MessageBundle.getMessage("angal.patient.select"), JOptionPane.YES_NO_OPTION)) {
+															case JOptionPane.OK_OPTION:
+																ok=true;
+																break;
+															case JOptionPane.NO_OPTION:
+																ok=false;
+																break;									
+											}
+										}
+									}catch(OHServiceException ex){
+										if(ex.getMessages() != null){
+											for(OHExceptionMessage msg : ex.getMessages()){
+												JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+											}
 										}
 									}
 									if (ok) {
@@ -313,8 +323,16 @@ public class PatientInsert extends JDialog implements ActionListener{
 										patient.setBloodType("");
 										patient.setHasInsurance('U');
 										patient.setParentTogether('U');
-									
-										result = manager.newPatient(patient);
+										
+										try{
+											result = manager.newPatient(patient);
+										}catch(OHServiceException ex){
+											if(ex.getMessages() != null){
+												for(OHExceptionMessage msg : ex.getMessages()){
+													JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+												}
+											}
+										}
 										if (result) {
 											firePatientInserted(patient);
 										}
@@ -330,19 +348,27 @@ public class PatientInsert extends JDialog implements ActionListener{
 					}else{//Update
 						String name= jFirstNameTextField.getText()+" "+jSecondNameTextField.getText();
 						if(!(patient.getName().equals(name))){
-						if(manager.isPatientPresent(name)){										
-							switch (JOptionPane.showConfirmDialog(null, 
-									MessageBundle.getMessage("angal.patient.thepatientisalreadypresent") + ". /n" +
-									MessageBundle.getMessage("angal.patient.doyouwanttocontinue") + "?", 
-									MessageBundle.getMessage("angal.patient.select"), JOptionPane.YES_NO_OPTION)) {
-							case JOptionPane.OK_OPTION:
-								ok=true;
-								break;
-							case JOptionPane.NO_OPTION:
-								ok=false;
-								break;									
+							try{
+								if(manager.isPatientPresent(name)){										
+									switch (JOptionPane.showConfirmDialog(null, 
+											MessageBundle.getMessage("angal.patient.thepatientisalreadypresent") + ". /n" +
+													MessageBundle.getMessage("angal.patient.doyouwanttocontinue") + "?", 
+													MessageBundle.getMessage("angal.patient.select"), JOptionPane.YES_NO_OPTION)) {
+													case JOptionPane.OK_OPTION:
+														ok=true;
+														break;
+													case JOptionPane.NO_OPTION:
+														ok=false;
+														break;									
+									}
+								}
+							}catch(OHServiceException ex){
+								if(ex.getMessages() != null){
+									for(OHExceptionMessage msg : ex.getMessages()){
+										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+									}
+								}
 							}
-						}
 						}else{
 							ok=true;
 						}
@@ -376,8 +402,15 @@ public class PatientInsert extends JDialog implements ActionListener{
 						//patient.setBloodType("");
 						//patient.setHasInsurance('U');
 						//patient.setParentTogether('U');*/
-						
-						result = manager.updatePatient(patient);
+						try{
+							result = manager.updatePatient(patient);
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						}
 						if (result) {
 							firePatientUpdated(patient);
 						}

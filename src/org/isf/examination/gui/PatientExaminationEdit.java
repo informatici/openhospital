@@ -30,6 +30,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -42,13 +43,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.model.GenderPatientExamination;
 import org.isf.examination.model.PatientExamination;
-import org.isf.examination.service.ExaminationOperations;
 import org.isf.generaldata.ExaminationParameters;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoIntegerTextField;
 import org.isf.utils.jobjects.VoLimitedTextArea;
 
@@ -220,25 +221,30 @@ public class PatientExaminationEdit extends JDialog {
 	private void updateSummary() {
 		StringBuilder summary = new StringBuilder();
 		summary.append(SUMMARY_HEADER);
-		ExaminationOperations examOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
+		ExaminationBrowserManager examManager = new ExaminationBrowserManager();
 		ArrayList<PatientExamination> patexList = null;
 		try {
-			patexList = examOperations.getLastNByPatID(patex.getPatient().getCode(), ExaminationParameters.LIST_SIZE);
-		} catch (OHException e) {
-			e.printStackTrace();
+			patexList = examManager.getLastNByPatID(patex.getPatient().getCode(), ExaminationParameters.LIST_SIZE);
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
 		}
 		Collections.sort(patexList);
-		
-		for (PatientExamination patex : patexList) {
-			summary.append(SUMMARY_START_ROW);
-			summary.append(STD).append(new SimpleDateFormat(DATE_FORMAT).format(new Date(patex.getPex_date().getTime()))).append(ETD);
-			summary.append(STD).append(patex.getPex_height()).append(ETD);
-			summary.append(STD).append(patex.getPex_weight()).append(ETD);
-			summary.append(STD).append(patex.getPex_pa_min()).append(" / ").append(patex.getPex_pa_max()).append(ETD);
-			summary.append(STD).append(patex.getPex_fc()).append(ETD);
-			summary.append(STD).append(patex.getPex_temp()).append(ETD);
-			summary.append(STD).append(patex.getPex_sat()).append(ETD);
-			summary.append(SUMMARY_END_ROW);
+		if(patexList != null){
+			for (PatientExamination patex : patexList) {
+				summary.append(SUMMARY_START_ROW);
+				summary.append(STD).append(new SimpleDateFormat(DATE_FORMAT).format(new Date(patex.getPex_date().getTime()))).append(ETD);
+				summary.append(STD).append(patex.getPex_height()).append(ETD);
+				summary.append(STD).append(patex.getPex_weight()).append(ETD);
+				summary.append(STD).append(patex.getPex_pa_min()).append(" / ").append(patex.getPex_pa_max()).append(ETD);
+				summary.append(STD).append(patex.getPex_fc()).append(ETD);
+				summary.append(STD).append(patex.getPex_temp()).append(ETD);
+				summary.append(STD).append(patex.getPex_sat()).append(ETD);
+				summary.append(SUMMARY_END_ROW);
+			}
 		}
 		summary.append(SUMMARY_FOOTER);
 		jEditorPaneSummary.setText(summary.toString());
@@ -860,12 +866,15 @@ public class PatientExaminationEdit extends JDialog {
 		}
 		public void actionPerformed(ActionEvent e) {
 			
-			ExaminationOperations ioOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
+			ExaminationBrowserManager examManager = new ExaminationBrowserManager();
 			try {
-				ioOperations.saveOrUpdate(patex);
-			} catch (OHException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				examManager.saveOrUpdate(patex);
+			}catch(OHServiceException ex){
+				if(ex.getMessages() != null){
+					for(OHExceptionMessage msg : ex.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
 			}
 			dispose();
 		}

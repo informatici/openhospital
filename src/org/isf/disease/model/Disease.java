@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.isf.distype.model.DiseaseType;
 
 /**
@@ -42,6 +44,7 @@ public class Disease
 
 	@NotNull
 	@ManyToOne
+	@NotFound(action = NotFoundAction.IGNORE)
 	@JoinColumn(name="DIS_DCL_ID_A")
 	private DiseaseType diseaseType; 
 

@@ -56,7 +56,7 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
+    	//jpa.destroy();
 
     	return;
     }
@@ -190,7 +190,7 @@ public class Tests
 			code = _setupTestDischargeType(false);
 			DischargeType foundDischargeType = (DischargeType)jpa.find(DischargeType.class, code); 
 			foundDischargeType.setDescription("Update");
-			result = ioOperations.UpdateDischargeType(foundDischargeType);
+			result = ioOperations.updateDischargeType(foundDischargeType);
 			DischargeType updateDischargeType = (DischargeType)jpa.find(DischargeType.class, code); 
 			
 			assertEquals(true, result);

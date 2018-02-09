@@ -30,6 +30,8 @@ import org.isf.dicom.manager.SourceFiles;
 import org.isf.dicom.model.FileDicom;
 import org.isf.generaldata.MessageBundle;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 
 /**
  * GUI for Dicom Viewer
@@ -285,9 +287,17 @@ public class DicomGui extends JFrame implements WindowListener {
 				int n = JOptionPane.showOptionDialog(DicomGui.this, MessageBundle.getMessage("angal.dicom.delete.request"), MessageBundle.getMessage("angal.dicom.delete.title"),
 						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, "");
 
-				if (n == 0)
-					DicomManagerFactory.getManager().deleteSerie(patient, thumbnail.getSelectedInstance().getDicomSeriesNumber());
-
+				if (n == 0){
+					try {
+						DicomManagerFactory.getManager().deleteSerie(patient, thumbnail.getSelectedInstance().getDicomSeriesNumber());
+					}catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
+					}
+				}
 				thumbnail.initialize();
 
 			}

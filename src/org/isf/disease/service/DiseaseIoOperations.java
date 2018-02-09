@@ -47,17 +47,21 @@ public class DiseaseIoOperations {
 		Disease disease = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM DISEASE JOIN DISEASETYPE ON DIS_DCL_ID_A = DCL_ID_A WHERE DIS_ID_A = ?";
-		jpa.createQuery(query, Disease.class, false);
-		params.add(code);
-		jpa.setParameters(params, false);
-		disease = (Disease)jpa.getResult();		
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM DISEASE JOIN DISEASETYPE ON DIS_DCL_ID_A = DCL_ID_A WHERE DIS_ID_A = ?";
+			jpa.createQuery(query, Disease.class, false);
+			params.add(code);
+			jpa.setParameters(params, false);
+			disease = (Disease)jpa.getResult();		
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return disease;
 	}
 	
@@ -81,21 +85,25 @@ public class DiseaseIoOperations {
 		ArrayList<Disease> diseases = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = _calculateGetDiseasesQuery(disTypeCode, opd, ipdIn, ipdOut); 
-		jpa.createQuery(query, Disease.class, false);		
-		if (disTypeCode != null) 
-		{
-			params.add(disTypeCode);		
-			jpa.setParameters(params, false);
-		}
-		List<Disease> diseaseList = (List<Disease>)jpa.getList();
-		diseases = new ArrayList<Disease>(diseaseList);			
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String query = _calculateGetDiseasesQuery(disTypeCode, opd, ipdIn, ipdOut); 
+			jpa.createQuery(query, Disease.class, false);		
+			if (disTypeCode != null) 
+			{
+				params.add(disTypeCode);		
+				jpa.setParameters(params, false);
+			}
+			List<Disease> diseaseList = (List<Disease>)jpa.getList();
+			diseases = new ArrayList<Disease>(diseaseList);			
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return diseases;
 	}
 	
@@ -158,14 +166,17 @@ public class DiseaseIoOperations {
 			Disease disease) throws OHException
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(disease);
-    	jpa.commitTransaction();
-    	
-		return result;
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(disease);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
+		return true;
 	}
 
 	/**
@@ -178,15 +189,18 @@ public class DiseaseIoOperations {
 			Disease disease) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		disease.setLock(disease.getLock() + 1);
-		jpa.merge(disease);
-    	jpa.commitTransaction();
-    	
-		return result;
+		try{
+			jpa.beginTransaction();	
+			disease.setLock(disease.getLock() + 1);
+			jpa.merge(disease);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
+		return true;
 	}
 
 	/**
@@ -199,14 +213,22 @@ public class DiseaseIoOperations {
 			Disease disease) throws OHException
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		Disease foundDisease = (Disease)jpa.find(Disease.class, disease.getCode());
 		boolean result = false;
-		
-		
-		if (foundDisease.getLock() != disease.getLock())
-		{
-			result = true;
-		}
+
+		try{
+			jpa.beginTransaction();
+			Disease foundDisease = (Disease)jpa.find(Disease.class, disease.getCode());
+			jpa.commitTransaction();
+
+			if (foundDisease.getLock() != disease.getLock())
+			{
+				result = true;
+			}
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		
 		return result;
 	}
@@ -221,17 +243,20 @@ public class DiseaseIoOperations {
 			Disease disease) throws OHException
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		disease.setOpdInclude(false);
-		disease.setIpdInInclude(false);
-		disease.setIpdOutInclude(false);
-		jpa.merge(disease);
-    	jpa.commitTransaction();
-    	
-		return result;
+		try{
+			jpa.beginTransaction();	
+			disease.setOpdInclude(false);
+			disease.setIpdInInclude(false);
+			disease.setIpdOutInclude(false);
+			jpa.merge(disease);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
+		return true;
 	}
 
 	/**
@@ -244,15 +269,21 @@ public class DiseaseIoOperations {
 			String code) throws OHException
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		Disease foundDisease = (Disease)jpa.find(Disease.class, code);
 		boolean present = false;
+		try{
+			jpa.beginTransaction();
+			Disease foundDisease = (Disease)jpa.find(Disease.class, code);
+			jpa.commitTransaction();
 
-		
-		if (foundDisease != null)
-		{
-			present = true;
-		}
-		
+			if (foundDisease != null)
+			{
+				present = true;
+			}
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return present;
 	}
 
@@ -281,21 +312,21 @@ public class DiseaseIoOperations {
 			params.add(typeCode);
 			jpa.setParameters(params, false);
 			foundDisease = (Disease)jpa.getResult();		
+			jpa.commitTransaction();
 			
 			if (foundDisease != null && foundDisease.getDescription().compareTo(description) == 0)
 			{
 				present = true;
 			}
 			
-		} catch (Exception e) {
+		} catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
 			if (e.getCause().getClass().equals(NoResultException.class))
 				return false;
-			else throw new OHException(e.getCause().getMessage(), e.getCause());
+			else throw e;
 			
-		} finally {
-			jpa.commitTransaction();
-		}
-		
+		} 
 		return present;
 	}
 }

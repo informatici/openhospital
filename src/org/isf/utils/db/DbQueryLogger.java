@@ -1,5 +1,10 @@
 package org.isf.utils.db;
 
+import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,13 +15,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.isf.generaldata.MessageBundle;
-import org.isf.utils.exception.OHException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * Class that executes a query using the connection DbSingleConn
+ * Class that executes a query using the connection DbSingleJpaConn
  * The various methods that open a connection with the 
  * autocommit flag set to false have the responsability
  * of doing the commit/rollback operation
@@ -38,13 +38,15 @@ public class DbQueryLogger {
 			logger.debug("Query " + sanitize(aQuery));
 		}
     	try{
-	        Connection conn = DbSingleConn.getConnection();
+	        Connection conn = DbSingleJpaConn.getConnection();
 	        conn.setAutoCommit(autocommit);
 	        Statement stat = conn.createStatement();
 	        return stat.executeQuery(aQuery);
+        }catch (OHException e){
+            throw e;
     	} catch (SQLException e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e); //, e); // + ": " + aQuery, e);
-    	} catch (IOException e) {
+    	} catch (Exception e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e); 
     	}
     }
@@ -65,16 +67,18 @@ public class DbQueryLogger {
     	ResultSet results = null;
     	Connection conn = null;
     	try {
-    		conn = DbSingleConn.getConnection();
+    		conn = DbSingleJpaConn.getConnection();
     		conn.setAutoCommit(autocommit);
     		PreparedStatement pstmt = conn.prepareStatement(aQuery);
     		for (int i = 0; i < params.size(); i++) {
     			pstmt.setObject(i + 1, params.get(i));
     		}
     		results = pstmt.executeQuery();
+        }catch (OHException e){
+            throw e;
     	} catch (SQLException e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e); // + ": " + aQuery, e);
-    	} catch (IOException e) {
+    	} catch (Exception e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e); 
     	}
     	return results;
@@ -94,15 +98,17 @@ public class DbQueryLogger {
 			logger.debug("Query " + sanitize(aQuery));
 		}
     	try{
-	        Connection conn = DbSingleConn.getConnection();
+	        Connection conn = DbSingleJpaConn.getConnection();
 	        conn.setAutoCommit(autocommit);
 	        Statement stat = conn.createStatement();
 	        return stat.executeUpdate(aQuery) > 0;
+        }catch (OHException e){
+            throw e;
     	} catch (SQLIntegrityConstraintViolationException e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.theselecteditemisstillusedsomewhere"), e); // + ": " + aQuery, e);
     	} catch (SQLException e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e); // + ": " + aQuery, e);
-    	} catch (IOException e) {
+    	} catch (Exception e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e); 
     	}
     }
@@ -123,18 +129,20 @@ public class DbQueryLogger {
 		}
     	Connection conn = null;
     	try {
-    		conn = DbSingleConn.getConnection();
+    		conn = DbSingleJpaConn.getConnection();
     		conn.setAutoCommit(autocommit);
     		PreparedStatement pstmt = conn.prepareStatement(aQuery);
     		for (int i = 0; i < params.size(); i++) {
     			pstmt.setObject(i+1, params.get(i));
     		}
     		return pstmt.executeUpdate() > 0;
+        }catch (OHException e){
+            throw e;
     	} catch (SQLIntegrityConstraintViolationException e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.theselecteditemisstillusedsomewhere"), e); // + ": " + aQuery, e);
     	} catch (SQLException e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e); // + ": " + aQuery, e);
-    	} catch (IOException e) {
+    	} catch (Exception e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e); 
     	}
     }
@@ -154,14 +162,16 @@ public class DbQueryLogger {
 			logger.debug("Query " + sanitize(aQuery));
 		}
     	try{
-	        Connection conn = DbSingleConn.getConnection();
+	        Connection conn = DbSingleJpaConn.getConnection();
 	        conn.setAutoCommit(autocommit);
 	        Statement stat = conn.createStatement();
 	        stat.execute(aQuery,Statement.RETURN_GENERATED_KEYS);
 	        return stat.getGeneratedKeys();
+        }catch (OHException e){
+            throw e;
     	} catch (SQLException e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e); // + ": " + aQuery, e);
-    	} catch (IOException e) {
+    	} catch (Exception e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e); 
     	}
     }
@@ -182,7 +192,7 @@ public class DbQueryLogger {
 			if (!params.isEmpty()) logger.trace("	parameters : " + sanitize(params));
 		}
     	try{
-	        Connection conn = DbSingleConn.getConnection();
+	        Connection conn = DbSingleJpaConn.getConnection();
 	        conn.setAutoCommit(autocommit);
 	        PreparedStatement pstmt = conn.prepareStatement(aQuery, Statement.RETURN_GENERATED_KEYS);
     		for (int i = 0; i < params.size(); i++) {
@@ -190,9 +200,11 @@ public class DbQueryLogger {
     		}
     		pstmt.execute();
 	        return pstmt.getGeneratedKeys();
+        }catch (OHException e){
+            throw e;
     	} catch (SQLException e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e); // + ": " + aQuery, e);
-    	} catch (IOException e) {
+    	} catch (Exception e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e); 
     	}
     }
@@ -210,51 +222,17 @@ public class DbQueryLogger {
     	if (logger.isDebugEnabled()) {
 			logger.debug("Query " + sanitize(aQuery));
 		}
-    	try{
-	        Connection conn = DbSingleConn.getConnection();
-	        Statement stat = conn.createStatement();
-	        ResultSet set = stat.executeQuery(aQuery);
-	        return set.first();
+    	try {
+            Connection conn = DbSingleJpaConn.getConnection();
+            Statement stat = conn.createStatement();
+            ResultSet set = stat.executeQuery(aQuery);
+            return set.first();
+        }catch (OHException e){
+    	    throw e;
     	} catch (SQLException e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e); // + ": " + aQuery, e);
-    	} catch (IOException e) {
+    	} catch (Exception e) {
     		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e); 
-    	}
-    }
-    
-    /**
-     * 
-     * @throws OHException
-     */
-    public void closeConnection() throws OHException {
-    	try{
-    		DbSingleConn.closeConnection();
-    	} catch(Exception e){
-    		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e);
-    	}
-    }
-    
-    public void releaseConnection() throws OHException {
-    	try{
-    		DbSingleConn.releaseConnection();
-    	}catch(Exception e){
-    		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e);
-    	}
-    }
-    
-    public void commit() throws OHException {
-    	try{
-    		DbSingleConn.commitConnection();
-    	}catch(Exception e){
-    		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e);
-    	}
-    }
-    
-    public void rollback() throws OHException {
-    	try{
-    		DbSingleConn.rollbackConnection();
-    	}catch(Exception e){
-    		throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"), e);
     	}
     }
     

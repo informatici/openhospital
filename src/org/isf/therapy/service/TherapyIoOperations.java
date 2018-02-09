@@ -3,7 +3,6 @@ package org.isf.therapy.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.isf.generaldata.MessageBundle;
 import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
@@ -20,16 +19,45 @@ public class TherapyIoOperations {
 	 * @return the therapyID
 	 * @throws OHException 
 	 */
-	public int newTherapy(
+	public TherapyRow newTherapy(
 			TherapyRow thRow) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(thRow);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
+		return thRow;
+	}
+	
+	/**
+	 * insert a new {@link TherapyRow} (therapy) in the DB
+	 * 
+	 * @param thRow - the {@link TherapyRow} (therapy)
+	 * @param numTherapy - the therapy progressive number for the patient
+	 * @return the therapyID
+	 * @throws OHException 
+	 */
+	public int updateOrCreateTherapy(
+			TherapyRow thRow) throws OHException 
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
 		
-		jpa.beginTransaction();	
-		jpa.persist(thRow);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.merge(thRow);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return thRow.getTherapyID();
 	}
 
@@ -51,22 +79,26 @@ public class TherapyIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 				
-		
-		jpa.beginTransaction();
-		
-		query = "SELECT * FROM THERAPIES JOIN (MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A) ON THR_MDSR_ID = MDSR_ID";
-		if (patID != 0) {
-			query += " WHERE THR_PAT_ID = ?";
-			params.add(patID);
+		try{
+			jpa.beginTransaction();
+
+			query = "SELECT * FROM THERAPIES JOIN (MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A) ON THR_MDSR_ID = MDSR_ID";
+			if (patID != 0) {
+				query += " WHERE THR_PAT_ID = ?";
+				params.add(patID);
+			}
+			query += " ORDER BY THR_PAT_ID, THR_ID";
+			jpa.createQuery(query, TherapyRow.class, false);
+			jpa.setParameters(params, false);
+			List<TherapyRow> therapyLists = (List<TherapyRow>)jpa.getList();
+			therapyList = new ArrayList<TherapyRow>(therapyLists);			
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		query += " ORDER BY THR_PAT_ID, THR_ID";
-		jpa.createQuery(query, TherapyRow.class, false);
-		jpa.setParameters(params, false);
-		List<TherapyRow> therapyLists = (List<TherapyRow>)jpa.getList();
-		therapyList = new ArrayList<TherapyRow>(therapyLists);			
-		
-		jpa.commitTransaction();
-		
 		return therapyList;
 	}
 	
@@ -84,21 +116,20 @@ public class TherapyIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
-		
-		jpa.beginTransaction();		
-
 		try {
+			jpa.beginTransaction();		
+
 			jpa.createQuery("DELETE FROM THERAPIES WHERE THR_PAT_ID = ?", TherapyRow.class, false);
 			params.add(patID);
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
-		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 	
 
-		jpa.commitTransaction();	
-		
+			jpa.commitTransaction();	
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}		
         return result;
 	}
 }

@@ -31,16 +31,20 @@ public class VacTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<VaccineType> pvaccineType = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM VACCINETYPE ORDER BY VACT_ID_A";
-		jpa.createQuery(query, VaccineType.class, false);
-		List<VaccineType> vaccineTypeList = (List<VaccineType>)jpa.getList();
-		pvaccineType = new ArrayList<VaccineType>(vaccineTypeList);			
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM VACCINETYPE ORDER BY VACT_ID_A";
+			jpa.createQuery(query, VaccineType.class, false);
+			List<VaccineType> vaccineTypeList = (List<VaccineType>)jpa.getList();
+			pvaccineType = new ArrayList<VaccineType>(vaccineTypeList);			
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return pvaccineType;
 	}
 	
@@ -57,11 +61,15 @@ public class VacTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(vaccineType);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(vaccineType);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 	
@@ -78,11 +86,15 @@ public class VacTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(vaccineType);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.merge(vaccineType);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 	
@@ -99,12 +111,16 @@ public class VacTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();
-		VaccineType objToRemove = (VaccineType) jpa.find(VaccineType.class, vaccineType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();
+			VaccineType objToRemove = (VaccineType) jpa.find(VaccineType.class, vaccineType.getCode());
+			jpa.remove(objToRemove);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;	
 	}
 	
@@ -122,16 +138,20 @@ public class VacTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		VaccineType vaccineType;
 		boolean result = false;
-		
-		
-		jpa.beginTransaction();	
-		vaccineType = (VaccineType)jpa.find(VaccineType.class, code);
-		if (vaccineType != null)
-		{
-			result = true;
+
+		try{
+			jpa.beginTransaction();	
+			vaccineType = (VaccineType)jpa.find(VaccineType.class, code);
+			if (vaccineType != null)
+			{
+				result = true;
+			}
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 }

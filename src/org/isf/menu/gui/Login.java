@@ -13,6 +13,8 @@ import org.isf.utils.db.BCrypt;
 import java.util.*;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,15 +152,22 @@ public class Login extends JDialog implements ActionListener, KeyListener {
 		public LoginPanel(Login myFrame) {
 
 			UserBrowsingManager manager = new UserBrowsingManager();
-			users = manager.getUser();
+            try {
+                users = manager.getUser();
+            } catch (OHServiceException e1) {
+                OHServiceExceptionUtil.showMessages(e1);
+            }
 
 			/*
 			 * for (User u : users) System.out.println(u);
 			 */
 
 			usersList = new JComboBox();
-			for (User u : users)
-				usersList.addItem(u.getUserName());
+			if(users != null) {
+                for (User u : users) {
+                    usersList.addItem(u.getUserName());
+                }
+            }
 
 			Dimension d = usersList.getPreferredSize();
 			usersList.setPreferredSize(new Dimension(120, d.height));

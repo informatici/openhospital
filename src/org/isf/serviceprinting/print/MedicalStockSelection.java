@@ -37,6 +37,9 @@ import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.Menu;
 import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.ward.model.Ward;
 
 public class MedicalStockSelection extends JDialog implements ActionListener{
@@ -216,10 +219,18 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 	private JComboBox getMedicalBox() {
 		medicalBox = new JComboBox();
 		MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
-		ArrayList<Medical> medical = medicalManager.getMedicals();
+		ArrayList<Medical> medical;
+		try {
+			medical = medicalManager.getMedicals();
+		} catch (OHServiceException e1) {
+			medical = null;
+			JOptionPane.showMessageDialog(null, e1.getMessage());
+		}
 		medicalBox.addItem("All");
-		for (Medical aMedical : medical) {
-			medicalBox.addItem(aMedical);
+		if (null != medical) {
+			for (Medical aMedical : medical) {
+				medicalBox.addItem(aMedical);
+			}
 		}
 		medicalBox.addMouseListener(new MouseListener() {
 			public void mouseExited(MouseEvent e) {
@@ -251,11 +262,20 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 	private JComboBox getMedicalTypeBox() {
 		medicalTypeBox = new JComboBox();
 		MedicalTypeBrowserManager medicalManager = new MedicalTypeBrowserManager();
-		ArrayList<MedicalType> medical = medicalManager.getMedicalType();
+		ArrayList<MedicalType> medical;
+		
 		medicalTypeBox.addItem("All");
-		for (MedicalType aMedicalType : medical) {
-			medicalTypeBox.addItem(aMedicalType);
+		
+		try {
+			medical = medicalManager.getMedicalType();
+			
+			for (MedicalType aMedicalType : medical) {
+				medicalTypeBox.addItem(aMedicalType);
+			}
+		} catch (OHServiceException e1) {
+			OHServiceExceptionUtil.showMessages(e1);
 		}
+		
 		medicalTypeBox.addMouseListener(new MouseListener() {
 			public void mouseExited(MouseEvent e) {
 			}
@@ -308,10 +328,18 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 	private JComboBox getMovementTypeBox() {
 		movTypeBox = new JComboBox();
 		MedicaldsrstockmovTypeBrowserManager typeManager = new MedicaldsrstockmovTypeBrowserManager();
-		ArrayList<MovementType> type = typeManager.getMedicaldsrstockmovType();
+		ArrayList<MovementType> type;
+		try {
+			type = typeManager.getMedicaldsrstockmovType();
+		} catch (OHServiceException e1) {
+			type = null;
+			JOptionPane.showMessageDialog(null, e1.getMessage());
+		}
 		movTypeBox.addItem("All");
-		for (MovementType movementType : type) {
-			movTypeBox.addItem(movementType);
+		if (null != type) {
+			for (MovementType movementType : type) {
+				movTypeBox.addItem(movementType);
+			}
 		}
 		movTypeBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -336,7 +364,17 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 		org.isf.ward.manager.WardBrowserManager wbm = new org.isf.ward.manager.WardBrowserManager();
 		wardBox = new JComboBox();
 		wardBox.addItem("All");
-		ArrayList<Ward> wardList = wbm.getWards();
+		ArrayList<Ward> wardList;
+		try {
+			wardList = wbm.getWards();
+		}catch(OHServiceException e){
+			wardList = new ArrayList<Ward>();
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		for (org.isf.ward.model.Ward elem : wardList) {
 			wardBox.addItem(elem);
 		}
@@ -430,7 +468,11 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 						return ;
 					}
 					ArrayList<Movement4Print> pMovements2 = convertToPrint(pMovements);
-					new PrintManager(path,pMovements2,format);
+					try {
+						new PrintManager(path,pMovements2,format);
+					} catch (OHServiceException e1) {
+						JOptionPane.showMessageDialog(MedicalStockSelection.this, e1.getMessage());
+					}
 				}
 			}
 		});

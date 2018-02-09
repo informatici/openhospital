@@ -31,6 +31,8 @@ import javax.swing.text.BadLocationException;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
 import org.isf.menu.manager.UserBrowsingManager;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.xmpp.gui.ChatTab.TabButton;
 import org.isf.xmpp.manager.Interaction;
 import org.jivesoftware.smack.Roster;
@@ -221,9 +223,14 @@ public class CommunicationFrame extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				UserBrowsingManager user=new UserBrowsingManager();
 				String user_name = (String)((RosterEntry)buddyList.getSelectedValue()).getName();
-				String info = user.getUsrInfo(user_name);
-				
-				StringBuilder sb = new StringBuilder();
+                String info = null;
+                try {
+                    info = user.getUsrInfo(user_name);
+                } catch (OHServiceException e) {
+                    OHServiceExceptionUtil.showMessages(e);
+                }
+
+                StringBuilder sb = new StringBuilder();
 				sb.append(MessageBundle.getMessage("angal.xmpp.user")).append(": ");
 				sb.append(user_name).append("\n");
 				sb.append(MessageBundle.getMessage("angal.xmpp.info")).append(": ");

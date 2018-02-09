@@ -24,6 +24,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -39,6 +40,8 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class SelectPatient extends JDialog {
@@ -94,7 +97,16 @@ public class SelectPatient extends JDialog {
 	public SelectPatient(JFrame owner, Patient pat) {
 		super(owner, true);
 		if (!GeneralData.ENHANCEDSEARCH) {
-			patArray = patManager.getPatientWithHeightAndWeight(null);
+			try {
+				patArray = patManager.getPatientWithHeightAndWeight(null);
+			}catch(OHServiceException ex){
+				if(ex.getMessages() != null){
+					for(OHExceptionMessage msg : ex.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+				patArray = new ArrayList<Patient>();
+			}
 			patSearch = patArray;
 		}
 		if (pat == null) {
@@ -118,7 +130,16 @@ public class SelectPatient extends JDialog {
 	public SelectPatient(JDialog owner, Patient pat) {
 		super(owner, true);
 		if (!GeneralData.ENHANCEDSEARCH) {
-			patArray = patManager.getPatientWithHeightAndWeight(null);
+			try {
+				patArray = patManager.getPatientWithHeightAndWeight(null);
+			}catch(OHServiceException ex){
+				if(ex.getMessages() != null){
+					for(OHExceptionMessage msg : ex.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+				patArray = new ArrayList<Patient>();
+			}
 			patSearch = patArray;
 		}
 		if (pat == null) {
@@ -142,7 +163,16 @@ public class SelectPatient extends JDialog {
 	public SelectPatient(JDialog owner, String search) {
 		super(owner, true);
 		if (!GeneralData.ENHANCEDSEARCH) {
-			patArray = patManager.getPatientWithHeightAndWeight(null);
+			try {
+				patArray = patManager.getPatientWithHeightAndWeight(null);
+			}catch(OHServiceException ex){
+				if(ex.getMessages() != null){
+					for(OHExceptionMessage msg : ex.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+				patArray = new ArrayList<Patient>();
+			}
 			patSearch = patArray;
 		}
 		ps = new PatientSummary(patient);
@@ -340,6 +370,11 @@ public class SelectPatient extends JDialog {
 						
 						int index = jTablePatient.getSelectedRow();
 						patient = (Patient)jTablePatient.getValueAt(index, -1);
+						try {
+							patient.setPhoto(patManager.getPatientPhoto(patient).getPhoto());
+						} catch (OHServiceException e1) {
+							JOptionPane.showMessageDialog(SelectPatient.this, e1.getMessage());
+						}
 						updatePatientSummary();
 						
 					}
@@ -418,7 +453,16 @@ public class SelectPatient extends JDialog {
 			jSearchButton.addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent e) {
-					patArray = patManager.getPatientWithHeightAndWeight(jTextFieldSearchPatient.getText());
+					try {
+						patArray = patManager.getPatientWithHeightAndWeight(jTextFieldSearchPatient.getText());
+					}catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
+						patArray = new ArrayList<Patient>();
+					}
 					filterPatient();
 				}
 			});

@@ -33,6 +33,8 @@ import org.isf.disease.model.Disease;
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
 import org.isf.distype.model.DiseaseType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class DiseaseEdit extends JDialog {
@@ -250,15 +252,23 @@ public class DiseaseEdit extends JDialog {
 							
 							return;	
 						}
-						
-						if (manager.codeControl(key)){
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.disease.codealreadyinuse"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							
-							return;	
+						try{
+							if (manager.codeControl(key)){
+								JOptionPane.showMessageDialog(				
+										null,
+										MessageBundle.getMessage("angal.disease.codealreadyinuse"),
+										MessageBundle.getMessage("angal.hospital"),
+										JOptionPane.PLAIN_MESSAGE);
+
+								return;	
+							}
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+							return;
 						}
 					}
 					if (diseaseDesc.equals("")){
@@ -272,15 +282,24 @@ public class DiseaseEdit extends JDialog {
 
 					//if inserting or description has changed on updating
 					if (lastDescription == null || !lastDescription.equals(diseaseDesc)) {
-						if (manager.descriptionControl(descriptionTextField.getText(),
-								((DiseaseType)typeComboBox.getSelectedItem()).getCode())){
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.disease.diseasealreadypresent"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							
-							return;	
+						try{
+							if (manager.descriptionControl(descriptionTextField.getText(),
+									((DiseaseType)typeComboBox.getSelectedItem()).getCode())){
+								JOptionPane.showMessageDialog(				
+										null,
+										MessageBundle.getMessage("angal.disease.diseasealreadypresent"),
+										MessageBundle.getMessage("angal.hospital"),
+										JOptionPane.PLAIN_MESSAGE);
+
+								return;	
+							}
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+							return;
 						}
 					}
 					
@@ -292,15 +311,32 @@ public class DiseaseEdit extends JDialog {
 					disease.setIpdOutInclude(includeIpdOutCheckBox.isSelected());
 					
 					boolean result = false;
-					if (insert) {      // inserting
-						result = manager.newDisease(disease);
-						if (result) {
-							fireDiseaseInserted();
+					try{
+						if (insert) {      // inserting
+							result = manager.newDisease(disease);
+							if (result) {
+								fireDiseaseInserted();
+							}
+						} else {                          // updating
+							boolean modified = manager.hasDiseaseModified(disease);
+							boolean overWrite = false;
+							if (modified) {
+								String message = MessageBundle.getMessage("angal.disease.thedatahasbeenupdatedbysomeoneelse") +	MessageBundle.getMessage("angal.disease.doyouwanttooverwritethedata");
+								int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.disease.select"), JOptionPane.YES_NO_OPTION);
+								overWrite = response == JOptionPane.OK_OPTION;
+							}
+							if (!modified || overWrite){
+								result = manager.updateDisease(disease);
+							}
+							if (result) {
+								fireDiseaseUpdated();
+							}
 						}
-					} else {                          // updating
-						result = manager.updateDisease(disease);
-						if (result) {
-							fireDiseaseUpdated();
+					}catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
 						}
 					}
 					if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.disease.thedatacouldnotbesaved"));
@@ -377,25 +413,33 @@ public class DiseaseEdit extends JDialog {
 	private JComboBox getTypeComboBox() {
 		if (typeComboBox == null) {
 			typeComboBox = new JComboBox();
-			if (insert) {
-				DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
-				ArrayList<DiseaseType> types = manager.getDiseaseType();
-				for (DiseaseType elem : types) {
-					typeComboBox.addItem(elem);
+			try{
+				if (insert) {
+					DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
+					ArrayList<DiseaseType> types = manager.getDiseaseType();
+					for (DiseaseType elem : types) {
+						typeComboBox.addItem(elem);
+					}
+				} else {
+					DiseaseType selectedDiseaseType=null;
+					DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
+					ArrayList<DiseaseType> types = manager.getDiseaseType();
+					for (DiseaseType elem : types) {
+						typeComboBox.addItem(elem);
+						if (disease.getType().equals(elem)) {
+							selectedDiseaseType = elem;
+						}
+					}
+					if (selectedDiseaseType!=null)
+						typeComboBox.setSelectedItem(selectedDiseaseType);
+					//typeComboBox.setEnabled(false);
 				}
-			} else {
-				DiseaseType selectedDiseaseType=null;
-				DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
-				ArrayList<DiseaseType> types = manager.getDiseaseType();
-				for (DiseaseType elem : types) {
-					typeComboBox.addItem(elem);
-					if (disease.getType().equals(elem)) {
-						selectedDiseaseType = elem;
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
 					}
 				}
-				if (selectedDiseaseType!=null)
-					typeComboBox.setSelectedItem(selectedDiseaseType);
-				//typeComboBox.setEnabled(false);
 			}
 			
 		}

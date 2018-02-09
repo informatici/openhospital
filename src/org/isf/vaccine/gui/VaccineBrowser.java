@@ -20,6 +20,8 @@ import javax.swing.table.DefaultTableModel;
 
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.vaccine.manager.VaccineBrowserManager;
 import org.isf.vaccine.model.Vaccine;
@@ -150,12 +152,18 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 			jSelectionCombo = new JComboBox();
 			jSelectionCombo.setPreferredSize(new Dimension(200, 30));
 				VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
-				ArrayList<VaccineType> allVacType = manager.getVaccineType();
-				jSelectionCombo.addItem(new Vaccine("", MessageBundle.getMessage("angal.vaccine.all"),new VaccineType("",""),0));
-				for (VaccineType elem : allVacType) {
-					jSelectionCombo.addItem(elem);
+				ArrayList<VaccineType> allVacType = null;
+				try {
+					allVacType = manager.getVaccineType();
+				} catch (OHServiceException e1) {
+					OHServiceExceptionUtil.showMessages(e1);
 				}
-				
+				jSelectionCombo.addItem(new Vaccine("", MessageBundle.getMessage("angal.vaccine.all"),new VaccineType("",""),0));
+				if(allVacType != null){
+					for (VaccineType elem : allVacType) {
+						jSelectionCombo.addItem(elem);
+					}
+				}				
 				jSelectionCombo.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						String pSelectionVaccineType=jSelectionCombo.getSelectedItem().toString();
@@ -258,12 +266,15 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 								MessageBundle.getMessage("angal.vaccine.deletevaccine") + " \""+m.getDescription()+"\" ?",
 								MessageBundle.getMessage("angal.hospital"),
 								JOptionPane.YES_NO_OPTION);
-
-						if ((n == JOptionPane.YES_OPTION) && (manager.deleteVaccine(m))){
-							pVaccine.remove(table.getSelectedRow());
-							model.fireTableDataChanged();
-							table.updateUI();
-						}
+                        try{
+                            if ((n == JOptionPane.YES_OPTION) && (manager.deleteVaccine(m))){
+                                pVaccine.remove(table.getSelectedRow());
+                                model.fireTableDataChanged();
+                                table.updateUI();
+                            }
+                        } catch (OHServiceException e) {
+                            OHServiceExceptionUtil.showMessages(e);
+                        }
 					}
 				}
 			});
@@ -328,14 +339,22 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 
 		public VaccineBrowserModel() {
 			VaccineBrowserManager manager = new VaccineBrowserManager();
-			pVaccine  = manager.getVaccine();
-		}
+            try {
+                pVaccine  = manager.getVaccine();
+            } catch (OHServiceException e) {
+                OHServiceExceptionUtil.showMessages(e);
+            }
+        }
 		
 		
 		public VaccineBrowserModel(String vaccineType) {
 			VaccineBrowserManager manager = new VaccineBrowserManager();
-			pVaccine = manager.getVaccine(vaccineType);
-		}
+            try {
+                pVaccine = manager.getVaccine(vaccineType);
+            } catch (OHServiceException e) {
+                OHServiceExceptionUtil.showMessages(e);
+            }
+        }
 		
 		public int getRowCount() {
 			if (pVaccine == null)

@@ -9,6 +9,7 @@ package org.isf.vactype.gui;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
+import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.util.EventListener;
 
@@ -21,6 +22,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
+
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.*;
 import org.isf.vactype.manager.VaccineTypeBrowserManager;
 import org.isf.vactype.model.VaccineType;
@@ -208,14 +212,18 @@ public class VaccineTypeEdit extends JDialog{
 						return;
 					}	
 					if(insert){
-					if (manager.codeControl(key)){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.vactype.codealreadyinuse"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						codeTextField.setText("");
-						return;	
+					try {
+						if (manager.codeControl(key)){
+							JOptionPane.showMessageDialog(				
+									null,
+									MessageBundle.getMessage("angal.vactype.codealreadyinuse"),
+									MessageBundle.getMessage("angal.hospital"),
+									JOptionPane.PLAIN_MESSAGE);
+							codeTextField.setText("");
+							return;	
+						}
+					} catch (OHServiceException e1) {
+                        OHServiceExceptionUtil.showMessages(e1);
 					}};
 					
 					if (descriptionTextField.getText().equals("")){
@@ -234,7 +242,11 @@ public class VaccineTypeEdit extends JDialog{
 					boolean result = false;
 					
 					if (insert) {// inserting
-						result = manager.newVaccineType(vaccineType);
+						try {
+							result = manager.newVaccineType(vaccineType);
+						} catch (OHServiceException e1) {
+							OHServiceExceptionUtil.showMessages(e1);
+						}
 						if (result) {
 						    fireVaccineInserted();
                         }
@@ -245,7 +257,11 @@ public class VaccineTypeEdit extends JDialog{
                     	if (descriptionTextField.getText().equals(lastdescription)){
     						dispose();	
     					}else{
-    						result = manager.UpdateVaccineType(vaccineType);
+    						try {
+								result = manager.updateVaccineType(vaccineType);
+							} catch (OHServiceException e1) {
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						if (result) {
 							fireVaccineUpdated();
                         }

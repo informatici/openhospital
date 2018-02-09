@@ -2,14 +2,17 @@ package org.isf.operation.manager;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.operation.model.Operation;
 import org.isf.operation.service.OperationIoOperations;
 import org.isf.opetype.model.OperationType;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that provides gui separation from database operations and gives some
@@ -20,19 +23,31 @@ import org.isf.utils.exception.OHException;
  */
 public class OperationBrowserManager {
 
+	private final Logger logger = LoggerFactory.getLogger(OperationBrowserManager.class);
+	
 	private OperationIoOperations ioOperations = Menu.getApplicationContext().getBean(OperationIoOperations.class);
 
 	/**
 	 * return the list of {@link Operation}s
 	 * 
 	 * @return the list of {@link Operation}s. It could be <code>empty</code> or <code>null</code>.
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Operation> getOperation() {
+	public ArrayList<Operation> getOperation() throws OHServiceException {
 		try {
 			return ioOperations.getOperation(null);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -41,14 +56,23 @@ public class OperationBrowserManager {
 	 * 
 	 * @param typeDescription - a type description
 	 * @return the list of {@link Operation}s. It could be <code>empty</code> or <code>null</code>.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Operation> getOperation(String typecode) {
+	public ArrayList<Operation> getOperation(String typecode) throws OHServiceException {
 		try {
 			return ioOperations.getOperation(typecode);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -57,13 +81,48 @@ public class OperationBrowserManager {
 	 * 
 	 * @param operation - the {@link Operation} to insert
 	 * @return <code>true</code> if the operation has been inserted, <code>false</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public boolean newOperation(Operation operation) {
+	public boolean newOperation(Operation operation) throws OHServiceException {
 		try {
 			return ioOperations.newOperation(operation);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+		}
+	}
+	
+	/** 
+	 * updates an {@link Operation} in the DB
+	 * 
+	 * @param operation - the {@link Operation} to update
+	 * @return <code>true</code> if the item has been updated. <code>false</code> other
+	 * @throws OHServiceException 
+	 */
+	public boolean hasOperationModified(Operation operation) throws OHServiceException {
+		try {
+			return ioOperations.hasOperationModified(operation);
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -72,30 +131,25 @@ public class OperationBrowserManager {
 	 * 
 	 * @param operation - the {@link Operation} to update
 	 * @return <code>true</code> if the item has been updated. <code>false</code> other
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
-	public boolean updateOperation(Operation operation) {
+	public boolean updateOperation(Operation operation) throws OHServiceException {
 		try {
-			boolean recordUpdated = ioOperations.hasOperationModified(operation);
+			// the user has confirmed he wants to overwrite the record
+			return ioOperations.updateOperation(operation);
 
-			if (!recordUpdated) { 
-				// it was not updated
-				return ioOperations.updateOperation(operation);
-			} else { 
-				// it was updated by someone else
-				String message = MessageBundle.getMessage("angal.admission.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
-				int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
-				boolean overWrite = response== JOptionPane.OK_OPTION;
-
-				if (overWrite) {
-					// the user has confirmed he wants to overwrite the record
-					return ioOperations.updateOperation(operation);
-				}
-			}
-			return false;
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -103,13 +157,23 @@ public class OperationBrowserManager {
 	 * Delete a {@link Operation} in the DB
 	 * @param operation - the {@link Operation} to delete
 	 * @return <code>true</code> if the item has been updated, <code>false</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public boolean deleteOperation(Operation operation) {
+	public boolean deleteOperation(Operation operation) throws OHServiceException {
 		try {
 			return ioOperations.deleteOperation(operation);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -117,13 +181,23 @@ public class OperationBrowserManager {
 	 * checks if an {@link Operation} code has already been used
 	 * @param code - the code
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public boolean codeControl(String code) {
+	public boolean codeControl(String code) throws OHServiceException {
 		try {
 			return ioOperations.isCodePresent(code);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -133,13 +207,23 @@ public class OperationBrowserManager {
 	 * @param description - the {@link Operation} description
 	 * @param typeCode - the {@link OperationType} code
 	 * @return <code>true</code> if the description is already in use, <code>false</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public boolean descriptionControl(String description, String typeCode) {
+	public boolean descriptionControl(String description, String typeCode) throws OHServiceException {
 		try {
 			return ioOperations.isDescriptionPresent(description,typeCode);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}  catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 	

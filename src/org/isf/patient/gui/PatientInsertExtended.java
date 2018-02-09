@@ -13,6 +13,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,6 +22,7 @@ import java.util.EventListener;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -45,6 +47,8 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.generaldata.SmsParameters;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.video.gui.PatientPhotoPanel;
 import org.joda.time.DateTime;
@@ -407,16 +411,24 @@ public class PatientInsertExtended extends JDialog {
 					}
 					if (insert) {
 						String name = secondName + " " + firstName;
-						if (manager.isPatientPresent(name)) {
-							switch (JOptionPane.showConfirmDialog(null,
-									MessageBundle.getMessage("angal.patient.thepatientisalreadypresent") + ". /n" + MessageBundle.getMessage("angal.patient.doyouwanttocontinue") + "?",
-									MessageBundle.getMessage("angal.patient.select"), JOptionPane.YES_NO_OPTION)) {
-							case JOptionPane.OK_OPTION:
-								ok = true;
-								break;
-							case JOptionPane.NO_OPTION:
-								ok = false;
-								break;
+						try{
+							if (manager.isPatientPresent(name)) {
+								switch (JOptionPane.showConfirmDialog(null,
+										MessageBundle.getMessage("angal.patient.thepatientisalreadypresent") + ". /n" + MessageBundle.getMessage("angal.patient.doyouwanttocontinue") + "?",
+										MessageBundle.getMessage("angal.patient.select"), JOptionPane.YES_NO_OPTION)) {
+										case JOptionPane.OK_OPTION:
+											ok = true;
+											break;
+										case JOptionPane.NO_OPTION:
+											ok = false;
+											break;
+								}
+							}
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
 							}
 						}
 						if (ok) {
@@ -476,16 +488,24 @@ public class PatientInsertExtended extends JDialog {
 
 							patient.setNote(jNoteTextArea.getText().trim());
 
-//							try {
-//								Image photo = ImageIO.read(new File(photoPanel.getPhotoFilePath()));
-//								patient.setPhoto(photo);
-//							} catch (IOException ioe) {
-//								// the photo didn't change
-//								logger.debug("Patient photo not changed");
-//							}
+							try {
+								Image photo = ImageIO.read(new File(photoPanel.getPhotoFilePath()));
+								patient.setPhoto(photo);
+							} catch (IOException ioe) {
+								// the photo didn't change
+								//logger.debug("Patient photo not changed");
+							}
 
 							BusyState.setBusyState(PatientInsertExtended.this, true);
-							result = manager.newPatient(patient);
+							try{
+								result = manager.newPatient(patient);
+							}catch(OHServiceException ex){
+								if(ex.getMessages() != null){
+									for(OHExceptionMessage msg : ex.getMessages()){
+										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+									}
+								}
+							}
 							BusyState.setBusyState(PatientInsertExtended.this, false);
 							if (result)
 								firePatientInserted(patient);
@@ -564,16 +584,24 @@ public class PatientInsertExtended extends JDialog {
 						}
 						patient.setNote(jNoteTextArea.getText().trim());
 
-//						try {
-//							Image photo = ImageIO.read(new File(photoPanel.getPhotoFilePath()));
-//							patient.setPhoto(photo);
-//						} catch (IOException ioe) {
-//							// the photo didn't change
-//							logger.debug("Patient photo not changed");
-//						}
+						try {
+							Image photo = ImageIO.read(new File(photoPanel.getPhotoFilePath()));
+							patient.setPhoto(photo);
+						} catch (IOException ioe) {
+							// the photo didn't change
+							//logger.debug("Patient photo not changed");
+						}
 
 						BusyState.setBusyState(PatientInsertExtended.this, true);
-						result = manager.updatePatient(patient);
+						try{
+							result = manager.updatePatient(patient);
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						}
 						BusyState.setBusyState(PatientInsertExtended.this, false);
 						if (result) {
 							firePatientUpdated(patient);
@@ -630,7 +658,15 @@ public class PatientInsertExtended extends JDialog {
 			AgeType ageType = null;
 			
 			if (index > 0) {
-				ageType = at.getTypeByCode(index);
+				try {
+					ageType = at.getTypeByCode(index);
+				}catch(OHServiceException e){
+					if(e.getMessages() != null){
+						for(OHExceptionMessage msg : e.getMessages()){
+							JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+						}
+					}
+				}
 			} else
 				return false;
 
@@ -1427,7 +1463,17 @@ public class PatientInsertExtended extends JDialog {
 			jAgeDescComboBox = new JComboBox();
 
 			AgeTypeBrowserManager at = new AgeTypeBrowserManager();
-			ArrayList<AgeType> ageList = at.getAgeType();
+			ArrayList<AgeType> ageList;
+			try {
+				ageList = at.getAgeType();
+			}catch(OHServiceException e){
+				ageList = new ArrayList<AgeType>();
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			jAgeDescComboBox.addItem("");
 			for (AgeType ag : ageList) {
 				jAgeDescComboBox.addItem(MessageBundle.getMessage(ag.getDescription()));

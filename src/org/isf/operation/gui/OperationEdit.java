@@ -32,6 +32,8 @@ import org.isf.operation.manager.OperationBrowserManager;
 import org.isf.operation.model.Operation;
 import org.isf.opetype.manager.OperationTypeBrowserManager;
 import org.isf.opetype.model.OperationType;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 /**
@@ -229,97 +231,112 @@ public class OperationEdit extends JDialog {
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					if (insert){
-						String key = codeTextField.getText().trim();
-						if (key.equals("")){
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.operation.pleaseinsertacode"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							return;
-						}	
-						if (key.length()>10){
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.operation.codetoolongmaxchars"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							
-							return;	
-						}
-						OperationBrowserManager manager = new OperationBrowserManager();
-						
-						if (manager.codeControl(key)){
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.operation.codealreadyinuse"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							
-							return;	
-						}
-						
-						/*if (manager.descriptionControl(descriptionTextField.getText(),
+					try{
+						if (insert){
+							String key = codeTextField.getText().trim();
+							if (key.equals("")){
+								JOptionPane.showMessageDialog(				
+										null,
+										MessageBundle.getMessage("angal.operation.pleaseinsertacode"),
+										MessageBundle.getMessage("angal.hospital"),
+										JOptionPane.PLAIN_MESSAGE);
+								return;
+							}	
+							if (key.length()>10){
+								JOptionPane.showMessageDialog(				
+										null,
+										MessageBundle.getMessage("angal.operation.codetoolongmaxchars"),
+										MessageBundle.getMessage("angal.hospital"),
+										JOptionPane.PLAIN_MESSAGE);
+
+								return;	
+							}
+							OperationBrowserManager manager = new OperationBrowserManager();
+
+							if (manager.codeControl(key)){
+								JOptionPane.showMessageDialog(				
+										null,
+										MessageBundle.getMessage("angal.operation.codealreadyinuse"),
+										MessageBundle.getMessage("angal.hospital"),
+										JOptionPane.PLAIN_MESSAGE);
+
+								return;	
+							}
+
+							/*if (manager.descriptionControl(descriptionTextField.getText(),
 						 ((OperationType)typeComboBox.getSelectedItem()).getCode())){
 						 JOptionPane.showMessageDialog(				
 						 null,
 						 "Operation already present",
 						 "St Luke Hospital",
 						 JOptionPane.PLAIN_MESSAGE);
-						 
+
 						 return;	
 						 }*/
-					}
-					if (descriptionTextField.getText().equals("")){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.operation.pleaseinsertavaliddescription"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;	
-					}
-					OperationBrowserManager manager = new OperationBrowserManager();
-					if(descriptionTextField.getText().equals(lastdescription)){
-					}else{
-						
-						if (manager.descriptionControl(descriptionTextField.getText(),
-								((OperationType)typeComboBox.getSelectedItem()).getCode())){
+						}
+						if (descriptionTextField.getText().equals("")){
 							JOptionPane.showMessageDialog(				
 									null,
-									MessageBundle.getMessage("angal.operation.operationalreadypresent"),
+									MessageBundle.getMessage("angal.operation.pleaseinsertavaliddescription"),
 									MessageBundle.getMessage("angal.hospital"),
 									JOptionPane.PLAIN_MESSAGE);
-							
 							return;	
 						}
-					}
-					
-					
-					operation.setType((OperationType)typeComboBox.getSelectedItem());
-					operation.setDescription(descriptionTextField.getText());
-					operation.setCode(codeTextField.getText().trim().toUpperCase());
-					if (major.isSelected()) {
-						operation.setMajor(1);
-					} else {
-						operation.setMajor(0);
-					}
-					
-					boolean result = false;
-					if (insert) {      // inserting
-						result = manager.newOperation(operation);
-						if (result) {
-							fireOperationInserted();
+						OperationBrowserManager manager = new OperationBrowserManager();
+						if(descriptionTextField.getText().equals(lastdescription)){
+						}else{
+
+							if (manager.descriptionControl(descriptionTextField.getText(),
+									((OperationType)typeComboBox.getSelectedItem()).getCode())){
+								JOptionPane.showMessageDialog(				
+										null,
+										MessageBundle.getMessage("angal.operation.operationalreadypresent"),
+										MessageBundle.getMessage("angal.hospital"),
+										JOptionPane.PLAIN_MESSAGE);
+
+								return;	
+							}
 						}
-					}
-					else {                          // updating
-						result = manager.updateOperation(operation);
-						if (result) {
-							fireOperationUpdated();
+
+
+						operation.setType((OperationType)typeComboBox.getSelectedItem());
+						operation.setDescription(descriptionTextField.getText());
+						operation.setCode(codeTextField.getText().trim().toUpperCase());
+						if (major.isSelected()) {
+							operation.setMajor(1);
+						} else {
+							operation.setMajor(0);
 						}
+
+						boolean result = false;
+						if (insert) {      // inserting
+							result = manager.newOperation(operation);
+							if (result) {
+								fireOperationInserted();
+							}
+						}
+						else {                          // updating
+							boolean recordUpdated = manager.hasOperationModified(operation);
+							boolean overWrite = false;
+							if (recordUpdated){ 
+								// it was updated by someone else
+								String message = MessageBundle.getMessage("angal.admission.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
+								int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
+								overWrite = response== JOptionPane.OK_OPTION;
+							}
+							if (!recordUpdated || overWrite) {
+								// the user has confirmed he wants to overwrite the record
+								result = manager.updateOperation(operation);
+							}
+							if (result) {
+								fireOperationUpdated();
+							}
+						}
+						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.operation.thedatacouldnotbesaved"));
+						else  dispose();
+					}catch(OHServiceException ex){
+						OHServiceExceptionUtil.showMessages(ex);
 					}
-					if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.operation.thedatacouldnotbesaved"));
-					else  dispose();
 				}
 			});
 		}
@@ -414,9 +431,16 @@ public class OperationEdit extends JDialog {
 			typeComboBox = new JComboBox();
 			if (insert) {
 				OperationTypeBrowserManager manager = new OperationTypeBrowserManager();
-				ArrayList<OperationType> types = manager.getOperationType();
-				for (OperationType elem : types) {
-					typeComboBox.addItem(elem);
+				ArrayList<OperationType> types;
+				try {
+					types = manager.getOperationType();
+					
+					for (OperationType elem : types) {
+						typeComboBox.addItem(elem);
+					}
+				} catch (OHServiceException e) {
+					OHServiceExceptionUtil.showMessages(e);
+					types = null;
 				}
 			} else {
 				typeComboBox.addItem(operation.getType());

@@ -11,6 +11,8 @@ import org.isf.menu.manager.*;
 import org.isf.menu.model.*;
 import org.isf.utils.db.BCrypt;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
 public class UserEdit extends JDialog {
 
@@ -266,13 +268,21 @@ public class UserEdit extends JDialog {
 					boolean result = false;
 					if (insert) {      // inserting
 						//System.out.println("saving... "+user);
-						result = manager.newUser(user);
-						if (result) {
+                        try {
+                            result = manager.newUser(user);
+                        } catch (OHServiceException e1) {
+                            OHServiceExceptionUtil.showMessages(e1);
+                        }
+                        if (result) {
                            fireUserInserted(user);
                         }
                     } else {                          // updating
-						result = manager.updateUser(user);
-						if (result) {
+                        try {
+                            result = manager.updateUser(user);
+                        } catch (OHServiceException e1) {
+                            OHServiceExceptionUtil.showMessages(e1);
+                        }
+                        if (result) {
 							fireUserUpdated();
                         }
 					}
@@ -343,10 +353,17 @@ public class UserEdit extends JDialog {
 			typeComboBox = new JComboBox();
 			if (insert) {
 				UserBrowsingManager manager = new UserBrowsingManager();
-				ArrayList<UserGroup> group = manager.getUserGroup();
-				for (UserGroup elem : group) {
-					typeComboBox.addItem(elem);
-				}
+                ArrayList<UserGroup> group = null;
+                try {
+                    group = manager.getUserGroup();
+                } catch (OHServiceException e) {
+                    OHServiceExceptionUtil.showMessages(e);
+                }
+                if(group != null) {
+                    for (UserGroup elem : group) {
+                        typeComboBox.addItem(elem);
+                    }
+                }
 			} else {
 				typeComboBox.addItem(user.getUserGroupName());
 				typeComboBox.setEnabled(false);

@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -31,14 +32,17 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.PropertyConfigurator;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.sms.manager.SmsManager;
 import org.isf.sms.model.Sms;
 import org.isf.sms.service.SmsOperations;
+//import org.isf.sms.service.SmsOperations;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+
 import com.toedter.calendar.JDateChooser;
-import javax.swing.JLabel;
 
 /**
  * @author Mwithi
@@ -62,8 +66,8 @@ public class SmsBrowser extends ModalJFrame {
 	private boolean[] columnResizable = {false, false, false, true, false};
 	private int width;
 	private int eight;
-	
-	private SmsOperations smsOp = new SmsOperations();
+
+	private SmsManager smsManager = new SmsManager();
 	private List<Sms> smsList = null;
 	
 	private final DateTime dateTimeAtStartOfToday = new DateTime(new DateMidnight());  
@@ -283,8 +287,8 @@ public class SmsBrowser extends ModalJFrame {
 	
 	private void updateModel(Date from, Date to) {
 		try {
-			smsList = smsOp.getAll(from, to);
-		} catch (OHException e) {
+			smsList = smsManager.getAll(from, to);
+		} catch (OHServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
