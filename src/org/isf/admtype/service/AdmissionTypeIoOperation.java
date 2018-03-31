@@ -3,6 +3,7 @@ package org.isf.admtype.service;
 import java.util.ArrayList;
 
 import org.isf.admtype.model.AdmissionType;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Persistence class for admtype module.
  */
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class AdmissionTypeIoOperation 
 {
 

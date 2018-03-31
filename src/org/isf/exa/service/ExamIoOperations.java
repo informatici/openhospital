@@ -16,13 +16,15 @@ import org.isf.exa.model.ExamRow;
 import org.isf.exatype.model.ExamType;
 import org.isf.exatype.service.ExamTypeIoOperationRepository;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class ExamIoOperations {
 
 	@Autowired

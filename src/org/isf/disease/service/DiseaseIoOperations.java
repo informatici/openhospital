@@ -18,6 +18,7 @@ package org.isf.disease.service;
 import java.util.ArrayList;
 
 import org.isf.disease.model.Disease;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Rick, Vero
  */
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class DiseaseIoOperations {
 
 	@Autowired

@@ -3,6 +3,7 @@ package org.isf.distype.service;
 import java.util.ArrayList;
 
 import org.isf.distype.model.DiseaseType;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Persistence class for the DisType module.
  */
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class DiseaseTypeIoOperation {
 
 	@Autowired

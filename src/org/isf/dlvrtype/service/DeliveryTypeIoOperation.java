@@ -3,6 +3,7 @@ package org.isf.dlvrtype.service;
 import java.util.ArrayList;
 
 import org.isf.dlvrtype.model.DeliveryType;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
  * The persistence class for the DeliveryType module.
  */
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class DeliveryTypeIoOperation {
 	
 	@Autowired

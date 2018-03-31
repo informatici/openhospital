@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.malnutrition.model.Malnutrition;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Persistence class for the malnutrition module.
  */
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class MalnutritionIoOperation {
 
 	@Autowired

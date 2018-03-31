@@ -3,13 +3,15 @@ package org.isf.pregtreattype.service;
 import java.util.ArrayList;
 
 import org.isf.pregtreattype.model.PregnantTreatmentType;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class PregnantTreatmentTypeIoOperation {
 
 	@Autowired

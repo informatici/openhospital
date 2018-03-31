@@ -3,6 +3,7 @@ package org.isf.visits.service;
 import java.util.ArrayList;
 
 import org.isf.patient.model.Patient;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.isf.visits.model.Visit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class VisitsIoOperations {
 
 	@Autowired

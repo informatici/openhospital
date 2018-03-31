@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import org.isf.patient.model.Patient;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class PatientIoOperations 
 {
 	@Autowired

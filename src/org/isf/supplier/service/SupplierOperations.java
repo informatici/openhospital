@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.isf.generaldata.ExaminationParameters;
 import org.isf.supplier.model.Supplier;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  */
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class SupplierOperations {
 
 	@Autowired

@@ -13,6 +13,7 @@ import org.isf.medicals.service.MedicalsIoOperationRepository;
 import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
 import org.isf.utils.db.DbQueryLogger;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,8 @@ import org.isf.medstockmovtype.service.MedicalStockMovementTypeIoOperationReposi
  * 			- added complete Ward and Movement construction in getMovement()
  */
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class MedicalStockIoOperations {
 
 	@Autowired
