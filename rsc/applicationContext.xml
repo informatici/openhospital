@@ -5,6 +5,7 @@
 	xmlns:context="http://www.springframework.org/schema/context"
  	xmlns:jpa="http://www.springframework.org/schema/data/jpa" 
  	xmlns:tx="http://www.springframework.org/schema/tx"
+ 	xmlns:aop="http://www.springframework.org/schema/aop"
 	
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
@@ -14,7 +15,9 @@
   		http://www.springframework.org/schema/data/jpa
         http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
         http://www.springframework.org/schema/tx 
-        http://www.springframework.org/schema/tx/spring-tx.xsd  		
+        http://www.springframework.org/schema/tx/spring-tx.xsd  	
+		http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd  	
   		">
 		
 	<context:component-scan base-package="org.isf" />
@@ -59,5 +62,7 @@
  	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
  		<property name="entityManagerFactory" ref="entityManagerFactory" />
  	</bean>
+ 	
+	<aop:aspectj-autoproxy proxy-target-class="true" />
 
 </beans>

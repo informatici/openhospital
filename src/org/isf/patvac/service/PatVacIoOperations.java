@@ -12,13 +12,15 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import org.isf.patvac.model.PatientVaccine;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class PatVacIoOperations {
 
 	@Autowired

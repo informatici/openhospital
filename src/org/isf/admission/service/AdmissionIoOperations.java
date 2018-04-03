@@ -30,6 +30,7 @@ import org.isf.disctype.service.DischargeTypeIoOperationRepository;
 import org.isf.generaldata.GeneralData;
 import org.isf.patient.model.Patient;
 import org.isf.patient.service.PatientIoOperationRepository;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,6 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class AdmissionIoOperations 
 {
 	@Autowired
@@ -286,7 +289,6 @@ public class AdmissionIoOperations
 	 * @return <code>true</code> if the record has been set to delete.
 	 * @throws OHException if an error occurs.
 	 */
-	@Transactional
 	public boolean setDeleted(
 			int admissionId) throws OHException 
 	{

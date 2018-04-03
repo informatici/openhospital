@@ -2,6 +2,7 @@ package org.isf.vaccine.service;
 
 import java.util.ArrayList;
 
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.isf.vaccine.model.Vaccine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class VaccineIoOperations {
 
 	@Autowired

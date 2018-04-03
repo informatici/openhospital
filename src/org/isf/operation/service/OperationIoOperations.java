@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import org.isf.operation.model.Operation;
 import org.isf.opetype.model.OperationType;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Rick, Vero, pupo
  */
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class OperationIoOperations {
 
 	@Autowired

@@ -9,6 +9,7 @@ import java.util.Date;
 import org.isf.examination.model.PatientExamination;
 import org.isf.generaldata.ExaminationParameters;
 import org.isf.patient.model.Patient;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  */
 @Component
-@Transactional
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class ExaminationOperations {
 
 	@Autowired
