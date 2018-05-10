@@ -1,42 +1,31 @@
 package org.isf.opetype.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.opetype.model.OperationType;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class OperationTypeIoOperation {
 
+	@Autowired
+	private OperationTypeIoOperationRepository repository;
+	
 	/**
 	 * return the list of {@link OperationType}s
 	 * 
 	 * @return the list of {@link OperationType}s. It could be <code>empty</code> or <code>null</code>.
 	 * @throws OHException 
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<OperationType> getOperationType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<OperationType> operationTypes = null;
-
-		try {
-			jpa.beginTransaction();
-			
-			String query = "SELECT OCL_ID_A, OCL_DESC FROM OPERATIONTYPE ORDER BY OCL_DESC";
-			jpa.createQuery(query, OperationType.class, false);
-			List<OperationType> operationTypeList = (List<OperationType>)jpa.getList();
-			operationTypes = new ArrayList<OperationType>(operationTypeList);	
-			
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return operationTypes;
+		return new ArrayList<OperationType>(repository.findAllByOrderByDescriptionAsc()); 
 	}
 	
 	/**
@@ -49,17 +38,12 @@ public class OperationTypeIoOperation {
 	public boolean newOperationType(
 			OperationType operationType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
+
+		OperationType savedOperationType = repository.save(operationType);
+		result = (savedOperationType != null);
 		
-		try {
-			jpa.beginTransaction();	
-			jpa.persist(operationType);
-	    	jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
 		return result;
 	}
 	
@@ -73,17 +57,11 @@ public class OperationTypeIoOperation {
 	public boolean updateOperationType(
 			OperationType operationType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		try {
-			jpa.beginTransaction();	
-			jpa.merge(operationType);
-	    	jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
+	
+
+		OperationType savedOperationType = repository.save(operationType);
+		result = (savedOperationType != null);
 		
 		return result;
 	}
@@ -98,18 +76,11 @@ public class OperationTypeIoOperation {
 	public boolean deleteOperationType(
 			OperationType operationType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
-		try {
-			jpa.beginTransaction();	
-			OperationType objToRemove = (OperationType) jpa.find(OperationType.class, operationType.getCode());
-			jpa.remove(objToRemove);
-	    	jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
+		repository.delete(operationType);
+		
 		return result;
 	}
 	
@@ -122,22 +93,10 @@ public class OperationTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		OperationType operationType;
-		boolean result = false;
+		boolean result = true;
+	
 		
-		try {
-			jpa.beginTransaction();	
-			operationType = (OperationType)jpa.find(OperationType.class, code);
-			if (operationType != null)
-			{
-				result = true;
-			}
-	    	jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
+		result = repository.exists(code);
 		
 		return result;
 	}

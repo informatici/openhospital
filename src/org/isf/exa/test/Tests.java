@@ -18,7 +18,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
@@ -28,7 +34,9 @@ public class Tests
 	private static TestExamContext testExamContext;
 	private static TestExamTypeContext testExamTypeContext;
 	private static TestExamRowContext testExamRowContext;
-		
+
+    @Autowired
+    ExamIoOperations examIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -68,7 +76,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
     	testExam = null;
     	testExamType = null;
     	testExamRow = null;
@@ -164,14 +171,13 @@ public class Tests
 	public void testIoGetExamRow()  
 	{
 		int code = 0;
-		ExamIoOperations ioOperations = new ExamIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestExamRow(false);
 			ExamRow foundExamRow = (ExamRow)jpa.find(ExamRow.class, code); 
-			ArrayList<ExamRow> examRows = ioOperations.getExamRow(null, null);
+			ArrayList<ExamRow> examRows = examIoOperation.getExamRow(null, null);
 			
 			assertEquals(foundExamRow.getDescription(), examRows.get(examRows.size()-1).getDescription());
 		} 
@@ -188,14 +194,13 @@ public class Tests
 	public void testIoGetExams()  
 	{
 		String code = "";
-		ExamIoOperations ioOperations = new ExamIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestExam(false);
 			Exam foundExam = (Exam)jpa.find(Exam.class, code); 
-			ArrayList<Exam> exams = ioOperations.getExams();
+			ArrayList<Exam> exams = examIoOperation.getExams();
 			
 			assertEquals(foundExam.getDescription(), exams.get(exams.size()-1).getDescription());
 		} 
@@ -212,14 +217,13 @@ public class Tests
 	public void testIoGetExamType()  
 	{
 		String code = "";
-		ExamIoOperations ioOperations = new ExamIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestExamType(false);
 			ExamType foundExamType = (ExamType)jpa.find(ExamType.class, code); 
-			ArrayList<ExamType> examTypes = ioOperations.getExamType();
+			ArrayList<ExamType> examTypes = examIoOperation.getExamType();
 			
 			assertEquals(foundExamType.getDescription(), examTypes.get(examTypes.size()-1).getDescription());
 		} 
@@ -235,7 +239,6 @@ public class Tests
 	@Test
 	public void testIoNewExamRow() 
 	{
-		ExamIoOperations ioOperations = new ExamIoOperations();
 		boolean result = false;
 		
 		
@@ -250,7 +253,7 @@ public class Tests
 			jpa.persist(exam);
 			jpa.commitTransaction();
 			ExamRow examRow = testExamRow.setup(exam, true);
-			result = ioOperations.newExamRow(examRow);
+			result = examIoOperation.newExamRow(examRow);
 			
 			assertEquals(true, result);
 			_checkExamRowIntoDb(examRow.getCode());
@@ -267,7 +270,6 @@ public class Tests
 	@Test
 	public void testIoNewExam() 
 	{
-		ExamIoOperations ioOperations = new ExamIoOperations();
 		boolean result = false;
 		
 		
@@ -280,7 +282,7 @@ public class Tests
 			jpa.persist(examType);
 			jpa.commitTransaction();
 			Exam exam = testExam.setup(examType, false);
-			result = ioOperations.newExam(exam);
+			result = examIoOperation.newExam(exam);
 			
 			assertEquals(true, result);
 			_checkExamIntoDb(exam.getCode());
@@ -298,7 +300,6 @@ public class Tests
 	public void testIoUpdateExam() 
 	{
 		String code = "";
-		ExamIoOperations ioOperations = new ExamIoOperations();
 		boolean result = false;
 		
 		
@@ -307,7 +308,7 @@ public class Tests
 			code = _setupTestExam(false);
 			Exam foundExam = (Exam)jpa.find(Exam.class, code); 
 			foundExam.setDescription("Update");
-			result = ioOperations.updateExam(foundExam, true);
+			result = examIoOperation.updateExam(foundExam, true);
 			Exam updateExam = (Exam)jpa.find(Exam.class, code); 
 			
 			assertEquals(true, result);
@@ -326,7 +327,6 @@ public class Tests
 	public void testIoDeleteExam() 
 	{
 		String code = "";
-		ExamIoOperations ioOperations = new ExamIoOperations();
 		boolean result = false;
 		
 
@@ -334,11 +334,11 @@ public class Tests
 		{		
 			code = _setupTestExam(false);
 			Exam foundExam = (Exam)jpa.find(Exam.class, code); 
-			result = ioOperations.deleteExam(foundExam);
-			
+			result = examIoOperation.deleteExam(foundExam);
+
 			assertEquals(true, result);
-			Exam deletedExam = (Exam)jpa.find(Exam.class, code); 
-			assertEquals(null, deletedExam);
+			result = examIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{
@@ -353,7 +353,6 @@ public class Tests
 	public void testIoDeleteExamRow() 
 	{
 		int code = 0;
-		ExamIoOperations ioOperations = new ExamIoOperations();
 		boolean result = false;
 		
 
@@ -361,11 +360,11 @@ public class Tests
 		{		
 			code = _setupTestExamRow(false);
 			ExamRow foundExamRow = (ExamRow)jpa.find(ExamRow.class, code); 
-			result = ioOperations.deleteExamRow(foundExamRow);
+			result = examIoOperation.deleteExamRow(foundExamRow);
 			
 			assertEquals(true, result);
-			ExamRow deletedExamRow = (ExamRow)jpa.find(ExamRow.class, code); 
-			assertEquals(null, deletedExamRow);
+			result = examIoOperation.isRowPresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{
@@ -379,7 +378,6 @@ public class Tests
 	@Test
 	public void testIoIsKeyPresent()
 	{
-		ExamIoOperations ioOperations = new ExamIoOperations();
 		boolean result = false;
 		
 
@@ -392,7 +390,7 @@ public class Tests
 			jpa.persist(examType);
 			jpa.persist(exam);
 			jpa.commitTransaction();
-			result = ioOperations.isKeyPresent(exam);
+			result = examIoOperation.isKeyPresent(exam);
 			
 			assertEquals(true, result);
 		} 

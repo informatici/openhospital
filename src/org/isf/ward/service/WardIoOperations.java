@@ -1,12 +1,15 @@
 package org.isf.ward.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.admission.model.Admission;
+import org.isf.admission.service.AdmissionIoOperationRepository;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class offers the io operations for recovering and managing
@@ -15,40 +18,29 @@ import org.springframework.stereotype.Component;
  * @author Rick
  * 
  */
+
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class WardIoOperations {
 
+	@Autowired
+	private WardIoOperationRepository repository;
+	@Autowired
+	private AdmissionIoOperationRepository admissionRepository;
+	
 	/**
 	 * Retrieves the number of patients currently admitted in the {@link Ward}
 	 * @param ward - the ward
 	 * @return the number of patients currently admitted
 	 * @throws OHException
 	 */
-	@SuppressWarnings("unchecked")
 	public int getCurrentOccupation(
 			Ward ward) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Ward> wards = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try{
-			jpa.beginTransaction();
+	{		
+		ArrayList<Admission> admissions = new ArrayList<Admission>(admissionRepository.findAllWhereWard(ward.getCode()));
 
-			String query = "SELECT * FROM ADMISSION WHERE ADM_IN = 1 AND ADM_WRD_ID_A = ?";
-			jpa.createQuery(query, Ward.class, false);
-			params.add(ward.getCode());
-			jpa.setParameters(params, false);
-			List<Ward> wardList = (List<Ward>)jpa.getList();
-			wards = new ArrayList<Ward>(wardList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return wards.size();
+		return admissions.size();
 	}
 	
 	/**
@@ -56,26 +48,10 @@ public class WardIoOperations {
 	 * @return the retrieved wards.
 	 * @throws OHException if an error occurs retrieving the diseases.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<Ward> getWardsNoMaternity() throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Ward> wards = null;
-				
-		try{
-			jpa.beginTransaction();
+	{		
+		ArrayList<Ward> wards = new ArrayList<Ward>(repository.findAllWhereWardIsM());
 
-			String query = "SELECT * FROM WARD WHERE WRD_ID_A <> 'M'";
-			jpa.createQuery(query, Ward.class, false);
-			List<Ward> wardList = (List<Ward>)jpa.getList();
-			wards = new ArrayList<Ward>(wardList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
 		return wards;
 	}
 	
@@ -85,38 +61,21 @@ public class WardIoOperations {
 	 * @return the retrieved wards.
 	 * @throws OHException if an error occurs retrieving the wards.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<Ward> getWards(
 			String wardID) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+	{ 
 		ArrayList<Ward> wards = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM WARD";
-
-			if (wardID != null && wardID.trim().length() > 0) 
-			{
-				query = query + " WHERE WRD_ID_A LIKE ?";
-			}	
-			jpa.createQuery(query, Ward.class, false);
-			if (wardID != null && wardID.trim().length() > 0) 
-			{
-				params.add(wardID);
-				jpa.setParameters(params, false);
-			}
-			List<Ward> wardList = (List<Ward>)jpa.getList();
-			wards = new ArrayList<Ward>(wardList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
+		
+		
+		if (wardID != null && wardID.trim().length() > 0) 
+		{
+			wards = new ArrayList<Ward>(repository.findAllWhereIdLike(wardID));
+		}	
+		else
+		{
+			wards = new ArrayList<Ward>(repository.findAll());
 		}
+
 		return wards;
 	}
 	
@@ -129,19 +88,13 @@ public class WardIoOperations {
 	public boolean newWard(
 			Ward ward) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
+
+		Ward savedWard = repository.save(ward);
+		result = (savedWard != null);
 		
-		try{
-			jpa.beginTransaction();	
-			jpa.persist(ward);
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return result;	
+		return result;
 	}
 	
 	/**
@@ -154,18 +107,12 @@ public class WardIoOperations {
 	public boolean updateWard(
 			Ward ward) throws OHException
 	{				
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		try{
-			jpa.beginTransaction();	
-			ward.setLock(ward.getLock()+1);
-			jpa.merge(ward);
-			jpa.commitTransaction();		
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
+	
+
+		Ward savedWard = repository.save(ward);
+		result = (savedWard != null);
+		
 		return result;
 	}
 	
@@ -178,19 +125,11 @@ public class WardIoOperations {
 	public boolean deleteWard(
 			Ward ward) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		try{
-			Ward wardToRemove = (Ward) jpa.find(Ward.class, ward.getCode());
-
-			jpa.beginTransaction();	
-			jpa.remove(wardToRemove);
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
+	
+		
+		repository.delete(ward);
+		
 		return result;	
 	}
 	
@@ -203,25 +142,12 @@ public class WardIoOperations {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		Ward ward;
-		boolean result = false;
+		boolean result = true;
+	
 		
-		try{
-			jpa.beginTransaction();
-			ward = (Ward)jpa.find(Ward.class, code);
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		if (ward != null)
-		{
-			result = true;
-		}
-    	
-    	return result;
+		result = repository.exists(code);
+		
+		return result;	
 	}
 	
 	
@@ -248,19 +174,10 @@ public class WardIoOperations {
 	public boolean isLockWard(
 			Ward ward) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean isLockWard = false;
-		Ward foundWard = null;
-		try{
-			jpa.beginTransaction();
-			foundWard = (Ward)jpa.find(Ward.class, ward.getCode());
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		
+				
+
+		Ward foundWard = repository.findOne(ward.getCode()); 
 		if (foundWard.getLock() == ward.getLock())
 		{
 			isLockWard = true;

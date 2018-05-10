@@ -9,15 +9,14 @@ package org.isf.operation.service;
  -----------------------------------------------------------*/
 
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.NoResultException;
 
 import org.isf.operation.model.Operation;
 import org.isf.opetype.model.OperationType;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class offers the io operations for recovering and managing
@@ -26,7 +25,12 @@ import org.springframework.stereotype.Component;
  * @author Rick, Vero, pupo
  */
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class OperationIoOperations {
+
+	@Autowired
+	private OperationIoOperationRepository repository;
 	
 	/**
 	 * return the {@link Operation}s whose type matches specified string
@@ -35,40 +39,21 @@ public class OperationIoOperations {
 	 * @return the list of {@link Operation}s. It could be <code>empty</code> or <code>null</code>.
 	 * @throws OHException 
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<Operation> getOperation(
 			String typeDescription) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Operation> operations = null;
-		String query = null;
-		ArrayList<Object> params = new ArrayList<Object>();
+    	ArrayList<Operation> operations = null;
 
-		try{
-			jpa.beginTransaction();
-			if (typeDescription == null) 
-			{
-				query = "SELECT * FROM OPERATION JOIN OPERATIONTYPE ON OPE_OCL_ID_A = OCL_ID_A ORDER BY OPE_DESC";
-			}
-			else
-			{
-				query = "SELECT * FROM OPERATION JOIN OPERATIONTYPE ON OPE_OCL_ID_A = OCL_ID_A WHERE OCL_DESC LIKE CONCAT('%', ? , '%') ORDER BY OPE_DESC";
-			}	
-			jpa.createQuery(query, Operation.class, false);
-			if (typeDescription != null) 
-			{
-				params.add(typeDescription);
-				jpa.setParameters(params, false);
-			}
-			List<Operation> operationList = (List<Operation>)jpa.getList();
-			operations = new ArrayList<Operation>(operationList);		
-
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
+    	
+		if (typeDescription == null) 
+		{
+			operations = repository.findAllWithoutDescription();
 		}
+		else
+		{
+			operations = repository.findAllByDescription(typeDescription);
+		}	
+
 		return operations;
 	}
 	
@@ -82,18 +67,12 @@ public class OperationIoOperations {
 	public boolean newOperation(
 			Operation operation) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		try{
-			jpa.beginTransaction();	
-			jpa.persist(operation);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
+	
+
+		Operation savedOperation = repository.save(operation);
+		result = (savedOperation != null);
+    	
 		return result;
 	}
 	
@@ -105,21 +84,14 @@ public class OperationIoOperations {
 	 */
 	public boolean hasOperationModified(
 			Operation operation) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+	{ 
+		Operation foundOperation = repository.findOne(operation.getCode()); 
 		boolean result = false;
-		try{
-			jpa.beginTransaction();
-			Operation foundOperation = (Operation)jpa.find(Operation.class, operation.getCode());
-			jpa.commitTransaction();
-			if (foundOperation.getLock() != operation.getLock())
-			{
-				result = true;
-			}
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
+		
+		
+		if (foundOperation.getLock() != operation.getLock())
+		{
+			result = true;
 		}
 		
 		return result;
@@ -135,19 +107,13 @@ public class OperationIoOperations {
 	public boolean updateOperation(
 			Operation operation) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
-		try{
-			jpa.beginTransaction();	
-			operation.setLock(operation.getLock() + 1);
-			jpa.merge(operation);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
+		operation.setLock(operation.getLock()+1);
+		Operation savedOperation = repository.save(operation);
+		result = (savedOperation != null);
+    	
 		return result;
 	}
 	
@@ -160,19 +126,11 @@ public class OperationIoOperations {
 	public boolean deleteOperation(
 			Operation operation) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
-		try{
-			jpa.beginTransaction();	
-			Operation operationToRemove = (Operation) jpa.find(Operation.class, operation.getCode());
-			jpa.remove(operationToRemove);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
+		repository.delete(operation);
+    	
 		return result;
 	}
 	
@@ -185,21 +143,12 @@ public class OperationIoOperations {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
-		boolean present = false;
-		try{
-			jpa.beginTransaction();
-			Operation foundOperation = (Operation)jpa.find(Operation.class, code);
-			if (foundOperation != null)
-			{
-				present = true;
-			}
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}		
-		return present;
+		boolean result = true;
+	
+		
+		result = repository.exists(code);
+		
+		return result;
 	}
 	
 	/**
@@ -214,34 +163,15 @@ public class OperationIoOperations {
 			String description, 
 			String typeCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
-		Operation foundOperation = null;
+		Operation foundOperation = repository.findOneByDescriptionAndType(description, typeCode);
 		boolean present = false;
-		ArrayList<Object> params = new ArrayList<Object>();
+				
+			
+		if (foundOperation != null && foundOperation.getDescription().compareTo(description) == 0)
+		{
+			present = true;
+		}
 		
-		try {
-			jpa.beginTransaction();
-			
-			String query = "SELECT * FROM OPERATION WHERE OPE_DESC = ? AND OPE_OCL_ID_A = ?";
-			jpa.createQuery(query, Operation.class, false);
-			params.add(description);
-			params.add(typeCode);
-			jpa.setParameters(params, false);
-			foundOperation = (Operation)jpa.getResult();		
-			jpa.commitTransaction();
-			
-			if (foundOperation != null && foundOperation.getDescription().compareTo(description) == 0)
-			{
-				present = true;
-			}
-			
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			if (e.getCause().getClass().equals(NoResultException.class))
-				return false;
-			else throw e;
-			
-		} 
 		return present;
 	}
 }

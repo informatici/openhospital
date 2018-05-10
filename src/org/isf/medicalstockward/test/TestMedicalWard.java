@@ -52,8 +52,8 @@ public class TestMedicalWard
 			MedicalWard medicalward) 
 	{		
     	System.out.println("Check MedicalWard: " + medicalward.getMedicalId() + "-" + medicalward.getWardId());	
-    	assertEquals(in_quantity, medicalward.getInQuantity());
-    	assertEquals(out_quantity, medicalward.getOutQuantity());
+    	assertEquals(in_quantity, medicalward.getInQuantity(), 0.1);
+    	assertEquals(out_quantity, medicalward.getOutQuantity(), 0.1);
 		
 		return;
 	}

@@ -1,6 +1,5 @@
 package org.isf.agetype.test;
 
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -14,13 +13,22 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
 	private static TestAgeType testAgeType;
 	private static TestAgeTypeContext testAgeTypeContext;
-		
+
+    @Autowired
+    AgeTypeIoOperations ageTypeIoOperations;
+    
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -56,7 +64,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
     	testAgeType = null;
     	testAgeTypeContext = null;
 
@@ -108,14 +115,13 @@ public class Tests
 	public void testIoGetAgeType() 
 	{
 		String code = "";
-		AgeTypeIoOperations ioOperations = new AgeTypeIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestAgeType(false);
 			AgeType foundAgeType = (AgeType)jpa.find(AgeType.class, code); 
-			ArrayList<AgeType> ageTypes = ioOperations.getAgeType();
+			ArrayList<AgeType> ageTypes = ageTypeIoOperations.getAgeType();
 			
 			assertEquals(foundAgeType.getDescription(), ageTypes.get(ageTypes.size()-1).getDescription());
 		} 
@@ -132,7 +138,6 @@ public class Tests
 	public void testIoUpdateAgeType() 
 	{
 		String code = "";
-		AgeTypeIoOperations ioOperations = new AgeTypeIoOperations();
 		boolean result = false;
 		
 		
@@ -144,7 +149,7 @@ public class Tests
 			foundAgeType.setTo(40);
 			ArrayList<AgeType> ageTypes = new ArrayList<AgeType>();
 			ageTypes.add(foundAgeType);
-			result = ioOperations.updateAgeType(ageTypes);
+			result = ageTypeIoOperations.updateAgeType(ageTypes);
 			AgeType updateAgeType = (AgeType)jpa.find(AgeType.class, code); 
 			
 			assertEquals(true, result);
@@ -162,16 +167,14 @@ public class Tests
 	
 	@Test
 	public void testIoGetAgeTypeByCode()
-	{
-		AgeTypeIoOperations ioOperations = new AgeTypeIoOperations();
-		
+	{	
+		String code = "";
 		
 		try 
 		{		
-			AgeType ageType = testAgeType.setup(true);
-			ageType.setCode("d8");
-			jpa.persist(ageType);
-			AgeType foundAgeType = ioOperations.getAgeTypeByCode(9);
+			code = _setupTestAgeType(false);
+			AgeType ageType = (AgeType)jpa.find(AgeType.class, code); 
+			AgeType foundAgeType = ageTypeIoOperations.getAgeTypeByCode(9);
 			
 			assertEquals(ageType.getFrom(), foundAgeType.getFrom());
 			assertEquals(ageType.getTo(), foundAgeType.getTo());
