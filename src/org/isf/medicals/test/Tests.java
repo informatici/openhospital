@@ -248,7 +248,7 @@ public class Tests
 			Medical foundMedical = (Medical)jpa.find(Medical.class, code); 
 			result = medicalsIoOperations.medicalExists(foundMedical);
 			
-			assertEquals(false, result);
+			assertEquals(true, result);
 		} 
 		catch (Exception e) 
 		{
