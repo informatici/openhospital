@@ -18,6 +18,7 @@ import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
 import org.isf.ward.test.TestWard;
 import org.isf.ward.test.TestWardContext;
+import org.isf.accounting.model.Bill;
 import org.isf.medicals.model.Medical;
 import org.isf.medicals.test.TestMedical;
 import org.isf.medicals.test.TestMedicalContext;
@@ -506,7 +507,7 @@ public class Tests
 		try 
 		{		
 			code = _setupTestMovement(false);
-			ArrayList<Movement> movements = (ArrayList<Movement>) jpa.getList();
+			ArrayList<Movement> movements = medicalStockIoOperation.getMovements();
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
 			GregorianCalendar gc = medicalStockIoOperation.getLastMovementDate();
 
