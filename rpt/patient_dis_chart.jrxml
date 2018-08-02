@@ -17,6 +17,7 @@
 		 whenNoDataType="AllSectionsNoDetail"
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false"
+		 resourceBundle="patient_dis_chart"
 		 whenResourceMissingType="Key">
 	<property name="ireport.scriptlethandling" value="0" />
 	<property name="ireport.encoding" value="UTF-8" />

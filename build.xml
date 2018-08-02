@@ -47,11 +47,7 @@
 	<target name="distribute" depends="clean,build,wrapper" description="Creates distribution files of application">
 		<mkdir dir="${dist.dir}/${lib.dir}" />
 		<mkdir dir="${dist.dir}/${bin.dir}" />
-		<!-- <jar jarfile="${dist.dir}/${bin.dir}/OH.jar" basedir="${bin.dir}" /> -->
-		<jar destfile="${dist.dir}/${bin.dir}/OH.jar">  
-		  <fileset dir="${bin.dir}" />  
-		  <metainf dir="${src.dir}/META-INF"  includes="**/persistence.xml" />        
-		</jar>
+		<jar jarfile="${dist.dir}/${bin.dir}/OH.jar" basedir="${bin.dir}" />
 
 		<copy file="startup.sh" todir="${dist.dir}" />
 		<copy file="SetupGSM.sh" todir="${dist.dir}" />

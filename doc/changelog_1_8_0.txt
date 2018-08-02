@@ -175,7 +175,7 @@
 			   
 			   - bundles/language_xx.properties
 	
-	Added utilties to export bundles keys not yet translated and to update keys found 
+	Added utilities to export bundles keys not yet translated and to update keys found 
 	in same bundles
 ===========================================================================================
 17.
@@ -526,7 +526,7 @@
 			   --> lib/h8/validation-api-1.0.0.GA.jar
 			   - rsc/h8.properties
 			   
-	Added liberary to fix hibernate annotations
+	Added library to fix hibernate annotations
 ===========================================================================================
 53.
 	12/02/2014 - build.propertis
