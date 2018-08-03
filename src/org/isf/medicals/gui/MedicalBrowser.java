@@ -422,11 +422,11 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 			} else if (c == 2) {
 				return String.class;
 			} else if (c == 3) {
-				return String.class;
+				return Integer.class;
 			} else if (c == 4) {
-				return String.class;
+				return Double.class;
 			} else if (c == 5) {
-				return String.class;
+				return Double.class;
 			} else if (c == 6) {
 				return Boolean.class;
 			} 
@@ -460,11 +460,11 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 			} else if (c == 2) {
 				return med.getDescription();
 			} else if (c == 3) {
-				return String.valueOf(med.getPcsperpck());
+				return med.getPcsperpck();
 			} else if (c == 4) {
-				return String.valueOf(actualQty);
+				return actualQty;
 			} else if (c == 5) {
-				return String.valueOf(minQuantity);
+				return minQuantity;
 			} else if(c == 6){
 				//if(actualQty<=minQuantity)return true;
 				if(actualQty == 0)return true;
