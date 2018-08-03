@@ -694,8 +694,14 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 			jButtonToday.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {
+//					System.out.println("==> dateToday0  : " + dateToday0.toString());
+//					System.out.println("==> dateToday24 : " + dateToday24.toString());
+//					System.out.println("==> Date From   : " + dateFrom.toString());
+//					System.out.println("==> Date To     : " + dateTo.toString());
 					dateFrom.setTime(dateToday0.getTime());
 					dateTo.setTime(dateToday24.getTime());
+//					System.out.println("==> Date From   : " + dateFrom.toString());
+//					System.out.println("==> Date To     : " + dateTo.toString());
 					
 					jCalendarFrom.setDate(dateFrom.getTime());
 					jCalendarTo.setDate(dateTo.getTime());
