@@ -236,7 +236,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private JLabel getJLabelTo() {
 		if (jLabelTo == null) {
 			jLabelTo = new JLabel();
-			jLabelTo.setText(MessageBundle.getMessage("angal.billbrowser.to")); //$NON-NLS-1$
+			jLabelTo.setText(MessageBundle.getMessage("angal.common.to")); //$NON-NLS-1$
 		}
 		return jLabelTo;
 	}
@@ -297,7 +297,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private JLabel getJLabelFrom() {
 		if (jLabelFrom == null) {
 			jLabelFrom = new JLabel();
-			jLabelFrom.setText(MessageBundle.getMessage("angal.billbrowser.from")); //$NON-NLS-1$
+			jLabelFrom.setText(MessageBundle.getMessage("angal.common.from")); //$NON-NLS-1$
 		}
 		return jLabelFrom;
 	}

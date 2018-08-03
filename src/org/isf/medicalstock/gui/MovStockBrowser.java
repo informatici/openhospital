@@ -300,13 +300,13 @@ public class MovStockBrowser extends ModalJFrame {
 		movementPanel.add(label4Panel);
 
 		JPanel moveFromPanel = new JPanel(new BorderLayout());
-		JLabel label = new JLabel(MessageBundle.getMessage("angal.medicalstock.from"));
+		JLabel label = new JLabel(MessageBundle.getMessage("angal.common.from"));
 		label.setVerticalAlignment(SwingConstants.TOP);
 		moveFromPanel.add(label, BorderLayout.WEST);
 		moveFromPanel.add(getMovDateFrom(), BorderLayout.EAST);
 		movementPanel.add(moveFromPanel);
 		JPanel moveToPanel = new JPanel(new BorderLayout());
-		JLabel label_1 = new JLabel(MessageBundle.getMessage("angal.medicalstock.to"));
+		JLabel label_1 = new JLabel(MessageBundle.getMessage("angal.common.to"));
 		label_1.setVerticalAlignment(SwingConstants.TOP);
 		moveToPanel.add(label_1, BorderLayout.WEST);
 		moveToPanel.add(getMovDateTo(), BorderLayout.EAST);
@@ -323,11 +323,11 @@ public class MovStockBrowser extends ModalJFrame {
 				MessageBundle.getMessage("angal.medicalstock.lotpreparationdate")));
 
 		JPanel lotPrepFromPanel = new JPanel(new BorderLayout());
-		lotPrepFromPanel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.from")), BorderLayout.WEST);
+		lotPrepFromPanel.add(new JLabel(MessageBundle.getMessage("angal.common.from")), BorderLayout.WEST);
 		lotPrepFromPanel.add(getLotPrepFrom(), BorderLayout.EAST);
 		lotPreparationDatePanel.add(lotPrepFromPanel);
 		JPanel lotPrepToPanel = new JPanel(new BorderLayout());
-		lotPrepToPanel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.to")), BorderLayout.WEST);
+		lotPrepToPanel.add(new JLabel(MessageBundle.getMessage("angal.common.to")), BorderLayout.WEST);
 		lotPrepToPanel.add(getLotPrepTo(), BorderLayout.EAST);
 		lotPreparationDatePanel.add(lotPrepToPanel);
 
@@ -342,11 +342,11 @@ public class MovStockBrowser extends ModalJFrame {
 				BorderFactory.createLineBorder(Color.GRAY), MessageBundle.getMessage("angal.medicalstock.lotduedate")));
 
 		JPanel lotDueFromPanel = new JPanel(new BorderLayout());
-		lotDueFromPanel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.from")), BorderLayout.WEST);
+		lotDueFromPanel.add(new JLabel(MessageBundle.getMessage("angal.common.from")), BorderLayout.WEST);
 		lotDueFromPanel.add(getLotDueFrom(), BorderLayout.EAST);
 		lotDueDatePanel.add(lotDueFromPanel);
 		JPanel lotDueToPanel = new JPanel(new BorderLayout());
-		lotDueToPanel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.to")), BorderLayout.WEST);
+		lotDueToPanel.add(new JLabel(MessageBundle.getMessage("angal.common.to")), BorderLayout.WEST);
 		lotDueToPanel.add(getLotDueTo(), BorderLayout.EAST);
 		lotDueDatePanel.add(lotDueToPanel);
 

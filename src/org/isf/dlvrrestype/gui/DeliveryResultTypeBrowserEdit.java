@@ -216,7 +216,7 @@ public class DeliveryResultTypeBrowserEdit extends JDialog{
 							if (manager.codeControl(key)){
 								JOptionPane.showMessageDialog(				
 										null,
-										MessageBundle.getMessage("angal.dlvrrestype.codealreadyinuse"),
+										MessageBundle.getMessage("angal.common.codealreadyinuse"),
 										MessageBundle.getMessage("angal.hospital"),
 										JOptionPane.PLAIN_MESSAGE);
 								codeTextField.setText("");
@@ -354,7 +354,7 @@ public class DeliveryResultTypeBrowserEdit extends JDialog{
 	private JPanel getJDescriptionLabelPanel() {
 		if (jDescriptionLabelPanel == null) {
 			jDescripitonLabel = new JLabel();
-			jDescripitonLabel.setText(MessageBundle.getMessage("angal.dlvrrestype.description"));
+			jDescripitonLabel.setText(MessageBundle.getMessage("angal.common.description"));
 			jDescriptionLabelPanel = new JPanel();
 			jDescriptionLabelPanel.add(jDescripitonLabel, null);
 		}

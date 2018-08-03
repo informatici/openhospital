@@ -235,7 +235,7 @@ public class ExamTypeEdit extends JDialog{
 						if (true == found) {
 							JOptionPane.showMessageDialog(				
 									null,
-									MessageBundle.getMessage("angal.exatype.codealreadyinuse"),
+									MessageBundle.getMessage("angal.common.codealreadyinuse"),
 									MessageBundle.getMessage("angal.hospital"),
 									JOptionPane.PLAIN_MESSAGE);
 							codeTextField.setText("");
@@ -378,7 +378,7 @@ public class ExamTypeEdit extends JDialog{
 	private JPanel getJDescriptionLabelPanel() {
 		if (jDescriptionLabelPanel == null) {
 			jDescripitonLabel = new JLabel();
-			jDescripitonLabel.setText(MessageBundle.getMessage("angal.exatype.description"));
+			jDescripitonLabel.setText(MessageBundle.getMessage("angal.common.description"));
 			jDescriptionLabelPanel = new JPanel();
 			jDescriptionLabelPanel.add(jDescripitonLabel, null);
 		}

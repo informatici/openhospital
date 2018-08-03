@@ -83,7 +83,16 @@ public class MovStockMultipleDischarging extends JDialog {
 	private JDateChooser jDateChooser;
 	private JComboBox jComboBoxDestination;
 	private JTable jTableMovements;
-	private final String[] columnNames = { MessageBundle.getMessage("angal.common.codem"), MessageBundle.getMessage("angal.common.descriptionm"), MessageBundle.getMessage("angal.medicalstock.multipledischarging.unitpack"), MessageBundle.getMessage("angal.medicalstock.multipledischarging.qty"), MessageBundle.getMessage("angal.medicalstock.multipledischarging.unitpack"), MessageBundle.getMessage("angal.medicalstock.multipledischarging.total"), MessageBundle.getMessage("angal.medicalstock.multipledischarging.lotnumberabb"), MessageBundle.getMessage("angal.medicalstock.multipledischarging.expiringdate")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+	private final String[] columnNames = { 
+				MessageBundle.getMessage("angal.common.codem"), 
+				MessageBundle.getMessage("angal.common.descriptionm"), 
+				MessageBundle.getMessage("angal.medicalstock.multipledischarging.unitpack"), 
+				MessageBundle.getMessage("angal.medicalstock.multipledischarging.qty"), 
+				MessageBundle.getMessage("angal.medicalstock.multipledischarging.unitpack"), 
+				MessageBundle.getMessage("angal.medicalstock.multipledischarging.total"), 
+				MessageBundle.getMessage("angal.medicalstock.multipledischarging.lotnumberabb"), 
+				MessageBundle.getMessage("angal.medicalstock.multipledischarging.expiringdate")
+			}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 	private final Class[] columnClasses = { String.class, String.class, Integer.class, Integer.class, String.class, Integer.class, String.class, String.class};
 	private boolean[] columnEditable = { false, false, false, false, true, false, false, false};
 	private int[] columnWidth = { 50, 100, 70, 50, 70, 50, 100, 80};
@@ -1035,7 +1044,7 @@ public class MovStockMultipleDischarging extends JDialog {
 				return MessageBundle.getMessage("angal.medicalstock.duedate"); //$NON-NLS-1$
 			}
 			if (c == 3) {
-				return MessageBundle.getMessage("angal.medicalstock.quantity"); //$NON-NLS-1$
+				return MessageBundle.getMessage("angal.common.quantity"); //$NON-NLS-1$
 			}
 			return ""; //$NON-NLS-1$
 		}
@@ -1087,7 +1096,7 @@ public class MovStockMultipleDischarging extends JDialog {
 				return MessageBundle.getMessage("angal.common.code"); //$NON-NLS-1$
 			}
 			if (c == 1) {
-				return MessageBundle.getMessage("angal.medicals.description"); //$NON-NLS-1$
+				return MessageBundle.getMessage("angal.common.description"); //$NON-NLS-1$
 			}
 			return ""; //$NON-NLS-1$
 		}

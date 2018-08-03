@@ -39,7 +39,9 @@ public class OperationTypeBrowser extends ModalJFrame implements OperationTypeLi
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<OperationType> pOperationType;
-	private String[] pColums = { MessageBundle.getMessage("angal.opetype.codem"), MessageBundle.getMessage("angal.opetype.descriptionm")};
+	private String[] pColums = { 
+			MessageBundle.getMessage("angal.common.codem"), 
+			MessageBundle.getMessage("angal.common.descriptionm")};
 	private int[] pColumwidth = {80, 200 };
 //	private int pfrmWidth;
 //	private int pfrmHeight;

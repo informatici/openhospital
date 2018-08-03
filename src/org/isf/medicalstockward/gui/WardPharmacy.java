@@ -136,16 +136,25 @@ public class WardPharmacy extends ModalJFrame implements
 	// private Medical drugSelected;
 	private MovementWard movSelected;
 	private boolean added = false;
-	private String[] columsIncomes = { MessageBundle.getMessage("angal.common.date"), MessageBundle.getMessage("angal.medicalstockward.medical"),
-			MessageBundle.getMessage("angal.medicalstockward.quantity") };
+	private String[] columsIncomes = { 
+			MessageBundle.getMessage("angal.common.date"), 
+			MessageBundle.getMessage("angal.medicalstockward.medical"),
+			MessageBundle.getMessage("angal.common.quantity") };
 	private boolean[] columsResizableIncomes = { false, true, false };
 	private int[] columWidthIncomes = { 150, 320, 200 };
-	private String[] columsOutcomes = { MessageBundle.getMessage("angal.common.date"), MessageBundle.getMessage("angal.medicalstockward.patient"),
-			MessageBundle.getMessage("angal.medicalstockward.age"), MessageBundle.getMessage("angal.medicalstockward.sex"), MessageBundle.getMessage("angal.medicalstockward.weight"),
-			MessageBundle.getMessage("angal.medicalstockward.medical"), MessageBundle.getMessage("angal.medicalstockward.quantity") };
+	private String[] columsOutcomes = { 
+			MessageBundle.getMessage("angal.common.date"), 
+			MessageBundle.getMessage("angal.medicalstockward.patient"),
+			MessageBundle.getMessage("angal.medicalstockward.age"), 
+			MessageBundle.getMessage("angal.medicalstockward.sex"), 
+			MessageBundle.getMessage("angal.medicalstockward.weight"),
+			MessageBundle.getMessage("angal.medicalstockward.medical"), 
+			MessageBundle.getMessage("angal.common.quantity") };
 	private boolean[] columsResizableOutcomes = { false, false, false, false, false, true, false };
 	private int[] columWidthOutcomes = { 150, 150, 50, 50, 50, 220, 100 };
-	private String[] columsDrugs = { MessageBundle.getMessage("angal.medicalstockward.medical"), MessageBundle.getMessage("angal.medicalstockward.quantity") };
+	private String[] columsDrugs = { 
+			MessageBundle.getMessage("angal.medicalstockward.medical"), 
+			MessageBundle.getMessage("angal.common.quantity") };
 	private boolean[] columsResizableDrugs = { true, false };
 	private int[] columWidthDrugs = { 350, 100 };
 	private final int filterWidth = 250;
@@ -798,7 +807,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private JLabel getJLabelTo() {
 		if (jLabelTo == null) {
 			jLabelTo = new JLabel();
-			jLabelTo.setText(MessageBundle.getMessage("angal.medicalstockward.to")); //$NON-NLS-1$
+			jLabelTo.setText(MessageBundle.getMessage("angal.common.to")); //$NON-NLS-1$
 			jLabelTo.setBounds(509, 15, 45, 15);
 		}
 		return jLabelTo;
@@ -807,7 +816,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private JLabel getJLabelFrom() {
 		if (jLabelFrom == null) {
 			jLabelFrom = new JLabel();
-			jLabelFrom.setText(MessageBundle.getMessage("angal.medicalstockward.from")); //$NON-NLS-1$
+			jLabelFrom.setText(MessageBundle.getMessage("angal.common.from")); //$NON-NLS-1$
 			jLabelFrom.setBounds(365, 14, 45, 15);
 		}
 		return jLabelFrom;
