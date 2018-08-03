@@ -724,9 +724,9 @@ public class MovStockMultipleCharging extends JDialog {
 			Lot lot = movement.getLot();
 			String lotName = lot.getCode();
 			int qty = movement.getQuantity();
-			int ppp = medical.getPcsperpck().intValue();
+			int ppp = medical.getPcsperpck().intValue() == 0 ? 1 : medical.getPcsperpck().intValue();
 			int option = units.get(r);
-			int total = option == UNITS ? qty : (ppp == 0 ? qty : ppp * qty);
+			int total = option == UNITS ? qty : ppp * qty;
 			double cost = lot.getCost();
 			if (c == -1) {
 				return movement;
