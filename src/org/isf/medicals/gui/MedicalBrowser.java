@@ -255,6 +255,7 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 				FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
 				fcExcel.setFileFilter(excelFilter);
 				fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);  
+				fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicals.stock")));
 				
 				int iRetVal = fcExcel.showSaveDialog(MedicalBrowser.this);
 				if(iRetVal == JFileChooser.APPROVE_OPTION)
