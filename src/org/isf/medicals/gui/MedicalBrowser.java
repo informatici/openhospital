@@ -102,7 +102,7 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 				MessageBundle.getMessage("angal.medicals.typem"), 
 				MessageBundle.getMessage("angal.common.code"), 
 				MessageBundle.getMessage("angal.common.descriptionm"), 
-				MessageBundle.getMessage("angal.medicals.pcsperpck"), 
+				MessageBundle.getMessage("angal.medicals.pcsperpckm"), 
 				MessageBundle.getMessage("angal.medicals.stockm"),
 				MessageBundle.getMessage("angal.medicals.critlevelm"),
 				MessageBundle.getMessage("angal.medicals.outofstockm")
@@ -212,7 +212,7 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 			public void actionPerformed(ActionEvent event) {
 				if (table.getSelectedRow() < 0) {
 					JOptionPane.showMessageDialog(				
-	                        null,
+							MedicalBrowser.this,
 	                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
 	                        MessageBundle.getMessage("angal.hospital"),
 	                        JOptionPane.PLAIN_MESSAGE);				
@@ -221,7 +221,7 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 					MedicalBrowsingManager manager = new MedicalBrowsingManager();
 					Medical m = (Medical)(((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
 					int n = JOptionPane.showConfirmDialog(
-	                        null,
+							MedicalBrowser.this,
 	                        MessageBundle.getMessage("angal.medicals.deletemedical") + " \""+m.getDescription()+"\" ?",
 	                        MessageBundle.getMessage("angal.hospital"),
 	                        JOptionPane.YES_NO_OPTION);
@@ -269,14 +269,18 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 						xlsExport.exportTableToExcel(table, exportFile);
 					} catch(IOException exc)
 					{
-						logger.info("Export to excel error : "+exc.getMessage());
+						JOptionPane.showMessageDialog(MedicalBrowser.this,
+								exc.getMessage(),
+		                        MessageBundle.getMessage("angal.hospital"),
+		                        JOptionPane.PLAIN_MESSAGE);	
+						logger.error("Export to excel error : "+exc.getMessage());
 					}
 				}
 			}
 		});
 		buttonPanel.add(buttonExport);
 		
-		JButton buttonStock = new JButton(MessageBundle.getMessage("angal.medicals.stockm"));
+		JButton buttonStock = new JButton(MessageBundle.getMessage("angal.medicals.stock"));
 		buttonStock.setMnemonic(KeyEvent.VK_S);
 		buttonStock.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
@@ -314,7 +318,9 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		buttonPanel.add(buttonClose);
 
 		add(buttonPanel, BorderLayout.SOUTH);
+		pack();
 		setVisible(true);
+		setLocationRelativeTo(null);
 	}
 
 	protected void launchExpiringReport() {
@@ -322,6 +328,9 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		ArrayList<String> options = new ArrayList<String>();
 		options.add(MessageBundle.getMessage("angal.medicals.today"));
 		options.add(MessageBundle.getMessage("angal.medicals.thismonth"));
+		options.add(MessageBundle.getMessage("angal.medicals.nextmonth"));
+		options.add(MessageBundle.getMessage("angal.medicals.nexttwomonths"));
+		options.add(MessageBundle.getMessage("angal.medicals.nextthreemonths"));
 		options.add(MessageBundle.getMessage("angal.medicals.othermonth"));
 		
 		Icon icon = new ImageIcon("rsc/icons/calendar_dialog.png"); //$NON-NLS-1$
@@ -355,6 +364,33 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 			to = formatDateTimeReport(gc);
 		}
 		if (options.indexOf(option) == ++i) {
+			GregorianCalendar gc = new GregorianCalendar();
+			gc.set(GregorianCalendar.DAY_OF_MONTH, 1);
+			from = formatDateTimeReport(gc);
+			
+			gc.add(GregorianCalendar.MONTH, 1);
+			gc.set(GregorianCalendar.DAY_OF_MONTH, gc.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
+			to = formatDateTimeReport(gc);
+		}
+		if (options.indexOf(option) == ++i) {
+			GregorianCalendar gc = new GregorianCalendar();
+			gc.set(GregorianCalendar.DAY_OF_MONTH, 1);
+			from = formatDateTimeReport(gc);
+			
+			gc.add(GregorianCalendar.MONTH, 2);
+			gc.set(GregorianCalendar.DAY_OF_MONTH, gc.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
+			to = formatDateTimeReport(gc);
+		}
+		if (options.indexOf(option) == ++i) {
+			GregorianCalendar gc = new GregorianCalendar();
+			gc.set(GregorianCalendar.DAY_OF_MONTH, 1);
+			from = formatDateTimeReport(gc);
+			
+			gc.add(GregorianCalendar.MONTH, 3);
+			gc.set(GregorianCalendar.DAY_OF_MONTH, gc.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
+			to = formatDateTimeReport(gc);
+		}
+		if (options.indexOf(option) == ++i) {
 			GregorianCalendar monthYear;
 			icon = new ImageIcon("rsc/icons/calendar_dialog.png"); //$NON-NLS-1$
 			JMonthYearChooser monthYearChooser = new JMonthYearChooser();
@@ -373,10 +409,10 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 	        
 	        GregorianCalendar gc = new GregorianCalendar();
 			gc.set(GregorianCalendar.DAY_OF_MONTH, 1);
-			gc.set(GregorianCalendar.MONTH, monthYear.get(GregorianCalendar.MONTH));
-			gc.set(GregorianCalendar.YEAR, monthYear.get(GregorianCalendar.YEAR));
 			from = formatDateTimeReport(gc);
 			
+			gc.set(GregorianCalendar.MONTH, monthYear.get(GregorianCalendar.MONTH));
+			gc.set(GregorianCalendar.YEAR, monthYear.get(GregorianCalendar.YEAR));
 			gc.set(GregorianCalendar.DAY_OF_MONTH, gc.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
 			to = formatDateTimeReport(gc);
 		}
