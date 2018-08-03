@@ -208,16 +208,14 @@ public class PatientPhotoPanel extends JPanel {
 					
 					jGetPhotoButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
-							// aggiorno la lista dei dispositivi
+							// Updating the devices list
 							int videoDevicesCount = VideoManager.updateDeviceList();
 	
-							// il reset del videomanager serve su linux per
-							// interrompere il demone che intercetta il collegamento
-							// o la disconnessione di dispositivi
+							// This reset is need in Linux in order to stop the daemon
 							VideoManager.reset(false);
 	
-							// se ci sono dispositivi collegati mostriamo il frame
-							// altrimenti solo un dialog
+							// If devices are found, we show the frame
+							// We show only a dialog otherwise
 							if (videoDevicesCount > 0) {
 								new Thread(new Runnable() {
 									public void run() {
@@ -242,7 +240,7 @@ public class PatientPhotoPanel extends JPanel {
 						
 						public void actionPerformed(ActionEvent e) {
 							
-							// aggiorno la lista dei dispositivi
+							// Update the devices list
 							VideoManager.reset(true);
 							int videoDevicesCount = VideoManager.updateDeviceList();
 							
@@ -263,9 +261,8 @@ public class PatientPhotoPanel extends JPanel {
 							jAttachPhotoButton.setEnabled(false);
 							switch (buttonMode) {
 								case BUTTONMODE_showStream:
-									// il reset del videomanager serve su linux per
-									// interrompere il demone che intercetta il collegamento
-									// o la disconnessione di dispositivi
+									// The videomanager reset is needed on Linux in order to stop the daemon for
+									// devices plugin events
 									VideoManager.reset(true);
 									final int videoDevicesCount = VideoManager.updateDeviceList();
 									if (videoDevicesCount > 0)	{

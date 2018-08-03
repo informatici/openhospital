@@ -42,8 +42,7 @@ public class LinuxVideoDevicesManager extends VideoDevicesManager {
 		
 			String [] vendorAndProductId = deviceIdArray[5].split("_");
 			
-			// se le cifre che compongono le due stringhe sono in numero inferiore a 4
-			// allora aggiunge degli 0 in testa alle stringhe
+			// if the digits are less than 4, padding with 0 (zero)
 			String vendorId = vendorAndProductId[2];
 			for (int i = vendorId.length(); i < 4; i++)
 				vendorId = "0" + vendorId;

@@ -146,9 +146,6 @@ public class BottomPanel extends JPanel {
 		//remove(scroll);
 		scroll.setPreferredSize(new Dimension(width-40, 110));
 		//add(scroll);
-		
-		// non impostare alcuna preferredsize per PhotoFramesBox altrimenti
-		// la sua dimensione sarà fissa e quindi non sarà scrollable
 	}
 	
 	
