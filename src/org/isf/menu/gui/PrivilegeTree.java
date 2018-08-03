@@ -148,7 +148,15 @@ class PrivilegeTree extends JDialog {
 		UserMenuItem umi = (UserMenuItem) node.getUserObject();
 		
 		/* Also if node has leafs can be deactivated */
-
+		String user = MainMenu.getUser();
+		String umiFile = umi.getCode();
+		
+		if (user.equals("admin") && (umiFile.equals("file") ||
+				umiFile.equals("groups") || umiFile.equals("users") || 
+				umiFile.equals("usersusers") || umiFile.equals("exit"))) {
+			return;
+		}
+		
 		if (umi.isActive())
 			umi.setActive(false);
 		else
