@@ -512,7 +512,7 @@ public class MovStockMultipleDischarging extends JDialog {
 			}
 			if (null != movTypes) {
 				for (MovementType movType : movTypes) {
-					if (movType.getType().equals("-")) //$NON-NLS-1$
+					if (movType.getType().contains("-")) //$NON-NLS-1$
 						jComboBoxDischargeType.addItem(movType);
 				}
 			}

@@ -477,7 +477,7 @@ public class MovStockBrowser extends ModalJFrame {
 				if (!(typeBox.getSelectedItem() instanceof String)) {
 					MovementType selected = (MovementType) typeBox
 							.getSelectedItem();
-					if (selected.getType().equalsIgnoreCase("-")) {
+					if (selected.getType().contains("-")) {
 						wardBox.setEnabled(true);
 					} else {
 						wardBox.setSelectedIndex(0);
