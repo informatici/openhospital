@@ -2,8 +2,6 @@ package org.isf.menu.manager;
 
 import java.util.*;
 
-import javax.swing.JOptionPane;
-
 import org.isf.menu.gui.Menu;
 import org.isf.menu.model.*;
 import org.isf.menu.service.*;
@@ -150,6 +148,8 @@ public class UserBrowsingManager {
 	 */
 	public boolean deleteUser(User user) throws OHServiceException {
 		try {
+			if (user.getUserName().equals("admin"))
+				throw new OHException(MessageBundle.getMessage("angal.menu.youcantdeleteadminuser"), null);
 			return ioOperations.deleteUser(user);
         }catch(OHException e){
 			/*Already cached exception with OH specific error message -
