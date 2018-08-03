@@ -163,7 +163,7 @@ public class VaccineEdit extends JDialog {
 			vaccineTypeDescLabel.setText(MessageBundle.getMessage("angal.vaccine.vaccinetype"));
             //vaccine code
 			codeLabel = new JLabel();
-			codeLabel.setText(MessageBundle.getMessage("angal.vaccine.code"));
+			codeLabel.setText(MessageBundle.getMessage("angal.common.code"));
 			// vaccine description
 			descLabel = new JLabel();
 			descLabel.setText(MessageBundle.getMessage("angal.vaccine.description"));

@@ -1084,7 +1084,7 @@ public class MovStockMultipleDischarging extends JDialog {
 
 		public String getColumnName(int c) {
 			if (c == 0) {
-				return MessageBundle.getMessage("angal.medicals.code"); //$NON-NLS-1$
+				return MessageBundle.getMessage("angal.common.code"); //$NON-NLS-1$
 			}
 			if (c == 1) {
 				return MessageBundle.getMessage("angal.medicals.description"); //$NON-NLS-1$

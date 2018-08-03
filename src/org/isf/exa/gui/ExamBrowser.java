@@ -180,7 +180,7 @@ public class ExamBrowser extends ModalJFrame{
 				int n = JOptionPane.showConfirmDialog(
                         null,
                         MessageBundle.getMessage("angal.exa.deletefolowingexam") + " :" + 
-                        "\n"+MessageBundle.getMessage("angal.exa.code")+"= " + e.getCode() +
+                        "\n"+MessageBundle.getMessage("angal.common.code")+"= " + e.getCode() +
                         "\n"+MessageBundle.getMessage("angal.exa.description")+" = " + e.getDescription() +
                         "\n?",
                         MessageBundle.getMessage("angal.hospital"),

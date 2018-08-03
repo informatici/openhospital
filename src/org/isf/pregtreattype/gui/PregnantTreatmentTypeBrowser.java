@@ -39,7 +39,7 @@ public class PregnantTreatmentTypeBrowser extends ModalJFrame implements Pregnan
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<PregnantTreatmentType> pPregnantTreatmentType;
-	private String[] pColums = { MessageBundle.getMessage("angal.preagtreattype.code"), MessageBundle.getMessage("angal.preagtreattype.description") };
+	private String[] pColums = { MessageBundle.getMessage("angal.common.code"), MessageBundle.getMessage("angal.preagtreattype.description") };
 	private int[] pColumwidth = {80, 200 };
 	private JPanel jContainPanel = null;
 	private JPanel jButtonPanel = null;

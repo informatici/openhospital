@@ -194,7 +194,7 @@ public class DiseaseEdit extends JDialog {
 			gbc_typeComboBox.gridy = 0;
 			dataPanel.add(getTypeComboBox(), gbc_typeComboBox);  // Generated
 			codeLabel = new JLabel();
-			codeLabel.setText(MessageBundle.getMessage("angal.disease.code"));
+			codeLabel.setText(MessageBundle.getMessage("angal.common.code"));
 			GridBagConstraints gbc_codeLabel = new GridBagConstraints();
 			gbc_codeLabel.insets = new Insets(5, 5, 5, 5);
 			gbc_codeLabel.fill = GridBagConstraints.BOTH;

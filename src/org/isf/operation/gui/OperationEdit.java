@@ -171,7 +171,7 @@ public class OperationEdit extends JDialog {
 			descLabel.setText(MessageBundle.getMessage("angal.operation.description"));  // Generated
 			descLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 			codeLabel = new JLabel();
-			codeLabel.setText(MessageBundle.getMessage("angal.operation.code"));
+			codeLabel.setText(MessageBundle.getMessage("angal.common.code"));
 			codeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 			dataPanel = new JPanel();
 			dataPanel.setLayout(new BoxLayout(getDataPanel(), BoxLayout.Y_AXIS));  // Generated

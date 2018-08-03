@@ -120,7 +120,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 	private String rowCounterText = MessageBundle.getMessage("angal.admission.count");
 	private ArrayList<AdmittedPatient> pPatient = new ArrayList<AdmittedPatient>();
 	private String informations = MessageBundle.getMessage("angal.admission.city") + " / " + MessageBundle.getMessage("angal.admission.addressm") + " / " + MessageBundle.getMessage("angal.admission.telephone") + " / " + MessageBundle.getMessage("angal.patient.note");
-	private String[] pColums = { MessageBundle.getMessage("angal.admission.code"), MessageBundle.getMessage("angal.admission.name"), MessageBundle.getMessage("angal.admission.age"), MessageBundle.getMessage("angal.admission.sex"), informations, MessageBundle.getMessage("angal.admission.ward") };
+	private String[] pColums = { MessageBundle.getMessage("angal.common.code"), MessageBundle.getMessage("angal.admission.name"), MessageBundle.getMessage("angal.admission.age"), MessageBundle.getMessage("angal.admission.sex"), informations, MessageBundle.getMessage("angal.admission.ward") };
 	private int[] pColumwidth = { 100, 200, 80, 50, 150, 100 };
 	private boolean[] pColumResizable = {false, false, false, false, true, false};
 	private AdmittedPatient patient;
@@ -873,9 +873,9 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 
 				//ASK CONFIRMATION
 				int ok = JOptionPane.showConfirmDialog(null, 
-						MessageBundle.getMessage("angal.admission.withthisoperationthepatient")+"\n"+MessageBundle.getMessage("angal.admission.code")+": "+
+						MessageBundle.getMessage("angal.admission.withthisoperationthepatient")+"\n"+MessageBundle.getMessage("angal.code.code")+": "+
 						patient2.getCode() + " " + patient2.getName() + " " + patient2.getAge() + " " + patient2.getAddress() +"\n"+
-						MessageBundle.getMessage("angal.admission.willbedeletedandhisherhistorytransferedtothepatient")+"\n"+MessageBundle.getMessage("angal.admission.code")+": "+
+						MessageBundle.getMessage("angal.admission.willbedeletedandhisherhistorytransferedtothepatient")+"\n"+MessageBundle.getMessage("angal.code.code")+": "+
 						mergedPatient.getCode() + " " + mergedPatient.getName() + " " + mergedPatient.getAge() + " " + mergedPatient.getAddress() +"\n"+
 						MessageBundle.getMessage("angal.admission.continue"),
 						MessageBundle.getMessage("angal.admission.merge"), 
