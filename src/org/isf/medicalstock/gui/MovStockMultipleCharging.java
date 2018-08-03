@@ -538,6 +538,10 @@ public class MovStockMultipleCharging extends JDialog {
 
 		if (ok == JOptionPane.OK_OPTION) {
 			String lotName = lotNameTextField.getText();
+			if (expireDateChooser.getDate().before(preparationDateChooser.getDate())) {
+				JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.expirydatebeforepreparationdate"));
+				return null;
+			}
 			expiringDate.setTime(expireDateChooser.getDate());
 			preparationDate.setTime(preparationDateChooser.getDate());
 			lot = new Lot(lotName, preparationDate, expiringDate);
