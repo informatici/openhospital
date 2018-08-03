@@ -147,13 +147,11 @@ public class MovStockMultipleCharging extends JDialog {
 		}
 
 		medicalMap = new HashMap<String, Medical>();
-		if (null != medicals) {
 			for (Medical med : medicals) {
 				String key = med.getProd_code();
-				if (key.equals("")) key = med.getCode().toString(); //$NON-NLS-1$
+			if (key == null || key.equals("")) key = med.getType().getCode() + med.getDescription();
 				medicalMap.put(key, med);
 			}
-		}
 		units = new ArrayList<Integer>();
 	}
 	
