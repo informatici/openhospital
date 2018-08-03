@@ -379,7 +379,7 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 			gc.set(GregorianCalendar.DAY_OF_MONTH, gc.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
 			to = formatDateTimeReport(gc);
 		}
-		new GenericReportFromDateToDate(from, to, "PharmaceuticalExpiration", false);
+		new GenericReportFromDateToDate(from, to, "PharmaceuticalExpiration", MessageBundle.getMessage("angal.medicals.expiringreport"), false);
 	}
 	
 	private String formatDateTimeReport(GregorianCalendar date) {

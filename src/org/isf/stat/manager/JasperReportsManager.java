@@ -363,7 +363,7 @@ public class JasperReportsManager {
 
 
 
-    public void getGenericReportFromDateToDateCSV(String fromDate, String toDate, String jasperFileName, String exportFilename) throws OHServiceException {
+    public void getGenericReportFromDateToDateExcel(String fromDate, String toDate, String jasperFileName, String exportFilename) throws OHServiceException {
 
         try{
             HashMap<String, Object> parameters = compileGenericReportFromDateToDateParameters(fromDate, toDate);
@@ -383,7 +383,7 @@ public class JasperReportsManager {
             File exportFile = new File(exportFilename);
 
             ExcelExporter xlsExport = new ExcelExporter();
-            xlsExport.exportResultsetToCSV(resultSet, exportFile);
+            xlsExport.exportResultsetToExcel(resultSet, exportFile);
 
         } catch(OHServiceException e){
             //Already managed, ready to return OHServiceException
@@ -418,7 +418,7 @@ public class JasperReportsManager {
         }
     }
 
-    public void getGenericReportMYCsv(Integer month, Integer year, String jasperFileName, String exportFilename) throws OHServiceException {
+    public void getGenericReportMYExcel(Integer month, Integer year, String jasperFileName, String exportFilename) throws OHServiceException {
 
         try{
             HashMap<String, Object> parameters = compileGenericReportMYParameters(month, year);
@@ -438,7 +438,7 @@ public class JasperReportsManager {
             File exportFile = new File(exportFilename);
 
             ExcelExporter xlsExport = new ExcelExporter();
-            xlsExport.exportResultsetToCSV(resultSet, exportFile);
+            xlsExport.exportResultsetToExcel(resultSet, exportFile);
         } catch(OHServiceException e){
             //Already managed, ready to return OHServiceException
             throw e;

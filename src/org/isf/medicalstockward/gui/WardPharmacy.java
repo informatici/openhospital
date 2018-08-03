@@ -1223,7 +1223,15 @@ public class WardPharmacy extends ModalJFrame implements
 					JFileChooser fcExcel = new JFileChooser();
 					FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
 					fcExcel.setFileFilter(excelFilter);
-					fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);  
+					fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					int index = jTabbedPaneWard.getSelectedIndex();
+					if (index == 0) {
+						fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicalstockward.outcomes") + ".xls"));
+					} else if (index == 1) {
+						fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicalstockward.incomings") + ".xls"));
+					} else if (index == 2) {
+						fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicalstockward.drugs") + ".xls"));
+					}
 					
 					int iRetVal = fcExcel.showSaveDialog(WardPharmacy.this);
 					if(iRetVal == JFileChooser.APPROVE_OPTION) {
@@ -1233,7 +1241,6 @@ public class WardPharmacy extends ModalJFrame implements
 							
 							ExcelExporter xlsExport = new ExcelExporter();
 							
-							int index = jTabbedPaneWard.getSelectedIndex();
 							if (index == 0) {
 								xlsExport.exportTableToExcel(jTableOutcomes, exportFile);
 							} else if (index == 1) {
