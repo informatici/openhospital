@@ -1221,7 +1221,7 @@ public class WardPharmacy extends ModalJFrame implements
 
 				public void actionPerformed(ActionEvent arg0) {
 					JFileChooser fcExcel = new JFileChooser();
-					FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.csv)","csv");
+					FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
 					fcExcel.setFileFilter(excelFilter);
 					fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);  
 					
@@ -1229,17 +1229,17 @@ public class WardPharmacy extends ModalJFrame implements
 					if(iRetVal == JFileChooser.APPROVE_OPTION) {
 						try {
 							File exportFile = fcExcel.getSelectedFile();
-							if (!exportFile.getName().endsWith("csv")) exportFile = new File(exportFile.getAbsoluteFile() + ".csv");
+							if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
 							
 							ExcelExporter xlsExport = new ExcelExporter();
 							
 							int index = jTabbedPaneWard.getSelectedIndex();
 							if (index == 0) {
-								xlsExport.exportTableToCSV(jTableOutcomes, exportFile);
+								xlsExport.exportTableToExcel(jTableOutcomes, exportFile);
 							} else if (index == 1) {
-								xlsExport.exportTableToCSV(jTableIncomes, exportFile);
+								xlsExport.exportTableToExcel(jTableIncomes, exportFile);
 							} else if (index == 2) {
-								xlsExport.exportTableToCSV(jTableDrugs, exportFile);
+								xlsExport.exportTableToExcel(jTableDrugs, exportFile);
 							}
 							
 						} catch (IOException e) {
