@@ -346,8 +346,8 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 							}
 							try {
 								BusyState.setBusyState(BillBrowser.this, true);
-							new GenericReportUserInDate(from, to, user, "BillsReportUserInDate");
-							return;
+								new GenericReportUserInDate(from, to, user, "BillsReportUserInDate");
+								return;
 							} finally {
 								BusyState.setBusyState(BillBrowser.this, false);
 							}
