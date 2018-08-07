@@ -57,7 +57,6 @@ import org.isf.utils.db.NormalizeString;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.BusyState;
-import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
 import org.isf.utils.jobjects.TextPrompt.Show;
 import org.isf.ward.manager.WardBrowserManager;
@@ -893,6 +892,7 @@ public class MovStockMultipleDischarging extends JDialog {
 		MovStockInsertingManager manager = new MovStockInsertingManager();
 		
 		// Check the Date
+		GregorianCalendar today = new GregorianCalendar();
 		GregorianCalendar thisDate = new GregorianCalendar();
 		thisDate.setTime(jDateChooser.getDate());
 		GregorianCalendar lastDate;
@@ -901,6 +901,10 @@ public class MovStockMultipleDischarging extends JDialog {
 		} catch (OHServiceException e) {
 			lastDate = null;
 			OHServiceExceptionUtil.showMessages(e);
+		}
+		if (thisDate.after(today)) {
+			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.futuredatenotallowed")); //$NON-NLS-1$ //$NON-NLS-2$
+			return false;
 		}
 		if (lastDate != null && thisDate.compareTo(lastDate) < 0) {
 			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.datebeforelastmovement") + format(lastDate) + MessageBundle.getMessage("angal.medicalstock.multipledischarging.notallowed")); //$NON-NLS-1$ //$NON-NLS-2$

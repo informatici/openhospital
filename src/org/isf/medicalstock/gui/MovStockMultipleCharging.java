@@ -109,7 +109,6 @@ public class MovStockMultipleCharging extends JDialog {
 
 	/**
 	 * Launch the application.
-	 * TODO: externalize strings
 	 */
 	public static void main(String[] args) {
 		try {
@@ -817,6 +816,7 @@ public class MovStockMultipleCharging extends JDialog {
 		MovStockInsertingManager manager = new MovStockInsertingManager();
 		
 		// Check the Date
+		GregorianCalendar today = new GregorianCalendar();
 		GregorianCalendar thisDate = new GregorianCalendar();
 		thisDate.setTime(jDateChooser.getDate());
 		GregorianCalendar lastDate;
@@ -825,6 +825,10 @@ public class MovStockMultipleCharging extends JDialog {
 		} catch (OHServiceException e) {
 			lastDate = null;
 			OHServiceExceptionUtil.showMessages(e);
+		}
+		if (thisDate.after(today)) {
+			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.futuredatenotallowed")); //$NON-NLS-1$ //$NON-NLS-2$
+			return false;
 		}
 		if (lastDate != null && thisDate.compareTo(lastDate) < 0) {
 			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.datebeforelastmovement") + format(lastDate) + MessageBundle.getMessage("angal.medicalstock.multiplecharging.notallowed")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -874,11 +878,11 @@ public class MovStockMultipleCharging extends JDialog {
 			}
 			if (GeneralData.LOTWITHCOST) {
 				Double cost = lot.getCost();
-				if (cost == null || cost.doubleValue() <= 0.) {
+				/*if (cost == null || cost.doubleValue() <= 0.) {
 					JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.zerocostsnotallowed")); //$NON-NLS-1$
 					jTableMovements.getSelectionModel().setSelectionInterval(i, i);
 					return false;
-				}
+				}*/
 			}
 			mov.setDate(thisDate);
 			mov.setRefNo(refNo);
