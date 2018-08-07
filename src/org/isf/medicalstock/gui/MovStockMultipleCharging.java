@@ -601,15 +601,29 @@ public class MovStockMultipleCharging extends JDialog {
 			JPanel panel = new JPanel(new BorderLayout());
 			panel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.multiplecharging.useanexistinglot")), BorderLayout.NORTH); //$NON-NLS-1$
 			panel.add(new JScrollPane(lotTable), BorderLayout.CENTER);
-			
-			int ok = JOptionPane.showConfirmDialog(MovStockMultipleCharging.this, panel, MessageBundle.getMessage("angal.medicalstock.multiplecharging.existinglot"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+			Object[] options = {MessageBundle.getMessage("angal.medicalstock.multiplecharging.selectedlot"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.newlot")};
+						
+			int row = -1;
+			do {
+				
+				int ok = JOptionPane.showOptionDialog(MovStockMultipleCharging.this, 
+						panel, 
+						MessageBundle.getMessage("angal.medicalstock.multiplecharging.existinglot"), 
+						JOptionPane.YES_NO_OPTION, 
+						JOptionPane.QUESTION_MESSAGE, 
+						null, 
+						options, 
+						options[0]); //$NON-NLS-1$
 
-			if (ok == JOptionPane.OK_OPTION) {
-				int row = lotTable.getSelectedRow();
-				lot = lots.get(row);
-			}
-			return lot;
+				if (ok == JOptionPane.YES_OPTION) {
+					row = lotTable.getSelectedRow();
+					if (row != -1) lot = lots.get(row);
+					else JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.common.pleaseselectarow"));
+				} else row = 0;
+				
+			} while (row == -1);
 			
+			return lot;
 		}
 		return lot;
 	}
