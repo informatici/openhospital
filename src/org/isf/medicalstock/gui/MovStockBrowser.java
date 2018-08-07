@@ -133,6 +133,8 @@ public class MovStockBrowser extends ModalJFrame {
 	private static final String DATE_FORMAT_DD_MM_YY = "dd/MM/yy";
 	private static final String DATE_FORMAT_DD_MM_YY_HH_MM = "dd/MM/yy HH:mm";
 	
+	private String currencyCod;
+	
 	public MovStockBrowser() {
 		myFrame = this;
 		setTitle(MessageBundle.getMessage("angal.medicalstock.stockmovementbrowser"));
@@ -219,13 +221,19 @@ public class MovStockBrowser extends ModalJFrame {
 			for (Movement mov : moves) {
 				totalQti += mov.getQuantity();
 			}
+			jTableTotal.getModel().setValueAt(totalQti, 0, 4);
+		} else {
+			jTableTotal.getModel().setValueAt(MessageBundle.getMessage("angal.common.notapplicable"), 0, 4);
 		}
 		totalAmount = new BigDecimal(0);
 		for (Movement mov : moves) {
 			BigDecimal itemAmount = new BigDecimal(Double.toString(mov.getQuantity()));
+			if (mov.getType().getType().contains("+")) 
 			totalAmount = totalAmount.add(itemAmount.multiply(new BigDecimal(mov.getLot().getCost())));
+			else 
+				totalAmount = totalAmount.subtract(itemAmount.multiply(new BigDecimal(mov.getLot().getCost())));
 		}
-		jTableTotal.getModel().setValueAt(totalQti, 0, 4);
+		jTableTotal.getModel().setValueAt(currencyCod, 0, 11);
 		jTableTotal.getModel().setValueAt(totalAmount, 0, 12);
 	}
 
@@ -1066,9 +1074,13 @@ public class MovStockBrowser extends ModalJFrame {
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			setHorizontalAlignment(columnAlignment[column]);
-			if (column == 4) value = formatter1.format((Number) value);
+			if (column == 4) {
+				if (value instanceof Number) value = formatter1.format((Number) value);
+			}
 			if (column == 11) value = formatter100.format((Number) value);
-			if (column == 12) value = formatter10.format((Number) value);
+			if (column == 12) {
+				if (value instanceof Number) value = formatter10.format((Number) value);
+			}
 			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		}
 	}
