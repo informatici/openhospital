@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -42,13 +43,17 @@ import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
 import org.isf.stat.gui.report.GenericReportFromDateToDate;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalOrder;
+import org.isf.stat.gui.report.GenericReportPharmaceuticalStock;
 import org.isf.utils.excel.ExcelExporter;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.JMonthYearChooser;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.toedter.calendar.JDateChooser;
 
 /**
  * This class shows a complete extended list of medical drugs,
@@ -284,7 +289,62 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		buttonStock.setMnemonic(KeyEvent.VK_S);
 		buttonStock.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
-				new GenericReportPharmaceuticalOrder(GeneralData.PHARMACEUTICALSTOCK);
+				ArrayList<String> options = new ArrayList<String>();
+				options.add(MessageBundle.getMessage("angal.medicals.today"));
+				options.add(MessageBundle.getMessage("angal.common.date"));
+				
+				Icon icon = new ImageIcon("rsc/icons/calendar_dialog.png"); //$NON-NLS-1$
+				String option = (String) JOptionPane.showInputDialog(MedicalBrowser.this, 
+						MessageBundle.getMessage("angal.medicals.pleaseselectareport"), 
+						MessageBundle.getMessage("angal.medicals.report"), 
+						JOptionPane.INFORMATION_MESSAGE, 
+						icon, 
+						options.toArray(), 
+						options.get(0));
+				
+				if (option == null)
+					return;
+				
+				int i = 0;
+				if (options.indexOf(option) == i) {
+						
+						try {
+							BusyState.setBusyState(MedicalBrowser.this, true);
+							new GenericReportPharmaceuticalStock(null, GeneralData.PHARMACEUTICALSTOCK);
+							return;
+						} finally {
+							BusyState.setBusyState(MedicalBrowser.this, false);
+						}
+						
+					}
+				if (options.indexOf(option) == ++i) {
+					
+					icon = new ImageIcon("rsc/icons/calendar_dialog.png"); //$NON-NLS-1$
+					
+					JDateChooser dateChooser = new JDateChooser();
+					dateChooser.setLocale(new Locale(GeneralData.LANGUAGE));
+					
+			        int r = JOptionPane.showConfirmDialog(MedicalBrowser.this, 
+			        		dateChooser, 
+			        		MessageBundle.getMessage("angal.common.date"), 
+			        		JOptionPane.OK_CANCEL_OPTION, 
+			        		JOptionPane.PLAIN_MESSAGE,
+			        		icon);
+
+			        if (r == JOptionPane.OK_OPTION) {
+			        	
+						try {
+							BusyState.setBusyState(MedicalBrowser.this, true);
+							new GenericReportPharmaceuticalStock(dateChooser.getDate(), GeneralData.PHARMACEUTICALSTOCK);
+							return;
+						} finally {
+							BusyState.setBusyState(MedicalBrowser.this, false);
+						}
+						
+			        } else {
+			            return;
+			        }
+				}
 			}
 		});
 		buttonPanel.add(buttonStock);
