@@ -38,7 +38,7 @@ import org.isf.medtype.model.MedicalType;
  *------------------------------------------*/
 @Entity
 @Table(name="MEDICALDSR")
-public class Medical implements Comparable<Medical> {
+public class Medical implements Comparable<Medical>, Cloneable {
 	/**
 	 * Code of the medical
 	 */
@@ -221,12 +221,13 @@ public class Medical implements Comparable<Medical> {
 
 	@Override
 	public boolean equals(Object anObject) {
-		return (anObject == null) || !(anObject instanceof Medical) ? false
-				: (getCode().equals(((Medical) anObject).getCode())
-						&& getDescription().equalsIgnoreCase(
-								((Medical) anObject).getDescription())
+		if (anObject == null || !(anObject instanceof Medical)) return false;
+		if (getProd_code() == null && ((Medical) anObject).getProd_code() != null) return false;
+		if (getProd_code() != null && ((Medical) anObject).getProd_code() == null) return false;
+		if (getProd_code() != null && ((Medical) anObject).getProd_code() != null && !getProd_code().equals(((Medical) anObject).getProd_code())) return false;
+		return (getCode().equals(((Medical) anObject).getCode())
+						&& getDescription().equalsIgnoreCase(((Medical) anObject).getDescription())
 						&& getType().equals(((Medical) anObject).getType())
-						&& getProd_code().equals(((Medical) anObject).getProd_code())
 						&& getInitialqty()==(((Medical) anObject).getInitialqty()) 
 						&& getInqty()==(((Medical) anObject).getInqty())
 						&& getOutqty()==(((Medical) anObject).getOutqty())
@@ -254,5 +255,10 @@ public class Medical implements Comparable<Medical> {
 	    }
 	  
 	    return this.hashCode;
-	}	
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

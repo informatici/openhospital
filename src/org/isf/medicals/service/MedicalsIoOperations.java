@@ -6,6 +6,7 @@
 package org.isf.medicals.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -174,14 +175,45 @@ public class MedicalsIoOperations {
 		}
 		return medicals;
 	}
+    
+    /**
+	 * Checks if the specified {@link Medical} exists or not.
+	 * @param medical - the medical to check.
+	 * @return <code>true</code> if exists, <code>false</code> otherwise.
+	 * @throws OHException if an SQL error occurs during the check.
+	 */
+	@SuppressWarnings("unchecked")
+	public ArrayList<Medical> medicalCheck(Medical medical) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Medical> medicals = new ArrayList<Medical>();
+		List<Object> params = Collections.<Object>singletonList(medical.getDescription());
+
+		try{
+			jpa.beginTransaction();
+			String query = "select * from MEDICALDSR join MEDICALDSRTYPE on MDSR_MDSRT_ID_A = MDSRT_ID_A where MDSR_DESC SOUNDS LIKE ?";
+			jpa.createQuery(query, Medical.class, false);
+			jpa.setParameters(params, false);
+			List<Medical> medicalList = (List<Medical>)jpa.getList();
+			
+			medicals = new ArrayList<Medical>(medicalList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
+		return medicals;
+	}
 
 	/**
-	 * Checks if the specified {@link Medical} exists or not.
+	 * Checks if the specified {@link Medical} exists or not for the {@link MedicalType}.
 	 * @param medical the medical to check.
 	 * @return <code>true</code> if exists <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the check.
 	 */
-	public boolean medicalExists(Medical medical) throws OHException {
+	public boolean medicalExistsInType(Medical medical) throws OHException {
 		
 		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
@@ -191,10 +223,9 @@ public class MedicalsIoOperations {
 		try {
 			jpa.beginTransaction();
 
-			String query = "SELECT * FROM MEDICALDSR WHERE MDSR_MDSRT_ID_A = ? AND MDSR_DESC = ? AND MDSR_ID <> ?";
+			String query = "SELECT * FROM MEDICALDSR WHERE MDSR_MDSRT_ID_A = ? AND MDSR_DESC = ?";
 			params.add(medical.getType().getCode());
 			params.add(medical.getDescription());
-			params.add(medical.getCode());
 			jpa.createQuery(query, Medical.class, false);
 			jpa.setParameters(params, false);
 			Medical foundMedical = (Medical) jpa.getResult();
@@ -220,6 +251,41 @@ public class MedicalsIoOperations {
 		return result;
 	}
 
+	/**
+	 * Checks if the specified {@link Medical} ProductCode exists or not.
+	 * @param medical - the medical to check.
+	 * @return <code>true</code> if exists, <code>false</code> otherwise.
+	 * @throws OHException if an SQL error occurs during the check.
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean productCodeExists(Medical medical) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		boolean result = true;
+		List<Object> params = Collections.<Object>singletonList(medical.getProd_code());
+
+		try{
+			jpa.beginTransaction();
+			String query = "select * from MEDICALDSR where MDSR_CODE = ?";
+			jpa.createQuery(query, Medical.class, false);
+			jpa.setParameters(params, false);
+			List<Medical> medicalList = (List<Medical>)jpa.getList();
+			result = !medicalList.isEmpty();
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			if (e.getCause().getClass().equals(NoResultException.class)) {
+				result = false;
+				jpa.commitTransaction();
+			} else {
+				//DbJpaUtil managed exception
+				jpa.rollbackTransaction();
+				throw e;
+			}
+		}	
+		return result;
+	}
+	
 	/**
 	 * Stores the specified {@link Medical}.
 	 * @param medical the medical to store.
