@@ -161,7 +161,7 @@ public class MovStockMultipleDischarging extends JDialog {
 		if (null != medicals) {
 			for (Medical med : medicals) {
 				String key = med.getProd_code();
-				if (key.equals("")) key = med.getCode().toString(); //$NON-NLS-1$
+				if (key == null || key.equals("")) key = med.getType().getCode() + med.getDescription();
 				medicalMap.put(key, med);
 			}
 		}
@@ -710,7 +710,18 @@ public class MovStockMultipleDischarging extends JDialog {
 		message.append(med.toString());
 		message.append("\n").append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.lyinginstock")).append(totalQty); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		String quantity = JOptionPane.showInputDialog(MovStockMultipleDischarging.this, message.toString(), 0);
+		StringBuilder title = new StringBuilder(MessageBundle.getMessage("angal.common.quantity"));
+		String prodCode = med.getProd_code();
+		if (prodCode != null && !prodCode.equals("")) {
+			title.append(" ").append(MessageBundle.getMessage("angal.common.code"));
+			title.append(": ").append(prodCode);
+		} else { 
+			title.append(": ");
+		}
+		String quantity = JOptionPane.showInputDialog(MovStockMultipleDischarging.this, 
+				message.toString(), 
+				title.toString(),
+				JOptionPane.QUESTION_MESSAGE); //$NON-NLS-1$
 		int qty = 0;
 		if (quantity != null) {
 			try {

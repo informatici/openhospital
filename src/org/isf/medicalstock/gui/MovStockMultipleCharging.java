@@ -148,7 +148,7 @@ public class MovStockMultipleCharging extends JDialog {
 		medicalMap = new HashMap<String, Medical>();
 			for (Medical med : medicals) {
 				String key = med.getProd_code();
-			if (key == null || key.equals("")) key = med.getType().getCode() + med.getDescription();
+				if (key == null || key.equals("")) key = med.getType().getCode() + med.getDescription();
 				medicalMap.put(key, med);
 			}
 		units = new ArrayList<Integer>();
@@ -646,7 +646,19 @@ public class MovStockMultipleCharging extends JDialog {
 	}
 
 	protected int askQuantity(Medical med) {
-		String quantity = JOptionPane.showInputDialog(MovStockMultipleCharging.this, med.toString() + MessageBundle.getMessage("angal.common.quantity"), 0); //$NON-NLS-1$
+		StringBuilder title = new StringBuilder(MessageBundle.getMessage("angal.common.quantity"));
+		StringBuilder message = new StringBuilder(med.toString());
+		String prodCode = med.getProd_code();
+		if (prodCode != null && !prodCode.equals("")) {
+			title.append(" ").append(MessageBundle.getMessage("angal.common.code"));
+			title.append(": ").append(prodCode);
+		} else { 
+			title.append(": ");
+		}
+		String quantity = JOptionPane.showInputDialog(MovStockMultipleCharging.this, 
+				message.toString(), 
+				title.toString(),
+				JOptionPane.QUESTION_MESSAGE); //$NON-NLS-1$
 		int qty = 0;
 		if (quantity != null) {
 			try {
