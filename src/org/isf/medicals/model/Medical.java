@@ -73,7 +73,7 @@ public class Medical implements Comparable<Medical>, Cloneable {
 	 * initial quantity
 	 */
 	@NotNull
-	@Column(name="MDSR_MIN_STOCK_QTI")
+	@Column(name="MDSR_INI_STOCK_QTI")
 	private double initialqty;
 	
 	/**
@@ -87,7 +87,7 @@ public class Medical implements Comparable<Medical>, Cloneable {
 	 * input quantity
 	 */
 	@NotNull
-	@Column(name="MDSR_INI_STOCK_QTI")
+	@Column(name="MDSR_IN_QTI")
 	private double inqty;
 
 	/**
@@ -101,7 +101,7 @@ public class Medical implements Comparable<Medical>, Cloneable {
 	 * min quantity
 	 */
 	@NotNull
-	@Column(name="MDSR_IN_QTI")
+	@Column(name="MDSR_MIN_STOCK_QTI")
 	private double minqty;
 
 	/**

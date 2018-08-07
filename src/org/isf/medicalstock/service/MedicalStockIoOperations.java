@@ -858,12 +858,10 @@ public class MedicalStockIoOperations {
 	 * Retrieves lot referred to the specified {@link Medical}.
 	 * @param medical the medical.
 	 * @return a list of {@link Lot}.
-	 * @throws Exception 
+	 * @throws OHException if an error occurs retrieving the lot list.
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayList<Lot> getLotsByMedical(
-			Medical medical) throws OHException 
-	{
+	public ArrayList<Lot> getLotsByMedical(Medical medical) throws OHException {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Lot> lots = null;
 		ArrayList<Object> params = new ArrayList<Object>();
@@ -872,7 +870,7 @@ public class MedicalStockIoOperations {
 			jpa.beginTransaction();
 			
 			String query = "select LT_ID_A,LT_PREP_DATE,LT_DUE_DATE,LT_COST,"
-					+ "SUM(IF(MMVT_TYPE='+',MMV_QTY,-MMV_QTY)) as quantity from "
+					+ "SUM(IF(MMVT_TYPE LIKE '+%',MMV_QTY,-MMV_QTY)) as quantity from "
 					+ "((MEDICALDSRLOT join MEDICALDSRSTOCKMOV on MMV_LT_ID_A=LT_ID_A) join MEDICALDSR on MMV_MDSR_ID=MDSR_ID)"
 					+ " join MEDICALDSRSTOCKMOVTYPE on MMV_MMVT_ID_A=MMVT_ID_A "
 					+ "where MDSR_ID=? group by LT_ID_A order by LT_DUE_DATE";

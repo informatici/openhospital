@@ -772,7 +772,7 @@ public class MovStockMultipleCharging extends JDialog {
 			} else if (c == 8) {
 				return cost;
 			} else if (c == 9) {
-				return cost * qty;
+				return cost * total;
 			}
 			return null;
 		}
@@ -866,6 +866,7 @@ public class MovStockMultipleCharging extends JDialog {
 			Movement mov = movements.get(i);
 			Lot lot = mov.getLot();
 			GregorianCalendar expiringDate = mov.getLot().getDueDate();
+			int option = units.get(i);
 			if (expiringDate.compareTo(thisDate) < 0) {
 				JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdateinthepastnotallowed")); //$NON-NLS-1$
 				jTableMovements.getSelectionModel().setSelectionInterval(i, i);
@@ -881,11 +882,21 @@ public class MovStockMultipleCharging extends JDialog {
 			}
 			mov.setDate(thisDate);
 			mov.setRefNo(refNo);
+			mov.setQuantity(calcTotal(mov, option));
 			mov.setType((MovementType) jComboBoxChargeType.getSelectedItem());
 			mov.setSupplier(((Supplier) jComboBoxSupplier.getSelectedItem()));
 			mov.getLot().setPreparationDate(thisDate);
 		}
 		return ok;
+	}
+	
+	private int calcTotal(Movement mov, int option) {
+		Medical medical = mov.getMedical();
+		int qty = mov.getQuantity();
+		int ppp = medical.getPcsperpck().intValue() == 0 ? 1 : medical.getPcsperpck().intValue();
+		int total = option == UNITS ? qty : ppp * qty;
+		
+		return total;
 	}
 	
 	private boolean save() {
