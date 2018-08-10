@@ -55,17 +55,17 @@ public class Server {
 		return roster;
 	}
 
-	public Chat getChat(String to,String id,MessageListener listner)
+	public Chat getChat(String to, String id, MessageListener listner)
 	{
 		Chat chat=null;
-
-		if(connection.getChatManager().getThreadChat(id+user)==null){
-			System.out.println("chat in creazione con : "+to+" id= "+id);
-			chat = connection.getChatManager().createChat(to,id+user,listner);
+		id = id + "@" + user;
+		if(connection.getChatManager().getThreadChat(id)==null){
+			logger.debug("Creation chat: " + to + ", id = " + id);
+			chat = connection.getChatManager().createChat(to, id, listner);
 		}
 		else{
-			System.out.println("chat già esistente con: "+to+" id= "+id );
-			chat= connection.getChatManager().getThreadChat(id+user);
+			logger.debug("Existing chat: " + to + ", id = " + id);
+			chat = connection.getChatManager().getThreadChat(id);
 		}
 		return chat;
 	}
