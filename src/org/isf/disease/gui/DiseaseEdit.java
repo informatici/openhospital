@@ -91,11 +91,6 @@ public class DiseaseEdit extends JDialog {
 	
 	private static final String VERSION=MessageBundle.getMessage("angal.versione"); 
 
-	private int pfrmBase = 15;
-	private int pfrmWidth = 5;
-	private int pfrmHeight = 5;
-	private int pfrmBordX;
-	private int pfrmBordY;
 	private JPanel jContentPane = null;
 	private JPanel dataPanel = null;
 	private JPanel buttonPanel = null;
@@ -134,11 +129,6 @@ public class DiseaseEdit extends JDialog {
 	 * @return void
 	 */
 	private void initialize() {
-//		Toolkit kit = Toolkit.getDefaultToolkit();
-//		Dimension screensize = kit.getScreenSize();
-//		pfrmBordX = (screensize.width - (screensize.width / pfrmBase * pfrmWidth)) / 2;
-//		pfrmBordY = (screensize.height - (screensize.height / pfrmBase * pfrmHeight)) / 2;
-//		this.setBounds(pfrmBordX,pfrmBordY,screensize.width / pfrmBase * pfrmWidth,screensize.height / pfrmBase * pfrmHeight);
 		this.setContentPane(getJContentPane());
 		if (insert) {
 			this.setTitle(MessageBundle.getMessage("angal.disease.newdisease")+VERSION+")");
@@ -361,12 +351,12 @@ public class DiseaseEdit extends JDialog {
 					
 					boolean result = false;
 					try{
-						if (insert) {      // inserting
+						if (insert) { // inserting
 							result = manager.newDisease(disease);
 							if (result) {
 								fireDiseaseInserted();
 							}
-						} else {                          // updating
+						} else { // updating
 							boolean modified = manager.hasDiseaseModified(disease);
 							boolean overWrite = false;
 							if (modified) {
