@@ -583,7 +583,7 @@ class AdmissionBrowserModel extends DefaultTableModel {
 			}else if (c == 3) {
 				String id = null;
 				if (r < admList.size()) {
-					id = admList.get(r).getDiseaseOut1().getCode();
+					id = admList.get(r).getDiseaseOut1() == null ? null :  admList.get(r).getDiseaseOut1().getCode();
 					if (id == null){
 						id = "";
 					}
