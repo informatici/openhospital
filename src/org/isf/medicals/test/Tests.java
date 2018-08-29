@@ -243,7 +243,7 @@ public class Tests
 		{		
 			code = _setupTestMedical(false);
 			Medical foundMedical = (Medical)jpa.find(Medical.class, code); 
-			result = ioOperations.medicalExistsInType(foundMedical);
+			result = ioOperations.medicalExistsInType(foundMedical, true);
 			
 			assertEquals(false, result);
 		} 

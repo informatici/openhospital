@@ -84,7 +84,7 @@ public class MedicalEdit extends JDialog {
 	 * This is the default constructor; we pass the arraylist and the
 	 * selectedrow because we need to update them
 	 */
-	public MedicalEdit(Medical old, boolean inserting,JFrame owner) {
+	public MedicalEdit(Medical old, boolean inserting, JFrame owner) {
 		super(owner,true);
 		insert = inserting;
 		try {
@@ -216,22 +216,22 @@ public class MedicalEdit extends JDialog {
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					MedicalBrowsingManager manager = new MedicalBrowsingManager();
+					Medical newMedical = null;
 					try {
-						medical.setType((MedicalType) typeComboBox.getSelectedItem());
-						medical.setDescription(descriptionTextField.getText());
-						medical.setProd_code(codeTextField.getText());
-						medical.setPcsperpck(Integer.valueOf(pcsperpckField.getText()));
-						medical.setMinqty(Double.valueOf(minQtiField.getText()));
-					} catch (NumberFormatException ex) {
-						JOptionPane.showMessageDialog(
-								null, 
-								MessageBundle.getMessage("angal.medicals.insertavalidvalue"));
+						newMedical = (Medical) medical.clone();
+						newMedical.setType((MedicalType) typeComboBox.getSelectedItem());
+						newMedical.setDescription(descriptionTextField.getText());
+						newMedical.setProd_code(codeTextField.getText());
+						newMedical.setPcsperpck(pcsperpckField.getValue());
+						newMedical.setMinqty(minQtiField.getValue());
+					} catch (CloneNotSupportedException ex) {
+						ex.printStackTrace();
 					}
 					boolean result = false;
 					if (insert) { // inserting
-						if (true == isValidForInsert(medical)) {
+						if (true == isValidForInsert(newMedical)) {
 							try {
-								result = manager.newMedical(medical, false);
+								result = manager.newMedical(newMedical, false);
 							} catch (OHServiceException e1) {
 								OHServiceExceptionUtil.showMessages(e1);
 							}					
@@ -241,9 +241,9 @@ public class MedicalEdit extends JDialog {
 						} else return;							
 					} else { // updating
 						try {
-							if (true == isValidForUpdate(oldMedical, medical)) {
+							if (true == isValidForUpdate(oldMedical, newMedical)) {
 								
-								result = manager.updateMedical(null, medical, true);
+								result = manager.updateMedical(oldMedical, newMedical, true);
 								
 								if (false == result) {
 									// update failed due to lock -- record was updated by someone else
@@ -251,11 +251,16 @@ public class MedicalEdit extends JDialog {
 											MessageBundle.getMessage("angal.medicals.doyouwanttooverwritethedata");
 									int response = JOptionPane.showConfirmDialog(null, msg, MessageBundle.getMessage("angal.medicals.select"), JOptionPane.YES_NO_OPTION);
 									if (response== JOptionPane.OK_OPTION) {
-										result = manager.updateMedical(null, medical, false);
+										result = manager.updateMedical(oldMedical, newMedical, false);
 									}
 								}
 								
 								if (result) {
+									medical.setType((MedicalType) typeComboBox.getSelectedItem());
+									medical.setDescription(descriptionTextField.getText());
+									medical.setProd_code(codeTextField.getText());
+									medical.setPcsperpck(pcsperpckField.getValue());
+									medical.setMinqty(minQtiField.getValue());
 									dispose();
 								}	
 							} else return;

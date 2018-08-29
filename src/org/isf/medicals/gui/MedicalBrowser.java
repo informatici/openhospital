@@ -100,7 +100,6 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 	private int pfrmWidth;
 	private int pfrmHeight;
 	private int selectedrow;
-	private JLabel selectlabel;
 	private JComboBox pbox;
 	private ArrayList<Medical> pMedicals;
 	private String[] pColums = {
@@ -131,7 +130,31 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		pfrmHeight = screensize.height / 2;
 		setBounds((screensize.width - pfrmWidth) / 2, screensize.height / 4, pfrmWidth,
 				pfrmHeight);
-		
+		setContentPane(getContentpane());
+		pack();
+		setVisible(true);
+		setLocationRelativeTo(null);
+	}
+	
+	private JPanel getContentpane() {
+		JPanel contentPane = new JPanel();
+		contentPane.setLayout(new BorderLayout());
+		contentPane.add(getScrollPane(), BorderLayout.CENTER);
+		contentPane.add(getJButtonPanel(), BorderLayout.SOUTH);
+		return contentPane;
+	}
+	
+	private JScrollPane getScrollPane() {
+		JScrollPane scrollPane = new JScrollPane(getJTable());
+		int totWidth = 0;
+		for (int colWidth : pColumwidth) {
+			totWidth += colWidth;
+		}
+		scrollPane.setPreferredSize(new Dimension(totWidth, 450));
+		return scrollPane;
+	}
+	
+	private JTable getJTable() {
 		model = new MedicalBrowsingModel();
 		table = new JTable(model);
 
@@ -140,155 +163,64 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 			table.getColumnModel().getColumn(i).setMinWidth(pColumwidth[i]);
 			if (!pColumResizable[i]) table.getColumnModel().getColumn(i).setMaxWidth(pColumwidth[i]);
 		}
-		add(new JScrollPane(table), BorderLayout.CENTER);
-		JPanel buttonPanel = new JPanel();
-		
-		selectlabel = new JLabel(MessageBundle.getMessage("angal.medicals.selecttype"));
-		buttonPanel.add(selectlabel);
-		
-		MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
-		pbox = new JComboBox();
-		pbox.addItem(MessageBundle.getMessage("angal.medicals.allm"));
-		ArrayList<MedicalType> type;
-		try {
-			type = manager.getMedicalType();
-		
-			//for efficiency in the sequent for
-			for (MedicalType elem : type) {
-				pbox.addItem(elem);
-			}
-		} catch (OHServiceException e1) {
-			type = null;
-			OHServiceExceptionUtil.showMessages(e1);
-		}
-		
-		pbox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				pSelection=pbox.getSelectedItem().toString();
-				if (pSelection.compareTo(MessageBundle.getMessage("angal.medicals.allm")) == 0)
-					model = new MedicalBrowsingModel();
-				else
-					model = new MedicalBrowsingModel(pSelection);
-				model.fireTableDataChanged();
-				table.updateUI();
-			}
-		});
-		buttonPanel.add(pbox);
-
-		JButton buttonNew = new JButton(MessageBundle.getMessage("angal.common.new"));
-		buttonNew.setMnemonic(KeyEvent.VK_N);
-		buttonNew.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent event) {
-				medical=new Medical(null,new MedicalType("",""),"","",0,0,0,0,0,0);;	//medical will reference the new record
-				MedicalEdit newrecord = new MedicalEdit(medical,true,me);
-				newrecord.setVisible(true);
-				if(medical.getCode()!=null)medicalInserted();
-			}
-		});
-		if (MainMenu.checkUserGrants("btnpharmaceuticalnew")) buttonPanel.add(buttonNew);
-		
-		JButton buttonEdit = new JButton(MessageBundle.getMessage("angal.common.edit"));
-		buttonEdit.setMnemonic(KeyEvent.VK_E);
-		buttonEdit.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent event) {
-				if (table.getSelectedRow() < 0) {
-					JOptionPane.showMessageDialog(				
-	                        null,
-	                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
-	                        MessageBundle.getMessage("angal.hospital"),
-	                        JOptionPane.PLAIN_MESSAGE);				
-					return;									
-				}else {		
-					selectedrow = table.getSelectedRow();
-					medical = (Medical)(((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
-					MedicalEdit editrecord = new MedicalEdit(medical,false,me);
-					editrecord.setVisible(true);
-					medicalUpdated();
-				}	 				
-			}
-		});
-		if (MainMenu.checkUserGrants("btnpharmaceuticaledit")) buttonPanel.add(buttonEdit);
-		
-		JButton buttonDelete = new JButton(MessageBundle.getMessage("angal.common.delete"));
-		buttonDelete.setMnemonic(KeyEvent.VK_D);
-		buttonDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				if (table.getSelectedRow() < 0) {
-					JOptionPane.showMessageDialog(				
-							MedicalBrowser.this,
-	                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
-	                        MessageBundle.getMessage("angal.hospital"),
-	                        JOptionPane.PLAIN_MESSAGE);				
-					return;									
-				}else {
-					MedicalBrowsingManager manager = new MedicalBrowsingManager();
-					Medical m = (Medical)(((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
-					int n = JOptionPane.showConfirmDialog(
-							MedicalBrowser.this,
-	                        MessageBundle.getMessage("angal.medicals.deletemedical") + " \""+m.getDescription()+"\" ?",
-	                        MessageBundle.getMessage("angal.hospital"),
-	                        JOptionPane.YES_NO_OPTION);
+		return table;
+	}
 	
-					if ((n == JOptionPane.YES_OPTION)){
-						boolean deleted;
-						try {
-							deleted = (manager.deleteMedical(m));
-						} catch (OHServiceException e) {
-							deleted = false;
-							OHServiceExceptionUtil.showMessages(e);
-						}
-						
-						if (true == deleted) {
-							pMedicals.remove(table.getSelectedRow());
-							model.fireTableDataChanged();
-							table.updateUI();
-						}
-					}
-				}
+	private JPanel getJButtonPanel() {
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.add(new JLabel(MessageBundle.getMessage("angal.medicals.selecttype")));
+		buttonPanel.add(getComboBoxMedicalType());
+		if (MainMenu.checkUserGrants("btnpharmaceuticalnew")) buttonPanel.add(getJButtonNew());
+		if (MainMenu.checkUserGrants("btnpharmaceuticaledit")) buttonPanel.add(getJButtonEdit());
+		if (MainMenu.checkUserGrants("btnpharmaceuticaldel")) buttonPanel.add(getJButtonDelete());
+		buttonPanel.add(getJButtonReport());
+		buttonPanel.add(getJButtonStock());
+		buttonPanel.add(getJButtonOrderList());
+		buttonPanel.add(getJButtonExpiring());
+		buttonPanel.add(getJButtonClose());
+		return buttonPanel;
+	}
+
+	private JButton getJButtonClose() {
+		JButton buttonClose = new JButton(MessageBundle.getMessage("angal.common.close"));
+		buttonClose.setMnemonic(KeyEvent.VK_C);
+		buttonClose.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				dispose();
 			}
 		});
-		if (MainMenu.checkUserGrants("btnpharmaceuticaldel")) buttonPanel.add(buttonDelete);
-		
-		JButton buttonExport = new JButton(MessageBundle.getMessage("angal.medicals.export"));
-		buttonExport.setMnemonic(KeyEvent.VK_X);
-		buttonExport.addActionListener(new ActionListener(){
+		return buttonClose;
+	}
+
+	private JButton getJButtonExpiring() {
+		JButton buttonExpiring = new JButton(MessageBundle.getMessage("angal.medicals.expiring"));
+		buttonExpiring.setMnemonic(KeyEvent.VK_X);
+		buttonExpiring.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
+				launchExpiringReport();
 				
-				JFileChooser fcExcel = new JFileChooser();
-				FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
-				fcExcel.setFileFilter(excelFilter);
-				fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);  
-				fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicals.stock")));
-				
-				int iRetVal = fcExcel.showSaveDialog(MedicalBrowser.this);
-				if(iRetVal == JFileChooser.APPROVE_OPTION)
-				{
-					File exportFile = fcExcel.getSelectedFile();
-					if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
-					
-					ExcelExporter xlsExport = new ExcelExporter();
-					try
-					{
-						xlsExport.exportTableToExcel(table, exportFile);
-					} catch(IOException exc)
-					{
-						JOptionPane.showMessageDialog(MedicalBrowser.this,
-								exc.getMessage(),
-		                        MessageBundle.getMessage("angal.hospital"),
-		                        JOptionPane.PLAIN_MESSAGE);	
-						logger.error("Export to excel error : "+exc.getMessage());
-					}
-				}
 			}
 		});
-		buttonPanel.add(buttonExport);
-		
+		return buttonExpiring;
+	}
+
+	private JButton getJButtonOrderList() {
+		JButton buttonOrderList = new JButton(MessageBundle.getMessage("angal.medicals.orderlist"));
+		buttonOrderList.setMnemonic(KeyEvent.VK_O);
+		buttonOrderList.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event){
+				new GenericReportPharmaceuticalOrder(GeneralData.PHARMACEUTICALORDER);
+			}
+		});
+		return buttonOrderList;
+	}
+
+	private JButton getJButtonStock() {
 		JButton buttonStock = new JButton(MessageBundle.getMessage("angal.medicals.stock"));
 		buttonStock.setMnemonic(KeyEvent.VK_S);
 		buttonStock.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
+				
 				ArrayList<String> options = new ArrayList<String>();
 				options.add(MessageBundle.getMessage("angal.medicals.today"));
 				options.add(MessageBundle.getMessage("angal.common.date"));
@@ -347,40 +279,155 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 				}
 			}
 		});
-		buttonPanel.add(buttonStock);
-		
-		JButton buttonOrderList = new JButton(MessageBundle.getMessage("angal.medicals.orderlist"));
-		buttonOrderList.setMnemonic(KeyEvent.VK_O);
-		buttonOrderList.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent event){
-				new GenericReportPharmaceuticalOrder(GeneralData.PHARMACEUTICALORDER);
-			}
-		});
-		buttonPanel.add(buttonOrderList);
-		
-		JButton buttonExpiring = new JButton(MessageBundle.getMessage("angal.medicals.expiring"));
-		buttonExpiring.setMnemonic(KeyEvent.VK_X);
-		buttonExpiring.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent event){
-				launchExpiringReport();
-				
-			}
-		});
-		buttonPanel.add(buttonExpiring);
-		
-		JButton buttonClose = new JButton(MessageBundle.getMessage("angal.common.close"));
-		buttonClose.setMnemonic(KeyEvent.VK_C);
-		buttonClose.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				dispose();
-			}
-		});
-		buttonPanel.add(buttonClose);
+		return buttonStock;
+	}
 
-		add(buttonPanel, BorderLayout.SOUTH);
-		pack();
-		setVisible(true);
-		setLocationRelativeTo(null);
+	private JButton getJButtonReport() {
+		JButton buttonExport = new JButton(MessageBundle.getMessage("angal.medicals.export"));
+		buttonExport.setMnemonic(KeyEvent.VK_X);
+		buttonExport.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event){
+				
+				JFileChooser fcExcel = new JFileChooser();
+				FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
+				fcExcel.setFileFilter(excelFilter);
+				fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);  
+				fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicals.stock")));
+				
+				int iRetVal = fcExcel.showSaveDialog(MedicalBrowser.this);
+				if(iRetVal == JFileChooser.APPROVE_OPTION)
+				{
+					File exportFile = fcExcel.getSelectedFile();
+					if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
+					
+					ExcelExporter xlsExport = new ExcelExporter();
+					try
+					{
+						xlsExport.exportTableToExcel(table, exportFile);
+					} catch(IOException exc)
+					{
+						JOptionPane.showMessageDialog(MedicalBrowser.this,
+								exc.getMessage(),
+		                        MessageBundle.getMessage("angal.hospital"),
+		                        JOptionPane.PLAIN_MESSAGE);	
+						logger.error("Export to excel error : "+exc.getMessage());
+					}
+				}
+			}
+		});
+		return buttonExport;
+	}
+
+	private JButton getJButtonDelete() {
+		JButton buttonDelete = new JButton(MessageBundle.getMessage("angal.common.delete"));
+		buttonDelete.setMnemonic(KeyEvent.VK_D);
+		buttonDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				if (table.getSelectedRow() < 0) {
+					JOptionPane.showMessageDialog(				
+							MedicalBrowser.this,
+	                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
+	                        MessageBundle.getMessage("angal.hospital"),
+	                        JOptionPane.PLAIN_MESSAGE);				
+					return;									
+				}else {
+				MedicalBrowsingManager manager = new MedicalBrowsingManager();
+				Medical m = (Medical)(((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
+				int n = JOptionPane.showConfirmDialog(
+                        null,
+                        MessageBundle.getMessage("angal.medicals.deletemedical") + " \""+m.getDescription()+"\" ?",
+                        MessageBundle.getMessage("angal.hospital"),
+                        JOptionPane.YES_NO_OPTION);
+
+				boolean deleted;
+				try {
+					deleted = (manager.deleteMedical(m));
+				} catch (OHServiceException e) {
+					deleted = false;
+					OHServiceExceptionUtil.showMessages(e);
+				}
+				if ((n == JOptionPane.YES_OPTION) && deleted){
+					pMedicals.remove(table.getSelectedRow());
+					model.fireTableDataChanged();
+					table.updateUI();
+					}
+				}
+			}
+		});
+		return buttonDelete;
+	}
+
+	private JButton getJButtonEdit() {
+		JButton buttonEdit = new JButton(MessageBundle.getMessage("angal.common.edit"));
+		buttonEdit.setMnemonic(KeyEvent.VK_E);
+		buttonEdit.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				if (table.getSelectedRow() < 0) {
+					JOptionPane.showMessageDialog(				
+	                        MedicalBrowser.this,
+	                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
+	                        MessageBundle.getMessage("angal.hospital"),
+	                        JOptionPane.PLAIN_MESSAGE);				
+					return;									
+				}else {		
+					selectedrow = table.getSelectedRow();
+					medical = (Medical)(((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
+					MedicalEdit editrecord = new MedicalEdit(medical,false,me);
+					editrecord.setVisible(true);
+					medicalUpdated();
+				}	 				
+			}
+		});
+		return buttonEdit;
+	}
+
+	private JButton getJButtonNew() {
+		JButton buttonNew = new JButton(MessageBundle.getMessage("angal.common.new"));
+		buttonNew.setMnemonic(KeyEvent.VK_N);
+		buttonNew.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				medical=new Medical(null,new MedicalType("",""),"","",0,0,0,0,0,0);;	//medical will reference the new record
+				MedicalEdit newrecord = new MedicalEdit(medical,true,me);
+				newrecord.setVisible(true);
+				if(medical.getCode()!=null)medicalInserted();
+			}
+		});
+		return buttonNew;
+	}
+
+	private JComboBox getComboBoxMedicalType() {
+		MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
+		pbox = new JComboBox();
+		pbox.addItem(MessageBundle.getMessage("angal.medicals.allm"));
+		ArrayList<MedicalType> type;
+		try {
+			type = manager.getMedicalType();
+		
+			//for efficiency in the sequent for
+			for (MedicalType elem : type) {
+				pbox.addItem(elem);
+			}
+		} catch (OHServiceException e1) {
+			type = null;
+			OHServiceExceptionUtil.showMessages(e1);
+		}
+		for (MedicalType elem : type) {
+			pbox.addItem(elem);
+		}
+		pbox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				pSelection=pbox.getSelectedItem().toString();
+				if (pSelection.compareTo(MessageBundle.getMessage("angal.medicals.allm")) == 0)
+					model = new MedicalBrowsingModel();
+				else
+					model = new MedicalBrowsingModel(pSelection);
+				model.fireTableDataChanged();
+				table.updateUI();
+			}
+		});
+		return pbox;
 	}
 
 	protected void launchExpiringReport() {
