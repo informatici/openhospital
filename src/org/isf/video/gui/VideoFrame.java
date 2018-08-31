@@ -119,8 +119,7 @@ public class VideoFrame extends JDialog {
 							{
 								int resIndex = firstVideoDevice.getDefaultResolutionIndex();
 								
-								// nessuna risoluzione di default trovata,
-								// selezioniamo la prima
+								// no default resolution found: select the first one
 								if (resIndex == -1)
 								{
 									System.out.println("No default resolution found.");
@@ -159,7 +158,7 @@ public class VideoFrame extends JDialog {
 		int sheight = (int)ssize.getHeight();
 		int botpanheight = bottomPanel.getHeight();
 		
-		// h schermo - (h pannello inferiore + spazio x pulsanti e label in middlepanel) - spazio extra
+		// screen height - (low panel height + buttons space and label in middlepanel) - extra space
 		int appletHeight = sheight - (botpanheight + 120) - 100;
 		//System.out.println("appletHeight : "+ appletHeight);
 		return appletHeight;
@@ -269,7 +268,7 @@ public class VideoFrame extends JDialog {
 								updateCurrentStreamInfo();
 							}
 							else	{
-								// visualizza messaggio d'errore nel middlepanel
+								// shows error message in middlePanel
 								middlePanel.showBlackPanel(-1, -1, true);
 							}
 							

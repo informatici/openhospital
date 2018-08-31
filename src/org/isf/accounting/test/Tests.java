@@ -81,7 +81,7 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
+    	//jpa.destroy();
     	testBill = null;
     	testBillItems = null;
     	testBillPayments = null;
@@ -230,7 +230,7 @@ public class Tests
 			Bill foundBill = (Bill)jpa.find(Bill.class, id); 
 			ArrayList<Bill> bills = ioOperations.getPendingBills(0);
 			
-			assertEquals(foundBill.getAmount(), bills.get(0).getAmount(), 0.1);
+			assertEquals(true, bills.contains(foundBill));
 		} 
 		catch (Exception e) 
 		{

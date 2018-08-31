@@ -24,16 +24,20 @@ public class PriceOthersIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<PricesOthers> pricesOthers = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM PRICESOTHERS ORDER BY OTH_DESC";
-		jpa.createQuery(query, PricesOthers.class, false);
-		List<PricesOthers> pricesOtherstList = (List<PricesOthers>)jpa.getList();
-		pricesOthers = new ArrayList<PricesOthers>(pricesOtherstList);			
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM PRICESOTHERS ORDER BY OTH_DESC";
+			jpa.createQuery(query, PricesOthers.class, false);
+			List<PricesOthers> pricesOtherstList = (List<PricesOthers>)jpa.getList();
+			pricesOthers = new ArrayList<PricesOthers>(pricesOtherstList);			
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return pricesOthers;
 	}
 
@@ -50,11 +54,15 @@ public class PriceOthersIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(other);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(other);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;
 	}
 
@@ -71,12 +79,16 @@ public class PriceOthersIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();
-		PricesOthers objToRemove = (PricesOthers) jpa.find(PricesOthers.class, other.getId());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();
+			PricesOthers objToRemove = (PricesOthers) jpa.find(PricesOthers.class, other.getId());
+			jpa.remove(objToRemove);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;
 	}
 
@@ -93,11 +105,15 @@ public class PriceOthersIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.merge(other);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.merge(other);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;	
 	}
 }

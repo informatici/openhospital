@@ -20,6 +20,8 @@ import javax.swing.table.DefaultTableModel;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.UserGroup;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 
@@ -165,12 +167,16 @@ public class UserGroupBrowsing extends ModalJFrame implements GroupEdit.GroupLis
                         MessageBundle.getMessage("angal.hospital"),
                         JOptionPane.YES_NO_OPTION);
 
-				if ((n == JOptionPane.YES_OPTION) && (manager.deleteGroup(m))){
-					pGroup.remove(table.getSelectedRow());
-					model.fireTableDataChanged();
-					table.updateUI();
-					}
-				}
+                    try {
+                        if ((n == JOptionPane.YES_OPTION) && (manager.deleteGroup(m))){
+                            pGroup.remove(table.getSelectedRow());
+                            model.fireTableDataChanged();
+                            table.updateUI();
+                            }
+                    } catch (OHServiceException e) {
+                        OHServiceExceptionUtil.showMessages(e);
+                    }
+                }
 			}
 		});
 		buttonPanel.add(buttonDelete);
@@ -200,8 +206,12 @@ public class UserGroupBrowsing extends ModalJFrame implements GroupEdit.GroupLis
 
 		public UserGroupBrowserModel() {
 			UserBrowsingManager manager = new UserBrowsingManager();
-			pGroup = manager.getUserGroup();
-		}
+            try {
+                pGroup = manager.getUserGroup();
+            } catch (OHServiceException e) {
+                OHServiceExceptionUtil.showMessages(e);
+            }
+        }
 		public int getRowCount() {
 			if (pGroup == null)
 				return 0;

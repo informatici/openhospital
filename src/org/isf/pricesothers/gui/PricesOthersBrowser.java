@@ -20,6 +20,8 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.pricesothers.gui.PricesOthersEdit.PricesOthersListener;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 public class PricesOthersBrowser extends ModalJFrame implements PricesOthersListener {
@@ -41,8 +43,8 @@ public class PricesOthersBrowser extends ModalJFrame implements PricesOthersList
 	private JButton jButtonDelete;
 	private JButton jButtonClose;
 	private String[] columnNames = {
-			MessageBundle.getMessage("angal.pricesothers.code"), 
-			MessageBundle.getMessage("angal.pricesothers.description"), 
+			MessageBundle.getMessage("angal.common.code"), 
+			MessageBundle.getMessage("angal.common.description"), 
 			MessageBundle.getMessage("angal.pricesothers.opdm"), 
 			MessageBundle.getMessage("angal.pricesothers.ipdm"), 
 			MessageBundle.getMessage("angal.pricesothers.daily"),
@@ -103,7 +105,10 @@ public class PricesOthersBrowser extends ModalJFrame implements PricesOthersList
 					}else {		
 						int selectedRow = jTablePricesOthers.getSelectedRow();
 						pOthers = (PricesOthers)jTablePricesOthers.getModel().getValueAt(selectedRow, -1);
-						
+						if (pOthers.getId() == 1) {
+							JOptionPane.showMessageDialog(null,	MessageBundle.getMessage("angal.sql.operationnotpermittedprotectedelement"));
+							return;
+						}
 						int ok = JOptionPane.showConfirmDialog(
 								null,
 								MessageBundle.getMessage("angal.pricesothers.doyoureallywanttodeletethisitem"), //$NON-NLS-1$
@@ -114,7 +119,11 @@ public class PricesOthersBrowser extends ModalJFrame implements PricesOthersList
 						if (ok == JOptionPane.OK_OPTION) {
 							
 							boolean result = false;
-							result = pOthersManager.deleteOther(pOthers);
+							try {
+								result = pOthersManager.deleteOther(pOthers);
+							}catch(OHServiceException e){
+								OHServiceExceptionUtil.showMessages(e);
+							}
 							
 							if (result) {
 								
@@ -227,7 +236,11 @@ class PricesOthersBrowserModel extends DefaultTableModel {
 
 		public PricesOthersBrowserModel() {
 			pOthersManager = new PricesOthersManager();
-			pOthersArray = pOthersManager.getOthers();
+			try {
+				pOthersArray = pOthersManager.getOthers();
+			}catch(OHServiceException e){
+				OHServiceExceptionUtil.showMessages(e);
+			}
 		}
 		public int getRowCount() {
 			if (pOthersArray == null)

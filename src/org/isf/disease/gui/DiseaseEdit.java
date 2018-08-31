@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.EventListenerList;
 
 import org.isf.disease.manager.DiseaseBrowserManager;
@@ -33,7 +34,13 @@ import org.isf.disease.model.Disease;
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
 import org.isf.distype.model.DiseaseType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
+import java.awt.GridLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 public class DiseaseEdit extends JDialog {
 	
@@ -84,11 +91,6 @@ public class DiseaseEdit extends JDialog {
 	
 	private static final String VERSION=MessageBundle.getMessage("angal.versione"); 
 
-	private int pfrmBase = 15;
-	private int pfrmWidth = 5;
-	private int pfrmHeight = 5;
-	private int pfrmBordX;
-	private int pfrmBordY;
 	private JPanel jContentPane = null;
 	private JPanel dataPanel = null;
 	private JPanel buttonPanel = null;
@@ -127,11 +129,6 @@ public class DiseaseEdit extends JDialog {
 	 * @return void
 	 */
 	private void initialize() {
-//		Toolkit kit = Toolkit.getDefaultToolkit();
-//		Dimension screensize = kit.getScreenSize();
-//		pfrmBordX = (screensize.width - (screensize.width / pfrmBase * pfrmWidth)) / 2;
-//		pfrmBordY = (screensize.height - (screensize.height / pfrmBase * pfrmHeight)) / 2;
-//		this.setBounds(pfrmBordX,pfrmBordY,screensize.width / pfrmBase * pfrmWidth,screensize.height / pfrmBase * pfrmHeight);
 		this.setContentPane(getJContentPane());
 		if (insert) {
 			this.setTitle(MessageBundle.getMessage("angal.disease.newdisease")+VERSION+")");
@@ -165,21 +162,65 @@ public class DiseaseEdit extends JDialog {
 	 */
 	private JPanel getDataPanel() {
 		if (dataPanel == null) {
+			dataPanel = new JPanel();
+			GridBagLayout gbl_dataPanel = new GridBagLayout();
+			gbl_dataPanel.columnWidths = new int[]{0, 0, 0};
+			gbl_dataPanel.rowHeights = new int[]{31, 31, 31, 31, 0};
+			gbl_dataPanel.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+			gbl_dataPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+			dataPanel.setLayout(gbl_dataPanel);
 			typeLabel = new JLabel();
 			typeLabel.setText(MessageBundle.getMessage("angal.disease.type"));  // Generated
-			descLabel = new JLabel();
-			descLabel.setText(MessageBundle.getMessage("angal.disease.description"));  // Generated
+			GridBagConstraints gbc_typeLabel = new GridBagConstraints();
+			gbc_typeLabel.fill = GridBagConstraints.BOTH;
+			gbc_typeLabel.insets = new Insets(5, 5, 5, 5);
+			gbc_typeLabel.gridx = 0;
+			gbc_typeLabel.gridy = 0;
+			dataPanel.add(typeLabel, gbc_typeLabel);  // Generated
+			GridBagConstraints gbc_typeComboBox = new GridBagConstraints();
+			gbc_typeComboBox.fill = GridBagConstraints.BOTH;
+			gbc_typeComboBox.insets = new Insets(5, 5, 5, 5);
+			gbc_typeComboBox.gridx = 1;
+			gbc_typeComboBox.gridy = 0;
+			dataPanel.add(getTypeComboBox(), gbc_typeComboBox);  // Generated
 			codeLabel = new JLabel();
-			codeLabel.setText(MessageBundle.getMessage("angal.disease.code"));
-			dataPanel = new JPanel();
-			dataPanel.setLayout(new BoxLayout(getDataPanel(), BoxLayout.Y_AXIS));  // Generated
-			dataPanel.add(typeLabel, null);  // Generated
-			dataPanel.add(getTypeComboBox(), null);  // Generated
-			dataPanel.add(codeLabel, null);  // Generated
-			dataPanel.add(getCodeTextField(), null);  // Generated
-			dataPanel.add(descLabel, null);  // Generated
-			dataPanel.add(getDescriptionTextField(), null);  // Generated
-			dataPanel.add(getJFlagsPanel(), null);
+			codeLabel.setText(MessageBundle.getMessage("angal.common.code"));
+			GridBagConstraints gbc_codeLabel = new GridBagConstraints();
+			gbc_codeLabel.insets = new Insets(5, 5, 5, 5);
+			gbc_codeLabel.fill = GridBagConstraints.BOTH;
+			gbc_codeLabel.gridx = 0;
+			gbc_codeLabel.gridy = 1;
+			dataPanel.add(codeLabel, gbc_codeLabel);  // Generated
+			descLabel = new JLabel();
+			descLabel.setText(MessageBundle.getMessage("angal.common.description"));  // Generated
+			GridBagConstraints gbc_descLabel = new GridBagConstraints();
+			gbc_descLabel.fill = GridBagConstraints.BOTH;
+			gbc_descLabel.insets = new Insets(5, 5, 5, 5);
+			gbc_descLabel.gridx = 0;
+			gbc_descLabel.gridy = 2;
+			dataPanel.add(descLabel, gbc_descLabel);  // Generated
+			GridBagConstraints gbc_descTextField = new GridBagConstraints();
+			gbc_descTextField.fill = GridBagConstraints.HORIZONTAL;
+			gbc_descTextField.insets = new Insets(5, 5, 5, 5);
+			gbc_descTextField.gridy = 2;
+			gbc_descTextField.gridx = 1;
+			gbc_descLabel.fill = GridBagConstraints.BOTH;
+			gbc_descLabel.insets = new Insets(0, 0, 5, 5);
+			gbc_descLabel.gridx = 1;
+			gbc_descLabel.gridy = 3;
+			dataPanel.add(getDescriptionTextField(), gbc_descTextField);  // Generated
+			GridBagConstraints gbc_codeTextField = new GridBagConstraints();
+			gbc_codeTextField.fill = GridBagConstraints.BOTH;
+			gbc_codeTextField.insets = new Insets(5, 5, 5, 5);
+			gbc_codeTextField.gridx = 1;
+			gbc_codeTextField.gridy = 1;
+			dataPanel.add(getCodeTextField(), gbc_codeTextField);  // Generated
+			GridBagConstraints gbc_jNewPatientPanel = new GridBagConstraints();
+			gbc_jNewPatientPanel.fill = GridBagConstraints.BOTH;
+			gbc_jNewPatientPanel.gridx = 1;
+			gbc_jNewPatientPanel.gridy = 3;
+			dataPanel.add(getJFlagsPanel(), gbc_jNewPatientPanel);
+			
 		}
 		return dataPanel;
 	}
@@ -250,15 +291,23 @@ public class DiseaseEdit extends JDialog {
 							
 							return;	
 						}
-						
-						if (manager.codeControl(key)){
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.disease.codealreadyinuse"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							
-							return;	
+						try{
+							if (manager.codeControl(key)){
+								JOptionPane.showMessageDialog(				
+										null,
+										MessageBundle.getMessage("angal.common.codealreadyinuse"),
+										MessageBundle.getMessage("angal.hospital"),
+										JOptionPane.PLAIN_MESSAGE);
+
+								return;	
+							}
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+							return;
 						}
 					}
 					if (diseaseDesc.equals("")){
@@ -272,15 +321,24 @@ public class DiseaseEdit extends JDialog {
 
 					//if inserting or description has changed on updating
 					if (lastDescription == null || !lastDescription.equals(diseaseDesc)) {
-						if (manager.descriptionControl(descriptionTextField.getText(),
-								((DiseaseType)typeComboBox.getSelectedItem()).getCode())){
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.disease.diseasealreadypresent"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							
-							return;	
+						try{
+							if (manager.descriptionControl(descriptionTextField.getText(),
+									((DiseaseType)typeComboBox.getSelectedItem()).getCode())){
+								JOptionPane.showMessageDialog(				
+										null,
+										MessageBundle.getMessage("angal.disease.diseasealreadypresent"),
+										MessageBundle.getMessage("angal.hospital"),
+										JOptionPane.PLAIN_MESSAGE);
+
+								return;	
+							}
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+							return;
 						}
 					}
 					
@@ -292,15 +350,32 @@ public class DiseaseEdit extends JDialog {
 					disease.setIpdOutInclude(includeIpdOutCheckBox.isSelected());
 					
 					boolean result = false;
-					if (insert) {      // inserting
-						result = manager.newDisease(disease);
-						if (result) {
-							fireDiseaseInserted();
+					try{
+						if (insert) { // inserting
+							result = manager.newDisease(disease);
+							if (result) {
+								fireDiseaseInserted();
+							}
+						} else { // updating
+							boolean modified = manager.hasDiseaseModified(disease);
+							boolean overWrite = false;
+							if (modified) {
+								String message = MessageBundle.getMessage("angal.disease.thedatahasbeenupdatedbysomeoneelse") +	MessageBundle.getMessage("angal.disease.doyouwanttooverwritethedata");
+								int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.disease.select"), JOptionPane.YES_NO_OPTION);
+								overWrite = response == JOptionPane.OK_OPTION;
+							}
+							if (!modified || overWrite){
+								result = manager.updateDisease(disease);
+							}
+							if (result) {
+								fireDiseaseUpdated();
+							}
 						}
-					} else {                          // updating
-						result = manager.updateDisease(disease);
-						if (result) {
-							fireDiseaseUpdated();
+					}catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
 						}
 					}
 					if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.disease.thedatacouldnotbesaved"));
@@ -377,25 +452,34 @@ public class DiseaseEdit extends JDialog {
 	private JComboBox getTypeComboBox() {
 		if (typeComboBox == null) {
 			typeComboBox = new JComboBox();
-			if (insert) {
-				DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
-				ArrayList<DiseaseType> types = manager.getDiseaseType();
-				for (DiseaseType elem : types) {
-					typeComboBox.addItem(elem);
+			typeComboBox.setBorder(new EmptyBorder(5, 5, 5, 5));
+			try{
+				if (insert) {
+					DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
+					ArrayList<DiseaseType> types = manager.getDiseaseType();
+					for (DiseaseType elem : types) {
+						typeComboBox.addItem(elem);
+					}
+				} else {
+					DiseaseType selectedDiseaseType=null;
+					DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
+					ArrayList<DiseaseType> types = manager.getDiseaseType();
+					for (DiseaseType elem : types) {
+						typeComboBox.addItem(elem);
+						if (disease.getType().equals(elem)) {
+							selectedDiseaseType = elem;
+						}
+					}
+					if (selectedDiseaseType!=null)
+						typeComboBox.setSelectedItem(selectedDiseaseType);
+					//typeComboBox.setEnabled(false);
 				}
-			} else {
-				DiseaseType selectedDiseaseType=null;
-				DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
-				ArrayList<DiseaseType> types = manager.getDiseaseType();
-				for (DiseaseType elem : types) {
-					typeComboBox.addItem(elem);
-					if (disease.getType().equals(elem)) {
-						selectedDiseaseType = elem;
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
 					}
 				}
-				if (selectedDiseaseType!=null)
-					typeComboBox.setSelectedItem(selectedDiseaseType);
-				//typeComboBox.setEnabled(false);
 			}
 			
 		}

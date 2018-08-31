@@ -14,6 +14,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
+
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.*;
 
 
@@ -212,15 +215,25 @@ public class MedicalTypeBrowserEdit extends JDialog{
 						return;	
 					}
 					if(insert){
-					if (manager.codeControl(key)){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.medtype.codealreadyinuse"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						codeTextField.setText("");
-						return;	
-					}};
+						boolean inserted;
+						
+						try {
+							inserted = manager.codeControl(key);
+						} catch (OHServiceException e1) {
+							inserted = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
+						
+						if (true == inserted){
+							JOptionPane.showMessageDialog(				
+									null,
+									MessageBundle.getMessage("angal.common.codealreadyinuse"),
+									MessageBundle.getMessage("angal.hospital"),
+									JOptionPane.PLAIN_MESSAGE);
+							codeTextField.setText("");
+							return;	
+						}
+					};
 					if (descriptionTextField.getText().equals("")){
 						JOptionPane.showMessageDialog(				
 		                        null,
@@ -234,9 +247,14 @@ public class MedicalTypeBrowserEdit extends JDialog{
 					}
 					medicalType.setDescription(descriptionTextField.getText());
 					medicalType.setCode(codeTextField.getText());
-					boolean result = false;
+					boolean result;
 					if (insert) {      // inserting
-						result = manager.newMedicalType(medicalType);
+						try {
+							result = manager.newMedicalType(medicalType);
+						} catch (OHServiceException e1) {
+							result = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
 						if (result) {
                            fireMedicalInserted();
                         }
@@ -247,7 +265,12 @@ public class MedicalTypeBrowserEdit extends JDialog{
                     	if (descriptionTextField.getText().equals(lastdescription)){
     						dispose();	
     					}else{
-    						result = manager.updateMedicalType(medicalType);
+    						try {
+								result = manager.updateMedicalType(medicalType);
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						if (result) {
 							fireMedicalUpdated();
                         }
@@ -347,7 +370,7 @@ public class MedicalTypeBrowserEdit extends JDialog{
 	private JPanel getJDescriptionLabelPanel() {
 		if (jDescriptionLabelPanel == null) {
 			jDescripitonLabel = new JLabel();
-			jDescripitonLabel.setText(MessageBundle.getMessage("angal.medtype.description"));
+			jDescripitonLabel.setText(MessageBundle.getMessage("angal.common.description"));
 			jDescriptionLabelPanel = new JPanel();
 			jDescriptionLabelPanel.add(jDescripitonLabel, null);
 		}

@@ -14,6 +14,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
+
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.*;
 
 
@@ -210,15 +213,25 @@ public class OperationTypeEdit extends JDialog{
 						return;	
 					}
 					if(insert){
-					if (manager.codeControl(key)){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.opetype.codealreadyinuse"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						codeTextField.setText("");
-						return;	
-					}};
+						boolean inserted;
+						
+						try {
+							inserted = manager.codeControl(key);
+						} catch (OHServiceException e1) {
+							inserted = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
+						
+						if (true == inserted){
+							JOptionPane.showMessageDialog(				
+									null,
+									MessageBundle.getMessage("angal.common.codealreadyinuse"),
+									MessageBundle.getMessage("angal.hospital"),
+									JOptionPane.PLAIN_MESSAGE);
+							codeTextField.setText("");
+							return;	
+						}
+					}
 					if (descriptionTextField.getText().equals("")){
 						JOptionPane.showMessageDialog(				
 		                        null,
@@ -234,7 +247,12 @@ public class OperationTypeEdit extends JDialog{
 					operationType.setCode(codeTextField.getText());
 					boolean result = false;
 					if (insert) {      // inserting
-						result = manager.newOperationType(operationType);
+						try {
+							result = manager.newOperationType(operationType);
+						} catch (OHServiceException e1) {
+							result = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
 						if (result) {
                            fireOperationInserted();
                         }
@@ -245,7 +263,12 @@ public class OperationTypeEdit extends JDialog{
                     	if (descriptionTextField.getText().equals(lastdescription)){
     						dispose();	
     					}else{
-    						result = manager.updateOperationType(operationType);
+    						try {
+								result = manager.updateOperationType(operationType);
+							} catch (OHServiceException e1) {
+								OHServiceExceptionUtil.showMessages(e1);
+								result = false;
+							}
 						if (result) {
 							fireOperationUpdated();
                         }
@@ -345,7 +368,7 @@ public class OperationTypeEdit extends JDialog{
 	private JPanel getJDescriptionLabelPanel() {
 		if (jDescriptionLabelPanel == null) {
 			jDescripitonLabel = new JLabel();
-			jDescripitonLabel.setText(MessageBundle.getMessage("angal.opetype.description"));
+			jDescripitonLabel.setText(MessageBundle.getMessage("angal.common.description"));
 			jDescriptionLabelPanel = new JPanel();
 			jDescriptionLabelPanel.add(jDescripitonLabel, null);
 		}

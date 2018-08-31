@@ -14,7 +14,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -41,13 +40,12 @@ import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
 import org.isf.disease.model.Disease;
 import org.isf.examination.gui.PatientExaminationEdit;
+import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.model.GenderPatientExamination;
 import org.isf.examination.model.PatientExamination;
-import org.isf.examination.service.ExaminationOperations;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
-import org.isf.menu.gui.Menu;
 import org.isf.opd.gui.OpdEditExtended;
 import org.isf.opd.model.Opd;
 import org.isf.patient.gui.PatientInsert;
@@ -56,7 +54,8 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.therapy.gui.TherapyEdit;
 import org.isf.utils.db.NormalizeString;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.time.TimeTools;
@@ -121,7 +120,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 	private String rowCounterText = MessageBundle.getMessage("angal.admission.count");
 	private ArrayList<AdmittedPatient> pPatient = new ArrayList<AdmittedPatient>();
 	private String informations = MessageBundle.getMessage("angal.admission.city") + " / " + MessageBundle.getMessage("angal.admission.addressm") + " / " + MessageBundle.getMessage("angal.admission.telephone") + " / " + MessageBundle.getMessage("angal.patient.note");
-	private String[] pColums = { MessageBundle.getMessage("angal.admission.code"), MessageBundle.getMessage("angal.admission.name"), MessageBundle.getMessage("angal.admission.age"), MessageBundle.getMessage("angal.admission.sex"), informations, MessageBundle.getMessage("angal.admission.ward") };
+	private String[] pColums = { MessageBundle.getMessage("angal.common.code"), MessageBundle.getMessage("angal.admission.name"), MessageBundle.getMessage("angal.admission.age"), MessageBundle.getMessage("angal.admission.sex"), informations, MessageBundle.getMessage("angal.admission.ward") };
 	private int[] pColumwidth = { 100, 200, 80, 50, 150, 100 };
 	private boolean[] pColumResizable = {false, false, false, false, true, false};
 	private AdmittedPatient patient;
@@ -303,7 +302,15 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 		if (!GeneralData.ENHANCEDSEARCH) {
 			//Load the whole list of patients
 		    BusyState.setBusyState(this, true);
-			pPatient = manager.getAdmittedPatients(null);
+			try {
+				pPatient = manager.getAdmittedPatients(null);
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 		    BusyState.setBusyState(this, false);
 		}
 		
@@ -365,7 +372,17 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 
 		if (wardList == null) {
 			WardBrowserManager wbm = new WardBrowserManager();
-			ArrayList<Ward> wardWithBeds = wbm.getWards();
+			ArrayList<Ward> wardWithBeds;
+			try {
+				wardWithBeds = wbm.getWards();
+			}catch(OHServiceException e){
+				wardWithBeds = new ArrayList<Ward>();
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 			
 			wardList = new ArrayList<Ward>();
 			for (Ward elem : wardWithBeds) {
@@ -514,19 +531,22 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 					Patient pat = patient.getPatient();
 					
 					PatientExamination patex;
-					ExaminationOperations examOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
+					ExaminationBrowserManager examManager = new ExaminationBrowserManager();
 					
 					PatientExamination lastPatex = null;
 					try {
-						lastPatex = examOperations.getLastByPatID(pat.getCode());
-					} catch (OHException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						lastPatex = examManager.getLastByPatID(pat.getCode());
+					}catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
 					}
 					if (lastPatex != null) {
-						patex = examOperations.getFromLastPatientExamination(lastPatex);
+						patex = examManager.getFromLastPatientExamination(lastPatex);
 					} else {
-						patex = examOperations.getDefaultPatientExamination(pat);
+						patex = examManager.getDefaultPatientExamination(pat);
 					}
 					
 					GenderPatientExamination gpatex = new GenderPatientExamination(patex, pat.getSex() == 'M');
@@ -613,13 +633,41 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				if (n == JOptionPane.YES_OPTION){
 					PatientBrowserManager manager = new PatientBrowserManager();
 					BusyState.setBusyState(AdmittedPatientBrowser.this, true);
-					boolean result = manager.deletePatient(pat);
+					boolean result = false;
+					try {
+						result = manager.deletePatient(pat);
+					}catch(OHServiceException e){
+						if(e.getMessages() != null){
+							for(OHExceptionMessage msg : e.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
+					}
 					BusyState.setBusyState(AdmittedPatientBrowser.this, false);
 					if (result){
 						AdmissionBrowserManager abm = new AdmissionBrowserManager();
-						ArrayList<Admission> patientAdmissions = abm.getAdmissions(pat);
+						ArrayList<Admission> patientAdmissions;
+						try {
+							patientAdmissions = abm.getAdmissions(pat);
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+							patientAdmissions = new ArrayList<Admission>();
+						}
+
 						for (Admission elem : patientAdmissions){
-							abm.setDeleted(elem.getId());
+							try {
+								abm.setDeleted(elem.getId());
+							}catch(OHServiceException e){
+								if(e.getMessages() != null){
+									for(OHExceptionMessage msg : e.getMessages()){
+										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+									}
+								}
+							}
 						}
 						fireMyDeletedPatient(pat);
 					}
@@ -693,7 +741,17 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				if (patient  != null) {
 					Patient pat = patient.getPatient();
 					BillBrowserManager billManager = new BillBrowserManager();
-					ArrayList<Bill> patientPendingBills = billManager.getPendingBills(pat.getCode());
+					ArrayList<Bill> patientPendingBills;
+					try {
+						patientPendingBills = billManager.getPendingBills(pat.getCode());
+					}catch(OHServiceException e){
+						patientPendingBills = new ArrayList<Bill>();
+						if(e.getMessages() != null){
+							for(OHExceptionMessage msg : e.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
+					}
 					if (patientPendingBills.isEmpty()) {
 						new PatientBillEdit(AdmittedPatientBrowser.this, pat);
 						//dispose();
@@ -815,9 +873,9 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 
 				//ASK CONFIRMATION
 				int ok = JOptionPane.showConfirmDialog(null, 
-						MessageBundle.getMessage("angal.admission.withthisoperationthepatient")+"\n"+MessageBundle.getMessage("angal.admission.code")+": "+
+						MessageBundle.getMessage("angal.admission.withthisoperationthepatient")+"\n"+MessageBundle.getMessage("angal.code.code")+": "+
 						patient2.getCode() + " " + patient2.getName() + " " + patient2.getAge() + " " + patient2.getAddress() +"\n"+
-						MessageBundle.getMessage("angal.admission.willbedeletedandhisherhistorytransferedtothepatient")+"\n"+MessageBundle.getMessage("angal.admission.code")+": "+
+						MessageBundle.getMessage("angal.admission.willbedeletedandhisherhistorytransferedtothepatient")+"\n"+MessageBundle.getMessage("angal.code.code")+": "+
 						mergedPatient.getCode() + " " + mergedPatient.getName() + " " + mergedPatient.getAge() + " " + mergedPatient.getAddress() +"\n"+
 						MessageBundle.getMessage("angal.admission.continue"),
 						MessageBundle.getMessage("angal.admission.merge"), 
@@ -841,67 +899,18 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 						mergedPatient.setSecondName(patient2.getSecondName());
 					}
 				}
-				if (mergedPatient.getBirthDate() != null &&
-						mergedPatient.getAgetype().compareTo("") == 0) {
-					//mergedPatient only Age
-					Date bdate2 = patient2.getBirthDate();
-					int age2 = patient2.getAge();
-					String ageType2 = patient2.getAgetype();
-					if (bdate2 != null) {
-						//patient2 has BirthDate
-						mergedPatient.setAge(age2);
-						mergedPatient.setBirthDate(bdate2);
-					}
-					if (bdate2 != null && ageType2.compareTo("") != 0) {
-						//patient2 has AgeType 
-						mergedPatient.setAge(age2);
-						mergedPatient.setAgetype(ageType2);
-					}
-				}
-				
-				if (mergedPatient.getAddress().compareTo("") == 0)
-					mergedPatient.setAddress(patient2.getAddress());
-				
-				if (mergedPatient.getCity().compareTo("") == 0)
-					mergedPatient.setCity(patient2.getCity());
-				
-				if (mergedPatient.getNextKin().compareTo("") == 0)
-					mergedPatient.setNextKin(patient2.getNextKin());
-				
-				if (mergedPatient.getTelephone().compareTo("") == 0)
-					mergedPatient.setTelephone(patient2.getTelephone());
-				
-				if (mergedPatient.getMother_name().compareTo("") == 0)
-					mergedPatient.setMother_name(patient2.getMother_name());
-				
-				if (mergedPatient.getMother() == 'U')
-					mergedPatient.setMother(patient2.getMother());
-				
-				if (mergedPatient.getFather_name().compareTo("") == 0)
-					mergedPatient.setFather_name(patient2.getFather_name());
-				
-				if (mergedPatient.getFather() == 'U')
-					mergedPatient.setFather(patient2.getFather());
-				
-				if (mergedPatient.getBloodType().compareTo("") == 0)
-					mergedPatient.setBloodType(patient2.getBloodType());
-				
-				if (mergedPatient.getHasInsurance() == 'U')
-					mergedPatient.setHasInsurance(patient2.getHasInsurance());
-				
-				if (mergedPatient.getParentTogether() == 'U')
-					mergedPatient.setParentTogether(patient2.getParentTogether());
-				
-				if (mergedPatient.getNote().compareTo("") == 0)
-					mergedPatient.setNote(patient2.getNote());
-				else {
-					String note = mergedPatient.getNote();
-					mergedPatient.setNote(patient2.getNote()+"\n\n"+note);
-				}
 
 				PatientBrowserManager patManager = new PatientBrowserManager();
-				if (patManager.mergePatientHistory(mergedPatient, patient2)) {
-					fireMyDeletedPatient(patient2);
+				try{
+					if(patManager.mergePatient(mergedPatient, patient2)){
+						fireMyDeletedPatient(patient2);
+					}
+				}catch(OHServiceException e){
+					if(e.getMessages() != null){
+						for(OHExceptionMessage msg : e.getMessages()){
+							JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+						}
+					}
 				}
 			}
 		});
@@ -938,7 +947,15 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 			if (ok != JOptionPane.OK_OPTION) return;
 		}
 		BusyState.setBusyState(this, true);
-		pPatient = manager.getAdmittedPatients(key);
+		try {
+			pPatient = manager.getAdmittedPatients(key);
+		}catch(OHServiceException e){
+			if(e.getMessages() != null){
+				for(OHExceptionMessage msg : e.getMessages()){
+					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+				}
+			}
+		}
 		BusyState.setBusyState(this, false);
 		filterPatient(null);
 	}

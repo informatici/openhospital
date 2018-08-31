@@ -21,6 +21,8 @@ import org.isf.disctype.gui.DischargeTypeBrowserEdit.DischargeTypeListener;
 import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.model.DischargeType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -37,7 +39,9 @@ public class DischargeTypeBrowser extends ModalJFrame implements DischargeTypeLi
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<DischargeType> pDischargeType;
-	private String[] pColums = { MessageBundle.getMessage("angal.disctype.codem"), MessageBundle.getMessage("angal.disctype.descriptionm")};
+	private String[] pColums = { 
+			MessageBundle.getMessage("angal.codem.codem"), 
+			MessageBundle.getMessage("angal.common.descriptionm")};
 	private int[] pColumwidth = {80, 200, 80};
 	private JPanel jContainPanel = null;
 	private JPanel jButtonPanel = null;
@@ -204,11 +208,22 @@ public class DischargeTypeBrowser extends ModalJFrame implements DischargeTypeLi
 								MessageBundle.getMessage("angal.disctype.deleterow") + " \" "+dis.getDescription() + "\" ?",
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
 						
-						if ((n == JOptionPane.YES_OPTION)
-								&& (manager.deleteDischargeType(dis))) {
-							pDischargeType.remove(jTable.getSelectedRow());
-							model.fireTableDataChanged();
-							jTable.updateUI();
+						if ((n == JOptionPane.YES_OPTION)) {
+							
+							boolean deleted;
+							
+							try {
+								deleted = manager.deleteDischargeType(dis);
+							} catch (OHServiceException e) {
+								deleted = false;
+								OHServiceExceptionUtil.showMessages(e);
+							}
+							
+							if (true == deleted) {
+								pDischargeType.remove(jTable.getSelectedRow());
+								model.fireTableDataChanged();
+								jTable.updateUI();
+							}
 						}
 						}
 					}
@@ -238,7 +253,12 @@ class DischargeTypeBrowserModel extends DefaultTableModel {
 
 		public DischargeTypeBrowserModel() {
 			DischargeTypeBrowserManager manager = new DischargeTypeBrowserManager();
-			pDischargeType = manager.getDischargeType();
+			try {
+				pDischargeType = manager.getDischargeType();
+			} catch (OHServiceException e) {
+				pDischargeType = null;
+				OHServiceExceptionUtil.showMessages(e);
+			}
 		}
 		
 		public int getRowCount() {

@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import javax.swing.JOptionPane;
-
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
 import org.isf.menu.gui.Menu;
@@ -16,10 +14,16 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.sms.model.Sms;
 import org.isf.sms.service.SmsOperations;
+import org.isf.therapy.manager.TherapyManager;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.visits.model.Visit;
 import org.isf.visits.service.VisitsIoOperations;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Mwithi
@@ -27,20 +31,32 @@ import org.joda.time.DateTime;
  */
 public class VisitManager {
 	
-	private VisitsIoOperations ioOperations = Menu.getApplicationContext().getBean(VisitsIoOperations.class);
+	private final Logger logger = LoggerFactory.getLogger(TherapyManager.class);
 	
+	private VisitsIoOperations ioOperations = Menu.getApplicationContext().getBean(VisitsIoOperations.class);
+	private SmsOperations smsOp = Menu.getApplicationContext().getBean(SmsOperations.class);
 	/**
 	 * returns the list of all {@link Visit}s related to a patID
 	 * 
 	 * @param patID - the {@link Patient} ID. If <code>0</code> return the list of all {@link Visit}s
 	 * @return the list of {@link Visit}s
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Visit> getVisits(int patID) {
+	public ArrayList<Visit> getVisits(int patID) throws OHServiceException {
 		try {
 			return ioOperations.getVisits(patID);
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -49,13 +65,23 @@ public class VisitManager {
 	 * 
 	 * @param visit - the {@link Visit}
 	 * @return the visitID
+	 * @throws OHServiceException 
 	 */
-	public int newVisit(Visit visit) {
+	public int newVisit(Visit visit) throws OHServiceException {
 		try {
 			return ioOperations.newVisit(visit);
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return 0;
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -65,12 +91,12 @@ public class VisitManager {
 	 * @param patient - the {@link Patient} ID
 	 * @param visits - the list of {@link Visit}s related to patID. 
 	 * @return <code>true</code> if the list has been replaced, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 * @throws OHException 
 	 */
-	public boolean newVisits(ArrayList<Visit> visits) {
+	public boolean newVisits(ArrayList<Visit> visits) throws OHServiceException {
 		if (!visits.isEmpty()) {
 			DateTime now = new DateTime();
-			SmsOperations smsOp = new SmsOperations();
 			PatientBrowserManager patMan = new PatientBrowserManager();
 			try {
 				int patID = visits.get(0).getPatient().getCode();
@@ -102,8 +128,17 @@ public class VisitManager {
 					}
 				}
 			} catch (OHException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage());
-				return false;
+				/*Already cached exception with OH specific error message - 
+				 * create ready to return OHServiceException and keep existing error message
+				 */
+				logger.error("", e);
+				throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+						e.getMessage(), OHSeverityLevel.ERROR));
+			}catch(Exception e){
+				//Any exception
+				logger.error("", e);
+				throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+						MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 			}
 		}
 		return true;
@@ -114,14 +149,26 @@ public class VisitManager {
 	 * 
 	 * @param patID - the {@link Patient} ID
 	 * @return <code>true</code> if the list has been deleted, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 * @throws OHException 
 	 */
-	public boolean deleteAllVisits(int patID) {
+	public boolean deleteAllVisits(int patID) throws OHServiceException {
 		try {
-			return ioOperations.deleteAllVisits(patID);
+			ioOperations.deleteAllVisits(patID);
+			smsOp.deleteByModuleModuleID("visit", String.valueOf(patID));
+			return true;
 		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 	

@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.isf.generaldata.MessageBundle;
 import org.isf.patvac.model.PatientVaccine;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
@@ -74,55 +73,58 @@ public class PatVacIoOperations {
 		StringBuilder query = new StringBuilder();
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		String clause = " WHERE";
-		query.append("SELECT *"
-				+ " FROM PATIENTVACCINE JOIN VACCINE ON PAV_VAC_ID_A=VAC_ID_A"
-				+ " JOIN VACCINETYPE ON VAC_VACT_ID_A = VACT_ID_A"
-				+ " JOIN PATIENT ON PAV_PAT_ID = PAT_ID");
-		if (dateFrom != null || dateTo != null) {
-			if (dateFrom != null) {
-				query.append(clause).append(" DATE_FORMAT(PAV_DATE,'%Y-%m-%d') >= ?");
-				params.add(convertToSQLDateLimited(dateFrom));
+		try {
+			jpa.beginTransaction();
+			String clause = " WHERE";
+			query.append("SELECT *"
+					+ " FROM PATIENTVACCINE JOIN VACCINE ON PAV_VAC_ID_A=VAC_ID_A"
+					+ " JOIN VACCINETYPE ON VAC_VACT_ID_A = VACT_ID_A"
+					+ " JOIN PATIENT ON PAV_PAT_ID = PAT_ID");
+			if (dateFrom != null || dateTo != null) {
+				if (dateFrom != null) {
+					query.append(clause).append(" DATE_FORMAT(PAV_DATE,'%Y-%m-%d') >= ?");
+					params.add(convertToSQLDateLimited(dateFrom));
+					clause = " AND";
+				}
+				if (dateTo != null) {
+					params.add(convertToSQLDateLimited(dateTo));
+					query.append(clause).append(" DATE_FORMAT(PAV_DATE,'%Y-%m-%d') <= ?");
+					clause = " AND";
+				}
+			}
+			if (vaccineTypeCode != null) {
+				query.append(clause).append(" VACT_ID_A = ?");
+				params.add(vaccineTypeCode);
 				clause = " AND";
 			}
-			if (dateTo != null) {
-				params.add(convertToSQLDateLimited(dateTo));
-				query.append(clause).append(" DATE_FORMAT(PAV_DATE,'%Y-%m-%d') <= ?");
+			if (vaccineCode != null) {
+				query.append(clause).append(" VAC_ID_A = ?");
+				params.add(vaccineCode);
 				clause = " AND";
 			}
+			if ('A' != sex) {
+				query.append(clause).append(" PAT_SEX = ?");
+				params.add(sex);
+				clause = " AND";
+			}		
+			if (ageFrom != 0 || ageTo != 0) {
+				query.append(clause).append(" PAT_AGE BETWEEN ? AND ?");
+				params.add(ageFrom);
+				params.add(ageTo);
+				clause = " AND";
+			}		
+			query.append(" ORDER BY PAV_DATE DESC, PAV_ID");
+			
+			jpa.createQuery(query.toString(), PatientVaccine.class, false);
+			jpa.setParameters(params, false);
+			List<PatientVaccine> patientVaccineList = (List<PatientVaccine>)jpa.getList();
+			patientVaccines = new ArrayList<PatientVaccine>(patientVaccineList);		
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		if (vaccineTypeCode != null) {
-			query.append(clause).append(" VACT_ID_A = ?");
-			params.add(vaccineTypeCode);
-			clause = " AND";
-		}
-		if (vaccineCode != null) {
-			query.append(clause).append(" VAC_ID_A = ?");
-			params.add(vaccineCode);
-			clause = " AND";
-		}
-		if ('A' != sex) {
-			query.append(clause).append(" PAT_SEX = ?");
-			params.add(sex);
-			clause = " AND";
-		}		
-		if (ageFrom != 0 || ageTo != 0) {
-			query.append(clause).append(" PAT_AGE BETWEEN ? AND ?");
-			params.add(ageFrom);
-			params.add(ageTo);
-			clause = " AND";
-		}		
-		query.append(" ORDER BY PAV_DATE DESC, PAV_ID");
-		
-		jpa.createQuery(query.toString(), PatientVaccine.class, false);
-		jpa.setParameters(params, false);
-		List<PatientVaccine> patientVaccineList = (List<PatientVaccine>)jpa.getList();
-		patientVaccines = new ArrayList<PatientVaccine>(patientVaccineList);		
-		
-		jpa.commitTransaction();
-
 		return patientVaccines;
 	}
 
@@ -140,11 +142,15 @@ public class PatVacIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
+		try {
+			jpa.beginTransaction();	
+			jpa.persist(patVac);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		
-		jpa.beginTransaction();	
-		jpa.persist(patVac);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 
@@ -161,11 +167,15 @@ public class PatVacIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
+		try {
+			jpa.beginTransaction();	
+			jpa.merge(patVac);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		
-		jpa.beginTransaction();	
-		jpa.merge(patVac);
-    	jpa.commitTransaction();
-    	
 		return result;
 	}
 
@@ -182,12 +192,15 @@ public class PatVacIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		PatientVaccine objToRemove = (PatientVaccine) jpa.find(PatientVaccine.class, patVac.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			PatientVaccine objToRemove = (PatientVaccine) jpa.find(PatientVaccine.class, patVac.getCode());
+			jpa.remove(objToRemove);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 
@@ -205,10 +218,10 @@ public class PatVacIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
 		StringBuilder query = new StringBuilder();
 		Integer progYear = 0;
-
-		jpa.beginTransaction();		
 		
 		try {
+			jpa.beginTransaction();
+			
 			query.append("SELECT MAX(PAV_YPROG) FROM PATIENTVACCINE");
 			if (year != 0) {
 				query.append(" WHERE YEAR(PAV_DATE) = ?");
@@ -218,10 +231,10 @@ public class PatVacIoOperations {
 			jpa.setParameters(params, false);	
 			progYear = (Integer)jpa.getResult();
 			
-		} catch (OHException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
 			jpa.commitTransaction();
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
+			throw e;
 		}
 		
 		return progYear == null ? new Integer(0) : progYear;

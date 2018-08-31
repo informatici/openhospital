@@ -65,6 +65,8 @@ import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
 import org.isf.utils.excel.ExcelExporter;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
@@ -130,6 +132,8 @@ public class MovStockBrowser extends ModalJFrame {
 	private int[] pColumwidth = {50, 80, 45, 130, 50, 150, 70, 70, 80, 65, 50, 50, 70};
 	private static final String DATE_FORMAT_DD_MM_YY = "dd/MM/yy";
 	private static final String DATE_FORMAT_DD_MM_YY_HH_MM = "dd/MM/yy HH:mm";
+	
+	private String currencyCod;
 	
 	public MovStockBrowser() {
 		myFrame = this;
@@ -217,13 +221,19 @@ public class MovStockBrowser extends ModalJFrame {
 			for (Movement mov : moves) {
 				totalQti += mov.getQuantity();
 			}
+			jTableTotal.getModel().setValueAt(totalQti, 0, 4);
+		} else {
+			jTableTotal.getModel().setValueAt(MessageBundle.getMessage("angal.common.notapplicable"), 0, 4);
 		}
 		totalAmount = new BigDecimal(0);
 		for (Movement mov : moves) {
 			BigDecimal itemAmount = new BigDecimal(Double.toString(mov.getQuantity()));
+			if (mov.getType().getType().contains("+")) 
 			totalAmount = totalAmount.add(itemAmount.multiply(new BigDecimal(mov.getLot().getCost())));
+			else 
+				totalAmount = totalAmount.subtract(itemAmount.multiply(new BigDecimal(mov.getLot().getCost())));
 		}
-		jTableTotal.getModel().setValueAt(totalQti, 0, 4);
+		jTableTotal.getModel().setValueAt(currencyCod, 0, 11);
 		jTableTotal.getModel().setValueAt(totalAmount, 0, 12);
 	}
 
@@ -260,7 +270,7 @@ public class MovStockBrowser extends ModalJFrame {
 		medicalPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
 				.createLineBorder(Color.GRAY), MessageBundle.getMessage("angal.medicalstock.pharmaceutical")));
 		JPanel label1Panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		label1Panel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.description")));
+		label1Panel.add(new JLabel(MessageBundle.getMessage("angal.common.description")));
 		medicalPanel.add(label1Panel);
 		JPanel medicalDescPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		medicalDescPanel.add(getMedicalBox());
@@ -298,13 +308,13 @@ public class MovStockBrowser extends ModalJFrame {
 		movementPanel.add(label4Panel);
 
 		JPanel moveFromPanel = new JPanel(new BorderLayout());
-		JLabel label = new JLabel(MessageBundle.getMessage("angal.medicalstock.from"));
+		JLabel label = new JLabel(MessageBundle.getMessage("angal.common.from"));
 		label.setVerticalAlignment(SwingConstants.TOP);
 		moveFromPanel.add(label, BorderLayout.WEST);
 		moveFromPanel.add(getMovDateFrom(), BorderLayout.EAST);
 		movementPanel.add(moveFromPanel);
 		JPanel moveToPanel = new JPanel(new BorderLayout());
-		JLabel label_1 = new JLabel(MessageBundle.getMessage("angal.medicalstock.to"));
+		JLabel label_1 = new JLabel(MessageBundle.getMessage("angal.common.to"));
 		label_1.setVerticalAlignment(SwingConstants.TOP);
 		moveToPanel.add(label_1, BorderLayout.WEST);
 		moveToPanel.add(getMovDateTo(), BorderLayout.EAST);
@@ -321,11 +331,11 @@ public class MovStockBrowser extends ModalJFrame {
 				MessageBundle.getMessage("angal.medicalstock.lotpreparationdate")));
 
 		JPanel lotPrepFromPanel = new JPanel(new BorderLayout());
-		lotPrepFromPanel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.from")), BorderLayout.WEST);
+		lotPrepFromPanel.add(new JLabel(MessageBundle.getMessage("angal.common.from")), BorderLayout.WEST);
 		lotPrepFromPanel.add(getLotPrepFrom(), BorderLayout.EAST);
 		lotPreparationDatePanel.add(lotPrepFromPanel);
 		JPanel lotPrepToPanel = new JPanel(new BorderLayout());
-		lotPrepToPanel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.to")), BorderLayout.WEST);
+		lotPrepToPanel.add(new JLabel(MessageBundle.getMessage("angal.common.to")), BorderLayout.WEST);
 		lotPrepToPanel.add(getLotPrepTo(), BorderLayout.EAST);
 		lotPreparationDatePanel.add(lotPrepToPanel);
 
@@ -340,11 +350,11 @@ public class MovStockBrowser extends ModalJFrame {
 				BorderFactory.createLineBorder(Color.GRAY), MessageBundle.getMessage("angal.medicalstock.lotduedate")));
 
 		JPanel lotDueFromPanel = new JPanel(new BorderLayout());
-		lotDueFromPanel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.from")), BorderLayout.WEST);
+		lotDueFromPanel.add(new JLabel(MessageBundle.getMessage("angal.common.from")), BorderLayout.WEST);
 		lotDueFromPanel.add(getLotDueFrom(), BorderLayout.EAST);
 		lotDueDatePanel.add(lotDueFromPanel);
 		JPanel lotDueToPanel = new JPanel(new BorderLayout());
-		lotDueToPanel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.to")), BorderLayout.WEST);
+		lotDueToPanel.add(new JLabel(MessageBundle.getMessage("angal.common.to")), BorderLayout.WEST);
 		lotDueToPanel.add(getLotDueTo(), BorderLayout.EAST);
 		lotDueDatePanel.add(lotDueToPanel);
 
@@ -356,7 +366,13 @@ public class MovStockBrowser extends ModalJFrame {
 		wardBox = new JComboBox();
 		wardBox.setPreferredSize(new Dimension(130,25));
 		wardBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));
-		ArrayList<Ward> wardList = wbm.getWards();
+		ArrayList<Ward> wardList;
+		try {
+			wardList = wbm.getWards();
+		}catch(OHServiceException e){
+			wardList = new ArrayList<Ward>();
+			OHServiceExceptionUtil.showMessages(e);
+		}
 		for (org.isf.ward.model.Ward elem : wardList) {
 			wardBox.addItem(elem);
 		}
@@ -370,10 +386,18 @@ public class MovStockBrowser extends ModalJFrame {
 		medicalBox.setMinimumSize(new Dimension(150, 25));
 		medicalBox.setPreferredSize(new Dimension(150, 25));
 		MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
-		ArrayList<Medical> medical = medicalManager.getMedicals();
+		ArrayList<Medical> medical;
+		try {
+			medical = medicalManager.getMedicals();
+		} catch (OHServiceException e1) {
+			medical = null;
+			OHServiceExceptionUtil.showMessages(e1);
+		}
 		medicalBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));
-		for (Medical aMedical : medical) {
-			medicalBox.addItem(aMedical);
+		if (null != medical) {
+			for (Medical aMedical : medical) {
+				medicalBox.addItem(aMedical);
+			}
 		}
 		medicalBox.addMouseListener(new MouseListener() {
 			public void mouseExited(MouseEvent e) {
@@ -402,11 +426,20 @@ public class MovStockBrowser extends ModalJFrame {
 		medicalTypeBox = new JComboBox();
 		medicalTypeBox.setPreferredSize(new Dimension(130,25));
 		MedicalTypeBrowserManager medicalManager = new MedicalTypeBrowserManager();
-		ArrayList<MedicalType> medical = medicalManager.getMedicalType();
+		ArrayList<MedicalType> medical;
+		
 		medicalTypeBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));
-		for (MedicalType aMedicalType : medical) {
-			medicalTypeBox.addItem(aMedicalType);
+		
+		try {
+			medical = medicalManager.getMedicalType();
+			
+			for (MedicalType aMedicalType : medical) {
+				medicalTypeBox.addItem(aMedicalType);
+			}
+		} catch (OHServiceException e1) {
+			OHServiceExceptionUtil.showMessages(e1);
 		}
+		
 		medicalTypeBox.addMouseListener(new MouseListener() {
 			public void mouseExited(MouseEvent e) {
 			}
@@ -434,17 +467,25 @@ public class MovStockBrowser extends ModalJFrame {
 		typeBox = new JComboBox();
 		typeBox.setPreferredSize(new Dimension(130,25));
 		MedicaldsrstockmovTypeBrowserManager typeManager = new MedicaldsrstockmovTypeBrowserManager();
-		ArrayList<MovementType> type = typeManager.getMedicaldsrstockmovType();
+		ArrayList<MovementType> type;
+		try {
+			type = typeManager.getMedicaldsrstockmovType();
+		} catch (OHServiceException e1) {
+			type = null;
+			OHServiceExceptionUtil.showMessages(e1);
+		}
 		typeBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));
-		for (MovementType movementType : type) {
-			typeBox.addItem(movementType);
+		if (null != type) {
+			for (MovementType movementType : type) {
+				typeBox.addItem(movementType);
+			}
 		}
 		typeBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!(typeBox.getSelectedItem() instanceof String)) {
 					MovementType selected = (MovementType) typeBox
 							.getSelectedItem();
-					if (selected.getType().equalsIgnoreCase("-")) {
+					if (selected.getType().contains("-")) {
 						wardBox.setEnabled(true);
 					} else {
 						wardBox.setSelectedIndex(0);
@@ -495,7 +536,13 @@ public class MovStockBrowser extends ModalJFrame {
 			jTableTotal = new JTable();
 			
 			HospitalBrowsingManager hospitalManager = new HospitalBrowsingManager();
-			String currencyCod = hospitalManager.getHospitalCurrencyCod();
+			String currencyCod;
+			try {
+				currencyCod = hospitalManager.getHospitalCurrencyCod();
+			} catch (OHServiceException e) {
+				currencyCod = null;
+				OHServiceExceptionUtil.showMessages(e);
+			}
 			
 			jTableTotal.setModel(new DefaultTableModel(
 					new Object[][] {
@@ -893,9 +940,13 @@ public class MovStockBrowser extends ModalJFrame {
 				GregorianCalendar lotPrepTo, GregorianCalendar lotDueFrom,
 				GregorianCalendar lotDueTo) {
 			MovBrowserManager manager = new MovBrowserManager();
-			moves = manager.getMovements(medicalCode, medicalType, ward,
-					movType, movFrom, movTo, lotPrepFrom, lotPrepTo,
-					lotDueFrom, lotDueTo);
+			try {
+				moves = manager.getMovements(medicalCode, medicalType, ward,
+						movType, movFrom, movTo, lotPrepFrom, lotPrepTo,
+						lotDueFrom, lotDueTo);
+			} catch (OHServiceException e) {
+				OHServiceExceptionUtil.showMessages(e);
+			}
 			updateTotals();
 		}
 
@@ -1023,9 +1074,13 @@ public class MovStockBrowser extends ModalJFrame {
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			setHorizontalAlignment(columnAlignment[column]);
-			if (column == 4) value = formatter1.format((Number) value);
+			if (column == 4) {
+				if (value instanceof Number) value = formatter1.format((Number) value);
+			}
 			if (column == 11) value = formatter100.format((Number) value);
-			if (column == 12) value = formatter10.format((Number) value);
+			if (column == 12) {
+				if (value instanceof Number) value = formatter10.format((Number) value);
+			}
 			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		}
 	}

@@ -1,0 +1,8 @@
+version: '3'
+services:
+  database:
+    build:
+     context: ./
+     dockerfile: Dockerfile-ohdb
+    ports: 
+    - "3306:3306"

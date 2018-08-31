@@ -42,14 +42,14 @@ public abstract class XMLDocumentManager {
 			//Get the DocumentBuilder
 			docBuilder = factory.newDocumentBuilder();
 			
-			// se il file esiste
+			// If file exists
 			if (file.exists())	{
 				doc = docBuilder.parse(file);
 				doc.getDocumentElement().normalize();
 				
 				root = getRoot();
 				
-				// se la radice non esiste
+				// If root doesn't exist
 				if (root == null)	{
 					root = createRoot();
 					saveFile();
@@ -84,7 +84,7 @@ public abstract class XMLDocumentManager {
 
 	
 	private Element getRoot()	{
-		// c'è un solo nodo radice che verrà memorizzato in roots.item(0)
+		// Only one root element
 		NodeList roots = doc.getElementsByTagName("root");
 		Element root = null;
 		
@@ -134,7 +134,7 @@ public abstract class XMLDocumentManager {
 			deviceElement = doc.createElement("Device");
 			System.out.println("[XMLdebug] Adding: <device, " + deviceId + ">");
 		}
-		// altrimenti se esiste già modifica o aggiungi il valore dell'attributo id
+		// If already existing change or add the value for ID attribute
 		
 		deviceElement.setAttribute(getIdentificationAttributeName(), deviceId);
 		

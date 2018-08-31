@@ -16,7 +16,7 @@
 
 
 drop database if exists oh;
-create database oh CHARACTER SET latin2 COLLATE latin2_general_ci;
+create database oh CHARACTER SET utf8;
 
 use oh;
 

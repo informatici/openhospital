@@ -34,15 +34,19 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.patvac.manager.PatVacManager;
+import org.isf.patvac.model.PatientVaccine;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
 import org.isf.vaccine.manager.VaccineBrowserManager;
 import org.isf.vaccine.model.Vaccine;
 import org.isf.vactype.manager.VaccineTypeBrowserManager;
 import org.isf.vactype.model.VaccineType;
+
 import com.toedter.calendar.JDateChooser;
-import org.isf.patvac.manager.PatVacManager;
-import org.isf.patvac.model.PatientVaccine;
 
 public class PatVacEdit extends JDialog {
 	/**
@@ -108,7 +112,12 @@ public class PatVacEdit extends JDialog {
 
 	private int getPatientVaccineYMaxProg() {
 		PatVacManager manager = new PatVacManager();
-		return manager.getProgYear(0);
+		try {
+			return manager.getProgYear(0);
+		} catch (OHServiceException e) {
+			OHServiceExceptionUtil.showMessages(e);
+			return 0;
+		}
 	}
 
 	/**
@@ -350,13 +359,20 @@ public class PatVacEdit extends JDialog {
 			vaccineTypeComboBox.addItem(new VaccineType("", MessageBundle.getMessage("angal.patvac.allvaccinetype")));
 
 			VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
-			ArrayList<VaccineType> types = manager.getVaccineType();
+			ArrayList<VaccineType> types = null;
+			try {
+				types = manager.getVaccineType();
+			} catch (OHServiceException e1) {
+				OHServiceExceptionUtil.showMessages(e1);
+			}
 			VaccineType vaccineTypeSel = null;
-			for (VaccineType elem : types) {
-				vaccineTypeComboBox.addItem(elem);
-				if (!insert && elem.getCode() != null) {
-					if (elem.getCode().equalsIgnoreCase((patVac.getVaccine().getVaccineType().getCode()))) {
-						vaccineTypeSel = elem;
+			if(types != null){
+				for (VaccineType elem : types) {
+					vaccineTypeComboBox.addItem(elem);
+					if (!insert && elem.getCode() != null) {
+						if (elem.getCode().equalsIgnoreCase((patVac.getVaccine().getVaccineType().getCode()))) {
+							vaccineTypeSel = elem;
+						}
 					}
 				}
 			}
@@ -390,23 +406,25 @@ public class PatVacEdit extends JDialog {
 
 		ArrayList<Vaccine> allVac = null;
 		vaccineComboBox.addItem(new Vaccine("", MessageBundle.getMessage("angal.patvac.allvaccine"), new VaccineType("", ""), (Integer) null));
-
-		if (((VaccineType) vaccineTypeComboBox.getSelectedItem()).getDescription().equals(MessageBundle.getMessage("angal.patvac.allvaccinetype"))) {
-			allVac = manager.getVaccine();
-		} else {
-			allVac = manager.getVaccine(((VaccineType) vaccineTypeComboBox.getSelectedItem()).getCode());
-		}
-		;
-
-		for (Vaccine elem : allVac) {
-			if (!insert && elem.getCode() != null) {
-				if (elem.getCode().equalsIgnoreCase((patVac.getVaccine().getCode()))) {
-					vaccineSel = elem;
-				}
-			}
-			vaccineComboBox.addItem(elem);
-		}
-
+        try{
+            if (((VaccineType) vaccineTypeComboBox.getSelectedItem()).getDescription().equals(MessageBundle.getMessage("angal.patvac.allvaccinetype"))) {
+                allVac = manager.getVaccine();
+            } else {
+                allVac = manager.getVaccine(((VaccineType) vaccineTypeComboBox.getSelectedItem()).getCode());
+            }
+        } catch (OHServiceException e) {
+            OHServiceExceptionUtil.showMessages(e);
+        }
+        if(allVac != null) {
+            for (Vaccine elem : allVac) {
+                if (!insert && elem.getCode() != null) {
+                    if (elem.getCode().equalsIgnoreCase((patVac.getVaccine().getCode()))) {
+                        vaccineSel = elem;
+                    }
+                }
+                vaccineComboBox.addItem(elem);
+            }
+        }
 		if (vaccineSel != null) {
 			vaccineComboBox.setSelectedItem(vaccineSel);
 		}
@@ -492,18 +510,37 @@ public class PatVacEdit extends JDialog {
 		Patient patSelected = null;
 		PatientBrowserManager patBrowser = new PatientBrowserManager();
 
-		if (GeneralData.ENHANCEDSEARCH)
-			pat = patBrowser.getPatientWithHeightAndWeight(regExp);
-		else
-			pat = patBrowser.getPatient();
-
-		for (Patient elem : pat) {
-			if (!insert) {
-				if (elem.getCode().equals(patVac.getPatient().getCode())) {
-					patSelected = elem;
+		if (GeneralData.ENHANCEDSEARCH){
+			try {
+				pat = patBrowser.getPatientWithHeightAndWeight(regExp);
+			}catch(OHServiceException ex){
+				if(ex.getMessages() != null){
+					for(OHExceptionMessage msg : ex.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+				pat = new ArrayList<Patient>();
+			}
+		}else{
+			try {
+				pat = patBrowser.getPatient();
+			} catch (OHServiceException e) {
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
 				}
 			}
-			patientComboBox.addItem(elem);
+		}
+		if(pat != null){
+			for (Patient elem : pat) {
+				if (!insert) {
+					if (elem.getCode().equals(patVac.getPatient().getCode())) {
+						patSelected = elem;
+					}
+				}
+				patientComboBox.addItem(elem);
+			}
 		}
 		if (patSelected != null) {
 			patientComboBox.setSelectedItem(patSelected);
@@ -690,13 +727,24 @@ public class PatVacEdit extends JDialog {
 					patVac.setPatSex(selectedPatient.getSex());
 					patVac.setPatAge(selectedPatient.getAge());
 
-					boolean result = false;
+					boolean result;
 					PatVacManager manager = new PatVacManager();
 					// handling db insert/update
 					if (insert) {
-						result = manager.newPatientVaccine(patVac);
+						
+						try {
+							result = manager.newPatientVaccine(patVac);
+						} catch (OHServiceException e1) {
+							OHServiceExceptionUtil.showMessages(e1);
+							result = false;
+						}
 					} else {
-						result = manager.updatePatientVaccine(patVac);
+						try {
+							result = manager.updatePatientVaccine(patVac);
+						} catch (OHServiceException e1) {
+							OHServiceExceptionUtil.showMessages(e1);
+							result = false;
+						}
 					}
 
 					if (!result)

@@ -43,28 +43,32 @@ public class OperationIoOperations {
 		ArrayList<Operation> operations = null;
 		String query = null;
 		ArrayList<Object> params = new ArrayList<Object>();
-				
-		
-		jpa.beginTransaction();
-		if (typeDescription == null) 
-		{
-			query = "SELECT * FROM OPERATION JOIN OPERATIONTYPE ON OPE_OCL_ID_A = OCL_ID_A ORDER BY OPE_DESC";
-		}
-		else
-		{
-			query = "SELECT * FROM OPERATION JOIN OPERATIONTYPE ON OPE_OCL_ID_A = OCL_ID_A WHERE OCL_DESC LIKE CONCAT('%', ? , '%') ORDER BY OPE_DESC";
-		}	
-		jpa.createQuery(query, Operation.class, false);
-		if (typeDescription != null) 
-		{
-			params.add(typeDescription);
-			jpa.setParameters(params, false);
-		}
-		List<Operation> operationList = (List<Operation>)jpa.getList();
-		operations = new ArrayList<Operation>(operationList);		
-		
-		jpa.commitTransaction();
 
+		try{
+			jpa.beginTransaction();
+			if (typeDescription == null) 
+			{
+				query = "SELECT * FROM OPERATION JOIN OPERATIONTYPE ON OPE_OCL_ID_A = OCL_ID_A ORDER BY OPE_DESC";
+			}
+			else
+			{
+				query = "SELECT * FROM OPERATION JOIN OPERATIONTYPE ON OPE_OCL_ID_A = OCL_ID_A WHERE OCL_DESC LIKE CONCAT('%', ? , '%') ORDER BY OPE_DESC";
+			}	
+			jpa.createQuery(query, Operation.class, false);
+			if (typeDescription != null) 
+			{
+				params.add(typeDescription);
+				jpa.setParameters(params, false);
+			}
+			List<Operation> operationList = (List<Operation>)jpa.getList();
+			operations = new ArrayList<Operation>(operationList);		
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return operations;
 	}
 	
@@ -81,11 +85,15 @@ public class OperationIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(operation);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(operation);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 	
@@ -99,13 +107,19 @@ public class OperationIoOperations {
 			Operation operation) throws OHException 
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
-		Operation foundOperation = (Operation)jpa.find(Operation.class, operation.getCode());
 		boolean result = false;
-		
-		
-		if (foundOperation.getLock() != operation.getLock())
-		{
-			result = true;
+		try{
+			jpa.beginTransaction();
+			Operation foundOperation = (Operation)jpa.find(Operation.class, operation.getCode());
+			jpa.commitTransaction();
+			if (foundOperation.getLock() != operation.getLock())
+			{
+				result = true;
+			}
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
 		
 		return result;
@@ -124,12 +138,16 @@ public class OperationIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		operation.setLock(operation.getLock() + 1);
-		jpa.merge(operation);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			operation.setLock(operation.getLock() + 1);
+			jpa.merge(operation);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 	
@@ -145,12 +163,16 @@ public class OperationIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		Operation operationToRemove = (Operation) jpa.find(Operation.class, operation.getCode());
-		jpa.remove(operationToRemove);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			Operation operationToRemove = (Operation) jpa.find(Operation.class, operation.getCode());
+			jpa.remove(operationToRemove);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 	
@@ -163,16 +185,20 @@ public class OperationIoOperations {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		Operation foundOperation = (Operation)jpa.find(Operation.class, code);
+		DbJpaUtil jpa = new DbJpaUtil();
 		boolean present = false;
-
-		
-		if (foundOperation != null)
-		{
-			present = true;
-		}
-		
+		try{
+			jpa.beginTransaction();
+			Operation foundOperation = (Operation)jpa.find(Operation.class, code);
+			if (foundOperation != null)
+			{
+				present = true;
+			}
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}		
 		return present;
 	}
 	
@@ -202,21 +228,20 @@ public class OperationIoOperations {
 			params.add(typeCode);
 			jpa.setParameters(params, false);
 			foundOperation = (Operation)jpa.getResult();		
+			jpa.commitTransaction();
 			
 			if (foundOperation != null && foundOperation.getDescription().compareTo(description) == 0)
 			{
 				present = true;
 			}
 			
-		} catch (Exception e) {
+		} catch (OHException e) {
+			jpa.rollbackTransaction();
 			if (e.getCause().getClass().equals(NoResultException.class))
 				return false;
-			else throw new OHException(e.getCause().getMessage(), e.getCause());
+			else throw e;
 			
-		} finally {
-			jpa.commitTransaction();
-		}
-		
+		} 
 		return present;
 	}
 }

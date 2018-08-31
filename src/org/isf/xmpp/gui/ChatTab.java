@@ -13,7 +13,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ChatTab extends JTabbedPane {
+	
+	private final Logger logger = LoggerFactory.getLogger(ChatTab.class);
 
 	/**
 	 * 
@@ -24,7 +29,7 @@ public class ChatTab extends JTabbedPane {
 		 	super.addTab(title,component);
 		 	int index;
 		 	index=indexOfTab(title);
-	    	System.out.println(indexOfTabComponent(this));
+		 	logger.debug("index: " + indexOfTabComponent(this));
 	    	tab=new TabButton(title,indexOfTabComponent(this),this);
 		 	setTabComponentAt(index, tab);
 		 	

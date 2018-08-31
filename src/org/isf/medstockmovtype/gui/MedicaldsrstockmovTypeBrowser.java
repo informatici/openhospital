@@ -21,6 +21,8 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.medstockmovtype.gui.MedicaldsrstockmovTypeBrowserEdit.MedicaldsrstockmovTypeListener;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -37,7 +39,10 @@ public class MedicaldsrstockmovTypeBrowser extends ModalJFrame implements Medica
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<MovementType> pMedicaldsrstockmovType;
-	private String[] pColums = { MessageBundle.getMessage("angal.medstockmovtype.codem"), MessageBundle.getMessage("angal.medstockmovtype.descriptionm"), MessageBundle.getMessage("angal.medstockmovtype.typem")};
+	private String[] pColums = { 
+			MessageBundle.getMessage("angal.common.codem"), 
+			MessageBundle.getMessage("angal.common.descriptionm"), 
+			MessageBundle.getMessage("angal.medstockmovtype.typem")};
 	private int[] pColumwidth = {80, 200, 40};
 
 	private JPanel jContainPanel = null;
@@ -199,11 +204,22 @@ public class MedicaldsrstockmovTypeBrowser extends ModalJFrame implements Medica
 								MessageBundle.getMessage("angal.medstockmovtype.deletemovementtype")+" \" "+dis.getDescription() + "\" ?",
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
 						
-						if ((n == JOptionPane.YES_OPTION)
-								&& (manager.deleteMedicaldsrstockmovType(dis))) {
-							pMedicaldsrstockmovType.remove(jTable.getSelectedRow());
-							model.fireTableDataChanged();
-							jTable.updateUI();
+						if ((n == JOptionPane.YES_OPTION)) {
+							
+							boolean deleted;
+							
+							try {
+								deleted = manager.deleteMedicaldsrstockmovType(dis);
+							} catch (OHServiceException e) {
+								deleted = false;
+								OHServiceExceptionUtil.showMessages(e);
+							}
+							
+							if (true == deleted) {
+								pMedicaldsrstockmovType.remove(jTable.getSelectedRow());
+								model.fireTableDataChanged();
+								jTable.updateUI();
+							}
 						}
 					}
 				}
@@ -237,7 +253,12 @@ class MedicaldsrstockmovTypeBrowserModel extends DefaultTableModel {
 
 		public MedicaldsrstockmovTypeBrowserModel() {
 			MedicaldsrstockmovTypeBrowserManager manager = new MedicaldsrstockmovTypeBrowserManager();
-			pMedicaldsrstockmovType = manager.getMedicaldsrstockmovType();
+			try {
+				pMedicaldsrstockmovType = manager.getMedicaldsrstockmovType();
+			} catch (OHServiceException e) {
+				pMedicaldsrstockmovType = null;
+				OHServiceExceptionUtil.showMessages(e);
+			}
 		}
 		
 		public int getRowCount() {

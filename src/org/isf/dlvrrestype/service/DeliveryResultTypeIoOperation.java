@@ -25,16 +25,20 @@ public class DeliveryResultTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<DeliveryResultType> deliveryresultTypes = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM DELIVERYRESULTTYPE ORDER BY DRT_DESC";
-		jpa.createQuery(query, DeliveryResultType.class, false);
-		List<DeliveryResultType> deliveryResultList = (List<DeliveryResultType>)jpa.getList();
-		deliveryresultTypes = new ArrayList<DeliveryResultType>(deliveryResultList);			
-		
-		jpa.commitTransaction();
+		try {
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM DELIVERYRESULTTYPE ORDER BY DRT_DESC";
+			jpa.createQuery(query, DeliveryResultType.class, false);
+			List<DeliveryResultType> deliveryResultList = (List<DeliveryResultType>)jpa.getList();
+			deliveryresultTypes = new ArrayList<DeliveryResultType>(deliveryResultList);			
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return deliveryresultTypes;
 	}
 
@@ -49,12 +53,16 @@ public class DeliveryResultTypeIoOperation {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		
-		jpa.beginTransaction();	
-		jpa.merge(deliveryResultType);
-    	jpa.commitTransaction();
-    	
+
+		try{
+			jpa.beginTransaction();	
+			jpa.merge(deliveryResultType);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;	
 	}
 
@@ -70,11 +78,15 @@ public class DeliveryResultTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(deliveryResultType);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(deliveryResultType);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;
 	}
 
@@ -90,12 +102,16 @@ public class DeliveryResultTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		DeliveryResultType objToRemove = (DeliveryResultType) jpa.find(DeliveryResultType.class, deliveryResultType.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			DeliveryResultType objToRemove = (DeliveryResultType) jpa.find(DeliveryResultType.class, deliveryResultType.getCode());
+			jpa.remove(objToRemove);
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return result;	
 	}
 
@@ -111,15 +127,20 @@ public class DeliveryResultTypeIoOperation {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		DeliveryResultType deliveryResultType;
 		boolean result = false;
-		
-		
-		jpa.beginTransaction();	
-		deliveryResultType = (DeliveryResultType)jpa.find(DeliveryResultType.class, code);
-		if (deliveryResultType != null)
-		{
-			result = true;
-		}
-    	jpa.commitTransaction();
+
+		try{
+			jpa.beginTransaction();	
+			deliveryResultType = (DeliveryResultType)jpa.find(DeliveryResultType.class, code);
+			jpa.commitTransaction();
+			if (deliveryResultType != null)
+			{
+				result = true;
+			}
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
     	
 		return result;	
 	}

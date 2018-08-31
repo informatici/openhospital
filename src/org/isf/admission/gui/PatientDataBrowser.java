@@ -37,6 +37,8 @@ import org.isf.patient.gui.PatientInsert;
 import org.isf.patient.gui.PatientInsertExtended;
 import org.isf.patient.gui.PatientSummary;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.table.TableSorter;
 import org.isf.ward.manager.WardBrowserManager;
@@ -365,43 +367,50 @@ public class PatientDataBrowser extends ModalJFrame implements
 					int selectedRow = admTable.getSelectedRow();
 					Object selectedObj = sorter.getValueAt(selectedRow, -1);
 					
-					if (selectedObj instanceof Admission) {
-						
-						Admission adm = (Admission) sorter.getValueAt(selectedRow, -1);
-						AdmissionBrowserManager abm = new AdmissionBrowserManager();
-						
-						int n = JOptionPane.showConfirmDialog(
-		                        null,
-		                        MessageBundle.getMessage("angal.admission.deleteselectedadmission"),
-		                        MessageBundle.getMessage("angal.hospital"),
-		                        JOptionPane.YES_NO_OPTION);
-	
-						if ((n == JOptionPane.YES_OPTION) && abm.setDeleted(adm.getId())){
-							admList.remove(adm);
-							admModel.fireTableDataChanged();
-							admTable.updateUI();
-							sorter.sortByColumn(0, false);
-							if (adm.getAdmitted()==1){
-								fireDeleteAdmissionUpdated(adm);
+					try{
+						if (selectedObj instanceof Admission) {
+
+							Admission adm = (Admission) sorter.getValueAt(selectedRow, -1);
+							AdmissionBrowserManager abm = new AdmissionBrowserManager();
+
+							int n = JOptionPane.showConfirmDialog(
+									null,
+									MessageBundle.getMessage("angal.admission.deleteselectedadmission"),
+									MessageBundle.getMessage("angal.hospital"),
+									JOptionPane.YES_NO_OPTION);
+							if ((n == JOptionPane.YES_OPTION) && abm.setDeleted(adm.getId())){
+								admList.remove(adm);
+								admModel.fireTableDataChanged();
+								admTable.updateUI();
+								sorter.sortByColumn(0, false);
+								if (adm.getAdmitted()==1){
+									fireDeleteAdmissionUpdated(adm);
+								}
+								PatientDataBrowser.this.requestFocus();
 							}
-							PatientDataBrowser.this.requestFocus();
-						}	
-					} else {
-						Opd opd = (Opd) sorter.getValueAt(selectedRow, -1);
-						OpdBrowserManager delOpd = new OpdBrowserManager();
-						
-						int n = JOptionPane.showConfirmDialog(
-		                        null,
-		                        MessageBundle.getMessage("angal.admission.deleteselectedopd"),
-		                        MessageBundle.getMessage("angal.hospital"),
-		                        JOptionPane.YES_NO_OPTION);
-						
-						if ((n == JOptionPane.YES_OPTION) && (delOpd.deleteOpd(opd))){
-							opdList.remove(opd);
-							admModel.fireTableDataChanged();
-							admTable.updateUI();
-							sorter.sortByColumn(0, false);
-						}	
+						} else {
+							Opd opd = (Opd) sorter.getValueAt(selectedRow, -1);
+							OpdBrowserManager delOpd = new OpdBrowserManager();
+
+							int n = JOptionPane.showConfirmDialog(
+									null,
+									MessageBundle.getMessage("angal.admission.deleteselectedopd"),
+									MessageBundle.getMessage("angal.hospital"),
+									JOptionPane.YES_NO_OPTION);
+
+							if ((n == JOptionPane.YES_OPTION) && (delOpd.deleteOpd(opd))){
+								opdList.remove(opd);
+								admModel.fireTableDataChanged();
+								admTable.updateUI();
+								sorter.sortByColumn(0, false);
+							}	
+						}
+					}catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
 					}
 				}
 			});
@@ -461,15 +470,45 @@ class AdmissionBrowserModel extends DefaultTableModel {
 
 		public AdmissionBrowserModel() {
 			AdmissionBrowserManager manager = new AdmissionBrowserManager();
-			admList = manager.getAdmissions(patient);
 			DiseaseBrowserManager dbm = new DiseaseBrowserManager();
-			disease = dbm.getDiseaseAll();
-//			org.isf.operation.manager.OperationBrowserManager obm = new org.isf.operation.manager.OperationBrowserManager();
-//			operation = obm.getOperation();
 			WardBrowserManager wbm = new WardBrowserManager();
-			ward = wbm.getWards();
 			OpdBrowserManager opd = new OpdBrowserManager();
-			opdList = opd.getOpdList(patient.getCode());
+			try {
+				opdList = opd.getOpdList(patient.getCode());
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			try {
+				admList = manager.getAdmissions(patient);
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			try {
+				ward = wbm.getWards();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
+			try {
+				disease = dbm.getDiseaseAll();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 		}
 		
 		
@@ -544,18 +583,22 @@ class AdmissionBrowserModel extends DefaultTableModel {
 			}else if (c == 3) {
 				String id = null;
 				if (r < admList.size()) {
-					id = admList.get(r).getDiseaseOut1().getCode();
+					id = admList.get(r).getDiseaseOut1() == null ? null :  admList.get(r).getDiseaseOut1().getCode();
 					if (id == null){
 						id = "";
 					}
 				} else {
 					int z = r - admList.size();
-					id = opdList.get(z).getDisease3().getCode();
-					if (id == null){
-						id = opdList.get(z).getDisease2().getCode();
-						if (id == null){
-							id = "";
+					Disease dis = opdList.get(z).getDisease3();
+					if (dis == null){
+						dis = opdList.get(z).getDisease2();
+						if (dis == null){
+							id = opdList.get(z).getDisease().getCode();
+						} else {
+							id = dis.getCode();
 						}
+					} else {
+						id = dis.getCode();
 					}
 				}
 				for (Disease elem : disease) {

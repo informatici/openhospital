@@ -2,15 +2,20 @@ package org.isf.menu.manager;
 
 import java.util.*;
 
-import javax.swing.JOptionPane;
-
 import org.isf.menu.gui.Menu;
 import org.isf.menu.model.*;
 import org.isf.menu.service.*;
 import org.isf.utils.exception.OHException;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserBrowsingManager {
+
+    private final Logger logger = LoggerFactory.getLogger(UserBrowsingManager.class);
 	
 	private MenuIoOperations ioOperations = Menu.getApplicationContext().getBean(MenuIoOperations.class);
 	
@@ -18,13 +23,22 @@ public class UserBrowsingManager {
 	 * returns the list of {@link User}s
 	 * @return the list of {@link User}s
 	 */
-	public ArrayList<User> getUser() {
+	public ArrayList<User> getUser() throws OHServiceException {
 		try {
 			return ioOperations.getUser();
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
-		}
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -32,13 +46,22 @@ public class UserBrowsingManager {
 	 * @param groupID - the group ID
 	 * @return the list of {@link User}s
 	 */
-	public ArrayList<User> getUser(String groupID) {
+	public ArrayList<User> getUser(String groupID) throws OHServiceException {
 		try {
 			return ioOperations.getUser(groupID);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
-		}
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -46,18 +69,29 @@ public class UserBrowsingManager {
 	 * @param user - the {@link User} to insert
 	 * @return <code>true</code> if the user has been inserted, <code>false</code> otherwise.
 	 */
-	public boolean newUser(User user) {
+	public boolean newUser(User user) throws OHServiceException {
 		try {
 			String username = user.getUserName();
 			if (ioOperations.isUserNamePresent(username)) {
-				JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.menu.theuser") +
-						" " + username + " " + MessageBundle.getMessage("angal.menu.isalreadypresent"));
-				return false;
-			} else return ioOperations.newUser(user);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
+                throw new OHServiceException(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                        MessageBundle.getMessage("angal.menu.theuser") +
+                                " " + username + " " + MessageBundle.getMessage("angal.menu.isalreadypresent"), OHSeverityLevel.ERROR));
+			} else{
+			    return ioOperations.newUser(user);
+            }
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        }
 		
 	}
 	
@@ -66,13 +100,22 @@ public class UserBrowsingManager {
 	 * @param user - the {@link User} to update
 	 * @return <code>true</code> if the user has been updated, <code>false</code> otherwise.
 	 */
-	public boolean updateUser(User user) {
+	public boolean updateUser(User user) throws OHServiceException {
 		try {
 			return ioOperations.updateUser(user);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -80,13 +123,22 @@ public class UserBrowsingManager {
 	 * @param user - the {@link User} to update
 	 * @return <code>true</code> if the user has been updated, <code>false</code> otherwise.
 	 */
-	public boolean updatePassword(User user) {
+	public boolean updatePassword(User user) throws OHServiceException {
 		try {
 			return ioOperations.updatePassword(user);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -94,26 +146,46 @@ public class UserBrowsingManager {
 	 * @param user - the {@link User} to delete
 	 * @return <code>true</code> if the user has been deleted, <code>false</code> otherwise.
 	 */
-	public boolean deleteUser(User user) {
+	public boolean deleteUser(User user) throws OHServiceException {
 		try {
+			if (user.getUserName().equals("admin"))
+				throw new OHException(MessageBundle.getMessage("angal.menu.youcantdeleteadminuser"), null);
 			return ioOperations.deleteUser(user);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
 	 * returns the list of {@link UserGroup}s
 	 * @return the list of {@link UserGroup}s
 	 */
-	public ArrayList<UserGroup> getUserGroup() {
+	public ArrayList<UserGroup> getUserGroup() throws OHServiceException {
 		try {
 			return ioOperations.getUserGroup();
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
-		}
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -121,13 +193,22 @@ public class UserBrowsingManager {
 	 * @param aUser - the {@link User}
 	 * @return the list of {@link UserMenuItem}s 
 	 */
-	public ArrayList<UserMenuItem> getMenu(User aUser) {
+	public ArrayList<UserMenuItem> getMenu(User aUser) throws OHServiceException {
 		try {
 			return ioOperations.getMenu(aUser);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
-		}
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -135,13 +216,22 @@ public class UserBrowsingManager {
 	 * @param aGroup - the {@link UserGroup}
 	 * @return the list of {@link UserMenuItem}s 
 	 */
-	public ArrayList<UserMenuItem> getGroupMenu(UserGroup aGroup) {
+	public ArrayList<UserMenuItem> getGroupMenu(UserGroup aGroup) throws OHServiceException {
 		try {
 			return ioOperations.getGroupMenu(aGroup);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
-		}
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -150,13 +240,22 @@ public class UserBrowsingManager {
 	 * @param menu - the list of {@link UserMenuItem}s
 	 * @return <code>true</code> if the menu has been replaced, <code>false</code> otherwise.
 	 */
-	public boolean setGroupMenu(UserGroup aGroup, ArrayList<UserMenuItem> menu){
+	public boolean setGroupMenu(UserGroup aGroup, ArrayList<UserMenuItem> menu) throws OHServiceException {
 		try {
 			return ioOperations.setGroupMenu(aGroup,menu,false);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -164,13 +263,22 @@ public class UserBrowsingManager {
 	 * @param userName - the {@link User}'s username
 	 * @return the {@link User}'s description
 	 */
-	public String getUsrInfo(String userName){
+	public String getUsrInfo(String userName) throws OHServiceException {
 		try {
 			return ioOperations.getUsrInfo(userName);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
-		}
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -178,30 +286,32 @@ public class UserBrowsingManager {
 	 * @param aGroup - the {@link UserGroup} to delete
 	 * @return <code>true</code> if the group has been deleted, <code>false</code> otherwise.
 	 */
-	public boolean deleteGroup(UserGroup aGroup){
+	public boolean deleteGroup(UserGroup aGroup) throws OHServiceException {
 		if (aGroup.getCode().equals("admin")){
-			JOptionPane.showMessageDialog(				
-                    null,
-                    MessageBundle.getMessage("angal.menu.youcantdeletegroupadmin"),
-                    MessageBundle.getMessage("angal.hospital"),
-                    JOptionPane.WARNING_MESSAGE);	
-			return false;
+		    throw new OHServiceException(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.menu.youcantdeletegroupadmin"), OHSeverityLevel.WARNING));
 		}
 		ArrayList<User> users = getUser(aGroup.getCode());
 		if (users != null && users.size()>0){
-			JOptionPane.showMessageDialog(				
-                    null,
-                    MessageBundle.getMessage("angal.menu.thisgrouphasusers"),
-                    MessageBundle.getMessage("angal.hospital"),
-                    JOptionPane.WARNING_MESSAGE);
-			return false;
+
+            throw new OHServiceException(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.menu.thisgrouphasusers"), OHSeverityLevel.WARNING));
 		}
 		try {
 			return ioOperations.deleteGroup(aGroup);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -209,18 +319,29 @@ public class UserBrowsingManager {
 	 * @param aGroup - the {@link UserGroup} to insert
 	 * @return <code>true</code> if the group has been inserted, <code>false</code> otherwise.
 	 */
-	public boolean newUserGroup(UserGroup aGroup){
+	public boolean newUserGroup(UserGroup aGroup) throws OHServiceException {
 		try {
 			String code = aGroup.getCode();
 			if (ioOperations.isGroupNamePresent(code)) {
-				JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.menu.thegroup") +
-						" " + code + " " + MessageBundle.getMessage("angal.menu.isalreadypresent"));
-				return false;
-			} else return ioOperations.newUserGroup(aGroup);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
+                throw new OHServiceException(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                        MessageBundle.getMessage("angal.menu.thegroup") +
+                                " " + code + " " + MessageBundle.getMessage("angal.menu.isalreadypresent"), OHSeverityLevel.ERROR));
+			} else{
+			    return ioOperations.newUserGroup(aGroup);
+            }
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        }
 	}
 	
 	/**
@@ -228,12 +349,21 @@ public class UserBrowsingManager {
 	 * @param aGroup - the {@link UserGroup} to update
 	 * @return <code>true</code> if the group has been updated, <code>false</code> otherwise.
 	 */
-	public boolean updateUserGroup(UserGroup aGroup){
+	public boolean updateUserGroup(UserGroup aGroup) throws OHServiceException {
 		try {
 			return ioOperations.updateUserGroup(aGroup);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
+        }catch(OHException e){
+			/*Already cached exception with OH specific error message -
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        }
 	}
 }

@@ -25,8 +25,10 @@ import javax.swing.JTextField;
 import org.isf.exa.manager.ExamRowBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
-import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class ExamRowEdit extends JDialog {
 
@@ -101,7 +103,7 @@ public class ExamRowEdit extends JDialog {
 	private JPanel getDataPanel() {
 		if (dataPanel == null) {		
 			descLabel = new JLabel();
-			descLabel.setText(MessageBundle.getMessage("angal.exa.description"));
+			descLabel.setText(MessageBundle.getMessage("angal.common.description"));
 			dataPanel = new JPanel();
 			dataPanel.add(descLabel); 
 			dataPanel.add(getDescriptionTextField());  
@@ -162,12 +164,19 @@ public class ExamRowEdit extends JDialog {
 						ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
 						examRow.setDescription(descriptionTextField.getText().toUpperCase());
 						examRow.setExamCode(exam);
-						manager.newExamRow(examRow);
-						ArrayList<ExamRow> key = manager.getExamRow(examRow.getExamCode().getCode(),examRow.getDescription());
-					//	if(key.size()>0){
-							examRow.setCode(key.get(0).getCode());
-							dispose();
-					//	}	
+						
+						try {
+							boolean inserted = manager.newExamRow(examRow);
+							
+							if (true == inserted) {
+								ArrayList<ExamRow> key = manager.getExamRow(examRow.getExamCode().getCode(),examRow.getDescription());
+								examRow.setCode(key.get(0).getCode());
+							}
+						} catch (OHServiceException e1) {
+							OHServiceExceptionUtil.showMessages(e1);
+						}
+						
+						dispose();
 					}
 				}
 			});

@@ -21,6 +21,8 @@ import org.isf.dlvrrestype.gui.DeliveryResultTypeBrowserEdit.DeliveryResultTypeL
 import org.isf.dlvrrestype.manager.DeliveryResultTypeBrowserManager;
 import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -37,7 +39,9 @@ public class DeliveryResultTypeBrowser extends ModalJFrame implements DeliveryRe
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<DeliveryResultType> pDeliveryResultType;
-	private String[] pColums = { MessageBundle.getMessage("angal.dlvrrestype.codem"), MessageBundle.getMessage("angal.dlvrrestype.descriptionm")};
+	private String[] pColums = { 
+			MessageBundle.getMessage("angal.codem.codem"), 
+			MessageBundle.getMessage("angal.common.descriptionm")};
 	private int[] pColumwidth = {80, 200 };
 
 	private JPanel jContainPanel = null;
@@ -198,12 +202,19 @@ public class DeliveryResultTypeBrowser extends ModalJFrame implements DeliveryRe
 						int n = JOptionPane.showConfirmDialog(null,
 								MessageBundle.getMessage("angal.dlvrrestype.deletedeliveryresulttype") + "\" " + dis.getDescription() + "\" ?",
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
-						
-						if ((n == JOptionPane.YES_OPTION)
-								&& (manager.deleteDeliveryResultType(dis))) {
-							pDeliveryResultType.remove(jTable.getSelectedRow());
-							model.fireTableDataChanged();
-							jTable.updateUI();
+						try{
+							if ((n == JOptionPane.YES_OPTION)
+									&& (manager.deleteDeliveryResultType(dis))) {
+								pDeliveryResultType.remove(jTable.getSelectedRow());
+								model.fireTableDataChanged();
+								jTable.updateUI();
+							}
+						}catch(OHServiceException e){
+							if(e.getMessages() != null){
+								for(OHExceptionMessage msg : e.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
 						}
 					}
 				}
@@ -237,7 +248,15 @@ class DeliveryResultTypeBrowserModel extends DefaultTableModel {
 
 		public DeliveryResultTypeBrowserModel() {
 			DeliveryResultTypeBrowserManager manager = new DeliveryResultTypeBrowserManager();
-			pDeliveryResultType = manager.getDeliveryResultType();
+			try {
+				pDeliveryResultType = manager.getDeliveryResultType();
+			}catch(OHServiceException e){
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 		}
 		
 		public int getRowCount() {

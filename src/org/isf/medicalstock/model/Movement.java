@@ -145,7 +145,13 @@ public class Movement
 		this.refNo = refNo;
 	}
 	public String toString(){
-		return MessageBundle.getMessage("angal.medicalstock.medical")+":"+medical.toString()+MessageBundle.getMessage("angal.medicalstock.type")+":"+type.toString()+MessageBundle.getMessage("angal.medicalstock.quantity")+":"+quantity;
+		return MessageBundle.getMessage("angal.medicalstock.medical")+
+				":"+
+				medical.toString()+
+				MessageBundle.getMessage("angal.medicalstock.type")+
+				":"+
+				type.toString()+
+				MessageBundle.getMessage("angal.common.quantity")+":"+quantity;
 	}
 	
 	@Override

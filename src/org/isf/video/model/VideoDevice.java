@@ -119,7 +119,7 @@ public abstract class VideoDevice {
 		{
 			if (resolutions.get(i).equals(new Resolution(width,height)))
 			{
-				// se non siamo giunti all'ultima
+				// If not reached the end
 				if (i < size - 1)
 					return resolutions.get(i+1);
 			}

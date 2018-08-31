@@ -99,7 +99,7 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
+    	//jpa.destroy();
     	testMedical = null;
     	testMedicalContext = null;
     	testMedicalType = null;
@@ -243,9 +243,9 @@ public class Tests
 		{		
 			code = _setupTestMedical(false);
 			Medical foundMedical = (Medical)jpa.find(Medical.class, code); 
-			result = ioOperations.medicalExists(foundMedical);
+			result = ioOperations.medicalExistsInType(foundMedical, true);
 			
-			assertEquals(true, result);
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

@@ -26,16 +26,20 @@ public class AgeTypeIoOperations
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<AgeType> padmissiontype = null;
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM AGETYPE ORDER BY AT_CODE";
-		jpa.createQuery(query, AgeType.class, false);
-		List<AgeType> ageTypeList = (List<AgeType>)jpa.getList();
-		padmissiontype = new ArrayList<AgeType>(ageTypeList);			
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			String query = "SELECT * FROM AGETYPE ORDER BY AT_CODE";
+			jpa.createQuery(query, AgeType.class, false);
+			List<AgeType> ageTypeList = (List<AgeType>)jpa.getList();
+			padmissiontype = new ArrayList<AgeType>(ageTypeList);			
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return padmissiontype;
 	}
 
@@ -51,14 +55,18 @@ public class AgeTypeIoOperations
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		for (AgeType ageType : ageTypes) 
-		{
-			jpa.merge(ageType);
+		try{
+			jpa.beginTransaction();	
+			for (AgeType ageType : ageTypes) 
+			{
+				jpa.merge(ageType);
+			}
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-    	jpa.commitTransaction();
-    	
 		return result;	
 	}
 
@@ -75,14 +83,18 @@ public class AgeTypeIoOperations
 		String code = "";
 		AgeType ageType = null;
 				
-		
-		jpa.beginTransaction();
-		
-		code = "d" + String.valueOf(index-1);
-		ageType = (AgeType)jpa.find(AgeType.class, code); 
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			code = "d" + String.valueOf(index-1);
+			ageType = (AgeType)jpa.find(AgeType.class, code); 
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return ageType;
 	}
 }

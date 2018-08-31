@@ -20,14 +20,19 @@ import javax.swing.table.DefaultTableModel;
 import org.isf.generaldata.MessageBundle;
 import org.isf.priceslist.gui.ListEdit.ListListener;
 import org.isf.priceslist.manager.PriceListManager;
-import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.PriceList;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 public class ListBrowser extends ModalJFrame  implements ListListener{
 
 	public void listInserted(AWTEvent e) {
-		listArray = listManager.getLists();
+		try {
+			listArray = listManager.getLists();
+		}catch(OHServiceException ex){
+			OHServiceExceptionUtil.showMessages(ex);
+		}
 		jTablePriceLists.setModel(new ListBrowserModel());
 	}
 
@@ -45,7 +50,12 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 	private JButton jButtonCopy;
 	private JButton jButtonClose;
 	private JButton jButtonDelete;
-	private String[] columnNames = { MessageBundle.getMessage("angal.priceslist.idm"), MessageBundle.getMessage("angal.priceslist.name"), MessageBundle.getMessage("angal.priceslist.description"), MessageBundle.getMessage("angal.priceslist.currency") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private String[] columnNames = { 
+				MessageBundle.getMessage("angal.priceslist.idm"), 
+				MessageBundle.getMessage("angal.priceslist.name"), 
+				MessageBundle.getMessage("angal.common.description"), 
+				MessageBundle.getMessage("angal.priceslist.currency") 
+			}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private int[] columWidth = {100, 100, 200, 100};
 	private boolean[] columResizable = {false, false, true, false};
 	
@@ -108,21 +118,24 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 								list.getName(),
 								JOptionPane.YES_NO_OPTION,
 								JOptionPane.QUESTION_MESSAGE);
-						
-						if (ok == JOptionPane.OK_OPTION) {
-							
-							boolean result = false;
-							result = listManager.deleteList(list);
-							
-							if (result) {
-								
-								listArray = listManager.getLists();
-								jTablePriceLists.setModel(new ListBrowserModel());
-							} else {
-								JOptionPane.showMessageDialog(
-										null,
-										MessageBundle.getMessage("angal.priceslist.thedatacouldnotbedeleted")); //$NON-NLS-1$
+						try{
+							if (ok == JOptionPane.OK_OPTION) {
+
+								boolean result = false;
+								result = listManager.deleteList(list);
+
+								if (result) {
+
+									listArray = listManager.getLists();
+									jTablePriceLists.setModel(new ListBrowserModel());
+								} else {
+									JOptionPane.showMessageDialog(
+											null,
+											MessageBundle.getMessage("angal.priceslist.thedatacouldnotbedeleted")); //$NON-NLS-1$
+								}
 							}
+						}catch(OHServiceException e){
+							OHServiceExceptionUtil.showMessages(e);
 						}
 					}
 				}
@@ -219,18 +232,22 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 							PriceList copiedList = new PriceList(list.getId(),MessageBundle.getMessage("angal.priceslist.acode"),newName,MessageBundle.getMessage("angal.priceslist.adescription"),list.getCurrency());
 							
 							boolean result = false;
-							result = listManager.copyList(copiedList, qty, step);
+							try {
+								result = listManager.copyList(copiedList, qty, step);
 
-							if (result) {
-								JOptionPane.showMessageDialog(null,
-										MessageBundle.getMessage("angal.priceslist.listcopiedremembertoeditinformations")); //$NON-NLS-1$
-								
-								listArray = listManager.getLists();
-								jTablePriceLists.setModel(new ListBrowserModel());
-							
-							} else {
-								JOptionPane.showMessageDialog(null,
-										MessageBundle.getMessage("angal.priceslist.thedatacouldnotbesaved"));
+								if (result) {
+									JOptionPane.showMessageDialog(null,
+											MessageBundle.getMessage("angal.priceslist.listcopiedremembertoeditinformations")); //$NON-NLS-1$
+
+									listArray = listManager.getLists();
+									jTablePriceLists.setModel(new ListBrowserModel());
+
+								} else {
+									JOptionPane.showMessageDialog(null,
+											MessageBundle.getMessage("angal.priceslist.thedatacouldnotbesaved"));
+								}
+							}catch(OHServiceException e){
+								OHServiceExceptionUtil.showMessages(e);
 							}
 
 						} else return;
@@ -332,7 +349,11 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 
 		public ListBrowserModel() {
 			listManager = new PriceListManager();
-			listArray = listManager.getLists();
+			try {
+				listArray = listManager.getLists();
+			}catch(OHServiceException e){
+				OHServiceExceptionUtil.showMessages(e);
+			}
 		}
 		public int getRowCount() {
 			if (listArray == null)

@@ -14,13 +14,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
-import org.isf.utils.jobjects.*;
-import org.isf.generaldata.MessageBundle;
-
-
 
 import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.model.DischargeType;
+import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class DischargeTypeBrowserEdit extends JDialog{
 
@@ -211,15 +211,25 @@ public class DischargeTypeBrowserEdit extends JDialog{
 					}
 					
 					if(insert){
-					if (manager.codeControl(key)){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.disctype.codealreadyinuse"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						codeTextField.setText("");
-						return;	
-					}};
+						boolean codeExists;
+						
+						try {
+							codeExists = manager.codeControl(key);
+						} catch (OHServiceException e1) {
+							codeExists = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
+						
+						if (true == codeExists){
+							JOptionPane.showMessageDialog(				
+									null,
+									MessageBundle.getMessage("angal.common.codealreadyinuse"),
+									MessageBundle.getMessage("angal.hospital"),
+									JOptionPane.PLAIN_MESSAGE);
+							codeTextField.setText("");
+							return;	
+						}
+					};
 					if (descriptionTextField.getText().equals("")){
 						JOptionPane.showMessageDialog(				
 		                        null,
@@ -237,7 +247,12 @@ public class DischargeTypeBrowserEdit extends JDialog{
 					dischargeType.setCode(codeTextField.getText());					
 					boolean result = false;
 					if (insert) {      // inserting
-						result = manager.newDischargeType(dischargeType);
+						try {
+							result = manager.newDischargeType(dischargeType);
+						} catch (OHServiceException e1) {
+							result = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
 						if (result) {
                            fireDischargeInserted(dischargeType);
                         }
@@ -248,7 +263,12 @@ public class DischargeTypeBrowserEdit extends JDialog{
                     	if (descriptionTextField.getText().equals(lastdescription)){
     						dispose();	
     					}else{
-    						result = manager.updateDischargeType(dischargeType);
+    						try {
+								result = manager.updateDischargeType(dischargeType);
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						if (result) {
 							fireDischargeUpdated();
                         }
@@ -350,7 +370,7 @@ public class DischargeTypeBrowserEdit extends JDialog{
 	private JPanel getJDescriptionLabelPanel() {
 		if (jDescriptionLabelPanel == null) {
 			jDescripitonLabel = new JLabel();
-			jDescripitonLabel.setText(MessageBundle.getMessage("angal.disctype.description"));
+			jDescripitonLabel.setText(MessageBundle.getMessage("angal.common.description"));
 			jDescriptionLabelPanel = new JPanel();
 			jDescriptionLabelPanel.add(jDescripitonLabel, null);
 		}

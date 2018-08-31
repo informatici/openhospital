@@ -5,7 +5,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -14,9 +13,11 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.lab.model.LaboratoryForPrint;
 import org.isf.serviceprinting.manager.PrintManager;
-import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
 public class LabPrintFrame extends JDialog{
 
@@ -41,7 +42,7 @@ public class LabPrintFrame extends JDialog{
 	
 	private List<LaboratoryForPrint> labList = null;
 	
-	public LabPrintFrame (JFrame owner, ArrayList<LaboratoryForPrint> labs) {
+	public LabPrintFrame (JFrame owner, List<LaboratoryForPrint> labs) {
 		super(owner, true);
 		initialize();
 		labList = labs;
@@ -106,7 +107,11 @@ public class LabPrintFrame extends JDialog{
 			okButton.addActionListener(new ActionListener() {
 			
 				public void actionPerformed(ActionEvent arg0) {
-					new PrintManager("Laboratory",labList,printTypeSelected);
+					try {
+						new PrintManager("Laboratory",labList,printTypeSelected);
+					} catch (OHServiceException e) {
+						OHServiceExceptionUtil.showMessages(e);
+					}
 					dispose();
 				}
 			});

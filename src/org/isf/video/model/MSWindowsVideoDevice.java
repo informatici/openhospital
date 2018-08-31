@@ -36,7 +36,7 @@ public class MSWindowsVideoDevice extends VideoDevice {
 			removeResolutionsFromFile();
 		}
 		
-		// se nel file non erano memorizzate risoluzioni per questo device
+		// If no resolutions were saved for this device
 		if ((resolutions == null)	||	(resolutions.size() == 0))	{			
 			resolutions = VideoDeviceStreamAppletManager.checkResolutions(this);
 			

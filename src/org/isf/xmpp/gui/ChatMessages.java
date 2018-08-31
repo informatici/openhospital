@@ -16,7 +16,9 @@ import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import org.isf.stat.manager.GenericReportFromDateToDate;
+import org.isf.stat.gui.report.GenericReportFromDateToDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChatMessages extends JTextPane {
 
@@ -30,6 +32,8 @@ public class ChatMessages extends JTextPane {
 	private Color redColor =  new Color (25,25,112);
 	private SimpleAttributeSet keyWord;
 	private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+	
+	private final Logger logger = LoggerFactory.getLogger(ChatMessages.class);
 
 
 	public ChatMessages(){
@@ -88,21 +92,19 @@ public class ChatMessages extends JTextPane {
 		view.setBorderPainted( false );
 		view.setContentAreaFilled(false);
 		
-		//System.out.println("ha funzionato");
 		String [] reports=new String[4];
 		int i=0;
 		StringTokenizer st = new StringTokenizer(report);
 		while(st.hasMoreTokens()){
-			//System.out.println(st.nextToken());
 			reports[i]=st.nextToken();
 			i++;
 		}
 		fromDate=reports[1];
-		System.out.println("1: "+reports[1]);
+		logger.debug("fromDate: "+reports[1]);
 		toDate=reports[2];
-		System.out.println("2: "+reports[2]);
+		logger.debug("toDate: "+reports[2]);
 		typeReport=reports[3];
-		System.out.println("3: "+reports[3]);
+		logger.debug("typeReport: "+reports[3]);
 		int position = doc.getEndPosition().getOffset();
 		StyleConstants.setForeground(keyWord, greenColor);
 
@@ -119,7 +121,7 @@ public class ChatMessages extends JTextPane {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new GenericReportFromDateToDate(fromDate,toDate,typeReport, false);
+				new GenericReportFromDateToDate(fromDate,toDate,typeReport,typeReport, false);
 				view.setEnabled(false);
 			}
 		});

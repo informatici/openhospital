@@ -23,6 +23,8 @@ import javax.swing.table.DefaultTableModel;
 import org.isf.menu.manager.*;
 import org.isf.menu.model.*;
 import org.isf.utils.db.BCrypt;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.generaldata.MessageBundle;
 
@@ -149,10 +151,17 @@ public class UserBrowsing extends ModalJFrame implements UserEdit.UserListener {
 		
 		pbox = new JComboBox();
 		pbox.addItem(MessageBundle.getMessage("angal.menu.all"));
-		ArrayList<UserGroup> group = manager.getUserGroup();
-		for (UserGroup elem : group) {
-			pbox.addItem(elem);
-		}
+        ArrayList<UserGroup> group = null;
+        try {
+            group = manager.getUserGroup();
+        } catch (OHServiceException e) {
+            OHServiceExceptionUtil.showMessages(e);
+        }
+        if(group != null) {
+            for (UserGroup elem : group) {
+                pbox.addItem(elem);
+            }
+        }
 		pbox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				pSelection=pbox.getSelectedItem().toString();
@@ -250,9 +259,13 @@ public class UserBrowsing extends ModalJFrame implements UserEdit.UserListener {
 					if (newPassword != null && !newPassword.equals("") && newPassword.length() >= 6) {
 						String hashed = BCrypt.hashpw(new String(newPassword), BCrypt.gensalt());
 						user.setPasswd(hashed);
-						if (manager.updatePassword(user))
-							JOptionPane.showMessageDialog(UserBrowsing.this, MessageBundle.getMessage("angal.menu.thepasswordhasbeenchanged"));
-					} else {
+                        try {
+                            if (manager.updatePassword(user))
+                                JOptionPane.showMessageDialog(UserBrowsing.this, MessageBundle.getMessage("angal.menu.thepasswordhasbeenchanged"));
+                        } catch (OHServiceException e) {
+                            OHServiceExceptionUtil.showMessages(e);
+                        }
+                    } else {
 						JOptionPane.showMessageDialog(UserBrowsing.this, MessageBundle.getMessage("angal.menu.pleaseinsertavalidpasswordminsixdigits"));
 					}
 				}	 				
@@ -280,12 +293,16 @@ public class UserBrowsing extends ModalJFrame implements UserEdit.UserListener {
                         MessageBundle.getMessage("angal.hospital"),
                         JOptionPane.YES_NO_OPTION);
 
-				if ((n == JOptionPane.YES_OPTION) && (manager.deleteUser(m))){
-					pUser.remove(table.getSelectedRow());
-					model.fireTableDataChanged();
-					table.updateUI();
-					}
-				}
+                    try {
+                        if ((n == JOptionPane.YES_OPTION) && (manager.deleteUser(m))){
+                            pUser.remove(table.getSelectedRow());
+                            model.fireTableDataChanged();
+                            table.updateUI();
+                            }
+                    } catch (OHServiceException e) {
+                        OHServiceExceptionUtil.showMessages(e);
+                    }
+                }
 			}
 		});
 		buttonPanel.add(buttonDelete);
@@ -313,12 +330,20 @@ public class UserBrowsing extends ModalJFrame implements UserEdit.UserListener {
 
 		public UserBrowserModel(String s) {
 			UserBrowsingManager manager = new UserBrowsingManager();
-			pUser = manager.getUser(s);
-		}
+            try {
+                pUser = manager.getUser(s);
+            } catch (OHServiceException e) {
+                OHServiceExceptionUtil.showMessages(e);
+            }
+        }
 		public UserBrowserModel() {
 			UserBrowsingManager manager = new UserBrowsingManager();
-			pUser = manager.getUser();
-		}
+            try {
+                pUser = manager.getUser();
+            } catch (OHServiceException e) {
+                OHServiceExceptionUtil.showMessages(e);
+            }
+        }
 		public int getRowCount() {
 			if (pUser == null)
 				return 0;

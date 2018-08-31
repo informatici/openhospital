@@ -40,6 +40,8 @@ import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.ward.model.Ward;
 
 public class WardPharmacyNew extends JDialog implements SelectionListener {
@@ -93,9 +95,9 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 		jButtonPickPatient.setText(MessageBundle.getMessage("angal.medicalstockwardedit.changepatient")); //$NON-NLS-1$
 		jButtonPickPatient.setToolTipText(MessageBundle.getMessage("angal.medicalstockwardedit.changethepatientassociatedwiththismovement")); //$NON-NLS-1$
 		jButtonTrashPatient.setEnabled(true);
-		if (patientSelected.getWeight() == 0) {
-			JOptionPane.showMessageDialog(WardPharmacyNew.this, MessageBundle.getMessage("angal.medicalstockwardedit.theselectedpatienthasnoweightdefined"));
-		}
+//		if (patientSelected.getWeight() == 0) {
+//			JOptionPane.showMessageDialog(WardPharmacyNew.this, MessageBundle.getMessage("angal.medicalstockwardedit.theselectedpatienthasnoweightdefined"));
+//		}
 	}
 	
 	private static final long serialVersionUID = 1L;
@@ -122,7 +124,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 	private Ward wardSelected;
 	private Object[] medClasses = {Medical.class, Integer.class};
 	private String[] medColumnNames = {MessageBundle.getMessage("angal.medicalstockward.medical"), 
-									   MessageBundle.getMessage("angal.medicalstockward.quantity")};
+									   MessageBundle.getMessage("angal.common.quantity")};
 	private Integer[] medWidth = {200, 150};
 	private boolean[] medResizable = {true, false};
 	
@@ -273,7 +275,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 						
 						int r = JOptionPane.showConfirmDialog(WardPharmacyNew.this, 
 								new Object[] { messageBld.toString(), jSpinnerQty },
-								MessageBundle.getMessage("angal.medicalstockwardedit.quantity"),
+								MessageBundle.getMessage("angal.common.quantity"),
 				        		JOptionPane.OK_CANCEL_OPTION, 
 				        		JOptionPane.PLAIN_MESSAGE);
 						
@@ -442,7 +444,13 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 							e1.printStackTrace();
 						}
 						
-						boolean result = wardManager.newMovementWard(oneMovementWard);
+						boolean result;
+						try {
+							result = wardManager.newMovementWard(oneMovementWard);
+						} catch (OHServiceException e1) {
+							result = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
 						if (result) {
 							fireMovementWardInserted();
 						}
@@ -472,7 +480,13 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 							}
 						}
 						
-						boolean result = wardManager.newMovementWard(manyMovementWard);
+						boolean result;
+						try {
+							result = wardManager.newMovementWard(manyMovementWard);
+						} catch (OHServiceException e1) {
+							result = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
 						if (result) {
 							fireMovementWardInserted();
 						}

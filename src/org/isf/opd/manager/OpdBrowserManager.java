@@ -4,13 +4,16 @@ package org.isf.opd.manager;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
-import javax.swing.JOptionPane;
-
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.opd.model.Opd;
 import org.isf.opd.service.OpdIoOperations;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -19,6 +22,8 @@ import org.isf.utils.exception.OHException;
  */
 public class OpdBrowserManager {
 	
+	private final Logger logger = LoggerFactory.getLogger(OpdBrowserManager.class);
+	
 	private OpdIoOperations ioOperations = Menu.getApplicationContext().getBean(OpdIoOperations.class);
 	
 	/**
@@ -26,13 +31,23 @@ public class OpdBrowserManager {
 	 * 
 	 * @param oneWeek - if <code>true</code> return the last week, only today otherwise.
 	 * @return the list of OPDs. It could be <code>null</code>.
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Opd> getOpd(boolean oneWeek){
+	public ArrayList<Opd> getOpd(boolean oneWeek) throws OHServiceException{
 		try {
 			return ioOperations.getOpdList(oneWeek);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -49,13 +64,23 @@ public class OpdBrowserManager {
 	 * @param sex
 	 * @param newPatient
 	 * @return the list of OPDs. It could be <code>null</code>.
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Opd> getOpd(String diseaseTypeCode,String diseaseCode, GregorianCalendar dateFrom,GregorianCalendar dateTo,int ageFrom, int ageTo,char sex,char newPatient) {
+	public ArrayList<Opd> getOpd(String diseaseTypeCode,String diseaseCode, GregorianCalendar dateFrom,GregorianCalendar dateTo,int ageFrom, int ageTo,char sex,char newPatient) throws OHServiceException {
 		try {
 			return ioOperations.getOpdList(diseaseTypeCode,diseaseCode,dateFrom,dateTo,ageFrom,ageTo,sex,newPatient);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -65,12 +90,23 @@ public class OpdBrowserManager {
 	 * @param patID - the patient ID
 	 * @return the list of {@link Opd}s associated to specified patient ID.
 	 * 		   the whole list of {@link Opd}s if <code>0</code> is passed.
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Opd> getOpdList(int patientcode) {
+	public ArrayList<Opd> getOpdList(int patientcode) throws OHServiceException {
 		try {
 			return ioOperations.getOpdList(patientcode);
-		} catch (OHException e) {
-			return null;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -79,43 +115,71 @@ public class OpdBrowserManager {
 	 * 
 	 * @param an {@link OPD}
 	 * @return <code>true</code> if the item has been inserted
+	 * @throws OHServiceException 
 	 */
-	public boolean newOpd(Opd opd) {
+	public boolean newOpd(Opd opd) throws OHServiceException {
 		try {
 			return ioOperations.newOpd(opd);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
 	/**
+	 * Checks if the specified {@link Opd} has been modified.
+	 * @param opd - the {@link Opd} to check.
+	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
+	 * @throws OHServiceException if an error occurs during the check.
+	 */
+	public boolean hasOpdModified(Opd opd) throws OHServiceException{
+		try {
+			return ioOperations.hasOpdModified(opd);
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+		}
+	}
+	
+	/**
 	 * Updates the specified {@link Opd} object.
 	 * @param opd - the {@link Opd} object to update.
 	 * @return <code>true</code> if has been updated, <code>false</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public boolean updateOpd(Opd opd){
+	public boolean updateOpd(Opd opd) throws OHServiceException{
 		try {
-			boolean recordUpdated = ioOperations.hasOpdModified(opd);
-
-			if (!recordUpdated) { 
-				// it was not updated
-				return ioOperations.updateOpd(opd);
-			} else { 
-				// it was updated by someone else
-				String message = MessageBundle.getMessage("angal.admission.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
-				int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
-				boolean overWrite = response== JOptionPane.OK_OPTION;
-
-				if (overWrite) {
-					// the user has confirmed he wants to overwrite the record
-					return ioOperations.updateOpd(opd);
-				}
-			}
-			return false;
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+			return ioOperations.updateOpd(opd);
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -124,13 +188,23 @@ public class OpdBrowserManager {
 	 * 
 	 * @param opd - the {@link OPD} to delete
 	 * @return <code>true</code> if the item has been deleted. <code>false</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public boolean deleteOpd(Opd opd) {
+	public boolean deleteOpd(Opd opd) throws OHServiceException {
 		try {
 			return ioOperations.deleteOpd(opd);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -139,13 +213,23 @@ public class OpdBrowserManager {
 	 * 
 	 * @param year
 	 * @return <code>int</code> - the progressive number in the year
+	 * @throws OHServiceException 
 	 */
-	public int getProgYear(int year) {
+	public int getProgYear(int year) throws OHServiceException {
 		try {
 			return ioOperations.getProgYear(year);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return 0;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -154,13 +238,23 @@ public class OpdBrowserManager {
 	 * 
 	 * @param patID - the patient ID
 	 * @return last Opd associated with specified patient ID or <code>null</code>
+	 * @throws OHServiceException 
 	 */
-	public Opd getLastOpd(int patientcode) {
+	public Opd getLastOpd(int patientcode) throws OHServiceException {
 		try {
 			return ioOperations.getLastOpd(patientcode);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 }

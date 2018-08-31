@@ -28,6 +28,8 @@ import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
 import org.isf.sms.service.SmsSender;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.xmpp.gui.CommunicationFrame;
 import org.isf.xmpp.service.Server;
@@ -140,9 +142,13 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 
 		// get menu items
 		UserBrowsingManager manager = new UserBrowsingManager();
-		myMenu = manager.getMenu(myUser);
+        try {
+            myMenu = manager.getMenu(myUser);
+        } catch (OHServiceException e) {
+            OHServiceExceptionUtil.showMessages(e);
+        }
 
-		// start connection with xmpp server if is enabled
+        // start connection with xmpp server if is enabled
 		if (flag_Xmpp) {
 			try {
 				Server.getInstance().login(myUser.getUserName(), myUser.getPasswd());
@@ -157,7 +163,18 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 				 * communication.incomingChat(); communication.receiveFile();
 				 */
 			} catch (XMPPException e) {
-				logger.info("No XMPP Server seems to be running: set XMPPMODULEENABLED = false");
+				String message = e.getMessage();
+				if (message.contains("SASL authentication DIGEST-MD5 failed")) {
+					if (myUser.getUserName().equals("admin")) {
+						logger.error("Cannot use \"admin\" user, please consider to create another user under the admin group");
+					} else {
+						logger.error("Passwords not matching, please drop XMPP user and login OH again with the same user");
+					}
+				} else if (message.contains("XMPPError connecting")) {
+					logger.error("No XMPP Server seems to be running: set XMPPMODULEENABLED = false");
+				} else {
+					logger.error("An error occurs: " + e.getMessage());
+				}
 				flag_Xmpp = GeneralData.XMPPMODULEENABLED = false;
 			}
 

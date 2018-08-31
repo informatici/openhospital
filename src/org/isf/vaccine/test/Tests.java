@@ -63,7 +63,7 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	jpa.destroy();
+    	//jpa.destroy();
     	testVaccine = null;
     	testVaccineContext = null;
     	testVaccineType = null;

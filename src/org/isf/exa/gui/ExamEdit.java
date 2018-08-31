@@ -10,23 +10,29 @@
 
 package org.isf.exa.gui;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.util.*;
+import java.util.ArrayList;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JFrame;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.BoxLayout;
 import javax.swing.JTextField;
-import javax.swing.JComboBox;
+
 import org.isf.exa.manager.ExamBrowsingManager;
-import org.isf.exa.model.*;
+import org.isf.exa.model.Exam;
 import org.isf.exatype.model.ExamType;
-import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class ExamEdit extends JDialog {
 
@@ -113,8 +119,8 @@ public class ExamEdit extends JDialog {
 	private JPanel getDataPanel() {
 		if (dataPanel == null) {
 			typeLabel = new JLabel(MessageBundle.getMessage("angal.exa.type"));
-			descLabel = new JLabel(MessageBundle.getMessage("angal.exa.description"));			
-			codeLabel=new JLabel(MessageBundle.getMessage("angal.exa.code"));
+			descLabel = new JLabel(MessageBundle.getMessage("angal.common.description"));			
+			codeLabel=new JLabel(MessageBundle.getMessage("angal.common.code"));
 			procLabel = new JLabel(MessageBundle.getMessage("angal.exa.procedure"));
 			defLabel = new JLabel(MessageBundle.getMessage("angal.exa.default"));
 			dataPanel = new JPanel();
@@ -191,13 +197,46 @@ public class ExamEdit extends JDialog {
 						
 						boolean result = false;
 						if (insert) {
-							if (manager.isKeyPresent(exam)) {
+							
+							boolean keyPresent;
+							
+							try {
+								keyPresent = manager.isKeyPresent(exam);
+							} catch (OHServiceException e1) {
+								keyPresent = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
+							
+							if (true == keyPresent) {
 								JOptionPane.showMessageDialog(ExamEdit.this, MessageBundle.getMessage("angal.exa.changethecodebecauseisalreadyinuse"));
 								return;
 							}
-							result = manager.newExam(exam);
+							try {
+								result = manager.newExam(exam);
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						} else {
-							result = manager.updateExam(exam);
+							try {
+								result = manager.updateExam(exam);
+								
+								if (false == result) {
+									String prompt = MessageBundle.getMessage("angal.exa.thedatahasbeenupdatedbysomeoneelse") + ".\n"
+											+ MessageBundle.getMessage("angal.exa.doyouwanttooverwritethedata") + "?";
+									
+									int ok = JOptionPane.showConfirmDialog(null,
+											prompt,
+											MessageBundle.getMessage("angal.exa.select"), JOptionPane.YES_NO_OPTION);
+									
+									if (JOptionPane.YES_OPTION == ok) {
+										manager.updateExam(exam, false);
+									}
+								}
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						}
 						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exa.thedatacouldnotbesaved"));
 						else  dispose();
@@ -270,9 +309,17 @@ public class ExamEdit extends JDialog {
 			typeComboBox = new JComboBox();
 			if (insert) {
 				ExamBrowsingManager manager = new ExamBrowsingManager();
-				ArrayList<ExamType> types = manager.getExamType();
-				for (ExamType elem : types) {
-					typeComboBox.addItem(elem);
+				ArrayList<ExamType> types;
+				try {
+					types = manager.getExamType();
+				} catch (OHServiceException e) {
+					types = null;
+					OHServiceExceptionUtil.showMessages(e);
+				}
+				if (null != types) {
+					for (ExamType elem : types) {
+						typeComboBox.addItem(elem);
+					}
 				}
 			} else {
 				typeComboBox.addItem(exam.getExamtype());

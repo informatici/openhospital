@@ -32,8 +32,8 @@ import javax.swing.JPanel;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
-import org.isf.stat.manager.GenericReportFromDateToDate;
-import org.isf.stat.manager.GenericReportMY;
+import org.isf.stat.gui.report.GenericReportFromDateToDate;
+import org.isf.stat.gui.report.GenericReportMY;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoDateTextField;
@@ -390,7 +390,7 @@ public class ReportLauncher extends ModalJFrame{
 		return jCSVButton;
 	}
 	
-	protected void generateReport(boolean toCSV) {
+	protected void generateReport(boolean toExcel) {
 		   
 		int rptIndex=jRptComboBox.getSelectedIndex();
 		Integer month = jMonthComboBox.getSelectedIndex()+1;
@@ -401,7 +401,7 @@ public class ReportLauncher extends ModalJFrame{
 		if (rptIndex>=0) {
 			String sParType = reportMatrix[rptIndex][TYPE];
 			if (sParType.equalsIgnoreCase("twodates")) {
-				new GenericReportFromDateToDate(fromDate, toDate, reportMatrix[rptIndex][FILENAME], toCSV);
+				new GenericReportFromDateToDate(fromDate, toDate, reportMatrix[rptIndex][FILENAME], MessageBundle.getMessage(reportMatrix[rptIndex][BUNDLE]), toExcel);
 				if (GeneralData.XMPPMODULEENABLED) {
 					String user= (String)shareWith.getSelectedItem();
 					CommunicationFrame frame= (CommunicationFrame)CommunicationFrame.getFrame();
@@ -418,7 +418,7 @@ public class ReportLauncher extends ModalJFrame{
 				fromDate = sdf.format(d.getTime());
 				d.set(GregorianCalendar.DAY_OF_MONTH, d.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
 				toDate = sdf.format(d.getTime());
-				new GenericReportFromDateToDate(fromDate, toDate, reportMatrix[rptIndex][FILENAME], toCSV);
+				new GenericReportFromDateToDate(fromDate, toDate, reportMatrix[rptIndex][FILENAME], MessageBundle.getMessage(reportMatrix[rptIndex][BUNDLE]), toExcel);
 				if (GeneralData.XMPPMODULEENABLED) {
 					String user= (String)shareWith.getSelectedItem();
 					CommunicationFrame frame= (CommunicationFrame)CommunicationFrame.getFrame();
@@ -427,7 +427,7 @@ public class ReportLauncher extends ModalJFrame{
 				}
 			}
 			if (sParType.equalsIgnoreCase("monthyear")) {
-				new GenericReportMY(month, year, reportMatrix[rptIndex][FILENAME], toCSV);
+				new GenericReportMY(month, year, reportMatrix[rptIndex][FILENAME], MessageBundle.getMessage(reportMatrix[rptIndex][BUNDLE]), toExcel);
 				if (GeneralData.XMPPMODULEENABLED) {
 					String user= (String)shareWith.getSelectedItem();
 					CommunicationFrame frame= (CommunicationFrame)CommunicationFrame.getFrame();

@@ -138,7 +138,7 @@ public class LinuxShellInterface {
 		String productDescription = "";
 		
 		//String command = "lsusb -vs " + idBus + ":" + idDevice + "| grep iProduct";
-		// FS = stringa separatrice
+		// FS = string separator
 		String command = "lsusb -vd " + vendorHexId + ":" + productHexId + "| grep iProduct | awk 'BEGIN { FS = \" 1 \"}; {print $2}'";
 		String productLine = execute(command);
 		
@@ -177,7 +177,7 @@ public class LinuxShellInterface {
 			String h = heightArray.get(i);
 			
 			if (w != "" && h != "")	{
-				// aggiunge degli zeri utili per l'ordinamento
+				// Padding with 0 (zeros) useful for sorting
 				for (int j = w.length(); j < 4; j++)
 					w = "0" + w;
 				
@@ -194,7 +194,7 @@ public class LinuxShellInterface {
 		if (k > 0)	{
 			Collections.sort(resolutions);
 			
-			// toglie gli zeri iniziali
+			// Removes starting 0 (zero)
 			for (int i=0; i<k-1; i++)	{
 				resolutions.set(i, resolutions.get(i).replaceAll("^0*", ""));
 			}

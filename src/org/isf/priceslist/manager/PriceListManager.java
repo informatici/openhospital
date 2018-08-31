@@ -3,8 +3,7 @@ package org.isf.priceslist.manager;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.swing.JOptionPane;
-
+import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.Price;
@@ -12,34 +11,61 @@ import org.isf.priceslist.model.PriceList;
 import org.isf.priceslist.service.PricesListIoOperations;
 import org.isf.serviceprinting.print.PriceForPrint;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PriceListManager {
 
+	private final Logger logger = LoggerFactory.getLogger(PriceListManager.class);
+	
 	private PricesListIoOperations ioOperations = Menu.getApplicationContext().getBean(PricesListIoOperations.class);
 	
 	/**
 	 * return the list of {@link List}s in the DB
 	 * @return the list of {@link List}s
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<PriceList> getLists() {
+	public ArrayList<PriceList> getLists() throws OHServiceException {
 		try {
 			return ioOperations.getLists();
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
-		} 
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+		}
 	}
 	
 	/**
 	 * return the list of {@link Price}s in the DB
 	 * @return the list of {@link Price}s
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Price> getPrices() {
+	public ArrayList<Price> getPrices() throws OHServiceException {
 		try {
 			return ioOperations.getPrices();
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return null;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -48,13 +74,23 @@ public class PriceListManager {
 	 * @param list - the {@link List}
 	 * @param prices - the list of {@link Price}s
 	 * @return <code>true</code> if the list has been replaced, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 */
-	public boolean updatePrices(PriceList list, ArrayList<Price> prices) {
+	public boolean updatePrices(PriceList list, ArrayList<Price> prices) throws OHServiceException {
 		try {
 			return ioOperations.updatePrices(list, prices);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -63,13 +99,23 @@ public class PriceListManager {
 	 * 
 	 * @param list - the {@link List}
 	 * @return <code>true</code> if the list has been inserted, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 */
-	public boolean newList(PriceList list) {
+	public boolean newList(PriceList list) throws OHServiceException {
 		try {
 			return ioOperations.newList(list);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -78,13 +124,23 @@ public class PriceListManager {
 	 * 
 	 * @param list - the {@link List} to update
 	 * @return <code>true</code> if the list has been updated, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 */
-	public boolean updateList(PriceList updateList) {
+	public boolean updateList(PriceList updateList) throws OHServiceException {
 		try {
 			return ioOperations.updateList(updateList);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -93,13 +149,23 @@ public class PriceListManager {
 	 * 
 	 * @param list - the {@link List} to delete
 	 * @return <code>true</code> if the list has been deleted, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 */
-	public boolean deleteList(PriceList deleteList) {
+	public boolean deleteList(PriceList deleteList) throws OHServiceException {
 		try {
 			return ioOperations.deleteList(deleteList);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -108,8 +174,9 @@ public class PriceListManager {
 	 * 
 	 * @param list
 	 * @return <code>true</code> if the list has been duplicated, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 */
-	public boolean copyList(PriceList list) {
+	public boolean copyList(PriceList list) throws OHServiceException {
 		return copyList(list, 1., 0.);
 	}
 	
@@ -120,13 +187,23 @@ public class PriceListManager {
 	 * @param factor - the multiplying factor
 	 * @param step - the rounding step
 	 * @return <code>true</code> if the list has been duplicated, <code>false</code> otherwise
+	 * @throws OHServiceException 
 	 */
-	public boolean copyList(PriceList list, double factor, double step) {
+	public boolean copyList(PriceList list, double factor, double step) throws OHServiceException {
 		try {
 			return ioOperations.copyList(list, factor, step);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
+		}catch(OHException e){
+			/*Already cached exception with OH specific error message - 
+			 * create ready to return OHServiceException and keep existing error message
+			 */
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					e.getMessage(), OHSeverityLevel.ERROR));
+		}catch(Exception e){
+			//Any exception
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 	

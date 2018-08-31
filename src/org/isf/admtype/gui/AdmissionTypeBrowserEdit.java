@@ -14,6 +14,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
+
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.*;
 import org.isf.generaldata.MessageBundle;
 
@@ -211,16 +214,25 @@ public class AdmissionTypeBrowserEdit extends JDialog{
 						
 						return;	
 					}
-					if(insert){
-					if (manager.codeControl(key)){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.admtype.codealreadyinuse"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						codeTextField.setText("");
-						return;	
-					}};
+					try{
+						if(insert){
+							if (manager.codeControl(key)){
+								JOptionPane.showMessageDialog(				
+										null,
+										MessageBundle.getMessage("angal.common.codealreadyinuse"),
+										MessageBundle.getMessage("angal.hospital"),
+										JOptionPane.PLAIN_MESSAGE);
+								codeTextField.setText("");
+								return;	
+							}
+						}
+					}catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
+					}
 					if (descriptionTextField.getText().equals("")){
 						JOptionPane.showMessageDialog(				
 		                        null,
@@ -237,7 +249,15 @@ public class AdmissionTypeBrowserEdit extends JDialog{
 					admissionType.setCode(codeTextField.getText());
 					boolean result = false;
 					if (insert) {      // inserting
-						result = manager.newAdmissionType(admissionType);
+						try {
+							result = manager.newAdmissionType(admissionType);
+						}catch(OHServiceException ex){
+							if(ex.getMessages() != null){
+								for(OHExceptionMessage msg : ex.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						}
 						if (result) {
                            fireAdmissionInserted(admissionType);
                         }
@@ -248,7 +268,15 @@ public class AdmissionTypeBrowserEdit extends JDialog{
                     	if (descriptionTextField.getText().equals(lastdescription)){
     						dispose();	
     					}else{
-    						result = manager.updateAdmissionType(admissionType);
+    						try {
+								result = manager.updateAdmissionType(admissionType);
+    						}catch(OHServiceException ex){
+    							if(ex.getMessages() != null){
+    								for(OHExceptionMessage msg : ex.getMessages()){
+    									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+    								}
+    							}
+    						}
 						if (result) {
 							fireAdmissionUpdated();
                         }
@@ -348,7 +376,7 @@ public class AdmissionTypeBrowserEdit extends JDialog{
 	private JPanel getJDescriptionLabelPanel() {
 		if (jDescriptionLabelPanel == null) {
 			jDescripitonLabel = new JLabel();
-			jDescripitonLabel.setText(MessageBundle.getMessage("angal.admtype.descriptionm"));
+			jDescripitonLabel.setText(MessageBundle.getMessage("angal.common.descriptionm"));
 			jDescriptionLabelPanel = new JPanel();
 			jDescriptionLabelPanel.add(jDescripitonLabel, null);
 		}

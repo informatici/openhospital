@@ -158,9 +158,8 @@ public class MiddlePanel extends JPanel {
 					generatedFileName = VideoManager.frame.savePhoto(filename);
 				
 				if ((! generatedFileName.equals(""))	&&	VideoManager.frame.fullScreenMode)	{
-					// la creazione del popup con l'anteprima viene delegata al FullScreanStreamFrame
-					// poiche' il popup deve comparire su di esso e non sul VideoFrame
-					// (visto che MiddlePanel e' membro di VideoFrame)
+					// The creation of a popup window is done by the FullScreanStreamFrame object
+					// because have to be shown on top
 					VideoManager.frame.fullScreenStreamFrame.showPhotoPreview(generatedFileName);
 				}
 			}

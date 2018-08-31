@@ -3,7 +3,6 @@ package org.isf.priceslist.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.isf.generaldata.MessageBundle;
 import org.isf.priceslist.model.Price;
 import org.isf.priceslist.model.PriceList;
 import org.isf.utils.db.DbJpaUtil;
@@ -24,15 +23,19 @@ public class PricesListIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<PriceList> pList = null;
 				
-		
-		jpa.beginTransaction();
-		
-		jpa.createQuery("SELECT * FROM PRICELISTS", PriceList.class, false);
-		List<PriceList> priceLists = (List<PriceList>)jpa.getList();
-		pList = new ArrayList<PriceList>(priceLists);			
-		
-		jpa.commitTransaction();
-		
+		try{
+			jpa.beginTransaction();
+
+			jpa.createQuery("SELECT * FROM PRICELISTS", PriceList.class, false);
+			List<PriceList> priceLists = (List<PriceList>)jpa.getList();
+			pList = new ArrayList<PriceList>(priceLists);			
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return pList;
 	}
 	
@@ -47,15 +50,19 @@ public class PricesListIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Price> pPrice = null;
 				
-		
-		jpa.beginTransaction();
-		
-		jpa.createQuery("SELECT * FROM PRICES ORDER BY PRC_DESC", Price.class, false);
-		List<Price> prices = (List<Price>)jpa.getList();
-		pPrice = new ArrayList<Price>(prices);			
-		
-		jpa.commitTransaction();
+		try{
+			jpa.beginTransaction();
 
+			jpa.createQuery("SELECT * FROM PRICES ORDER BY PRC_DESC", Price.class, false);
+			List<Price> prices = (List<Price>)jpa.getList();
+			pPrice = new ArrayList<Price>(prices);			
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
 		return pPrice;
 	}
 
@@ -88,20 +95,18 @@ public class PricesListIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
-		
-		jpa.beginTransaction();		
-
 		try {
+			jpa.beginTransaction();		
 			jpa.createQuery("DELETE FROM PRICES WHERE PRC_LST_ID = ?", Price.class, false);
 			params.add(id);
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
+			jpa.commitTransaction();	
 		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 	
-
-		jpa.commitTransaction();	
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}  	
 		
         return result;
     }
@@ -114,23 +119,22 @@ public class PricesListIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
-		
-		for (Price price : prices) 
-		{
+		try {
 			jpa.beginTransaction();		
-	
-			try {
+
+			for (Price price : prices) 
+			{
 				jpa.createQuery("INSERT INTO PRICES (PRC_LST_ID, PRC_GRP, PRC_ITEM, PRC_DESC, PRC_PRICE) VALUES (?,?,?,?,?)", Price.class, false);
 				params = _addUpdatePriceParameters(list, price);
 				jpa.setParameters(params, false);
 				jpa.executeUpdate();
-			}  catch (OHException e) {
-				result = false;
-				throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-			} 	
-	
+			}		
 			jpa.commitTransaction();
-		}		
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 	
 		
         return result;
     }
@@ -163,21 +167,19 @@ public class PricesListIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil();
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
-        		
-		
-		jpa.beginTransaction();		
 
 		try {
+			jpa.beginTransaction();		
 			jpa.createQuery("INSERT INTO PRICELISTS (LST_CODE, LST_NAME, LST_DESC, LST_CURRENCY) VALUES (?,?,?,?)", PriceList.class, false);
 			params = _addNewPriceListParameters(list);
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
+			jpa.commitTransaction();
 		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		} 	
-
-		jpa.commitTransaction();
 
 		return result;
 	}
@@ -210,10 +212,8 @@ public class PricesListIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
-		
-		jpa.beginTransaction();		
-
 		try {
+			jpa.beginTransaction();		
 			String query = "UPDATE PRICELISTS SET LST_CODE = ?, " +
 						   "LST_NAME = ?, " +
 						   "LST_DESC = ?, " +
@@ -223,12 +223,13 @@ public class PricesListIoOperations {
 			params = _addUpdatePriceListParameters(list);
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
+			jpa.commitTransaction();
 		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		} 	
 
-		jpa.commitTransaction();
 		
 		return result;
 	}
@@ -275,20 +276,18 @@ public class PricesListIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
-		
-		jpa.beginTransaction();		
-
 		try {
+			jpa.beginTransaction();		
 			jpa.createQuery("DELETE FROM PRICELISTS WHERE LST_ID = ? ", PriceList.class, false);
 			params.add(id);
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
+			jpa.commitTransaction();	
 		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		} 	
-
-		jpa.commitTransaction();	
 		
         return result;
     }
@@ -335,29 +334,33 @@ public class PricesListIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true; 		
 
-		
-		jpa.beginTransaction();			
-		
-		jpa.createQuery("SELECT * FROM PRICES WHERE PRC_LST_ID = ?", Price.class, false);
-		params.add(list.getId());			
-		jpa.setParameters(params, false);
-		List<Price> Prices = (List<Price>)jpa.getList();
-		for (Price price: Prices) 
-		{    
-			Price newPrice = new Price();
-			
-			
-			newPrice.setList(newList);
-			newPrice.setGroup(price.getGroup());
-			newPrice.setDesc(price.getDesc());
-			newPrice.setPrice(Math.round((price.getPrice() * factor) / step) * step);
-			newPrice.setItem(price.getItem());
-			
-			jpa.persist(newPrice);			
-	    }        
-		
-		jpa.commitTransaction();			
-		
+		try{
+			jpa.beginTransaction();			
+
+			jpa.createQuery("SELECT * FROM PRICES WHERE PRC_LST_ID = ?", Price.class, false);
+			params.add(list.getId());			
+			jpa.setParameters(params, false);
+			List<Price> Prices = (List<Price>)jpa.getList();
+			for (Price price: Prices) 
+			{    
+				Price newPrice = new Price();
+
+
+				newPrice.setList(newList);
+				newPrice.setGroup(price.getGroup());
+				newPrice.setDesc(price.getDesc());
+				newPrice.setPrice(Math.round((price.getPrice() * factor) / step) * step);
+				newPrice.setItem(price.getItem());
+
+				jpa.persist(newPrice);			
+			}        
+
+			jpa.commitTransaction();			
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
         return result;
     }
 
@@ -371,29 +374,33 @@ public class PricesListIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
-				
-		jpa.beginTransaction();			
-		
-		jpa.createQuery("SELECT * FROM PRICES WHERE PRC_LST_ID = ?", Price.class, false);
-		params.add(list.getId());			
-		jpa.setParameters(params, false);
-		List<Price> Prices = (List<Price>)jpa.getList();
-		for (Price price: Prices) 
-		{    
-			Price newPrice = new Price();
-			
-			
-			newPrice.setList(newList);
-			newPrice.setGroup(price.getGroup());
-			newPrice.setDesc(price.getDesc());
-			newPrice.setPrice(price.getPrice() * factor);
-			newPrice.setItem(price.getItem());
-								
-			jpa.persist(newPrice);		
-		}        
-		
-		jpa.commitTransaction();			
-		
+		try{
+			jpa.beginTransaction();			
+
+			jpa.createQuery("SELECT * FROM PRICES WHERE PRC_LST_ID = ?", Price.class, false);
+			params.add(list.getId());			
+			jpa.setParameters(params, false);
+			List<Price> Prices = (List<Price>)jpa.getList();
+			for (Price price: Prices) 
+			{    
+				Price newPrice = new Price();
+
+
+				newPrice.setList(newList);
+				newPrice.setGroup(price.getGroup());
+				newPrice.setDesc(price.getDesc());
+				newPrice.setPrice(price.getPrice() * factor);
+				newPrice.setItem(price.getItem());
+
+				jpa.persist(newPrice);		
+			}        
+
+			jpa.commitTransaction();			
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
         return result;		
     }
 
@@ -401,17 +408,22 @@ public class PricesListIoOperations {
 			DbJpaUtil jpa,
 			PriceList list) throws OHException 
     {			
-		jpa.beginTransaction();	
-		
 		PriceList newList = new PriceList();
-		newList.setCode(list.getCode());
-		newList.setName(list.getName());
-		newList.setDescription(list.getDescription());
-		newList.setCurrency(list.getCurrency());
-		jpa.persist(newList);
-		
-    	jpa.commitTransaction();
-		
+		try {
+			jpa.beginTransaction();	
+
+			newList.setCode(list.getCode());
+			newList.setName(list.getName());
+			newList.setDescription(list.getDescription());
+			newList.setCurrency(list.getCurrency());
+			jpa.persist(newList);
+
+			jpa.commitTransaction();
+		}  catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		} 
         return newList;
     }
 }

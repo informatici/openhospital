@@ -3,7 +3,6 @@ package org.isf.visits.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.isf.generaldata.MessageBundle;
 import org.isf.patient.model.Patient;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
@@ -29,22 +28,26 @@ public class VisitsIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
 		String query = null;
 				
-		
-		jpa.beginTransaction();
-		
-		query = "SELECT * FROM VISITS";
-		if (patID != 0) {
-			query += " WHERE VST_PAT_ID = ?";
-			params.add(patID);
+		try{
+			jpa.beginTransaction();
+
+			query = "SELECT * FROM VISITS";
+			if (patID != 0) {
+				query += " WHERE VST_PAT_ID = ?";
+				params.add(patID);
+			}
+			query += " ORDER BY VST_PAT_ID, VST_DATE";
+			jpa.createQuery(query, Visit.class, false);
+			jpa.setParameters(params, false);
+			List<Visit> therapyLists = (List<Visit>)jpa.getList();
+			visitList = new ArrayList<Visit>(therapyLists);			
+
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		query += " ORDER BY VST_PAT_ID, VST_DATE";
-		jpa.createQuery(query, Visit.class, false);
-		jpa.setParameters(params, false);
-		List<Visit> therapyLists = (List<Visit>)jpa.getList();
-		visitList = new ArrayList<Visit>(therapyLists);			
-		
-		jpa.commitTransaction();
-		
 		return visitList;
 	}
 
@@ -60,11 +63,15 @@ public class VisitsIoOperations {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		
-		
-		jpa.beginTransaction();	
-		jpa.persist(visit);
-    	jpa.commitTransaction();
-    	
+		try{
+			jpa.beginTransaction();	
+			jpa.persist(visit);
+			jpa.commitTransaction();
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return visit.getVisitID();
 	}
 	
@@ -82,21 +89,20 @@ public class VisitsIoOperations {
 		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
-		
-		jpa.beginTransaction();		
-
 		try {
+			jpa.beginTransaction();		
+
 			jpa.createQuery("DELETE FROM VISITS WHERE VST_PAT_ID = ?", Visit.class, false);
 			params.add(patID);
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();
-		}  catch (OHException e) {
-			result = false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 	
 
-		jpa.commitTransaction();	
-		
+			jpa.commitTransaction();	
+		}catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}		
         return result;
 	}
 }

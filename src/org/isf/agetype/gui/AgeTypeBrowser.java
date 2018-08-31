@@ -18,6 +18,8 @@ import javax.swing.table.DefaultTableModel;
 import org.isf.agetype.manager.AgeTypeBrowserManager;
 import org.isf.agetype.model.AgeType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -34,8 +36,11 @@ public class AgeTypeBrowser extends ModalJFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<AgeType> pAgeType;
-	private String[] pColums = { MessageBundle.getMessage("angal.agetype.code"), MessageBundle.getMessage("angal.agetype.from"), MessageBundle.getMessage("angal.agetype.to"),
-			MessageBundle.getMessage("angal.agetype.description") };
+	private String[] pColums = { 
+			MessageBundle.getMessage("angal.common.code"), 
+			MessageBundle.getMessage("angal.common.from"), 
+			MessageBundle.getMessage("angal.common.to"),
+			MessageBundle.getMessage("angal.common.description") };
 	private int[] pColumwidth = { 80, 80, 80, 200 };
 	private JPanel jContainPanel = null;
 	private JPanel jButtonPanel = null;
@@ -119,7 +124,15 @@ public class AgeTypeBrowser extends ModalJFrame {
 								return;
 							} 
 						}
-						manager.updateAgeType(pAgeType);
+						try {
+							manager.updateAgeType(pAgeType);
+						}catch(OHServiceException e){
+							if(e.getMessages() != null){
+								for(OHExceptionMessage msg : e.getMessages()){
+									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+								}
+							}
+						}
 						edit = false;
 						jTable.updateUI();
 						jEditSaveButton.setText(MessageBundle.getMessage("angal.common.edit"));
@@ -171,7 +184,16 @@ public class AgeTypeBrowser extends ModalJFrame {
 
 		public AgeTypeBrowserModel() {
 			AgeTypeBrowserManager manager = new AgeTypeBrowserManager();
-			pAgeType = manager.getAgeType();
+			try {
+				pAgeType = manager.getAgeType();
+			}catch(OHServiceException e){
+				pAgeType = new ArrayList<AgeType>();
+				if(e.getMessages() != null){
+					for(OHExceptionMessage msg : e.getMessages()){
+						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+					}
+				}
+			}
 		}
 
 		public int getRowCount() {

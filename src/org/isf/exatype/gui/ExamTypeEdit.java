@@ -22,12 +22,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
-import org.isf.utils.jobjects.*;
-
 
 import org.isf.exatype.manager.ExamTypeBrowserManager;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class ExamTypeEdit extends JDialog{
 
@@ -221,16 +222,26 @@ public class ExamTypeEdit extends JDialog{
 						
 						return;	
 					}
-					if(insert){
-					if (manager.codeControl(key)){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.exatype.codealreadyinuse"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						codeTextField.setText("");
-						return;	
-					}};
+					if(insert) {
+						boolean found;
+						
+						try {
+							found = manager.codeControl(key);
+						} catch (OHServiceException e1) {
+							found = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
+						
+						if (true == found) {
+							JOptionPane.showMessageDialog(				
+									null,
+									MessageBundle.getMessage("angal.common.codealreadyinuse"),
+									MessageBundle.getMessage("angal.hospital"),
+									JOptionPane.PLAIN_MESSAGE);
+							codeTextField.setText("");
+							return;	
+						}
+					};
 					if (descriptionTextField.getText().equals("")){
 						JOptionPane.showMessageDialog(				
 		                        null,
@@ -246,7 +257,12 @@ public class ExamTypeEdit extends JDialog{
 					examType.setCode(codeTextField.getText());
 					boolean result = false;
 					if (insert) {      // inserting
-						result = manager.newExamType(examType);
+						try {
+							result = manager.newExamType(examType);
+						} catch (OHServiceException e1) {
+							result = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
 						if (result) {
                            fireExamInserted();
                         }
@@ -257,7 +273,12 @@ public class ExamTypeEdit extends JDialog{
                     	if (descriptionTextField.getText().equals(lastdescription)){
     						dispose();	
     					}else{
-    						result = manager.updateExamType(examType);
+    						try {
+								result = manager.updateExamType(examType);
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						if (result) {
 							fireExamUpdated();
                         }
@@ -357,7 +378,7 @@ public class ExamTypeEdit extends JDialog{
 	private JPanel getJDescriptionLabelPanel() {
 		if (jDescriptionLabelPanel == null) {
 			jDescripitonLabel = new JLabel();
-			jDescripitonLabel.setText(MessageBundle.getMessage("angal.exatype.description"));
+			jDescripitonLabel.setText(MessageBundle.getMessage("angal.common.description"));
 			jDescriptionLabelPanel = new JPanel();
 			jDescriptionLabelPanel.add(jDescripitonLabel, null);
 		}

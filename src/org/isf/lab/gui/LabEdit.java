@@ -47,6 +47,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.EventListenerList;
 
 import org.isf.admission.manager.AdmissionBrowserManager;
+import org.isf.admission.model.Admission;
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.manager.ExamRowBrowsingManager;
 import org.isf.exa.model.Exam;
@@ -59,6 +60,8 @@ import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
 
@@ -327,15 +330,22 @@ public class LabEdit extends JDialog {
 			patientComboBox = new JComboBox();
 			Patient patSelected=null;
 			PatientBrowserManager patBrowser = new PatientBrowserManager();
-			ArrayList<Patient> pat = patBrowser.getPatient();
+			ArrayList<Patient> pat = null;
+			try {
+				pat = patBrowser.getPatient();
+			} catch (OHServiceException e) {
+				OHServiceExceptionUtil.showMessages(e);
+			}
 			patientComboBox.addItem(MessageBundle.getMessage("angal.lab.selectapatient"));
-			for (Patient elem : pat) {
-				if (!insert) {
-					if (elem.getCode()==lab.getPatId().getCode()) {
-						patSelected=elem;
+			if(pat != null){
+				for (Patient elem : pat) {
+					if (!insert) {
+						if (elem.getCode()==lab.getPatId().getCode()) {
+							patSelected=elem;
+						}
 					}
+					patientComboBox.addItem(elem);
 				}
-				patientComboBox.addItem(elem);
 			}
 			if (patSelected!=null)
 				patientComboBox.setSelectedItem(patSelected);
@@ -348,7 +358,13 @@ public class LabEdit extends JDialog {
 						patTextField.setText(pat.getName());
 						ageTextField.setText(pat.getAge()+"");
 						sexTextField.setText(pat.getSex()+"");
-						inPatientCheckBox.setSelected(admMan.getCurrentAdmission(pat) != null ? true : false);
+						Admission admission = null;
+						try {
+							admission = admMan.getCurrentAdmission(pat);
+						}catch(OHServiceException e){
+							OHServiceExceptionUtil.showMessages(e);
+						}
+						inPatientCheckBox.setSelected(admission != null ? true : false);
 					}
 				}
 			});
@@ -371,15 +387,24 @@ public class LabEdit extends JDialog {
 			examComboBox = new JComboBox();
 			Exam examSel=null;
 			ExamBrowsingManager manager = new ExamBrowsingManager();
-			ArrayList<Exam> exams = manager.getExams();
+			ArrayList<Exam> exams;
+			try {
+				exams = manager.getExams();
+			} catch (OHServiceException e) {
+				exams = null;
+				OHServiceExceptionUtil.showMessages(e);
+			}
 			examComboBox.addItem(MessageBundle.getMessage("angal.lab.selectanexam"));
-			for (Exam elem : exams) {
-				if (!insert && elem.getCode()!=null) {
-					if (elem.getCode().equalsIgnoreCase((lab.getExam().getCode()))) {
-						examSel=elem;
+			
+			if (null != exams) {
+				for (Exam elem : exams) {
+					if (!insert && elem.getCode()!=null) {
+						if (elem.getCode().equalsIgnoreCase((lab.getExam().getCode()))) {
+							examSel=elem;
+						}
 					}
+					examComboBox.addItem(elem);
 				}
-				examComboBox.addItem(elem);
 			}
 			examComboBox.setSelectedItem(examSel);
 			
@@ -578,14 +603,34 @@ public class LabEdit extends JDialog {
 					boolean result = false;
 					if (insert) {
 						if (examSelected.getProcedure() == 1)
-							result = manager.newLabFirstProcedure(lab);
+							try {
+								result = manager.newLabFirstProcedure(lab);
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						else if (examSelected.getProcedure() == 2)
-							result = manager.newLabSecondProcedure(lab,	labRow);
+							try {
+								result = manager.newLabSecondProcedure(lab,	labRow);
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 					} else {
 						if (examSelected.getProcedure() == 1)
-							result = manager.editLabFirstProcedure(lab);
+							try {
+								result = manager.editLabFirstProcedure(lab);
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						else if (examSelected.getProcedure() == 2)
-							result = manager.editLabSecondProcedure(lab,	labRow);
+							try {
+								result = manager.editLabSecondProcedure(lab,	labRow);
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 					}
 
 					if (!result)
@@ -616,10 +661,18 @@ public class LabEdit extends JDialog {
 		examRowComboBox.addItem(result);
 
 		ExamRowBrowsingManager rowManager = new ExamRowBrowsingManager();
-		ArrayList<ExamRow> rows = rowManager.getExamRow(examSelected.getCode());
-		for (ExamRow r : rows) {
-			if (!r.getDescription().equals(result))
-				examRowComboBox.addItem(r.getDescription());
+		ArrayList<ExamRow> rows;
+		try {
+			rows = rowManager.getExamRow(examSelected.getCode());
+		} catch (OHServiceException e) {
+			rows = null;
+			OHServiceExceptionUtil.showMessages(e);
+		}
+		if (null != rows) {
+			for (ExamRow r : rows) {
+				if (!r.getDescription().equals(result))
+					examRowComboBox.addItem(r.getDescription());
+			}
 		}
 		resultPanel.add(examRowComboBox);
 
@@ -632,27 +685,41 @@ public class LabEdit extends JDialog {
 		String examId = examSelected.getCode();
 		ExamRowBrowsingManager eRowManager = new ExamRowBrowsingManager();
 		eRows = null;
-		eRows = eRowManager.getExamRow(examId);
+		try {
+			eRows = eRowManager.getExamRow(examId);
+		} catch (OHServiceException e1) {
+			OHServiceExceptionUtil.showMessages(e1);
+		}
+		
 		if (insert) {
-			for (ExamRow r : eRows)
-				resultPanel.add(new SubPanel(r, "N"));
+			if (null != eRows) {
+				for (ExamRow r : eRows)
+					resultPanel.add(new SubPanel(r, "N"));
+			}
 		} else {
 			LabRowManager lRowManager = new LabRowManager();
 
-			ArrayList<LaboratoryRow> lRows = lRowManager.getLabRow(lab
-					.getCode());
+			ArrayList<LaboratoryRow> lRows;
+			try {
+				lRows = lRowManager.getLabRowByLabId(lab.getCode());
+			} catch (OHServiceException e) {
+				lRows = new ArrayList<LaboratoryRow>();
+				OHServiceExceptionUtil.showMessages(e);
+			}
 			boolean find;
-			for (ExamRow r : eRows) {
-				find = false;
-				for (LaboratoryRow lR : lRows) {
-					if (r.getDescription()
-							.equalsIgnoreCase(lR.getDescription()))
-						find = true;
-				}
-				if (find) {
-					resultPanel.add(new SubPanel(r, "P"));
-				} else {
-					resultPanel.add(new SubPanel(r, "N"));
+			if (null != eRows) {
+				for (ExamRow r : eRows) {
+					find = false;
+					for (LaboratoryRow lR : lRows) {
+						if (r.getDescription()
+								.equalsIgnoreCase(lR.getDescription()))
+							find = true;
+					}
+					if (find) {
+						resultPanel.add(new SubPanel(r, "P"));
+					} else {
+						resultPanel.add(new SubPanel(r, "N"));
+					}
 				}
 			}
 		}

@@ -102,10 +102,12 @@ public class DbSingleConn {
 		sbURL.append(port);
 		sbURL.append("/");
 		sbURL.append(db);
-		sbURL.append("?user=");
+		sbURL.append("?useUnicode=true&characterEncoding=UTF-8");
+		sbURL.append("&user=");
 		sbURL.append(username);
 		sbURL.append("&password=");
 		sbURL.append(password);
+		
 
 		return DriverManager.getConnection(sbURL.toString());
 	}

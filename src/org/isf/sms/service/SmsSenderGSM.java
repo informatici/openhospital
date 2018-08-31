@@ -3,12 +3,6 @@
  */
 package org.isf.sms.service;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,12 +11,17 @@ import java.util.Enumeration;
 import java.util.List;
 
 import org.apache.log4j.PropertyConfigurator;
-import org.isf.generaldata.SmsParameters;
 import org.isf.sms.model.Sms;
 import org.isf.sms.providers.GSMParameters;
 import org.isf.utils.exception.OHException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import gnu.io.CommPortIdentifier;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
 
 /**
  * @author Mwithi

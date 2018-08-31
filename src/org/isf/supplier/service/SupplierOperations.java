@@ -3,14 +3,14 @@
  */
 package org.isf.supplier.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.isf.generaldata.ExaminationParameters;
 import org.isf.supplier.model.Supplier;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Mwithi
@@ -37,19 +37,23 @@ public class SupplierOperations {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		
-		jpa.beginTransaction();
-		if (supplier.getSupId() != null)
-		{
-			jpa.merge(supplier);			
-		}
-		else
-		{			
-			jpa.persist(supplier);
-		}
-    	jpa.commitTransaction();
-    	
+
+        try{
+            jpa.beginTransaction();
+            if (supplier.getSupId() != null)
+            {
+                jpa.merge(supplier);
+            }
+            else
+            {
+                jpa.persist(supplier);
+            }
+            jpa.commitTransaction();
+        }catch (OHException e) {
+            //DbJpaUtil managed exception
+            jpa.rollbackTransaction();
+            throw e;
+        }
 		return result;	
 	}
 
@@ -64,12 +68,16 @@ public class SupplierOperations {
 	{
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		
-		
-		jpa.beginTransaction();	
-		Supplier foundSupplier = (Supplier)jpa.find(Supplier.class, ID);
-    	jpa.commitTransaction();
-    	
-		return foundSupplier;
+		try{
+            jpa.beginTransaction();
+            Supplier foundSupplier = (Supplier)jpa.find(Supplier.class, ID);
+            jpa.commitTransaction();
+            return foundSupplier;
+        }catch (OHException e) {
+            //DbJpaUtil managed exception
+            jpa.rollbackTransaction();
+            throw e;
+        }
 	}
 	
 	/**

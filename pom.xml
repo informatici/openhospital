@@ -242,7 +242,7 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.5.1</version>
+			<version>4.5.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -280,12 +280,19 @@
 		<dependency>
 			<groupId>com.lowagie</groupId>
 			<artifactId>itext</artifactId>
-			<version>4.2.2</version>
-			<type>pom</type>
+			<version>1.02b</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/itext-1.02b.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
+			<exclusions>
+	          <exclusion>
+	          	<groupId>com.lowagie</groupId>
+				<artifactId>itext</artifactId>
+	          </exclusion>
+	        </exclusions>
 			<version>3.0.0</version>
 		</dependency>
 		<dependency>

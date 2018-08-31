@@ -61,6 +61,8 @@ import org.isf.patient.model.Patient;
 import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.excel.ExcelExporter;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.ward.manager.WardBrowserManager;
@@ -134,16 +136,25 @@ public class WardPharmacy extends ModalJFrame implements
 	// private Medical drugSelected;
 	private MovementWard movSelected;
 	private boolean added = false;
-	private String[] columsIncomes = { MessageBundle.getMessage("angal.common.date"), MessageBundle.getMessage("angal.medicalstockward.medical"),
-			MessageBundle.getMessage("angal.medicalstockward.quantity") };
+	private String[] columsIncomes = { 
+			MessageBundle.getMessage("angal.common.date"), 
+			MessageBundle.getMessage("angal.medicalstockward.medical"),
+			MessageBundle.getMessage("angal.common.quantity") };
 	private boolean[] columsResizableIncomes = { false, true, false };
 	private int[] columWidthIncomes = { 150, 320, 200 };
-	private String[] columsOutcomes = { MessageBundle.getMessage("angal.common.date"), MessageBundle.getMessage("angal.medicalstockward.patient"),
-			MessageBundle.getMessage("angal.medicalstockward.age"), MessageBundle.getMessage("angal.medicalstockward.sex"), MessageBundle.getMessage("angal.medicalstockward.weight"),
-			MessageBundle.getMessage("angal.medicalstockward.medical"), MessageBundle.getMessage("angal.medicalstockward.quantity") };
+	private String[] columsOutcomes = { 
+			MessageBundle.getMessage("angal.common.date"), 
+			MessageBundle.getMessage("angal.medicalstockward.patient"),
+			MessageBundle.getMessage("angal.medicalstockward.age"), 
+			MessageBundle.getMessage("angal.medicalstockward.sex"), 
+			MessageBundle.getMessage("angal.medicalstockward.weight"),
+			MessageBundle.getMessage("angal.medicalstockward.medical"), 
+			MessageBundle.getMessage("angal.common.quantity") };
 	private boolean[] columsResizableOutcomes = { false, false, false, false, false, true, false };
 	private int[] columWidthOutcomes = { 150, 150, 50, 50, 50, 220, 100 };
-	private String[] columsDrugs = { MessageBundle.getMessage("angal.medicalstockward.medical"), MessageBundle.getMessage("angal.medicalstockward.quantity") };
+	private String[] columsDrugs = { 
+			MessageBundle.getMessage("angal.medicalstockward.medical"), 
+			MessageBundle.getMessage("angal.common.quantity") };
 	private boolean[] columsResizableDrugs = { true, false };
 	private int[] columWidthDrugs = { 350, 100 };
 	private final int filterWidth = 250;
@@ -700,11 +711,20 @@ public class WardPharmacy extends ModalJFrame implements
 			jComboBoxTypes.setMaximumSize(new Dimension(filterWidth, 24));
 			jComboBoxTypes.setPreferredSize(new Dimension(filterWidth, 24));
 			MedicalTypeBrowserManager medicalManager = new MedicalTypeBrowserManager();
-			ArrayList<MedicalType> medicalTypes = medicalManager.getMedicalType();
+			ArrayList<MedicalType> medicalTypes;
+			
 			jComboBoxTypes.addItem(MessageBundle.getMessage("angal.medicalstockward.alltypes"));
-			for (MedicalType aMedicalType : medicalTypes) {
-				jComboBoxTypes.addItem(aMedicalType);
+			
+			try {
+				medicalTypes = medicalManager.getMedicalType();
+				
+				for (MedicalType aMedicalType : medicalTypes) {
+					jComboBoxTypes.addItem(aMedicalType);
+				}
+			} catch (OHServiceException e) {
+				OHServiceExceptionUtil.showMessages(e);
 			}
+			
 			jComboBoxTypes.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent arg0) {
@@ -724,7 +744,13 @@ public class WardPharmacy extends ModalJFrame implements
 			jComboBoxMedicals.setPreferredSize(new Dimension(filterWidth, 24));
 		}
 		MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
-		ArrayList<Medical> medicals = medicalManager.getMedicals();
+		ArrayList<Medical> medicals;
+		try {
+			medicals = medicalManager.getMedicals();
+		} catch (OHServiceException e) {
+			medicals = null;
+			OHServiceExceptionUtil.showMessages(e);
+		}
 		jComboBoxMedicals.addItem(MessageBundle.getMessage("angal.medicalstockward.allmedicals"));
 		MedicalType medicalType;
 		if (jComboBoxTypes.getSelectedItem() instanceof String) {
@@ -732,12 +758,14 @@ public class WardPharmacy extends ModalJFrame implements
 		} else {
 			medicalType = (MedicalType) jComboBoxTypes.getSelectedItem();
 		}
-		for (Medical aMedical : medicals) {
-			boolean ok = true;
-			if (medicalType != null)
-				ok = ok && aMedical.getType().equals(medicalType);
-			if (ok)
-				jComboBoxMedicals.addItem(aMedical);
+		if (null != medicals) {
+			for (Medical aMedical : medicals) {
+				boolean ok = true;
+				if (medicalType != null)
+					ok = ok && aMedical.getType().equals(medicalType);
+				if (ok)
+					jComboBoxMedicals.addItem(aMedical);
+			}
 		}
 		return jComboBoxMedicals;
 	}
@@ -779,7 +807,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private JLabel getJLabelTo() {
 		if (jLabelTo == null) {
 			jLabelTo = new JLabel();
-			jLabelTo.setText(MessageBundle.getMessage("angal.medicalstockward.to")); //$NON-NLS-1$
+			jLabelTo.setText(MessageBundle.getMessage("angal.common.to")); //$NON-NLS-1$
 			jLabelTo.setBounds(509, 15, 45, 15);
 		}
 		return jLabelTo;
@@ -788,7 +816,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private JLabel getJLabelFrom() {
 		if (jLabelFrom == null) {
 			jLabelFrom = new JLabel();
-			jLabelFrom.setText(MessageBundle.getMessage("angal.medicalstockward.from")); //$NON-NLS-1$
+			jLabelFrom.setText(MessageBundle.getMessage("angal.common.from")); //$NON-NLS-1$
 			jLabelFrom.setBounds(365, 14, 45, 15);
 		}
 		return jLabelFrom;
@@ -807,7 +835,12 @@ public class WardPharmacy extends ModalJFrame implements
 		if (jComboBoxWard == null) {
 			jComboBoxWard = new JComboBox();
 			WardBrowserManager wardManager = new WardBrowserManager();
-			wardList = wardManager.getWards();
+			try {
+				wardList = wardManager.getWards();
+			}catch(OHServiceException e){
+				wardList = new ArrayList<Ward>();
+				OHServiceExceptionUtil.showMessages(e);
+			}
 			jComboBoxWard.addItem(MessageBundle.getMessage("angal.medicalstockward.selectaward"));
 			for (Ward ward : wardList) {
 				if (ward.isPharmacy())
@@ -878,14 +911,19 @@ public class WardPharmacy extends ModalJFrame implements
 
 		public IncomesModel() {
 			wardIncomes = new ArrayList<Movement>();
-			listMovementCentral = movManager.getMovements(wardSelected.getCode(), dateFrom, dateTo);
-
-			for (Movement mov : listMovementCentral) {
-				if (mov.getWard().getDescription() != null) {
-					if (mov.getWard().equals(wardSelected)) {
-						wardIncomes.add(mov);
+			try {
+				listMovementCentral = movManager.getMovements(wardSelected.getCode(), dateFrom, dateTo);
+				
+				for (Movement mov : listMovementCentral) {
+					if (mov.getWard().getDescription() != null) {
+						if (mov.getWard().equals(wardSelected)) {
+							wardIncomes.add(mov);
+						}
 					}
 				}
+			} catch (OHServiceException e) {
+				OHServiceExceptionUtil.showMessages(e);
+				e.printStackTrace();
 			}
 		}
 
@@ -942,7 +980,12 @@ public class WardPharmacy extends ModalJFrame implements
 
 		public OutcomesModel() {
 			wardOutcomes = new ArrayList<MovementWard>();
-			listMovementWardFromTo = wardManager.getMovementWard(wardSelected.getCode(), dateFrom, dateTo);
+			try {
+				listMovementWardFromTo = wardManager.getMovementWard(wardSelected.getCode(), dateFrom, dateTo);
+			} catch (OHServiceException e) {
+				OHServiceExceptionUtil.showMessages(e);
+				listMovementWardFromTo = new ArrayList<MovementWard>();
+			}
 
 			Medical medicalSelected;
 			if (jComboBoxMedicals.getSelectedItem() instanceof String) {
@@ -1080,7 +1123,12 @@ public class WardPharmacy extends ModalJFrame implements
 		int newQty;
 
 		public DrugsModel() {
-			wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
+			try {
+				wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
+			} catch (OHServiceException e) {
+				OHServiceExceptionUtil.showMessages(e);
+				wardDrugs = new ArrayList<MedicalWard>();
+			}
 		}
 
 		public int getRowCount() {
@@ -1147,6 +1195,7 @@ public class WardPharmacy extends ModalJFrame implements
 
 				public void actionPerformed(ActionEvent arg0) {
 					
+					try {
 					if (jTabbedPaneWard.getSelectedIndex() == 0) {
 						new PrintManager("WardPharmacyOutcomes", wardManager.convertMovementWardForPrint(wardOutcomes), 0);
 					} else if (jTabbedPaneWard.getSelectedIndex() == 1) {
@@ -1154,6 +1203,9 @@ public class WardPharmacy extends ModalJFrame implements
 					} else if (jTabbedPaneWard.getSelectedIndex() == 2) {
 						new PrintManager("WardPharmacyDrugs", wardManager.convertWardDrugs(wardSelected, wardDrugs), 0);
 					} 
+					} catch (OHServiceException e) {
+						OHServiceExceptionUtil.showMessages(e);
+					}
 				}
 			});
 		}
@@ -1169,25 +1221,32 @@ public class WardPharmacy extends ModalJFrame implements
 
 				public void actionPerformed(ActionEvent arg0) {
 					JFileChooser fcExcel = new JFileChooser();
-					FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.csv)","csv");
+					FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
 					fcExcel.setFileFilter(excelFilter);
-					fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);  
+					fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					int index = jTabbedPaneWard.getSelectedIndex();
+					if (index == 0) {
+						fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicalstockward.outcomes") + ".xls"));
+					} else if (index == 1) {
+						fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicalstockward.incomings") + ".xls"));
+					} else if (index == 2) {
+						fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicalstockward.drugs") + ".xls"));
+					}
 					
 					int iRetVal = fcExcel.showSaveDialog(WardPharmacy.this);
 					if(iRetVal == JFileChooser.APPROVE_OPTION) {
 						try {
 							File exportFile = fcExcel.getSelectedFile();
-							if (!exportFile.getName().endsWith("csv")) exportFile = new File(exportFile.getAbsoluteFile() + ".csv");
+							if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
 							
 							ExcelExporter xlsExport = new ExcelExporter();
 							
-							int index = jTabbedPaneWard.getSelectedIndex();
 							if (index == 0) {
-								xlsExport.exportTableToCSV(jTableOutcomes, exportFile);
+								xlsExport.exportTableToExcel(jTableOutcomes, exportFile);
 							} else if (index == 1) {
-								xlsExport.exportTableToCSV(jTableIncomes, exportFile);
+								xlsExport.exportTableToExcel(jTableIncomes, exportFile);
 							} else if (index == 2) {
-								xlsExport.exportTableToCSV(jTableDrugs, exportFile);
+								xlsExport.exportTableToExcel(jTableDrugs, exportFile);
 							}
 							
 						} catch (IOException e) {

@@ -10,9 +10,9 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 
-import org.isf.generaldata.MessageBundle;
-import org.isf.medicals.model.*;
+import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.model.Movement;
+import org.isf.medtype.model.MedicalType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
 import org.springframework.stereotype.Component;
@@ -43,16 +43,21 @@ public class MedicalsIoOperations {
 		Medical medical = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A WHERE MDSR_ID = ?";
-		params.add(code);
-		jpa.createQuery(query, Medical.class, false);
-		jpa.setParameters(params, false);
-		medical = (Medical)jpa.getResult();	
-		
-		jpa.commitTransaction();
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A WHERE MDSR_ID = ?";
+			params.add(code);
+			jpa.createQuery(query, Medical.class, false);
+			jpa.setParameters(params, false);
+			medical = (Medical)jpa.getResult();	
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 
 		return medical;
 	}
@@ -81,22 +86,27 @@ public class MedicalsIoOperations {
 		ArrayList<Medical> medicals = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ";
-		if (description!=null) {
-			query += "where MDSRT_DESC like ? ";
-			params.add(description);
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ";
+			if (description!=null) {
+				query += "where MDSRT_DESC like ? ";
+				params.add(description);
+			}
+			query += "order BY MDSR_DESC";
+			jpa.createQuery(query, Medical.class, false);
+			jpa.setParameters(params, false);
+			List<Medical> medicalList = (List<Medical>)jpa.getList();
+			medicals = new ArrayList<Medical>(medicalList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		query += "order BY MDSR_DESC";
-		jpa.createQuery(query, Medical.class, false);
-		jpa.setParameters(params, false);
-		List<Medical> medicalList = (List<Medical>)jpa.getList();
-		medicals = new ArrayList<Medical>(medicalList);			
 		
-		jpa.commitTransaction();
-
 		return medicals;
 	}
 
@@ -118,85 +128,180 @@ public class MedicalsIoOperations {
 		ArrayList<Medical> medicals = null;
 		ArrayList<Object> params = new ArrayList<Object>();
 				
-		
-		jpa.beginTransaction();
-		
-		String query = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ";
-		if (description!=null) {
-			query += "where ";
-			query += "(MDSR_DESC like ? OR MDSR_CODE like ?) ";
-			params.add("%"+description+"%");
-			params.add("%"+description+"%");
-		}
-		if(type!=null){
-			if (params.size() == 0) 
-			{
-				query += "where ";				
-			}
-			else 
-			{
-				query += "and ";
-			}
-			query += "(MDSRT_ID_A=?) ";
-			params.add(type);
-		}
-		if(expiring){
-			if (params.size() == 0) 
-			{
+		try {
+			jpa.beginTransaction();
+			
+			String query = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ";
+			if (description!=null) {
 				query += "where ";
+				query += "(MDSR_DESC like ? OR MDSR_CODE like ?) ";
+				params.add("%"+description+"%");
+				params.add("%"+description+"%");
 			}
-			else 
-			{
-				query += "and ";
+			if(type!=null){
+				if (params.size() == 0) 
+				{
+					query += "where ";				
+				}
+				else 
+				{
+					query += "and ";
+				}
+				query += "(MDSRT_ID_A=?) ";
+				params.add(type);
 			}
-			query += "((MDSR_INI_STOCK_QTI+MDSR_IN_QTI-MDSR_OUT_QTI)<MDSR_MIN_STOCK_QTI) ";
+			if(expiring){
+				if (params.size() == 0) 
+				{
+					query += "where ";
+				}
+				else 
+				{
+					query += "and ";
+				}
+				query += "((MDSR_INI_STOCK_QTI+MDSR_IN_QTI-MDSR_OUT_QTI)<MDSR_MIN_STOCK_QTI) ";
+			}
+			query += "order BY MDSR_MDSRT_ID_A, MDSR_DESC";
+			jpa.createQuery(query, Medical.class, false);
+			jpa.setParameters(params, false);
+			List<Medical> medicalList = (List<Medical>)jpa.getList();
+			medicals = new ArrayList<Medical>(medicalList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		query += "order BY MDSR_MDSRT_ID_A, MDSR_DESC";
-		jpa.createQuery(query, Medical.class, false);
-		jpa.setParameters(params, false);
-		List<Medical> medicalList = (List<Medical>)jpa.getList();
-		medicals = new ArrayList<Medical>(medicalList);			
-		
-		jpa.commitTransaction();
+		return medicals;
+	}
+    
+    /**
+	 * Checks if the specified {@link Medical} exists or not.
+	 * @param medical - the medical to check.
+	 * @param update - if <code>true</code> excludes the actual {@link Medical}
+	 * @return <code>true</code> if exists, <code>false</code> otherwise.
+	 * @throws OHException if an SQL error occurs during the check.
+	 */
+	@SuppressWarnings("unchecked")
+	public ArrayList<Medical> medicalCheck(Medical medical, boolean update) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Medical> medicals = new ArrayList<Medical>();
+		List<Object> params = new ArrayList<Object>(); 
 
+		try{
+			jpa.beginTransaction();
+			StringBuilder query = new StringBuilder("select * from MEDICALDSR join MEDICALDSRTYPE on MDSR_MDSRT_ID_A = MDSRT_ID_A where MDSR_DESC SOUNDS LIKE ?");
+			params.add(medical.getDescription());
+			if (update) {
+				query.append(" AND MDSR_ID <> ?");
+				params.add(medical.getCode());
+			}
+			jpa.createQuery(query.toString(), Medical.class, false);
+			jpa.setParameters(params, false);
+			List<Medical> medicalList = (List<Medical>)jpa.getList();
+			
+			medicals = new ArrayList<Medical>(medicalList);			
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			//DbJpaUtil managed exceptio
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return medicals;
 	}
 
 	/**
-	 * Checks if the specified {@link Medical} exists or not.
+	 * Checks if the specified {@link Medical} exists or not for the {@link MedicalType}.
 	 * @param medical the medical to check.
+	 * @param update - if <code>true</code> excludes the actual {@link Medical}
 	 * @return <code>true</code> if exists <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the check.
 	 */
-	public boolean medicalExists(Medical medical) throws OHException {
+	public boolean medicalExistsInType(Medical medical, boolean update) throws OHException {
 		
 		DbJpaUtil jpa = new DbJpaUtil();
-		boolean result = false;
 		ArrayList<Object> params = new ArrayList<Object>();
-
-		jpa.beginTransaction();
-
-		String query = "SELECT * FROM MEDICALDSR WHERE MDSR_MDSRT_ID_A = ? AND MDSR_DESC = ?";
-		params.add(medical.getType().getCode());
-		params.add(medical.getDescription());
-		jpa.createQuery(query, Medical.class, false);
-		jpa.setParameters(params, false);
+		
+		boolean result;
+		
 		try {
+			jpa.beginTransaction();
+			StringBuilder query = new StringBuilder("SELECT * FROM MEDICALDSR WHERE MDSR_MDSRT_ID_A = ? AND MDSR_DESC = ?");
+			params.add(medical.getType().getCode());
+			params.add(medical.getDescription());
+			if (update) {
+				query.append(" AND MDSR_ID <> ?");
+				params.add(medical.getCode());
+			}
+			jpa.createQuery(query.toString(), Medical.class, false);
+			jpa.setParameters(params, false);
 			Medical foundMedical = (Medical) jpa.getResult();
+		
 			if (foundMedical != null) {
 				result = true;
+			} else {
+				result = false;
 			}
-		} catch (Exception e) {
-			if (e.getCause().getClass().equals(NoResultException.class))
-				return false;
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} finally {
+			
 			jpa.commitTransaction();
+		} catch (OHException e) {
+			if (e.getCause().getClass().equals(NoResultException.class)) {
+				result = false;
+				jpa.commitTransaction();
+			} else {
+				//DbJpaUtil managed exception
+				jpa.rollbackTransaction();
+				throw e;
+			}
 		}
-
+		
 		return result;
 	}
 
+	/**
+	 * Checks if the specified {@link Medical} ProductCode exists or not.
+	 * @param medical - the medical to check.
+	 * @param update - if <code>true</code> excludes the actual {@link Medical}
+	 * @return <code>true</code> if exists, <code>false</code> otherwise.
+	 * @throws OHException if an SQL error occurs during the check.
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean productCodeExists(Medical medical, boolean update) throws OHException
+	{
+		DbJpaUtil jpa = new DbJpaUtil();
+		boolean result = true;
+		List<Object> params = new ArrayList<Object>();
+
+		try{
+			jpa.beginTransaction();
+			StringBuilder query = new StringBuilder("select * from MEDICALDSR where MDSR_CODE = ?");
+			params.add(medical.getProd_code());
+			if (update) {
+				query.append(" AND MDSR_ID <> ?");
+				params.add(medical.getCode());
+			}
+			jpa.createQuery(query.toString(), Medical.class, false);
+			jpa.setParameters(params, false);
+			List<Medical> medicalList = (List<Medical>)jpa.getList();
+			result = !medicalList.isEmpty();
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			if (e.getCause().getClass().equals(NoResultException.class)) {
+				result = false;
+				jpa.commitTransaction();
+			} else {
+				//DbJpaUtil managed exception
+				jpa.rollbackTransaction();
+				throw e;
+			}
+		}	
+		return result;
+	}
+	
 	/**
 	 * Stores the specified {@link Medical}.
 	 * @param medical the medical to store.
@@ -207,10 +312,16 @@ public class MedicalsIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 
-		jpa.beginTransaction();
-		jpa.persist(medical);
-		jpa.commitTransaction();
-
+		try {
+			jpa.beginTransaction();
+			jpa.persist(medical);
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
+		
 		return result;
 	}
 
@@ -227,17 +338,21 @@ public class MedicalsIoOperations {
 		Medical medical = null;
 		int lock = -1;
 				
-		
-		jpa.beginTransaction();
-		
-		medical = (Medical)jpa.find(Medical.class, code); 
-		if (medical != null)
-		{
-			lock = medical.getLock();
+		try {
+			jpa.beginTransaction();
+			
+			medical = (Medical)jpa.find(Medical.class, code); 
+			if (medical != null)
+			{
+				lock = medical.getLock();
+			}
+			
+			jpa.commitTransaction();
+		} catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
-		
-		jpa.commitTransaction();
-		
 		return lock;
 	}
 
@@ -254,13 +369,13 @@ public class MedicalsIoOperations {
 		medical.setLock(new Integer(medical.getLock().intValue() + 1));
 
 		try {
-			
 			jpa.beginTransaction();
 			jpa.merge(medical);
-			jpa.commitTransaction();
-			
-		} catch (Exception e) {
-			throw new OHException(e.getMessage(), e);
+			jpa.commitTransaction();	
+		} catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
 		}
 
 		return result;
@@ -276,29 +391,32 @@ public class MedicalsIoOperations {
 			int code) throws OHException 
  {
 		DbJpaUtil jpa = new DbJpaUtil();
-		boolean result = false;
+		boolean result;
 		ArrayList<Object> params = new ArrayList<Object>();
 
-		jpa.beginTransaction();
-
-		String query = "select * from MEDICALDSRSTOCKMOV where MMV_MDSR_ID = ?";
-		params.add(code);
-		jpa.createQuery(query, Movement.class, false);
-		jpa.setParameters(params, false);
 		try {
+			jpa.beginTransaction();
+	
+			String query = "select * from MEDICALDSRSTOCKMOV where MMV_MDSR_ID = ?";
+			params.add(code);
+			jpa.createQuery(query, Movement.class, false);
+			jpa.setParameters(params, false);
 			Movement foundMovement = (Movement) jpa.getResult();
 			if (foundMovement.getMedical().getCode() == code) {
 				result = true;
+			} else {
+				result = false;
 			}
-		} catch (Exception e) {
-			if (e.getCause().getClass().equals(NoResultException.class))
-				return false;
-			throw new OHException(
-					MessageBundle
-							.getMessage("angal.sql.problemsoccurredwiththesqlistruction"),
-					e);
-		} finally {
 			jpa.commitTransaction();
+		} catch (OHException e) {
+			if (e.getCause().getClass().equals(NoResultException.class)) {
+				result = false;
+				jpa.commitTransaction();
+			} else {
+				//DbJpaUtil managed exception
+				jpa.rollbackTransaction();
+				throw e;
+			}
 		}
 
 		return result;
@@ -316,12 +434,16 @@ public class MedicalsIoOperations {
 		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 		
-		
-		jpa.beginTransaction();	
-		Medical objToRemove = (Medical) jpa.find(Medical.class, medical.getCode());
-		jpa.remove(objToRemove);
-    	jpa.commitTransaction();
-    	
+		try {
+			jpa.beginTransaction();	
+			Medical objToRemove = (Medical) jpa.find(Medical.class, medical.getCode());
+			jpa.remove(objToRemove);
+	    	jpa.commitTransaction();
+		} catch (OHException e) {
+			//DbJpaUtil managed exception
+			jpa.rollbackTransaction();
+			throw e;
+		}
 		return result;
 	}
 }
