@@ -147,7 +147,7 @@ public class UserEdit extends JDialog {
 			nameLabel = new JLabel();
 			nameLabel.setText(MessageBundle.getMessage("angal.menu.name")); 
 			descLabel = new JLabel();
-			descLabel.setText(MessageBundle.getMessage("angal.menu.description"));  
+			descLabel.setText(MessageBundle.getMessage("angal.common.description"));  
 			
 			JPanel comboPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
 			JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));

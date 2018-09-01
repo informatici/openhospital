@@ -123,7 +123,13 @@ public class PatientSummary {
 	final int insetSize = 5;
 
 	private JPanel getPatientTitlePanel() {
-		JLabel l = new JLabel(MessageBundle.getMessage("angal.admission.patientsummary") + " (" + MessageBundle.getMessage("angal.patient.code") + ": " + patient.getCode() + ")");
+		StringBuilder label = new StringBuilder(MessageBundle.getMessage("angal.admission.patientsummary"))
+				.append(" (")
+				.append(MessageBundle.getMessage("angal.common.code"))
+				.append(": ")
+				.append(patient.getCode())
+				.append(")");
+		JLabel l = new JLabel(label.toString());
 		l.setBackground(Color.CYAN);
 		JPanel lP = new JPanel(new FlowLayout(FlowLayout.CENTER, insetSize, insetSize));
 		lP.add(l);
@@ -157,7 +163,7 @@ public class PatientSummary {
 		Integer code = patient.getCode();
 		JLabel patientCode = null;
 		if (code != null) 
-			patientCode = new JLabel(MessageBundle.getMessage("angal.patient.code") + ": " + code.toString());
+			patientCode = new JLabel(MessageBundle.getMessage("angal.common.code") + ": " + code.toString());
 		else 
 			patientCode = new JLabel(" ");
 		JLabel patientName = new JLabel(MessageBundle.getMessage("angal.patient.name") + ": " + filtra(patient.getName()));
