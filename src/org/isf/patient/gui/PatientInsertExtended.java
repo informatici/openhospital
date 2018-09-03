@@ -410,7 +410,7 @@ public class PatientInsertExtended extends JDialog {
 						return;
 					}
 					if (insert) {
-						String name = secondName + " " + firstName;
+						String name = firstName + " " + secondName;
 						try{
 							if (manager.isPatientPresent(name)) {
 								switch (JOptionPane.showConfirmDialog(null,
