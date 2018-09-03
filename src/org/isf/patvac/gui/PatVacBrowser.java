@@ -242,7 +242,6 @@ public class PatVacBrowser extends ModalJFrame {
 					new PatVacEdit (myFrame, patientVaccine, false);
 					
 					if (!last.equals(patientVaccine)) {
-//						lPatVac.set(lPatVac.size() - selectedrow - 1, patientVaccine);
 						((PatVacBrowsingModel) jTable.getModel()).fireTableDataChanged();
 						updateRowCounter();
 						if ((jTable.getRowCount() > 0) && selectedrow > -1)
@@ -294,7 +293,7 @@ public class PatVacBrowser extends ModalJFrame {
 							}
 						
 							if (true == deleted) {
-								lPatVac.remove(lPatVac.size() - jTable.getSelectedRow()	- 1);
+								lPatVac.remove(jTable.getSelectedRow());
 								model.fireTableDataChanged();
 								jTable.updateUI();
 							}
