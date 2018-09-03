@@ -725,13 +725,12 @@ public class PatVacEdit extends JDialog {
 					patVac.setLock(0);
 					patVac.setPatName(selectedPatient.getName());
 					patVac.setPatSex(selectedPatient.getSex());
-					patVac.setPatAge(selectedPatient.getAge());
 
 					boolean result;
 					PatVacManager manager = new PatVacManager();
 					// handling db insert/update
 					if (insert) {
-						
+						patVac.setPatAge(selectedPatient.getAge());
 						try {
 							result = manager.newPatientVaccine(patVac);
 						} catch (OHServiceException e1) {

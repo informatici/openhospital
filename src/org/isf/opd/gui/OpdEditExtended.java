@@ -1544,7 +1544,6 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 					opd.setNewPatient(newPatient);
 					opd.setReferralFrom(referralFrom);
 					opd.setReferralTo(referralTo);
-					opd.setAge(opdPatient.getAge());
 					opd.setSex(opdPatient.getSex());
 					
 					opd.setfirstName(opdPatient.getFirstName());
@@ -1573,6 +1572,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 						if (insert){
 							GregorianCalendar date =new GregorianCalendar();
 							opd.setProgYear(opdManager.getProgYear(date.get(Calendar.YEAR))+1);
+							opd.setAge(opdPatient.getAge());
 							//remember for later use
 							RememberDates.setLastOpdVisitDate(gregDate);
 							result = opdManager.newOpd(opd);
