@@ -274,7 +274,7 @@ public class PatientInsert extends JDialog implements ActionListener{
 								if (age == -1) {
 									JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patient.insertvalidage"));
 								} else {
-									String name= jSecondNameTextField.getText()+" "+jFirstNameTextField.getText();
+									String name = jFirstNameTextField.getText() + " " + jSecondNameTextField.getText();
 									try{
 										if (manager.isPatientPresent(name)) {										
 											switch (JOptionPane.showConfirmDialog(null, 
