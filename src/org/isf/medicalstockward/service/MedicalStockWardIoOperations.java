@@ -360,11 +360,13 @@ public class MedicalStockWardIoOperations
 			Iterator<MedicalWard> medicalWardIterator = medicalWardList.iterator();
 			while (medicalWardIterator.hasNext()) 
 			{
-				MedicalWard foudMedicalWard = medicalWardIterator.next();
-				Medical medical = (Medical)jpa.find(Medical.class, foudMedicalWard.getId().getMedicalId()); 
-				float qty = foudMedicalWard.getInQuantity() - foudMedicalWard.getOutQuantity();
-				MedicalWard medicalWard = new MedicalWard(medical, (double)qty);
-				medicalWards.add(medicalWard);
+				MedicalWard foundMedicalWard = medicalWardIterator.next();
+				Medical medical = (Medical)jpa.find(Medical.class, foundMedicalWard.getId().getMedicalId()); 
+				float qty = foundMedicalWard.getInQuantity() - foundMedicalWard.getOutQuantity();
+				if (qty > 0) {
+					MedicalWard medicalWard = new MedicalWard(medical, (double)qty);
+					medicalWards.add(medicalWard);
+				}
 			}
 
 			jpa.commitTransaction();
