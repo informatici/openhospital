@@ -515,7 +515,7 @@ public class MovStockMultipleDischarging extends JDialog {
 			}
 			if (null != movTypes) {
 				for (MovementType movType : movTypes) {
-					if (movType.getType().equals("-")) //$NON-NLS-1$
+					if (movType.getType().contains("-")) //$NON-NLS-1$
 						jComboBoxDischargeType.addItem(movType);
 				}
 			}
@@ -740,6 +740,7 @@ public class MovStockMultipleDischarging extends JDialog {
 					throw new NumberFormatException();
 			} catch (NumberFormatException nfe) {
 				JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.pleaseinsertavalidvalue")); //$NON-NLS-1$
+				qty = 0;
 			}
 		}
 		

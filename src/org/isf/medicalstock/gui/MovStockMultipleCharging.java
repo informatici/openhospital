@@ -645,6 +645,7 @@ public class MovStockMultipleCharging extends JDialog {
 					throw new NumberFormatException();
 			} catch (NumberFormatException nfe) {
 				JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertavalidvalue")); //$NON-NLS-1$
+				qty = 0;
 			}
 		}
 		return qty;
