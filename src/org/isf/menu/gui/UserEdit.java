@@ -228,56 +228,51 @@ public class UserEdit extends JDialog {
 	private JButton getOkButton() {
 		if (okButton == null) {
 			okButton = new JButton();
-			okButton.setText(MessageBundle.getMessage("angal.common.ok"));  // Generated
+			okButton.setText(MessageBundle.getMessage("angal.common.ok")); // Generated
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					if (nameTextField.getText().equals("")){
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.menu.pleaseinsertavalidusername"));
+					String userName = nameTextField.getText();
+					if (userName.equals("")) {
+						JOptionPane.showMessageDialog(null,	MessageBundle.getMessage("angal.menu.pleaseinsertavalidusername"));
 						return;
+
 					}
-					char[] password = pwdTextField.getPassword();
-					char[] repeatPassword = pwd2TextField.getPassword();
-					
-					if (insert) {
-						if (Arrays.equals(password, new char[0])){
-							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.menu.pleaseinsertapassword"));
-							return;
-						}
-						if (Arrays.equals(repeatPassword, new char[0])){
-							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.menu.pleaseretypethepassword"));
-							return;
-						}
-						if (!Arrays.equals(password, repeatPassword)){
-							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.menu.passwordincorrectpleaseretype"));
-							return;
-						}
-					}
+					user.setUserName(userName);
+					user.setDesc(descriptionTextField.getText());
 					UserBrowsingManager manager = new UserBrowsingManager();
-					if (insert) {
-						String hashed = BCrypt.hashpw(new String(password), BCrypt.gensalt());
-						user.setUserGroupName(((UserGroup)typeComboBox.getSelectedItem()));
-						user.setUserName(nameTextField.getText());
-						user.setPasswd(hashed);
-						user.setDesc(descriptionTextField.getText());
-					} else {
-						user.setUserGroupName((UserGroup)typeComboBox.getSelectedItem());
-						user.setUserName(nameTextField.getText());
-						user.setDesc(descriptionTextField.getText());
-					}
-					
 					boolean result = false;
-					if (insert) {      // inserting
-						//System.out.println("saving... "+user);
+					if (insert) {
+						char[] password = pwdTextField.getPassword();
+						char[] repeatPassword = pwd2TextField.getPassword();
+
+						if (Arrays.equals(password, new char[0])) {
+							JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.menu.pleaseinsertapassword"));
+							return;
+						}
+						if (Arrays.equals(repeatPassword, new char[0])) {
+							JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.menu.pleaseretypethepassword"));
+							return;
+						}
+						if (!Arrays.equals(password, repeatPassword)) {
+							JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.menu.passwordincorrectpleaseretype"));
+							return;
+						}
+						String hashed = BCrypt.hashpw(new String(password), BCrypt.gensalt());
+						user.setPasswd(hashed);
+						user.setUserGroupName((UserGroup) typeComboBox.getSelectedItem());
                         try {
                             result = manager.newUser(user);
                         } catch (OHServiceException e1) {
                             OHServiceExceptionUtil.showMessages(e1);
                         }
                         if (result) {
-                           fireUserInserted(user);
+							fireUserInserted(user);
+							Arrays.fill(password, '0');
+							Arrays.fill(repeatPassword, '0');
                         }
-                    } else {                          // updating
-                        try {
+					} else {
+						user.setUserGroupName((UserGroup) typeComboBox.getSelectedItem());
+						try {
                             result = manager.updateUser(user);
                         } catch (OHServiceException e1) {
                             OHServiceExceptionUtil.showMessages(e1);
@@ -286,13 +281,12 @@ public class UserEdit extends JDialog {
 							fireUserUpdated();
                         }
 					}
-					if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.menu.thedatacouldnotbesaved"));
-                    else {
-                    	Arrays.fill(password, '0');
-                    	Arrays.fill(repeatPassword, '0');
-                    	dispose();
-                    }
-                }
+
+					if (!result) JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.menu.thedatacouldnotbesaved"));
+					else {
+						dispose();
+					}
+				}// end of method
 			});
 		}
 		return okButton;

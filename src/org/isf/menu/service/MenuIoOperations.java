@@ -275,7 +275,7 @@ public class MenuIoOperations
             jpa.beginTransaction();
             query = "UPDATE USER SET US_PASSWD = ? WHERE US_ID_A = ?";
 			jpa.createQuery(query, Patient.class, false);
-			params.add(user.getDesc());
+			params.add(user.getPasswd());
 			params.add(user.getUserName());
 			jpa.setParameters(params, false);
 			jpa.executeUpdate();

@@ -104,15 +104,15 @@ public class UserBrowsing extends ModalJFrame implements UserEdit.UserListener {
 	private JLabel selectlabel;
 	private JComboBox pbox;
 	private ArrayList<User> pUser;
-	//private String[] pColums = { MessageBundle.getMessage("angal.menu.userm"), MessageBundle.getMessage("angal.menu.groupm"), MessageBundle.getMessage("angal.menu.passwdm"), MessageBundle.getMessage("angal.menu.descm") };
-	private String[] pColums = { MessageBundle.getMessage("angal.menu.userm"), MessageBundle.getMessage("angal.menu.groupm"), MessageBundle.getMessage("angal.menu.descm") };
-	//private int[] pColumwidth = {70, 70, 70, 150 };
+	private String[] pColums = { 
+			MessageBundle.getMessage("angal.menu.userm"), 
+			MessageBundle.getMessage("angal.menu.groupm"), 
+			MessageBundle.getMessage("angal.menu.descm") };
 	private int[] pColumwidth = {70, 70, 150 };
 	private User user;
 	private DefaultTableModel model ;
 	private JTable table;
 	private JScrollPane scrollPane;
-	//private final String MASQ = "xxxxxx";
 	
 	private String pSelection;
 	

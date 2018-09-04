@@ -112,17 +112,21 @@ public class Login extends JDialog implements ActionListener, KeyListener {
 	private void acceptPwd() {
 		String userName = (String) usersList.getSelectedItem();
 		String passwd = new String(pwd.getPassword());
+		String message = MessageBundle.getMessage("angal.menu.passwordincorrectretry");
 		boolean found = false;
 		for (User u : users) {
-			if (u.getUserName().equals(userName)
-					&& BCrypt.checkpw(passwd, u.getPasswd())) {
-				returnUser = u;
-				found = true;
+			try {
+				if (u.getUserName().equals(userName)
+						&& BCrypt.checkpw(passwd, u.getPasswd())) {
+					returnUser = u;
+					found = true;
+				}
+			} catch (IllegalArgumentException ex) {
+				message = MessageBundle.getMessage("angal.menu.invalidpasswordforthisuser");
 			}
 		}
 		if (!found) {
-			String message = MessageBundle
-					.getMessage("angal.menu.passwordincorrectretry");
+			
 			logger.warn("Login failed: " + message);
 			JOptionPane.showMessageDialog(this, message, "",
 					JOptionPane.PLAIN_MESSAGE);
@@ -163,11 +167,8 @@ public class Login extends JDialog implements ActionListener, KeyListener {
 			 */
 
 			usersList = new JComboBox();
-			if(users != null) {
-                for (User u : users) {
-                    usersList.addItem(u.getUserName());
-                }
-            }
+			for (User u : users)
+				usersList.addItem(u.getUserName());
 
 			Dimension d = usersList.getPreferredSize();
 			usersList.setPreferredSize(new Dimension(120, d.height));
