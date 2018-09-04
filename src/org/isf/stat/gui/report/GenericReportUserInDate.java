@@ -48,9 +48,9 @@ import javax.swing.*;
 					if (askForPrint) {
 						print = JOptionPane.showConfirmDialog(null, MessageBundle.getMessage("angal.genericreportbill.doyouwanttoprintreceipt"));
 					}
-					if (print == JOptionPane.OK_OPTION) {
-						new PrintReceipt(jasperReportTxtResultDto.getJasperPrint(), jasperReportTxtResultDto.getFilename());
-					}
+					if (print != JOptionPane.OK_OPTION) return; //STOP
+						
+					new PrintReceipt(jasperReportTxtResultDto.getJasperPrint(), jasperReportTxtResultDto.getFilename());
 				}
 			} catch (Exception e) {
                 logger.error("", e);

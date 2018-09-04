@@ -1,10 +1,10 @@
 package org.isf.serviceprinting.manager;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -12,6 +12,7 @@ import javax.print.DocPrintJob;
 import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
+import javax.print.ServiceUI;
 import javax.print.SimpleDoc;
 import javax.print.attribute.Attribute;
 import javax.print.attribute.DocAttributeSet;
@@ -19,11 +20,15 @@ import javax.print.attribute.HashDocAttributeSet;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 
+import org.isf.generaldata.TxtPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
-
-import org.isf.generaldata.TxtPrinter;
 
 /**
  * 
@@ -34,78 +39,81 @@ import org.isf.generaldata.TxtPrinter;
  * 
  */
 public class PrintReceipt {
+	
+	private PrintService defaultPrintService;
+	private final Logger logger = LoggerFactory.getLogger(PrintReceipt.class);
 
 	/**
-	 * 
-	 * @param jasperPrint
-	 * @param TXTfile
+	 * @param jasperFileName
+	 * @param parameters
+	 * @param conn
 	 */
-	public PrintReceipt(JasperPrint jasperPrint, String TXTfile) {
-
+	public PrintReceipt(JasperPrint jasperPrint, String fileName) {
+				
+		TxtPrinter.getTxtPrinter();
+		
 		try {
-			TxtPrinter.getTxtPrinter();
-
-			JRTextExporter exporter = new JRTextExporter();
-			exporter.setParameter(JRTextExporterParameter.JASPER_PRINT, jasperPrint);
-			exporter.setParameter(JRTextExporterParameter.OUTPUT_FILE_NAME, TXTfile);
-			exporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, TxtPrinter.PAGE_WIDTH);
-			exporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, TxtPrinter.PAGE_HEIGHT);
-			exporter.exportReport();
-
-			try {
-				PrintService printService = PrintServiceLookup.lookupDefaultPrintService();
-
-				if (printService != null) {
-					getPrinter(printService);
-					if (!TxtPrinter.ZPL) {
-						printFileTxt(TXTfile, printService);
+			defaultPrintService = PrintServiceLookup.lookupDefaultPrintService();
+			if (defaultPrintService != null) {
+				if (TxtPrinter.MODE.equalsIgnoreCase("ZPL")) {
+					
+					JRTextExporter exporter = new JRTextExporter();
+					exporter.setParameter(JRTextExporterParameter.JASPER_PRINT, jasperPrint);
+					exporter.setParameter(JRTextExporterParameter.OUTPUT_FILE_NAME, fileName);
+					exporter.setParameter(JRTextExporterParameter.CHARACTER_WIDTH, TxtPrinter.TXT_CHAR_WIDTH);
+					exporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, TxtPrinter.TXT_CHAR_HEIGHT);
+					exporter.exportReport();
+					
+					printFileZPL(fileName, !TxtPrinter.USE_DEFAULT_PRINTER);
+					
+				} else if (TxtPrinter.MODE.equalsIgnoreCase("TXT")) {
+						
+					if (jasperPrint.getPages().size() > 1) {
+						printReversPages(jasperPrint);
 					} else {
-						printFileZPL(TXTfile, printService);
+						JasperPrintManager.printReport(jasperPrint, !TxtPrinter.USE_DEFAULT_PRINTER);
 					}
-				} else {
-					System.out.println("printer was not found.");
-					System.out.println(printService);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+					
+				} else if (TxtPrinter.MODE.equalsIgnoreCase("PDF")) {
+					
+					if (jasperPrint.getPages().size() > 1) {
+						printReversPages(jasperPrint);
+					} else {
+						JasperPrintManager.printReport(jasperPrint, !TxtPrinter.USE_DEFAULT_PRINTER);
+					}
 
+				} else {
+					logger.debug("invalid MODE");
+					logger.debug("MODE: " + TxtPrinter.MODE);
+				}
+			} else {
+				logger.debug("printer was not found.");
+				logger.debug(defaultPrintService.toString());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * 
-	 * @param file
-	 * @param printService
-	 */
-	private void printFileTxt(String file, PrintService printService) {
-			try {
-				System.out.println("Using: " + printService.getName());
-				DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
-				PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
-				DocAttributeSet das = new HashDocAttributeSet();
-				FileInputStream fis = new FileInputStream(file);
-				Doc doc = new SimpleDoc(fis, flavor, das);
-				
-				DocPrintJob job = printService.createPrintJob();
-				job.print(doc, pras);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (PrintException e) {
-				e.printStackTrace();
-			}
 	}
 	
 	/**
 	 * 
 	 * @param file
-	 * @param printService
+	 * @param showDialog
 	 */
-	private void printFileZPL(String file, PrintService printService) {
+	private void printFileZPL(String file, boolean showDialog) {
 		try {
-			System.out.println("Using: " + printService.getName());
+			PrintService printService;
+			if (showDialog) {
+				PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
+				DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+			    PrintService printServices[] = PrintServiceLookup.lookupPrintServices(flavor, pras);
+			    PrintService defaultService = PrintServiceLookup.lookupDefaultPrintService();
+			    printService = ServiceUI.printDialog(null, 200, 200, printServices, defaultService, flavor, pras);
+			} else {
+				printService = defaultPrintService;
+			}
+			if (printService == null) return;
+			getPrinterDetails(printService);
 			DocPrintJob job = printService.createPrintJob();
 			DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
 			PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
@@ -113,31 +121,33 @@ public class PrintReceipt {
 			
 			FileReader frStream = new FileReader(file);
 			BufferedReader brStream = new BufferedReader(frStream);
-
-			//int width = 447;
-			//int height = 782;
-			//int charW = width / TxtPrinter.PAGE_WIDTH;
-			//int charH = height / TxtPrinter.PAGE_HEIGHT;
-			int charH = TxtPrinter.ZPL_ROW_HEIGHT;
 			
+			int charH = TxtPrinter.ZPL_ROW_HEIGHT;
 			String font = "^A" + TxtPrinter.ZPL_FONT_TYPE;
 			String aLine = brStream.readLine();
-			String zpl = "^XA^LH0,30" + aLine;//starting point
+			String header = "^XA^LH0,30" + aLine;//starting point
+			
+			StringBuilder zpl = new StringBuilder();
 			int i = 0;
 			while (!aLine.equals("")) {
 				//System.out.println(aLine);
-				zpl+="^FO0," + (i * charH);//line position
-				zpl+=font + "," + charH;//font size
-				zpl+="^FD" + aLine + "^FS";//line field
+				zpl.append("^FO0," + (i * charH));//line position
+				zpl.append(font + "," + charH);//font size
+				zpl.append("^FD" + aLine + "^FS");//line field
 				aLine = brStream.readLine();
 				i++;
 			}
-			zpl+="^XZ";//end
-			System.out.println(zpl);
-			byte[] by = zpl.getBytes();
+			zpl.append("^XZ");//end
+			String labelLenght = "^LL" + charH * i;
+			header+=labelLenght;
+			String label = header+zpl;
+			
+			System.out.println(label);
+			byte[] by = label.getBytes();
 			Doc doc = new SimpleDoc(by, flavor, das);
 			job.print(doc, pras);
 			brStream.close();
+			frStream.close();
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -150,22 +160,37 @@ public class PrintReceipt {
 	
 	/**
 	 * 
+	 * @param file
+	 */
+	private void printReversPages(JasperPrint jasperPrint) {
+		try {
+			
+			List pages = jasperPrint.getPages();
+			JasperPrintManager.printPages(jasperPrint, 0, pages.size()-1, !TxtPrinter.USE_DEFAULT_PRINTER);
+			
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 
 	 * @param printService
 	 */
-	private void getPrinter(PrintService printService) {
-		System.out.println("Printer: " + printService.getName());
-		System.out.println("Supported flavors:");
+	private void getPrinterDetails(PrintService printService) {
+		logger.debug("Printer: " + printService.getName());
+		logger.debug("Supported flavors:");
 		DocFlavor[] flavors = printService.getSupportedDocFlavors();
 		if (flavors != null) {
 			for (DocFlavor flavor : flavors) {
-				System.out.println(flavor);
+				logger.debug(flavor.toString());
 			}
 		}
 		System.out.println("Attributes:");
 		Attribute[] attributes = printService.getAttributes().toArray();
 		if (attributes != null) {
 			for (Attribute attr : attributes) {
-				System.out.println(attr.getName() + ": " + (attr.getClass()).toString());
+				logger.debug(attr.getName() + ": " + (attr.getClass()).toString());
 			}
 		}
 	}
