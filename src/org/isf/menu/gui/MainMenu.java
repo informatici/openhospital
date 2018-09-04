@@ -163,7 +163,18 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 				 * communication.incomingChat(); communication.receiveFile();
 				 */
 			} catch (XMPPException e) {
-				logger.info("No XMPP Server seems to be running: set XMPPMODULEENABLED = false");
+				String message = e.getMessage();
+				if (message.contains("SASL authentication DIGEST-MD5 failed")) {
+					if (myUser.getUserName().equals("admin")) {
+						logger.error("Cannot use \"admin\" user, please consider to create another user under the admin group");
+					} else {
+						logger.error("Passwords not matching, please drop XMPP user and login OH again with the same user");
+					}
+				} else if (message.contains("XMPPError connecting")) {
+					logger.error("No XMPP Server seems to be running: set XMPPMODULEENABLED = false");
+				} else {
+					logger.error("An error occurs: " + e.getMessage());
+				}
 				flag_Xmpp = GeneralData.XMPPMODULEENABLED = false;
 			}
 
@@ -350,7 +361,7 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 
 			for (UserMenuItem u : myMenu)
 				if (u.getMySubmenu().equals("main")) {
-					button[k - 1] = new JButton(MessageBundle.getMessage(u.getButtonLabel()));
+					button[k - 1] = new JButton(u.getButtonLabel());
 
 					button[k - 1].setMnemonic(KeyEvent.VK_A + (int) (u.getShortcut() - 'A'));
 

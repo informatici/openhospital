@@ -382,15 +382,28 @@ public class MenuIoOperations
         try{
             jpa.beginTransaction();
 
-            String query = "select mn.*,GROUPMENU.GM_ACTIVE from USERGROUP "
+            String query = "select mn.*,GROUPMENU.GM_ACTIVE as IS_ACTIVE from USERGROUP "
                     + " inner join GROUPMENU on UG_ID_A=GM_UG_ID_A inner join MENUITEM as mn on "
                     + " GM_MNI_ID_A=mn.MNI_ID_A where UG_ID_A = ? order by MNI_POSITION";
+            
+            Query q = jpa.getEntityManager().createNativeQuery(query,"UserMenuItemWithStatus");
+            q.setParameter(1, aGroup.getCode());
+            
             jpa.createQuery(query, UserMenuItem.class, false);
             params.add(aGroup.getCode());
             jpa.setParameters(params, false);
-            List<UserMenuItem> menuList = (List<UserMenuItem>)jpa.getList();
-            menu = new ArrayList<UserMenuItem>(menuList);
-
+            
+            List<Object[]> menuList = (List<Object[]>)q.getResultList();
+            menu = new ArrayList<UserMenuItem>();
+            Iterator<Object[]> it = menuList.iterator();
+            while (it.hasNext()) {
+                Object[] object = it.next();
+                char active = (Character) object[1];
+                UserMenuItem umi = (UserMenuItem)object[0];
+                umi.setActive(active == 'Y' ? true : false);
+                menu.add(umi);
+            }
+            
             jpa.commitTransaction();
         }catch (OHException e) {
             //DbJpaUtil managed exception
