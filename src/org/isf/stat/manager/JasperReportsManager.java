@@ -377,13 +377,12 @@ public class JasperReportsManager {
             DbQueryLogger dbQuery = new DbQueryLogger();
             ResultSet resultSet = dbQuery.getData(queryString, true);
 
-            if (!exportFilename.endsWith("csv")) {
-                exportFilename = exportFilename + ".csv";
-            }
             File exportFile = new File(exportFilename);
-
             ExcelExporter xlsExport = new ExcelExporter();
-            xlsExport.exportResultsetToCSV(resultSet, exportFile);
+			if (exportFile.getName().endsWith(".xls"))
+				xlsExport.exportResultsetToExcelOLD(resultSet, exportFile);
+			else
+				xlsExport.exportResultsetToExcel(resultSet, exportFile);
 
         } catch(OHServiceException e){
             //Already managed, ready to return OHServiceException
@@ -418,7 +417,7 @@ public class JasperReportsManager {
         }
     }
 
-    public void getGenericReportMYCsv(Integer month, Integer year, String jasperFileName, String exportFilename) throws OHServiceException {
+    public void getGenericReportMYExcel(Integer month, Integer year, String jasperFileName, String exportFilename) throws OHServiceException {
 
         try{
             HashMap<String, Object> parameters = compileGenericReportMYParameters(month, year);
@@ -432,13 +431,12 @@ public class JasperReportsManager {
             DbQueryLogger dbQuery = new DbQueryLogger();
             ResultSet resultSet = dbQuery.getData(queryString, true);
 
-            if (!exportFilename.endsWith("csv")) {
-                exportFilename = exportFilename + ".csv";
-            }
             File exportFile = new File(exportFilename);
-
             ExcelExporter xlsExport = new ExcelExporter();
-            xlsExport.exportResultsetToCSV(resultSet, exportFile);
+            if (exportFile.getName().endsWith(".xls"))
+				xlsExport.exportResultsetToExcelOLD(resultSet, exportFile);
+			else
+				xlsExport.exportResultsetToExcel(resultSet, exportFile);
         } catch(OHServiceException e){
             //Already managed, ready to return OHServiceException
             throw e;
