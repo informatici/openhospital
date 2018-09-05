@@ -1,0 +1,10 @@
+0.0.2 (13/04/2008)
+------------------
+- the shell script oh.sh looks for a free port to run MySQL server starting from port 3306
+- created README, TODO and this Changelog file in the root directory of the package
+- included the LICENSE file containing the GNU General Public License in the oh/ directory related to Open Hospital itself.
+- suppressed MySQL log messages on stdout when launching oh.sh
+
+0.0.1 (30/03/2008)
+------------------
+- the very first release
