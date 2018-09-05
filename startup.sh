@@ -105,4 +105,4 @@ case $ARCH in
 		;;
 esac
 
-$JAVA_EXE -Djava.library.path=${NATIVE_LIB_PATH} -classpath "$OPENHOSPITAL_CLASSPATH:$CLASSPATH" org.isf.menu.gui.Menu "$@"
+$JAVA_EXE -Dsun.java2d.dpiaware=false -Djava.library.path=${NATIVE_LIB_PATH} -classpath "$OPENHOSPITAL_CLASSPATH:$CLASSPATH" org.isf.menu.gui.Menu "$@"
