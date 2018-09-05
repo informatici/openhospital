@@ -105,21 +105,13 @@ public class UserMenuItem
 	
 	
 	public String getAltLabel() {
-		try {
-			return MessageBundle.getMessage(altLabel);
-		} catch (Exception e) {
-			return altLabel;
-		}
+		return MessageBundle.getMessage(altLabel); 
 	}
 	public void setAltLabel(String altLabel) {
 		this.altLabel = altLabel;
 	}
 	public String getButtonLabel() {
-		try {
-			return MessageBundle.getMessage(buttonLabel);
-		} catch (Exception e) {
-			return buttonLabel;
-		}
+		return MessageBundle.getMessage(buttonLabel);
 	}
 	public void setButtonLabel(String buttonLabel) {
 		this.buttonLabel = buttonLabel;

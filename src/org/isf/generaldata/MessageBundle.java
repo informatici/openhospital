@@ -40,12 +40,16 @@ public class MessageBundle {
 			if (resourceBundle != null) {
 				//message = new String(resourceBundle.getString(key).getBytes("ISO-8859-1"), "UTF-8");
 				message = resourceBundle.getString(key);
-			}
+			} else return key;
 		} catch (MissingResourceException e) {
 			if (GeneralData.DEBUG) {
 				message = key;
 			} else {
-				message = defaultResourceBundle.getString(key);
+				try {
+					message = defaultResourceBundle.getString(key);
+				} catch (MissingResourceException e1) {
+					message = key;
+				}
 			}
 			logger.error(">> key not found: " + key);
 		} 
