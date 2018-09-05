@@ -131,7 +131,6 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 	private int[] columnsAlignment = { SwingConstants.LEFT, SwingConstants.CENTER, SwingConstants.LEFT, SwingConstants.CENTER, SwingConstants.CENTER, SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.LEFT };
 	private boolean[] columnsBold = { false, true, false, false, false, false, false, false };
 	private int selectedrow;
-	private Opd opd;
 	private OpdBrowserManager manager = new OpdBrowserManager();
 	private JButton filterButton = null;
 	private String rowCounterText = MessageBundle.getMessage("angal.opd.count") + ": ";
@@ -202,8 +201,8 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 		initialize();
         setVisible(true);
         //if(bOpenEdit)
-        opd = new Opd();
-        OpdEditExtended editrecord = new OpdEditExtended(myFrame, opd, patient, true);
+        Opd newOpd = new Opd(0,' ',-1,new Disease(),0);
+        OpdEditExtended editrecord = new OpdEditExtended(myFrame, newOpd, patient, true);
         editrecord.addSurgeryListener(OpdBrowser.this);
 		editrecord.setVisible(true);
 	}
@@ -282,13 +281,13 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 			jNewButton.addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent event) {
-					opd = new Opd();
+					Opd newOpd = new Opd(0,' ',-1,new Disease(),0);
 					if (GeneralData.OPDEXTENDED) {
-						OpdEditExtended newrecord = new OpdEditExtended(myFrame, opd, true);
+						OpdEditExtended newrecord = new OpdEditExtended(myFrame, newOpd, true);
 						newrecord.addSurgeryListener(OpdBrowser.this);
 						newrecord.setVisible(true);
 					} else {
-						OpdEdit newrecord = new OpdEdit(myFrame, opd, true);
+						OpdEdit newrecord = new OpdEdit(myFrame, newOpd, true);
 						newrecord.addSurgeryListener(OpdBrowser.this);
 						newrecord.setVisible(true);
 					}
@@ -978,14 +977,13 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 		}
 		
 		public int getColumnCount() {
-			/*int c = 0;
+			int c = 0;
 			for (int i = 0; i < columnsVisible.length; i++) {
 				if (columnsVisible[i]) {
 					c++;
 				}
 			}
-			return c;*/
-			return pColums.length;
+			return c;
 		}
 		
 		public Object getValueAt(int r, int c) {

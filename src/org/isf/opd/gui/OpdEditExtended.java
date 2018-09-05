@@ -142,7 +142,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		surgeryListeners.remove(SurgeryListener.class, listener);
 	}
 	
-	private void fireSurgeryInserted() {
+	private void fireSurgeryInserted(Opd opd) {
 		AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
 
 			/**
@@ -154,7 +154,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		for (int i = 0; i < listeners.length; i++)
 			((SurgeryListener)listeners[i]).surgeryInserted(event, opd);
 	}
-	private void fireSurgeryUpdated() {
+	private void fireSurgeryUpdated(Opd opd) {
 		AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
 
 			/**
@@ -1577,7 +1577,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 							RememberDates.setLastOpdVisitDate(gregDate);
 							result = opdManager.newOpd(opd);
 							if (result) {
-								fireSurgeryInserted();
+								fireSurgeryInserted(opd);
 							}
 							if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opd.thedatacouldnotbesaved"));
 							else  dispose();
@@ -1597,7 +1597,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 							}
 
 							if (result) {
-								fireSurgeryUpdated();
+								fireSurgeryUpdated(opd);
 							};
 							if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opd.thedatacouldnotbesaved"));
 							else  dispose();
