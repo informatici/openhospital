@@ -1,43 +1,31 @@
 package org.isf.disctype.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.disctype.model.DischargeType;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class DischargeTypeIoOperation {
 
+	@Autowired
+	private DischargeTypeIoOperationRepository repository;
+	
 	/**
 	 * method that returns all DischargeTypes in a list
 	 * 
 	 * @return the list of all DischargeTypes
 	 * @throws OHException
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<DischargeType> getDischargeType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<DischargeType> dischargeTypes = null;
-				
-		try {
-			jpa.beginTransaction();
-			
-			String query = "SELECT * FROM DISCHARGETYPE ORDER BY DIST_DESC";
-			jpa.createQuery(query, DischargeType.class, false);
-			List<DischargeType> dischargeList = (List<DischargeType>)jpa.getList();
-			dischargeTypes = new ArrayList<DischargeType>(dischargeList);			
-			
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return dischargeTypes;
+		return new ArrayList<DischargeType>(repository.findAllByOrderByDescriptionAsc());
 	}
 
 	/**
@@ -47,20 +35,16 @@ public class DischargeTypeIoOperation {
 	 * @return true - if the existing DischargeType has been updated
 	 * @throws OHException
 	 */
-	public boolean updateDischargeType(
+	public boolean UpdateDischargeType(
 			DischargeType dischargeType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		try {		
-			jpa.beginTransaction();	
-			jpa.merge(dischargeType);
-	    	jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return true;	
+		boolean result = true;
+	
+		
+		DischargeType savedDischargeType = repository.save(dischargeType);
+		result = (savedDischargeType != null);
+		
+		return result;
 	}
 
 	/**
@@ -73,17 +57,13 @@ public class DischargeTypeIoOperation {
 	public boolean newDischargeType(
 			DischargeType dischargeType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		try {
-			jpa.beginTransaction();	
-			jpa.persist(dischargeType);
-	    	jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return true;
+		boolean result = true;
+	
+		
+		DischargeType savedDischargeType = repository.save(dischargeType);
+		result = (savedDischargeType != null);
+		
+		return result;
 	}
 
 	/**
@@ -96,47 +76,29 @@ public class DischargeTypeIoOperation {
 	public boolean deleteDischargeType(
 			DischargeType dischargeType) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		try {
-			jpa.beginTransaction();
-			DischargeType objToRemove = (DischargeType) jpa.find(DischargeType.class, dischargeType.getCode());
-			jpa.remove(objToRemove);
-	    	jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return true;	
+		boolean result = true;
+	
+		
+		repository.delete(dischargeType);
+		
+		return result;
 	}
 
 	/**
 	 * method that check if a DischargeType already exists
 	 * 
 	 * @param code
-	 * @return true - if the DischargeType already exists; false otherwise
+	 * @return true - if the DischargeType already exists
 	 * @throws OHException 
 	 */
 	public boolean isCodePresent(
 			String code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		DischargeType dischargeType;
-		boolean result = false;
+		boolean result = true;
+	
 		
-		try {
-			jpa.beginTransaction();	
-			dischargeType = (DischargeType)jpa.find(DischargeType.class, code);
-			if (dischargeType != null)
-			{
-				result = true;
-			}
-	    	jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return result;	
+		result = repository.exists(code);
+		
+		return result;
 	}
 }

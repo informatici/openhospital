@@ -1,12 +1,12 @@
 package org.isf.hospital.service;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import org.isf.hospital.model.Hospital;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This class offers the io operations for recovering and
@@ -16,7 +16,12 @@ import org.springframework.stereotype.Component;
  * 
  */
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class HospitalIoOperations {
+
+	@Autowired
+	private HospitalIoOperationRepository repository;
 	
 	/**
 	 * Reads from database hospital informations
@@ -24,25 +29,12 @@ public class HospitalIoOperations {
 	 * @return {@link Hospital} object
 	 * @throws OHException 
 	 */
-    @SuppressWarnings("unchecked")
 	public Hospital getHospital() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		ArrayList<Hospital> hospitals = (ArrayList<Hospital>) repository.findAll();
+				
 
-		try {
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM HOSPITAL";
-			jpa.createQuery(query, Hospital.class, false);
-            Hospital hospital = (Hospital) jpa.getResult();
-
-			jpa.commitTransaction();
-			return hospital;
-		} catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
+		return hospitals.get(0);
 	}
 	
 	/**
@@ -52,24 +44,8 @@ public class HospitalIoOperations {
 	 */
 	public String getHospitalCurrencyCod() throws OHException
 	{
-		String query = "SELECT * FROM HOSPITAL";
-		String currencyCod = "";
-		
-		DbJpaUtil jpa = new DbJpaUtil();
-		
-		try {
-			jpa.beginTransaction();
-			
-			jpa.createQuery(query, Hospital.class, false);
-			Hospital hospital = (Hospital) jpa.getResult();
-			currencyCod = hospital.getCurrencyCod();
-			
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
+		String currencyCod = repository.findHospitalCurrent();
+	
 		
 		return currencyCod;
 	}
@@ -83,19 +59,12 @@ public class HospitalIoOperations {
 	public boolean updateHospital(
 			Hospital hospital) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
+
+		Hospital savedHospital = repository.save(hospital);
+		result = (savedHospital != null);
 		
-		hospital.setLock(hospital.getLock()+1);
-		try {
-			jpa.beginTransaction();
-			jpa.merge(hospital);
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			// DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
 		return result;
 	} 
 	

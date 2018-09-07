@@ -13,11 +13,17 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests 
 {
 	private static DbJpaUtil jpa;
@@ -25,7 +31,9 @@ public class Tests
 	private static TestPatientExamination testPatientExamination;
 	private static TestPatientContext testPatientContext;
 	private static TestPatientExaminationContext testPatientExaminationContext;
-		
+
+    @Autowired
+    ExaminationOperations examinationOperations;
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -63,7 +71,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
     	testPatient = null;
     	testPatientExamination = null;
     	testPatientContext = null;
@@ -116,9 +123,6 @@ public class Tests
 	@Test
 	public void testGetDefaultPatientExamination()
 	{
-		ExaminationOperations examinationOperations = new ExaminationOperations();
-		
-
 		try 
 		{		
 			Patient	patient = testPatient.setup(false);
@@ -138,10 +142,7 @@ public class Tests
 	
 	@Test
 	public void testGetFromLastPatientExamination()
-	{
-		ExaminationOperations examinationOperations = new ExaminationOperations();
-
-		
+	{		
 		try 
 		{		
 			Patient	patient = testPatient.setup(false);		
@@ -164,7 +165,6 @@ public class Tests
 	@Test
 	public void testSaveOrUpdate() 
 	{
-		ExaminationOperations examinationOperations = new ExaminationOperations();
 		int id = 0;
 			
 
@@ -189,7 +189,6 @@ public class Tests
 	@Test
 	public void testGetByID() 
 	{
-		ExaminationOperations examinationOperations = new ExaminationOperations();
 		int id = 0;
 			
 
@@ -211,10 +210,7 @@ public class Tests
 
 	@Test
 	public void testGetLastByPatID()
-	{		
-		ExaminationOperations examinationOperations = new ExaminationOperations();
-		
-		
+	{				
 		try 
 		{		
 			jpa.beginTransaction();				
@@ -238,10 +234,7 @@ public class Tests
 
 	@Test
 	public void testGetLastNByPatID()
-	{		
-		ExaminationOperations examinationOperations = new ExaminationOperations();
-		
-		
+	{				
 		try 
 		{		
 			jpa.beginTransaction();				
@@ -265,10 +258,7 @@ public class Tests
 
 	@Test
 	public void testGetByPatID()
-	{			
-		ExaminationOperations examinationOperations = new ExaminationOperations();
-		
-		
+	{	
 		try 
 		{		
 			jpa.beginTransaction();				

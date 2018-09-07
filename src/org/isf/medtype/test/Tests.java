@@ -14,13 +14,21 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
 	private static TestMedicalType testMedicalType;
 	private static TestMedicalTypeContext testMedicalTypeContext;
-		
+
+    @Autowired
+    MedicalTypeIoOperation medicalTypeIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -56,8 +64,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
-
     	return;
     }
 	
@@ -106,14 +112,13 @@ public class Tests
 	public void testIoGetMedicalType() 
 	{
 		String code = "";
-		MedicalTypeIoOperation ioOperations = new MedicalTypeIoOperation();
 		
 		
 		try 
 		{		
 			code = _setupTestMedicalType(false);
 			MedicalType foundMedicalType = (MedicalType)jpa.find(MedicalType.class, code); 
-			ArrayList<MedicalType> medicalTypes = ioOperations.getMedicalTypes();
+			ArrayList<MedicalType> medicalTypes = medicalTypeIoOperation.getMedicalTypes();
 			
 			assertEquals(foundMedicalType.getDescription(), medicalTypes.get(medicalTypes.size()-1).getDescription());
 		} 
@@ -130,7 +135,6 @@ public class Tests
 	public void testIoUpdateMedicalType()
 	{
 		String code = "";
-		MedicalTypeIoOperation ioOperations = new MedicalTypeIoOperation();
 		boolean result = false;
 		
 		
@@ -139,7 +143,7 @@ public class Tests
 			code = _setupTestMedicalType(false);
 			MedicalType foundMedicalType = (MedicalType)jpa.find(MedicalType.class, code); 
 			foundMedicalType.setDescription("Update");
-			result = ioOperations.updateMedicalType(foundMedicalType);
+			result = medicalTypeIoOperation.updateMedicalType(foundMedicalType);
 			MedicalType updateMedicalType = (MedicalType)jpa.find(MedicalType.class, code); 
 			
 			assertEquals(true, result);
@@ -157,14 +161,13 @@ public class Tests
 	@Test
 	public void testIoNewMedicalType() 
 	{
-		MedicalTypeIoOperation ioOperations = new MedicalTypeIoOperation();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			MedicalType medicalType = testMedicalType.setup(true);
-			result = ioOperations.newMedicalType(medicalType);
+			result = medicalTypeIoOperation.newMedicalType(medicalType);
 			
 			assertEquals(true, result);
 			_checkMedicalTypeIntoDb(medicalType.getCode());
@@ -179,44 +182,18 @@ public class Tests
 	}
 
 	@Test
-	public void testIoDeleteMedicalType() 
-	{
-		String code = "";
-		MedicalTypeIoOperation ioOperations = new MedicalTypeIoOperation();
-		boolean result = false;
-		
-
-		try 
-		{		
-			code = _setupTestMedicalType(false);
-			MedicalType foundMedicalType = (MedicalType)jpa.find(MedicalType.class, code); 
-			result = ioOperations.deleteMedicalType(foundMedicalType);
-			
-			assertEquals(true, result);
-			MedicalType deletedMedicalType = (MedicalType)jpa.find(MedicalType.class, code); 
-			assertEquals(null, deletedMedicalType);
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("==> Test Exception: " + e);		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}
-
-	@Test
 	public void testIoIsCodePresent() 
 	{
 		String code = "";
-		MedicalTypeIoOperation ioOperations = new MedicalTypeIoOperation();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestMedicalType(false);
-			result = ioOperations.isCodePresent(code);
+			result = medicalTypeIoOperation.isCodePresent(code);
+			
+			assertEquals(true, result);
 		} 
 		catch (Exception e) 
 		{
@@ -225,6 +202,32 @@ public class Tests
 		}
 		
 		assertEquals(true, result);
+		
+		return;
+	}
+
+	@Test
+	public void testIoDeleteMedicalType() 
+	{
+		String code = "";
+		boolean result = false;
+		
+
+		try 
+		{		
+			code = _setupTestMedicalType(false);
+			MedicalType foundMedicalType = (MedicalType)jpa.find(MedicalType.class, code); 
+			result = medicalTypeIoOperation.deleteMedicalType(foundMedicalType);
+			
+			assertEquals(true, result);
+			result = medicalTypeIoOperation.isCodePresent(code);
+			assertEquals(false, result);
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("==> Test Exception: " + e);		
+			assertEquals(true, false);
+		}
 		
 		return;
 	}

@@ -4,43 +4,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.agetype.model.AgeType;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 
 /**
  * Persistence class for agetype module.
  *
  */
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class AgeTypeIoOperations 
 {
+	@Autowired
+	private AgeTypeIoOperationRepository repository;
+	
 	/**
 	 * Returns all available age types.
 	 * @return a list of {@link AgeType}.
 	 * @throws OHException if an error occurs retrieving the age types.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<AgeType> getAgeType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<AgeType> padmissiontype = null;
-				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM AGETYPE ORDER BY AT_CODE";
-			jpa.createQuery(query, AgeType.class, false);
-			List<AgeType> ageTypeList = (List<AgeType>)jpa.getList();
-			padmissiontype = new ArrayList<AgeType>(ageTypeList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return padmissiontype;
+		return new ArrayList<AgeType>(repository.findAllByOrderByCodeAsc());
 	}
 
 	/**
@@ -50,24 +40,15 @@ public class AgeTypeIoOperations
 	 * @throws OHException if an error occurs during the update.
 	 */
 	public boolean updateAgeType(
-			ArrayList<AgeType> ageTypes) throws OHException 
+			ArrayList<AgeType> ageType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
-		try{
-			jpa.beginTransaction();	
-			for (AgeType ageType : ageTypes) 
-			{
-				jpa.merge(ageType);
-			}
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return result;	
+		List<AgeType> savedAgeType = repository.save(ageType);
+		result = (savedAgeType != null);
+		
+		return result;
 	}
 
 	/**
@@ -79,22 +60,13 @@ public class AgeTypeIoOperations
 	public AgeType getAgeTypeByCode(
 			int index) throws OHException 
 	{	
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		String code = "";
 		AgeType ageType = null;
 				
-		try{
-			jpa.beginTransaction();
+		
+		code = "d" + String.valueOf(index-1);
+		ageType = repository.findOneByCode(code); 
 
-			code = "d" + String.valueOf(index-1);
-			ageType = (AgeType)jpa.find(AgeType.class, code); 
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
 		return ageType;
 	}
 }

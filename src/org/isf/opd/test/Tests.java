@@ -24,7 +24,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
@@ -36,7 +42,9 @@ public class Tests
 	private static TestDiseaseTypeContext testDiseaseTypeContext;
 	private static TestDisease testDisease;
 	private static TestDiseaseContext testDiseaseContext;
-		
+
+    @Autowired
+    OpdIoOperations opdIoOperation;	
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -136,14 +144,13 @@ public class Tests
 	public void testIoGetOpd()
 	{
 		int code = 0;
-		OpdIoOperations ioOperations = new OpdIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestOpd(false);
 			Opd foundOpd = (Opd)jpa.find(Opd.class, code); 
-			ArrayList<Opd> opds = ioOperations.getOpdList(
+			ArrayList<Opd> opds = opdIoOperation.getOpdList(
 					foundOpd.getDisease().getType().getCode(), 
 					foundOpd.getDisease().getCode(),
 					foundOpd.getVisitDate(),
@@ -167,7 +174,6 @@ public class Tests
 	@Test
 	public void testIoNewOpd() throws OHException
 	{
-		OpdIoOperations ioOperations = new OpdIoOperations();
 		Patient	patient = testPatient.setup(false); 
 		DiseaseType diseaseType = testDiseaseType.setup(false);
 		Disease disease = testDisease.setup(diseaseType, false);
@@ -183,7 +189,8 @@ public class Tests
 			jpa.commitTransaction();
 
 			Opd opd = testOpd.setup(patient, disease, false);
-			result = ioOperations.newOpd(opd);
+	    	opd.setDate(new Date());
+			result = opdIoOperation.newOpd(opd);
 			
 			assertEquals(true, result);
 			_checkOpdIntoDb(opd.getCode());
@@ -200,7 +207,6 @@ public class Tests
 	@Test
 	public void testOpdIoHasOpdModified() 
 	{
-		OpdIoOperations ioOperations = new OpdIoOperations();
 		int code = 0;
 		boolean result = false;
 			
@@ -209,7 +215,7 @@ public class Tests
 		{		
 			code = _setupTestOpd(true);
 			Opd foundOpd = (Opd)jpa.find(Opd.class, code); 
-			result = ioOperations.hasOpdModified(foundOpd);			
+			result = opdIoOperation.hasOpdModified(foundOpd);			
 			assertEquals(false, result);
 		} 
 		catch (Exception e) 
@@ -225,7 +231,6 @@ public class Tests
 	public void testIoUpdateOpd() 
 	{
 		int code = 0;
-		OpdIoOperations ioOperations = new OpdIoOperations();
 		boolean result = false;
 		
 		
@@ -234,7 +239,7 @@ public class Tests
 			code = _setupTestOpd(false);
 			Opd foundOpd = (Opd)jpa.find(Opd.class, code); 
 			foundOpd.setNote("Update");
-			result = ioOperations.updateOpd(foundOpd);
+			result = opdIoOperation.updateOpd(foundOpd);
 			Opd updateOpd = (Opd)jpa.find(Opd.class, code); 
 			
 			assertEquals(true, result);
@@ -253,7 +258,6 @@ public class Tests
 	public void testIoDeleteOpd() 
 	{
 		int code = 0;
-		OpdIoOperations ioOperations = new OpdIoOperations();
 		boolean result = false;
 		
 
@@ -261,11 +265,11 @@ public class Tests
 		{		
 			code = _setupTestOpd(false);
 			Opd foundOpd = (Opd)jpa.find(Opd.class, code); 
-			result = ioOperations.deleteOpd(foundOpd);
-			
+			result = opdIoOperation.deleteOpd(foundOpd);
+
 			assertEquals(true, result);
-			Opd deletedOpd = (Opd)jpa.find(Opd.class, code); 
-			assertEquals(null, deletedOpd);
+			result = opdIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{
@@ -280,14 +284,13 @@ public class Tests
 	public void testIoGetProgYear()  
 	{
 		int code = 0;
-		OpdIoOperations ioOperations = new OpdIoOperations();
 		int progYear = 0;
 		
 
 		try 
 		{		
 			code = _setupTestOpd(false);
-			progYear = ioOperations.getProgYear(0);
+			progYear = opdIoOperation.getProgYear(0);
 
 			Opd foundOpd = (Opd)jpa.find(Opd.class, code); 
 			assertEquals(foundOpd.getProgYear(), progYear);
@@ -305,14 +308,13 @@ public class Tests
 	public void testIoGetLastOpd()  
 	{
 		int code = 0;
-		OpdIoOperations ioOperations = new OpdIoOperations();
 		
 
 		try 
 		{		
 			code = _setupTestOpd(false);
 			Opd foundOpd = (Opd)jpa.find(Opd.class, code); 
-			Opd lastOpd = ioOperations.getLastOpd(foundOpd.getPatient().getCode());
+			Opd lastOpd = opdIoOperation.getLastOpd(foundOpd.getPatient().getCode());
 
 			assertEquals(foundOpd.getCode(), lastOpd.getCode());
 		} 

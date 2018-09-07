@@ -3,6 +3,8 @@ package org.isf.accounting.manager;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
+import javax.swing.JOptionPane;
+
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
@@ -16,14 +18,15 @@ import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.isf.menu.gui.Menu;
+import org.isf.utils.exception.OHException;
+
 public class BillBrowserManager {
 
-	private final Logger logger = LoggerFactory.getLogger(BillBrowserManager.class);
-	
 	private AccountingIoOperations ioOperations;
 
-	public BillBrowserManager(){
-		ioOperations=Menu.getApplicationContext().getBean(AccountingIoOperations.class);
+	public BillBrowserManager() {
+		ioOperations = Menu.getApplicationContext().getBean(AccountingIoOperations.class);
 	}
 
 	/**
@@ -38,12 +41,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -63,12 +66,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -86,12 +89,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -111,12 +114,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -135,12 +138,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -161,12 +164,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -186,12 +189,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -210,12 +213,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -234,12 +237,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -257,12 +260,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -281,12 +284,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -304,12 +307,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -328,12 +331,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -353,12 +356,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -378,12 +381,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -403,12 +406,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
@@ -427,12 +430,12 @@ public class BillBrowserManager {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
 			 */
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
-			logger.error("", e);
+			
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}

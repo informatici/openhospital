@@ -195,23 +195,23 @@ public class PatientBrowserManager {
 	 * @return {@link Patient} with photo (if any)
 	 * @throws OHServiceException
 	 */
-	public Patient getPatientPhoto(Patient patient) throws OHServiceException {
-		try {
-			return ioOperations.getPatientPhoto(patient);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-	}
+//	public Patient getPatientPhoto(Patient patient) throws OHServiceException {
+//		try {
+//			return ioOperations.getPatientPhoto(patient);
+//		}  catch(OHException e){
+//			/*Already cached exception with OH specific error message - 
+//			 * create ready to return OHServiceException and keep existing error message
+//			 */
+//			logger.error("", e);
+//			throw new OHServiceException(e, new OHExceptionMessage(null, 
+//					e.getMessage(), OHSeverityLevel.ERROR));
+//		}catch(Exception e){
+//			//Any exception
+//			logger.error("", e);
+//			throw new OHServiceException(e, new OHExceptionMessage(null, 
+//					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+//		}
+//	}
 	
 	/**
 	 * get a Patient by his/her ID, even if he/her has been logically deleted
