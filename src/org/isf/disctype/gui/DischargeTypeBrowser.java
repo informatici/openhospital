@@ -40,7 +40,7 @@ public class DischargeTypeBrowser extends ModalJFrame implements DischargeTypeLi
 	private static final long serialVersionUID = 1L;
 	private ArrayList<DischargeType> pDischargeType;
 	private String[] pColums = { 
-			MessageBundle.getMessage("angal.codem.codem"), 
+			MessageBundle.getMessage("angal.common.codem"), 
 			MessageBundle.getMessage("angal.common.descriptionm")};
 	private int[] pColumwidth = {80, 200, 80};
 	private JPanel jContainPanel = null;

@@ -209,7 +209,7 @@ public class LabManager {
 	 */
 	public boolean editLabSecondProcedure(Laboratory laboratory, ArrayList<String> labRow) throws OHServiceException {
 		try {
-			return ioOperations.updateLabSecondProcedure(laboratory, labRow);
+			return ioOperations.newLabSecondProcedure(laboratory, labRow);
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));

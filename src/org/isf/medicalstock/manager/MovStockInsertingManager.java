@@ -280,7 +280,7 @@ public class MovStockInsertingManager {
 			if (isAutomaticLot()) {
 				result = ioOperations.newAutomaticDischargingMovement(movement);
 			} else
-				result = ioOperations.prepareDischargingwMovement(movement);
+				result = ioOperations.prepareDischargingMovement(movement);
 			return result;
 		} catch (OHException e) {
 			/*Already cached exception with OH specific error message - 

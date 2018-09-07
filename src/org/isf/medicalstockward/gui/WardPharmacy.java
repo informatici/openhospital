@@ -1125,6 +1125,7 @@ public class WardPharmacy extends ModalJFrame implements
 		public DrugsModel() {
 			try {
 				wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
+				System.out.println("Ciao");
 			} catch (OHServiceException e) {
 				OHServiceExceptionUtil.showMessages(e);
 				wardDrugs = new ArrayList<MedicalWard>();
@@ -1144,9 +1145,10 @@ public class WardPharmacy extends ModalJFrame implements
 			}
 			if (c == 0) {
 				try {
+					wardDrug.getMedical();
 					return wardDrug.getMedical().getDescription();
 				} catch (OHException e) {
-					return null;
+					JOptionPane.showMessageDialog(WardPharmacy.this, e.getMessage(), getTitle(), JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			if (c == 1) {

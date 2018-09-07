@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestAgeType 
 {	
-    private String code = "Z";
+    private String code = "d8";
     private String description = "TestDescription";
     private int from = 1;
     private int to = 100;

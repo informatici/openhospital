@@ -1,16 +1,21 @@
 package org.isf.therapy.service;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import org.isf.therapy.model.TherapyRow;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class TherapyIoOperations {
 
+	@Autowired
+	private TherapyIoOperationRepository repository;
+	
 	/**
 	 * insert a new {@link TherapyRow} (therapy) in the DB
 	 * 
@@ -22,43 +27,9 @@ public class TherapyIoOperations {
 	public TherapyRow newTherapy(
 			TherapyRow thRow) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		TherapyRow savedTherapy = repository.save(thRow);
 		
-		try{
-			jpa.beginTransaction();	
-			jpa.persist(thRow);
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return thRow;
-	}
-	
-	/**
-	 * insert a new {@link TherapyRow} (therapy) in the DB
-	 * 
-	 * @param thRow - the {@link TherapyRow} (therapy)
-	 * @param numTherapy - the therapy progressive number for the patient
-	 * @return the therapyID
-	 * @throws OHException 
-	 */
-	public int updateOrCreateTherapy(
-			TherapyRow thRow) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		
-		try{
-			jpa.beginTransaction();	
-			jpa.merge(thRow);
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return thRow.getTherapyID();
+		return savedTherapy;
 	}
 
 	/**
@@ -70,35 +41,20 @@ public class TherapyIoOperations {
 	 * @return the list of {@link TherapyRow}s (therapies)
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<TherapyRow> getTherapyRows(
 			int patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<TherapyRow> therapyList = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-		String query = null;
-				
-		try{
-			jpa.beginTransaction();
 
-			query = "SELECT * FROM THERAPIES JOIN (MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A) ON THR_MDSR_ID = MDSR_ID";
-			if (patID != 0) {
-				query += " WHERE THR_PAT_ID = ?";
-				params.add(patID);
-			}
-			query += " ORDER BY THR_PAT_ID, THR_ID";
-			jpa.createQuery(query, TherapyRow.class, false);
-			jpa.setParameters(params, false);
-			List<TherapyRow> therapyLists = (List<TherapyRow>)jpa.getList();
-			therapyList = new ArrayList<TherapyRow>(therapyLists);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
+		
+		if (patID != 0) {
+			therapyList = new ArrayList<TherapyRow>(repository.findAllWherePatientByOrderPatientAndIdAsc(patID));
 		}
+		else
+		{
+			therapyList = new ArrayList<TherapyRow>(repository.findAllByOrderPatientAndIdAsc()); 
+		}
+		
 		return therapyList;
 	}
 	
@@ -112,24 +68,29 @@ public class TherapyIoOperations {
 	public boolean deleteAllTherapies(
 			int patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
-        		
-		try {
-			jpa.beginTransaction();		
+	
+		
+		repository.deleteWherePatient(patID);
+		
+		return result;	
+	}
 
-			jpa.createQuery("DELETE FROM THERAPIES WHERE THR_PAT_ID = ?", TherapyRow.class, false);
-			params.add(patID);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-
-			jpa.commitTransaction();	
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}		
-        return result;
+	/**
+	 * checks if the code is already in use
+	 *
+	 * @param code - the therapy code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
+	 */
+	public boolean isCodePresent(
+			Integer code) throws OHException
+	{
+		boolean result = true;
+	
+		
+		result = repository.exists(code);
+		
+		return result;	
 	}
 }

@@ -1,43 +1,32 @@
 package org.isf.pricesothers.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.pricesothers.model.PricesOthers;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class PriceOthersIoOperations {
 
+	@Autowired
+	private PriceOthersIoOperationRepository repository;
+	
 	/**
 	 * return the list of {@link PriceOthers}s in the DB
 	 * 
 	 * @return the list of {@link PriceOthers}s
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<PricesOthers> getOthers() throws OHException 
-	{
+	{		
+		ArrayList<PricesOthers> pricesOthers = (ArrayList<PricesOthers>) repository.findAllByOrderByDescriptionAsc();
 
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<PricesOthers> pricesOthers = null;
-				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM PRICESOTHERS ORDER BY OTH_DESC";
-			jpa.createQuery(query, PricesOthers.class, false);
-			List<PricesOthers> pricesOtherstList = (List<PricesOthers>)jpa.getList();
-			pricesOthers = new ArrayList<PricesOthers>(pricesOtherstList);			
-
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
 		return pricesOthers;
 	}
 
@@ -51,18 +40,12 @@ public class PriceOthersIoOperations {
 	public boolean newOthers(
 			PricesOthers other) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		try{
-			jpa.beginTransaction();	
-			jpa.persist(other);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
+	
+
+		PricesOthers savedOther = repository.save(other);
+		result = (savedOther != null);
+		    	
 		return result;
 	}
 
@@ -76,19 +59,11 @@ public class PriceOthersIoOperations {
 	public boolean deleteOthers(
 			PricesOthers other) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
-		try{
-			jpa.beginTransaction();
-			PricesOthers objToRemove = (PricesOthers) jpa.find(PricesOthers.class, other.getId());
-			jpa.remove(objToRemove);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
+		repository.delete(other);
+		
 		return result;
 	}
 
@@ -102,18 +77,30 @@ public class PriceOthersIoOperations {
 	public boolean updateOther(
 			PricesOthers other) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
+
+		PricesOthers savedOther = repository.save(other);
+		result = (savedOther != null);
+		    	
+		return result;
+	}
+
+	/**
+	 * checks if the code is already in use
+	 *
+	 * @param code - the price other code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
+	 */
+	public boolean isCodePresent(
+			Integer id) throws OHException
+	{
+		boolean result = true;
+	
 		
-		try{
-			jpa.beginTransaction();	
-			jpa.merge(other);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
+		result = repository.exists(id);
+		
 		return result;	
 	}
 }

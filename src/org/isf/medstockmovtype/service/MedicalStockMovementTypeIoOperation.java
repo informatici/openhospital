@@ -1,46 +1,34 @@
 package org.isf.medstockmovtype.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.medstockmovtype.model.MovementType;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Persistence class for the medstockmovtype module.
  *
  */
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class MedicalStockMovementTypeIoOperation {
 
+	@Autowired
+	private MedicalStockMovementTypeIoOperationRepository repository;
+	
 	/**
 	 * Retrieves all the stored {@link MovementType}.
 	 * @return all the stored {@link MovementType}s.
 	 * @throws OHException if an error occurs retrieving the medical stock movement types.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<MovementType> getMedicaldsrstockmovType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<MovementType> medicaldsrstockmovtypes = null;
-				
-		try {
-			jpa.beginTransaction();
-			
-			String query = "SELECT * FROM MEDICALDSRSTOCKMOVTYPE ORDER BY MMVT_DESC";
-			jpa.createQuery(query, MovementType.class, false);
-			List<MovementType> movementTypeList = (List<MovementType>)jpa.getList();
-			medicaldsrstockmovtypes = new ArrayList<MovementType>(movementTypeList);			
-			
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		
-		return medicaldsrstockmovtypes;
+		return new ArrayList<MovementType>(repository.findAllByOrderByDescriptionAsc()); 	
 	}
 
 	/**
@@ -52,18 +40,13 @@ public class MedicalStockMovementTypeIoOperation {
 	public boolean updateMedicaldsrstockmovType(
 			MovementType medicaldsrstockmovType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
+
+		MovementType savedMedicaldsrstockmovType = repository.save(medicaldsrstockmovType);
+		result = (savedMedicaldsrstockmovType != null);
 		
-		try {
-			jpa.beginTransaction();	
-			jpa.merge(medicaldsrstockmovType);
-	    	jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return result;	
+		return result;
 	}
 
 	/**
@@ -75,18 +58,13 @@ public class MedicalStockMovementTypeIoOperation {
 	public boolean newMedicaldsrstockmovType(
 			MovementType medicaldsrstockmovType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
+
+		MovementType savedMedicaldsrstockmovType = repository.save(medicaldsrstockmovType);
+		result = (savedMedicaldsrstockmovType != null);
 		
-		try {
-		jpa.beginTransaction();	
-		jpa.persist(medicaldsrstockmovType);
-    	jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return result;	
+		return result;
 	}
 
 	/**
@@ -98,19 +76,11 @@ public class MedicalStockMovementTypeIoOperation {
 	public boolean deleteMedicaldsrstockmovType(
 			MovementType medicaldsrstockmovType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		try {
-			jpa.beginTransaction();	
-			MovementType objToRemove = (MovementType) jpa.find(MovementType.class, medicaldsrstockmovType.getCode());
 	
-			jpa.remove(objToRemove);
-	    	jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
+		
+		repository.delete(medicaldsrstockmovType);
+		
 		return result;	
 	}
 
@@ -123,22 +93,11 @@ public class MedicalStockMovementTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		MovementType medicaldsrstockmovType;
-		boolean result = false;
+		boolean result = true;
+	
 		
-		try {
-			jpa.beginTransaction();	
-			medicaldsrstockmovType = (MovementType)jpa.find(MovementType.class, code);
-			if (medicaldsrstockmovType != null)
-			{
-				result = true;
-			}
-	    	jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return result;	
+		result = repository.exists(code);
+		
+		return result;
 	}
 }

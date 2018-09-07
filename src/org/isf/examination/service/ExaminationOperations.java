@@ -6,22 +6,27 @@ package org.isf.examination.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
 import org.isf.examination.model.PatientExamination;
 import org.isf.generaldata.ExaminationParameters;
 import org.isf.patient.model.Patient;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Mwithi
  * 
  */
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class ExaminationOperations {
 
+	@Autowired
+	private ExaminationIoOperationRepository repository;
+	
 	public ExaminationOperations() {
 	}
 
@@ -57,42 +62,16 @@ public class ExaminationOperations {
 	public void saveOrUpdate(
 			PatientExamination patex) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+		repository.save(patex);
 		
-		try{
-			jpa.beginTransaction();
-			if (patex.getPex_ID() != 0)
-			{
-				jpa.merge(patex);			
-			}
-			else
-			{			
-				jpa.persist(patex);
-			}
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return;	
+		return;
 	}
 
 	public PatientExamination getByID(
 			int ID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		PatientExamination foundPatientExamination = null;
+		PatientExamination foundPatientExamination = repository.findOne(ID);
 		
-		try{
-			jpa.beginTransaction();	
-			foundPatientExamination = (PatientExamination)jpa.find(PatientExamination.class, ID);
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
 		return foundPatientExamination;
 	}
 
@@ -104,59 +83,16 @@ public class ExaminationOperations {
 		return !patExamination.isEmpty() ? patExamination.get(0) : null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public ArrayList<PatientExamination> getLastNByPatID(
 			int patID, 
 			int number) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<PatientExamination> patExaminations = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-			
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM PATIENTEXAMINATION WHERE PEX_PAT_ID = ? ORDER BY PEX_DATE DESC LIMIT ?";
-			params.add(patID);
-			params.add(number);
-			jpa.createQuery(query, PatientExamination.class, false);
-			jpa.setParameters(params, false);
-			List<PatientExamination> patExaminationList = (List<PatientExamination>)jpa.getList();
-			patExaminations = new ArrayList<PatientExamination>(patExaminationList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return patExaminations;
+		return (ArrayList<PatientExamination>)repository.findAllByIdOrderDescLimited(patID, number);
 	}
 
-	@SuppressWarnings("unchecked")
 	public ArrayList<PatientExamination> getByPatID(
 			int patID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<PatientExamination> patExaminations = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-			
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM PATIENTEXAMINATION WHERE PEX_PAT_ID = ? ORDER BY PEX_DATE DESC";
-			params.add(patID);
-			jpa.createQuery(query, PatientExamination.class, false);
-			jpa.setParameters(params, false);
-			List<PatientExamination> patExaminationList = (List<PatientExamination>)jpa.getList();
-			patExaminations = new ArrayList<PatientExamination>(patExaminationList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return patExaminations;
+		return (ArrayList<PatientExamination>)repository.findAllByIdOrderDesc(patID);
 	}
 }

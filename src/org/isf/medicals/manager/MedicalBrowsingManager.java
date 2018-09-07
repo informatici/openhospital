@@ -252,7 +252,7 @@ public class MedicalBrowsingManager {
 	public boolean checkMedicalForInsert(Medical medical) throws OHException {
 		checkMedicalCommon(medical);
 		boolean productCodeExists = !medical.getProd_code().equals("") && ioOperations.productCodeExists(medical, false);
-		boolean medicalExists = ioOperations.medicalExistsInType(medical, false);
+		boolean medicalExists = ioOperations.medicalExists(medical, false);
 		ArrayList<Medical> similarMedicals = ioOperations.medicalCheck(medical, false);
 		if (productCodeExists) {
 			throw new OHException(MessageBundle.getMessage("angal.medicals.thecodeisalreadyused"));
@@ -282,7 +282,7 @@ public class MedicalBrowsingManager {
 	public boolean checkMedicalForUpdate(Medical oldMedical, Medical medical) throws OHException {
 		checkMedicalCommon(medical);		
 		boolean productCodeExists = !medical.getProd_code().equals("") && ioOperations.productCodeExists(medical, true);
-		boolean medicalExists = ioOperations.medicalExistsInType(medical, true);
+		boolean medicalExists = ioOperations.medicalExists(medical, true);
 		ArrayList<Medical> similarMedicals = ioOperations.medicalCheck(medical, true);
 		if (productCodeExists) {
 			throw new OHException(MessageBundle.getMessage("angal.medicals.thecodeisalreadyused"));

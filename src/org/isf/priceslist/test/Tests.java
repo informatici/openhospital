@@ -15,8 +15,14 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests 
 {
 	private static DbJpaUtil jpa;
@@ -24,7 +30,9 @@ public class Tests
 	private static TestPriceListContext testPriceListContext;
 	private static TestPrice testPrice;
 	private static TestPriceContext testPriceContext;
-	
+
+    @Autowired
+    PricesListIoOperations priceListIoOperation;
 		
 	@BeforeClass
     public static void setUpClass()  
@@ -62,7 +70,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
     	testPriceList = null;
     	testPriceListContext = null;
     	testPrice = null;
@@ -114,13 +121,10 @@ public class Tests
 	
 	@Test
 	public void testIoGetLists() 
-	{
-		PricesListIoOperations ioOperations = new PricesListIoOperations();
-		
-		
+	{	
 		try 
 		{		
-			ArrayList<PriceList> priceLists = ioOperations.getLists();
+			ArrayList<PriceList> priceLists = priceListIoOperation.getLists();
 			
 			
 			assertEquals(testPriceListContext.getAllSaved().get(0).getName(), priceLists.get(0).getName());
@@ -176,13 +180,10 @@ public class Tests
 	
 	@Test
 	public void testIoGetPrices()
-	{
-		PricesListIoOperations ioOperations = new PricesListIoOperations();
-		
-		
+	{		
 		try 
 		{		
-			ArrayList<Price> prices = ioOperations.getPrices();
+			ArrayList<Price> prices = priceListIoOperation.getPrices();
 			
 			
 			assertEquals(testPriceContext.getAllSaved().get(0).getPrice(), prices.get(0).getPrice());
@@ -199,7 +200,6 @@ public class Tests
 	@Test
 	public void testIoUpdatePrices() 
 	{
-		PricesListIoOperations ioOperations = new PricesListIoOperations();
 		ArrayList<Price> prices = new ArrayList<Price>(); 
 		int deleteId = 0, insertId = 0;
 		boolean result = false;
@@ -214,7 +214,7 @@ public class Tests
 			Price insertPrice = testPrice.setup(null, false);
 			insertId = deleteId + 1;
 			prices.add(insertPrice);	
-			result = ioOperations.updatePrices(priceList, prices);
+			result = priceListIoOperation.updatePrices(priceList, prices);
 			
 			Price foundPrice = (Price)jpa.find(Price.class, insertId); 		
 			assertEquals(true, result);				
@@ -232,14 +232,13 @@ public class Tests
 	@Test
 	public void testIoNewList()
 	{
-		PricesListIoOperations ioOperations = new PricesListIoOperations();
 		int id = 0;
 		
 		
 		try 
 		{		
 			PriceList pricelist = testPriceList.setup(false);
-			ioOperations.newList(pricelist);	
+			priceListIoOperation.newList(pricelist);	
 			
 			id = _getListMax();	
 			PriceList foundPriceList = (PriceList)jpa.find(PriceList.class, id); 	
@@ -257,7 +256,6 @@ public class Tests
 	@Test
 	public void testIoUpdateList()
 	{
-		PricesListIoOperations ioOperations = new PricesListIoOperations();
 		int id = 0;
 		
 		
@@ -267,7 +265,7 @@ public class Tests
 			PriceList priceList = (PriceList)jpa.find(PriceList.class, id); 
 			priceList.setName("NewListName");
 			
-			ioOperations.updateList(priceList);
+			priceListIoOperation.updateList(priceList);
 			
 			assertEquals("NewListName", priceList.getName());
 		} 
@@ -283,7 +281,6 @@ public class Tests
 	@Test
 	public void testIoDeleteList()
 	{
-		PricesListIoOperations ioOperations = new PricesListIoOperations();
 		int id = 0, maxId = 0;
 		
 		
@@ -293,7 +290,7 @@ public class Tests
 			id = _setupTestPriceList(true);
 			PriceList priceList = (PriceList)jpa.find(PriceList.class, id); 
 			
-			ioOperations.deleteList(priceList);
+			priceListIoOperation.deleteList(priceList);
 			
 			id = _getListMax();
 			assertEquals(maxId, id);
@@ -310,7 +307,6 @@ public class Tests
 	@Test
 	public void testIoCopyList()
 	{
-		PricesListIoOperations ioOperations = new PricesListIoOperations();
 		int id = 0, maxId = 0;
 		
 		
@@ -320,7 +316,7 @@ public class Tests
 			Price price = (Price)jpa.find(Price.class, id); 
 			PriceList priceList = price.getList(); 
 			
-			ioOperations.copyList(priceList, 2, 0);
+			priceListIoOperation.copyList(priceList, 2, 0);
 			
 			maxId = _getPriceMax();
 			Price copyPrice = (Price)jpa.find(Price.class, maxId);
@@ -339,7 +335,6 @@ public class Tests
 	@Test
 	public void testIoCopyListSteps()
 	{
-		PricesListIoOperations ioOperations = new PricesListIoOperations();
 		int id = 0, maxId = 0;
 		
 		
@@ -349,7 +344,7 @@ public class Tests
 			Price price = (Price)jpa.find(Price.class, id); 
 			PriceList priceList = price.getList(); 
 			
-			ioOperations.copyList(priceList, 2, 3);
+			priceListIoOperation.copyList(priceList, 2, 3);
 			
 			maxId = _getPriceMax();
 			Price copyPrice = (Price)jpa.find(Price.class, maxId);

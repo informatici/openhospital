@@ -40,7 +40,7 @@ public class DeliveryResultTypeBrowser extends ModalJFrame implements DeliveryRe
 	private static final long serialVersionUID = 1L;
 	private ArrayList<DeliveryResultType> pDeliveryResultType;
 	private String[] pColums = { 
-			MessageBundle.getMessage("angal.codem.codem"), 
+			MessageBundle.getMessage("angal.common.codem"), 
 			MessageBundle.getMessage("angal.common.descriptionm")};
 	private int[] pColumwidth = {80, 200 };
 

@@ -14,13 +14,23 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
 	private static TestDischargeType testDischargeType;
 	private static TestDischargeTypeContext testDischargeTypeContext;
-		
+
+    @Autowired
+    DischargeTypeIoOperation dischargeTypeIoOperation;
+    
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -56,8 +66,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
-
     	return;
     }
 	
@@ -106,14 +114,13 @@ public class Tests
 	public void testIoGetDischargeType() 
 	{
 		String code = "";
-		DischargeTypeIoOperation ioOperations = new DischargeTypeIoOperation();
 		
 
 		try 
 		{		
 			code = _setupTestDischargeType(false);
 			DischargeType foundDischargeType = (DischargeType)jpa.find(DischargeType.class, code); 
-			ArrayList<DischargeType> dischargeTypes = ioOperations.getDischargeType();
+			ArrayList<DischargeType> dischargeTypes = dischargeTypeIoOperation.getDischargeType();
 			
 			assertEquals(foundDischargeType.getDescription(), dischargeTypes.get(dischargeTypes.size()-1).getDescription());
 		} 
@@ -129,17 +136,39 @@ public class Tests
     @Test
 	public void testIoNewDischargeType()  
 	{
-		DischargeTypeIoOperation ioOperations = new DischargeTypeIoOperation();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			DischargeType dischargeType = testDischargeType.setup(true);
-			result = ioOperations.newDischargeType(dischargeType);
+			result = dischargeTypeIoOperation.newDischargeType(dischargeType);
 			
 			assertEquals(true, result);
 			_checkDischargeTypeIntoDb(dischargeType.getCode());
+		} 
+		catch (Exception e) 
+		{
+			System.out.println("==> Test Exception: " + e);		
+			assertEquals(true, false);
+		}
+		
+		return;
+	}
+	
+	@Test
+	public void testIoIsCodePresent() 
+	{
+		String code = "";
+		boolean result = false;
+		
+	
+		try 
+		{		
+			code = _setupTestDischargeType(false);
+			result = dischargeTypeIoOperation.isCodePresent(code);
+			
+			assertEquals(true, result);
 		} 
 		catch (Exception e) 
 		{
@@ -154,7 +183,6 @@ public class Tests
 	public void testIoDeleteDischargeType()
 	{
 		String code = "";
-		DischargeTypeIoOperation ioOperations = new DischargeTypeIoOperation();
 		boolean result = false;
 		
 
@@ -162,11 +190,11 @@ public class Tests
 		{		
 			code = _setupTestDischargeType(false);
 			DischargeType foundDischargeType = (DischargeType)jpa.find(DischargeType.class, code); 
-			result = ioOperations.deleteDischargeType(foundDischargeType);
+			result = dischargeTypeIoOperation.deleteDischargeType(foundDischargeType);
 			
 			assertEquals(true, result);
-			DischargeType deletedDischargeType = (DischargeType)jpa.find(DischargeType.class, code); 
-			assertEquals(null, deletedDischargeType);
+			result = dischargeTypeIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{
@@ -181,7 +209,6 @@ public class Tests
 	public void testIoUpdateDischargeType()
 	{
 		String code = "";
-		DischargeTypeIoOperation ioOperations = new DischargeTypeIoOperation();
 		boolean result = false;
 		
 
@@ -190,35 +217,11 @@ public class Tests
 			code = _setupTestDischargeType(false);
 			DischargeType foundDischargeType = (DischargeType)jpa.find(DischargeType.class, code); 
 			foundDischargeType.setDescription("Update");
-			result = ioOperations.updateDischargeType(foundDischargeType);
+			result = dischargeTypeIoOperation.UpdateDischargeType(foundDischargeType);
 			DischargeType updateDischargeType = (DischargeType)jpa.find(DischargeType.class, code); 
 			
 			assertEquals(true, result);
 			assertEquals("Update", updateDischargeType.getDescription());
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("==> Test Exception: " + e);		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}
-		
-	@Test
-	public void testIoIsCodePresent() 
-	{
-		String code = "";
-		DischargeTypeIoOperation ioOperations = new DischargeTypeIoOperation();
-		boolean result = false;
-		
-
-		try 
-		{		
-			code = _setupTestDischargeType(false);
-			result = ioOperations.isCodePresent(code);
-			
-			assertEquals(true, result);
 		} 
 		catch (Exception e) 
 		{

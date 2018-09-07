@@ -177,10 +177,7 @@ public class TherapyManager {
 
 				for (TherapyRow thRow : thRows) {
 
-					int therapyID = ioOperations.updateOrCreateTherapy(thRow);
-					if (therapyID == 0) return false;
-
-					thRow.setTherapyID(therapyID);
+					ioOperations.newTherapy(thRow);
 					if (thRow.isSms()) {
 						Therapy th = createTherapy(thRow);
 						GregorianCalendar[] dates = th.getDates();						

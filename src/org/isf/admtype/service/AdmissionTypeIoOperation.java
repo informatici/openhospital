@@ -1,45 +1,34 @@
 package org.isf.admtype.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.admtype.model.AdmissionType;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Persistence class for admtype module.
  */
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class AdmissionTypeIoOperation 
 {
+
+	@Autowired
+	private AdmissionTypeIoOperationRepository repository;
+	
 	/**
 	 * Returns all the available {@link AdmissionType}s.
 	 * @return a list of admission types.
 	 * @throws OHException if an error occurs.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<AdmissionType> getAdmissionType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<AdmissionType> padmissiontype = null;
-				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM ADMISSIONTYPE ORDER BY ADMT_DESC";
-			jpa.createQuery(query, AdmissionType.class, false);
-			List<AdmissionType> admissionTypeList = (List<AdmissionType>)jpa.getList();
-			padmissiontype = new ArrayList<AdmissionType>(admissionTypeList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return padmissiontype;
+		return new ArrayList<AdmissionType>(repository.findAllByOrderByDescriptionAsc());
 	}
 
 	/**
@@ -51,19 +40,13 @@ public class AdmissionTypeIoOperation
 	public boolean updateAdmissionType(
 			AdmissionType admissionType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
-		try{
-			jpa.beginTransaction();	
-			jpa.merge(admissionType);
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return result;	
+		AdmissionType savedAdmissionType = repository.save(admissionType);
+		result = (savedAdmissionType != null);
+		
+		return result;
 	}
 
 	/**
@@ -75,19 +58,13 @@ public class AdmissionTypeIoOperation
 	public boolean newAdmissionType(
 			AdmissionType admissionType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
-		try{
-			jpa.beginTransaction();	
-			jpa.persist(admissionType);
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return result;	
+		AdmissionType savedAdmissionType = repository.save(admissionType);
+		result = (savedAdmissionType != null);
+		
+		return result;
 	}
 
 	/**
@@ -99,18 +76,11 @@ public class AdmissionTypeIoOperation
 	public boolean deleteAdmissionType(
 			AdmissionType admissionType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		try{
-			jpa.beginTransaction();	
-			AdmissionType objToRemove = (AdmissionType) jpa.find(AdmissionType.class, admissionType.getCode());
-			jpa.remove(objToRemove);
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
+	
+		
+		repository.delete(admissionType);
+		
 		return result;	
 	}
 
@@ -123,23 +93,11 @@ public class AdmissionTypeIoOperation
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		AdmissionType admissionType;
-		boolean result = false;
+		boolean result = true;
+	
 		
-		try{
-			jpa.beginTransaction();	
-			admissionType = (AdmissionType)jpa.find(AdmissionType.class, code);
-			if (admissionType != null)
-			{
-				result = true;
-			}
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return result;	
+		result = repository.exists(code);
+		
+		return result;
 	}
 }

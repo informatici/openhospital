@@ -327,7 +327,7 @@ public class DeliveryResultTypeBrowserEdit extends JDialog{
 	private JLabel getJCodeLabel() {
 		if (jCodeLabel == null) {
 			jCodeLabel = new JLabel();
-			jCodeLabel.setText(MessageBundle.getMessage("angal.dlvrrestype.codechar"));
+			jCodeLabel.setText(MessageBundle.getMessage("angal.distype.codemaxchars"));
 		}
 		return jCodeLabel;
 	}
