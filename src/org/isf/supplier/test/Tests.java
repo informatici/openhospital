@@ -14,13 +14,21 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
 	private static TestSupplier testSupplier;
 	private static TestSupplierContext testSupplierContext;
-		
+
+    @Autowired
+    SupplierOperations supplierIoOperation;	
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -56,7 +64,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
     	testSupplier = null;
     	testSupplierContext = null;
 
@@ -107,14 +114,13 @@ public class Tests
 	@Test
 	public void testSupplierSaveOrUpdate() 
 	{		
-		SupplierOperations ioOperations = new SupplierOperations();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			Supplier supplier = testSupplier.setup(true);
-			result = ioOperations.saveOrUpdate(supplier);
+			result = supplierIoOperation.saveOrUpdate(supplier);
 			
 			assertEquals(true, result);
 			_checkSupplierIntoDb(supplier.getSupId());
@@ -131,14 +137,13 @@ public class Tests
 	@Test
 	public void testSupplierGetByID() 
 	{	
-		SupplierOperations ioOperations = new SupplierOperations();
 		int code = 0;
 		
 		
 		try 
 		{		
 			code = _setupTestSupplier(false);
-			Supplier foundSupplier = ioOperations.getByID(code);
+			Supplier foundSupplier = supplierIoOperation.getByID(code);
 			
 			_checkSupplierIntoDb(foundSupplier.getSupId());
 		} 
@@ -155,14 +160,13 @@ public class Tests
 	public void testSupplierGetAll() 
 	{		
 		int code = 0;
-		SupplierOperations ioOperations = new SupplierOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestSupplier(false);
 			Supplier foundSupplier = (Supplier)jpa.find(Supplier.class, code); 
-			List<Supplier> suppliers = ioOperations.getAll();			
+			List<Supplier> suppliers = supplierIoOperation.getAll();			
 			
 			assertEquals(true, suppliers.contains(foundSupplier));
 		} 
@@ -179,14 +183,13 @@ public class Tests
 	public void testSupplierGetList() 
 	{	
 		int code = 0;
-		SupplierOperations ioOperations = new SupplierOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestSupplier(false);
 			Supplier foundSupplier = (Supplier)jpa.find(Supplier.class, code); 
-			List<Supplier> suppliers = ioOperations.getList();			
+			List<Supplier> suppliers = supplierIoOperation.getList();			
 			
 			assertEquals(true, suppliers.contains(foundSupplier));
 		} 

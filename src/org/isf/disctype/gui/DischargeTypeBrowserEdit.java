@@ -223,7 +223,7 @@ public class DischargeTypeBrowserEdit extends JDialog{
 						if (true == codeExists){
 							JOptionPane.showMessageDialog(				
 									null,
-									MessageBundle.getMessage("angal.disctype.codealreadyinuse"),
+									MessageBundle.getMessage("angal.common.codealreadyinuse"),
 									MessageBundle.getMessage("angal.hospital"),
 									JOptionPane.PLAIN_MESSAGE);
 							codeTextField.setText("");

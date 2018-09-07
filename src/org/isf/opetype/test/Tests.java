@@ -14,13 +14,23 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
 	private static TestOperationType testOperationType;
 	private static TestOperationTypeContext testOperationTypeContext;
-		
+
+    @Autowired
+    OperationTypeIoOperation operationTypeIoOperation;
+    
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -56,8 +66,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
-
     	return;
     }
 	
@@ -106,14 +114,13 @@ public class Tests
 	public void testIoGetOperationType() 
 	{
 		String code = "";
-		OperationTypeIoOperation ioOperations = new OperationTypeIoOperation();
 		
 		
 		try 
 		{		
 			code = _setupTestOperationType(false);
 			OperationType foundOperationType = (OperationType)jpa.find(OperationType.class, code); 
-			ArrayList<OperationType> operationTypes = ioOperations.getOperationType();
+			ArrayList<OperationType> operationTypes = operationTypeIoOperation.getOperationType();
 			
 			assertEquals(foundOperationType.getDescription(), operationTypes.get(operationTypes.size() - 1).getDescription());
 		} 
@@ -130,7 +137,6 @@ public class Tests
 	public void testIoUpdateOperationType() 
 	{
 		String code = "";
-		OperationTypeIoOperation ioOperations = new OperationTypeIoOperation();
 		boolean result = false;
 		
 		
@@ -139,7 +145,7 @@ public class Tests
 			code = _setupTestOperationType(false);
 			OperationType foundOperationType = (OperationType)jpa.find(OperationType.class, code); 
 			foundOperationType.setDescription("Update");
-			result = ioOperations.updateOperationType(foundOperationType);
+			result = operationTypeIoOperation.updateOperationType(foundOperationType);
 			OperationType updateOperationType = (OperationType)jpa.find(OperationType.class, code); 
 			
 			assertEquals(true, result);
@@ -157,14 +163,13 @@ public class Tests
 	@Test
 	public void testIoNewOperationType() 
 	{
-		OperationTypeIoOperation ioOperations = new OperationTypeIoOperation();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			OperationType operationType = testOperationType.setup(true);
-			result = ioOperations.newOperationType(operationType);
+			result = operationTypeIoOperation.newOperationType(operationType);
 			
 			assertEquals(true, result);
 			_checkOperationTypeIntoDb(operationType.getCode());
@@ -179,22 +184,18 @@ public class Tests
 	}
 
 	@Test
-	public void testIoDeleteOperationType() 
+	public void testIoIsCodePresent() 
 	{
 		String code = "";
-		OperationTypeIoOperation ioOperations = new OperationTypeIoOperation();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestOperationType(false);
-			OperationType foundOperationType = (OperationType)jpa.find(OperationType.class, code); 
-			result = ioOperations.deleteOperationType(foundOperationType);
+			result = operationTypeIoOperation.isCodePresent(code);
 			
 			assertEquals(true, result);
-			OperationType deletedOperationType = (OperationType)jpa.find(OperationType.class, code); 
-			assertEquals(null, deletedOperationType);
 		} 
 		catch (Exception e) 
 		{
@@ -206,19 +207,21 @@ public class Tests
 	}
 
 	@Test
-	public void testIoIsCodePresent() 
+	public void testIoDeleteOperationType() 
 	{
 		String code = "";
-		OperationTypeIoOperation ioOperations = new OperationTypeIoOperation();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestOperationType(false);
-			result = ioOperations.isCodePresent(code);
+			OperationType foundOperationType = (OperationType)jpa.find(OperationType.class, code); 
+			result = operationTypeIoOperation.deleteOperationType(foundOperationType);
 			
 			assertEquals(true, result);
+			result = operationTypeIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

@@ -1,43 +1,32 @@
 package org.isf.pregtreattype.service;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.pregtreattype.model.PregnantTreatmentType;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class PregnantTreatmentTypeIoOperation {
 
+	@Autowired
+	private PregnantTreatmentTypeIoOperationRepository repository;
+	
+	
 	/**
 	 * return the list of {@link PregnantTreatmentType}s
 	 * 
 	 * @return the list of {@link PregnantTreatmentType}s
 	 * @throws OHException 
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<PregnantTreatmentType> getPregnantTreatmentType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<PregnantTreatmentType> pregnantTreatmentTypes = null;
-				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM PREGNANTTREATMENTTYPE ORDER BY PTT_DESC";
-			jpa.createQuery(query, PregnantTreatmentType.class, false);
-			List<PregnantTreatmentType> pregnantTreatmentList = (List<PregnantTreatmentType>)jpa.getList();
-			pregnantTreatmentTypes = new ArrayList<PregnantTreatmentType>(pregnantTreatmentList);			
-
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
-		return pregnantTreatmentTypes;
+		return new ArrayList<PregnantTreatmentType>(repository.findAllByOrderByDescriptionAsc()); 
 	}
 	
 	/**
@@ -50,18 +39,12 @@ public class PregnantTreatmentTypeIoOperation {
 	public boolean newPregnantTreatmentType(
 			PregnantTreatmentType pregnantTreatmentType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
+
+		PregnantTreatmentType savedPregnantTreatmentType = repository.save(pregnantTreatmentType);
+		result = (savedPregnantTreatmentType != null);
 		
-		try{
-			jpa.beginTransaction();	
-			jpa.persist(pregnantTreatmentType);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
 		return result;
 	}
 	
@@ -75,19 +58,13 @@ public class PregnantTreatmentTypeIoOperation {
 	public boolean updatePregnantTreatmentType(
 			PregnantTreatmentType pregnantTreatmentType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 
-		try{
-			jpa.beginTransaction();	
-			jpa.merge(pregnantTreatmentType);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
-		return result;	
+		PregnantTreatmentType savedPregnantTreatmentType = repository.save(pregnantTreatmentType);
+		result = (savedPregnantTreatmentType != null);
+		
+		return result;
 	}
 	
 	/**
@@ -100,20 +77,12 @@ public class PregnantTreatmentTypeIoOperation {
 	public boolean deletePregnantTreatmentType(
 			PregnantTreatmentType pregnantTreatmentType) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
-		try{
-			jpa.beginTransaction();
-			PregnantTreatmentType objToRemove = (PregnantTreatmentType) jpa.find(PregnantTreatmentType.class, pregnantTreatmentType.getCode());
-			jpa.remove(objToRemove);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
-		return result;	
+		repository.delete(pregnantTreatmentType);
+		
+		return result;
 	}
 	
 	/**
@@ -126,23 +95,11 @@ public class PregnantTreatmentTypeIoOperation {
 	public boolean isCodePresent(
 			String code) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		PregnantTreatmentType pregnantTreatmentTyp;
-		boolean result = false;
+		boolean result = true;
+	
 		
-		try{
-			jpa.beginTransaction();	
-			pregnantTreatmentTyp = (PregnantTreatmentType)jpa.find(PregnantTreatmentType.class, code);
-			if (pregnantTreatmentTyp != null)
-			{
-				result = true;
-			}
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
-		return result;	
+		result = repository.exists(code);
+		
+		return result;
 	}
 }

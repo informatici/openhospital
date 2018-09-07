@@ -57,10 +57,8 @@ import java.io.File;
                     if(iRetVal == JFileChooser.APPROVE_OPTION)
                     {
                         File exportFile = fcExcel.getSelectedFile();
-                        FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fcExcel.getFileFilter();
-						String extension = selectedFilter.getExtensions()[0];
-						if (!exportFile.getName().endsWith(extension)) exportFile = new File(exportFile.getAbsoluteFile() + "." + extension);
-                        jasperReportsManager.getGenericReportFromDateToDateCSV(fromDate,toDate, jasperFileName, exportFile.getAbsolutePath());
+                        if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
+                        jasperReportsManager.getGenericReportFromDateToDateExcel(fromDate,toDate, jasperFileName, exportFile.getAbsolutePath());
                     }
                 } else {
                     JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportFromDateToDatePdf(fromDate, toDate, jasperFileName);

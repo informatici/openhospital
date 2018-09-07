@@ -14,13 +14,21 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
 	private static TestWard testWard;
 	private static TestWardContext testWardContext;
-		
+
+    @Autowired
+    WardIoOperations wardIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -55,9 +63,7 @@ public class Tests
     
     @AfterClass
     public static void tearDownClass() throws OHException 
-    {
-    	//jpa.destroy();
-    	
+    {    	
     	return;
     }
 	
@@ -106,14 +112,13 @@ public class Tests
 	public void testIoGetWardsNoMaternity() 
 	{
 		String code = "";
-		WardIoOperations ioOperations = new WardIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestWard(false);
 			Ward foundWard = (Ward)jpa.find(Ward.class, code); 
-			ArrayList<Ward> wards = ioOperations.getWardsNoMaternity();
+			ArrayList<Ward> wards = wardIoOperation.getWardsNoMaternity();
 			
 			assertEquals(foundWard.getDescription(), wards.get(wards.size()-1).getDescription());
 		} 
@@ -130,14 +135,13 @@ public class Tests
 	public void testIoGetWards() 
 	{
 		String code = "";
-		WardIoOperations ioOperations = new WardIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestWard(false);
 			Ward foundWard = (Ward)jpa.find(Ward.class, code); 
-			ArrayList<Ward> wards = ioOperations.getWards(code);			
+			ArrayList<Ward> wards = wardIoOperation.getWards(code);			
 			
 			assertEquals(foundWard.getDescription(), wards.get(0).getDescription());
 		} 
@@ -153,14 +157,13 @@ public class Tests
 	@Test
 	public void testIoNewWard() 
 	{
-		WardIoOperations ioOperations = new WardIoOperations();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			Ward ward = testWard.setup(true);
-			result = ioOperations.newWard(ward);
+			result = wardIoOperation.newWard(ward);
 			
 			assertEquals(true, result);
 			_checkWardIntoDb(ward.getCode());
@@ -178,7 +181,6 @@ public class Tests
 	public void testIoUpdateWard() 
 	{
 		String code = "";
-		WardIoOperations ioOperations = new WardIoOperations();
 		boolean result = false;
 		
 		
@@ -187,7 +189,7 @@ public class Tests
 			code = _setupTestWard(false);
 			Ward foundWard = (Ward)jpa.find(Ward.class, code); 
 			foundWard.setDescription("Update");
-			result = ioOperations.updateWard(foundWard);
+			result = wardIoOperation.updateWard(foundWard);
 			Ward updateWard = (Ward)jpa.find(Ward.class, code); 
 			
 			assertEquals(true, result);
@@ -205,7 +207,6 @@ public class Tests
 	@Test
 	public void testIoUpdateWardNoCodePresent() 
 	{
-		WardIoOperations ioOperations = new WardIoOperations();
 		boolean result = false;
 				
 
@@ -213,7 +214,7 @@ public class Tests
 		{		
 			Ward ward = testWard.setup(true);
 			ward.setCode("X");
-			result = ioOperations.updateWard(ward);
+			result = wardIoOperation.updateWard(ward);
 			
 			assertEquals(true, result);
 		} 
@@ -230,7 +231,6 @@ public class Tests
 	public void testIoUpdateWardConfirmetOverriden() 
 	{
 		String code = "";
-		WardIoOperations ioOperations = new WardIoOperations();
 		boolean result = false;
 		
 		
@@ -240,7 +240,7 @@ public class Tests
 			Ward cloneWard= testWard.setup(false);
 			cloneWard.setLock(cloneWard.getLock()+1);
 			cloneWard.setDescription("Update");
-			result = ioOperations.updateWard(cloneWard);
+			result = wardIoOperation.updateWard(cloneWard);
 			Ward updateWard = (Ward)jpa.find(Ward.class, code); 
 			
 			assertEquals(true, result);
@@ -259,7 +259,6 @@ public class Tests
 	public void testIoDeleteWard() 
 	{
 		String code = "";
-		WardIoOperations ioOperations = new WardIoOperations();
 		boolean result = false;
 		
 
@@ -267,11 +266,11 @@ public class Tests
 		{		
 			code = _setupTestWard(false);
 			Ward foundWard = (Ward)jpa.find(Ward.class, code); 
-			result = ioOperations.deleteWard(foundWard);
-			
+			result = wardIoOperation.deleteWard(foundWard);
+
 			assertEquals(true, result);
-			Ward deletedWard = (Ward)jpa.find(Ward.class, code); 
-			assertEquals(null, deletedWard);
+			result = wardIoOperation.isCodePresent(code);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{
@@ -286,14 +285,13 @@ public class Tests
 	public void testIoIsCodePresent() 
 	{
 		String code = "";
-		WardIoOperations ioOperations = new WardIoOperations();
 		boolean result = false;
 				
 
 		try 
 		{		
 			code = _setupTestWard(false);
-			result = ioOperations.isCodePresent(code);
+			result = wardIoOperation.isCodePresent(code);
 			
 			assertEquals(true, result);
 		} 
@@ -309,13 +307,12 @@ public class Tests
 	@Test
 	public void testIoIsCodePresentFalse() 
 	{
-		WardIoOperations ioOperations = new WardIoOperations();
 		boolean result = false;
 				
 
 		try 
 		{		
-			result = ioOperations.isCodePresent("X");
+			result = wardIoOperation.isCodePresent("X");
 			
 			assertEquals(false, result);
 		} 
@@ -331,13 +328,12 @@ public class Tests
 	@Test
 	public void testIoIsMaternityPresent() 
 	{
-		WardIoOperations ioOperations = new WardIoOperations();
 		boolean result = false;
 				
 
 		try 
 		{		
-			result = ioOperations.isMaternityPresent();
+			result = wardIoOperation.isMaternityPresent();
 			
 			assertEquals(true, result);
 		} 
@@ -354,7 +350,6 @@ public class Tests
 	public void testIoIsLockWard() 
 	{
 		String code = "";
-		WardIoOperations ioOperations = new WardIoOperations();
 		boolean result = false;
 				
 
@@ -362,7 +357,7 @@ public class Tests
 		{		
 			code = _setupTestWard(false);
 			Ward foundWard = (Ward)jpa.find(Ward.class, code); 
-			result = ioOperations.isLockWard(foundWard);
+			result = wardIoOperation.isLockWard(foundWard);
 			
 			assertEquals(true, result);
 		} 
@@ -378,7 +373,6 @@ public class Tests
 	@Test
 	public void testIoIsLockWardFalse() 
 	{
-		WardIoOperations ioOperations = new WardIoOperations();
 		boolean result = false;
 				
 
@@ -387,7 +381,7 @@ public class Tests
 			_setupTestWard(false);
 			Ward cloneWard= testWard.setup(false);
 			cloneWard.setLock(cloneWard.getLock()+1);
-			result = ioOperations.isLockWard(cloneWard);
+			result = wardIoOperation.isLockWard(cloneWard);
 			
 			assertEquals(false, result);
 		} 

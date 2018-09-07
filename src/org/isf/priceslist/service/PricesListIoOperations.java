@@ -5,37 +5,35 @@ import java.util.List;
 
 import org.isf.priceslist.model.Price;
 import org.isf.priceslist.model.PriceList;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class PricesListIoOperations {
 
+	@Autowired
+	private PriceListIoOperationRepository repository;
+	
+	@Autowired
+	private PriceIoOperationRepository priceRepository;
+	
 	/**
 	 * return the list of {@link List}s in the DB
 	 * 
 	 * @return the list of {@link List}s
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<PriceList> getLists() throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<PriceList> pList = null;
-				
-		try{
-			jpa.beginTransaction();
+			
 
-			jpa.createQuery("SELECT * FROM PRICELISTS", PriceList.class, false);
-			List<PriceList> priceLists = (List<PriceList>)jpa.getList();
-			pList = new ArrayList<PriceList>(priceLists);			
-
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
+		pList = new ArrayList<PriceList>(repository.findAll());
+		
 		return pList;
 	}
 	
@@ -45,24 +43,12 @@ public class PricesListIoOperations {
 	 * @return the list of {@link Price}s
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<Price> getPrices() throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Price> pPrice = null;
-				
-		try{
-			jpa.beginTransaction();
+						
 
-			jpa.createQuery("SELECT * FROM PRICES ORDER BY PRC_DESC", Price.class, false);
-			List<Price> prices = (List<Price>)jpa.getList();
-			pPrice = new ArrayList<Price>(prices);			
-
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
+		pPrice = new ArrayList<Price>(priceRepository.findAllByOrderByDescriptionAsc());
+		
 		return pPrice;
 	}
 
@@ -77,82 +63,43 @@ public class PricesListIoOperations {
 	public boolean updatePrices(
 			PriceList list, 
 			ArrayList<Price> prices) throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 		
 		
-		result = _deletePricesInsideList(jpa, list.getId());
+		result = _deletePricesInsideList(list.getId());
 		
-		result &= _insertNewPricesInsideList(jpa, list, prices);
+		result &= _insertNewPricesInsideList(list, prices);
 
 		return result;
 	}
 	
 	private boolean _deletePricesInsideList(
-			DbJpaUtil jpa,
 			int id) throws OHException 
-    {	
-		ArrayList<Object> params = new ArrayList<Object>();
+    {			
 		boolean result = true;
-        		
-		try {
-			jpa.beginTransaction();		
-			jpa.createQuery("DELETE FROM PRICES WHERE PRC_LST_ID = ?", Price.class, false);
-			params.add(id);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-			jpa.commitTransaction();	
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}  	
+
 		
+		priceRepository.deleteWhereList(id);
+        				
         return result;
     }
 	
 	private boolean _insertNewPricesInsideList(
-			DbJpaUtil jpa,
 			PriceList list,
 			ArrayList<Price> prices) throws OHException 
     {	
-		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
         		
-		try {
-			jpa.beginTransaction();		
-
-			for (Price price : prices) 
-			{
-				jpa.createQuery("INSERT INTO PRICES (PRC_LST_ID, PRC_GRP, PRC_ITEM, PRC_DESC, PRC_PRICE) VALUES (?,?,?,?,?)", Price.class, false);
-				params = _addUpdatePriceParameters(list, price);
-				jpa.setParameters(params, false);
-				jpa.executeUpdate();
-			}		
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
+		
+		for (Price price : prices) 
+		{
+			priceRepository.insertPrice(
+					list.getId(), price.getGroup(), price.getItem(),
+					price.getDesc(),
+					price.getPrice());
+		}
 		
         return result;
-    }
-	
-	private ArrayList<Object> _addUpdatePriceParameters(
-			PriceList list, 
-			Price price) throws OHException 
-    {	
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-
-		params.add(list.getId());
-		params.add(price.getGroup());
-		params.add(price.getItem());
-		params.add(price.getDesc());
-		params.add(price.getPrice());
-        		
-        return params;
     }
 
 	/**
@@ -164,41 +111,14 @@ public class PricesListIoOperations {
 	 */
 	public boolean newList(
 			PriceList list) throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil();
-		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
-
-		try {
-			jpa.beginTransaction();		
-			jpa.createQuery("INSERT INTO PRICELISTS (LST_CODE, LST_NAME, LST_DESC, LST_CURRENCY) VALUES (?,?,?,?)", PriceList.class, false);
-			params = _addNewPriceListParameters(list);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
-
+        		
+		
+		repository.insertPriceList(list.getCode(), list.getName(), list.getDescription(), list.getCurrency());
+		
 		return result;
 	}
 	
-	private ArrayList<Object> _addNewPriceListParameters(
-			PriceList list) throws OHException 
-    {	
-
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-			
-		params.add(list.getCode());
-		params.add(list.getName());
-		params.add(list.getDescription());
-		params.add(list.getCurrency());
-        		
-        return params;
-    }
-
 	/**
 	 * update a {@link List} in the DB
 	 * 
@@ -208,46 +128,16 @@ public class PricesListIoOperations {
 	 */
 	public boolean updateList(
 			PriceList list) throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil();
-		ArrayList<Object> params = new ArrayList<Object>();
-		boolean result = true;
-        		
-		try {
-			jpa.beginTransaction();		
-			String query = "UPDATE PRICELISTS SET LST_CODE = ?, " +
-						   "LST_NAME = ?, " +
-						   "LST_DESC = ?, " +
-						   "LST_CURRENCY = ? "+
-						   "WHERE LST_ID = ?";
-			jpa.createQuery(query, PriceList.class, false);
-			params = _addUpdatePriceListParameters(list);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
+		boolean result = false;
+        				
 
+		if (repository.updatePriceList(list.getCode(), list.getName(), list.getDescription(), list.getCurrency(), list.getId()) > 0)
+		{
+			result = true;
+		}		
 		
 		return result;
 	}
-
-	private ArrayList<Object> _addUpdatePriceListParameters(
-			PriceList list) throws OHException 
-    {	
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-			
-		params.add(list.getCode());
-		params.add(list.getName());
-		params.add(list.getDescription());
-		params.add(list.getCurrency());
-		params.add(list.getId());
-        		
-        return params;
-    }
 	
 	/**
 	 * delete a {@link List} in the DB
@@ -258,36 +148,23 @@ public class PricesListIoOperations {
 	 */
 	public boolean deleteList(
 			PriceList list) throws OHException {
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 
 		
-		result = _deletePricesInsideList(jpa, list.getId());
+		result = _deletePricesInsideList(list.getId());
 
-		result &= _deletePriceList(jpa, list.getId());
+		result &= _deletePriceList(list.getId());
 				
 		return result;
 	}	
 	
 	private boolean _deletePriceList(
-			DbJpaUtil jpa,
 			int id) throws OHException 
     {	
-		ArrayList<Object> params = new ArrayList<Object>();
 		boolean result = true;
-        		
-		try {
-			jpa.beginTransaction();		
-			jpa.createQuery("DELETE FROM PRICELISTS WHERE LST_ID = ? ", PriceList.class, false);
-			params.add(id);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-			jpa.commitTransaction();	
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
+		
+		
+		repository.deleteWhereId(id);
 		
         return result;
     }
@@ -306,124 +183,46 @@ public class PricesListIoOperations {
 			double factor, 
 			double step) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
-		boolean result = false;
+    	PriceList newList = _insertNewPriceList(list);
+		boolean result = true; 			
+
 		
-				
-		if (step > 0) 
-		{
-			result = _insertCopyListSteps(jpa, list, factor, step);
+		List<Price> Prices = (List<Price>)priceRepository.findAllWhereList(list.getId());
+		for (Price price: Prices) 
+		{    
+			Price newPrice = new Price();
 			
-		}
-		else
-		{
-			result = _insertCopyList(jpa, list, factor);			
-		}
-
-		return result;
-	}
-	
-    @SuppressWarnings("unchecked")
-	private boolean _insertCopyListSteps(
-			DbJpaUtil jpa,
-			PriceList list, 
-			double factor, 
-			double step) throws OHException 
-    {	
-    	PriceList newList = _insertNewPriceList(jpa, list);
-		ArrayList<Object> params = new ArrayList<Object>();
-		boolean result = true; 		
-
-		try{
-			jpa.beginTransaction();			
-
-			jpa.createQuery("SELECT * FROM PRICES WHERE PRC_LST_ID = ?", Price.class, false);
-			params.add(list.getId());			
-			jpa.setParameters(params, false);
-			List<Price> Prices = (List<Price>)jpa.getList();
-			for (Price price: Prices) 
-			{    
-				Price newPrice = new Price();
-
-
-				newPrice.setList(newList);
-				newPrice.setGroup(price.getGroup());
-				newPrice.setDesc(price.getDesc());
+			
+			newPrice.setList(newList);
+			newPrice.setGroup(price.getGroup());
+			newPrice.setDesc(price.getDesc());
+			if (step > 0) 
+			{
 				newPrice.setPrice(Math.round((price.getPrice() * factor) / step) * step);
-				newPrice.setItem(price.getItem());
-
-				jpa.persist(newPrice);			
-			}        
-
-			jpa.commitTransaction();			
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
+			}
+			else
+			{
+				newPrice.setPrice(price.getPrice() * factor);				
+			}
+			newPrice.setItem(price.getItem());			
+			priceRepository.save(newPrice);
+	    }        			
+		
         return result;
     }
 
-    @SuppressWarnings("unchecked")	
-	private boolean _insertCopyList(
-			DbJpaUtil jpa,
-			PriceList list, 
-			double factor) throws OHException 
-    {	
-    	PriceList newList = _insertNewPriceList(jpa, list);
-		ArrayList<Object> params = new ArrayList<Object>();
-		boolean result = true;
-        		
-		try{
-			jpa.beginTransaction();			
-
-			jpa.createQuery("SELECT * FROM PRICES WHERE PRC_LST_ID = ?", Price.class, false);
-			params.add(list.getId());			
-			jpa.setParameters(params, false);
-			List<Price> Prices = (List<Price>)jpa.getList();
-			for (Price price: Prices) 
-			{    
-				Price newPrice = new Price();
-
-
-				newPrice.setList(newList);
-				newPrice.setGroup(price.getGroup());
-				newPrice.setDesc(price.getDesc());
-				newPrice.setPrice(price.getPrice() * factor);
-				newPrice.setItem(price.getItem());
-
-				jpa.persist(newPrice);		
-			}        
-
-			jpa.commitTransaction();			
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
-        return result;		
-    }
-
 	private PriceList _insertNewPriceList(
-			DbJpaUtil jpa,
 			PriceList list) throws OHException 
-    {			
+    {					
 		PriceList newList = new PriceList();
-		try {
-			jpa.beginTransaction();	
-
-			newList.setCode(list.getCode());
-			newList.setName(list.getName());
-			newList.setDescription(list.getDescription());
-			newList.setCurrency(list.getCurrency());
-			jpa.persist(newList);
-
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 
+		
+		
+		newList.setCode(list.getCode());
+		newList.setName(list.getName());
+		newList.setDescription(list.getDescription());
+		newList.setCurrency(list.getCurrency());		
+		repository.save(newList);
+		
         return newList;
     }
 }

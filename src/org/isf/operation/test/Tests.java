@@ -17,7 +17,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
@@ -25,8 +31,11 @@ public class Tests
 	private static TestOperationType testOperationType;
 	private static TestOperationContext testOperationContext;
 	private static TestOperationTypeContext testOperationTypeContext;
-		
 	
+    @Autowired
+    OperationIoOperations operationIoOperations;
+    
+    
 	@BeforeClass
     public static void setUpClass()  
     {
@@ -63,7 +72,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
     	testOperation = null;
     	testOperationType = null;
     	testOperationContext = null;
@@ -117,14 +125,13 @@ public class Tests
 	public void testIoGetOperations() throws OHException 
 	{
 		String code = "";
-		OperationIoOperations ioOperations = new OperationIoOperations();
 		
 		
 		try 
 		{		
 			code = _setupTestOperation(false);
 			Operation foundOperation = (Operation)jpa.find(Operation.class, code); 
-			ArrayList<Operation> operations = ioOperations.getOperation(foundOperation.getDescription());
+			ArrayList<Operation> operations = operationIoOperations.getOperation(foundOperation.getDescription());
 			
 			assertEquals(foundOperation.getDescription(), operations.get(0).getDescription());
 		} 
@@ -140,7 +147,6 @@ public class Tests
 	@Test
 	public void testIoNewOperation() throws OHException 
 	{
-		OperationIoOperations ioOperations = new OperationIoOperations();
 		OperationType operationType = testOperationType.setup(false);
 		boolean result = false;
 		
@@ -151,7 +157,7 @@ public class Tests
 			Operation operation = testOperation.setup(operationType, true);
 			jpa.persist(operationType);
 			jpa.commitTransaction();
-			result = ioOperations.newOperation(operation);
+			result = operationIoOperations.newOperation(operation);
 			
 			assertEquals(true, result);
 			_checkOperationIntoDb(operation.getCode());
@@ -169,7 +175,6 @@ public class Tests
 	public void testIoHasOperationModified() throws OHException 
 	{
 		String code = "";
-		OperationIoOperations ioOperations = new OperationIoOperations();
 		boolean result = false;
 		
 		
@@ -177,7 +182,7 @@ public class Tests
 		{		
 			code = _setupTestOperation(false);
 			Operation foundOperation = (Operation)jpa.find(Operation.class, code);
-			result = ioOperations.hasOperationModified(foundOperation);
+			result = operationIoOperations.hasOperationModified(foundOperation);
 			
 			assertEquals(false, result);
 		} 
@@ -194,7 +199,6 @@ public class Tests
 	public void testIoUpdateOperation() throws OHException 
 	{
 		String code = "";
-		OperationIoOperations ioOperations = new OperationIoOperations();
 		boolean result = false;
 		
 		
@@ -204,7 +208,7 @@ public class Tests
 			Operation foundOperation = (Operation)jpa.find(Operation.class, code); 
 			int lock = foundOperation.getLock().intValue();
 			foundOperation.setDescription("Update");
-			result = ioOperations.updateOperation(foundOperation);
+			result = operationIoOperations.updateOperation(foundOperation);
 			Operation updateOperation = (Operation)jpa.find(Operation.class, code); 
 			
 			assertEquals(true, result);
@@ -224,7 +228,6 @@ public class Tests
 	public void testIoDeleteOperation() throws OHException 
 	{
 		String code = "";
-		OperationIoOperations ioOperations = new OperationIoOperations();
 		boolean result = false;
 		
 		
@@ -232,7 +235,7 @@ public class Tests
 		{		
 			code = _setupTestOperation(false);
 			Operation foundOperation = (Operation)jpa.find(Operation.class, code); 
-			result = ioOperations.deleteOperation(foundOperation);
+			result = operationIoOperations.deleteOperation(foundOperation);
 			
 			assertEquals(true, result);
 		} 
@@ -249,14 +252,13 @@ public class Tests
 	public void testIoIsCodePresent() throws OHException 
 	{
 		String code = "";
-		OperationIoOperations ioOperations = new OperationIoOperations();
 		boolean result = false;
 		
 
 		try 
 		{		
 			code = _setupTestOperation(false);
-			result = ioOperations.isCodePresent(code);
+			result = operationIoOperations.isCodePresent(code);
 			
 			assertEquals(true, result);
 		} 
@@ -273,7 +275,6 @@ public class Tests
 	public void testIoIsDescriptionPresent() throws OHException 
 	{
 		String code = "";
-		OperationIoOperations ioOperations = new OperationIoOperations();
 		boolean result = false;
 		
 
@@ -281,7 +282,7 @@ public class Tests
 		{		
 			code = _setupTestOperation(false);
 			Operation foundOperation = (Operation)jpa.find(Operation.class, code); 
-			result = ioOperations.isDescriptionPresent(foundOperation.getDescription(), foundOperation.getType().getCode());
+			result = operationIoOperations.isDescriptionPresent(foundOperation.getDescription(), foundOperation.getType().getCode());
 			
 			assertEquals(true, result);
 		} 

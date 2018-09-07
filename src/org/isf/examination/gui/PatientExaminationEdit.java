@@ -15,6 +15,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -548,6 +551,16 @@ public class PatientExaminationEdit extends JDialog {
 			//jDateChooserDate.setLocale(new Locale(GeneralData.LANGUAGE));
 			jDateChooserDate.setLocale(new Locale("en")); //$NON-NLS-1$
 			jDateChooserDate.setDateFormatString("dd/MM/yyyy - HH:mm"); //$NON-NLS-1$
+			jDateChooserDate.addPropertyChangeListener("date", new PropertyChangeListener() {
+				
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					Date date = (Date) evt.getNewValue();
+					jDateChooserDate.setDate(date);
+					patex.setPex_date(new Timestamp(date.getTime()));
+					
+				}
+			});
 		}
 		return jDateChooserDate;
 	}

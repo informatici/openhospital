@@ -236,7 +236,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private JLabel getJLabelTo() {
 		if (jLabelTo == null) {
 			jLabelTo = new JLabel();
-			jLabelTo.setText(MessageBundle.getMessage("angal.billbrowser.to")); //$NON-NLS-1$
+			jLabelTo.setText(MessageBundle.getMessage("angal.common.to")); //$NON-NLS-1$
 		}
 		return jLabelTo;
 	}
@@ -297,7 +297,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private JLabel getJLabelFrom() {
 		if (jLabelFrom == null) {
 			jLabelFrom = new JLabel();
-			jLabelFrom.setText(MessageBundle.getMessage("angal.billbrowser.from")); //$NON-NLS-1$
+			jLabelFrom.setText(MessageBundle.getMessage("angal.common.from")); //$NON-NLS-1$
 		}
 		return jLabelFrom;
 	}
@@ -346,8 +346,8 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 							}
 							try {
 								BusyState.setBusyState(BillBrowser.this, true);
-							new GenericReportUserInDate(from, to, user, "BillsReportUserInDate");
-							return;
+								new GenericReportUserInDate(from, to, user, "BillsReportUserInDate");
+								return;
 							} finally {
 								BusyState.setBusyState(BillBrowser.this, false);
 							}
@@ -694,8 +694,14 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 			jButtonToday.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {
+//					System.out.println("==> dateToday0  : " + dateToday0.toString());
+//					System.out.println("==> dateToday24 : " + dateToday24.toString());
+//					System.out.println("==> Date From   : " + dateFrom.toString());
+//					System.out.println("==> Date To     : " + dateTo.toString());
 					dateFrom.setTime(dateToday0.getTime());
 					dateTo.setTime(dateToday24.getTime());
+//					System.out.println("==> Date From   : " + dateFrom.toString());
+//					System.out.println("==> Date To     : " + dateTo.toString());
 					
 					jCalendarFrom.setDate(dateFrom.getTime());
 					jCalendarTo.setDate(dateTo.getTime());

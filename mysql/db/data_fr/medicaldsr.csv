@@ -1,0 +1,397 @@
+﻿1;K;Test de glycemie
+2;L;Acide acétique glaciaire 1 ltr
+3;L;Acetone 99 % 1ltr
+4;L;Sulfate de cuivre 11 500g
+5;L;EDTA Di - sodium sel 100g
+6;L;Ethanol absolu 1ltr
+7;L;Solution de formaldéhyde 35-38 % 1ltr
+8;L;Acide chlorhydrique 30 à 33 % 1ltr
+9;L;Cristal d'iode 100g
+10;L;Méthanol 99 % 1ltr
+11;L;Cristaux de phénol 1kg
+12;L;Iodure de potassium 100g
+13;L;Carbonate de sodium anhydre 500g
+14;L;Citrate de sodium 100g
+15;L;Sulfate de sodium 500g
+16;L;Nitrate de sodium 25g
+17;L;Acide sulfosalicylique 500g
+18;L;Acide sulfurique conc. 1ltr
+19;L;Xylène 2.5 litres
+20;L;Fluorure de sodium
+21;L;Oxalate de potassium
+22;L;Bleu de crésyl brillant
+23;L;Oxalate d'ammonium
+24;L;4 diméthyl Aminobenzaldelyde
+25;L;Trichloro-acétique
+26;L;Non 111 chlorure (chlorure ferrique)
+27;L;Carbonate de sodium anhydre
+28;L;Citrate trisodique
+29;L;Cristal Violet
+30;K;TPG (ALT) 200ml (n'a pas de NAOH)
+31;K;GOT (AST) 200 ml (n'a pas de NAOH) AS 101
+32;K;GOT (AST) 200ml (calorimétrie) comme 147
+33;K;VIH 1/2 Kit Capillus 100Tests
+34;K;Tampon de VIH pour déterminer Kit
+35;K;VIH détermine 1/11 (Abbott) 100Tests
+36;K; VIH UNIGOLD 1/11 Test Kits 20 Tests
+37;K;Tests de grossesse (HGG Latex) 50
+38;K;RPR 125 x 75 mm
+39;K;Antigène RPR (VDRL charbon) 5ml
+40;D;Adrénaline 1mg/ml 1ml Amp
+41;D;Aminophylline 25mg/ml; 10ml Amp
+42;D;Amphotéricine B 50mg flacon
+43;D;Flacon de 500mg d'ampicilline
+44;D;Atropine 1mg/ml 1ml Amp
+45;D;Benzathine pénicilline 2;4 MUI flacon
+46;D;Benzyl pénicilline 1 MIU flacon
+47;D;Benzyl pénicilline 5 MIU flacon
+48;D;Chloramphénicol fiole de 1g
+49;D;Chloroquine 40mg Base/ml 5ml Amp
+50;D;Chlorpromazine 25mg/ml / 2ml Amp
+51;D;Cloxacilline 500mg flacon
+52;D;Cyclophosphamide flacon de 200mg
+53;D;Cyclophosphamide flacon de 500mg
+54;D;Diazepam 5mg/ml ml 2 Amp
+55;D;Diclofénac 25mg/ml ml 3 Amp
+56;D;Digoxine 0.25 mg/ml ml 2 Amp
+57;D;Furosémide Amp de 2ml 10mg/ml
+58;D;Gentamicine 40mg/ml; 2ml
+59;D;Haloperidol 5mg/ml 1ml Amp
+60;D;Halopéridol décanoate 50mg/ml 1ml Amp
+61;D;Hydralazine flacon de 20mg
+62;D;Hydrocortisone flacon de 100mg
+63;D;Butyl bromure de scopolamine 20mg/ml/Amp
+64;D;Insuline Soluble 100 UI/ml flacon de 10ml
+65;D;Iinsuline Isophane 100 UI/ml flacon de 10ml
+66;D;Insuline Mixtard 30/70 100 UI/ml flacon de 10ml
+67;D;Insuline Mixtard 30/70 cartouches de 5x3ml 100 UI/ml
+68;D;Iinsuline Isophane 40 UI/ml 10ml
+69;D;Fer Dextran 10mg/ml flacon de 2ml
+70;D;Kétamine 10mg/ml flacon de 20ml
+71;D;Kétamine 10mg/ml flacon de 10ml
+72;D;Lidocaïne 2 % flacon de 20ml
+73;D;Lidocaïne 2 % adrénaline Dent.cartridges
+74;D;Lidocaïne spinal 50mg/ml ml 2 Amp
+75;D;Methylergomeatrine 0.2 mg/ml 1 ml Amp
+76;D;Methylergomeatrine 0.5 mg/ml 1 ml Am
+77;D;Metoclopramide 5mg/ml 100ml Amp
+78;D;Métronidazole IV de 2ml 5mg/ml
+79;D;Morphine 15mg/ml 1ml Amp
+80;D;Ocytocine 10 UI/ml 1ml Amp
+81;D;Péthidine 100mg/ml ml 2 Amp
+82;D;Péthidine 50mg/ml 1ml Amp
+83;D;Phénobarbital 100mg/ml ml 2 Amp
+84;D;Phytoménadione 10mg/ml 1ml Amp
+85;D;Phytoménadione 1mg/ml 1ml Amp
+86;D;Procaïne pénicilline fortifié 4 MIU flacon
+87;D;Promethazine 25mg/ml ml 2 Amp
+88;D;Quinine Di-HCI 300mg/ml ml 2 Amp
+89;D;Ranitidine 25mg/ml ml 2 Amp
+90;D;Streptomycine fiole de 1g
+91;D;Suxaméthonium flacon de 500mg
+92;D;Suxaméthonium 500mg/ml ml 2 Amp
+93;D;Tétanos antitoxine 1500 IU 1ml Amp
+94;D;Tthiopental sodique flacon de 500mg
+95;D;Eau pour Injection 10ml flacon
+96;D;Chlorure de sodium 0.9% IV 500ml
+97;D;Lactate de sodium composé IV 500ml
+98;D;Acetazolamide 250mg CP
+99;D;Aciclovir 200mg CP
+100;D;Aciclovir
+101;D;Aminophylline 100mg CP
+102;D;Albendazole 400mg CP
+103;D;Albendazole 200mg CP
+104;D;Amitriptyline 25mg CP
+105;D;Amoxicilline 250mg Caps
+106;D;Amoxicillin /Clavulanate 375 mg CP
+107;D;Acide ascorbique 100mg CP
+108;D;Aspirine 300mg CP
+109;D;Atenolol 50mg CP
+110;D;Aténolol 100mg CP
+111;D;Bendrofluazide 5mg CP
+112;D;Benzhexol 2mg CP
+113;D;Benzhexol 5mg CP
+114;D;Bisacodyl 5mg CP
+115;D;Calcium Lactate 300mg CP
+116;D;Carbamazepine 200mg CP
+117;D;Carbimazole 5mg CP
+118;D;Charbon 250mg CP
+119;D;Chloramphenicol 250mg Caps
+120;D;Chloroquine sans enrobage 150mg CP
+121;D;Chloroquine enduit 150mg CP
+122;K;URÉE calorimétriques 300 Tests
+123;D;Chlorphenimine 4mg CP
+124;D;Chlorpromazine 100mg CP
+125;D;Chlorpromazine 25mg CP
+126;D;Cimetidine 200mg CP
+127;D;Cimetidine 400mg CP
+128;D;Ciprofloxacine 500mg CP
+129;D;Ciprofloxacine 250mg CP
+130;D;Cloxacilline 250mg CP
+131;D;Codéine phosphate 30mg CP
+132;D;Cotrimoxazole 100 / 20mg Paed onglet
+133;D;Cotrimoxazole 400 / 80mg CP
+134;D;Darrows demi force 500ml
+135;D;Dexaméthasone 4mg/ml ml 2 Amp
+136;D;Dexaméthasone 4mg/ml 1ml Amp
+137;D;Dextrose 5 % IV 500ml
+138;D;Dextrose 30 % IV 100ml
+139;D;Dextrose 50 % IV 100ml
+140;D;Dexaméthasone de 0.5 mg CP
+141;D;Diazepam 5mg CP
+142;D;Diclofenac 50mg CP
+143;D;Diéthylcarbamazine 50mg CP
+144;D;Digoxine 0.25 mg CP
+145;D;Doxycycline 100mg CP
+146;D;Ephédrine 30mg CP
+147;D;Erythromycin 250mg CP
+148;D;Fansidar 500 / 25mg CP (50dosesx3)
+149;D;Fansidar 500 / 25mg CP
+150;D;Sulfate ferreux 200mg CP
+151;D;Fluconazole 100mg CP
+152;D;Fluconazole 100mg 24 gelules
+153;D;Acide folique 1mg CP
+154;D;Acide folique 5mg CP
+155;D;Acide folique/ferreux Sulp 0.5 / 200mg CP
+156;D;Acide folique 15mg CP
+157;D;Frusemide 40mg CP
+158;D;Glibenclamide 5mg CP
+159;D;Griseofulvine 500mg CP
+160;D;Haloperidol 5mg CP
+161;D;Haloperidol 5mg
+162;D;Hydralazine 25mg CP
+163;D;Hyoscine 10mg CP
+164;D;Ibuprofène 200mg CP
+165;D;Imipramine 25mg CP
+166;D;Indomethacin 25mg CP
+167;D;Isoniazid 300mg CP
+168;D;Ketoconazole 200mg CP
+169;D;Salbutamol 4mg CP
+170;D;Spironolactone 25mg CP
+171;D;Tolbutamide 500mg CP
+172;D;Vitamine A 200.000 UI Caps
+173;D;Vvitamines du complexe B CP
+174;D;Sel de réhydratation orale (SRO)
+175;D;Paracétamol sirop 120mg /5ml
+176;D;Paracetamol 120mg / 5ml 100ml
+177;D;Quinine 100mg / 5ml sirop 100ml
+178;D;L'alcool 95 % non dénaturé 20Ltrs
+179;D;Chlorhexidine/Cétrimide 1.5/15 % 1Ltr
+180;D;Chlorhexidine/Cétrimide 1.5/15 % 5Ltr
+181;D;Boîte de 25g de Violet de gentiane
+182;D;Peroxyde d'hydrogène 6 % 250ml
+183;D;Solution d'iode 2 % 500ml
+184;D;Solution d'Hypochlorite de sodium 0.75 Ltr
+185;D;Détergent liquide parfumé 5Ltr
+186;D;Barre de savon bleu 550g
+187;D;Détergent liquide 20Ltr
+188;D;Lave-mains savon en poudre 5kg
+189;D;Hypochlorite de sodium solution 5Ltr
+190;D;Gouttes de bétaméthasone 0.1 % yeux/oreilles/nez
+191;D;Betamethasone 0.1% Neomycin 0.35 % collyre 7.5ml
+192;D;Chloramphénicol 0.5 % collyre 10ml
+193;D;Cloramphenicol 1 % Onguent 3.5 g
+194;D;Gentamicine 0.3 % oeil/oreille gouttes 10ml
+195;D;Hydrocortisone 1 % collyre 5ml
+196;D;Tétracycline pommade yeux 1 % 3.5 g
+197;D;Béclométhasone 50mcg inhalateur
+198;K;Bandelettes tests d'urine 3 paramètres 100 tests
+199;D;Solution de salbutamol pour inhalation 5ml
+200;D;Inhalateur de salbutamol 10ml
+201;D;Clotrimazole Pessaires de 500mg
+202;D;Clotrimazole Pessaires de 100mg
+203;D;Diazépam  2mg/ml 2.5 ml rectale
+204;D;Suppositoires antihaemorrhoid
+205;D;Nystatine pessaires 100.000 IU
+206;D;Dextrose monohydraté Apyrogen 25Kg
+207;D;Amoxicilline 125mg / 5ml poud. SUSP 100ml
+208;D;Chloramphénicol 125mg / 5ml Susp 3Ltr
+209;D;Chloramphénicol 125mg / 5ml Susp 100ml
+210;D;Cotrimoxazole 200 + 40mg / 5ml Susp 3Ltr
+211;D;Cotrimoxazole 200 + 40mg / 5ml Susp 100ml
+212;D;Nystatine 500.000 IU / Susp / gouttes
+213;D;Pyridoxine 50mg CP
+214;D;Quinine 300mg CP
+215;D;Ranitidine 150mg CP
+216;D;Rifampicine/isoniazide 150/100 CP
+217;D;Chlorure de sodium Apyrogen 50kg
+218;K;Tache de champ A et B
+219;K;Gentian Violet
+220;K;Rouge neutre
+221;K;Éosine jaunâtre
+222;K;Coloration de Giemsa
+223;K;Anti-sérum A 10ml
+224;S;Sang qui donne la valeur jetables
+225;S;Sac de transfert de sang 300ml
+226;S;Seringue pour insuline 100 UI avec aiguilles G26/29
+227;S;Canule IV G16 avec Port
+228;S;Canule IV G18 avec Port
+229;S;Canule IV G20 avec Port
+230;S;Canule IV G22 avec Port
+231;S;Canule IV G24 sans Port
+232;S;Canule IV G24 avec Port
+233;S;IV avec une définition jetable
+234;S;Conteneur d’Aiguille contaminés jetables
+235;S;Aiguilles jetables de Luer G20
+236;S;Aiguilles jetables de Luer G21
+237;S;Aiguilles jetables de Luer G22
+238;S;Aiguilles jetables de Luer G23
+239;S;Aiguilles Spinal G20x75 - 120mm
+240;S;Aiguilles Spinal G22x75 - 120mm
+241;S;Aiguilles Spinal G25x75 - 120mm
+242;S;Aiguilles Spinal G22x40mm
+243;S;Set de perfusion G19
+244;S;Set de perfusion G21
+245;S;Set de perfusion G23
+246;S;Set de perfusion G25
+247;S;Seringue d'Irrigation/alimentation 50 / 60ml
+248;S;Seringue Luer  2Ml  avec aiguille jetable
+249;S;Seringue Luer  10Ml  avec aiguille jetable
+250;S;Seringue Luer  20Ml  avec aiguille jetable
+251;S;Seringue Luer  25Ml  avec aiguille jetable
+252;S;Guedel pour voies aériennes taille 00
+253;S;Guedel pour voies aériennes taille 0
+254;S;Guedel pour voies aériennes taille 1
+255;S;Guedel pour voies aériennes taille 2
+256;S;Guedel pour voies aériennes taille 3
+257;S;Pad oculaire stérile
+258;S;Ruban adhésif 2.5 cm x 5 m
+259;S;Ruban adhésif 7.5 cm x 5 m
+260;S;Coton hydrophile 500G
+261;S;Coton hydrophile 200G
+262;S;Bandage élastique 10 cm x 4.5 m
+263;S;Un Bandage élastique 7.5 cm x 4;;5 m
+264;S;Bandage de gaze 7.5 cm x 3;;65-4m
+265;S;Bandage de gaze 10 cm x 4 m
+266;S;Compresses Non stérile 10 x 10 cm
+267;S;Compresses stérile 10 x 10 cm
+268;S;Gaze Hydrophylic 90 cm x 91 cm
+269;S;Plâtre de Paris 10cm
+270;S;Plâtre de Paris 15cm
+271;S;Sonde Foley CH20 3 façon ballon
+272;S;Sonde Foley CH8 3 façon ballon
+273;S;Sonde Foley CH10 3 façon ballon
+274;S;Sonde Foley CH12 3 façon ballon
+275;S;Sonde Foley CH14 3 façon ballon
+276;S;Sonde Foley CH16 3 façon ballon
+277;S;Sonde Foley CH18 3 façon ballon
+278;S;Bouchon de cathéter pour toutes les tailles
+279;S;Sonde naso-gastrique G5 (enfants)
+280;S;Sonde naso-gastrique G8 (enfants)
+281;S;Sonde naso-gastrique G6 (enfants)
+282;S;Sonde naso-gastrique G10 (enfants)
+283;S;Sonde naso-gastrique G14 (enfants)
+284;S;Sonde naso-gastrique G16 (enfants)
+285;S;Sonde rectale CH24
+286;S;Sonde rectale CH26
+287;S;Cathéter d'aspiration jetable de taille 6
+288;S;Cathéter d'aspiration jetable de taille 8
+289;S;Cathéter d'aspiration jetable de taille 16
+290;S;Cathéter d'aspiration jetable de taille 12
+291;S;Cathéter d'aspiration jetable de taille 14
+292;S;Cathéter d'aspiration jetable de taille 10
+293;S;Gants Domestic
+294;S;Gants haut risque moyen non stérile
+295;S;Gants gynécologiques 7.5-8
+296;S;Gants Non stériles jetables moyen
+297;S;Gants Non stériles jetables grand
+298;S;Gants chirurgicaux stériles 6
+299;S;Gants chirurgicaux stériles 6.5
+300;S;Gants chirurgicaux stériles 7
+301;S;Gants chirurgicaux stériles 7;5
+302;S;Gants chirurgicaux stériles 8
+303;S;Gants chirurgicaux stériles 8;5
+304;S;Abaisse-langue jetables
+305;S;Bassines en plastique Autoclavable
+306;S;Bassines inox
+307;S;Body sac 70 x 215cm (adulte)
+308;S;Bol sans couvercle en acier inoxydable 7 x 12cm
+309;S;Bol sans couvercle en acier inoxydable 8 x 16cm
+310;S;Bol sans couvercle 10 x 24 cm en acier inoxydable
+311;S;"Anneau de air 43x15cm; caoutchouc avec pompe"
+312;S;Sac de colostomie clos 30mm taille 2
+313;S;Sac de colostomie clos 30mm taille 3
+314;S;Sac de colostomie ouvert réutilisable 35 mm
+315;S;Seringue de caoutchouc pour oreille 60ml
+316;S;Trousse de premiers soins
+317;S;Galipot inox 300ml / 15cm
+318;S;Galipot inox 200ml / 10cm
+319;S;Bouteille  pour eau chaude2Ltr
+320;S;Boîte de instrument avec couvercle 20x10x5cm
+321;S;Plateau à instruments 30 x 20 x 2 cm
+322;S;Boite d'irrigation avec accessoires
+323;S;Cuvette médicale inox 24cm
+324;S;Cuvette médicale inox 20cm
+325;S;Rein plat polypropylène 24cm
+326;S;Mackintosh en plastique (tablier) / 1m
+327;S;Mackintosh en caoutchouc marron (bâches) / 1m
+328;S;Tasse à mesurer graduée 25ml
+329;S;Support de cou petit
+330;S;Support de cou moyen
+331;S;Support de cou grand
+332;S;Cuillère de médecine 5ml
+333;S;Tablier en plastique réutilisable
+334;S;Tablier en plastique réutilisable local
+335;S;Tablier polyéthylène Disp Non stérile
+336;S;Lames de rasoir jetable 5pc
+337;S;Stéthoscope métal fœtal
+338;S;Stéthoscope fœtal bois
+339;S;Brosse chirurgicale (épuration)
+340;S;Mop chirurgical 12 x 15
+341;S;Plateau de comptage Tablet
+342;S;Rouleaux de papier hygiénique
+343;S;Kit de traction Enfants
+344;S;Kit de traction Adulte
+345;S;Thermomètre clinique Type plat
+346;S;Thermomètre clinique Type prismatique
+347;S;Cravate  pour cordon ombilical non stérile 100m
+348;S;Cravate  pour cordon ombilical stérile 22m
+349;S;Urinoir 1Ltr / 2Ltr
+350;S;Sac pour collecte d’urine stérile 2Ltr
+351;S;Insectcide Spray 400g
+352;S;Moustiquaire imprégnée moyenne
+353;S;Moustiquaire imprégnée grand
+354;S;Moustiquaire non imprégnée moyenne
+355;S;Moustiquaire non imprégnée grand
+356;S;Tablette d'imprégnation moustiquaire
+357;S;Imprégnation de moustiquaires liquide 500ml
+358;S;Pulvérisation anti-moustiques en poudre pour murs  80g
+359;S;Poignée pour lame chirurgicale  N° 3
+360;S;Poignée pour lame chirurgicale N° 4
+361;S;Lames chirurgicales N° 20
+362;S;Lames chirurgicales N° 21
+363;S;Lames chirurgicales N° 22
+364;S;Lames chirurgicales N° 23
+365;S;Aiguille à suture  N° 5 rond
+366;S;Aiguille à suture  N° 5 couping
+367;S;Aiguille à suture  N° 6 rond
+368;S;Suture Cutgut chromique (0)
+369;S;Suture Cutgut chromique (2) RN22240TH
+370;S;Suture Cutgut chromique (2/0) RN22230TH
+371;S;Suture Cutgut chromique (3/0) RN2325TF
+372;S;Suture Cutgut plaine (2/0) RN1230TF
+373;S;Suture S595 de soie (1)
+374;S;Suture en soie (2/0) RN5230TF
+375;S;Suture RN3330TF de PGA (3/0)
+376;S;100cmx60cm tablier de plomb
+377;S;Développeur de rayons x 2;6 kg pour 22.5Ltr
+378;S;X-ray Film 18x24cm
+379;S;X-ray Film 20x40cm
+380;S;X-ray Film 24x30cm
+381;S;X-ray Film 30x40cm
+382;S;X-ray Film 35x35cm
+383;S;X-ray Film 43x35cm
+384;S;Cassette de Film x-ray 18x24cm avec écran
+385;S;Cassette de Film x-ray 24x30cm avec écran
+386;S;Cassette de Film x-ray 30x40cm avec écran
+387;S;Cassette de Film x-ray 35x35cm avec écran
+388;S;Cassette de Film x-ray 35x43cm avec écran
+389;S;Fixateur pour film radiographique 3;3 kg pour 22;5 Ltr
+390;S;Sulfate de baryum pour rayons x 1kg
+391;S;Diatrizoate Meglumin Sod 76 % 20ml Amp
+392;K;Anti-sérum B 10ml
+393;K;Anti-sérum AB 10ml
+394;K;Anti-sérum D 10ml
+395;K;Créatinine 200ml (calorimétrie)
+396;K;GlucoseGOD PAD 6 x 100ml (colorimétrique)
+397;K;Bandelettes pour Test glycémique (Hyloguard)

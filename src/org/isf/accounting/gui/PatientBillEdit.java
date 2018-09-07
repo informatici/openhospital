@@ -1352,7 +1352,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 					String quantity = (String) JOptionPane.showInputDialog(
 		                    PatientBillEdit.this,
 		                    MessageBundle.getMessage("angal.newbill.insertquantity"), //$NON-NLS-1$
-		                    MessageBundle.getMessage("angal.newbill.quantity"), //$NON-NLS-1$
+		                    MessageBundle.getMessage("angal.common.quantity"), //$NON-NLS-1$
 		                    JOptionPane.PLAIN_MESSAGE,
 		                    icon,
 		                    null,
@@ -1435,7 +1435,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 					String quantity = (String) JOptionPane.showInputDialog(
 		                    PatientBillEdit.this,
 		                    MessageBundle.getMessage("angal.newbill.insertquantity"), //$NON-NLS-1$
-		                    MessageBundle.getMessage("angal.newbill.quantity"), //$NON-NLS-1$
+		                    MessageBundle.getMessage("angal.common.quantity"), //$NON-NLS-1$
 		                    JOptionPane.PLAIN_MESSAGE,
 		                    icon,
 		                    null,
@@ -1717,7 +1717,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 						String quantity = (String) JOptionPane.showInputDialog(
 			                    PatientBillEdit.this,
 			                    MessageBundle.getMessage("angal.newbill.insertquantity"), //$NON-NLS-1$
-			                    MessageBundle.getMessage("angal.newbill.quantity"), //$NON-NLS-1$
+			                    MessageBundle.getMessage("angal.common.quantity"), //$NON-NLS-1$
 			                    JOptionPane.PLAIN_MESSAGE,
 			                    icon,
 			                    null,

@@ -373,11 +373,7 @@ public class SelectPatient extends JDialog {
 						
 						int index = jTablePatient.getSelectedRow();
 						patient = (Patient)jTablePatient.getValueAt(index, -1);
-						try {
-							patient.setPhoto(patManager.getPatientPhoto(patient).getPhoto());
-						} catch (OHServiceException e1) {
-							JOptionPane.showMessageDialog(SelectPatient.this, e1.getMessage());
-						}
+						patient.setPhoto(patient.getPhoto());
 						updatePatientSummary();
 						
 					}

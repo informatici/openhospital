@@ -289,7 +289,7 @@ public class VideoDevicesPanel extends JPanel {
 		resolutionsComboBox.setSelectedIndex(index);
 	}
 	
-	// to do: verificare se esiste un device con l'id specificato
+	// TODO: verify if exists a device with the specified ID
 	public void selectDevice(int id)	{
 		System.out.println("Selected device " + id + "...");
 		

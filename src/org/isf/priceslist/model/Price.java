@@ -49,7 +49,7 @@ public class Price
 
 	@NotNull
 	@Column(name="PRC_DESC")  
-    private String desc;
+    private String description;
 
 	@NotNull
 	@Column(name="PRC_PRICE")  
@@ -81,7 +81,7 @@ public class Price
 		this.list = list;
 		this.group = group;
 		this.item = item;
-		this.desc = desc;
+		this.description = desc;
 		this.price = price;
 		this.editable = editable;
 	}
@@ -102,7 +102,7 @@ public class Price
 		this.list = list;
 		this.group = group;
 		this.item = item;
-		this.desc = desc;
+		this.description = desc;
 		this.price = price;
 		this.editable = true;
 	}
@@ -120,7 +120,7 @@ public class Price
 		this.list = list;
 		this.group = group;
 		this.item = item;
-		this.desc = desc;
+		this.description = desc;
 		this.price = price;
 		this.editable = true;
 	}
@@ -158,11 +158,11 @@ public class Price
 	}
 	
     public String getDesc() {
-		return desc;
+		return description;
 	}
 
 	public void setDesc(String desc) {
-		this.desc = desc;
+		this.description = desc;
 	}
 
 	public Double getPrice() {
@@ -187,7 +187,7 @@ public class Price
 
 	@Override
 	public String toString() {
-		return desc;
+		return description;
 	}
 	
 	@Override

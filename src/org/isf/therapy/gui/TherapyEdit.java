@@ -995,6 +995,8 @@ public class TherapyEdit extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 					if (selectedTherapy == null)
 						return;
+					System.out.println("==> SelectedTherapy : " + selectedTherapy.getTherapyID());
+					System.out.println("==> hashTableThRow : " + hashTableThRow.get(selectedTherapy.getTherapyID()));
 					thRows.remove(hashTableThRow.get(selectedTherapy.getTherapyID()));
 					therapies.remove(selectedTherapy);
 					//thRows.remove(selectedTherapy.getNumTherapy() - 1);

@@ -14,13 +14,21 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
 	private static TestPricesOthers testPricesOthers;
 	private static TestPricesOthersContext testPricesOthersContext;
-		
+
+    @Autowired
+    PriceOthersIoOperations otherIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -56,8 +64,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
-
     	return;
     }
 	
@@ -106,14 +112,13 @@ public class Tests
 	public void testIoGetPricesOthers() 
 	{
 		int id = 0;
-		PriceOthersIoOperations ioOperations = new PriceOthersIoOperations();
 		
 		
 		try 
 		{		
 			id = _setupTestPricesOthers(false);
 			PricesOthers foundPricesOthers = (PricesOthers)jpa.find(PricesOthers.class, id); 
-			ArrayList<PricesOthers> pricesOtherss = ioOperations.getOthers();
+			ArrayList<PricesOthers> pricesOtherss = otherIoOperation.getOthers();
 			
 			assertEquals(foundPricesOthers.getDescription(), pricesOtherss.get(1).getDescription());
 		} 
@@ -130,7 +135,6 @@ public class Tests
 	public void testIoUpdatePricesOthers() 
 	{
 		int id = 0;
-		PriceOthersIoOperations ioOperations = new PriceOthersIoOperations();
 		boolean result = false;
 		
 		
@@ -139,7 +143,7 @@ public class Tests
 			id = _setupTestPricesOthers(false);
 			PricesOthers foundPricesOthers = (PricesOthers)jpa.find(PricesOthers.class, id); 
 			foundPricesOthers.setDescription("Update");
-			result = ioOperations.updateOther(foundPricesOthers);
+			result = otherIoOperation.updateOther(foundPricesOthers);
 			PricesOthers updatePricesOthers = (PricesOthers)jpa.find(PricesOthers.class, id); 
 			
 			assertEquals(true, result);
@@ -157,14 +161,13 @@ public class Tests
 	@Test
 	public void testIoNewPricesOthers() 
 	{
-		PriceOthersIoOperations ioOperations = new PriceOthersIoOperations();
 		boolean result = false;
 		
 		
 		try 
 		{		
 			PricesOthers pricesOthers = testPricesOthers.setup(true);
-			result = ioOperations.newOthers(pricesOthers);
+			result = otherIoOperation.newOthers(pricesOthers);
 			
 			assertEquals(true, result);
 			_checkPricesOthersIntoDb(pricesOthers.getId());
@@ -182,7 +185,6 @@ public class Tests
 	public void testIoDeletePricesOthers() 
 	{
 		int id = 0;
-		PriceOthersIoOperations ioOperations = new PriceOthersIoOperations();
 		boolean result = false;
 		
 
@@ -190,11 +192,11 @@ public class Tests
 		{		
 			id = _setupTestPricesOthers(false);
 			PricesOthers foundPricesOthers = (PricesOthers)jpa.find(PricesOthers.class, id); 
-			result = ioOperations.deleteOthers(foundPricesOthers);
+			result = otherIoOperation.deleteOthers(foundPricesOthers);
 			
 			assertEquals(true, result);
-			PricesOthers deletedPricesOthers = (PricesOthers)jpa.find(PricesOthers.class, id); 
-			assertEquals(null, deletedPricesOthers);
+			result = otherIoOperation.isCodePresent(id);			
+			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

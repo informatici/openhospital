@@ -214,7 +214,7 @@ public class PregnantTreatmentTypeEdit extends JDialog{
 							if (manager.codeControl(key)){
 								JOptionPane.showMessageDialog(				
 										null,
-										MessageBundle.getMessage("angal.preagtreattype.codealreadyinuse"),
+										MessageBundle.getMessage("angal.common.codealreadyinuse"),
 										MessageBundle.getMessage("angal.hospital"),
 										JOptionPane.PLAIN_MESSAGE);
 								codeTextField.setText("");

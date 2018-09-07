@@ -8,19 +8,24 @@ package org.isf.patvac.service;
  * 20/10/2011 - insert vaccine type management
  * 14/11/2011 - claudia - inserted search condtion on date
  *------------------------------------------*/
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import org.isf.patvac.model.PatientVaccine;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class PatVacIoOperations {
 
+	@Autowired
+	private PatVacIoOperationRepository repository;
+	
 	/**
 	 * returns all {@link PatientVaccine}s of today or one week ago
 	 * 
@@ -57,7 +62,6 @@ public class PatVacIoOperations {
 	 * @return the list of {@link PatientVaccine}s
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<PatientVaccine> getPatientVaccine(
 			String vaccineTypeCode, 
 			String vaccineCode, 
@@ -67,65 +71,22 @@ public class PatVacIoOperations {
 			int ageFrom, 
 			int ageTo) throws OHException 
 	{
+		ArrayList<Integer> pPatientVaccineCode = null;
+		ArrayList<PatientVaccine> pPatientVaccine = new ArrayList<PatientVaccine>();
 		
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<PatientVaccine> patientVaccines = null;
-		StringBuilder query = new StringBuilder();
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try {
-			jpa.beginTransaction();
-			String clause = " WHERE";
-			query.append("SELECT *"
-					+ " FROM PATIENTVACCINE JOIN VACCINE ON PAV_VAC_ID_A=VAC_ID_A"
-					+ " JOIN VACCINETYPE ON VAC_VACT_ID_A = VACT_ID_A"
-					+ " JOIN PATIENT ON PAV_PAT_ID = PAT_ID");
-			if (dateFrom != null || dateTo != null) {
-				if (dateFrom != null) {
-					query.append(clause).append(" DATE_FORMAT(PAV_DATE,'%Y-%m-%d') >= ?");
-					params.add(convertToSQLDateLimited(dateFrom));
-					clause = " AND";
-				}
-				if (dateTo != null) {
-					params.add(convertToSQLDateLimited(dateTo));
-					query.append(clause).append(" DATE_FORMAT(PAV_DATE,'%Y-%m-%d') <= ?");
-					clause = " AND";
-				}
-			}
-			if (vaccineTypeCode != null) {
-				query.append(clause).append(" VACT_ID_A = ?");
-				params.add(vaccineTypeCode);
-				clause = " AND";
-			}
-			if (vaccineCode != null) {
-				query.append(clause).append(" VAC_ID_A = ?");
-				params.add(vaccineCode);
-				clause = " AND";
-			}
-			if ('A' != sex) {
-				query.append(clause).append(" PAT_SEX = ?");
-				params.add(sex);
-				clause = " AND";
-			}		
-			if (ageFrom != 0 || ageTo != 0) {
-				query.append(clause).append(" PAT_AGE BETWEEN ? AND ?");
-				params.add(ageFrom);
-				params.add(ageTo);
-				clause = " AND";
-			}		
-			query.append(" ORDER BY PAV_DATE DESC, PAV_ID");
+		
+		pPatientVaccineCode = (ArrayList<Integer>) repository.findAllByCodesAndDatesAndSexAndAges(
+				vaccineTypeCode, vaccineCode, dateFrom, dateTo, sex, ageFrom, ageTo);
+		for (int i=0; i<pPatientVaccineCode.size(); i++)
+		{
+			Integer code = pPatientVaccineCode.get(i);
+			PatientVaccine patientVaccine = repository.findOne(code);
 			
-			jpa.createQuery(query.toString(), PatientVaccine.class, false);
-			jpa.setParameters(params, false);
-			List<PatientVaccine> patientVaccineList = (List<PatientVaccine>)jpa.getList();
-			patientVaccines = new ArrayList<PatientVaccine>(patientVaccineList);		
 			
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
+			pPatientVaccine.add(i, patientVaccine);
 		}
-		return patientVaccines;
+
+		return pPatientVaccine;
 	}
 
 	/**
@@ -138,18 +99,11 @@ public class PatVacIoOperations {
 	public boolean newPatientVaccine(
 			PatientVaccine patVac) throws OHException 
 	{
-
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		try {
-			jpa.beginTransaction();	
-			jpa.persist(patVac);
-	    	jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
+	
+
+		PatientVaccine savedVaccine = repository.save(patVac);
+		result = (savedVaccine != null);
 		
 		return result;
 	}
@@ -164,17 +118,11 @@ public class PatVacIoOperations {
 	public boolean updatePatientVaccine(
 			PatientVaccine patVac) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-		
-		try {
-			jpa.beginTransaction();	
-			jpa.merge(patVac);
-	    	jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
+	
+
+		PatientVaccine savedVaccine = repository.save(patVac);
+		result = (savedVaccine != null);
 		
 		return result;
 	}
@@ -189,19 +137,12 @@ public class PatVacIoOperations {
 	public boolean deletePatientVaccine(
 			PatientVaccine patVac) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 		
-		try {
-			jpa.beginTransaction();	
-			PatientVaccine objToRemove = (PatientVaccine) jpa.find(PatientVaccine.class, patVac.getCode());
-			jpa.remove(objToRemove);
-	    	jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return result;
+		repository.delete(patVac);
+		
+		return result;	
 	}
 
 	/**
@@ -214,40 +155,36 @@ public class PatVacIoOperations {
 	public int getProgYear(
 			int year) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
-		ArrayList<Object> params = new ArrayList<Object>();
-		StringBuilder query = new StringBuilder();
 		Integer progYear = 0;
+
 		
-		try {
-			jpa.beginTransaction();
-			
-			query.append("SELECT MAX(PAV_YPROG) FROM PATIENTVACCINE");
-			if (year != 0) {
-				query.append(" WHERE YEAR(PAV_DATE) = ?");
-				params.add(year);
-			}
-			jpa.createQuery(query.toString(), null, false);
-			jpa.setParameters(params, false);	
-			progYear = (Integer)jpa.getResult();
-			
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
+		if (year != 0) 
+		{
+			progYear = repository.findMaxCodeWhereVaccineDate(year);
+		}
+		else
+		{
+			progYear = repository.findMaxCode();
 		}
 		
 		return progYear == null ? new Integer(0) : progYear;
 	}
-	
+
 	/**
-	 * return a String representing the date in format <code>yyyy-MM-dd</code>
-	 * 
-	 * @param date
-	 * @return the date in format <code>yyyy-MM-dd</code>
+	 * checks if the code is already in use
+	 *
+	 * @param code - the patient vaccine code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
 	 */
-	private String convertToSQLDateLimited(GregorianCalendar date) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		return sdf.format(date.getTime());
+	public boolean isCodePresent(
+			Integer code) throws OHException
+	{
+		boolean result = true;
+	
+		
+		result = repository.exists(code);
+		
+		return result;	
 	}
 }

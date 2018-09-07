@@ -4,7 +4,7 @@
 4;Guinea Worm;ND;0;1;1;;
 5;morbillo;ND;0;1;1;;
 6;Meningite;ND;0;1;1;;
-7;Tetano neonatale (meno 28 giorni di et�);ND;3;1;1;;
+7;Tetano neonatale (meno 28 giorni di età);ND;3;1;1;;
 8;Peste;ND;0;1;1;;
 9;rabbia;ND;0;1;1;;
 10;virale emorragica Febbre;ND;0;1;1;;
@@ -83,7 +83,7 @@
 90;Malattie del sistema erinary Genito (non infettive);NC;0;1;1;;
 91;malformazioni congenite e anormalit� cromosomiche;ND;1;0;1;;
 92;Comlpication e la cura chirurgica;NC;0;1;1;;
-93;Benine neoplasia del (tutti i tipi);NC;16;0;0;;
+93;Benine neoplasia del (tutti i tipi);NC;16;1;1;;
 94;Il cancro della mammella;NC;0;1;1;;
 95;cancro della prostata;ND;1;0;1;;
 96;Tumori maligni degli organi digestivi;NC;0;1;1;;

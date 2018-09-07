@@ -245,7 +245,7 @@ public class ListEdit extends JDialog {
 	private JLabel getJLabelCode() {
 		if (jLabelCode == null) {
 			jLabelCode = new JLabel();
-			jLabelCode.setText(MessageBundle.getMessage("angal.priceslist.codestar")); //$NON-NLS-1$
+			jLabelCode.setText(MessageBundle.getMessage("angal.common.codestar")); //$NON-NLS-1$
 		}
 		return jLabelCode;
 	}

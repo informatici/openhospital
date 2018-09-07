@@ -59,7 +59,7 @@ public class VideoDeviceStreamAppletManager {
 					photoW = photoMaxHeight * resW / resH;
 				}
 				
-				// utilizziamo il metodo che scala soltanto
+				// Using the method that resizes only
 				Image patientPhoto = PatientPhotoCreator.createPatientPhoto(img, photoW, photoH);
 				
 				//Image patientPhoto = PatientPhotoCreator.createPatientPhoto(img, photoW, photoH, photoMaxWidth, photoMaxHeight);
@@ -169,7 +169,7 @@ public class VideoDeviceStreamAppletManager {
 			}
 		}
 		
-		// controllo non necessario, ma non si sa mai...
+		// This control is not actually needed, but to be safe...
 		if (currentStreamApplet != null)	{
 			currentStreamApplet.activate();
 		}

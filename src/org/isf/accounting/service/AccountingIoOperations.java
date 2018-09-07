@@ -3,61 +3,43 @@ package org.isf.accounting.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Persistence class for Accounting module.
  */
 @Component
-public class AccountingIoOperations {
-
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
+public class AccountingIoOperations {	
+	
+	@Autowired
+	private AccountingBillIoOperationRepository billRepository;
+	@Autowired
+	private AccountingBillPaymentIoOperationRepository billPaymentRepository;
+	@Autowired
+	private AccountingBillItemsIoOperationRepository billItemsRepository;
+	
+	
 	/**
 	 * Returns all the pending {@link Bill}s for the specified patient.
 	 * @param patID the patient id.
 	 * @return the list of pending bills.
 	 * @throws OHException if an error occurs retrieving the pending bills.
 	 */
-    @SuppressWarnings("unchecked")
-	public ArrayList<Bill> getPendingBills(
-			int patID) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Bill> pendingBills = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try{
-			jpa.beginTransaction();
+	public ArrayList<Bill> getPendingBills(int patID) throws OHException {
+		if (patID != 0)
+			return new ArrayList<Bill>(billRepository.findByStatusAndPatient_codeOrderByDateDesc("O", patID));
 
-			String query = "SELECT * FROM BILLS" +
-					" WHERE BLL_STATUS = 'O'";
-			if (patID != 0) 
-			{
-				query = query + " AND BLL_ID_PAT = ?";
-			}
-			query = query + " ORDER BY BLL_DATE DESC";		
-			jpa.createQuery(query, Bill.class, false);
-			if (patID != 0) 
-			{
-				params.add(patID);
-				jpa.setParameters(params, false);
-			}
-			List<Bill> billList = (List<Bill>)jpa.getList();
-			pendingBills = new ArrayList<Bill>(billList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return pendingBills;
+		return new ArrayList<Bill>(billRepository.findByStatusOrderByDateDesc("O"));
 	}
 	
 	/**
@@ -65,27 +47,8 @@ public class AccountingIoOperations {
 	 * @return a list of bills.
 	 * @throws OHException if an error occurs retrieving the bills.
 	 */
-    @SuppressWarnings("unchecked")
-	public ArrayList<Bill> getBills() throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Bill> bills = null;
-				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM BILLS ORDER BY BLL_DATE DESC";
-			jpa.createQuery(query, Bill.class, false);
-			List<Bill> billList = (List<Bill>)jpa.getList();
-			bills = new ArrayList<Bill>(billList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return bills;
+	public ArrayList<Bill> getBills() throws OHException {
+		return new ArrayList<Bill>(billRepository.findAllByOrderByDateDesc());
 	}
 	
 	/**
@@ -94,24 +57,8 @@ public class AccountingIoOperations {
 	 * @return the {@link Bill}.
 	 * @throws OHException if an error occurs retrieving the bill.
 	 */
-	public Bill getBill(
-			int billID) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		Bill bill = null;
-				
-		try{
-			jpa.beginTransaction();
-
-			bill = (Bill)jpa.find(Bill.class, billID); 
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return bill;
+	public Bill getBill(int billID) throws OHException {
+		return billRepository.findOne(billID);
 	}
 
 	/**
@@ -119,27 +66,9 @@ public class AccountingIoOperations {
 	 * @return a list of user id.
 	 * @throws OHException if an error occurs retrieving the users list.
 	 */
-    @SuppressWarnings("unchecked")
-	public ArrayList<String> getUsers() throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<String> userIds = null;
-				
-		try{
-			jpa.beginTransaction();
+    public ArrayList<String> getUsers() throws OHException {
 
-			String query = "SELECT DISTINCT(BLP_USR_ID_A) FROM BILLPAYMENTS ORDER BY BLP_USR_ID_A ASC";
-			jpa.createQuery(query, null, false);
-			List<String> userIdList = (List<String>)jpa.getList();
-			userIds = new ArrayList<String>(userIdList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return userIds;
+		return new ArrayList<String>(billPaymentRepository.findUserDistinctByOrderByUserAsc());
 	}
 
 	/**
@@ -149,39 +78,20 @@ public class AccountingIoOperations {
 	 * @return a list of {@link BillItems} associated to the bill id or all the stored bill items.
 	 * @throws OHException if an error occurs retrieving the bill items.
 	 */
-    @SuppressWarnings("unchecked")
-	public ArrayList<BillItems> getItems(
-			int billID) throws OHException 
-	{		
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<BillItems> pendingBillItems = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM BILLITEMS";
-			if (billID != 0) 
-			{
-				query = query + " WHERE BLI_ID_BILL = ?";
-			}
-			query = query + " ORDER BY BLI_ID ASC";		
-			jpa.createQuery(query, BillItems.class, false);
-			if (billID != 0) 
-			{
-				params.add(billID);
-				jpa.setParameters(params, false);
-			}
-			List<BillItems> billItemList = (List<BillItems>)jpa.getList();
-			pendingBillItems = new ArrayList<BillItems>(billItemList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
+	public ArrayList<BillItems> getItems(int billID) throws OHException {
+		ArrayList<BillItems> billItems = null;
+		
+		
+		if (billID != 0)
+		{
+			billItems = new ArrayList<BillItems>(billItemsRepository.findByBill_idOrderByIdAsc(billID));			
 		}
-		return pendingBillItems;
+		else
+		{
+			billItems = new ArrayList<BillItems>(billItemsRepository.findAllByOrderByIdAsc()); 
+		}
+
+		return billItems;
 	}
 
 	/**
@@ -191,35 +101,12 @@ public class AccountingIoOperations {
 	 * @return a list of {@link BillPayments} for the specified date range.
 	 * @throws OHException if an error occurs retrieving the bill payments.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<BillPayments> getPayments(
-			GregorianCalendar dateFrom, 
-			GregorianCalendar dateTo) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<BillPayments> payments = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try{
-			jpa.beginTransaction();
+		GregorianCalendar dateFrom, 
+		GregorianCalendar dateTo) throws OHException {
 
-			String query = "SELECT * FROM BILLPAYMENTS" +
-					" WHERE DATE(BLP_DATE) BETWEEN ? AND ?" +
-					" ORDER BY BLP_ID_BILL, BLP_DATE ASC";
-			jpa.createQuery(query, BillPayments.class, false);
-			params.add(new Timestamp(dateFrom.getTime().getTime()));
-			params.add(new Timestamp(dateTo.getTime().getTime()));
-			jpa.setParameters(params, false);
-			List<BillPayments> billPaymentList = (List<BillPayments>)jpa.getList();
-			payments = new ArrayList<BillPayments>(billPaymentList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return payments;
+		return new ArrayList<BillPayments>(
+			billPaymentRepository.findByDateBetweenOrderByIdAscDateAsc(dateFrom.getTime(), dateTo.getTime()));
 	}
 
 	/**
@@ -229,38 +116,20 @@ public class AccountingIoOperations {
 	 * @return the list of bill payments.
 	 * @throws OHException if an error occurs retrieving the bill payments.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<BillPayments> getPayments(
 			int billID) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+	{ 
 		ArrayList<BillPayments> payments = null;
-		ArrayList<Object> params = new ArrayList<Object>();
 				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM BILLPAYMENTS";
-			if (billID != 0) 
-			{
-				query = query + " WHERE BLP_ID_BILL = ?";
-			}
-			query = query + " ORDER BY BLP_ID_BILL, BLP_DATE ASC";		
-			jpa.createQuery(query, BillPayments.class, false);
-			if (billID != 0) 
-			{
-				params.add(billID);
-				jpa.setParameters(params, false);
-			}
-			List<BillPayments> billPaymentList = (List<BillPayments>)jpa.getList();
-			payments = new ArrayList<BillPayments>(billPaymentList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
+		if (billID != 0) 
+		{
+			payments = (ArrayList<BillPayments>) billPaymentRepository.findAllWherBillIdByOrderByBillAndDate(billID);
 		}
+		else
+		{
+			payments = (ArrayList<BillPayments>) billPaymentRepository.findAllByOrderByBillAndDate();
+		}
+		
 		return payments;
 	}
 
@@ -290,21 +159,9 @@ public class AccountingIoOperations {
 	 * @return the generated {@link Bill} id.
 	 * @throws OHException if an error occurs storing the bill.
 	 */
-	public int newBill(
-			Bill newBill) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		
-		try{
-			jpa.beginTransaction();	
-			jpa.persist(newBill);
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return newBill.getId();		
+	public int newBill(Bill newBill) throws OHException {
+
+		return billRepository.save(newBill).getId();
 	}
 
 	/**
@@ -318,81 +175,46 @@ public class AccountingIoOperations {
 			Bill bill,
 			ArrayList<BillItems> billItems) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 		
 		
-		result = _deleteBillsInsideBillItems(jpa, bill.getId());
+		result = _deleteBillsInsideBillItems(bill.getId());
 		
-		result &= _insertNewBillInsideBillItems(jpa, bill, billItems);
+		result &= _insertNewBillInsideBillItems(bill, billItems);
 
 		return result;
 	}
 	
 	private boolean _deleteBillsInsideBillItems(
-			DbJpaUtil jpa,
 			int id) throws OHException 
     {	
-		ArrayList<Object> params = new ArrayList<Object>();
-
-		try {
-			jpa.beginTransaction();		
-			jpa.createQuery("DELETE FROM BILLITEMS WHERE BLI_ID_BILL = ?", BillItems.class, false);
-			params.add(id);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-			jpa.commitTransaction();	
-		}  catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw  e;
-		} 	
-
-        return true;
+		boolean result = true;
+        		
+		
+		billItemsRepository.deleteWhereId(id);
+		
+        return result;
     }
 	
 	private boolean _insertNewBillInsideBillItems(
-			DbJpaUtil jpa,
 			Bill bill,
 			ArrayList<BillItems> billItems) throws OHException 
     {	
-		ArrayList<Object> params = new ArrayList<Object>();
+		boolean result = true;
+        		
 		
 		for (BillItems item : billItems) 
 		{
-			try {
-				jpa.beginTransaction();		
-				String query = "INSERT INTO BILLITEMS (" +
-								"BLI_ID_BILL, BLI_IS_PRICE, BLI_ID_PRICE, BLI_ITEM_DESC, BLI_ITEM_AMOUNT, BLI_QTY) "+
-								"VALUES (?,?,?,?,?,?)";
-				jpa.createQuery(query, BillItems.class, false);
-				params = _addUpdateBillItemParameters(bill, item);
-				jpa.setParameters(params, false);
-				jpa.executeUpdate();
-				jpa.commitTransaction();
-			}  catch (OHException e) {
-				jpa.rollbackTransaction();
-				throw e;
-			} 	
-		}		
+			billItemsRepository.insertBillItem(
+				bill.getId(),
+				item.isPrice(),
+				item.getPriceID(),
+				item.getItemDescription(),
+				item.getItemAmount(),
+				item.getItemQuantity());
+		}
 		
-        return true;
-    }
-	
-	private ArrayList<Object> _addUpdateBillItemParameters(
-			Bill bill, 
-			BillItems item) throws OHException 
-    {	
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-
-		params.add(bill.getId());
-		params.add(item.isPrice());
-		params.add(item.getPriceID());
-		params.add(item.getItemDescription());
-		params.add(item.getItemAmount());
-		params.add(item.getItemQuantity());
-        		
-        return params;
+		return result;
     }
 	
 	/**
@@ -406,76 +228,45 @@ public class AccountingIoOperations {
 			Bill bill, 
 			ArrayList<BillPayments> payItems) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
 		boolean result = true;
 		
 		
-		result = _deleteBillsInsideBillPayments(jpa, bill.getId());
+		result = _deleteBillsInsideBillPayments(bill.getId());
 		
-		result &= _insertNewBillInsideBillPayments(jpa, bill, payItems);
+		result &= _insertNewBillInsideBillPayments(bill, payItems);
 
 		return result;
 	}
 	
 	private boolean _deleteBillsInsideBillPayments(
-			DbJpaUtil jpa,
 			int id) throws OHException 
     {	
-		ArrayList<Object> params = new ArrayList<Object>();
-		try {
-			jpa.beginTransaction();		
-			jpa.createQuery("DELETE FROM BILLPAYMENTS WHERE BLP_ID_BILL = ?", BillPayments.class, false);
-			params.add(id);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-			jpa.commitTransaction();	
-		}  catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
-        return true;
+		boolean result = true;
+        		
+		
+		billPaymentRepository.deleteWhereId(id);
+		
+        return result;
     }
 	
 	private boolean _insertNewBillInsideBillPayments(
-			DbJpaUtil jpa,
 			Bill bill,
 			ArrayList<BillPayments> billPayments) throws OHException 
     {	
-		ArrayList<Object> params = new ArrayList<Object>();
+
+		boolean result = true;
+        		
 		
 		for (BillPayments payment : billPayments) 
 		{
-			try {
-				jpa.beginTransaction();		
-				String query = "INSERT INTO BILLPAYMENTS (" +
-						"BLP_ID_BILL, BLP_DATE, BLP_AMOUNT, BLP_USR_ID_A) " +
-						"VALUES (?,?,?,?)";
-				jpa.createQuery(query, BillPayments.class, false);
-				params = _addUpdateBillPaymentParameters(bill, payment);
-				jpa.setParameters(params, false);
-				jpa.executeUpdate();
-				jpa.commitTransaction();
-			}  catch (OHException e) {
-				jpa.rollbackTransaction();
-				throw e;
-			} 	
-		}		
-        return true;
-    }
-	
-	private ArrayList<Object> _addUpdateBillPaymentParameters(
-			Bill bill, 
-			BillPayments payment) throws OHException 
-    {	
-		ArrayList<Object> params = new ArrayList<Object>();
+			billPaymentRepository.insertBillPayment(
+				bill.getId(),
+				payment.getDate(),
+				payment.getAmount(),
+				payment.getUser());
+		}
 		
-
-		params.add(bill.getId());
-		params.add(payment.getDate());
-		params.add(payment.getAmount());
-		params.add(payment.getUser());
-        		
-        return params;
+		return result;
     }
 	
 	/**
@@ -487,58 +278,14 @@ public class AccountingIoOperations {
 	public boolean updateBill(
 			Bill updateBill) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
-		ArrayList<Object> params = new ArrayList<Object>();
-		try {
-			jpa.beginTransaction();		
-			String query = "UPDATE BILLS SET " +
-							"BLL_DATE = ?, " +
-							"BLL_UPDATE = ?, " +
-							"BLL_IS_LST = ?, " +
-							"BLL_ID_LST = ?, " +
-							"BLL_LST_NAME = ?, " +
-							"BLL_IS_PAT = ?, " +
-							"BLL_ID_PAT = ?, " +
-							"BLL_PAT_NAME = ?, " +
-							"BLL_STATUS = ?, " +
-							"BLL_AMOUNT = ?, " +
-							"BLL_BALANCE = ?, " +
-							"BLL_USR_ID_A = ? " +
-							"WHERE BLL_ID = ?";
-			jpa.createQuery(query, Bill.class, false);
-			params = _addUpdateBillParameters(updateBill);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
-		return true;
-	}
+		boolean result = true;
 	
-	private ArrayList<Object> _addUpdateBillParameters(
-			Bill bill) throws OHException 
-    {	
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-			
-		params.add(bill.getDate());
-		params.add(bill.getUpdate());
-		params.add(bill.isList());
-		params.add(bill.getList().getId());
-		params.add(bill.getListName());
-		params.add(bill.isPatient());			
-		params.add(bill.getPatient().getCode());
-		params.add(bill.getPatName());
-		params.add(bill.getStatus());
-		params.add(bill.getAmount());
-		params.add(bill.getBalance());
-		params.add(bill.getUser());
-		params.add(bill.getId());
-        		
-        return params;
-    }
+
+		Bill savedBill = billRepository.save(updateBill);
+		result = (savedBill != null);
+				
+		return result;
+	}
 
 	/**
 	 * Deletes the specified {@link Bill}.
@@ -549,21 +296,12 @@ public class AccountingIoOperations {
 	public boolean deleteBill(
 			Bill deleteBill) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
-		ArrayList<Object> params = new ArrayList<Object>();
-		try {
-			jpa.beginTransaction();		
-			String query = "UPDATE BILLS SET BLL_STATUS = 'D' WHERE BLL_ID = ?";
-			jpa.createQuery(query, Bill.class, false);
-			params.add(deleteBill.getId());
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
-		return true;
+		boolean result = true;
+        		
+		
+		billRepository.updateDeleteWhereId(deleteBill.getId());
+		
+		return result;
 	}
 
 	/**
@@ -573,32 +311,15 @@ public class AccountingIoOperations {
 	 * @return a list of retrieved {@link Bill}s.
 	 * @throws OHException if an error occurs retrieving the bill list.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<Bill> getBills(
 			GregorianCalendar dateFrom, 
 			GregorianCalendar dateTo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Bill> bills = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try{
-			jpa.beginTransaction();
+		ArrayList<Bill> bills = (ArrayList<Bill>) billRepository.findAllWhereDates(
+				new Timestamp(dateFrom.getTime().getTime()),
+				new Timestamp(dateTo.getTime().getTime()));
+		
 
-			String query = "SELECT * FROM BILLS WHERE DATE(BLL_DATE) BETWEEN ? AND ?";	
-			jpa.createQuery(query, Bill.class, false);
-			params.add(new Timestamp(dateFrom.getTime().getTime()));
-			params.add(new Timestamp(dateTo.getTime().getTime()));
-			jpa.setParameters(params, false);
-			List<Bill> billList = (List<Bill>)jpa.getList();
-			bills = new ArrayList<Bill>(billList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
 		return bills;
 	}
 
@@ -608,44 +329,24 @@ public class AccountingIoOperations {
 	 * @return a list of {@link Bill} associated to the passed {@link BillPayments}.
 	 * @throws OHException if an error occurs retrieving the bill list.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<Bill> getBills(
 			ArrayList<BillPayments> payments) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Bill> bills = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM BILLS WHERE BLL_ID IN ( ";	
-			for (int i = 0; i < payments.size(); i++) 
-			{
-				BillPayments payment = payments.get(i);
-				if (i == payments.size() - 1) 
-				{
-					query = query + "?";
-				} 
-				else 
-				{
-					query = query + "?, ";
-				}
-				params.add(payment.getBill().getId());
-			}
-			query = query + ")";
-			jpa.createQuery(query, Bill.class, false);
-			jpa.setParameters(params, false);
-			List<Bill> billList = (List<Bill>)jpa.getList();
-			bills = new ArrayList<Bill>(billList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
+		ArrayList<Integer> pBillCode = null;
+		ArrayList<Bill> pBill = new ArrayList<Bill>();
+		
+		
+		pBillCode = new ArrayList<Integer>(billRepository.findAllByPayments(payments));			
+		for (int i=0; i<pBillCode.size(); i++)
+		{
+			Integer code = pBillCode.get(i);
+			Bill bill = billRepository.findOne(code);
+			
+			
+			pBill.add(i, bill);
 		}
-		return bills;
+		
+		return pBill;
 	}
 
 	/**
@@ -654,37 +355,24 @@ public class AccountingIoOperations {
 	 * @return a list of {@link BillPayments} associated to the passed bill list.
 	 * @throws OHException if an error occurs retrieving the payments.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<BillPayments> getPayments(
 			ArrayList<Bill> bills) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<BillPayments> payments = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try{
-			jpa.beginTransaction();
 
-			String query = "SELECT * FROM BILLPAYMENTS WHERE BLP_ID_BILL IN (''";	
-			if (bills!=null) {
-				for (Bill bill:bills) 
-				{
-					query = query + ", ?";
-					params.add(bill.getId());
-				}
-			}
-			query = query + ")";
-			jpa.createQuery(query, BillPayments.class, false);
-			jpa.setParameters(params, false);
-			List<BillPayments> paymentList = (List<BillPayments>)jpa.getList();
-			payments = new ArrayList<BillPayments>(paymentList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
+		ArrayList<Integer> pPaymentCode = null;
+		ArrayList<BillPayments> pPayment = new ArrayList<BillPayments>();
+		
+		
+		pPaymentCode = new ArrayList<Integer>(billPaymentRepository.findAllByBills(bills));			
+		for (int i=0; i<pPaymentCode.size(); i++)
+		{
+			Integer code = pPaymentCode.get(i);
+			BillPayments payment = billPaymentRepository.findOne(code);
+			
+			
+			pPayment.add(i, payment);
 		}
-		return payments;
+		
+		return pPayment;
 	}
 }

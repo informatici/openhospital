@@ -219,7 +219,7 @@ public class DiseaseTypeBrowserEdit extends JDialog{
 							if (manager.codeControl(key)){
 								JOptionPane.showMessageDialog(				
 										null,
-										MessageBundle.getMessage("angal.distype.codealreadyinuse"),
+										MessageBundle.getMessage("angal.common.codealreadyinuse"),
 										MessageBundle.getMessage("angal.hospital"),
 										JOptionPane.PLAIN_MESSAGE);
 								codeTextField.setText("");

@@ -29,7 +29,7 @@ public class VideoManager {
 	
 	public static void init()	{
 		shotPhotosTempDir = System.getProperty("java.io.tmpdir");
-		// aggiunge lo slash finale se manca
+		// Adds the file separator if missing
 		if ( !(shotPhotosTempDir.endsWith("/") || shotPhotosTempDir.endsWith("\\")) )
 			shotPhotosTempDir += System.getProperty("file.separator");
 	}
@@ -128,13 +128,12 @@ public class VideoManager {
 		String path = "";
 		
 		try {
-			// crea un file temporaneo per la foto scattata
+			// Creates a temp file for the photo image
 			File tempFile = File.createTempFile(filename, extension);
 			tempFile.deleteOnExit();
 			
-			// il metodo createTempFile aggiunge un suffisso numerico al nome del file,
-			// ci interessa conoscere quindi il nome reale del file creato per passarlo
-			// a saveCurrentFrame
+			// The method createTempFile prefixs the filename with a number
+			// We need the final filename to pass to saveCurrentFrame method
 			generatedFileName = tempFile.getName().replace(extension, "");
 			
 			String tempDir = VideoManager.shotPhotosTempDir;

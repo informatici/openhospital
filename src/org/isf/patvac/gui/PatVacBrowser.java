@@ -402,14 +402,14 @@ public class PatVacBrowser extends ModalJFrame {
 		datePanel.setLayout(new BoxLayout(datePanel, BoxLayout.Y_AXIS));
 
 		JPanel label1Panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		label1Panel.add(new JLabel(MessageBundle.getMessage("angal.common.date") +": "+ MessageBundle.getMessage("angal.patvac.from")), null);
+		label1Panel.add(new JLabel(MessageBundle.getMessage("angal.common.date") +": "+ MessageBundle.getMessage("angal.common.from")), null);
 		datePanel.add(label1Panel);
 		
 		label1Panel.add(getDateFromPanel());
 		datePanel.add(label1Panel,null);
 		
 		label1Panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		label1Panel.add(new JLabel(MessageBundle.getMessage("angal.common.date") +": "+MessageBundle.getMessage("angal.patvac.to") +"     "), null);
+		label1Panel.add(new JLabel(MessageBundle.getMessage("angal.common.date") +": "+MessageBundle.getMessage("angal.common.to") +"     "), null);
 		datePanel.add(label1Panel);
 		
 		label1Panel.add(getDateToPanel());

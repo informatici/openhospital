@@ -1749,7 +1749,6 @@ public class PatientInsertExtended extends JDialog {
 						.append(patient.getCode())
 						.append(")");
 				jDataContainPanel = setMyBorderCenter(jDataContainPanel, title.toString());
-
 			} else {
 				//int nextcode = manager.getNextPatientCode();
 				jDataContainPanel = setMyBorderCenter(jDataContainPanel, MessageBundle.getMessage("angal.patient.insertdataofnewpatient"));

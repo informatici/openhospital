@@ -28,7 +28,7 @@ public class LabRowManager {
 	 */
 	public ArrayList<LaboratoryRow> getLabRowByLabId(Integer code) throws OHServiceException{
 		try {
-			return ioOperations.getLabRowByLabId(code);
+			return ioOperations.getLabRow(code);
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));

@@ -1,11 +1,5 @@
 package org.isf.admission.service;
 
-import java.awt.Image;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.sql.Blob;
-import java.sql.SQLException;
-
 /*----------------------------------------------------------
  * modification history
  * ====================
@@ -27,31 +21,42 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
 import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
 import org.isf.admtype.model.AdmissionType;
+import org.isf.admtype.service.AdmissionTypeIoOperationRepository;
 import org.isf.disctype.model.DischargeType;
+import org.isf.disctype.service.DischargeTypeIoOperationRepository;
 import org.isf.generaldata.GeneralData;
 import org.isf.patient.model.Patient;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.patient.service.PatientIoOperationRepository;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class AdmissionIoOperations 
 {
+	@Autowired
+	private AdmissionIoOperationRepository repository;
+	@Autowired
+	private AdmissionTypeIoOperationRepository typeRepository;
+	@Autowired
+	private DischargeTypeIoOperationRepository dischargeRepository;
+	@Autowired
+	private PatientIoOperationRepository patientRepository;
+	
 	/**
 	 * Returns all patients with ward in which they are admitted.
 	 * @return the patient list with associated ward.
 	 * @throws OHException if an error occurs during database request.
-	 * @throws SQLException 
-	 * @throws IOException 
 	 */
-	public ArrayList<AdmittedPatient> getAdmittedPatients() throws OHException, IOException, SQLException {
+	public ArrayList<AdmittedPatient> getAdmittedPatients() throws OHException {
 		return getAdmittedPatients(null);
 	}
 
@@ -60,121 +65,29 @@ public class AdmissionIoOperations
 	 * @param searchTerms the search terms to use for filter the patient list, <code>null</code> if no filter have to be applied.
 	 * @return the filtered patient list.
 	 * @throws OHException if an error occurs during database request.
-	 * @throws IOException 
-	 * @throws SQLException 
 	 */
-    @SuppressWarnings({ "unchecked" })
 	public ArrayList<AdmittedPatient> getAdmittedPatients(
-			String searchTerms) throws OHException, IOException, SQLException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-		try{
-			jpa.beginTransaction();
-
-			String[] terms = _calculateAdmittedPatientsTerms(searchTerms);
-			String query = _calculateAdmittedPatientsQuery(terms);
-			params = _calculateAdmittedPatientParameters(terms);
-
-			Query q = jpa.getEntityManager().createNativeQuery(query,"AdmittedPatient");
-			//jpa.createQuery(query, null, false);
-			//jpa.setParameters(params, false);
-			try {
-				for (int i=0; i < params.size(); i++) 
-				{
-					q.setParameter((i + 1), params.get(i));	
-	    		}
-			} catch (IllegalArgumentException e) {
-				jpa.rollbackTransaction();
-				throw e;
-			}
-			List<Object[]> admittedPatientsList = (List<Object[]>)q.getResultList();
-			Iterator<Object[]> it = admittedPatientsList.iterator();
-			while (it.hasNext()) {
-				Object[] object = it.next();
-				Patient patient = (Patient) object[0];
-				Blob photoBlob = patient.getBlobPhoto();
-				if (photoBlob != null) {
-					BufferedInputStream is = new BufferedInputStream(photoBlob.getBinaryStream());
-					Image image = ImageIO.read(is);
-					patient.setPhoto(image);
-				} else {
-					patient.setPhoto(null);
-				}
-				Admission admission = (Admission) object[1];
-				AdmittedPatient admittedPatient = new AdmittedPatient(patient, admission);
-				admittedPatients.add(admittedPatient);
-			}
-
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return admittedPatients;
-	}
-    
-    private String[] _calculateAdmittedPatientsTerms(
 			String searchTerms) throws OHException 
 	{
-    	String[] terms = null;
-    	
-    	
-    	if (searchTerms != null && !searchTerms.isEmpty()) 
-		{
-			searchTerms = searchTerms.trim().toLowerCase();
-			terms = searchTerms.split(" ");
-		}
-    	
-    	return terms;
-	}
-    
-    @SuppressWarnings("unused") 
-    private String _calculateAdmittedPatientsQuery(
-    		String[] terms) throws OHException 
-	{
-    	String query = null;	
-
-    	
-    	query = "SELECT PAT.*, ADM.* " +
-    			"FROM PATIENT PAT LEFT JOIN " +
-    			"(SELECT * FROM ADMISSION WHERE (ADM_DELETED='N' or ADM_DELETED is null) AND ADM_IN = 1) ADM " +
-    			"ON ADM.ADM_PAT_ID = PAT.PAT_ID " +
-    			"WHERE (PAT.PAT_DELETED='N' or PAT.PAT_DELETED is null) ";
-    	if (terms != null) 
-		{
-			for (String term:terms) 
-			{
-				query += " AND CONCAT(PAT_ID, LOWER(PAT_SNAME), LOWER(PAT_FNAME), LOWER(PAT_NOTE), LOWER(PAT_TAXCODE)) LIKE ?";
-			}
-		}
-		query += " ORDER BY PAT_ID DESC";
-    	
-    	return query;
-	}
-		
-    private ArrayList<Object> _calculateAdmittedPatientParameters(
-    		String[] terms) throws OHException 
-	{
-		ArrayList<Object> params = new ArrayList<Object>();
+		ArrayList<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
+		List<Object[]> admittedPatientsList = (List<Object[]>)repository.findAllBySearch(searchTerms);
+		Iterator<Object[]> it = admittedPatientsList.iterator();
 		
 		
-    	if (terms != null) 
-		{
-			for (String term:terms) 
-			{
-				String parameter = "%" + term + "%";
+		while (it.hasNext()) {
+			Object[] object = it.next();
+			Patient patient = patientRepository.findOne((Integer)object[0]);
+			Admission admission = null;
+			Integer admissionId = (Integer)object[26];
+			if (admissionId != null) admission = repository.findOne((Integer)object[26]);
 			
-				
-				params.add(parameter);
-			}
+					
+			AdmittedPatient admittedPatient = new AdmittedPatient(patient, admission);
+			admittedPatients.add(admittedPatient);
 		}
-    	
-    	return params;
-	}	
+
+		return admittedPatients;
+	}
 
 	/**
 	 * Returns the only one admission without dimission date (or null if none) for the specified patient.
@@ -184,30 +97,10 @@ public class AdmissionIoOperations
 	 */
 	public Admission getCurrentAdmission(
 			Patient patient) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		Admission admission = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
+	{ 
+		Admission admission = repository.findAllWherePatient(patient.getCode()).get(0);
 		
-		try {
-			jpa.beginTransaction();
-			
-			String query = "SELECT * FROM ADMISSION WHERE ADM_PAT_ID=? AND ADM_DELETED='N' AND ADM_DATE_DIS IS NULL";
-			jpa.createQuery(query, Admission.class, false);
-			params.add(patient.getCode());
-			jpa.setParameters(params, false);
-			admission = (Admission)jpa.getResult();		
-			jpa.commitTransaction();
-			
-		} catch (Exception e) {
-			jpa.rollbackTransaction();
-			if (e.getCause().getClass().equals(NoResultException.class))
-				return null;
-			else throw new OHException(e.getCause().getMessage(), e.getCause());
-		} finally {
-		}
-
+		
 		return admission;
 	}
 
@@ -220,25 +113,9 @@ public class AdmissionIoOperations
 	public Admission getAdmission(
 			int id) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		Admission admission = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM ADMISSION WHERE ADM_ID=?";
-			jpa.createQuery(query, Admission.class, false);
-			params.add(id);
-			jpa.setParameters(params, false);
-			admission = (Admission)jpa.getResult();		
-
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
+		Admission admission = repository.findOne(id);
+		
+		
 		return admission;
 	}
 
@@ -248,30 +125,12 @@ public class AdmissionIoOperations
 	 * @return the admission list.
 	 * @throws OHException if an error occurs during database request.
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<Admission> getAdmissions(
 			Patient patient) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Admission> padmission = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM ADMISSION WHERE ADM_PAT_ID=? and ADM_DELETED='N' ORDER BY ADM_DATE_ADM ASC";
-			jpa.createQuery(query, Admission.class, false);
-			params.add(patient.getCode());
-			jpa.setParameters(params, false);
-			List<Admission> admissionList = (List<Admission>)jpa.getList();
-			padmission = new ArrayList<Admission>(admissionList);			
-
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
+		ArrayList<Admission> padmission = (ArrayList<Admission>) repository.findAllWherePatientByOrderByDate(patient.getCode());
+	
+		
 		return padmission;
 	}
 	
@@ -284,18 +143,12 @@ public class AdmissionIoOperations
 	public boolean newAdmission(
 			Admission admission) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
+
+		Admission savedAdmission = repository.save(admission);
+		result = (savedAdmission != null);
 		
-		try{
-			jpa.beginTransaction();	
-			jpa.persist(admission);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
 		return result;
 	}
 
@@ -322,22 +175,15 @@ public class AdmissionIoOperations
 	public boolean hasAdmissionModified(
 			Admission admission) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = false;
 				
-		try{
-			jpa.beginTransaction();	
-			Admission foundAdmission = (Admission)jpa.find(Admission.class, admission.getId()); 
-			if (foundAdmission.getLock() != admission.getLock())
-			{
-				result = true;
-			}		
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
+		
+		Admission foundAdmission = repository.findOne(admission.getId()); 
+		if (foundAdmission.getLock() != admission.getLock())
+		{
+			result = true;
+		}		
+
 		return result;
 	}
 
@@ -350,18 +196,12 @@ public class AdmissionIoOperations
 	public boolean updateAdmission(
 			Admission admission) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
 
-		try{
-			jpa.beginTransaction();	
-			jpa.merge(admission);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
+		Admission savedAdmission = repository.save(admission);
+		result = (savedAdmission != null);
+		
 		return result;
 	}
 
@@ -370,26 +210,11 @@ public class AdmissionIoOperations
 	 * @return the admission types.
 	 * @throws OHException 
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<AdmissionType> getAdmissionType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<AdmissionType> padmissiontype = null;
-				
-		try{
-			jpa.beginTransaction();
+		ArrayList<AdmissionType> padmissiontype = (ArrayList<AdmissionType>) typeRepository.findAll();
 
-			String query = "SELECT * FROM ADMISSIONTYPE";
-			jpa.createQuery(query, AdmissionType.class, false);
-			List<AdmissionType> admissionTypeList = (List<AdmissionType>)jpa.getList();
-			padmissiontype = new ArrayList<AdmissionType>(admissionTypeList);			
-
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
+		
 		return padmissiontype;
 	}
 
@@ -398,26 +223,10 @@ public class AdmissionIoOperations
 	 * @return the discharge types.
 	 * @throws OHException 
 	 */
-    @SuppressWarnings("unchecked")
 	public ArrayList<DischargeType> getDischargeType() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<DischargeType> dischargeTypes = null;
+		ArrayList<DischargeType> dischargeTypes = (ArrayList<DischargeType>) dischargeRepository.findAll();
 				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM DISCHARGETYPE";
-			jpa.createQuery(query, DischargeType.class, false);
-			List<DischargeType> dischargeList = (List<DischargeType>)jpa.getList();
-			dischargeTypes = new ArrayList<DischargeType>(dischargeList);			
-
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
 		return dischargeTypes;
 	}
 
@@ -428,50 +237,14 @@ public class AdmissionIoOperations
 	 * @return the next prog.
 	 * @throws OHException if an error occurs retrieving the value.
 	 */
-	@SuppressWarnings("unchecked")
 	public int getNextYProg(
 			String wardId) throws OHException 
 	{
 		int next = 1;
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-		String query = "SELECT * FROM ADMISSION " +
-				"WHERE ADM_WRD_ID_A=? AND ADM_DATE_ADM >= ? AND ADM_DATE_ADM <= ? AND ADM_DELETED='N' " +
-				"ORDER BY ADM_YPROG DESC";
-		
-		try {
-			
-			jpa.beginTransaction();
-			
-			jpa.createQuery(query, Admission.class, false);
-			params = _calculateNextYProgParameters(wardId);
-			jpa.setParameters(params, false);
-			ArrayList<Admission> admissions = (ArrayList<Admission>) jpa.getList();
-			
-			if (admissions != null && !admissions.isEmpty()) { 
-				next = admissions.get(0).getYProg() + 1;
-			}
-				
-			jpa.commitTransaction();
-		} catch (Exception e) {
-			jpa.rollbackTransaction();
-			if (e.getCause().getClass().equals(NoResultException.class))
-				return next;
-			else throw new OHException(e.getCause().getMessage(), e.getCause());
-			
-		}
-		
-		return next;
-	}
-	
-	private ArrayList<Object> _calculateNextYProgParameters(
-			String wardId) throws OHException 
-	{
-		ArrayList<Object> params = new ArrayList<Object>();		
 		GregorianCalendar now = new GregorianCalendar();
 		GregorianCalendar first = null;
 		GregorianCalendar last = null;
+		Admission admission = null;
 		
 		
 		// de Felice - 20/01/2008 - richiesta di james che, per la sola
@@ -500,12 +273,14 @@ public class AdmissionIoOperations
 			first = new GregorianCalendar(now.get(Calendar.YEAR), 0, 1);
 			last = new GregorianCalendar(now.get(Calendar.YEAR), 11, 31);
 		}
-
-		params.add(wardId);
-		params.add(first);
-		params.add(last);
 		
-		return params;
+		admission = repository.findAllWhereWardAndDates(wardId, first, last).get(0);
+		if (admission != null) 
+		{
+			next = admission.getYProg() + 1; 		
+		} 
+		
+		return next;
 	}
 
 	/**
@@ -517,20 +292,14 @@ public class AdmissionIoOperations
 	public boolean setDeleted(
 			int admissionId) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-
-		try{
-			jpa.beginTransaction();	
-			Admission foundAdmission = (Admission)jpa.find(Admission.class, admissionId);  
-			foundAdmission.setDeleted("Y");
-			jpa.merge(foundAdmission);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
+		
+		
+		Admission foundAdmission = repository.findOne(admissionId);  
+		foundAdmission.setDeleted("Y");
+		Admission savedAdmission = repository.save(foundAdmission);
+		result = (savedAdmission != null);    	
+    	
 		return result;
 	}
 
@@ -540,33 +309,11 @@ public class AdmissionIoOperations
 	 * @return the number of used beds.
 	 * @throws OHException if an error occurs retrieving the bed count.
 	 */
-    @SuppressWarnings("unchecked")
 	public int getUsedWardBed(
 			String wardId) throws OHException 
 	{
-    	List<Admission> admissionList;
-    	DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
+    	List<Admission> admissionList = repository.findAllWhereIn1(wardId);
 		
-		String query = "SELECT * FROM ADMISSION WHERE ADM_IN = 1 AND ADM_WRD_ID_A = ? AND ADM_DELETED = 'N'";
-		
-		try {
-			
-			jpa.beginTransaction();
-			
-			jpa.createQuery(query, Admission.class, false);
-			params.add(wardId);
-			jpa.setParameters(params, false);
-			admissionList = (List<Admission>)jpa.getList();		
-			
-			jpa.commitTransaction();
-		} catch (Exception e) {
-			jpa.rollbackTransaction();
-			if (e.getCause().getClass().equals(NoResultException.class))
-				return 0;
-			else throw new OHException(e.getCause().getMessage(), e.getCause());
-			
-		}
 
 		return admissionList.size();
 	}
@@ -580,20 +327,14 @@ public class AdmissionIoOperations
 	public boolean deletePatientPhoto(
 			int patientId) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-
-		try{
-			jpa.beginTransaction();	
-			Patient foundPatient = (Patient)jpa.find(Patient.class, patientId);  
-			foundPatient.setPhoto(null);;
-			jpa.merge(foundPatient);
-			jpa.commitTransaction();
-		}  catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		} 	
+		
+		
+		Patient foundPatient = patientRepository.findOne(patientId);  
+		foundPatient.setPhoto(null);;
+		Patient savedPatient = patientRepository.save(foundPatient);
+		result = (savedPatient != null);    
+		
 		return result;
 	}
 }

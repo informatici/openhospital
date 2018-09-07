@@ -1,6 +1,5 @@
 package org.isf.sms.service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 // Generated 31-gen-2014 15.39.04 by Hibernate Tools 3.4.0.CR1
@@ -9,17 +8,24 @@ import java.util.Date;
 import java.util.List;
 
 import org.isf.sms.model.Sms;
-import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @see org.isf.sms.model.Sms
  * @author Mwithi
  */
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class SmsOperations {
 
+	@Autowired
+	private SmsIoOperationRepository repository;
+	
 	/**
 	 * 
 	 */
@@ -34,26 +40,13 @@ public class SmsOperations {
 	public boolean saveOrUpdate(
 			Sms sms) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
+	
+
+		Sms savedSms = repository.save(sms);
+		result = (savedSms != null);
 		
-		try{
-			jpa.beginTransaction();
-			if (sms.getSmsId() > 0)
-			{
-				jpa.merge(sms);			
-			}
-			else
-			{			
-				jpa.persist(sms);
-			}
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return result;	
+		return result;
 	}
 	
 	/**
@@ -65,18 +58,8 @@ public class SmsOperations {
 	public Sms getByID(
 			int ID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		Sms foundSms = null;
-		
-		try{
-			jpa.beginTransaction();	
-			foundSms = (Sms)jpa.find(Sms.class, ID);
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
+		Sms foundSms = repository.findOne(ID);;
+    	
 		return foundSms;
 	}
 	
@@ -85,35 +68,13 @@ public class SmsOperations {
 	 * @return smsList - the list of {@link Sms}s
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Sms> getAll(
 			Date dateFrom, 
 			Date dateTo) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Sms> sms = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM SMS" +
-					" WHERE DATE(SMS_DATE_SCHED) BETWEEN ? AND ?" +
-					" ORDER BY SMS_DATE_SCHED ASC";
-			jpa.createQuery(query, Sms.class, false);
-			params.add(new Timestamp(dateFrom.getTime()));
-			params.add(new Timestamp(dateTo.getTime()));
-			jpa.setParameters(params, false);
-			List<Sms> smsList = (List<Sms>)jpa.getList();
-			sms = new ArrayList<Sms>(smsList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return sms;
+	{		
+		ArrayList<Sms> smsList = new ArrayList<Sms>(repository.findAllWhereBetweenDatesByOrderDate(dateFrom, dateTo));
+		
+		return smsList;
 	}
 	
 	/**
@@ -121,36 +82,13 @@ public class SmsOperations {
 	 * @return smsList - the list of {@link Sms}s
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Sms> getList(
 			Date dateFrom, 
 			Date dateTo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Sms> sms = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM SMS" +
-					" WHERE DATE(SMS_DATE_SCHED) BETWEEN ? AND ?" +
-					" AND SMS_DATE_SENT IS NULL " +
-					" ORDER BY SMS_DATE_SCHED ASC";
-			jpa.createQuery(query, Sms.class, false);
-			params.add(new Timestamp(dateFrom.getTime()));
-			params.add(new Timestamp(dateTo.getTime()));
-			jpa.setParameters(params, false);
-			List<Sms> smsList = (List<Sms>)jpa.getList();
-			sms = new ArrayList<Sms>(smsList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return sms;
+		ArrayList<Sms> smsList = new ArrayList<Sms>(repository.findAllWhereSentNotNullBetweenDatesByOrderDate(dateFrom, dateTo));
+		
+		return smsList;
 	}
 	
 	/**
@@ -158,29 +96,11 @@ public class SmsOperations {
 	 * @return smsList - the list of {@link Sms}s
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Sms> getList() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Sms> sms = null;
-				
-		try{
-			jpa.beginTransaction();
-
-			String query = "SELECT * FROM SMS" +
-					" WHERE SMS_DATE_SENT IS NULL " +
-					" ORDER BY SMS_DATE_SCHED ASC";
-			jpa.createQuery(query, Sms.class, false);
-			List<Sms> smsList = (List<Sms>)jpa.getList();
-			sms = new ArrayList<Sms>(smsList);			
-
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		return sms;
+		ArrayList<Sms> smsList = new ArrayList<Sms>(repository.findAllWhereSentNotNullByOrderDate());
+		
+		return smsList;
 	}
 
 	/**
@@ -190,19 +110,9 @@ public class SmsOperations {
 	 */
 	public void delete(
 			Sms sms) throws OHException 
-	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
+	{		
+		repository.delete(sms);
 		
-		try{
-			jpa.beginTransaction();
-			Sms objToRemove = (Sms) jpa.find(Sms.class, sms.getSmsId());
-			jpa.remove(objToRemove);
-			jpa.commitTransaction();
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}
 		return;	
 	}
 
@@ -216,27 +126,27 @@ public class SmsOperations {
 			String module, 
 			String moduleID) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
 
-		try {
-			jpa.beginTransaction();		
-
-			String query = "DELETE FROM SMS" +
-					" WHERE SMS_MOD = ? AND SMS_MOD_ID = ?" +
-					" AND SMS_DATE_SENT IS NULL";
-			jpa.createQuery(query, Sms.class, false);
-			params.add(module);
-			params.add(moduleID);
-			jpa.setParameters(params, false);
-			jpa.executeUpdate();
-
-			jpa.commitTransaction();	
-		}catch (OHException e) {
-			//DbJpaUtil managed exception
-			jpa.rollbackTransaction();
-			throw e;
-		}		
+		repository.deleteWhereModuleAndId(module, moduleID);	
+		
         return;
+	}
+
+	/**
+	 * checks if the code is already in use
+	 *
+	 * @param code - the Sms code
+	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
+	 * @throws OHException 
+	 */
+	public boolean isCodePresent(
+			Integer code) throws OHException
+	{
+		boolean result = true;
+	
+		
+		result = repository.exists(code);
+		
+		return result;	
 	}
 }

@@ -807,7 +807,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private JLabel getJLabelTo() {
 		if (jLabelTo == null) {
 			jLabelTo = new JLabel();
-			jLabelTo.setText(MessageBundle.getMessage("angal.medicalstockward.to")); //$NON-NLS-1$
+			jLabelTo.setText(MessageBundle.getMessage("angal.common.to")); //$NON-NLS-1$
 			jLabelTo.setBounds(509, 15, 45, 15);
 		}
 		return jLabelTo;
@@ -816,7 +816,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private JLabel getJLabelFrom() {
 		if (jLabelFrom == null) {
 			jLabelFrom = new JLabel();
-			jLabelFrom.setText(MessageBundle.getMessage("angal.medicalstockward.from")); //$NON-NLS-1$
+			jLabelFrom.setText(MessageBundle.getMessage("angal.common.from")); //$NON-NLS-1$
 			jLabelFrom.setBounds(365, 14, 45, 15);
 		}
 		return jLabelFrom;
@@ -1125,6 +1125,7 @@ public class WardPharmacy extends ModalJFrame implements
 		public DrugsModel() {
 			try {
 				wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
+				System.out.println("Ciao");
 			} catch (OHServiceException e) {
 				OHServiceExceptionUtil.showMessages(e);
 				wardDrugs = new ArrayList<MedicalWard>();
@@ -1144,9 +1145,10 @@ public class WardPharmacy extends ModalJFrame implements
 			}
 			if (c == 0) {
 				try {
+					wardDrug.getMedical();
 					return wardDrug.getMedical().getDescription();
 				} catch (OHException e) {
-					return null;
+					JOptionPane.showMessageDialog(WardPharmacy.this, e.getMessage(), getTitle(), JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			if (c == 1) {
@@ -1221,25 +1223,32 @@ public class WardPharmacy extends ModalJFrame implements
 
 				public void actionPerformed(ActionEvent arg0) {
 					JFileChooser fcExcel = new JFileChooser();
-					FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.csv)","csv");
+					FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
 					fcExcel.setFileFilter(excelFilter);
-					fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);  
+					fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					int index = jTabbedPaneWard.getSelectedIndex();
+					if (index == 0) {
+						fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicalstockward.outcomes") + ".xls"));
+					} else if (index == 1) {
+						fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicalstockward.incomings") + ".xls"));
+					} else if (index == 2) {
+						fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicalstockward.drugs") + ".xls"));
+					}
 					
 					int iRetVal = fcExcel.showSaveDialog(WardPharmacy.this);
 					if(iRetVal == JFileChooser.APPROVE_OPTION) {
 						try {
 							File exportFile = fcExcel.getSelectedFile();
-							if (!exportFile.getName().endsWith("csv")) exportFile = new File(exportFile.getAbsoluteFile() + ".csv");
+							if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
 							
 							ExcelExporter xlsExport = new ExcelExporter();
 							
-							int index = jTabbedPaneWard.getSelectedIndex();
 							if (index == 0) {
-								xlsExport.exportTableToCSV(jTableOutcomes, exportFile);
+								xlsExport.exportTableToExcel(jTableOutcomes, exportFile);
 							} else if (index == 1) {
-								xlsExport.exportTableToCSV(jTableIncomes, exportFile);
+								xlsExport.exportTableToExcel(jTableIncomes, exportFile);
 							} else if (index == 2) {
-								xlsExport.exportTableToCSV(jTableDrugs, exportFile);
+								xlsExport.exportTableToExcel(jTableDrugs, exportFile);
 							}
 							
 						} catch (IOException e) {

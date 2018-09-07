@@ -64,9 +64,7 @@ public class GenericReportMY {
                 if(iRetVal == JFileChooser.APPROVE_OPTION)
                 {
                     File exportFile = fcExcel.getSelectedFile();
-                    FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fcExcel.getFileFilter();
-                    String extension = selectedFilter.getExtensions()[0];
-                    if (!exportFile.getName().endsWith(extension)) exportFile = new File(exportFile.getAbsoluteFile() + "." + extension);
+                    if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
                     jasperReportsManager.getGenericReportMYExcel(month,year,jasperFileName,exportFile.getAbsolutePath());
                 }
 			} else {

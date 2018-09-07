@@ -236,7 +236,7 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 					if (true == codeControl){
 						JOptionPane.showMessageDialog(				
 								null,
-								MessageBundle.getMessage("angal.medstockmovtype.codealreadyinuse"),
+								MessageBundle.getMessage("angal.common.codealreadyinuse"),
 								MessageBundle.getMessage("angal.hospital"),
 								JOptionPane.PLAIN_MESSAGE);
 						codeTextField.setText("");

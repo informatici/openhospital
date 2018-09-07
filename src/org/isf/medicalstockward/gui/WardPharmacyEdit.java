@@ -402,7 +402,7 @@ private JButton getJButtonTrashMedical() {
 
 	private JLabel getJLabelQty() {
 		JLabel jLabelQty= new JLabel();
-		jLabelQty.setText(MessageBundle.getMessage("angal.medicalstockwardedit.quantity")); //$NON-NLS-1$
+		jLabelQty.setText(MessageBundle.getMessage("angal.common.quantity")); //$NON-NLS-1$
 		return jLabelQty;
 	}
 

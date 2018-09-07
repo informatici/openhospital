@@ -235,7 +235,7 @@ public class ExamTypeEdit extends JDialog{
 						if (true == found) {
 							JOptionPane.showMessageDialog(				
 									null,
-									MessageBundle.getMessage("angal.exatype.codealreadyinuse"),
+									MessageBundle.getMessage("angal.common.codealreadyinuse"),
 									MessageBundle.getMessage("angal.hospital"),
 									JOptionPane.PLAIN_MESSAGE);
 							codeTextField.setText("");

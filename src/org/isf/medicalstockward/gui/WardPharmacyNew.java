@@ -95,9 +95,9 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 		jButtonPickPatient.setText(MessageBundle.getMessage("angal.medicalstockwardedit.changepatient")); //$NON-NLS-1$
 		jButtonPickPatient.setToolTipText(MessageBundle.getMessage("angal.medicalstockwardedit.changethepatientassociatedwiththismovement")); //$NON-NLS-1$
 		jButtonTrashPatient.setEnabled(true);
-		if (patientSelected.getWeight() == 0) {
-			JOptionPane.showMessageDialog(WardPharmacyNew.this, MessageBundle.getMessage("angal.medicalstockwardedit.theselectedpatienthasnoweightdefined"));
-		}
+//		if (patientSelected.getWeight() == 0) {
+//			JOptionPane.showMessageDialog(WardPharmacyNew.this, MessageBundle.getMessage("angal.medicalstockwardedit.theselectedpatienthasnoweightdefined"));
+//		}
 	}
 	
 	private static final long serialVersionUID = 1L;
@@ -124,7 +124,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 	private Ward wardSelected;
 	private Object[] medClasses = {Medical.class, Integer.class};
 	private String[] medColumnNames = {MessageBundle.getMessage("angal.medicalstockward.medical"), 
-									   MessageBundle.getMessage("angal.medicalstockward.quantity")};
+									   MessageBundle.getMessage("angal.common.quantity")};
 	private Integer[] medWidth = {200, 150};
 	private boolean[] medResizable = {true, false};
 	
@@ -275,7 +275,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 						
 						int r = JOptionPane.showConfirmDialog(WardPharmacyNew.this, 
 								new Object[] { messageBld.toString(), jSpinnerQty },
-								MessageBundle.getMessage("angal.medicalstockwardedit.quantity"),
+								MessageBundle.getMessage("angal.common.quantity"),
 				        		JOptionPane.OK_CANCEL_OPTION, 
 				        		JOptionPane.PLAIN_MESSAGE);
 						
