@@ -49,7 +49,13 @@ public class ExamBrowser extends ModalJFrame{
 	private JLabel selectlabel;
 	private JComboBox pbox;
 	private ArrayList<Exam> pExam;
-	private String[] pColums = { MessageBundle.getMessage("angal.exa.codem"), MessageBundle.getMessage("angal.exa.typem"), MessageBundle.getMessage("angal.exa.descriptionm") , MessageBundle.getMessage("angal.exa.procm") , MessageBundle.getMessage("angal.exa.defaultm") };
+	private String[] pColums = { 
+				MessageBundle.getMessage("angal.common.codem"), 
+				MessageBundle.getMessage("angal.exa.typem"), 
+				MessageBundle.getMessage("angal.common.descriptionm"),
+				MessageBundle.getMessage("angal.exa.procm"), 
+				MessageBundle.getMessage("angal.exa.defaultm") 
+			};
 	private int[] pColumwidth = {60,330,160,60,130};
 	private Exam exam;
 	private DefaultTableModel model ;
@@ -180,8 +186,8 @@ public class ExamBrowser extends ModalJFrame{
 				int n = JOptionPane.showConfirmDialog(
                         null,
                         MessageBundle.getMessage("angal.exa.deletefolowingexam") + " :" + 
-                        "\n"+MessageBundle.getMessage("angal.exa.code")+"= " + e.getCode() +
-                        "\n"+MessageBundle.getMessage("angal.exa.description")+" = " + e.getDescription() +
+                        "\n"+MessageBundle.getMessage("angal.common.code")+"= " + e.getCode() +
+                        "\n"+MessageBundle.getMessage("angal.common.description")+" = " + e.getDescription() +
                         "\n?",
                         MessageBundle.getMessage("angal.hospital"),
                         JOptionPane.YES_NO_OPTION);

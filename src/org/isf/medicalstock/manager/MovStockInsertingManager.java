@@ -248,7 +248,7 @@ public class MovStockInsertingManager {
 				throw new OHException(MessageBundle.getMessage("angal.medicalstock.preparationdatecannotbelaterthanduedate"));
 			}
 
-			if ((movement.getType().getType().equalsIgnoreCase("-")) && (movement.getQuantity() > movement.getLot().getQuantity())) {
+			if ((movement.getType().getType().contains("-")) && (movement.getQuantity() > movement.getLot().getQuantity())) {
 				throw new OHException(MessageBundle.getMessage("angal.medicalstock.movementquantityisgreaterthanthequantityof"));
 			}
 
@@ -280,7 +280,7 @@ public class MovStockInsertingManager {
 			if (isAutomaticLot()) {
 				result = ioOperations.newAutomaticDischargingMovement(movement);
 			} else
-				result = ioOperations.prepareDischargingwMovement(movement);
+				result = ioOperations.prepareDischargingMovement(movement);
 			return result;
 		} catch (OHException e) {
 			/*Already cached exception with OH specific error message - 
@@ -356,7 +356,7 @@ public class MovStockInsertingManager {
 //					return false;
 //				}
 //
-//				if ((movement.getType().getType().equalsIgnoreCase("-")) && (movement.getQuantity() > movement.getLot().getQuantity())) {
+//				if ((movement.getType().getType().contains("-")) && (movement.getQuantity() > movement.getLot().getQuantity())) {
 //					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.movementquantityisgreaterthanthequantityof"));
 //					return false;
 //				}

@@ -337,7 +337,7 @@ public class Tests
 		{		
 			code = _setupTestMovement(false);
 			Movement foundMovement = (Movement)jpa.find(Movement.class, code); 
-			boolean result = medicalStockIoOperation.prepareDischargingwMovement(foundMovement);
+			boolean result = medicalStockIoOperation.prepareDischargingMovement(foundMovement);
 
 			assertEquals(true, result);
 		} 

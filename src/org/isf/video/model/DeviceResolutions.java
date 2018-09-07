@@ -65,7 +65,7 @@ public class DeviceResolutions {
 		{
 			String[] c = defaultResolution.split("x");
 			
-			// se era stata impostata una risoluzione di default
+			// Check for default resolutions 
 			if (! c[0].equals(""))
 			{
 				this.defaultResolution = new Resolution(c[0], c[1]);

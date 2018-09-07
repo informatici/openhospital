@@ -58,11 +58,11 @@ public class LinuxVideoDevice extends VideoDevice {
 			removeResolutionsFromFile();
 		}
 		
-		// se nel file non erano memorizzate risoluzioni per questo device
+		// If no resolutions were saved for this device
 		if ((resolutions == null) || (resolutions.size() == 0))	{
 			resolutions = LinuxShellInterface.getResolutions(vendorHexId, productHexId);
 			
-			// se non è stato possibile recuperare le risoluzioni dalle informazioni del sistema operativo
+			// If retrieving resolutions has failed
 			if ((resolutions == null) || (resolutions.size() == 0))
 				resolutions = VideoDeviceStreamAppletManager.checkResolutions(this);
 			

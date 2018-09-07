@@ -43,8 +43,8 @@ public class PricesOthersBrowser extends ModalJFrame implements PricesOthersList
 	private JButton jButtonDelete;
 	private JButton jButtonClose;
 	private String[] columnNames = {
-			MessageBundle.getMessage("angal.pricesothers.code"), 
-			MessageBundle.getMessage("angal.pricesothers.description"), 
+			MessageBundle.getMessage("angal.common.code"), 
+			MessageBundle.getMessage("angal.common.description"), 
 			MessageBundle.getMessage("angal.pricesothers.opdm"), 
 			MessageBundle.getMessage("angal.pricesothers.ipdm"), 
 			MessageBundle.getMessage("angal.pricesothers.daily"),

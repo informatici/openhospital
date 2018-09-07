@@ -103,6 +103,7 @@ import org.isf.utils.time.RememberDates;
 import org.isf.utils.time.TimeTools;
 
 import com.toedter.calendar.JDateChooser;
+import javax.swing.SwingConstants;
 
 public class OpdEditExtended extends JDialog implements PatientInsertExtended.PatientListener, PatientInsert.PatientListener {
 	
@@ -633,12 +634,14 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			gbc_jLabelDate.gridx = 0;
 			jPanelData.add(jLabelDate, gbc_jLabelDate);
 			GridBagConstraints gbc_DateFieldCal = new GridBagConstraints();
+			gbc_DateFieldCal.weightx = 0.5;
 			gbc_DateFieldCal.fill = GridBagConstraints.HORIZONTAL;
 			gbc_DateFieldCal.insets = new Insets(5, 5, 5, 5);
 			gbc_DateFieldCal.gridy = 0;
 			gbc_DateFieldCal.gridx = 1;
 			jPanelData.add(getOpdDateFieldCal(), gbc_DateFieldCal);
 			GridBagConstraints gbc_jOpdNumberPanel = new GridBagConstraints();
+			gbc_jOpdNumberPanel.weightx = 0.5;
 			gbc_jOpdNumberPanel.gridwidth = 1;
 			gbc_jOpdNumberPanel.fill = GridBagConstraints.BOTH;
 			gbc_jOpdNumberPanel.insets = new Insets(5, 5, 5, 5);
@@ -655,6 +658,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			gbc_jSearchLabel.gridx = 0;
 			jPanelData.add(jSearchLabel, gbc_jSearchLabel);
 			GridBagConstraints gbc_jTextPatientSrc = new GridBagConstraints();
+			gbc_jTextPatientSrc.weightx = 0.5;
 			gbc_jTextPatientSrc.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jTextPatientSrc.insets = new Insets(5, 5, 5, 5);
 			gbc_jTextPatientSrc.gridy = 1;
@@ -666,6 +670,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			gbc_jSearchButton.gridx = 2;
 			jPanelData.add(getJSearchButton(), gbc_jSearchButton);
 			GridBagConstraints gbc_jSearchBox = new GridBagConstraints();
+			gbc_jSearchBox.weightx = 0.5;
 			gbc_jSearchBox.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jSearchBox.insets = new Insets(5, 5, 5, 5);
 			gbc_jSearchBox.gridy = 1;
@@ -742,9 +747,10 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			jPanelData.add(getDiseaseBox3(), gbc_jLabelDisBox3);
 			
 			jLabelLastOpdVisit = new JLabel(" ");
+			jLabelLastOpdVisit.setHorizontalAlignment(SwingConstants.RIGHT);
 			jLabelLastOpdVisit.setForeground(Color.RED);
 			GridBagConstraints gbc_jLabelLastOpdVisit = new GridBagConstraints();
-			gbc_jLabelLastOpdVisit.fill = GridBagConstraints.VERTICAL;
+			gbc_jLabelLastOpdVisit.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jLabelLastOpdVisit.insets = new Insets(5, 5, 5, 5);
 			gbc_jLabelLastOpdVisit.anchor = GridBagConstraints.EAST;
 			gbc_jLabelLastOpdVisit.gridy = 6;
@@ -761,19 +767,21 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			jPanelData.add(jFieldLastOpdVisit, gbc_jFieldLastOpdVisit);
 			
 			jLabelLastOpdNote = new JLabel(" ");
+			jLabelLastOpdNote.setHorizontalAlignment(SwingConstants.RIGHT);
 			jLabelLastOpdNote.setForeground(Color.RED);
 			GridBagConstraints gbc_jLabelLastOpdNote = new GridBagConstraints();
-			gbc_jLabelLastOpdNote.fill = GridBagConstraints.VERTICAL;
+			gbc_jLabelLastOpdNote.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jLabelLastOpdNote.insets = new Insets(5, 5, 5, 5);
 			gbc_jLabelLastOpdNote.anchor = GridBagConstraints.EAST;
 			gbc_jLabelLastOpdNote.gridy = 7;
 			gbc_jLabelLastOpdNote.gridx = 0;
 			jPanelData.add(jLabelLastOpdNote, gbc_jLabelLastOpdNote);
 			jFieldLastOpdNote = new JLabel(" ");
+			jFieldLastOpdNote.setPreferredSize(new Dimension(500,30));
 			jFieldLastOpdNote.setFocusable(false);
 			GridBagConstraints gbc_jFieldLastOpdNote = new GridBagConstraints();
+			gbc_jFieldLastOpdNote.anchor = GridBagConstraints.WEST;
 			gbc_jFieldLastOpdNote.insets = new Insets(5, 5, 5, 5);
-			gbc_jFieldLastOpdNote.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jFieldLastOpdNote.gridwidth = 4;
 			gbc_jFieldLastOpdNote.gridy = 7;
 			gbc_jFieldLastOpdNote.gridx = 1;

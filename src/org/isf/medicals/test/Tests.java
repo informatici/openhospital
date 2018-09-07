@@ -246,7 +246,7 @@ public class Tests
 		{		
 			code = _setupTestMedical(false);
 			Medical foundMedical = (Medical)jpa.find(Medical.class, code); 
-			result = medicalsIoOperations.medicalExists(foundMedical);
+			result = medicalsIoOperations.medicalExists(foundMedical, false);
 			
 			assertEquals(true, result);
 		} 
@@ -328,7 +328,7 @@ public class Tests
 			
 			assertEquals(true, result);
 			Medical deletedMedical = (Medical)jpa.find(Medical.class, code); 
-			result = medicalsIoOperations.medicalExists(deletedMedical);			
+			result = medicalsIoOperations.medicalExists(deletedMedical,true);			
 			assertEquals(false, result);
 		} 
 		catch (Exception e) 

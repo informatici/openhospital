@@ -7,7 +7,7 @@ package org.isf.medicals.service;
 
 import java.util.ArrayList;
 
-import org.isf.medicals.model.*;
+import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstock.service.MovementIoOperationRepository;
 import org.isf.utils.db.TranslateOHException;
@@ -152,19 +152,47 @@ public class MedicalsIoOperations
 
 		return medicals;
 	}
-
+	
 	/**
 	 * Checks if the specified {@link Medical} exists or not.
-	 * @param medical the medical to check.
-	 * @return <code>true</code> if exists <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @param medical - the medical to check.
+	 * @param update - if <code>true</code> excludes the actual {@link Medical}
+	 * @return all {@link Medical} with similar description
+	 * @throws OHException if an SQL error occurs during the check.
 	 */
-	public boolean medicalExists(Medical medical) throws OHException 
+	@SuppressWarnings("unchecked")
+	public ArrayList<Medical> medicalCheck(Medical medical, boolean update) throws OHException
+	{
+		ArrayList<Medical> medicals = null;
+		
+		if (update) {
+			medicals = (ArrayList<Medical>)repository.findAllWhereDescriptionSoundsLike(medical.getDescription(), medical.getCode());
+		} else {
+			medicals = (ArrayList<Medical>)repository.findAllWhereDescriptionSoundsLike(medical.getDescription()); 
+		}
+
+		return medicals;
+	}
+	
+	/**
+	 * Checks if the specified {@link Medical} ProductCode exists or not.
+	 * @param medical - the medical to check.
+	 * @param update - if <code>true</code> excludes the actual {@link Medical}
+	 * @return <code>true</code> if exists, <code>false</code> otherwise.
+	 * @throws OHException if an SQL error occurs during the check.
+	 */
+	public boolean productCodeExists(Medical medical, boolean update) throws OHException
 	{
 		boolean result = false;
 
 		
-		Medical foundMedical = repository.findOneWhereDescriptionAndType(medical.getDescription(), medical.getType().getCode());
+		Medical foundMedical = null;
+		
+		if (update) {
+			foundMedical = repository.findOneWhereProductCode(medical.getProd_code(), medical.getCode());
+		} else {
+			foundMedical = repository.findOneWhereProductCode(medical.getProd_code()); 
+		}
 		if (foundMedical != null) 
 		{
 			result = true;
@@ -172,7 +200,35 @@ public class MedicalsIoOperations
 		
 		return result;
 	}
+    
 
+	/**
+	 * Checks if the specified {@link Medical} exists or not.
+	 * @param medical the medical to check.
+	 * @param update - if <code>true</code> exclude the current medical itself from search
+	 * @return <code>true</code> if exists <code>false</code> otherwise.
+	 * @throws OHException if an error occurs during the check.
+	 */
+	public boolean medicalExists(Medical medical, boolean update) throws OHException 
+	{
+		boolean result = false;
+
+		
+		Medical foundMedical = null;
+		
+		if (update) {
+			foundMedical = repository.findOneWhereDescriptionAndType(medical.getDescription(), medical.getType().getCode(), medical.getCode());
+		} else {
+			foundMedical = repository.findOneWhereDescriptionAndType(medical.getDescription(), medical.getType().getCode()); 
+		}
+		if (foundMedical != null) 
+		{
+			result = true;
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * Stores the specified {@link Medical}.
 	 * @param medical the medical to store.

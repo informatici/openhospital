@@ -90,7 +90,7 @@ public class CommunicationFrame extends JFrame{
 
 	private void createFrame()
 	{
-		interaction= new Interaction(this);
+		interaction = new Interaction(this);
 		activateListeners();
 		getContentPane().add(createLeftPanel(),BorderLayout.WEST);
 		getContentPane().add(separator,BorderLayout.CENTER);
@@ -210,9 +210,9 @@ public class CommunicationFrame extends JFrame{
 				int returnVal = fileChooser.showOpenDialog(getParent());
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
-					logger.debug(file.toString());
+					logger.debug("Selected file: " + file.toString());
 					String receiver = (String)(((RosterEntry) buddyList.getSelectedValue()).getName());
-					logger.debug(receiver);
+					logger.debug("Receiver: " + receiver);
 					interaction.sendFile(receiver, file, null);				
 				}
 			}
@@ -267,7 +267,7 @@ public class CommunicationFrame extends JFrame{
 
 				if (e.getClickCount() == 2) {
 					int index = buddyList.locationToIndex(e.getPoint());
-					logger.debug(""+index);
+					logger.debug("Index : " + index);
 					if (index >= 0) {
 						user = ((RosterEntry)buddyList.getModel().getElementAt(index)).getName();
 						logger.debug("User selected: " + user.toString()); //$NON-NLS-1$
@@ -332,9 +332,9 @@ public class CommunicationFrame extends JFrame{
 	public ChatMessages getArea(String name,boolean incoming)
 	{
 
-		int index=tabs.indexOfTab(name);
-		logger.debug("index_:"+index); //$NON-NLS-1$
-		if(index!=-1){
+		int index = tabs.indexOfTab(name);
+		logger.debug("Index_: " + index); //$NON-NLS-1$
+		if(index != -1){
 			if(incoming){
 				((TabButton)tabs.getTabComponentAt(index)).setColor(Color.red);
 			}
@@ -348,22 +348,22 @@ public class CommunicationFrame extends JFrame{
 		}
 		else
 		{
-			logger.debug("index creazione:"+index); //$NON-NLS-1$
+			logger.debug("Index creation: " + index); //$NON-NLS-1$
 			newChat=new ChatPanel();
 			tabs.addTab(name, newChat);
 			tabs.setTabColor(new Color(176,23,31));
 			validate();
 			repaint();
-			index=tabs.indexOfTab(name);
-			logger.debug("index creazione:"+index); //$NON-NLS-1$
+			index = tabs.indexOfTab(name);
+			logger.debug("Index creation: " + index); //$NON-NLS-1$
 			return ((ChatPanel) tabs.getComponentAt(index)).getChatMessages();
 		}
 	}
 
 	public String getSelectedUser(){
 		int index=tabs.getSelectedIndex();
-		logger.debug("titolo"+tabs.getTitleAt(index)); //$NON-NLS-1$
-		logger.debug("index:"+index); //$NON-NLS-1$
+		logger.debug("Title : " + tabs.getTitleAt(index)); //$NON-NLS-1$
+		logger.debug("Index : " + index); //$NON-NLS-1$
 		return tabs.getTitleAt(index);
 	}
 	public void printMessage(ChatMessages area,String user,String text, boolean visualize){
@@ -376,11 +376,11 @@ public class CommunicationFrame extends JFrame{
 			{
 				int index = text.indexOf("$"); //$NON-NLS-1$
 				area.printNotification(text.substring(index+1));
-				logger.debug("listner normale messaggi"); //$NON-NLS-1$
+				logger.debug("Transfer accepted."); //$NON-NLS-1$
 			}
 			else if(text.startsWith("0101010001010010")){//trasferimento file rifiutato 0101010001010010=TR //$NON-NLS-1$
 				int index = text.indexOf("$"); //$NON-NLS-1$
-				logger.debug("listner incoming"); //$NON-NLS-1$
+				logger.debug("Transfer rejected."); //$NON-NLS-1$
 				area.printNotification(text.substring(index+1));
 			}
 			else{	
@@ -402,7 +402,7 @@ public class CommunicationFrame extends JFrame{
 		}
 	}
 
-	public void sendMessage(String text_message, String to,boolean visualize){
+	public void sendMessage(String text_message, String to, boolean visualize){
 
 		interaction.sendMessage(text_message, to, visualize);
 	}

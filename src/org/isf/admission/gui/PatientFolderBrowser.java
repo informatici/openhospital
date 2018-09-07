@@ -175,7 +175,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 	private String[] pColums = {MessageBundle.getMessage("angal.common.datem"),MessageBundle.getMessage("angal.admission.wards"), MessageBundle.getMessage("angal.admission.diagnosisinm"), MessageBundle.getMessage("angal.admission.diagnosisoutm"), MessageBundle.getMessage("angal.admission.statusm") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	private int[] pColumwidth = {120, 150, 200, 200, 120 };
 	
-	private String[] plColums = { MessageBundle.getMessage("angal.common.datem"), MessageBundle.getMessage("angal.lab.examm"), MessageBundle.getMessage("angal.lab.codem"),MessageBundle.getMessage("angal.lab.resultm") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private String[] plColums = { MessageBundle.getMessage("angal.common.datem"), MessageBundle.getMessage("angal.lab.examm"), MessageBundle.getMessage("angal.common.codem"),MessageBundle.getMessage("angal.lab.resultm") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private int[] plColumwidth = { 150, 200, 50, 200 };
 
 	private DefaultTableModel admModel;
@@ -604,7 +604,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 			}else if (c == 3) {
 				String id = null;
 				if (r < admList.size()) {
-					id = admList.get(r).getDiseaseOut1().getCode();
+					id = admList.get(r).getDiseaseOut1() == null ? null :  admList.get(r).getDiseaseOut1().getCode();
 					if (id == null){
 						id = ""; //$NON-NLS-1$
 					}

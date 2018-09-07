@@ -27,19 +27,30 @@ public class GenericReportMY {
 
     private final Logger logger = LoggerFactory.getLogger(GenericReportMY.class);
 
-	public GenericReportMY(Integer month, Integer year, String jasperFileName, boolean toCSV) {
+	public GenericReportMY(Integer month, Integer year, String jasperFileName, String defaultName, boolean toExcel) {
 		try{
             JasperReportsManager jasperReportsManager = new JasperReportsManager();
-			if (toCSV) {
+			if (toExcel) {
+				
+				StringBuilder sbFilename = new StringBuilder();
+				sbFilename = new StringBuilder();
+				sbFilename.append("PDF");
+				sbFilename.append(File.separator);
+				sbFilename.append(defaultName);
+				sbFilename.append(".xls");
+				File defaultFilename = new File(sbFilename.toString());
+				
                 JFileChooser fcExcel = new JFileChooser();
-                FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("CSV (*.csv)","csv");
+                FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
                 fcExcel.setFileFilter(excelFilter);
                 fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                fcExcel.setSelectedFile(defaultFilename);
 
                 int iRetVal = fcExcel.showSaveDialog(null);
                 if(iRetVal == JFileChooser.APPROVE_OPTION){
                     File exportFile = fcExcel.getSelectedFile();
-                    jasperReportsManager.getGenericReportMYCsv(month,year,jasperFileName,exportFile.getAbsolutePath());
+                    if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
+                    jasperReportsManager.getGenericReportMYExcel(month,year,jasperFileName,exportFile.getAbsolutePath());
                 }
 			} else {
                 JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportMYPdf(month,year,jasperFileName);

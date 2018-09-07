@@ -212,7 +212,7 @@ public class MedicalStockWardIoOperations
 		boolean result = true;
 		
 		
-		MedicalWard medicalWard = repository.findAllWhereIds(ward, medical);
+		MedicalWard medicalWard = repository.findOneWhereCodeAndMedical(ward, medical);
 		if (medicalWard == null)
 		{
 			repository.insertMedicalWard(ward, medical, -qty);

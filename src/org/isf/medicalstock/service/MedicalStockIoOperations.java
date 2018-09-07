@@ -208,7 +208,7 @@ public class MedicalStockIoOperations {
 	 * @return <code>true</code> if the movement has been stored, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the store operation.
 	 */
-	public boolean prepareDischargingwMovement(
+	public boolean prepareDischargingMovement(
 			Movement movement) throws OHException 
 	{
 		String lotCode = null;
@@ -430,7 +430,7 @@ public class MedicalStockIoOperations {
 				
 
 		Medical medical = (Medical)medicalRepository.findOne(medicalCode); 
-		medical.setInqty(medical.getOutqty()+incrementQuantity);
+		medical.setOutqty(medical.getOutqty()+incrementQuantity);
 		medicalRepository.save(medical);
 				
 		return result;
@@ -451,19 +451,16 @@ public class MedicalStockIoOperations {
 			int medicalCode, 
 			int quantity) throws OHException
 	{
-		List<MedicalWard> medicalWards = (List<MedicalWard>)medicalStockRepository.findAllWhereIds(wardCode, medicalCode);		
+		MedicalWard medicalWard = (MedicalWard)medicalStockRepository.findOneWhereCodeAndMedical(wardCode, medicalCode);		
 				
-		if (!medicalWards.isEmpty())
+		if (medicalWard != null)
 		{			
-			for (MedicalWard medicalWard : medicalWards)
-			{
-				medicalWard.setInQuantity(medicalWard.getInQuantity()+quantity);
-				medicalStockRepository.save(medicalWard);
-			}
+			medicalWard.setInQuantity(medicalWard.getInQuantity()+quantity);
+			medicalStockRepository.save(medicalWard);
 		}
 		else
 		{
-			MedicalWard medicalWard = new MedicalWard(wardCode.charAt(0), medicalCode, quantity, 0);
+			medicalWard = new MedicalWard(wardCode.charAt(0), medicalCode, quantity, 0);
 			medicalStockRepository.save(medicalWard);
 		}
 		
@@ -603,7 +600,7 @@ public class MedicalStockIoOperations {
 	 * Retrieves lot referred to the specified {@link Medical}.
 	 * @param medical the medical.
 	 * @return a list of {@link Lot}.
-	 * @throws Exception 
+	 * @throws OHException if an error occurs retrieving the lot list.
 	 */
 	public ArrayList<Lot> getLotsByMedical(
 			Medical medical) throws Exception 

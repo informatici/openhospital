@@ -26,19 +26,30 @@ import java.io.File;
 
     private final Logger logger = LoggerFactory.getLogger(GenericReportFromDateToDate.class);
 
-		public  GenericReportFromDateToDate(String fromDate, String toDate, String jasperFileName, boolean toCSV) {
+		public  GenericReportFromDateToDate(String fromDate, String toDate, String jasperFileName, String defaultName, boolean toExcel) {
 			try{
                 JasperReportsManager jasperReportsManager = new JasperReportsManager();
-				if (toCSV) {
+				if (toExcel) {
+					
+					StringBuilder sbFilename = new StringBuilder();
+					sbFilename = new StringBuilder();
+					sbFilename.append("PDF");
+					sbFilename.append(File.separator);
+					sbFilename.append(defaultName);
+					sbFilename.append(".xls");
+					File defaultFilename = new File(sbFilename.toString());
+					
                     JFileChooser fcExcel = new JFileChooser();
-                    FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("CSV (*.csv)","csv");
+                    FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
                     fcExcel.setFileFilter(excelFilter);
                     fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    fcExcel.setSelectedFile(defaultFilename);
 
                     int iRetVal = fcExcel.showSaveDialog(null);
                     if(iRetVal == JFileChooser.APPROVE_OPTION){
                         File exportFile = fcExcel.getSelectedFile();
-                        jasperReportsManager.getGenericReportFromDateToDateCSV(fromDate,toDate, jasperFileName, exportFile.getAbsolutePath());
+                        if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
+                        jasperReportsManager.getGenericReportFromDateToDateExcel(fromDate,toDate, jasperFileName, exportFile.getAbsolutePath());
                     }
                 } else {
                     JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportFromDateToDatePdf(fromDate, toDate, jasperFileName);

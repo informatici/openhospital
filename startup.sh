@@ -26,7 +26,8 @@ do
   fi
 done
 
-DIRLIBS=${EXEDIR}/rsc/*.xml
+
+DIRLIBS=${EXEDIR}/lib/*.jar
 for i in ${DIRLIBS}
 do
   if [ -z "$OPENHOSPITAL_CLASSPATH" ] ; then
@@ -36,8 +37,7 @@ do
   fi
 done
 
-
-DIRLIBS=${EXEDIR}/lib/*.jar
+DIRLIBS=${EXEDIR}/lib/h8/*.jar
 for i in ${DIRLIBS}
 do
   if [ -z "$OPENHOSPITAL_CLASSPATH" ] ; then

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface MedicalStockWardIoOperationRepository extends JpaRepository<MedicalWard, String>, MedicalStockWardIoOperationRepositoryCustom {      
 	   
     @Query(value = "SELECT * FROM MEDICALDSRWARD WHERE MDSRWRD_WRD_ID_A = :ward AND MDSRWRD_MDSR_ID = :medical", nativeQuery= true)
-    public MedicalWard findAllWhereIds(@Param("ward") String ward, @Param("medical") int medical);    
+    public MedicalWard findOneWhereCodeAndMedical(@Param("ward") String ward, @Param("medical") int medical);    
     
     @Query(value = "SELECT SUM(MMV_QTY) MAIN FROM MEDICALDSRSTOCKMOV M WHERE MMV_MMVT_ID_A = 'testDisc' AND MMV_MDSR_ID = :medical", nativeQuery= true)
     public Double findMainQuantityWhereMedical(@Param("medical") int medical);

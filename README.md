@@ -16,6 +16,12 @@ For remote MySQL server you need to change:
 - rsc/database.properties
 - rsc/log4j.properties
 
+***With docker compose***
+
+Simply run:
+
+docker-compose up 
+
 **How to launch the software**:
 
 Use scripts OpenHospital.sh (Linux) or OpenHospital.cmd (Windows)

@@ -1,9 +1,9 @@
 HB;1.Hematologia
-BT;2.Transfusión sanguínea
-PA;3.Parasitología
-BA;4.Bacteriología
-MC;5.Microscopía
-SE;6.Serología
-CH;7.Quimíca
+BT;2.TransfusiÃ³n sanguÃ­nea
+PA;3.ParasitologÃ­a
+BA;4.BacteriologÃ­a
+MC;5.MicroscopÃ­a
+SE;6.SerologÃ­a
+CH;7.QuimÃ­ca
 OC;8.Sangre Oculto
 OT;OTROS

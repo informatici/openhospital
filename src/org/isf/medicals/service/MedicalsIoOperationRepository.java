@@ -33,4 +33,15 @@ public interface MedicalsIoOperationRepository extends JpaRepository<Medical, In
     
     @Query(value = "SELECT * FROM MEDICALDSR WHERE MDSR_MDSRT_ID_A = :type AND MDSR_DESC = :description", nativeQuery= true)
     public Medical findOneWhereDescriptionAndType(@Param("description") String description, @Param("type") String type);   
+    @Query(value = "SELECT * FROM MEDICALDSR WHERE MDSR_MDSRT_ID_A = :type AND MDSR_DESC = :description AND MDSR_ID <> :id", nativeQuery= true)
+    public Medical findOneWhereDescriptionAndType(@Param("description") String description, @Param("type") String type, @Param("id") Integer id);
+    @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A WHERE MDSR_DESC SOUNDS LIKE :description", nativeQuery = true)
+    public List<Medical> findAllWhereDescriptionSoundsLike(@Param("description") String description);
+    @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A WHERE MDSR_DESC SOUNDS LIKE :description AND MDSR_ID <> :id", nativeQuery = true)
+    public List<Medical> findAllWhereDescriptionSoundsLike(@Param("description") String description, @Param("id") Integer id);
+    @Query(value = "SELECT * FROM MEDICALDSR WHERE MDSR_CODE = :prod_code", nativeQuery = true)
+    public Medical findOneWhereProductCode(@Param("prod_code") String prod_code);
+    @Query(value = "SELECT * FROM MEDICALDSR WHERE MDSR_CODE = :prod_code AND MDSR_ID <> :id", nativeQuery = true)
+    public Medical findOneWhereProductCode(@Param("prod_code") String prod_code, @Param("id") Integer id);
+    
 }

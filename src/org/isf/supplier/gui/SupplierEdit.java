@@ -182,8 +182,10 @@ public class SupplierEdit extends JDialog {
 			dataPanel.add(getEmailTextField(),null);
 			dataPanel.add(noteLabel, null);
 			dataPanel.add(getNoteTextField(),null);
-			dataPanel.add(isDeletedLabel, null);
-			dataPanel.add(getIsDeleted(),null);
+			if (!insert) {
+				dataPanel.add(isDeletedLabel, null);
+				dataPanel.add(getIsDeleted(),null);
+			}
 			dataPanel.add(requiredLabel, null);
 		}
 		return dataPanel;
@@ -252,7 +254,8 @@ public class SupplierEdit extends JDialog {
 					supplier.setSupFax(faxTextField.getText());
 					supplier.setSupEmail(emailTextField.getText());
 					supplier.setSupNote(noteTextField.getText());
-					supplier.setSupDeleted(isDeletedCheck.isSelected() ? 'Y' : 'N');
+					if (!insert) supplier.setSupDeleted(isDeletedCheck.isSelected() ? 'Y' : 'N');
+					else supplier.setSupDeleted('N');
 					
 					boolean result = false;
 					if (insert) { // inserting

@@ -261,6 +261,37 @@ public class JasperReportsManager {
                     MessageBundle.getMessage("angal.stat.reporterror"), OHSeverityLevel.ERROR));
         }
     }
+    
+    public JasperReportResultDto getGenericReportPharmaceuticalStockPdf(Date date, String jasperFileName) throws OHServiceException {
+    	
+    	try{
+    		if (date == null)
+				date = new Date();
+    		Format formatter;
+            formatter = new SimpleDateFormat("E d, MMMM yyyy");
+            String todayReport = formatter.format(date);
+            formatter = new SimpleDateFormat("yyyyMMdd");
+            String todayFile = formatter.format(date);
+            HashMap<String, Object> parameters = getHospitalParameters();
+            parameters.put("Date", todayReport);
+
+            String pdfFilename = "rpt/PDF/"+jasperFileName + "_" + todayFile.toString()+".pdf";
+
+            JasperReportResultDto result = generateJasperReport(compileJasperFilename(jasperFileName), pdfFilename, parameters);
+            JasperExportManager.exportReportToPdfFile(result.getJasperPrint(), pdfFilename);
+            return result;
+        } catch(OHServiceException e){
+            //Already managed, ready to return OHServiceException
+            throw e;
+        } catch (OHException e) {
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.stat.reporterror"), OHSeverityLevel.ERROR));
+        }
+    }
 
     public JasperReportResultDto getGenericReportUserInDatePdf(String fromDate, String toDate, String aUser, String jasperFileName) throws OHServiceException {
 
@@ -363,7 +394,7 @@ public class JasperReportsManager {
 
 
 
-    public void getGenericReportFromDateToDateCSV(String fromDate, String toDate, String jasperFileName, String exportFilename) throws OHServiceException {
+    public void getGenericReportFromDateToDateExcel(String fromDate, String toDate, String jasperFileName, String exportFilename) throws OHServiceException {
 
         try{
             HashMap<String, Object> parameters = compileGenericReportFromDateToDateParameters(fromDate, toDate);
@@ -383,7 +414,7 @@ public class JasperReportsManager {
             File exportFile = new File(exportFilename);
 
             ExcelExporter xlsExport = new ExcelExporter();
-            xlsExport.exportResultsetToCSV(resultSet, exportFile);
+            xlsExport.exportResultsetToExcel(resultSet, exportFile);
 
         } catch(OHServiceException e){
             //Already managed, ready to return OHServiceException
@@ -418,7 +449,7 @@ public class JasperReportsManager {
         }
     }
 
-    public void getGenericReportMYCsv(Integer month, Integer year, String jasperFileName, String exportFilename) throws OHServiceException {
+    public void getGenericReportMYExcel(Integer month, Integer year, String jasperFileName, String exportFilename) throws OHServiceException {
 
         try{
             HashMap<String, Object> parameters = compileGenericReportMYParameters(month, year);
@@ -438,7 +469,7 @@ public class JasperReportsManager {
             File exportFile = new File(exportFilename);
 
             ExcelExporter xlsExport = new ExcelExporter();
-            xlsExport.exportResultsetToCSV(resultSet, exportFile);
+            xlsExport.exportResultsetToExcel(resultSet, exportFile);
         } catch(OHServiceException e){
             //Already managed, ready to return OHServiceException
             throw e;

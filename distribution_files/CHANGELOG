@@ -1,0 +1,214 @@
+RELEASES:
+
+<---1.8.2---> 05/08/2016
+* Fixed merge function
+* DB creation in Spanish, Italian, English, Portugese and French
+* Improved Excel exports
+* Improved checks on data entry for better quality control
+* Improved Pharmaceuticals Stock reporting
+* Improved Pharmaceuticals recording and management
+* Improved memory management
+* Improved communication module
+* Other minor bug fixes
+
+<---1.8.1---> 01/10/2015
+* Fixed DB creation on Portable versions
+* Updated Admin Manual
+* Fixed some labels
+* Minor bug fixes
+* Fixed issue on Patient photo cropping
+* Added support for Czech characters
+
+<---1.8.0---> 24/01/2015
+
+* Swahili update! (thanks to Rosanna Colella)
+* Spanish update! (thanks to Corrado Sartori)
+* French update! (thanks to Ivette Kadja and Sergio Santini)
+* New! Italian, English and Spanish installer (thanks to Corrado Sartori)
+* New! DICOM Viewer (thanks to Pietro Castellucci)
+* New! SMS Framework to send SMS via GSM and HTPP with scheduling and spooling (thanks to Valentina De Leonardis)
+* New! Patient Passport (photo) from webcam or file (with auto-cropping and auto-resize, from Kenya)
+* Patient Examination module (height, weight, BMI, pressure, hearthrate, temperature, saturation and complain, from Somaliland)
+* New Pharmacy Management control (with costs and delivery notes, from Etiopia)
+* OPD and Admission/Discharge papers (from Etiopia)
+* Pharmacy Suppliers address book (from Etiopia)
+* CSV and Excel report exporter (from Etiopia)
+* Sex and age control over wards and diseases (from Etiopia)
+* Improved reports
+* Improved security
+* Many GUI improvements
+* Many bug fixes
+
+WARNING!!! If updating from previous versions the admin user password will be reset to 'admin';
+all other users passwords have to be reset again within the software File->Users module
+
+<---1.7.3---> 13/09/2014
+
+* Bug fixes.
+
+<---1.7.2---> 21/05/2013
+
+* Bug fixes.
+
+<---1.7.1---> 12/03/2013
+
+* Bug fixes.
+
+<---1.7.0---> 19/02/2013
+* Admin and user guides, user guide can be read by the HELP button.
+* Users' communication module (see admin and user guide on how to use it).
+* Print on ZPL printers.
+* New reports for Pharmacy, Accouting and Statistics modules.
+* Outgoing pharmaceuticals can be specified as lots.
+* Modal windows.
+* Added automatic calculating of bed occupancy days in Admission.
+* Added logging system in the database (LOG table) and on file (log/ directory).
+* The database now uses the InnoDB engine and foreign keys.
+* Spanish translation.
+* Many improvements in Admission/Patient, Accounting, Other Prices and Laboratory modules and general bug fixes.
+* All windows are modal now
+
+<---1.6.0---> 17/12/2011
+* Vaccines module.
+* Support for drug stock quantities in ward pharmacies.
+* Better search management in patient browser.
+* Speeded up the creation of a new pricelist as a copy of an existing one.
+* Redesigned admission browser.
+* Various bug fixes and improvements.
+
+<---1.5.0---> 09/08/2011
+* Implemented video module to capture a photo of patients from webcams.
+* Added patient field tax ID code.
+* Therapy and Visits modules.
+* Ward beds availability.
+* Printing of generic text receipt.
+* New reports for Ministry of Health of Kenya.
+* Cashiers logging system to report incomes.
+* On Screen Display (OSD) for logged username.
+* SQL compatibility with MySQL 5.5.
+* Various bug fixes and improvements.
+
+<---1.4.1---> 30/09/2010
+* Corrected character encoding for non standard ASCII characters in italian translation.
+* Fixed OpdBrowser Layout.
+* Fixed sex selection/update in OPD on languages other than english.
+* Updated images to reflect the new Informatici Senza Frontiere Onlus logo.
+
+<---1.4.0---> 13/04/2010
+* Extended patient registry (blood type, assurance, parent names, notes)
+* Integrated patient history (with OPD, after association to the patient registry)
+* Extended laboratory (associated exams to OPDs)
+* Multiple inserts of exams for a single patient
+* Secondary pharmacy stores (internal pharmacies)
+* Accountancy (management of patient bills with a price list)
+* Multi user: disable individual buttons inside the windows per single user
+* Better memory management
+* Internal/external PDF viewer for the reports
+* Merge function for the administrator (merge patient registry and two patient
+  histories in case of double registration)
+* Minor code improvements and new icon set
+
+<---1.3.1---> 13/02/2009
+* Added optional parameter jdbc.port in database.properties which defaults to MySQL standard port 3306
+* Added parameter PATIENTEXTENDED in generalData.properties to edit a standard or extended patient
+* Added parameter OPDEXTENDED in generalData.properties to edit a standard or extended OPD
+* Rolled back to int type for age fields and PAT_AGE e OPD_AGE fields in tables.
+* Bugfix on LabBrowser.
+* Search in AdmissionBrowser extended to address and town.
+* Fixed window dimension of PatientInsert, better widget layout in PatientInsert and PatientInsertExtended.
+* Switched fields "preparation date" and "expiry date" when inserting a new stock movement.
+* Updated german translation.
+* Added parameter in generalData.properties to reset maternity ward counter on 1st July (as requested bye Ugandan government).
+* New calculation of patient days in hmis108 report.
+
+
+<---1.3.0---> 21/12/2008
+* Date field in AdmissionBrowser have a calendar to choose the date from.
+* All multirow fields have a scrollbar.
+* Added patient's birth date field together with age field.
+* When patient's birth date is inserted the age is automatically calculated and 
+  the age field is disabled. If no birth date is given a textual age is allowed
+  (e.g. "child", "adult", etc.).
+* Added patient field "blood type", hidden "education level" field.
+* Modified menu structure to hide some program modules depending on the user.
+* Added field "product code" when inserting a new stock movement in pharmacy.
+* The out-of-stock field gets checked only when quantity is equal to zero.
+* Filter correction when selecting ALL in Pharmaceutical.
+* Pharmacy Stock: added search field for drugs.
+* Pharmacy Stock: auto update the list after inserting a movement.
+* Pharmacy Stock: modified filtering to show the full list by default.
+* Activated extended PatientInsert and extended Summary.
+* Changed patient field "rich/poor" to "has/has no assurance".
+* Added patient's father name and mother name.
+* Export the pharmacy list to Excel.
+* Creation of a new patient in OPD is now possible only by an already existing
+  patient or by the same function in the admission module. From Admission it is
+  possible to create a new OPD selecting a patient. In this case a new OPD is
+  created from the data of the selected patient.
+* Clinical sheet and data summary show also the visits in OPD.
+* OPD: the "new attendance" flag is checked if a patient has no history.
+* OPD: before creating a new attendence from an existing patient the user has 
+  to show his history.
+* OPD: when creating a new attendance from a previous OPD all but the notes field
+  get blanked.
+* OPD: added OPD notes field.
+
+
+<---1.2.1---> 31/07/2008
+* Implemented a medical record in the patient browser. The medical record shows the list of
+  admissions and exams for a patient. Selecting an admission the related exams are automatically
+  selected. The medical record allows to launch a new report.
+* Added new checkboxes "Referral From" and "Referral To" in OPD registration.
+* Minor improvements and fixed a few bugs.
+
+<---1.2.0---> 08-01-2008
+Added support for internationalization
+
+<---1.0---> 22-12-2006
+\OpenHospital\mysql\db\*.*			aggiornati script di creazione database
+OpenHospital\rsc\database.properties	settata correttamente la password per accesso db
+
+
+<---1.0---> 17-11-2006
+admission\gui\AdmissionBrowser		Utilizzo di remember dates,separazione di Diseases IPD da OPD, con gestione problematiche di editing
+admission\gui\AdmittedPatientBrowser	removed deleted patient from list; list in alphabetical order (due to ioOper modification)
+admission\service\IoOperations		removed deleted patient from list; list in alphabetical order
+disease\gui\DiseaseBrowser		title only
+disease\gui\DiseaseEdit			added include OPD and include IPD checkboxes
+disease\manager\DiseaseBrowserManager	added getDiseaseOPD and getDiseaseIPD
+disease\model\Disease			gestione di opdInclude e ipdInclude
+disease\service\IoOperations		gestione di opdInclude e ipdInclude
+exa\gui\ExamBrowser			corretta eliminazione esame (prima non si eliminava)
+exa\gui\ExamEdit			tolto toupper sulla descrizione; portata descrizione a 100 caratteri
+exa\service\IoOperations		gestione apici
+exatype\gui\ExamTypeBrowser		modifiche dovute al cambio di nome ExamTypeBrowserEdit in ExamTypeEdit
+exatype\gui\ExamTypeEdit		rinominato ExamTypeBrowserEdit in ExamTypeEdit
+lab\gui\LabBrowser			cambiato pulsante Show in Edit, modifiche sulla cancellazione
+lab\gui\LabEdit				aggiunto data esame, sex, age, material, flag ipd. E' ora permesso l'editing; data esame con remember date
+lab\manager\LabManager			supporto per l'edit
+lab\model\Laboratory			gestione data esame, sex, age, material, inout flag
+lab\service\IoOperations		gestione nuovi campi
+medicalstock\gui\MovStockBrowser	tolto pulsante "removeall"; corretta data di default per search
+medicalstock\manager\DateTextField	corretta data di default per search
+patient\model\Patient			aggiunto toString per la gestione del caricamente in combobox
+patient\service\IoOperations		gestione apici; salvataggio del campo "nome"=first+last in update
+stat\reportlauncher\gui\ReportLauncher	gestito anno via combo e reports anche via combo
+opd\gui\OpdBrowser			solo rinominato
+opd\gui\OpdEdit				renamed from SurgeryEdit; added visit date, disease 2, diseas3, disease is not mandatory if re-attendance; support for remember dates
+opd\manager\OpdBrowserManager		solo rinominato
+opd\model\Opd				gestione data visita, disease2, disease3
+opd\service\IoOperations		supporto di data visita, disease2, disease3
+utils\time\RememberDates		nuova classe statica per memorizzare la data "di sessione diinserimento" (adm, opd, lab)
+stat\gui\DiseasesListLauncher		gui per la stampa della Tabella Diagnosi
+stat\gui\ExamsList1Launcher		gui per la stampa della Tabella Esami
+stat\manager\DiseasesList		lancia il report Tabella Diagnosi
+stat\manager\ExamsList1			lancia il report Tabella Esami
+stat\manager\GenericReportMY		lancia un report generico con 2 parametri anno/mese
+
+
+
+<---0.9---> 28-10-2006
+1)minor bug corrections: Laboratory , Admission
+
+<---beta 3---> 1-10-2006
+First release.

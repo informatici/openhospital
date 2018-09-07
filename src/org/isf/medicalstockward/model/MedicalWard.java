@@ -42,7 +42,6 @@ public class MedicalWard implements Comparable<Object>
 	@Transient
 	private volatile int hashCode = 0;
 	
-	
 	public MedicalWard() {
 		super();
 		this.id = new MedicalWardId(); 
@@ -71,16 +70,21 @@ public class MedicalWard implements Comparable<Object>
 	}
 	
 	public Medical getMedical() throws OHException {
-		
-				
-		
-		jpa.beginTransaction();	
+		jpa = getDbJpaUtil();
+		jpa.beginTransaction();
+		System.out.println(id.getMedicalId());
 		Medical medical = (Medical)jpa.find(Medical.class, id.getMedicalId()); 
 		jpa.commitTransaction();
-		
 		return medical;
 	}
 	
+	private DbJpaUtil getDbJpaUtil() {
+		if (jpa == null) {
+			return new DbJpaUtil();
+		}
+		return jpa;
+	}
+
 	public void setMedical(Medical medical) {
 		this.id.setMedicalId(medical.getCode());
 	}

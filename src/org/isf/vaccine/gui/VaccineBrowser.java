@@ -72,9 +72,9 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 	private JScrollPane jScrollPane = null;
 	private JTable table = null;
 	private DefaultTableModel model = null;
-	private String[] pColums = { MessageBundle.getMessage("angal.vaccine.code"),
+	private String[] pColums = { MessageBundle.getMessage("angal.common.code"),
 			MessageBundle.getMessage("angal.vaccine.vaccinetype"),
-			MessageBundle.getMessage("angal.vaccine.description")};
+			MessageBundle.getMessage("angal.common.description")};
 	private int[] pColumwidth = {100, 50, 120};
 	private int selectedrow;
 	private ArrayList<Vaccine> pVaccine;
