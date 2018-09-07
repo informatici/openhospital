@@ -208,7 +208,7 @@ public class AdmissionTypeBrowserEdit extends JDialog{
 					if (key.length()>10){
 						JOptionPane.showMessageDialog(				
 								null,
-								MessageBundle.getMessage("angal.admtype.codetoolongmax"),
+								MessageBundle.getMessage("angal.admtype.codetoolongmaxchars"),
 								MessageBundle.getMessage("angal.hospital"),
 								JOptionPane.PLAIN_MESSAGE);
 						

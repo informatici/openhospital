@@ -243,10 +243,14 @@ public class MedicalStockWardIoOperations
 	{
 		ArrayList<MedicalWard> medicalWards = new ArrayList<MedicalWard>(repository.findAllWhereWard(wardId));
 		
-		
 		for (int i=0; i<medicalWards.size(); i++)
 		{
-			medicalWards.get(i).setQty(Double.valueOf(medicalWards.get(i).getInQuantity()-medicalWards.get(i).getOutQuantity()));		
+			double qty = Double.valueOf(medicalWards.get(i).getInQuantity() - medicalWards.get(i).getOutQuantity());
+			if (qty != 0) {
+				medicalWards.get(i).setQty(qty);
+			} else {
+				medicalWards.remove(i);
+			}
 		}
 		
 		return medicalWards;

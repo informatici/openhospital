@@ -57,6 +57,7 @@ import org.isf.utils.db.NormalizeString;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.BusyState;
+import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
 import org.isf.utils.jobjects.TextPrompt.Show;
 import org.isf.ward.manager.WardBrowserManager;
@@ -82,16 +83,16 @@ public class MovStockMultipleDischarging extends JDialog {
 	private JDateChooser jDateChooser;
 	private JComboBox jComboBoxDestination;
 	private JTable jTableMovements;
-	private final String[] columnNames = { 
-				MessageBundle.getMessage("angal.common.codem"), 
-				MessageBundle.getMessage("angal.common.descriptionm"), 
-				MessageBundle.getMessage("angal.medicalstock.multipledischarging.unitpack"), 
-				MessageBundle.getMessage("angal.medicalstock.multipledischarging.qty"), 
-				MessageBundle.getMessage("angal.medicalstock.multipledischarging.unitpack"), 
-				MessageBundle.getMessage("angal.medicalstock.multipledischarging.total"), 
-				MessageBundle.getMessage("angal.medicalstock.multipledischarging.lotnumberabb"), 
-				MessageBundle.getMessage("angal.medicalstock.multipledischarging.expiringdate")
-			}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+	private final String[] columnNames = {
+			MessageBundle.getMessage("angal.common.code"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.common.description"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multipledischarging.unitpack"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multipledischarging.qty"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multipledischarging.unitpack"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multipledischarging.total"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multipledischarging.lotnumberabb"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multipledischarging.expiringdate") //$NON-NLS-1$
+	}; 
 	private final Class[] columnClasses = { String.class, String.class, Integer.class, Integer.class, String.class, Integer.class, String.class, String.class};
 	private boolean[] columnEditable = { false, false, false, false, true, false, false, false};
 	private int[] columnWidth = { 50, 100, 70, 50, 70, 50, 100, 80};
@@ -103,7 +104,10 @@ public class MovStockMultipleDischarging extends JDialog {
 	private HashMap<String, Medical> medicalMap;
 	private ArrayList<Integer> units;
 	private JTableModel model;
-	private String[] qtyOption = new String[] { MessageBundle.getMessage("angal.medicalstock.multipledischarging.units"), MessageBundle.getMessage("angal.medicalstock.multipledischarging.packets") }; //$NON-NLS-1$ //$NON-NLS-2$
+	private String[] qtyOption = new String[] {
+			MessageBundle.getMessage("angal.medicalstock.multipledischarging.units"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multipledischarging.packet") //$NON-NLS-1$
+	}; 
 	private final int UNITS = 0;
 	private final int PACKETS = 1;
 	private int optionSelected = UNITS;
@@ -732,6 +736,7 @@ public class MovStockMultipleDischarging extends JDialog {
 					throw new NumberFormatException();
 			} catch (NumberFormatException nfe) {
 				JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.pleaseinsertavalidvalue")); //$NON-NLS-1$
+				qty = 0;
 			}
 		}
 		

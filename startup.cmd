@@ -47,5 +47,5 @@ cd /d %OH_HOME%\
 
 REM set JAVA=C:\PROGRA~2\Java\jdk1.6.0_29\bin\java.exe
 @echo on
-REM start /min %JAVA_HOME%\java -showversion -Djava.library.path=%NATIVE_PATH% -classpath %CLASSPATH% org.isf.menu.gui.Menu
-start /min %JAVA% -showversion -Djava.library.path=%NATIVE_PATH% -classpath %CLASSPATH% org.isf.menu.gui.Menu
+REM start /min %JAVA_HOME%\java -showversion -Dsun.java2d.dpiaware=false -Djava.library.path=%NATIVE_PATH% -classpath %CLASSPATH% org.isf.menu.gui.Menu
+start /min %JAVA% -showversion -Dsun.java2d.dpiaware=false -Djava.library.path=%NATIVE_PATH% -classpath %CLASSPATH% org.isf.menu.gui.Menu

@@ -1,12 +1,14 @@
 package org.isf.stat.manager;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRQuery;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.util.JRLoader;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.hospital.model.Hospital;
@@ -21,14 +23,14 @@ import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JRQuery;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 public class JasperReportsManager {
 
@@ -114,6 +116,37 @@ public class JasperReportsManager {
 
             JasperReportResultDto result = generateJasperReport(compileJasperFilename(jasperFileName), pdfFilename.toString(), parameters);
             JasperExportManager.exportReportToPdfFile(result.getJasperPrint(), pdfFilename);
+            return result;
+        } catch(OHServiceException e){
+            //Already managed, ready to return OHServiceException
+            throw e;
+        } catch (OHException e) {
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.stat.reporterror"), OHSeverityLevel.ERROR));
+        }
+    }
+    
+    public JasperReportResultDto getGenericReportBillZPL(Integer billID, String jasperFileName, boolean show, boolean askForPrint) throws OHServiceException {
+
+        try{
+            HashMap<String, Object> parameters = getHospitalParameters();
+            parameters.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
+            
+            parameters.put("billID", String.valueOf(billID)); // real param
+
+            StringBuilder sbFilename = new StringBuilder();
+            sbFilename.append("rpt");
+            sbFilename.append(File.separator);
+            sbFilename.append(jasperFileName);
+            sbFilename.append("Txt");
+            sbFilename.append(".jasper");
+
+            String txtFilename = "rpt/PDF/" + jasperFileName + "_" + String.valueOf(billID) + ".txt";
+            JasperReportResultDto result = generateJasperReport(sbFilename.toString(), txtFilename, parameters);
             return result;
         } catch(OHServiceException e){
             //Already managed, ready to return OHServiceException
@@ -408,13 +441,12 @@ public class JasperReportsManager {
             DbQueryLogger dbQuery = new DbQueryLogger();
             ResultSet resultSet = dbQuery.getData(queryString, true);
 
-            if (!exportFilename.endsWith("csv")) {
-                exportFilename = exportFilename + ".csv";
-            }
             File exportFile = new File(exportFilename);
-
             ExcelExporter xlsExport = new ExcelExporter();
-            xlsExport.exportResultsetToExcel(resultSet, exportFile);
+			if (exportFile.getName().endsWith(".xls"))
+				xlsExport.exportResultsetToExcelOLD(resultSet, exportFile);
+			else
+				xlsExport.exportResultsetToExcel(resultSet, exportFile);
 
         } catch(OHServiceException e){
             //Already managed, ready to return OHServiceException
@@ -463,13 +495,13 @@ public class JasperReportsManager {
             DbQueryLogger dbQuery = new DbQueryLogger();
             ResultSet resultSet = dbQuery.getData(queryString, true);
 
-            if (!exportFilename.endsWith("csv")) {
-                exportFilename = exportFilename + ".csv";
-            }
             File exportFile = new File(exportFilename);
-
             ExcelExporter xlsExport = new ExcelExporter();
-            xlsExport.exportResultsetToExcel(resultSet, exportFile);
+            if (exportFile.getName().endsWith(".xls"))
+				xlsExport.exportResultsetToExcelOLD(resultSet, exportFile);
+			else
+				xlsExport.exportResultsetToExcel(resultSet, exportFile);
+
         } catch(OHServiceException e){
             //Already managed, ready to return OHServiceException
             throw e;

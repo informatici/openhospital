@@ -39,9 +39,10 @@ public class DeliveryTypeBrowser extends ModalJFrame implements DeliveryTypeList
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<DeliveryType> pDeliveryType;
-	private String[] pColums = { 
-			MessageBundle.getMessage("angal.common.codem"), 
-			MessageBundle.getMessage("angal.common.descriptionm")};
+	private String[] pColums = {
+			MessageBundle.getMessage("angal.common.codem"),
+			MessageBundle.getMessage("angal.common.descriptionm")
+	};
 	private int[] pColumwidth = {80, 200 };
 
 	private JPanel jContainPanel = null;

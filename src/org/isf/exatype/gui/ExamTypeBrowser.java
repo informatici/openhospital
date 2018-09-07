@@ -44,9 +44,10 @@ public class ExamTypeBrowser extends ModalJFrame implements ExamTypeListener{
 	private static final String VERSION=MessageBundle.getMessage("angal.versione"); 
 
 	private ArrayList<ExamType> pExamType;
-	private String[] pColums = { 
-			MessageBundle.getMessage("angal.common.codem"), 
-			MessageBundle.getMessage("angal.common.descriptionm")};
+	private String[] pColums = {
+			MessageBundle.getMessage("angal.common.codem"),
+			MessageBundle.getMessage("angal.common.descriptionm")
+	};
 	private int[] pColumwidth = {80, 200 };
 
 	private JPanel jContainPanel = null;

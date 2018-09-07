@@ -50,12 +50,12 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 	private JButton jButtonCopy;
 	private JButton jButtonClose;
 	private JButton jButtonDelete;
-	private String[] columnNames = { 
-				MessageBundle.getMessage("angal.priceslist.idm"), 
-				MessageBundle.getMessage("angal.priceslist.name"), 
-				MessageBundle.getMessage("angal.common.description"), 
-				MessageBundle.getMessage("angal.priceslist.currency") 
-			}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private String[] columnNames = {
+			MessageBundle.getMessage("angal.priceslist.idm"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.priceslist.name"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.common.description"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.priceslist.currency") //$NON-NLS-1$
+	};
 	private int[] columWidth = {100, 100, 200, 100};
 	private boolean[] columResizable = {false, false, true, false};
 	

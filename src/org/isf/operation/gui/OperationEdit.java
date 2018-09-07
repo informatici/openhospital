@@ -245,7 +245,7 @@ public class OperationEdit extends JDialog {
 							if (key.length()>10){
 								JOptionPane.showMessageDialog(				
 										null,
-										MessageBundle.getMessage("angal.operation.codetoolongmaxchars"),
+										MessageBundle.getMessage("angal.common.codetoolongmaxchars"),
 										MessageBundle.getMessage("angal.hospital"),
 										JOptionPane.PLAIN_MESSAGE);
 

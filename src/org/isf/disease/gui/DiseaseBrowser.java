@@ -71,7 +71,11 @@ public class DiseaseBrowser extends ModalJFrame implements DiseaseEdit.DiseaseLi
 	private JLabel selectlabel;
 	private JComboBox pbox;
 	private ArrayList<Disease> pDisease;
-	private String[] pColums = {MessageBundle.getMessage("angal.common.codem"), MessageBundle.getMessage("angal.disease.typem"), MessageBundle.getMessage("angal.disease.namem")};
+	private String[] pColums = {
+			MessageBundle.getMessage("angal.common.codem"),
+			MessageBundle.getMessage("angal.disease.typem"),
+			MessageBundle.getMessage("angal.disease.namem")
+	};
 	private int[] pColumwidth = {50, 180, 200 };
 	private Disease disease;
 	private DefaultTableModel model ;

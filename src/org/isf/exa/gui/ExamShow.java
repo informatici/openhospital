@@ -46,9 +46,10 @@ public class ExamShow extends JDialog {
 	private Exam exam = null;
 	private JButton newButton = null;
 	private JButton deleteButton = null;
-	private String[] pColums = { 
-			MessageBundle.getMessage("angal.common.codem"), 
-			MessageBundle.getMessage("angal.common.descriptionm")};
+	private String[] pColums = {
+			MessageBundle.getMessage("angal.common.codem"),
+			MessageBundle.getMessage("angal.common.descriptionm")
+	};
 	private int[] pColumwidth = {50,250};
 	private DefaultTableModel model ;
 	private JTable table;

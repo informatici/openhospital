@@ -60,11 +60,11 @@ class PrivilegeTree extends JDialog {
 		tree = new JTree(model);
 
 		
-		//una struttura d'appoggio
+		//a supporting structure
 		ArrayList<UserMenuItem> junkMenu = new ArrayList<UserMenuItem>();
 		
 		//cycle to process the whole rootMenu
-		while (rootMenu != null && !rootMenu.isEmpty()) {
+		while (!rootMenu.isEmpty()) {
 			Iterator<UserMenuItem> it = rootMenu.iterator();
 			while (it.hasNext()) {
 				UserMenuItem umi = it.next();
@@ -125,11 +125,10 @@ class PrivilegeTree extends JDialog {
 		};
 		tree.addMouseListener(ml);
 
-		// set up node icons
-
+		//set up node icons
 		UserItemNameTreeCellRenderer renderer = new UserItemNameTreeCellRenderer();
 		
-		//no icona sulle foglie
+		//no icon on leaves
 		renderer.setLeafIcon(new ImageIcon(""));
 		tree.setCellRenderer(renderer);
 

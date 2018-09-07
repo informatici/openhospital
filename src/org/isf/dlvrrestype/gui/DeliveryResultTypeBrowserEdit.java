@@ -205,7 +205,7 @@ public class DeliveryResultTypeBrowserEdit extends JDialog{
 					if (key.length()>1){
 						JOptionPane.showMessageDialog(				
 								null,
-								MessageBundle.getMessage("angal.dlvrrestype.codetoolongmaxchar"),
+								MessageBundle.getMessage("angal.dlvrrestype.codetoolongmaxchars"),
 								MessageBundle.getMessage("angal.hospital"),
 								JOptionPane.PLAIN_MESSAGE);
 						
@@ -327,7 +327,7 @@ public class DeliveryResultTypeBrowserEdit extends JDialog{
 	private JLabel getJCodeLabel() {
 		if (jCodeLabel == null) {
 			jCodeLabel = new JLabel();
-			jCodeLabel.setText(MessageBundle.getMessage("angal.distype.codemaxchars"));
+			jCodeLabel.setText(MessageBundle.getMessage("angal.dlvrrestype.codemaxchars"));
 		}
 		return jCodeLabel;
 	}

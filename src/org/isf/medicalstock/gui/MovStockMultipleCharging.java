@@ -1,44 +1,5 @@
 package org.isf.medicalstock.gui;
 
-import com.toedter.calendar.JDateChooser;
-import org.apache.log4j.PropertyConfigurator;
-import org.isf.generaldata.GeneralData;
-import org.isf.generaldata.MessageBundle;
-import org.isf.medicals.manager.MedicalBrowsingManager;
-import org.isf.medicals.model.Medical;
-import org.isf.medicalstock.manager.MovStockInsertingManager;
-import org.isf.medicalstock.model.Lot;
-import org.isf.medicalstock.model.Movement;
-import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
-import org.isf.medstockmovtype.model.MovementType;
-import org.isf.supplier.manager.SupplierBrowserManager;
-import org.isf.supplier.model.Supplier;
-import org.isf.utils.db.NormalizeString;
-import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.jobjects.BusyState;
-import org.isf.utils.jobjects.RequestFocusListener;
-import org.isf.utils.jobjects.TextPrompt;
-import org.isf.utils.jobjects.TextPrompt.Show;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -62,6 +23,47 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+
+import org.apache.log4j.PropertyConfigurator;
+import org.isf.generaldata.GeneralData;
+import org.isf.generaldata.MessageBundle;
+import org.isf.medicals.manager.MedicalBrowsingManager;
+import org.isf.medicals.model.Medical;
+import org.isf.medicalstock.manager.MovStockInsertingManager;
+import org.isf.medicalstock.model.Lot;
+import org.isf.medicalstock.model.Movement;
+import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
+import org.isf.medstockmovtype.model.MovementType;
+import org.isf.supplier.manager.SupplierBrowserManager;
+import org.isf.supplier.model.Supplier;
+import org.isf.utils.db.NormalizeString;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.BusyState;
+import org.isf.utils.jobjects.RequestFocusListener;
+import org.isf.utils.jobjects.TextPrompt;
+import org.isf.utils.jobjects.TextPrompt.Show;
+
+import com.toedter.calendar.JDateChooser;
+
 public class MovStockMultipleCharging extends JDialog {
 	/**
 	 * 
@@ -78,18 +80,18 @@ public class MovStockMultipleCharging extends JDialog {
 	private JDateChooser jDateChooser;
 	private JComboBox jComboBoxSupplier;
 	private JTable jTableMovements;
-	private final String[] columnNames = { 
-				MessageBundle.getMessage("angal.common.code"), 
-				MessageBundle.getMessage("angal.common.description"), 
-				MessageBundle.getMessage("angal.medicalstock.multiplecharging.qtypacket"), 
-				MessageBundle.getMessage("angal.medicalstock.multiplecharging.qty"), 
-				MessageBundle.getMessage("angal.medicalstock.multiplecharging.unitpack"), 
-				MessageBundle.getMessage("angal.medicalstock.multiplecharging.total"), 
-				MessageBundle.getMessage("angal.medicalstock.multiplecharging.lotnumberabb"), 
-				MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdate"), 
-				MessageBundle.getMessage("angal.medicalstock.multiplecharging.cost"), 
-				MessageBundle.getMessage("angal.medicalstock.multiplecharging.total") 
-			}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+	private final String[] columnNames = {
+			MessageBundle.getMessage("angal.common.code"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.common.description"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.qtypacket"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.qty"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.unitpack"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.total"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.lotnumberabb"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdate"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.cost"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.total") //$NON-NLS-1$
+	};
 	private final Class[] columnClasses = { String.class, String.class, Integer.class, Integer.class, String.class, Integer.class, String.class, String.class, Double.class, Double.class };
 	private boolean[] columnEditable = { true, false, false, true, true, false, !GeneralData.AUTOMATICLOT, true, true, false };
 	private int[] columnWidth = { 50, 100, 70, 50, 70, 50, 50, 80, 50, 80 };
@@ -101,7 +103,10 @@ public class MovStockMultipleCharging extends JDialog {
 	private HashMap<String, Medical> medicalMap;
 	private ArrayList<Integer> units;
 	private JTableModel model;
-	private String[] qtyOption = new String[] { MessageBundle.getMessage("angal.medicalstock.multiplecharging.units"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.packet") }; //$NON-NLS-1$ //$NON-NLS-2$
+	private String[] qtyOption = new String[] {
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.units"), //$NON-NLS-2$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.packet") //$NON-NLS-2$
+	};
 	private JComboBox comboBoxUnits = new JComboBox(qtyOption);
 	private final int UNITS = 0;
 	private final int PACKETS = 1;
@@ -109,6 +114,7 @@ public class MovStockMultipleCharging extends JDialog {
 
 	/**
 	 * Launch the application.
+	 * TODO: externalize strings
 	 */
 	public static void main(String[] args) {
 		try {
@@ -146,11 +152,13 @@ public class MovStockMultipleCharging extends JDialog {
 		}
 
 		medicalMap = new HashMap<String, Medical>();
+		if (null != medicals) {
 			for (Medical med : medicals) {
 				String key = med.getProd_code();
 				if (key == null || key.equals("")) key = med.getType().getCode() + med.getDescription();
 				medicalMap.put(key, med);
 			}
+		}
 		units = new ArrayList<Integer>();
 	}
 	
@@ -621,8 +629,6 @@ public class MovStockMultipleCharging extends JDialog {
 				} else row = 0;
 				
 			} while (row == -1);
-			
-			return lot;
 		}
 		return lot;
 	}
@@ -669,6 +675,7 @@ public class MovStockMultipleCharging extends JDialog {
 					throw new NumberFormatException();
 			} catch (NumberFormatException nfe) {
 				JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertavalidvalue")); //$NON-NLS-1$
+				qty = 0;
 			}
 		}
 		return qty;
@@ -890,11 +897,11 @@ public class MovStockMultipleCharging extends JDialog {
 			}
 			if (GeneralData.LOTWITHCOST) {
 				Double cost = lot.getCost();
-				/*if (cost == null || cost.doubleValue() <= 0.) {
+				if (cost == null || cost.doubleValue() <= 0.) {
 					JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.zerocostsnotallowed")); //$NON-NLS-1$
 					jTableMovements.getSelectionModel().setSelectionInterval(i, i);
 					return false;
-				}*/
+				}
 			}
 			mov.setDate(thisDate);
 			mov.setRefNo(refNo);

@@ -69,7 +69,8 @@ public class WardBrowser extends ModalJFrame implements WardEdit.WardListener {
 	private JScrollPane jScrollPane = null;
 	private JTable table = null;
 	private DefaultTableModel model = null;
-	private String[] pColums = { MessageBundle.getMessage("angal.common.code"),
+	private String[] pColums = {
+			MessageBundle.getMessage("angal.common.code"),
 			MessageBundle.getMessage("angal.ward.name"),
 			MessageBundle.getMessage("angal.ward.telephone"),
 			MessageBundle.getMessage("angal.ward.fax"),

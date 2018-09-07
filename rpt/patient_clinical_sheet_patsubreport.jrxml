@@ -14,7 +14,7 @@
 		 rightMargin="0"
 		 topMargin="0"
 		 bottomMargin="0"
-		 whenNoDataType="NoPages"
+		 whenNoDataType="AllSectionsNoDetail"
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false">
 	<property name="ireport.scriptlethandling" value="0" />

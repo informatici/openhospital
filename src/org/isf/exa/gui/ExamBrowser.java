@@ -49,13 +49,13 @@ public class ExamBrowser extends ModalJFrame{
 	private JLabel selectlabel;
 	private JComboBox pbox;
 	private ArrayList<Exam> pExam;
-	private String[] pColums = { 
-				MessageBundle.getMessage("angal.common.codem"), 
-				MessageBundle.getMessage("angal.exa.typem"), 
-				MessageBundle.getMessage("angal.common.descriptionm"),
-				MessageBundle.getMessage("angal.exa.procm"), 
-				MessageBundle.getMessage("angal.exa.defaultm") 
-			};
+	private String[] pColums = {
+			MessageBundle.getMessage("angal.common.codem"),
+			MessageBundle.getMessage("angal.exa.typem"),
+			MessageBundle.getMessage("angal.common.descriptionm"),
+			MessageBundle.getMessage("angal.exa.procm"),
+			MessageBundle.getMessage("angal.exa.defaultm")
+	};
 	private int[] pColumwidth = {60,330,160,60,130};
 	private Exam exam;
 	private DefaultTableModel model ;
@@ -183,12 +183,20 @@ public class ExamBrowser extends ModalJFrame{
 				}
 				ExamBrowsingManager manager = new ExamBrowsingManager();
 				Exam e = (Exam)(((ExamBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
+				StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.exa.deletefolowingexam"))
+						.append(" :")
+						.append("\n")
+						.append(MessageBundle.getMessage("angal.common.code"))
+						.append("= ")
+						.append(e.getCode())
+						.append("\n")
+						.append(MessageBundle.getMessage("angal.common.description"))
+						.append("= ")
+						.append(e.getDescription())
+						.append("\n?");
 				int n = JOptionPane.showConfirmDialog(
                         null,
-                        MessageBundle.getMessage("angal.exa.deletefolowingexam") + " :" + 
-                        "\n"+MessageBundle.getMessage("angal.common.code")+"= " + e.getCode() +
-                        "\n"+MessageBundle.getMessage("angal.common.description")+" = " + e.getDescription() +
-                        "\n?",
+                        message.toString(),
                         MessageBundle.getMessage("angal.hospital"),
                         JOptionPane.YES_NO_OPTION);
 				if ((n == JOptionPane.YES_OPTION)){

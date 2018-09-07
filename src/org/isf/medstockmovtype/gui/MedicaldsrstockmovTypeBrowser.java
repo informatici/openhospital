@@ -39,10 +39,11 @@ public class MedicaldsrstockmovTypeBrowser extends ModalJFrame implements Medica
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<MovementType> pMedicaldsrstockmovType;
-	private String[] pColums = { 
-			MessageBundle.getMessage("angal.common.codem"), 
-			MessageBundle.getMessage("angal.common.descriptionm"), 
-			MessageBundle.getMessage("angal.medstockmovtype.typem")};
+	private String[] pColums = {
+			MessageBundle.getMessage("angal.common.codem"),
+			MessageBundle.getMessage("angal.common.descriptionm"),
+			MessageBundle.getMessage("angal.medstockmovtype.typem")
+	};
 	private int[] pColumwidth = {80, 200, 40};
 
 	private JPanel jContainPanel = null;

@@ -21,6 +21,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -242,11 +243,19 @@ public class WardPharmacyRectify extends JDialog {
 				jButtonOk.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						
-						Medical med = (Medical) jComboBoxMedical.getSelectedItem();
-						if (!(med instanceof Medical)) return;
+						Medical med;
+						try {
+							med = (Medical) jComboBoxMedical.getSelectedItem();
+						} catch (ClassCastException e1) {
+							JOptionPane.showMessageDialog(WardPharmacyRectify.this, MessageBundle.getMessage("angal.medicalstockward.rectify.pleaseselectadrug")); //$NON-NLS-1$
+							return;
+						}
 						
 						String reason = jTextFieldReason.getText().trim();
-						if (reason.equals("")) return; //$NON-NLS-1$
+						if (reason.equals("")) { //$NON-NLS-1$
+							JOptionPane.showMessageDialog(WardPharmacyRectify.this, MessageBundle.getMessage("angal.medicalstockward.rectify.pleasespecifythereason")); //$NON-NLS-1$
+							return;
+						}
 						
 						Double stock = Double.parseDouble(jLabelStockQty.getText());
 						Double newQty = (Double) jSpinnerNewQty.getValue();

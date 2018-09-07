@@ -167,11 +167,8 @@ public class Login extends JDialog implements ActionListener, KeyListener {
 			 */
 
 			usersList = new JComboBox();
-			if(users != null) {
-                for (User u : users) {
-                    usersList.addItem(u.getUserName());
-                }
-            }
+			for (User u : users)
+				usersList.addItem(u.getUserName());
 
 			Dimension d = usersList.getPreferredSize();
 			usersList.setPreferredSize(new Dimension(120, d.height));

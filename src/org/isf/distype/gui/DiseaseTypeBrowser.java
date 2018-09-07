@@ -38,9 +38,10 @@ public class DiseaseTypeBrowser extends ModalJFrame implements DiseaseTypeListen
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<DiseaseType> pDiseaseType;
-	private String[] pColums = { 
-		MessageBundle.getMessage("angal.common.codem"), 
-		MessageBundle.getMessage("angal.common.descriptionm")};
+	private String[] pColums = {
+			MessageBundle.getMessage("angal.common.codem"),
+			MessageBundle.getMessage("angal.common.descriptionm")
+	};
 	private int[] pColumwidth = {80, 200 };
 	private JPanel jContainPanel = null;
 	private JPanel jButtonPanel = null;

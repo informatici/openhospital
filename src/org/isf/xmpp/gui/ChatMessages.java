@@ -121,7 +121,7 @@ public class ChatMessages extends JTextPane {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new GenericReportFromDateToDate(fromDate,toDate,typeReport,typeReport, false);
+				new GenericReportFromDateToDate(fromDate,toDate,typeReport, typeReport, false);
 				view.setEnabled(false);
 			}
 		});

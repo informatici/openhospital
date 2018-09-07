@@ -45,8 +45,9 @@ public class VaccineTypeBrowser extends ModalJFrame implements VaccineTypeListen
 	private ArrayList<VaccineType> pVaccineType;
 	
 	private String[] pColums = {
-			MessageBundle.getMessage("angal.common.codem"), 
-			MessageBundle.getMessage("angal.common.descriptionm")};
+			MessageBundle.getMessage("angal.common.codem"),
+			MessageBundle.getMessage("angal.common.descriptionm")
+	};
 	private int[] pColumwidth = {80, 200 };
 
 	private JPanel jContainPanel = null;

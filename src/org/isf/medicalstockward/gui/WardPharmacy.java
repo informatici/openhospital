@@ -1071,19 +1071,19 @@ public class WardPharmacy extends ModalJFrame implements
 				if (mov.isPatient())
 					return mov.getAge();
 				else
-					return MessageBundle.getMessage("angal.medicalstockward.notapplicable.abb");
+					return MessageBundle.getMessage("angal.common.notapplicable");
 			}
 			if (c == 3) {
 				if (mov.isPatient())
 					return mov.getPatient().getSex();
-				return MessageBundle.getMessage("angal.medicalstockward.notapplicable.abb");
+				return MessageBundle.getMessage("angal.common.notapplicable");
 			}
 			if (c == 4) {
 				if (mov.isPatient()) {
 					float weight = mov.getWeight();
-					return weight == 0 ? MessageBundle.getMessage("angal.medicalstockward.notdefined.abb") : weight;
+					return weight == 0 ? MessageBundle.getMessage("angal.common.notdefined") : weight;
 				} else
-					return MessageBundle.getMessage("angal.medicalstockward.notapplicable.abb");
+					return MessageBundle.getMessage("angal.common.notapplicable");
 			}
 			if (c == 5) {
 				return mov.getMedical().getDescription();

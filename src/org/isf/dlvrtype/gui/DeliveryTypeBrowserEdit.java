@@ -204,7 +204,7 @@ public class DeliveryTypeBrowserEdit extends JDialog{
 					if (key.length()>1){
 						JOptionPane.showMessageDialog(				
 								null,
-								MessageBundle.getMessage("angal.dlvrtype.codetoolongmaxchar"),
+								MessageBundle.getMessage("angal.dlvrtype.codetoolongmaxchars"),
 								MessageBundle.getMessage("angal.hospital"),
 								JOptionPane.PLAIN_MESSAGE);
 						

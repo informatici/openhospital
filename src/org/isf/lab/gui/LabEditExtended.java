@@ -675,7 +675,6 @@ public class LabEditExtended extends JDialog {
 					lab.setInOutPatient((inPatientCheckBox.isSelected()?"I":"R"));
 					lab.setPatId(labPat);
 					lab.setPatName(labPat.getName());
-					lab.setAge(labPat.getAge());
 					lab.setSex(labPat.getSex()+"");
 					
 					if (examSelected.getProcedure() == 1)
@@ -692,6 +691,7 @@ public class LabEditExtended extends JDialog {
 					}
 					boolean result = false;
 					if (insert) {
+						lab.setAge(labPat.getAge());
 						if (examSelected.getProcedure() == 1)
 							try {
 								result = manager.newLabFirstProcedure(lab);

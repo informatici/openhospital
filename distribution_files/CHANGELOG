@@ -1,5 +1,21 @@
 RELEASES:
 
+<---1.8.3---> 08/05/2017
+* Fixed the Rectify function in Pharmaceutical Stock Ward
+* Fixed CRUD and descending sorter for PatientVaccines list
+* Fixed Disease List printing report
+* Fixed patient duplicates check
+* Avoid updating age when editing and old Opd, PatientVaccine and Laboratories
+* Cosmetic changes to the code
+* Improved Excel filesize and styles
+* Fixed a bug in updating user details (thanks to Ziad Al-Zein <zalzein2010@hotmail.com>)
+* Fixed a bug that was allowing negative quantities
+* Added new libraries in order to go beyond the limit of 65536 rows in Excel 2010. 
+* Kept compatibility with Excel 97-2003 through the file chooser ("save as" dialog)
+* Improved Text Printer with better handle of TXT and PDF multipage bills.
+* Improved Clinical Sheet Report in order to show at least the first page with the patient's details
+* Added support for high dpi monitor in launchers
+
 <---1.8.2---> 05/08/2016
 * Fixed merge function
 * DB creation in Spanish, Italian, English, Portugese and French

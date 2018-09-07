@@ -103,14 +103,14 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 	private JComboBox pbox;
 	private ArrayList<Medical> pMedicals;
 	private String[] pColums = {
-				MessageBundle.getMessage("angal.medicals.typem"), 
-				MessageBundle.getMessage("angal.common.code"), 
-				MessageBundle.getMessage("angal.common.descriptionm"), 
-				MessageBundle.getMessage("angal.medicals.pcsperpckm"), 
-				MessageBundle.getMessage("angal.medicals.stockm"),
-				MessageBundle.getMessage("angal.medicals.critlevelm"),
-				MessageBundle.getMessage("angal.medicals.outofstockm")
-			};
+			MessageBundle.getMessage("angal.medicals.typem"),
+			MessageBundle.getMessage("angal.common.code"),
+			MessageBundle.getMessage("angal.common.descriptionm"),
+			MessageBundle.getMessage("angal.medicals.pcsperpck"),
+			MessageBundle.getMessage("angal.medicals.stockm"),
+			MessageBundle.getMessage("angal.medicals.critlevelm"),
+			MessageBundle.getMessage("angal.medicals.outofstockm")
+	};
 	private int[] pColumwidth = {100,100,400,60,60,80,100};
 	private boolean[] pColumResizable = {true,true,true,true,true,true,true};
 	private Medical medical;
