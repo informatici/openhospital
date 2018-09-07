@@ -2,7 +2,7 @@
 
 MYSQL_DIR="mysql-5.0.51a-linux-i686"
 JAVA_DIR="jre1.6.0_45"
-OH_DIR="oh-1.8.0"
+OH_DIR="oh-1.8.3"
 
 where_i_am=$(pwd)
 cd $(dirname $0)
@@ -73,7 +73,7 @@ case $ARCH in
 esac
 
 cd $POH_PATH/$OH_DIR/
-$POH_PATH/$JAVA_DIR/bin/java -Djava.library.path=${NATIVE_LIB_PATH} -classpath $CLASSPATH org.isf.menu.gui.Menu 2>&1 > /dev/null
+$POH_PATH/$JAVA_DIR/bin/java -Dsun.java2d.dpiaware=false -Djava.library.path=${NATIVE_LIB_PATH} -classpath $CLASSPATH org.isf.menu.gui.Menu 2>&1 > /dev/null
 
 echo "Shutting down MySQL... "
 cd $POH_PATH/$MYSQL_DIR/

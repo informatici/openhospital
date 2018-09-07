@@ -163,10 +163,10 @@ public class VaccineEdit extends JDialog {
 			vaccineTypeDescLabel.setText(MessageBundle.getMessage("angal.vaccine.vaccinetype"));
             //vaccine code
 			codeLabel = new JLabel();
-			codeLabel.setText(MessageBundle.getMessage("angal.vaccine.code"));
+			codeLabel.setText(MessageBundle.getMessage("angal.common.code"));
 			// vaccine description
 			descLabel = new JLabel();
-			descLabel.setText(MessageBundle.getMessage("angal.vaccine.description"));
+			descLabel.setText(MessageBundle.getMessage("angal.common.description"));
 			// required fields
 			requiredLabel= new JLabel();
 			requiredLabel.setText(MessageBundle.getMessage("angal.vaccine.requiredfields"));
@@ -244,7 +244,7 @@ public class VaccineEdit extends JDialog {
                             if (manager.codeControl(key)){
                                 JOptionPane.showMessageDialog(
                                         null,
-                                        MessageBundle.getMessage("angal.vaccine.codealreadyinuse"),
+                                        MessageBundle.getMessage("angal.common.codealreadyinuse"),
                                         MessageBundle.getMessage("angal.hospital"),
                                         JOptionPane.PLAIN_MESSAGE);
 

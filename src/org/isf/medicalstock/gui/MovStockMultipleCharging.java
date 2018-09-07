@@ -78,7 +78,18 @@ public class MovStockMultipleCharging extends JDialog {
 	private JDateChooser jDateChooser;
 	private JComboBox jComboBoxSupplier;
 	private JTable jTableMovements;
-	private final String[] columnNames = { MessageBundle.getMessage("angal.medicalstock.multiplecharging.code"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.description"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.qtypacket"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.qty"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.unitpack"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.total"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.lotnumberabb"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdate"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.cost"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.total") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+	private final String[] columnNames = {
+			MessageBundle.getMessage("angal.common.code"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.common.description"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.qtypacket"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.qty"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.unitpack"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.total"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.lotnumberabb"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdate"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.cost"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.total") //$NON-NLS-1$
+	};
 	private final Class[] columnClasses = { String.class, String.class, Integer.class, Integer.class, String.class, Integer.class, String.class, String.class, Double.class, Double.class };
 	private boolean[] columnEditable = { true, false, false, true, true, false, !GeneralData.AUTOMATICLOT, true, true, false };
 	private int[] columnWidth = { 50, 100, 70, 50, 70, 50, 50, 80, 50, 80 };
@@ -90,7 +101,10 @@ public class MovStockMultipleCharging extends JDialog {
 	private HashMap<String, Medical> medicalMap;
 	private ArrayList<Integer> units;
 	private JTableModel model;
-	private String[] qtyOption = new String[] { MessageBundle.getMessage("angal.medicalstock.multiplecharging.units"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.packet") }; //$NON-NLS-1$ //$NON-NLS-2$
+	private String[] qtyOption = new String[] {
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.units"), //$NON-NLS-2$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.packet") //$NON-NLS-2$
+	};
 	private JComboBox comboBoxUnits = new JComboBox(qtyOption);
 	private final int UNITS = 0;
 	private final int PACKETS = 1;
@@ -631,6 +645,7 @@ public class MovStockMultipleCharging extends JDialog {
 					throw new NumberFormatException();
 			} catch (NumberFormatException nfe) {
 				JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertavalidvalue")); //$NON-NLS-1$
+				qty = 0;
 			}
 		}
 		return qty;
@@ -1022,10 +1037,10 @@ public class MovStockMultipleCharging extends JDialog {
 
 		public String getColumnName(int c) {
 			if (c == 0) {
-				return MessageBundle.getMessage("angal.medicals.code"); //$NON-NLS-1$
+				return MessageBundle.getMessage("angal.common.code"); //$NON-NLS-1$
 			}
 			if (c == 1) {
-				return MessageBundle.getMessage("angal.medicals.description"); //$NON-NLS-1$
+				return MessageBundle.getMessage("angal.common.description"); //$NON-NLS-1$
 			}
 			return ""; //$NON-NLS-1$
 		}

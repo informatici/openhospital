@@ -108,7 +108,11 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String[] patientClassItems = { MessageBundle.getMessage("angal.admission.all"), MessageBundle.getMessage("angal.admission.admitted"), MessageBundle.getMessage("angal.admission.notadmitted") };
+	private String[] patientClassItems = {
+			MessageBundle.getMessage("angal.admission.all"),
+			MessageBundle.getMessage("angal.admission.admitted"),
+			MessageBundle.getMessage("angal.admission.notadmitted")
+	};
 	private JComboBox patientClassBox = new JComboBox(patientClassItems);
 	private JCheckBox wardCheck[] = null;
 	private JTextField searchString = null;
@@ -119,8 +123,21 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 	private JLabel rowCounter = null;
 	private String rowCounterText = MessageBundle.getMessage("angal.admission.count");
 	private ArrayList<AdmittedPatient> pPatient = new ArrayList<AdmittedPatient>();
-	private String informations = MessageBundle.getMessage("angal.admission.city") + " / " + MessageBundle.getMessage("angal.admission.addressm") + " / " + MessageBundle.getMessage("angal.admission.telephone") + " / " + MessageBundle.getMessage("angal.patient.note");
-	private String[] pColums = { MessageBundle.getMessage("angal.admission.code"), MessageBundle.getMessage("angal.admission.name"), MessageBundle.getMessage("angal.admission.age"), MessageBundle.getMessage("angal.admission.sex"), informations, MessageBundle.getMessage("angal.admission.ward") };
+	private StringBuilder informations = new StringBuilder(MessageBundle.getMessage("angal.admission.city"))
+			.append(" / ")
+			.append(MessageBundle.getMessage("angal.admission.addressm"))
+			.append(" / ")
+			.append(MessageBundle.getMessage("angal.admission.telephone"))
+			.append(" / ")
+			.append(MessageBundle.getMessage("angal.patient.note"));
+	private String[] pColums = { 
+			MessageBundle.getMessage("angal.common.code"), 
+			MessageBundle.getMessage("angal.admission.name"),
+			MessageBundle.getMessage("angal.admission.age"), 
+			MessageBundle.getMessage("angal.admission.sex"), 
+			informations.toString(), 
+			MessageBundle.getMessage("angal.admission.ward")
+	};
 	private int[] pColumwidth = { 100, 200, 80, 50, 150, 100 };
 	private boolean[] pColumResizable = {false, false, false, false, true, false};
 	private AdmittedPatient patient;
@@ -872,13 +889,34 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				//System.out.println("mergedPatient: " + mergedPatient.getCode());
 
 				//ASK CONFIRMATION
-				int ok = JOptionPane.showConfirmDialog(null, 
-						MessageBundle.getMessage("angal.admission.withthisoperationthepatient")+"\n"+MessageBundle.getMessage("angal.admission.code")+": "+
-						patient2.getCode() + " " + patient2.getName() + " " + patient2.getAge() + " " + patient2.getAddress() +"\n"+
-						MessageBundle.getMessage("angal.admission.willbedeletedandhisherhistorytransferedtothepatient")+"\n"+MessageBundle.getMessage("angal.admission.code")+": "+
-						mergedPatient.getCode() + " " + mergedPatient.getName() + " " + mergedPatient.getAge() + " " + mergedPatient.getAddress() +"\n"+
-						MessageBundle.getMessage("angal.admission.continue"),
-						MessageBundle.getMessage("angal.admission.merge"), 
+				StringBuilder confirmation = new StringBuilder(MessageBundle.getMessage("angal.admission.withthisoperationthepatient"))
+						.append("\n")
+						.append(MessageBundle.getMessage("angal.common.code"))
+						.append(": ")
+						.append(patient2.getCode())
+						.append(" ")
+						.append(patient2.getName())
+						.append(" ")
+						.append(patient2.getAge())
+						.append(" ")
+						.append(patient2.getAddress())
+						.append("\n")
+						.append(MessageBundle.getMessage("angal.admission.willbedeletedandhisherhistorytransferedtothepatient"))
+						.append("\n")
+						.append(MessageBundle.getMessage("angal.common.code"))
+						.append(": ")
+						.append(mergedPatient.getCode())
+						.append(" ")
+						.append(mergedPatient.getName())
+						.append(" ")
+						.append(mergedPatient.getAge())
+						.append(" ")
+						.append(mergedPatient.getAddress())
+						.append("\n")
+						.append(MessageBundle.getMessage("angal.admission.continue"));
+				int ok = JOptionPane.showConfirmDialog(null,
+						confirmation.toString(),
+						MessageBundle.getMessage("angal.admission.merge"),
 						JOptionPane.YES_NO_OPTION);
 				if (ok != JOptionPane.YES_OPTION) return;
 				

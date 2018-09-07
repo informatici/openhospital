@@ -12,6 +12,7 @@ import net.sf.jasperreports.view.JasperViewer;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.generaldata.TxtPrinter;
 import org.isf.serviceprinting.manager.PrintReceipt;
 import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
@@ -27,28 +28,34 @@ public class GenericReportBill {
 	}
 
 	public GenericReportBill(Integer billID, String jasperFileName, boolean show, boolean askForPrint) {
+		
+		TxtPrinter.getTxtPrinter();
+		
 		try {
             JasperReportsManager jasperReportsManager = new JasperReportsManager();
-            JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportBillPdf(billID, jasperFileName, show, askForPrint);
+            JasperReportResultDto jasperReportPDFResultDto = jasperReportsManager.getGenericReportBillPdf(billID, jasperFileName, show, askForPrint);
 
 			if (show) {
                 if (GeneralData.INTERNALVIEWER) {
-                    JasperViewer.viewReport(jasperReportResultDto.getJasperPrint(), false);
+                    JasperViewer.viewReport(jasperReportPDFResultDto.getJasperPrint(), false);
                 } else {
                     Runtime rt = Runtime.getRuntime();
-                    rt.exec(GeneralData.VIEWER + " " + jasperReportResultDto.getFilename());
+                    rt.exec(GeneralData.VIEWER + " " + jasperReportPDFResultDto.getFilename());
                 }
 			}
 			
 			if (GeneralData.RECEIPTPRINTER) {
-                JasperReportResultDto jasperReportTxtResultDto = jasperReportsManager.getGenericReportBillTxt(billID, jasperFileName, show, askForPrint);
+				JasperReportResultDto jasperReportTxtResultDto = jasperReportsManager.getGenericReportBillTxt(billID, jasperFileName, show, askForPrint);
 				int print = JOptionPane.OK_OPTION;
 				if (askForPrint) {
 					print = JOptionPane.showConfirmDialog(null, MessageBundle.getMessage("angal.genericreportbill.doyouwanttoprintreceipt"));
 				}
-				if (print == JOptionPane.OK_OPTION) {
+				if (print != JOptionPane.OK_OPTION) return; //STOP
+				
+				if (TxtPrinter.MODE.equals("PDF")) new PrintReceipt(jasperReportPDFResultDto.getJasperPrint(), jasperReportPDFResultDto.getFilename());
+				else if (TxtPrinter.MODE.equals("TXT") ||
+						TxtPrinter.MODE.equals("ZPL"))
 					new PrintReceipt(jasperReportTxtResultDto.getJasperPrint(), jasperReportTxtResultDto.getFilename());
-				}
 			}
 		} catch (Exception e) {
             logger.error("", e);

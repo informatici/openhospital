@@ -142,7 +142,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		surgeryListeners.remove(SurgeryListener.class, listener);
 	}
 	
-	private void fireSurgeryInserted() {
+	private void fireSurgeryInserted(Opd opd) {
 		AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
 
 			/**
@@ -154,7 +154,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		for (int i = 0; i < listeners.length; i++)
 			((SurgeryListener)listeners[i]).surgeryInserted(event, opd);
 	}
-	private void fireSurgeryUpdated() {
+	private void fireSurgeryUpdated(Opd opd) {
 		AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
 
 			/**
@@ -1544,7 +1544,6 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 					opd.setNewPatient(newPatient);
 					opd.setReferralFrom(referralFrom);
 					opd.setReferralTo(referralTo);
-					opd.setAge(opdPatient.getAge());
 					opd.setSex(opdPatient.getSex());
 					
 					opd.setfirstName(opdPatient.getFirstName());
@@ -1573,11 +1572,12 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 						if (insert){
 							GregorianCalendar date =new GregorianCalendar();
 							opd.setProgYear(opdManager.getProgYear(date.get(Calendar.YEAR))+1);
+							opd.setAge(opdPatient.getAge());
 							//remember for later use
 							RememberDates.setLastOpdVisitDate(gregDate);
 							result = opdManager.newOpd(opd);
 							if (result) {
-								fireSurgeryInserted();
+								fireSurgeryInserted(opd);
 							}
 							if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opd.thedatacouldnotbesaved"));
 							else  dispose();
@@ -1597,7 +1597,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 							}
 
 							if (result) {
-								fireSurgeryUpdated();
+								fireSurgeryUpdated(opd);
 							};
 							if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opd.thedatacouldnotbesaved"));
 							else  dispose();

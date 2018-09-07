@@ -98,7 +98,15 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 	private JLabel selectlabel;
 	private JComboBox pbox;
 	private ArrayList<Medical> pMedicals;
-	private String[] pColums = {MessageBundle.getMessage("angal.medicals.typem"), MessageBundle.getMessage("angal.medicals.code"), MessageBundle.getMessage("angal.medicals.descriptionm"), MessageBundle.getMessage("angal.medicals.pcsperpck"), MessageBundle.getMessage("angal.medicals.stockm"),MessageBundle.getMessage("angal.medicals.critlevelm"),MessageBundle.getMessage("angal.medicals.outofstockm")};
+	private String[] pColums = {
+			MessageBundle.getMessage("angal.medicals.typem"),
+			MessageBundle.getMessage("angal.common.code"),
+			MessageBundle.getMessage("angal.common.descriptionm"),
+			MessageBundle.getMessage("angal.medicals.pcsperpck"),
+			MessageBundle.getMessage("angal.medicals.stockm"),
+			MessageBundle.getMessage("angal.medicals.critlevelm"),
+			MessageBundle.getMessage("angal.medicals.outofstockm")
+	};
 	private int[] pColumwidth = {100,100,400,60,60,80,100};
 	private boolean[] pColumResizable = {true,true,true,true,true,true,true};
 	private Medical medical;
@@ -371,7 +379,7 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 			gc.set(GregorianCalendar.DAY_OF_MONTH, gc.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
 			to = formatDateTimeReport(gc);
 		}
-		new GenericReportFromDateToDate(from, to, "PharmaceuticalExpiration", false);
+		new GenericReportFromDateToDate(from, to, "PharmaceuticalExpiration", MessageBundle.getMessage("angal.medicals.expiringreport"), false);
 	}
 	
 	private String formatDateTimeReport(GregorianCalendar date) {

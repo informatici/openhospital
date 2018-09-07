@@ -12,21 +12,24 @@ public class TxtPrinter {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final String FILE_PROPERTIES = "txtPrinter.properties";
 
+	public static boolean USE_DEFAULT_PRINTER;
 	public static boolean PRINT_AS_PAID;
     public static boolean PRINT_WITHOUT_ASK;
-    public static int PAGE_HEIGHT;
-    public static int PAGE_WIDTH;
-    public static boolean ZPL;
+    public static int TXT_CHAR_HEIGHT;
+    public static int TXT_CHAR_WIDTH;
+    public static String MODE;
     public static String ZPL_FONT_TYPE;
     public static int ZPL_ROW_HEIGHT;
+    public static String PRINTER;
     
-    public static boolean DEFAULT_PRINT_AS_PAID = false;
-    public static boolean DEFAULT_PRINT_WITHOUT_ASK = false;
-    private static int DEFAULT_PAGE_HEIGHT = 50;
-    private static int DEFAULT_PAGE_WIDTH = 47;
-    public static boolean DEFAULT_ZPL = false;
-    public static String DEFAULT_ZPL_FONT_TYPE = "A";
-    public static int DEFAULT_ZPL_ROW_HEIGHT = 9;
+    private static boolean DEFAULT_USE_DEFAULT_PRINTER = true;
+    private static boolean DEFAULT_PRINT_AS_PAID = false;
+    private static boolean DEFAULT_PRINT_WITHOUT_ASK = false;
+    private static int DEFAULT_TXT_CHAR_HEIGHT = 10;
+    private static int DEFAULT_TXT_CHAR_WIDTH = 10;
+    private static String DEFAULT_MODE = "PDF";
+    private static String DEFAULT_ZPL_FONT_TYPE = "A";
+    private static int DEFAULT_ZPL_ROW_HEIGHT = 9;
     
     private static TxtPrinter mySingleData;
 	private Properties p;
@@ -36,11 +39,13 @@ public class TxtPrinter {
 			p = new Properties();
 			p.load(new FileInputStream("rsc" + File.separator + FILE_PROPERTIES));
 			logger.info("File txtPrinter.properties loaded. ");
+			USE_DEFAULT_PRINTER = myGetProperty("USE_DEFAULT_PRINTER", DEFAULT_USE_DEFAULT_PRINTER);
+			if (!USE_DEFAULT_PRINTER) PRINTER = p.getProperty("USE_DEFAULT_PRINTER"); 
 			PRINT_AS_PAID = myGetProperty("PRINT_AS_PAID", DEFAULT_PRINT_AS_PAID);
 			PRINT_WITHOUT_ASK = myGetProperty("PRINT_WITHOUT_ASK", DEFAULT_PRINT_WITHOUT_ASK);
-			PAGE_HEIGHT = myGetProperty("PAGE_HEIGHT", DEFAULT_PAGE_HEIGHT);
-			PAGE_WIDTH = myGetProperty("PAGE_WIDTH", DEFAULT_PAGE_WIDTH);
-			ZPL = myGetProperty("ZPL", DEFAULT_ZPL);
+			TXT_CHAR_HEIGHT = myGetProperty("TXT_CHAR_HEIGHT", DEFAULT_TXT_CHAR_HEIGHT);
+			TXT_CHAR_WIDTH = myGetProperty("TXT_CHAR_WIDTH", DEFAULT_TXT_CHAR_WIDTH);
+			MODE = p.getProperty("MODE", DEFAULT_MODE);
 			ZPL_FONT_TYPE = myGetProperty("ZPL_FONT_TYPE", DEFAULT_ZPL_FONT_TYPE);
 			ZPL_ROW_HEIGHT = myGetProperty("ZPL_ROW_HEIGHT", DEFAULT_ZPL_ROW_HEIGHT);
 			

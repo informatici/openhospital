@@ -370,7 +370,7 @@ public class MedicalTypeBrowserEdit extends JDialog{
 	private JPanel getJDescriptionLabelPanel() {
 		if (jDescriptionLabelPanel == null) {
 			jDescripitonLabel = new JLabel();
-			jDescripitonLabel.setText(MessageBundle.getMessage("angal.medtype.description"));
+			jDescripitonLabel.setText(MessageBundle.getMessage("angal.common.description"));
 			jDescriptionLabelPanel = new JPanel();
 			jDescriptionLabelPanel.add(jDescripitonLabel, null);
 		}

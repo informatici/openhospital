@@ -1,15 +1,16 @@
 @echo off
 set OH_PATH=%~dps0
+set XCHANGE32_PATH=%OH_PATH%\mysql\bin
 
 cd /d %OH_PATH%\oh\rsc
-xcopy dicom.properties.ori dicom.properties /y
-Xchang32.exe dicom.properties "OH_PATH_SUBSTITUTE" "%OH_PATH%"
-Xchang32.exe dicom.properties "^x5c" "^x2f"
+echo f | xcopy dicom.properties.ori dicom.properties /y
+%XCHANGE32_PATH%\Xchang32.exe dicom.properties "OH_PATH_SUBSTITUTE" "%OH_PATH%"
+%XCHANGE32_PATH%\Xchang32.exe dicom.properties "^x5c" "^x2f"
 
 cd /d %OH_PATH%\mysql\bin
-xcopy my.ori my.cnf /y
-Xchang32.exe my.cnf "OH_PATH_SUBSTITUTE" "%OH_PATH%"
-Xchang32.exe my.cnf "^x5c" "^x2f"
+echo f | xcopy my.ori my.cnf /y
+%XCHANGE32_PATH%\Xchang32.exe my.cnf "OH_PATH_SUBSTITUTE" "%OH_PATH%"
+%XCHANGE32_PATH%\Xchang32.exe my.cnf "^x5c" "^x2f"
 
 start /b /min %OH_PATH%mysql\bin\mysqld --defaults-file=%OH_PATH%mysql\bin\my.cnf --standalone --console
 
@@ -42,6 +43,6 @@ set CLASSPATH=%CLASSPATH%;%OH_BIN%\OH.jar
 set CLASSPATH=%CLASSPATH%;%OH_BUNDLE%
 
 cd /d %OH_PATH%oh\
-%OH_PATH%jre6\bin\java.exe -showversion -Djava.library.path=%OH_PATH%oh\lib\native\Windows -cp %CLASSPATH% org.isf.menu.gui.Menu
+%OH_PATH%jre6\bin\java.exe -showversion -Dsun.java2d.dpiaware=false -Djava.library.path=%OH_PATH%oh\lib\native\Windows -cp %CLASSPATH% org.isf.menu.gui.Menu
 start /b %OH_PATH%mysql\bin\mysqladmin --user=root --password= --port=3307 shutdown
 exit

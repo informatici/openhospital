@@ -424,15 +424,15 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 					if (options.indexOf(option) == 0) {
 						try {
 							BusyState.setBusyState(BillBrowser.this, true);
-							new GenericReportFromDateToDate(from, to, GeneralData.BILLSREPORTMONTH, false);
+							new GenericReportFromDateToDate(from, to, GeneralData.BILLSREPORTMONTH, MessageBundle.getMessage("angal.billbrowser.shortreportonlybaddebts"), false);
 						} finally {
 							BusyState.setBusyState(BillBrowser.this, false);
-					}
+						}
 					}
 					if (options.indexOf(option) == 1) {
 						try {
 							BusyState.setBusyState(BillBrowser.this, true);
-							new GenericReportFromDateToDate(from, to, GeneralData.BILLSREPORT, false);
+							new GenericReportFromDateToDate(from, to, GeneralData.BILLSREPORT, MessageBundle.getMessage("angal.billbrowser.fullreportallbills"), false);
 						} finally {
 							BusyState.setBusyState(BillBrowser.this, false);
 						}
