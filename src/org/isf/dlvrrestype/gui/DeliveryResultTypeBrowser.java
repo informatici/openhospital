@@ -272,12 +272,13 @@ class DeliveryResultTypeBrowserModel extends DefaultTableModel {
 		}
 
 		public Object getValueAt(int r, int c) {
+			DeliveryResultType deliveryResultType = pDeliveryResultType.get(r);
 			if (c == 0) {
-				return pDeliveryResultType.get(r).getCode();
+				return deliveryResultType.getCode();
 			} else if (c == -1) {
-				return pDeliveryResultType.get(r);
+				return deliveryResultType;
 			} else if (c == 1) {
-				return pDeliveryResultType.get(r).getDescription();
+				return deliveryResultType.getDescription();
 			}
 			return null;
 		}
