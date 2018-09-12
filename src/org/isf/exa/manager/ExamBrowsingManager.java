@@ -5,6 +5,7 @@
 package org.isf.exa.manager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.exa.model.Exam;
 import org.isf.exa.service.ExamIoOperations;
@@ -32,6 +33,23 @@ public class ExamBrowsingManager {
 	private final Logger logger = LoggerFactory.getLogger(ExamBrowsingManager.class);
 	
 	/**
+	 * Verify if the object is valid for CRUD and return a list of errors, if any
+	 * @param exam
+	 * @return list of {@link OHExceptionMessage}
+	 */
+	protected List<OHExceptionMessage> validateExam(Exam exam) {
+		String key = exam.getCode();
+		String description = exam.getDescription();
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        if(key.isEmpty() || description.isEmpty()){
+	        errors.add(new OHExceptionMessage("codeAndOrDescriptionEmptyError", 
+	        		MessageBundle.getMessage("angal.exa.pleaseinsertcodeoranddescription"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        return errors;
+    }
+	
+	/**
 	 * Returns the list of {@link Exam}s
 	 * @return the list of {@link Exam}s. It could be <code>null</code>
 	 * @throws OHServiceException 
@@ -46,7 +64,8 @@ public class ExamBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), 
+					OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -76,7 +95,8 @@ public class ExamBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), 
+					OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -95,7 +115,8 @@ public class ExamBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"),
+					OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -118,7 +139,8 @@ public class ExamBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"),
+					OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -131,15 +153,27 @@ public class ExamBrowsingManager {
 	 */
 	public boolean newExam(Exam exam) throws OHServiceException {
 		try {
+			if (true == isKeyPresent(exam)) {
+				throw new OHServiceException(new OHExceptionMessage(null, 
+						MessageBundle.getMessage("angal.exa.changethecodebecauseisalreadyinuse"),
+						OHSeverityLevel.ERROR));
+			}
+			List<OHExceptionMessage> errors = validateExam(exam);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.newExam(exam);
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		}  catch (OHServiceException e) {
+			throw e;
 		} catch(Exception e){
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"),
+					OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -165,16 +199,22 @@ public class ExamBrowsingManager {
 	 */
 	public boolean updateExam(Exam exam, boolean check) throws OHServiceException {
 		try {
-			boolean updated = ioOperations.updateExam(exam, check);
-			return updated;
+			List<OHExceptionMessage> errors = validateExam(exam);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
+			return ioOperations.updateExam(exam, check);
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		}  catch (OHServiceException e) {
+			throw e;
 		} catch(Exception e){
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"),
+					OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -194,7 +234,8 @@ public class ExamBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"),
+					OHSeverityLevel.ERROR));
 		}
 	}
 }

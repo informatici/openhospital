@@ -8,11 +8,12 @@
 
 package org.isf.exa.gui;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import java.util.EventListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -21,13 +22,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.EventListenerList;
 
 import org.isf.exa.manager.ExamRowBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class ExamRowEdit extends JDialog {
@@ -37,7 +39,34 @@ public class ExamRowEdit extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final String VERSION=MessageBundle.getMessage("angal.versione"); 
+	private static final String VERSION=MessageBundle.getMessage("angal.versione");
+	
+	private EventListenerList examRowListeners = new EventListenerList();
+
+    public interface ExamRowListener extends EventListener {
+        public void examRowInserted(AWTEvent e);
+    }
+
+    public void addExamListener(ExamRowListener l) {
+    	examRowListeners.add(ExamRowListener.class, l);
+    }
+
+    public void removeExamListener(ExamRowListener listener) {
+    	examRowListeners.remove(ExamRowListener.class, listener);
+    }
+
+    private void fireExamRowInserted() {
+        AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;};
+
+        EventListener[] listeners = examRowListeners.getListeners(ExamRowListener.class);
+        for (int i = 0; i < listeners.length; i++)
+            ((ExamRowListener)listeners[i]).examRowInserted(event);
+    }
 	
 	private JPanel jContentPane = null;
 	private JPanel dataPanel = null;
@@ -54,7 +83,7 @@ public class ExamRowEdit extends JDialog {
 	 * This is the default constructor; we pass the arraylist and the selectedrow
      * because we need to update them
 	 */
-	public ExamRowEdit(JDialog owner,ExamRow old, Exam aExam) {
+	public ExamRowEdit(JDialog owner, ExamRow old, Exam aExam) {
 		super(owner,true);
 		examRow = old;	
 		exam = aExam;
@@ -137,7 +166,6 @@ public class ExamRowEdit extends JDialog {
             cancelButton.setMnemonic(KeyEvent.VK_C);
 			cancelButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					examRow=new ExamRow();
 					dispose();
 				}
 			});
@@ -157,26 +185,22 @@ public class ExamRowEdit extends JDialog {
             okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					if(descriptionTextField.getText().equalsIgnoreCase("")){
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exa.insertdescription"));
-					}
-					else{	
-						ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
-						examRow.setDescription(descriptionTextField.getText().toUpperCase());
-						examRow.setExamCode(exam);
-						
-						try {
-							boolean inserted = manager.newExamRow(examRow);
-							
-							if (true == inserted) {
-								ArrayList<ExamRow> key = manager.getExamRow(examRow.getExamCode().getCode(),examRow.getDescription());
-								examRow.setCode(key.get(0).getCode());
-							}
-						} catch (OHServiceException e1) {
-							OHServiceExceptionUtil.showMessages(e1);
+					
+					examRow.setDescription(descriptionTextField.getText().toUpperCase());
+					examRow.setExamCode(exam);
+					
+					ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
+					try {
+						if (true == manager.newExamRow(examRow)) {
+							fireExamRowInserted();
+							dispose();
 						}
-						
-						dispose();
+					}catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
 					}
 				}
 			});

@@ -10,11 +10,13 @@
 
 package org.isf.exa.gui;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.EventListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -25,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.EventListenerList;
 
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
@@ -32,6 +35,7 @@ import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class ExamEdit extends JDialog {
@@ -42,6 +46,46 @@ public class ExamEdit extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	private static final String VERSION=MessageBundle.getMessage("angal.versione");  
+	
+	private EventListenerList examListeners = new EventListenerList();
+
+    public interface ExamListener extends EventListener {
+        public void examUpdated(AWTEvent e);
+        public void examInserted(AWTEvent e);
+    }
+
+    public void addExamListener(ExamListener l) {
+    	examListeners.add(ExamListener.class, l);
+    }
+
+    public void removeExamListener(ExamListener listener) {
+    	examListeners.remove(ExamListener.class, listener);
+    }
+
+    private void fireExamInserted() {
+        AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;};
+
+        EventListener[] listeners = examListeners.getListeners(ExamListener.class);
+        for (int i = 0; i < listeners.length; i++)
+            ((ExamListener)listeners[i]).examInserted(event);
+    }
+    private void fireExamUpdated() {
+        AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;};
+
+        EventListener[] listeners = examListeners.getListeners(ExamListener.class);
+        for (int i = 0; i < listeners.length; i++)
+            ((ExamListener)listeners[i]).examUpdated(event);
+    }
     
 	private JPanel jContentPane = null;
 	private JPanel dataPanel = null;
@@ -184,62 +228,49 @@ public class ExamEdit extends JDialog {
             okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					if((codeTextField.getText().trim().equals(""))||(descriptionTextField.getText().trim().equals(""))){
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exa.pleaseinsertcodeoranddescription"));
-					} else {	
-						ExamBrowsingManager manager = new ExamBrowsingManager();
-						exam.setExamtype((ExamType)typeComboBox.getSelectedItem());
-						exam.setDescription(descriptionTextField.getText());
-						
-						exam.setCode(codeTextField.getText().toUpperCase());
-						exam.setDefaultResult(defTextField.getText().toUpperCase());
-						exam.setProcedure(Integer.parseInt(procComboBox.getSelectedItem().toString()));
-						
-						boolean result = false;
+							
+					exam.setExamtype((ExamType)typeComboBox.getSelectedItem());
+					exam.setCode(codeTextField.getText().trim().toUpperCase());
+					exam.setDescription(descriptionTextField.getText().trim());
+					exam.setProcedure(Integer.parseInt(procComboBox.getSelectedItem().toString()));
+					exam.setDefaultResult(defTextField.getText().trim().toUpperCase());
+					
+					ExamBrowsingManager manager = new ExamBrowsingManager();
+					try {
 						if (insert) {
-							
-							boolean keyPresent;
-							
-							try {
-								keyPresent = manager.isKeyPresent(exam);
-							} catch (OHServiceException e1) {
-								keyPresent = false;
-								OHServiceExceptionUtil.showMessages(e1);
-							}
-							
-							if (true == keyPresent) {
-								JOptionPane.showMessageDialog(ExamEdit.this, MessageBundle.getMessage("angal.exa.changethecodebecauseisalreadyinuse"));
-								return;
-							}
-							try {
-								result = manager.newExam(exam);
-							} catch (OHServiceException e1) {
-								result = false;
-								OHServiceExceptionUtil.showMessages(e1);
-							}
+							if (true == manager.newExam(exam)) {
+								fireExamInserted();
+								dispose();
+							} else 
+								JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exa.thedatacouldnotbesaved"));
 						} else {
-							try {
-								result = manager.updateExam(exam);
+							if (false == manager.updateExam(exam)) {
+								StringBuilder prompt = new StringBuilder(MessageBundle.getMessage("angal.exa.thedatahasbeenupdatedbysomeoneelse"))
+										.append("\n")
+										.append(MessageBundle.getMessage("angal.exa.doyouwanttooverwritethedata"))
+										.append("?");
+								int ok = JOptionPane.showConfirmDialog(null,
+										prompt.toString(),
+										MessageBundle.getMessage("angal.exa.select"), JOptionPane.YES_NO_OPTION);
 								
-								if (false == result) {
-									String prompt = MessageBundle.getMessage("angal.exa.thedatahasbeenupdatedbysomeoneelse") + ".\n"
-											+ MessageBundle.getMessage("angal.exa.doyouwanttooverwritethedata") + "?";
-									
-									int ok = JOptionPane.showConfirmDialog(null,
-											prompt,
-											MessageBundle.getMessage("angal.exa.select"), JOptionPane.YES_NO_OPTION);
-									
-									if (JOptionPane.YES_OPTION == ok) {
-										manager.updateExam(exam, false);
-									}
+								if (JOptionPane.YES_OPTION == ok) {
+									if (true == manager.updateExam(exam, false)) {
+										fireExamUpdated();
+										dispose();
+									} else 
+										JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exa.thedatacouldnotbesaved"));
 								}
-							} catch (OHServiceException e1) {
-								result = false;
-								OHServiceExceptionUtil.showMessages(e1);
+							} else {
+								fireExamUpdated();
+								dispose();
 							}
 						}
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exa.thedatacouldnotbesaved"));
-						else  dispose();
+					} catch (OHServiceException e1) {
+						if(e1.getMessages() != null){
+							for(OHExceptionMessage msg : e1.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+							}
+						}
 					}
 				}
 			});

@@ -10,6 +10,7 @@
 
 package org.isf.exa.gui;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -28,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import org.isf.exa.gui.ExamEdit.ExamListener;
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exatype.model.ExamType;
@@ -36,7 +38,7 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
-public class ExamBrowser extends ModalJFrame{
+public class ExamBrowser extends ModalJFrame implements ExamListener{
 
 	/**
 	 * 
@@ -46,7 +48,6 @@ public class ExamBrowser extends ModalJFrame{
 	private static final String VERSION=MessageBundle.getMessage("angal.versione"); 
 	
 	private int selectedrow;
-	private JLabel selectlabel;
 	private JComboBox pbox;
 	private ArrayList<Exam> pExam;
 	private String[] pColums = {
@@ -61,8 +62,14 @@ public class ExamBrowser extends ModalJFrame{
 	private DefaultTableModel model ;
 	private JTable table;
 	private final JFrame myFrame;
-	
 	private String pSelection;
+	private JButton jButtonNew;
+	private JButton jButtonEdit;
+	private JButton jButtonClose;
+	private JButton jButtonShow;
+	private JButton jButtonDelete;
+	private JPanel jContentPanel;
+	private JPanel buttonPanel;
 	
 	public ExamBrowser() {
 		myFrame=this;
@@ -74,104 +81,85 @@ public class ExamBrowser extends ModalJFrame{
         final int pfrmHeight = 8;
         this.setBounds((screensize.width - screensize.width * pfrmWidth / pfrmBase ) / 2, (screensize.height - screensize.height * pfrmHeight / pfrmBase)/2, 
                 screensize.width * pfrmWidth / pfrmBase, screensize.height * pfrmHeight / pfrmBase);
-		model = new ExamBrowsingModel();
-		table = new JTable(model);
-		table.getColumnModel().getColumn(0).setMinWidth(pColumwidth[0]);
-		table.getColumnModel().getColumn(1).setMinWidth(pColumwidth[1]);
-		table.getColumnModel().getColumn(2).setMinWidth(pColumwidth[2]);
-		table.getColumnModel().getColumn(3).setMinWidth(pColumwidth[3]);
-		table.getColumnModel().getColumn(4).setMinWidth(pColumwidth[4]);
-				
-		add(new JScrollPane(table), BorderLayout.CENTER);
-
-		JPanel buttonPanel = new JPanel();
 		
-		selectlabel = new JLabel(MessageBundle.getMessage("angal.exa.selecttype"));
-		buttonPanel.add(selectlabel);
-		
-		ExamBrowsingManager manager = new ExamBrowsingManager();
-		pbox = new JComboBox();
-		pbox.addItem(MessageBundle.getMessage("angal.exa.all"));
-		ArrayList<ExamType> type;
-		try {
-			type = manager.getExamType();	//for efficiency in the sequent for
-		} catch (OHServiceException e1) {
-			type = null;
-			OHServiceExceptionUtil.showMessages(e1);
-		}
-		if (null != type) {
-			for (ExamType elem : type) {
-				pbox.addItem(elem);
-			}
-		}
-		pbox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				pSelection=pbox.getSelectedItem().toString();
-				if (pSelection.compareTo(MessageBundle.getMessage("angal.exa.all")) == 0)
-					model = new ExamBrowsingModel();
-				else
-					model = new ExamBrowsingModel(pSelection);
-				model.fireTableDataChanged();
-				table.updateUI();
-			}
-		});
-		buttonPanel.add(pbox);
-				
-		JButton buttonNew = new JButton(MessageBundle.getMessage("angal.common.new"));
-		buttonNew.setMnemonic(KeyEvent.VK_N);
-		buttonNew.addActionListener(new ActionListener() {
+        this.setContentPane(getJContentPanel());
+		setVisible(true);
+	}
 
-			public void actionPerformed(ActionEvent event) {
-				exam=new Exam("","",new ExamType("",""),0,"",0);
-				Exam last=new Exam("","",new ExamType("",""),0,"",0);
-				ExamEdit newrecord = new ExamEdit(myFrame,exam,true);
-				newrecord.setVisible(true);
-				if(!last.equals(exam)){
-					//TODO: implement ExamListener
-					pExam.add(0,exam);
-					((ExamBrowsingModel)table.getModel()).fireTableDataChanged();
-					//table.updateUI();
-					if (table.getRowCount() > 0)
-						table.setRowSelectionInterval(0, 0);
+	private JPanel getJContentPanel() {
+		if (jContentPanel == null) {
+			jContentPanel = new JPanel();
+			jContentPanel.setLayout(new BorderLayout());
+			jContentPanel.add(getJButtonPanel(), java.awt.BorderLayout.SOUTH);
+			jContentPanel.add(new JScrollPane(getJTable()),BorderLayout.CENTER);
+			validate();
+		}
+		return jContentPanel;
+	}
+
+	private JPanel getJButtonPanel() {
+		if (buttonPanel == null) {
+			buttonPanel = new JPanel();
+			buttonPanel.add(new JLabel(MessageBundle.getMessage("angal.exa.selecttype")));
+			buttonPanel.add(getJComboBoxExamType());
+			buttonPanel.add(getJButtonNew());
+			buttonPanel.add(getJButtonEdit());
+			buttonPanel.add(getJButtonDelete());
+			buttonPanel.add(getJButtonShow());
+			buttonPanel.add(getJButtonClose());
+		}
+		return buttonPanel;
+	}
+
+	private JComboBox getJComboBoxExamType() {
+		if (pbox == null) {
+			pbox = new JComboBox();
+			pbox.addItem(MessageBundle.getMessage("angal.exa.all"));
+			ExamBrowsingManager manager = new ExamBrowsingManager();
+			ArrayList<ExamType> type;
+			try {
+				type = manager.getExamType();	//for efficiency in the sequent for
+			} catch (OHServiceException e1) {
+				type = null;
+				OHServiceExceptionUtil.showMessages(e1);
+			}
+			if (null != type) {
+				for (ExamType elem : type) {
+					pbox.addItem(elem);
 				}
 			}
-		});
-		buttonPanel.add(buttonNew);
+			pbox.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					pSelection=pbox.getSelectedItem().toString();
+					if (pSelection.compareTo(MessageBundle.getMessage("angal.exa.all")) == 0)
+						model = new ExamBrowsingModel();
+					else
+						model = new ExamBrowsingModel(pSelection);
+					model.fireTableDataChanged();
+					table.updateUI();
+				}
+			});
+		}
+		return pbox;
+	}
 
-		JButton buttonEdit = new JButton(MessageBundle.getMessage("angal.common.edit"));
-		buttonEdit.setMnemonic(KeyEvent.VK_E);
-		buttonEdit.addActionListener(new ActionListener() {
+	private JTable getJTable() {
+		if (table == null) {
+			model = new ExamBrowsingModel();
+			table = new JTable(model);
+			table.getColumnModel().getColumn(0).setMinWidth(pColumwidth[0]);
+			table.getColumnModel().getColumn(1).setMinWidth(pColumwidth[1]);
+			table.getColumnModel().getColumn(2).setMinWidth(pColumwidth[2]);
+			table.getColumnModel().getColumn(3).setMinWidth(pColumwidth[3]);
+			table.getColumnModel().getColumn(4).setMinWidth(pColumwidth[4]);
+		}
+		return table;
+	}
 
-			public void actionPerformed(ActionEvent event) {
-				if (table.getSelectedRow() < 0) {
-					JOptionPane.showMessageDialog(				
-	                        null,
-	                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
-	                        MessageBundle.getMessage("angal.hospital"),
-	                        JOptionPane.PLAIN_MESSAGE);				
-					return;									
-				}else {		
-					selectedrow = table.getSelectedRow();
-					exam = (Exam)(((ExamBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
-					Exam last=new Exam(exam.getCode(),exam.getDescription(),exam.getExamtype(),exam.getProcedure(),
-							exam.getDefaultResult(),exam.getLock());
-					ExamEdit editrecord = new ExamEdit(myFrame,exam,false);
-					editrecord.setVisible(true);
-					if(!last.equals(exam)){
-						pExam.set(selectedrow,exam);
-						((ExamBrowsingModel)table.getModel()).fireTableDataChanged();
-						table.updateUI();
-						if ((table.getRowCount() > 0) && selectedrow >-1)
-							table.setRowSelectionInterval(selectedrow,selectedrow);
-					}
-				}	 				
-			}
-		});
-		buttonPanel.add(buttonEdit);
-		
-		JButton buttonDelete = new JButton(MessageBundle.getMessage("angal.common.delete"));
-		buttonDelete.setMnemonic(KeyEvent.VK_D);
-		buttonDelete.addActionListener(new ActionListener() {
+	private JButton getJButtonDelete() {
+		jButtonDelete = new JButton(MessageBundle.getMessage("angal.common.delete"));
+		jButtonDelete.setMnemonic(KeyEvent.VK_D);
+		jButtonDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if (table.getSelectedRow() < 0) {
 					JOptionPane.showMessageDialog(				
@@ -217,42 +205,89 @@ public class ExamBrowser extends ModalJFrame{
 				}
 			}
 		});
-		buttonPanel.add(buttonDelete);
-		
-		JButton buttonShow = new JButton(MessageBundle.getMessage("angal.exa.results"));
-		buttonShow.setMnemonic(KeyEvent.VK_S);
-		buttonShow.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent event) {
-				if (table.getSelectedRow() < 0) {
-					JOptionPane.showMessageDialog(				
-	                        null,
-	                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
-	                        MessageBundle.getMessage("angal.hospital"),
-	                        JOptionPane.PLAIN_MESSAGE);				
-					return;									
-				}else {		
-					selectedrow = table.getSelectedRow();
-					exam = (Exam)(((ExamBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
-					new ExamShow(myFrame, exam);
-				}
-			}
-		});
-		buttonPanel.add(buttonShow);
-		
-		JButton buttonClose = new JButton(MessageBundle.getMessage("angal.common.close"));
-		buttonClose.setMnemonic(KeyEvent.VK_C);
-		buttonClose.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				dispose();
-			}
-		});
-		buttonPanel.add(buttonClose);
-
-		add(buttonPanel, BorderLayout.SOUTH);
-		setVisible(true);
+		return jButtonDelete;
 	}
 
+	private JButton getJButtonShow() {
+		if (jButtonShow == null) {
+			jButtonShow = new JButton(MessageBundle.getMessage("angal.exa.results"));
+			jButtonShow.setMnemonic(KeyEvent.VK_S);
+			jButtonShow.addActionListener(new ActionListener() {
+	
+				public void actionPerformed(ActionEvent event) {
+					if (table.getSelectedRow() < 0) {
+						JOptionPane.showMessageDialog(				
+		                        null,
+		                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
+		                        MessageBundle.getMessage("angal.hospital"),
+		                        JOptionPane.PLAIN_MESSAGE);				
+						return;									
+					}else {		
+						selectedrow = table.getSelectedRow();
+						exam = (Exam)(((ExamBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
+						new ExamShow(myFrame, exam);
+					}
+				}
+			});
+		}
+		return jButtonShow;
+	}
+
+
+	private JButton getJButtonClose() {
+		if (jButtonClose == null) {
+			jButtonClose = new JButton(MessageBundle.getMessage("angal.common.close"));
+			jButtonClose.setMnemonic(KeyEvent.VK_C);
+			jButtonClose.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					dispose();
+				}
+			});
+		}
+		return jButtonClose;
+	}
+
+
+	private JButton getJButtonEdit() {
+		if (jButtonEdit == null) {
+			jButtonEdit = new JButton(MessageBundle.getMessage("angal.common.edit"));
+			jButtonEdit.setMnemonic(KeyEvent.VK_E);
+			jButtonEdit.addActionListener(new ActionListener() {
+	
+				public void actionPerformed(ActionEvent event) {
+					if (table.getSelectedRow() < 0) {
+						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.common.pleaseselectarow"),
+								MessageBundle.getMessage("angal.hospital"), JOptionPane.PLAIN_MESSAGE);
+						return;
+					} else {
+						selectedrow = table.getSelectedRow();
+						exam = (Exam) (((ExamBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
+						ExamEdit editrecord = new ExamEdit(myFrame, exam, false);
+						editrecord.addExamListener(ExamBrowser.this);
+						editrecord.setVisible(true);
+					} 				
+				}
+			});
+		}
+		return jButtonEdit;
+	}
+
+	private JButton getJButtonNew() {
+		if (jButtonNew == null) {
+			jButtonNew = new JButton(MessageBundle.getMessage("angal.common.new"));
+			jButtonNew.setMnemonic(KeyEvent.VK_N);
+			jButtonNew.addActionListener(new ActionListener() {
+
+				public void actionPerformed(ActionEvent event) {
+					exam = new Exam("", "", new ExamType("", ""), 0, "", 0);
+					ExamEdit newrecord = new ExamEdit(myFrame, exam, true);
+					newrecord.addExamListener(ExamBrowser.this);
+					newrecord.setVisible(true);
+				}
+			});
+		}
+		return jButtonNew;
+	}
 		
 	class ExamBrowsingModel extends DefaultTableModel {
 		
@@ -294,19 +329,20 @@ public class ExamBrowser extends ModalJFrame{
 		}
 
 		public Object getValueAt(int r, int c) {
+			Exam exam = pExam.get(r);
 			if(c==-1){
-				return pExam.get(r);
+				return exam;
 			}
 			else if (c == 0) {
-				return pExam.get(r).getCode();
+				return exam.getCode();
 			} else if (c == 1) {
-				return pExam.get(r).getExamtype().getDescription();
+				return exam.getExamtype().getDescription();
 			} else if (c == 2) {
-				return pExam.get(r).getDescription();
+				return exam.getDescription();
 			} else if (c == 3) {
-				return pExam.get(r).getProcedure();
+				return exam.getProcedure();
 			} else if (c == 4) {
-				return pExam.get(r).getDefaultResult();
+				return exam.getDefaultResult();
 			}
 			return null;
 		}
@@ -316,6 +352,25 @@ public class ExamBrowser extends ModalJFrame{
 			//return super.isCellEditable(arg0, arg1);
 			return false;
 		}
+	}
+	
+	@Override
+	public void examUpdated(AWTEvent e) {
+		pExam.set(selectedrow, exam);
+		((ExamBrowsingModel) table.getModel()).fireTableDataChanged();
+		table.updateUI();
+		if ((table.getRowCount() > 0) && selectedrow > -1)
+			table.setRowSelectionInterval(selectedrow, selectedrow);
+		
+	}
+
+
+	@Override
+	public void examInserted(AWTEvent e) {
+		pExam.add(0, exam);
+		((ExamBrowsingModel) table.getModel()).fireTableDataChanged();
+		if (table.getRowCount() > 0)
+			table.setRowSelectionInterval(0, 0);
 	}
 
 }

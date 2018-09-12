@@ -10,6 +10,7 @@
 
 package org.isf.exa.gui;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -25,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import org.isf.exa.gui.ExamRowEdit.ExamRowListener;
 import org.isf.exa.manager.ExamRowBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
@@ -32,7 +34,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
-public class ExamShow extends JDialog {
+public class ExamShow extends JDialog implements ExamRowListener {
 
 	/**
 	 * 
@@ -117,17 +119,10 @@ public class ExamShow extends JDialog {
             newButton.setMnemonic(KeyEvent.VK_N);
 			newButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					examRow=new ExamRow();
-					ExamRow last=new ExamRow();
-					ExamRowEdit newrecord = new ExamRowEdit(myFrame,examRow,exam);
+					examRow = new ExamRow();
+					ExamRowEdit newrecord = new ExamRowEdit(myFrame, examRow, exam);
+					newrecord.addExamListener(ExamShow.this);
 					newrecord.setVisible(true);
-					if(!last.equals(examRow)){
-						pExamRow.add(0,examRow);
-						((ExamRowBrowsingModel)table.getModel()).fireTableDataChanged();
-						//table.updateUI();
-						if (table.getRowCount() > 0)
-							table.setRowSelectionInterval(0, 0);
-					}
 				}
 			});
 		}
@@ -167,7 +162,7 @@ public class ExamShow extends JDialog {
 						ExamRow row = (ExamRow)(((ExamRowBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
 						int n = JOptionPane.showConfirmDialog(
 	                        null,
-	                        MessageBundle.getMessage("angal.exa.deletemedicalrow")+" \""+row.getDescription()+"\" ?",
+	                        MessageBundle.getMessage("angal.exa.deleteexamresult")+" \""+row.getDescription()+"\" ?",
 	                        MessageBundle.getMessage("angal.hospital"),
 	                        JOptionPane.YES_NO_OPTION);
 
@@ -176,9 +171,7 @@ public class ExamShow extends JDialog {
 								boolean deleted = manager.deleteExamRow(row);
 								
 								if (true == deleted) {
-									pExamRow.remove(table.getSelectedRow());
-									model.fireTableDataChanged();
-									table.updateUI();
+									examRowDeleted();
 								}
 							} catch (OHServiceException e1) {
 								OHServiceExceptionUtil.showMessages(e1);
@@ -224,13 +217,14 @@ class ExamRowBrowsingModel extends DefaultTableModel {
 		}
 
 		public Object getValueAt(int r, int c) {
+			ExamRow examRow = pExamRow.get(r);
 			if(c==-1){
-				return pExamRow.get(r);
+				return examRow;
 			}
 			else if (c == 0) {
-				return pExamRow.get(r).getCode();
+				return examRow.getCode();
 			} else if (c == 1) {
-				return pExamRow.get(r).getDescription();
+				return examRow.getDescription();
 			} 
 			return null;
 		}
@@ -240,5 +234,20 @@ class ExamRowBrowsingModel extends DefaultTableModel {
 			//return super.isCellEditable(arg0, arg1);
 			return false;
 		}
+	}
+
+
+	@Override
+	public void examRowInserted(AWTEvent e) {
+		pExamRow.add(0, examRow);
+		((ExamRowBrowsingModel) table.getModel()).fireTableDataChanged();
+		if (table.getRowCount() > 0)
+			table.setRowSelectionInterval(0, 0);
+	}
+	
+	public void examRowDeleted() {
+		pExamRow.remove(table.getSelectedRow());
+		model.fireTableDataChanged();
+		table.updateUI();
 	}
 }
