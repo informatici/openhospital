@@ -54,7 +54,7 @@ public class ExamTypeEdit extends JDialog{
         examTypeListeners.remove(ExamTypeListener.class, listener);
     }
 
-    private void fireExamInserted() {
+    private void fireExamTypeInserted() {
         AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
 
 			/**
@@ -66,7 +66,7 @@ public class ExamTypeEdit extends JDialog{
         for (int i = 0; i < listeners.length; i++)
             ((ExamTypeListener)listeners[i]).examTypeInserted(event);
     }
-    private void fireExamUpdated() {
+    private void fireExamTypeUpdated() {
         AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
 
 			/**
@@ -264,7 +264,7 @@ public class ExamTypeEdit extends JDialog{
 							OHServiceExceptionUtil.showMessages(e1);
 						}
 						if (result) {
-                           fireExamInserted();
+                           fireExamTypeInserted();
                         }
 						if (!result) JOptionPane.showMessageDialog(null,  MessageBundle.getMessage("angal.exatype.thedatacouldnotbesaved"));
 	                    else  dispose();
@@ -280,7 +280,7 @@ public class ExamTypeEdit extends JDialog{
 								OHServiceExceptionUtil.showMessages(e1);
 							}
 						if (result) {
-							fireExamUpdated();
+							fireExamTypeUpdated();
                         }
 						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exatype.thedatacouldnotbesaved"));
                         else  dispose();
