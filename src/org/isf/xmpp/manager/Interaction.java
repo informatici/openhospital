@@ -36,8 +36,12 @@ import org.jivesoftware.smackx.filetransfer.FileTransferNegotiator;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.jivesoftware.smackx.filetransfer.OutgoingFileTransfer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Interaction{
+	
+	private final Logger logger = LoggerFactory.getLogger(Interaction.class);
 
 	private Server server;
 	private Roster roster;
@@ -55,7 +59,7 @@ public class Interaction{
 
 	public Interaction(CommunicationFrame gui){
 		this();
-		this.gui=gui;
+		this.gui = gui;
 	}
 	public Collection<String> getContactOnline(){
 
@@ -64,7 +68,7 @@ public class Interaction{
 		Collection<String> entries_online=new ArrayList<String>();
 		for(RosterEntry r:entries)
 		{
-			presence=roster.getPresence(r.getUser());
+			presence = roster.getPresence(r.getUser());
 			if(presence.isAvailable()== true)
 				entries_online.add(r.getName());
 		}
@@ -76,14 +80,14 @@ public class Interaction{
 		List<RosterEntry> entries= new ArrayList<RosterEntry>( roster.getEntries());
 		Collections.sort(entries,new Comparator<RosterEntry>(){
 			public int compare(RosterEntry r1, RosterEntry r2){
-				Presence presence1=roster.getPresence(r1.getUser());
-				Presence presence2=roster.getPresence(r2.getUser());
-				String r1_name=r1.getName();
-				String r2_name=r2.getName();
-				if(presence1.isAvailable()==presence2.isAvailable())
+				Presence presence1 = roster.getPresence(r1.getUser());
+				Presence presence2 = roster.getPresence(r2.getUser());
+				String r1_name = r1.getName();
+				String r2_name = r2.getName();
+				if(presence1.isAvailable() == presence2.isAvailable())
 					return r1_name.toLowerCase().compareTo(r2_name.toLowerCase());
 
-				if(presence1.isAvailable()&&(presence2.isAvailable()==false))
+				if(presence1.isAvailable() && (presence2.isAvailable() == false))
 					return -1;
 
 				else
@@ -91,9 +95,9 @@ public class Interaction{
 
 			}
 		});
-		JList buddy=new JList(entries.toArray());
+		JList buddy = new JList(entries.toArray());
 
-		ListCellRenderer render =new ComplexCellRender(server);
+		ListCellRenderer render = new ComplexCellRender(server);
 
 		buddy.setCellRenderer(render);
 
@@ -103,26 +107,34 @@ public class Interaction{
 
 
 
-	public void sendMessage(String text_message, String to,final boolean visualize){
+	public void sendMessage(String text_message, String to, final boolean visualize){
 
 		MessageListener listener = new MessageListener() {
 
 			@Override
 			public void processMessage(Chat chat, Message message) {
 				if(message.getType() == Message.Type.chat){
-					System.out.println("chat in arrivo da: "+ chat.getThreadID() );
-					String user= chat.getParticipant().substring(0,chat.getParticipant().indexOf("@"));
-					gui.printMessage((gui.getArea(user,true)),user,message.getBody(),false);  
+					logger.debug("Send message from: " + chat.getThreadID() );
+					String user = chat.getParticipant().substring(0,chat.getParticipant().indexOf("@"));
+					gui.printMessage((gui.getArea(user,true)), user, message.getBody(), false);
+					if(!gui.isVisible()) {
+						gui.setVisible(true);
+						gui.setState(java.awt.Frame.ICONIFIED);
+						gui.toFront();
+					} else {
+						gui.toFront();
+					}
 				}
 			}
 
 		};
 
-		to=to+server.getUserAddress();
+		to = to + server.getUserAddress();
 		Message message = new Message(to);
 		message.setBody(text_message);
 		message.setThread(to);
-		chat = server.getChat(to,message.getThread(),listener);
+		logger.debug("Listener: " + listener);
+		chat = server.getChat(to, message.getThread(), listener);
 		//chat.addMessageListener(listener);
 
 		try {
@@ -132,42 +144,41 @@ public class Interaction{
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-		if(visualize==true){
-			String user= gui.getSelectedUser();
-			gui.printMessage((gui.getArea(user,false)),"me", text_message, visualize);
+		if(visualize == true){
+			String user = gui.getSelectedUser();
+			gui.printMessage((gui.getArea(user,false)), "me", text_message, visualize);
 		}
 	}
 
 
 	public void incomingChat(){
-		ChatManager chatmanager=getChatManager();
+		ChatManager chatmanager = getChatManager();
 		chatmanager.addChatListener(new ChatManagerListener() {
 			@Override
 			public void chatCreated(Chat chat, boolean createLocally) {
-				if(!createLocally)
-				{
+				if(!createLocally) {
 
 					chat.addMessageListener(new MessageListener() {
 
 						@Override
 						public void processMessage(Chat chat, Message message) {
 							if(message.getType() == Message.Type.chat){
-								System.out.println("chat in arrivo(incomingchat): "+chat.getThreadID());
-								System.out.println("gui e':"+gui);
-								if(!gui.isVisible())
+								logger.debug("Incoming message from: " + chat.getThreadID());
+								logger.debug("GUI: " + gui);
+								String user = chat.getParticipant().substring(0,chat.getParticipant().indexOf("@"));
+								gui.printMessage(gui.getArea(user,true), userFromAddress(message.getFrom()), message.getBody(), false);
+								if(!gui.isVisible()) {
 									gui.setVisible(true);
-								
-								System.out.println("chat in arrivo(incomingchat): "+chat.getThreadID());
-								String user= chat.getParticipant().substring(0,chat.getParticipant().indexOf("@"));
-
-								gui.printMessage((gui.getArea(user,true)),userFromAddress(message.getFrom()),message.getBody(),false);  
+									gui.setState(java.awt.Frame.NORMAL);
+									gui.toFront();
+								} else {
+									gui.toFront();
+								}
 							}
-
 						}
 					});
 
 				}
-
 			}
 		});
 	}
@@ -183,14 +194,14 @@ public class Interaction{
 
 	
 	public void sendFile(String user,File file,String description){
-		System.out.println("trasferimento file richiesto");
+		logger.debug("File transfer requested.");
 		new ServiceDiscoveryManager(server.getConnection());
 		FileTransferManager manager= new FileTransferManager(server.getConnection());
 		FileTransferNegotiator.setServiceEnabled(server.getConnection(), true);
-		System.out.println(manager);
+		logger.debug("Manager: " + manager);
 		String userID = user+server.getUserAddress()+"/Smack";
 		//String userID=getUseradd(user);
-		System.out.println("destinatario:"+userID);
+		logger.debug("Recipient: " + userID);
 		//OutgoingFileTransfer.setResponseTimeout(10000);
 		OutgoingFileTransfer transfer = manager.createOutgoingFileTransfer(userID);
 		try {
@@ -198,12 +209,12 @@ public class Interaction{
 		} catch (XMPPException e) {
 			e.printStackTrace();
 		}
-		System.out.println("dopo il trasferimento "+transfer.isDone()+ ", "+transfer.getStatus());
+		logger.debug("Trasfer status: " + transfer.isDone() + ", " + transfer.getStatus());
 
 		if(transfer.isDone())
-			System.out.println("trasferimento completato con successo!");
+			logger.debug("Transfer successfully completed!");
 		if(transfer.getStatus().equals(Status.error))
-			System.out.println("errore durante il trasferimento"+transfer.getError());
+			logger.debug("Error while transfering: " + transfer.getError());
 
 	}
 
@@ -253,13 +264,11 @@ public class Interaction{
 						chooser.setAcceptAllFileFilterUsed(false);
 
 						if (chooser.showOpenDialog(gui) == JFileChooser.APPROVE_OPTION) { 
-							System.out.println("getCurrentDirectory(): " 
-									+  chooser.getCurrentDirectory());
-							System.out.println("getSelectedFile() : " 
-									+  chooser.getSelectedFile());
+							logger.debug("getCurrentDirectory(): " +  chooser.getCurrentDirectory());
+							logger.debug("getSelectedFile() : " +  chooser.getSelectedFile());
 						}
 						else {
-							System.out.println("No Selection ");
+							logger.debug("No Selection.");
 						}
 						IncomingFileTransfer transfer = request.accept();
 						String path= chooser.getSelectedFile()+"/"+request.getFileName();

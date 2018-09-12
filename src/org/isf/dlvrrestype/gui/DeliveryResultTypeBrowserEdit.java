@@ -193,7 +193,7 @@ public class DeliveryResultTypeBrowserEdit extends JDialog{
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					DeliveryResultTypeBrowserManager manager = new DeliveryResultTypeBrowserManager();
 					try{
-						
+
 						deliveryresultType.setDescription(descriptionTextField.getText());
 						deliveryresultType.setCode(codeTextField.getText());
 						
@@ -285,7 +285,7 @@ public class DeliveryResultTypeBrowserEdit extends JDialog{
 	private JLabel getJCodeLabel() {
 		if (jCodeLabel == null) {
 			jCodeLabel = new JLabel();
-			jCodeLabel.setText(MessageBundle.getMessage("angal.dlvrrestype.codechar"));
+			jCodeLabel.setText(MessageBundle.getMessage("angal.dlvrrestype.codemaxchars"));
 		}
 		return jCodeLabel;
 	}
@@ -312,7 +312,7 @@ public class DeliveryResultTypeBrowserEdit extends JDialog{
 	private JPanel getJDescriptionLabelPanel() {
 		if (jDescriptionLabelPanel == null) {
 			jDescripitonLabel = new JLabel();
-			jDescripitonLabel.setText(MessageBundle.getMessage("angal.dlvrrestype.description"));
+			jDescripitonLabel.setText(MessageBundle.getMessage("angal.common.description"));
 			jDescriptionLabelPanel = new JPanel();
 			jDescriptionLabelPanel.add(jDescripitonLabel, null);
 		}

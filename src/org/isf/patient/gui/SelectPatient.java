@@ -85,7 +85,10 @@ public class SelectPatient extends JDialog {
 	private JPanel jPanelDataPatient;
 	private Patient patient;
 	private PatientSummary ps;
-	private String[] patColums = { MessageBundle.getMessage("angal.patient.code"), MessageBundle.getMessage("angal.patient.name") }; 
+	private String[] patColums = {
+			MessageBundle.getMessage("angal.common.code"),
+			MessageBundle.getMessage("angal.patient.name")
+	}; 
 	private int[] patColumsWidth = { 100, 250 };
 	private boolean[] patColumsResizable = { false, true };
 
@@ -370,11 +373,7 @@ public class SelectPatient extends JDialog {
 						
 						int index = jTablePatient.getSelectedRow();
 						patient = (Patient)jTablePatient.getValueAt(index, -1);
-						try {
-							patient.setPhoto(patManager.getPatientPhoto(patient).getPhoto());
-						} catch (OHServiceException e1) {
-							JOptionPane.showMessageDialog(SelectPatient.this, e1.getMessage());
-						}
+						patient.setPhoto(patient.getPhoto());
 						updatePatientSummary();
 						
 					}

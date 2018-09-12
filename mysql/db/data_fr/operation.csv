@@ -1,0 +1,48 @@
+﻿1;OB;Césarienne;1;0
+2;OB;Hystérectomie;1;0
+3;OB;Rupture de l'utérus;1;0
+4;OB;Utérus blessé;1;0
+5;OB;Évacuations;1;0
+6;OB;Avortement incomplet;1;0
+7;OB;Avortement septique;1;0
+8;OB;Dilatation et curetage;1;0
+9;OB;Réparation de la fistule vésico-vaginale (FVV);1;0
+10;GY;Abdomen aigu;1;0
+11;GY;Grossesse extra-utérine;1;0
+12;GY;Péritonite;1;0
+13;GY;Abcès pelvien;1;0
+14;GY;Les fibromes utérins;1;0
+15;GY;Tumeurs ovariennes;1;0
+16;GY;Prolapsus utérin;1;0
+17;GY;Cystocèle;1;0
+18;MG;Circoncision;1;0
+19;MG;Phimosis;1;0
+20;MG;Paraphimosis;1;0
+21;MG;Fente dorsale-paraphimosis;1;0
+22;MG;Sténose de Uretheral-bougienage;1;0
+23;MG;Hydrocélectomie;1;0
+24;MG;Tumeurs testiculaires;1;0
+25;MG;Prostatectomie;1;0
+26;MG;Biopsie de la prostate;1;0
+27;MG;Biopsie de la vessie;1;0
+28;AG;Hernie (inguinale & fémorale);1;0
+29;AG;Étranglée;1;0
+30;AG;Non étranglée;1;0
+31;AG;Hernie Epigastrical;1;0
+32;AG;Occlusion intestinale;1;0
+33;AG;Mécanique;1;0
+34;AG;Volvulus;1;0
+35;AG;Laparotomie;1;0
+36;AG;Lésions abdominales pénétrantes;1;0
+37;AG;Péritonite;1;0
+38;AG;Appendicite;1;0
+39;AG;Cholécystite;1;0
+40;AG;Tumeurs abdominales;1;0
+41;OR;Réduction des fractures;1;0
+42;OR;Membre supérieur;1;0
+43;OR;Membre inférieur;1;0
+44;OR;Ostéomyélite - séquestrectomie;1;0
+45;OS;Incision & Drainage;1;0
+46;OS;Débridement;1;0
+47;OS;Mise - a-plat;1;0
+48;OS;Toilette chirurgicale & suture;1;0

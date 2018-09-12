@@ -62,10 +62,10 @@ public class TestMedical
 	{		
     	System.out.println("Check Medical: " + medical.getCode());	
     	assertEquals(description, medical.getDescription());
-    	assertEquals(initialqty, medical.getInitialqty());
-    	assertEquals(inqty, medical.getInqty());
-    	assertEquals(minqty, medical.getMinqty());
-    	assertEquals(outqty, medical.getOutqty());
+    	assertEquals(initialqty, medical.getInitialqty(), 0.1);
+    	assertEquals(inqty, medical.getInqty(), 0.1);
+    	assertEquals(minqty, medical.getMinqty(), 0.1);
+    	assertEquals(outqty, medical.getOutqty(), 0.1);
     	assertEquals(pcsperpck, medical.getPcsperpck());
     	assertEquals(prod_code, medical.getProd_code());
     	assertEquals(lock, medical.getLock());

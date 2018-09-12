@@ -227,7 +227,7 @@ public class MedicalTypeBrowserEdit extends JDialog{
 						if (true == inserted){
 							JOptionPane.showMessageDialog(				
 									null,
-									MessageBundle.getMessage("angal.medtype.codealreadyinuse"),
+									MessageBundle.getMessage("angal.common.codealreadyinuse"),
 									MessageBundle.getMessage("angal.hospital"),
 									JOptionPane.PLAIN_MESSAGE);
 							codeTextField.setText("");
@@ -370,7 +370,7 @@ public class MedicalTypeBrowserEdit extends JDialog{
 	private JPanel getJDescriptionLabelPanel() {
 		if (jDescriptionLabelPanel == null) {
 			jDescripitonLabel = new JLabel();
-			jDescripitonLabel.setText(MessageBundle.getMessage("angal.medtype.description"));
+			jDescripitonLabel.setText(MessageBundle.getMessage("angal.common.description"));
 			jDescriptionLabelPanel = new JPanel();
 			jDescriptionLabelPanel.add(jDescripitonLabel, null);
 		}

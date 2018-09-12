@@ -39,7 +39,10 @@ public class AdmissionTypeBrowser extends ModalJFrame implements LaboratoryTypeL
 	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<AdmissionType> pAdmissionType;
-	private String[] pColums = { MessageBundle.getMessage("angal.admtype.code"), MessageBundle.getMessage("angal.admtype.description")};
+	private String[] pColums = {
+			MessageBundle.getMessage("angal.common.code"),
+			MessageBundle.getMessage("angal.common.description")
+	};
 	private int[] pColumwidth = {80, 200, 80};
 	private JPanel jContainPanel = null;
 	private JPanel jButtonPanel = null;

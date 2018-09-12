@@ -8,8 +8,9 @@ import org.isf.video.manager.VideoDeviceFactory;
 
 public abstract class VideoDevicesManager {
 	
-	// contiene l'id del prossimo device che verrà inserito (serve per garantire l'unicità degli stessi),
-	// viene incrementato ad ogni inserimento di un device
+	// It contains the ID of the next device what will be connected
+	// It is used to guarantee the devices uniqueness and it's incremented every time
+	// a new device is plugged in
 	public static int progressiveDevicesIdCount = 0;
 	
 	public static int idCurrentVideoDevice = -1;
@@ -46,7 +47,7 @@ public abstract class VideoDevicesManager {
 	}
 	
 	public VideoDevice getNextVideoDevice(int id){
-		// ritorna il device successivo nella lista
+		// Returns the next device in the list
 		ArrayList<Integer> id_set = new ArrayList<Integer>(videoDevicesList.keySet());
 		System.out.println(videoDevicesList.toString());
 		int index = id_set.indexOf(id);
@@ -54,15 +55,14 @@ public abstract class VideoDevicesManager {
 		System.out.println("trovato in pos " + index);
 		
 		VideoDevice device = null;
-		// se l'id esiste nella lista
+		// If the ID exists in the list
 		if (index > -1)
 		{
-			// se l'id non è dell'ultimo device della lista
-			// ritorna il successivo
+			// If the ID is not last in the list, returns the next one
 			if (index < videoDevicesList.size() - 1) {
 				device = videoDevicesList.get(id_set.get(index + 1));
 			}
-			// altrimenti ritorna il primo
+			// Otherwise return the first one
 			else {
 				device = videoDevicesList.get(id_set.get(0));
 			}

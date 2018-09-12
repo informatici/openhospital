@@ -75,7 +75,7 @@ public class DischargeTypeBrowserManager {
 	 */
 	public boolean updateDischargeType(DischargeType dischargeType) throws OHServiceException {
 		try {
-			return ioOperations.updateDischargeType(dischargeType);
+			return ioOperations.newDischargeType(dischargeType);
 		} catch (OHException e) {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message

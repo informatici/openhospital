@@ -346,7 +346,7 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 				if (!(movTypeBox.getSelectedItem() instanceof String)) {
 					MovementType selected = (MovementType) movTypeBox
 							.getSelectedItem();
-					if (selected.getType().equalsIgnoreCase("-")) {
+					if (selected.getType().contains("-")) {
 						wardBox.setEnabled(true);
 					} else {
 						wardBox.setSelectedIndex(0);

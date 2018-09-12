@@ -137,7 +137,7 @@ public class GroupEdit extends JDialog {
 			nameLabel = new JLabel();
 			nameLabel.setText(MessageBundle.getMessage("angal.menu.name")); 
 			descLabel = new JLabel();
-			descLabel.setText(MessageBundle.getMessage("angal.menu.description"));  
+			descLabel.setText(MessageBundle.getMessage("angal.common.description"));  
 			dataPanel = new JPanel();
 			dataPanel.setLayout(new BoxLayout(getDataPanel(), BoxLayout.Y_AXIS));  
 		

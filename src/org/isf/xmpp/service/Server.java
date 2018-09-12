@@ -10,6 +10,8 @@ import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class Server {
@@ -19,6 +21,8 @@ public class Server {
 	private int port;
 	private Roster roster;
 	private String user;
+	
+	private final Logger logger = LoggerFactory.getLogger(Server.class);
 
 	private Server(){
 
@@ -37,8 +41,10 @@ public class Server {
 		try{
 			AccountManager user= new AccountManager(connection);
 			user.createAccount(userName, password);
+			logger.debug("XMPP user created");
 			connection.login(userName, password);
 		}catch (XMPPException e) {
+			logger.debug("XMPP user existing");
 			connection.login(userName, password);
 		}
 	}
@@ -49,17 +55,17 @@ public class Server {
 		return roster;
 	}
 
-	public Chat getChat(String to,String id,MessageListener listner)
+	public Chat getChat(String to, String id, MessageListener listner)
 	{
 		Chat chat=null;
-
-		if(connection.getChatManager().getThreadChat(id+user)==null){
-			System.out.println("chat in creazione con : "+to+" id= "+id);
-			chat = connection.getChatManager().createChat(to,id+user,listner);
+		id = id + "@" + user;
+		if(connection.getChatManager().getThreadChat(id)==null){
+			logger.debug("Creation chat: " + to + ", id = " + id);
+			chat = connection.getChatManager().createChat(to, id, listner);
 		}
 		else{
-			System.out.println("chat già esistente con: "+to+" id= "+id );
-			chat= connection.getChatManager().getThreadChat(id+user);
+			logger.debug("Existing chat: " + to + ", id = " + id);
+			chat = connection.getChatManager().getThreadChat(id);
 		}
 		return chat;
 	}

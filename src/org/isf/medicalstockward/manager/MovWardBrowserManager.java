@@ -31,10 +31,11 @@ public class MovWardBrowserManager {
 
 	/**
 	 * Gets all the {@link MovementWard}s.
+	 * If an error occurs a message error is shown and the <code>null</code> value is returned.
 	 * @return all the retrieved movements ward.
 	 * @throws OHServiceException 
 	 */
-	public ArrayList<MovementWard> getMovementWard() throws OHServiceException {
+	@Deprecated public ArrayList<MovementWard> getMovementWard() throws OHServiceException {
 		try {
 			return ioOperations.getWardMovements(null, null, null);
 		} catch (OHException e) {

@@ -410,7 +410,7 @@ public class PatientInsertExtended extends JDialog {
 						return;
 					}
 					if (insert) {
-						String name = secondName + " " + firstName;
+						String name = firstName + " " + secondName;
 						try{
 							if (manager.isPatientPresent(name)) {
 								switch (JOptionPane.showConfirmDialog(null,
@@ -1742,8 +1742,13 @@ public class PatientInsertExtended extends JDialog {
 		if (jDataContainPanel == null) {
 			jDataContainPanel = new JPanel();
 			if (!insert) {
-				jDataContainPanel = setMyBorderCenter(jDataContainPanel, patient.getName() + " (" + MessageBundle.getMessage("angal.patient.code") + ": " + patient.getCode() + ")");
-
+				StringBuilder title = new StringBuilder(patient.getName())
+						.append(" (")
+						.append(MessageBundle.getMessage("angal.common.code"))
+						.append(": ")
+						.append(patient.getCode())
+						.append(")");
+				jDataContainPanel = setMyBorderCenter(jDataContainPanel, title.toString());
 			} else {
 				//int nextcode = manager.getNextPatientCode();
 				jDataContainPanel = setMyBorderCenter(jDataContainPanel, MessageBundle.getMessage("angal.patient.insertdataofnewpatient"));

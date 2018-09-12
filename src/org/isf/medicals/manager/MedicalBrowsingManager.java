@@ -134,17 +134,15 @@ public class MedicalBrowsingManager {
 	/**
 	 * Saves the specified {@link Medical}. The medical is updated with the generated id.
 	 * In case of wrong parameters values a message error is shown and a <code>false</code> value is returned.
-	 * @param medical the medical to store.
+	 * @param medical - the medical to store.
+	 * @param validate - if <code>true</code> performs validation method checkMedicalForInsert(medical).
 	 * @return <code>true</code> if the medical has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException 
 	 */
-	public boolean newMedical(Medical medical) throws OHServiceException {
+	public boolean newMedical(Medical medical, boolean validate) throws OHServiceException {
 		try {
-			if (true == ioOperations.medicalExists(medical)) {
-				throw new OHException(MessageBundle.getMessage("angal.medicals.thetypemedicalyouinsertedwasalreadyinuse"));
-			} else {
-				return ioOperations.newMedical(medical);
-			}
+			if (validate) checkMedicalForInsert(medical);
+			return ioOperations.newMedical(medical);
 		} catch (OHException e) {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
@@ -162,31 +160,25 @@ public class MedicalBrowsingManager {
 
 	/**
 	 * Updates the specified medical.
-	 * @param medical the medical to update.
+	 * @param newMedical - the medical to update.
 	 * @param abortIfLocked - if <code>false</code> the {@link Medical} will be overwritten when already updated from someone else.
 	 * @return <code>true</code> if update is successful, false if abortIfLocked == true and the record is locked. Otherwise throws an OHServiceException
 	 * @throws OHServiceException 
 	 */
-	public boolean updateMedical(Medical medical, boolean abortIfLocked) throws OHServiceException {
+	public boolean updateMedical(Medical oldMedical, Medical newMedical, boolean abortIfLocked) throws OHServiceException {
 		try {
-			boolean medicalExists = ioOperations.medicalExists(medical);
-			
-			if (medicalExists) {
-				throw new OHException(MessageBundle.getMessage("angal.medicals.thetypemedicalyouinsertedwasalreadyinuse"));
-			}
-			
-			int lock = ioOperations.getMedicalLock(medical.getCode());
+			int lock = ioOperations.getMedicalLock(newMedical.getCode());
 			if (lock>=0) {
 				//ok the record is present, it was not deleted
-				if (lock!=medical.getLock()) {
+				if (lock!=newMedical.getLock()) {
 					if (true == abortIfLocked) {
 						return false;
 					} else {
-						return ioOperations.updateMedical(medical);
+						return ioOperations.updateMedical(newMedical);
 					}
 				} else {
 					//ok it was not updated
-					return ioOperations.updateMedical(medical);
+					return ioOperations.updateMedical(newMedical);
 				}
 			} else {
 				//the record was deleted since the last read
@@ -236,4 +228,78 @@ public class MedicalBrowsingManager {
 					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
+	
+	private void checkMedicalCommon(Medical medical) throws OHException {
+		if(medical.getMinqty()<0){
+			throw new OHException(MessageBundle.getMessage("angal.medicals.minquantitycannotbelessthan0"));
+		}
+		
+		if(medical.getPcsperpck()<0){
+			throw new OHException(MessageBundle.getMessage("angal.medicals.insertavalidpackaging"));
+		}
+
+		if(medical.getDescription().equalsIgnoreCase("")){
+			throw new OHException(MessageBundle.getMessage("angal.medicals.inseravaliddescription"));
+		}
+	}
+	
+	/**
+	 * Perform several checks on the provided medical, useful for insert
+	 * @param medical
+	 * @return <code>true</code> if the {@link Medical} is ok for inserting, <code>false</code> otherwise
+	 * @throws OHException
+	 */
+	public boolean checkMedicalForInsert(Medical medical) throws OHException {
+		checkMedicalCommon(medical);
+		boolean productCodeExists = !medical.getProd_code().equals("") && ioOperations.productCodeExists(medical, false);
+		boolean medicalExists = ioOperations.medicalExists(medical, false);
+		ArrayList<Medical> similarMedicals = ioOperations.medicalCheck(medical, false);
+		if (productCodeExists) {
+			throw new OHException(MessageBundle.getMessage("angal.medicals.thecodeisalreadyused"));
+		} else if (medicalExists) {
+			StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.medicals.thetypemedicalyouinsertedwasalreadyinuse")).append("\n");
+			message.append("[").append(medical.getType().getDescription()).append("] ");
+			message.append(medical.toString()).append("\n");
+			throw new OHException(message.toString());
+		} else if (!similarMedicals.isEmpty()) {
+			StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.medicals.themedicalyouinsertedseemsalreadyinuse")).append("\n");
+			for (Medical med : similarMedicals) {
+				String prod_code = med.getProd_code() == null || med.getProd_code().equals("") ? MessageBundle.getMessage("angal.common.notapplicable") : med.getProd_code();
+				message.append("[").append(med.getType().getDescription()).append("] ");
+				if (!med.getProd_code().equals("")) message.append("[").append(prod_code).append("] ");
+				message.append(med.toString()).append("\n");
+			}
+			throw new OHException(message.toString(), new Throwable("similarsFound"));
+		} else return true;
+	}
+	
+	/**
+	 * Perform several checks on the provided medical, useful for update
+	 * @param medical
+	 * @return <code>true</code> if the {@link Medical} is ok for updating, <code>false</code> otherwise
+	 * @throws OHException
+	 */
+	public boolean checkMedicalForUpdate(Medical oldMedical, Medical medical) throws OHException {
+		checkMedicalCommon(medical);		
+		boolean productCodeExists = !medical.getProd_code().equals("") && ioOperations.productCodeExists(medical, true);
+		boolean medicalExists = ioOperations.medicalExists(medical, true);
+		ArrayList<Medical> similarMedicals = ioOperations.medicalCheck(medical, true);
+		if (productCodeExists) {
+			throw new OHException(MessageBundle.getMessage("angal.medicals.thecodeisalreadyused"));
+		} else if (medicalExists) {
+			StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.medicals.thetypemedicalyouinsertedwasalreadyinuse")).append("\n");
+			message.append("[").append(medical.getType().getDescription()).append("] ");
+			message.append(medical.toString()).append("\n");
+			throw new OHException(message.toString());
+		} else if (!similarMedicals.isEmpty()) {
+			StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.medicals.themedicalyouinsertedseemsalreadyinuse")).append("\n");
+			for (Medical med : similarMedicals) {
+				message.append("[").append(med.getType().getDescription()).append("] ");
+				if (!med.getProd_code().equals("")) message.append("[").append(med.getProd_code()).append("] ");
+				message.append(med.toString()).append("\n");
+			}
+			throw new OHException(message.toString(), new Throwable("similarsFound"));
+		} else return true;
+	}
+	
 }

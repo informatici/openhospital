@@ -196,7 +196,7 @@ public class Supplier implements java.io.Serializable {
 		}
 		
 		Supplier supplier = (Supplier)obj;
-		return (this.getSupId() == supplier.getSupId());
+		return (this.getSupId().equals(supplier.getSupId()));
 	}
 
 	@Override

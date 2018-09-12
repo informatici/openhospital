@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.isf.utils.db.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,7 @@ public class MessageBundle {
 	public static void initialize() throws RuntimeException {
 		try {
 			defaultResourceBundle = ResourceBundle.getBundle("language", new Locale("en"));
-			resourceBundle = ResourceBundle.getBundle("language", new Locale(GeneralData.LANGUAGE));
+			resourceBundle = ResourceBundle.getBundle("language", new Locale(GeneralData.LANGUAGE), new UTF8Control());
 		} catch (MissingResourceException e) {
 			logger.error(">> no resource bundle found.");
 			System.exit(1);
@@ -39,12 +40,16 @@ public class MessageBundle {
 			if (resourceBundle != null) {
 				//message = new String(resourceBundle.getString(key).getBytes("ISO-8859-1"), "UTF-8");
 				message = resourceBundle.getString(key);
-			}
+			} else return key;
 		} catch (MissingResourceException e) {
 			if (GeneralData.DEBUG) {
 				message = key;
 			} else {
-				message = defaultResourceBundle.getString(key);
+				try {
+					message = defaultResourceBundle.getString(key);
+				} catch (MissingResourceException e1) {
+					message = key;
+				}
 			}
 			logger.error(">> key not found: " + key);
 		} 
@@ -93,4 +98,5 @@ public class MessageBundle {
 		}
 		return message;
 	}
+	
 }

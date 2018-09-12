@@ -23,7 +23,13 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
 	private static DbJpaUtil jpa;
@@ -37,12 +43,14 @@ public class Tests
 	private static TestBillPaymentsContext testBillPaymentsContext;
 	private static TestPatientContext testPatientContext;
 	private static TestPriceListContext testPriceListContext;
-		
+
+    @Autowired
+    AccountingIoOperations accountingIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
     {
-    	jpa = new DbJpaUtil();
+		jpa = new DbJpaUtil();
     	testBill = new TestBill();
     	testBillItems = new TestBillItems();
     	testBillPayments = new TestBillPayments();
@@ -81,7 +89,6 @@ public class Tests
     @AfterClass
     public static void tearDownClass() throws OHException 
     {
-    	//jpa.destroy();
     	testBill = null;
     	testBillItems = null;
     	testBillPayments = null;
@@ -221,14 +228,13 @@ public class Tests
 	public void testIoGetPendingBills()
 	{
 		int id = 0;
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
-		
+	
 		
 		try 
 		{
 			id = _setupTestBill(false);
 			Bill foundBill = (Bill)jpa.find(Bill.class, id); 
-			ArrayList<Bill> bills = ioOperations.getPendingBills(0);
+			ArrayList<Bill> bills = accountingIoOperation.getPendingBills(0);
 			
 			assertEquals(true, bills.contains(foundBill));
 		} 
@@ -245,14 +251,13 @@ public class Tests
 	public void testIoGetPendingBillsPatId()
 	{
 		int id = 0;
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		
 		
 		try 
 		{
 			id = _setupTestBill(false);
 			Bill foundBill = (Bill)jpa.find(Bill.class, id); 
-			ArrayList<Bill> bills = ioOperations.getPendingBills(foundBill.getPatient().getCode());
+			ArrayList<Bill> bills = accountingIoOperation.getPendingBills(foundBill.getPatient().getCode());
 			
 			assertEquals(foundBill.getAmount(), bills.get(0).getAmount(), 0.1);
 		} 
@@ -269,14 +274,13 @@ public class Tests
 	public void testIoGetBills() 
 	{
 		int id = 0;
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		
 		
 		try 
 		{
 			id = _setupTestBill(false);
 			Bill foundBill = (Bill)jpa.find(Bill.class, id); 
-			ArrayList<Bill> bills = ioOperations.getBills();
+			ArrayList<Bill> bills = accountingIoOperation.getBills();
 			
 			assertEquals(true, bills.contains(foundBill));
 		} 
@@ -293,14 +297,13 @@ public class Tests
 	public void testIoGetBill() 
 	{
 		int id = 0;
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 				
 
 		try 
 		{
 			id = _setupTestBill(false);
 			Bill foundBill = (Bill)jpa.find(Bill.class, id); 
-			Bill bill = ioOperations.getBill(id);
+			Bill bill = accountingIoOperation.getBill(id);
 			
 			assertEquals(foundBill.getAmount(), bill.getAmount(), 0.1);
 		} 
@@ -318,14 +321,13 @@ public class Tests
 	{
 		int id = 0;
 		ArrayList<String> userIds = null;
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		
 		
 		try 
 		{
 			id = _setupTestBillPayments(false);
 			BillPayments foundBillPayment = (BillPayments)jpa.find(BillPayments.class, id); 
-			userIds = ioOperations.getUsers();
+			userIds = accountingIoOperation.getUsers();
 			
 			assertEquals(true, userIds.contains(foundBillPayment.getUser()));
 		} 
@@ -340,15 +342,13 @@ public class Tests
 
 	@Test
 	public void testIoGetItems() 
-	{
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
-		
+	{		
 		try 
 		{
 			int billItemID = _setupTestBillItems(false);
 			
 			BillItems foundBillItem = (BillItems)jpa.find(BillItems.class, billItemID); 
-			ArrayList<BillItems> billItems = ioOperations.getItems(foundBillItem.getBill().getId());
+			ArrayList<BillItems> billItems = accountingIoOperation.getItems(foundBillItem.getBill().getId());
 			
 			assertEquals(true, billItems.contains(foundBillItem));
 		} 
@@ -365,14 +365,13 @@ public class Tests
 	public void testIoGetItemsBillId() 
 	{
 		int id = 0;
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		
 		
 		try 
 		{
 			id = _setupTestBillItems(false);
 			BillItems foundBillItem = (BillItems)jpa.find(BillItems.class, id); 
-			ArrayList<BillItems> billItems = ioOperations.getItems(foundBillItem.getBill().getId());
+			ArrayList<BillItems> billItems = accountingIoOperation.getItems(foundBillItem.getBill().getId());
 			
 			assertEquals(foundBillItem.getItemAmount(), billItems.get(0).getItemAmount(), 0.1);
 		} 
@@ -389,7 +388,6 @@ public class Tests
 	public void testIoGetPayments() 
 	{
 		int id = 0;
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		
 		
 		try 
@@ -398,7 +396,7 @@ public class Tests
 			BillPayments foundBillPayment = (BillPayments)jpa.find(BillPayments.class, id); 
 			GregorianCalendar dateFrom = new GregorianCalendar(4, 3, 2);
 			GregorianCalendar dateTo = new GregorianCalendar();
-			ArrayList<BillPayments> billPayments = ioOperations.getPayments(dateFrom, dateTo);
+			ArrayList<BillPayments> billPayments = accountingIoOperation.getPayments(dateFrom, dateTo);
 			
 			assertEquals(true, billPayments.contains(foundBillPayment));
 		} 
@@ -415,14 +413,13 @@ public class Tests
 	public void testIoGetPaymentsBillId()
 	{
 		int id = 0;
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		
 		
 		try 
 		{
 			id = _setupTestBillPayments(false);
 			BillPayments foundBillPayment = (BillPayments)jpa.find(BillPayments.class, id); 
-			ArrayList<BillPayments> billItems = ioOperations.getPayments(foundBillPayment.getBill().getId());
+			ArrayList<BillPayments> billItems = accountingIoOperation.getPayments(foundBillPayment.getBill().getId());
 			
 			assertEquals(foundBillPayment.getAmount(), billItems.get(0).getAmount(), 0.1);
 		} 
@@ -439,7 +436,6 @@ public class Tests
 	public void testIoNewBill() 
 	{
 		int id = 0;
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		Bill bill = null;
 		Patient	patient = null; 
 		PriceList priceList = null;
@@ -454,7 +450,7 @@ public class Tests
 			jpa.persist(priceList);
 			jpa.persist(patient);
 			jpa.commitTransaction();
-			id = ioOperations.newBill(bill);
+			id = accountingIoOperation.newBill(bill);
 			_checkBillIntoDb(id);
 		} 
 		catch (Exception e) 
@@ -469,7 +465,6 @@ public class Tests
 	@Test
 	public void testIoNewBillItems()
 	{
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		ArrayList<BillItems> billItems = new ArrayList<BillItems>(); 
 		int deleteId = 0, insertId = 0;
 		boolean result = false;
@@ -484,7 +479,7 @@ public class Tests
 			BillItems insertBillItem = testBillItems.setup(null, false);
 			insertId = deleteId + 1;
 			billItems.add(insertBillItem);	
-			result = ioOperations.newBillItems(bill, billItems);
+			result = accountingIoOperation.newBillItems(bill, billItems);
 			
 			BillItems foundBillItems = (BillItems)jpa.find(BillItems.class, insertId); 		
 			assertEquals(true, result);				
@@ -502,7 +497,6 @@ public class Tests
 	@Test
 	public void testIoNewBillPayments() 
 	{
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		ArrayList<BillPayments> billPayments = new ArrayList<BillPayments>(); 
 		int deleteId = 0, insertId = 0;
 		boolean result = false;
@@ -517,7 +511,7 @@ public class Tests
 			BillPayments insertBillPayment = testBillPayments.setup(null, false);
 			insertId = deleteId + 1;
 			billPayments.add(insertBillPayment);	
-			result = ioOperations.newBillPayments(bill, billPayments);
+			result = accountingIoOperation.newBillPayments(bill, billPayments);
 			
 			BillPayments foundBillPayments = (BillPayments)jpa.find(BillPayments.class, insertId); 		
 			assertEquals(true, result);				
@@ -535,7 +529,6 @@ public class Tests
 	@Test
 	public void testIoUpdateBill() 
 	{
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		int id = 0;
 		
 		
@@ -545,7 +538,7 @@ public class Tests
 			Bill bill = (Bill)jpa.find(Bill.class, id); 
 			bill.setAmount(12.34);
 			
-			ioOperations.updateBill(bill);
+			accountingIoOperation.updateBill(bill);
 			
 			assertEquals(12.34, bill.getAmount(), 0.1);
 		} 
@@ -561,7 +554,6 @@ public class Tests
 	@Test
 	public void testIoDeleteBill()
 	{
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		int id = 0;
 		
 		
@@ -570,10 +562,9 @@ public class Tests
 			id = _setupTestBill(true);
 			Bill bill = (Bill)jpa.find(Bill.class, id); 
 			
-			ioOperations.deleteBill(bill);
-			
-			Bill deletedBill = (Bill)jpa.find(Bill.class, id); 		
-			assertEquals("D", deletedBill.getStatus());
+			boolean result = accountingIoOperation.deleteBill(bill);
+			 		
+			assertEquals(true, result);
 		} 
 		catch (Exception e) 
 		{
@@ -587,7 +578,6 @@ public class Tests
 	@Test
 	public void testIoGetBillsTimeRange() 
 	{
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		int id = 0;
 		
 		
@@ -597,7 +587,7 @@ public class Tests
 			Bill foundBill = (Bill)jpa.find(Bill.class, id); 
 			GregorianCalendar dateFrom = new GregorianCalendar(4, 3, 2);
 			GregorianCalendar dateTo = new GregorianCalendar();
-			ArrayList<Bill> bills = ioOperations.getBills(dateFrom, dateTo);
+			ArrayList<Bill> bills = accountingIoOperation.getBills(dateFrom, dateTo);
 			
 			assertEquals(true, bills.contains(foundBill));
 		} 
@@ -614,7 +604,6 @@ public class Tests
 	public void testIoGetBillsPayment() 
 	{
 		int id = 0;
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		ArrayList<BillPayments> payments = new ArrayList<BillPayments>();
 		
 		
@@ -624,7 +613,7 @@ public class Tests
 			BillPayments foundBillPayment = (BillPayments)jpa.find(BillPayments.class, id); 
 			
 			payments.add(foundBillPayment);	
-			ArrayList<Bill> bills = ioOperations.getBills(payments);
+			ArrayList<Bill> bills = accountingIoOperation.getBills(payments);
 			
 			assertEquals(foundBillPayment.getBill().getAmount(), bills.get(0).getAmount(), 0.1);
 		} 
@@ -641,7 +630,6 @@ public class Tests
 	public void testIoGetPaymentsBill()
 	{
 		int id = 0;
-		AccountingIoOperations ioOperations = new AccountingIoOperations();
 		ArrayList<Bill> bills = new ArrayList<Bill>();
 		
 		
@@ -652,7 +640,7 @@ public class Tests
 			Bill foundBill = foundBillPayment.getBill(); 
 			
 			bills.add(foundBill);	
-			ArrayList<BillPayments> payments = ioOperations.getPayments(bills);
+			ArrayList<BillPayments> payments = accountingIoOperation.getPayments(bills);
 			
 			assertEquals(foundBill.getAmount(), payments.get(0).getBill().getAmount(), 0.1);
 		} 

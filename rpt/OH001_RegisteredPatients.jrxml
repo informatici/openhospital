@@ -38,6 +38,7 @@
 	<queryString><![CDATA[SELECT DATE(PAT_TIMESTAMP) DATE, COUNT(*) NUMBER
 FROM PATIENT 
 WHERE DATE(PAT_TIMESTAMP) BETWEEN STR_TO_DATE($P{fromdate},'%d/%m/%Y') AND STR_TO_DATE($P{todate},'%d/%m/%Y')
+AND PAT_DELETED = 'N'
 GROUP BY DATE(PAT_TIMESTAMP)]]></queryString>
 
 	<field name="DATE" class="java.sql.Date"/>

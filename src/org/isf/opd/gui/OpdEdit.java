@@ -82,7 +82,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 		surgeryListeners.remove(SurgeryListener.class, listener);
 	}
 	
-	private void fireSurgeryInserted() {
+	private void fireSurgeryInserted(Opd opd) {
 		AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
 
 			private static final long serialVersionUID = -2831804524718368850L;
@@ -93,7 +93,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 		for (int i = 0; i < listeners.length; i++)
 			((SurgeryListener)listeners[i]).surgeryInserted(event, opd);
 	}
-	private void fireSurgeryUpdated() {
+	private void fireSurgeryUpdated(Opd opd) {
 		AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
 
 			private static final long serialVersionUID = -1073238832996429931L;
@@ -576,7 +576,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 							RememberDates.setLastOpdVisitDate(gregDate);
 							result = manager.newOpd(opd);
 							if (result) {
-								fireSurgeryInserted();
+								fireSurgeryInserted(opd);
 							}
 							if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opd.thedatacouldnotbesaved"));
 							else  dispose();
@@ -611,7 +611,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 							}
 
 							if (result) {
-								fireSurgeryUpdated();
+								fireSurgeryUpdated(opd);
 							};
 							if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opd.thedatacouldnotbesaved"));
 							else  dispose();

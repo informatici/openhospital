@@ -26,19 +26,39 @@ import java.io.File;
 
     private final Logger logger = LoggerFactory.getLogger(GenericReportFromDateToDate.class);
 
-		public  GenericReportFromDateToDate(String fromDate, String toDate, String jasperFileName, boolean toCSV) {
+		public  GenericReportFromDateToDate(String fromDate, String toDate, String jasperFileName, String defaultName, boolean toExcel) {
 			try{
+				
+				StringBuilder sbFilename = new StringBuilder();
+				sbFilename.append("rpt");
+				sbFilename.append(File.separator);
+				sbFilename.append(jasperFileName);
+				sbFilename.append(".jasper");
+				File jasperFile = new File(sbFilename.toString());
+				
+				sbFilename = new StringBuilder();
+				sbFilename.append("PDF");
+				sbFilename.append(File.separator);
+				sbFilename.append(defaultName);
+				File defaultFilename = new File(sbFilename.toString());
+				
                 JasperReportsManager jasperReportsManager = new JasperReportsManager();
-				if (toCSV) {
-                    JFileChooser fcExcel = new JFileChooser();
-                    FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("CSV (*.csv)","csv");
-                    fcExcel.setFileFilter(excelFilter);
-                    fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				if (toExcel) {
+					JFileChooser fcExcel = new JFileChooser();
+					FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xlsx)","xlsx");
+					FileNameExtensionFilter excelFilter2003 = new FileNameExtensionFilter("Excel 97-2003 (*.xls)","xls");
+					fcExcel.addChoosableFileFilter(excelFilter);
+					fcExcel.addChoosableFileFilter(excelFilter2003);
+					fcExcel.setFileFilter(excelFilter);
+					fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					fcExcel.setSelectedFile(defaultFilename);
 
                     int iRetVal = fcExcel.showSaveDialog(null);
-                    if(iRetVal == JFileChooser.APPROVE_OPTION){
+                    if(iRetVal == JFileChooser.APPROVE_OPTION)
+                    {
                         File exportFile = fcExcel.getSelectedFile();
-                        jasperReportsManager.getGenericReportFromDateToDateCSV(fromDate,toDate, jasperFileName, exportFile.getAbsolutePath());
+                        if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
+                        jasperReportsManager.getGenericReportFromDateToDateExcel(fromDate,toDate, jasperFileName, exportFile.getAbsolutePath());
                     }
                 } else {
                     JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportFromDateToDatePdf(fromDate, toDate, jasperFileName);

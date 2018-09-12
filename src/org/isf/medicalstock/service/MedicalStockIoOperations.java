@@ -9,14 +9,19 @@ import java.util.Random;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
+import org.isf.medicals.service.MedicalsIoOperationRepository;
 import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
-import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.db.DbQueryLogger;
+import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.isf.medicalstockward.model.MedicalWard;
+import org.isf.medicalstockward.service.MedicalStockWardIoOperationRepository;
+import org.isf.medstockmovtype.service.MedicalStockMovementTypeIoOperationRepository;
 
 /**
  * Persistence class for MedicalStock module.
@@ -26,7 +31,25 @@ import org.isf.medicalstockward.model.MedicalWard;
  * 			- added complete Ward and Movement construction in getMovement()
  */
 @Component
+@Transactional(rollbackFor=OHException.class)
+@TranslateOHException
 public class MedicalStockIoOperations {
+
+	@Autowired
+	private MovementIoOperationRepository repository;
+	
+	@Autowired
+	private LotIoOperationRepository lotRepository;
+	
+	@Autowired
+	private MedicalsIoOperationRepository medicalRepository;
+
+	@Autowired
+	private MedicalStockWardIoOperationRepository medicalStockRepository;
+
+	@Autowired
+	private MedicalStockMovementTypeIoOperationRepository medicalStockMovementTypeIoRepository;
+		
 	
 	public enum MovementOrder {
 		DATE, WARD, PHARMACEUTICAL_TYPE, TYPE;
@@ -46,32 +69,12 @@ public class MedicalStockIoOperations {
 	 * @return the ids of medicals referencing the specified lot.
 	 * @throws OHException if an error occurs retrieving the referencing medicals.
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Integer> getMedicalsFromLot(
 			String lotCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try {
-			jpa.beginTransaction();
-			
-			String query = "select distinct MDSR_ID from " +
-					"((MEDICALDSRSTOCKMOVTYPE join MEDICALDSRSTOCKMOV on MMVT_ID_A = MMV_MMVT_ID_A) " +
-					"join MEDICALDSR  on MMV_MDSR_ID=MDSR_ID ) " +
-					"join MEDICALDSRLOT on MMV_LT_ID_A=LT_ID_A where LT_ID_A=?";
-			params.add(lotCode);
-			jpa.createQuery(query, null, false);
-			jpa.setParameters(params, false);
-			List<Integer> medicalIds = (List<Integer>)jpa.getList();			
-			
-			jpa.commitTransaction();
-			
-			return medicalIds;
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
+		List<Integer> medicalIds = repository.findAllByLot(lotCode);
+		
+		return medicalIds;
 	}
 	
 	/**
@@ -205,7 +208,7 @@ public class MedicalStockIoOperations {
 	 * @return <code>true</code> if the movement has been stored, <code>false</code> otherwise.
 	 * @throws OHException if an error occurs during the store operation.
 	 */
-	public boolean prepareDischargingwMovement(
+	public boolean prepareDischargingMovement(
 			Movement movement) throws OHException 
 	{
 		String lotCode = null;
@@ -245,19 +248,13 @@ public class MedicalStockIoOperations {
 			Movement movement, 
 			String lotCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
-				
-		try {
-			jpa.beginTransaction();	
-			Lot lot = (Lot)jpa.find(Lot.class, lotCode); 
-			movement.setLot(lot);
-			jpa.merge(movement);
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
+	
+
+		Lot lot = (Lot)lotRepository.findOne(lotCode); 
+		movement.setLot(lot);
+		Movement savedMovement = repository.save(movement);
+		result = (savedMovement != null);
 		
 		return result;
 	}
@@ -270,30 +267,25 @@ public class MedicalStockIoOperations {
 	 */
 	protected String generateLotCode() throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		Random random = new Random();
-		long candidateCode;
-		
+		long candidateCode = 0;
 		Lot lot = null;
-		
-		try {
-			do {
-				jpa.beginTransaction();	
 				
+		
+		try 
+		{
+			do 
+			{
 				candidateCode = Math.abs(random.nextLong());
-				lot = (Lot)jpa.find(Lot.class, String.valueOf(candidateCode));
-				
-				jpa.commitTransaction();
-				
-			} while (lot != null);
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		} catch (Exception e) {
-			jpa.rollbackTransaction();
+
+				lot = (Lot)lotRepository.findOne(String.valueOf(candidateCode)); 
+			} while (lot !=null);
+		} 
+		catch (Exception e) 
+		{
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		}
-		
+		} 
+
 		return String.valueOf(candidateCode);
 	}
 
@@ -307,31 +299,23 @@ public class MedicalStockIoOperations {
 	public boolean lotExists(
 			String lotCode) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		Lot lot = null;
 		boolean result = false;
 		
 		
 		try 
 		{
-			jpa.beginTransaction();	
-			lot = (Lot)jpa.find(Lot.class, lotCode); 
-			jpa.commitTransaction();
-			
+			lot = (Lot)lotRepository.findOne(lotCode); 
 			if (lot != null)
 			{
 				result = true;
 			}
-		}
-		catch (OHException e) 
-		{
-			jpa.rollbackTransaction();
-			throw e;
 		} 
-		catch (Exception e) {
-			jpa.rollbackTransaction();
+		catch (Exception e) 
+		{
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		}
+		} 
+		
 		return result;
 	}
 
@@ -347,24 +331,17 @@ public class MedicalStockIoOperations {
 			String lotCode, 
 			Lot lot) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = false;
 
 		
 		try 
 		{
-			jpa.beginTransaction();	
 			lot.setCode(lotCode);
-			jpa.persist(lot); 
-			jpa.commitTransaction();
+			lotRepository.save(lot);
 			result = true;	
 		} 
-		catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		catch (Exception e) {
-			jpa.rollbackTransaction();
+		catch (Exception e) 
+		{
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
 		} 
 		
@@ -427,19 +404,13 @@ public class MedicalStockIoOperations {
 			int medicalCode, 
 			double incrementQuantity) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 				
-		try {
-			jpa.beginTransaction();	
-			Medical medical = (Medical)jpa.find(Medical.class, medicalCode); 
-			medical.setInqty(medical.getInqty()+incrementQuantity);
-			jpa.merge(medical);
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
+		
+		Medical medical = (Medical)medicalRepository.findOne(medicalCode); 
+		medical.setInqty(medical.getInqty()+incrementQuantity);
+		medicalRepository.save(medical);
+		
 		return result;
 	}
 
@@ -455,19 +426,13 @@ public class MedicalStockIoOperations {
 			int medicalCode, 
 			double incrementQuantity) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		boolean result = true;
 				
-		try {
-			jpa.beginTransaction();	
-			Medical medical = (Medical)jpa.find(Medical.class, medicalCode); 
-			medical.setOutqty(medical.getOutqty()+incrementQuantity);
-			jpa.merge(medical);
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
+
+		Medical medical = (Medical)medicalRepository.findOne(medicalCode); 
+		medical.setOutqty(medical.getOutqty()+incrementQuantity);
+		medicalRepository.save(medical);
+				
 		return result;
 	}
 
@@ -486,53 +451,17 @@ public class MedicalStockIoOperations {
 			int medicalCode, 
 			int quantity) throws OHException
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
-		
-		List<MedicalWard> medicalWards = new ArrayList<MedicalWard>();
-		
-		try {
-			jpa.beginTransaction();
-			
-			String query = "SELECT * FROM MEDICALDSRWARD WHERE MDSRWRD_WRD_ID_A = ? AND MDSRWRD_MDSR_ID = ?";
-			params.add(wardCode);
-			params.add(medicalCode);
-			jpa.createQuery(query, MedicalWard.class, false);
-			jpa.setParameters(params, false);
-			medicalWards.addAll((List<MedicalWard>)jpa.getList());
-			
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
-		
-		if (!medicalWards.isEmpty())
+		MedicalWard medicalWard = (MedicalWard)medicalStockRepository.findOneWhereCodeAndMedical(wardCode, medicalCode);		
+				
+		if (medicalWard != null)
 		{			
-			for (MedicalWard medicalWard : medicalWards)
-			{
-				try {
-					jpa.beginTransaction();
-					medicalWard.setInQuantity(medicalWard.getInQuantity()+quantity);
-					jpa.merge(medicalWard);
-					jpa.commitTransaction();
-				} catch (OHException e) {
-					jpa.rollbackTransaction();
-					throw e;
-				}
-			}
+			medicalWard.setInQuantity(medicalWard.getInQuantity()+quantity);
+			medicalStockRepository.save(medicalWard);
 		}
 		else
 		{
-			try {
-				jpa.beginTransaction();
-				MedicalWard medicalWard = new MedicalWard(wardCode.charAt(0), medicalCode, quantity, 0);
-				jpa.persist(medicalWard);
-				jpa.commitTransaction();
-			} catch (OHException e) {
-				jpa.rollbackTransaction();
-				throw e;
-			}
+			medicalWard = new MedicalWard(wardCode.charAt(0), medicalCode, quantity, 0);
+			medicalStockRepository.save(medicalWard);
 		}
 		
 		return true;
@@ -556,56 +485,26 @@ public class MedicalStockIoOperations {
 	 * @return the list of retrieved movements.
 	 * @throws OHException if an error occurs retrieving the movements.
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<Movement> getMovements(
 			String wardId, 
 			GregorianCalendar dateFrom, 
 			GregorianCalendar dateTo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
-		ArrayList<Movement> movements = null;
+		ArrayList<Integer> pMovementCode = null;
+		ArrayList<Movement> pMovement = new ArrayList<Movement>();
 		
-		try {
-			jpa.beginTransaction();
+		
+		pMovementCode = new ArrayList<Integer>(repository.findtMovementWhereDatesAndId(wardId, dateFrom, dateTo));			
+		for (int i=0; i<pMovementCode.size(); i++)
+		{
+			Integer code = pMovementCode.get(i);
+			Movement movement = repository.findOne(code);
 			
-			String query = "SELECT * FROM (" + 
-							"(MEDICALDSRSTOCKMOVTYPE join MEDICALDSRSTOCKMOV on MMVT_ID_A = MMV_MMVT_ID_A) " +
-							"JOIN (MEDICALDSR join MEDICALDSRTYPE on MDSR_MDSRT_ID_A=MDSRT_ID_A) on MMV_MDSR_ID=MDSR_ID ) " +
-							"LEFT JOIN MEDICALDSRLOT on MMV_LT_ID_A=LT_ID_A " +
-							"LEFT JOIN WARD ON MMV_WRD_ID_A = WRD_ID_A " +
-							"LEFT JOIN SUPPLIER ON MMV_FROM = SUP_ID ";
-			if ((dateFrom != null) && (dateTo != null)) 
-			{
-				query += "WHERE DATE(MMV_DATE) BETWEEN DATE(?) and DATE(?) ";
-				params.add(dateFrom);
-				params.add(dateTo);
-			}
-			if (wardId != null && !wardId.equals("")) 
-			{
-				if (params.size() == 0) 
-				{
-					query += "WHERE ";
-				}
-				else 
-				{
-					query += "AND ";
-				}
-				query += "WRD_ID_A = ? ";
-				params.add(wardId);
-			}
-			query += "ORDER BY MMV_DATE DESC, MMV_REFNO DESC";		
-			jpa.createQuery(query, Movement.class, false);
-			jpa.setParameters(params, false);
-			List<Movement> movementList = (List<Movement>)jpa.getList();
-			movements = new ArrayList<Movement>(movementList);			
 			
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
+			pMovement.add(i, movement);
 		}
-		return movements;
+		
+		return pMovement;
 	}
 
 	/**
@@ -623,7 +522,6 @@ public class MedicalStockIoOperations {
 	 * @return all the retrieved movements.
 	 * @throws OHException
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<Movement> getMovements(
 			Integer medicalCode,
 			String medicalType, 
@@ -636,105 +534,23 @@ public class MedicalStockIoOperations {
 			GregorianCalendar lotDueFrom, 
 			GregorianCalendar lotDueTo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
-		ArrayList<Movement> movements = null;
-		String query = "";
-				
-		try {
-			jpa.beginTransaction();
-	
-			if (lotPrepFrom != null || lotDueFrom != null) 
-			{
-				query = "select * from ((MEDICALDSRSTOCKMOVTYPE join MEDICALDSRSTOCKMOV on MMVT_ID_A = MMV_MMVT_ID_A) "
-						+ "join (MEDICALDSR join MEDICALDSRTYPE on MDSR_MDSRT_ID_A=MDSRT_ID_A) on MMV_MDSR_ID=MDSR_ID )"
-						+ " left join WARD on MMV_WRD_ID_A=WRD_ID_A "
-						+ " join MEDICALDSRLOT on MMV_LT_ID_A=LT_ID_A "
-						+ " LEFT JOIN SUPPLIER ON MMV_FROM = SUP_ID "
-						+ " where ";
-			} 
-			else 
-			{
-				query = "select * from ((MEDICALDSRSTOCKMOVTYPE join MEDICALDSRSTOCKMOV on MMVT_ID_A = MMV_MMVT_ID_A) "
-						+ "join (MEDICALDSR join MEDICALDSRTYPE on MDSR_MDSRT_ID_A=MDSRT_ID_A) on MMV_MDSR_ID=MDSR_ID )"
-						+ " left join WARD on MMV_WRD_ID_A=WRD_ID_A "
-						+ " left join MEDICALDSRLOT on MMV_LT_ID_A=LT_ID_A "
-						+ " LEFT JOIN SUPPLIER ON MMV_FROM = SUP_ID "
-						+ " where ";
-			}
-			if ((medicalCode != null) || (medicalType != null)) 
-			{
-				if (medicalCode == null) 
-				{
-					query += "(MDSR_MDSRT_ID_A=?) ";
-					params.add(medicalType);
-				} else if (medicalType == null)
-				{
-					query += "(MDSR_ID=?) ";
-					params.add(medicalCode);
-				}
-			}
-			if ((movFrom != null) && (movTo != null)) 
-			{
-				if (params.size()!=0) 
-				{
-					query += "and ";
-				}
-				query += "(DATE(MMV_DATE) between DATE(?) and DATE(?)) ";
-				params.add(movFrom);
-				params.add(movTo);
-			}
-			if ((lotPrepFrom != null) && (lotPrepTo != null)) 
-			{
-				if (params.size()!=0) 
-				{
-					query += "and ";
-				}
-				query += "(DATE(LT_PREP_DATE) between DATE(?) and DATE(?)) ";
-				params.add(lotPrepFrom);
-				params.add(lotPrepTo);
-			}
-			if ((lotDueFrom != null) && (lotDueTo != null)) 
-			{
-				if (params.size()!=0) 
-				{
-					query += "and ";
-				}
-				query += "(DATE(LT_DUE_DATE) between DATE(?) and DATE(?)) ";
-				params.add(lotDueFrom);
-				params.add(lotDueTo);
-			}
-			if (movType != null) {
-				if (params.size()!=0) 
-				{
-					query += "and ";
-				}
-				query += "(MMVT_ID_A=?) ";
-				params.add(movType);
-			}
-			if (wardId != null) 
-			{
-				if (params.size()!=0) 
-				{
-					query += "and ";
-				}
-				query += "(WRD_ID_A=?) ";
-				params.add(wardId);
-			}
-			query += " ORDER BY MMV_DATE DESC, MMV_REFNO DESC";
+		ArrayList<Integer> pMovementCode = null;
+		ArrayList<Movement> pMovement = new ArrayList<Movement>();
+		
+		
+		pMovementCode = new ArrayList<Integer>(repository.findtMovementWhereData(
+				medicalCode, medicalType, wardId, movType, 
+				movFrom, movTo, lotPrepFrom, lotPrepTo, lotDueFrom, lotDueTo));			
+		for (int i=0; i<pMovementCode.size(); i++)
+		{
+			Integer code = pMovementCode.get(i);
+			Movement movement = repository.findOne(code);
 			
-			jpa.createQuery(query, Movement.class, false);
-			jpa.setParameters(params, false);
-			List<Movement> movementList = (List<Movement>)jpa.getList();
-			movements = new ArrayList<Movement>(movementList);			
 			
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
+			pMovement.add(i, movement);
 		}
 		
-		return movements;
+		return pMovement;	
 	}
 
 	/**
@@ -750,7 +566,6 @@ public class MedicalStockIoOperations {
 	 * @return the retrieved movements.
 	 * @throws OHException if an error occurs retrieving the movements.
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<Movement> getMovementForPrint(
 			String medicalDescription,
 			String medicalTypeCode, 
@@ -761,137 +576,47 @@ public class MedicalStockIoOperations {
 			String lotCode,
 			MovementOrder order) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
-		ArrayList<Movement> movements = null;
-		String query = "";
-				
-		try {
-			jpa.beginTransaction();
-	
-			query = "select * from ((MEDICALDSRSTOCKMOVTYPE join MEDICALDSRSTOCKMOV on MMVT_ID_A = MMV_MMVT_ID_A) " +
-					"join (MEDICALDSR join MEDICALDSRTYPE on MDSR_MDSRT_ID_A=MDSRT_ID_A) on MMV_MDSR_ID=MDSR_ID) " +
-					"left join WARD on MMV_WRD_ID_A=WRD_ID_A " +
-					"left join MEDICALDSRLOT on MMV_LT_ID_A=LT_ID_A " +
-					"LEFT JOIN SUPPLIER ON MMV_FROM = SUP_ID " +
-					"where ";
-	
-			if ((medicalDescription != null) || (medicalTypeCode != null)) 
-			{
-				if (medicalDescription == null) 
-				{
-					query += "(MDSR_MDSRT_ID_A = ?) ";
-					params.add(medicalTypeCode);
-				} 
-				else if (medicalTypeCode == null) 
-				{
-					query += "(MDSR_DESC like ?) ";
-					params.add("%" + medicalDescription + "%");
-				}
-			}
-			if (lotCode != null) 
-			{
-				if (params.size()!=0) 
-				{
-					query += "and ";
-				}
-				query += "(LT_ID_A like ?) ";
-				params.add("%" + lotCode + "%");
-			}
-			if ((movFrom != null) && (movTo != null)) 
-			{
-				if (params.size()!=0) 
-				{
-					query += "and ";
-				}
-				query += "(DATE(MMV_DATE) between DATE(?) and DATE(?)) ";
-				params.add(movFrom);
-				params.add(movTo);
-			}		
-			if (movType != null) 
-			{
-				if (params.size()!=0) 
-				{
-					query += "and ";
-				}
-				query += "(MMVT_ID_A=?) ";
-				params.add(movType);
-			}
-			if (wardId != null) 
-			{
-				if (params.size()!=0) 
-				{
-					query += "and ";
-				}
-				query += "(WRD_ID_A=?) ";
-				params.add(wardId);
-			}
-			switch (order) {
-				case DATE:
-					query += " ORDER BY MMV_DATE DESC, MMV_REFNO DESC";
-					break;
-				case WARD:
-					query += " order by MMV_REFNO DESC, WRD_NAME desc";
-					break;
-				case PHARMACEUTICAL_TYPE:
-					query += " order by MMV_REFNO DESC, MDSR_MDSRT_ID_A,MDSR_DESC";
-					break;
-				case TYPE:
-					query += " order by MMV_REFNO DESC, MMVT_DESC";
-					break;
-			}
-	
-			jpa.createQuery(query, Movement.class, false);
-			jpa.setParameters(params, false);
-			List<Movement> movementList = (List<Movement>)jpa.getList();
-			movements = new ArrayList<Movement>(movementList);			
+
+		ArrayList<Integer> pMovementCode = null;
+		ArrayList<Movement> pMovement = new ArrayList<Movement>();
+		
+		
+		pMovementCode = new ArrayList<Integer>(repository.findtMovementForPrint(
+				medicalDescription, medicalTypeCode, wardId, movType, 
+				movFrom, movTo, lotCode, order));			
+		for (int i=0; i<pMovementCode.size(); i++)
+		{
+			Integer code = pMovementCode.get(i);
+			Movement movement = repository.findOne(code);
 			
-			jpa.commitTransaction();		
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
+			
+			pMovement.add(i, movement);
 		}
-		return movements;
+		
+		return pMovement;	
 	}
 
 	/**
 	 * Retrieves lot referred to the specified {@link Medical}.
 	 * @param medical the medical.
 	 * @return a list of {@link Lot}.
-	 * @throws Exception 
+	 * @throws OHException if an error occurs retrieving the lot list.
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<Lot> getLotsByMedical(
-			Medical medical) throws OHException 
+			Medical medical) throws Exception 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
 		ArrayList<Lot> lots = null;
-		ArrayList<Object> params = new ArrayList<Object>();
-				
-		try {
-			jpa.beginTransaction();
+	
+		
+		List<Object[]> lotList = (List<Object[]>)lotRepository.findAllWhereMedical(medical.getCode());
+		lots = new ArrayList<Lot>();
+		for (Object[] object: lotList)
+		{
+			Lot lot = _convertObjectToLot(object);
 			
-			String query = "select LT_ID_A,LT_PREP_DATE,LT_DUE_DATE,LT_COST,"
-					+ "SUM(IF(MMVT_TYPE='+',MMV_QTY,-MMV_QTY)) as quantity from "
-					+ "((MEDICALDSRLOT join MEDICALDSRSTOCKMOV on MMV_LT_ID_A=LT_ID_A) join MEDICALDSR on MMV_MDSR_ID=MDSR_ID)"
-					+ " join MEDICALDSRSTOCKMOVTYPE on MMV_MMVT_ID_A=MMVT_ID_A "
-					+ "where MDSR_ID=? group by LT_ID_A order by LT_DUE_DATE";
-			params.add(medical.getCode());
-			jpa.createQuery(query, null, false);
-			jpa.setParameters(params, false);
-			List<Object[]> lotList = (List<Object[]>)jpa.getList();	
-			lots = new ArrayList<Lot>();
-			for (Object[] object: lotList)
-			{
-				Lot lot = _convertObjectToLot(object);
-				
-				lots.add(lot);
-			}
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
+			lots.add(lot);
 		}
+		
 		return lots;
 	}	
 
@@ -928,32 +653,19 @@ public class MedicalStockIoOperations {
 	 */
 	public GregorianCalendar getLastMovementDate() throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
-		String query = null;
 		GregorianCalendar gc = new GregorianCalendar();
-		
-		try {
-			jpa.beginTransaction();		
+				
 			
-			query = "SELECT MAX(MMV_DATE) AS DATE FROM MEDICALDSRSTOCKMOV";
-			jpa.createQuery(query, null, false);
-			Timestamp time = (Timestamp)jpa.getResult();
-			if (time != null) 
-			{
-				gc.setTime(time);
-			}
-			else
-			{
-				gc = null;
-			}
-			
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
+		Timestamp time = (Timestamp)repository.findMaxDate();
+		if (time != null) 
+		{
+			gc.setTime(time);
 		}
+		else
+		{
+			gc = null;
+		}					
 	
-
 		return gc;
 	}
 	
@@ -965,30 +677,14 @@ public class MedicalStockIoOperations {
 	public boolean refNoExists(
 			String refNo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil();
-		String query = null;
 		boolean result = false;
-		ArrayList<Object> params = new ArrayList<Object>();
 		
-		try {
-			jpa.beginTransaction();		
-		
-			query = "SELECT MMV_REFNO FROM MEDICALDSRSTOCKMOV WHERE MMV_REFNO LIKE ?";
-			jpa.createQuery(query, null, false);
-			params.add(refNo);
-			jpa.setParameters(params, false);
-			if (jpa.getList().size() > 0)
-			{
-				result = true;
-			}
 			
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		} 				
-	
-		
+		if (repository.findAllWhereRefNo(refNo).size() > 0)
+		{
+			result = true;
+		}		
+			
 		return result;
 	}
 
@@ -999,37 +695,12 @@ public class MedicalStockIoOperations {
 	 * @return the retrieved movements.
 	 * @throws OHException 
 	 */
-	@SuppressWarnings("unchecked")
 	public ArrayList<Movement> getMovementsByReference(
 			String refNo) throws OHException 
 	{
-		DbJpaUtil jpa = new DbJpaUtil(); 
-		ArrayList<Object> params = new ArrayList<Object>();
-		ArrayList<Movement> movements = null;
-		String query = "";
-				
-		try {
-			jpa.beginTransaction();
-	
-			query = "SELECT * FROM (" +
-					"(MEDICALDSRSTOCKMOVTYPE join MEDICALDSRSTOCKMOV on MMVT_ID_A = MMV_MMVT_ID_A) " +
-					"JOIN (MEDICALDSR join MEDICALDSRTYPE on MDSR_MDSRT_ID_A=MDSRT_ID_A) on MMV_MDSR_ID=MDSR_ID ) " +
-					"LEFT JOIN MEDICALDSRLOT on MMV_LT_ID_A=LT_ID_A " +
-					"LEFT JOIN WARD ON MMV_WRD_ID_A = WRD_ID_A " +
-					"WHERE MMV_REFNO = ? " +
-					"ORDER BY MMV_DATE DESC, MMV_REFNO DESC";
-	
-			jpa.createQuery(query, Movement.class, false);
-			params.add(refNo);
-			jpa.setParameters(params, false);
-			List<Movement> movementList = (List<Movement>)jpa.getList();
-			movements = new ArrayList<Movement>(movementList);			
-			
-			jpa.commitTransaction();
-		} catch (OHException e) {
-			jpa.rollbackTransaction();
-			throw e;
-		}
+		ArrayList<Movement> movements = (ArrayList<Movement>) repository.findAllByRefNo(refNo);
+						
+		
 		return movements;
 	}
 }
