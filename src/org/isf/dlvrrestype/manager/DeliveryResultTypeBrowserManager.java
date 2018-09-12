@@ -33,13 +33,19 @@ public class DeliveryResultTypeBrowserManager {
 		String description = deliveryResultType.getDescription();
         List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
         if(key.isEmpty() ){
-	        errors.add(new OHExceptionMessage("codeEmtyError", MessageBundle.getMessage("angal.dlvrrestype.pleaseinsertacode"), OHSeverityLevel.ERROR));
+	        errors.add(new OHExceptionMessage("codeEmptyError", 
+	        		MessageBundle.getMessage("angal.dlvrrestype.pleaseinsertacode"), 
+	        		OHSeverityLevel.ERROR));
         }
         if(key.length()>1){
-	        errors.add(new OHExceptionMessage("codeEmtyError", MessageBundle.getMessage("angal.dlvrrestype.codetoolongmaxchar"), OHSeverityLevel.ERROR));
+	        errors.add(new OHExceptionMessage("codeEmptyError", 
+	        		MessageBundle.getMessage("angal.dlvrrestype.codetoolongmaxchar"), 
+	        		OHSeverityLevel.ERROR));
         }
         if(description.isEmpty() ){
-            errors.add(new OHExceptionMessage("descrptionEmtyError", MessageBundle.getMessage("angal.dlvrrestype.pleaseinsertavaliddescription"), OHSeverityLevel.ERROR));
+            errors.add(new OHExceptionMessage("descrptionEmptyError", 
+            		MessageBundle.getMessage("angal.dlvrrestype.pleaseinsertavaliddescription"), 
+            		OHSeverityLevel.ERROR));
         }
         return errors;
     }
@@ -64,7 +70,8 @@ public class DeliveryResultTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), 
+					OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -83,7 +90,8 @@ public class DeliveryResultTypeBrowserManager {
             }
 			if (codeControl(deliveryresultType.getCode())){
 				throw new OHServiceException(new OHExceptionMessage(null, 
-						MessageBundle.getMessage("angal.dlvrrestype.codealreadyinuse"), OHSeverityLevel.ERROR));
+						MessageBundle.getMessage("angal.dlvrrestype.codealreadyinuse"), 
+						OHSeverityLevel.ERROR));
 			}
             return ioOperations.newDeliveryResultType(deliveryresultType);
 		}  catch(OHException e){
@@ -99,7 +107,8 @@ public class DeliveryResultTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), 
+					OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -130,7 +139,8 @@ public class DeliveryResultTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), 
+					OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -155,7 +165,8 @@ public class DeliveryResultTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), 
+					OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -180,7 +191,8 @@ public class DeliveryResultTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), 
+					OHSeverityLevel.ERROR));
 		}
 	}
 

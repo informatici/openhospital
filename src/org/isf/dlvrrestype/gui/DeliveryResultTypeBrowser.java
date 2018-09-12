@@ -293,21 +293,21 @@ class DeliveryResultTypeBrowserModel extends DefaultTableModel {
 		}
 	}
 
-public void deliveryresultTypeUpdated(AWTEvent e) {
-	pDeliveryResultType.set(selectedrow, deliveryresultType);
-	((DeliveryResultTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
-	jTable.updateUI();
-	if ((jTable.getRowCount() > 0) && selectedrow > -1)
-		jTable.setRowSelectionInterval(selectedrow, selectedrow);
-}
-
-
-public void deliveryresultTypeInserted(AWTEvent e) {
-	pDeliveryResultType.add(0, deliveryresultType);
-	((DeliveryResultTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
-	if (jTable.getRowCount() > 0)
-		jTable.setRowSelectionInterval(0, 0);
-}
+	public void deliveryresultTypeUpdated(AWTEvent e) {
+		pDeliveryResultType.set(selectedrow, deliveryresultType);
+		((DeliveryResultTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
+		jTable.updateUI();
+		if ((jTable.getRowCount() > 0) && selectedrow > -1)
+			jTable.setRowSelectionInterval(selectedrow, selectedrow);
+	}
+	
+	
+	public void deliveryresultTypeInserted(AWTEvent e) {
+		pDeliveryResultType.add(0, deliveryresultType);
+		((DeliveryResultTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
+		if (jTable.getRowCount() > 0)
+			jTable.setRowSelectionInterval(0, 0);
+	}
 	
 	
 }
