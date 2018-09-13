@@ -28,6 +28,7 @@ import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class ExamTypeEdit extends JDialog{
@@ -202,92 +203,36 @@ public class ExamTypeEdit extends JDialog{
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					String key = codeTextField.getText();
 					ExamTypeBrowserManager manager = new ExamTypeBrowserManager();
-					if (key.equals("")){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.exatype.pleaseinsertacode"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}	
-					//System.out.print(key.length());
-					if (key.length()>2){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.exatype.codetoolongmaxchars"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
+					try{
+						examType.setDescription(descriptionTextField.getText());
+						examType.setCode(codeTextField.getText());
 						
-						return;	
-					}
-					if(insert) {
-						boolean found;
-						
-						try {
-							found = manager.codeControl(key);
-						} catch (OHServiceException e1) {
-							found = false;
-							OHServiceExceptionUtil.showMessages(e1);
+						if (insert) {     // inserting
+							if (true == manager.newExamType(examType)) {
+	                           fireExamTypeInserted();
+	                           dispose();
+	                        } else
+	                        	JOptionPane.showMessageDialog(null,  MessageBundle.getMessage("angal.exatype.thedatacouldnotbesaved"));
+	                    }
+	                    else {            // updating
+	                    	if (descriptionTextField.getText().equals(lastdescription)){
+	    						dispose();	
+	    					}else{
+								if (true == manager.updateExamType(examType)) {
+									fireExamTypeUpdated();
+									dispose();
+		                        }else
+		                        	JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exatype.thedatacouldnotbesaved"));
+	    					}
 						}
-						
-						if (true == found) {
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.common.codealreadyinuse"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							codeTextField.setText("");
-							return;	
-						}
-					};
-					if (descriptionTextField.getText().equals("")){
-						JOptionPane.showMessageDialog(				
-		                        null,
-		                        MessageBundle.getMessage("angal.exatype.pleaseinsertavaliddescription"),
-		                        MessageBundle.getMessage("angal.hospital"),
-		                        JOptionPane.PLAIN_MESSAGE);
-						return;	
-					}
-					if (descriptionTextField.getText().equals(lastdescription)){
-						dispose();	
-					}
-					examType.setDescription(descriptionTextField.getText());
-					examType.setCode(codeTextField.getText());
-					boolean result = false;
-					if (insert) {      // inserting
-						try {
-							result = manager.newExamType(examType);
-						} catch (OHServiceException e1) {
-							result = false;
-							OHServiceExceptionUtil.showMessages(e1);
-						}
-						if (result) {
-                           fireExamTypeInserted();
-                        }
-						if (!result) JOptionPane.showMessageDialog(null,  MessageBundle.getMessage("angal.exatype.thedatacouldnotbesaved"));
-	                    else  dispose();
-                    }
-                    else {                          // updating
-                    	if (descriptionTextField.getText().equals(lastdescription)){
-    						dispose();	
-    					}else{
-    						try {
-								result = manager.updateExamType(examType);
-							} catch (OHServiceException e1) {
-								result = false;
-								OHServiceExceptionUtil.showMessages(e1);
+					} catch(OHServiceException ex){
+						if(ex.getMessages() != null){
+							for(OHExceptionMessage msg : ex.getMessages()){
+								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
 							}
-						if (result) {
-							fireExamTypeUpdated();
-                        }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exatype.thedatacouldnotbesaved"));
-                        else  dispose();
-    					}
-                    	
+						}
 					}
-					
                 }
 			});
 		}
