@@ -1,6 +1,7 @@
 package org.isf.distype.manager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -55,7 +56,13 @@ public class DiseaseTypeBrowserManager {
 	 */
 	public boolean newDiseaseType(DiseaseType diseaseType) throws OHServiceException {
 		try {
+            List<OHExceptionMessage> errors = validateDiseaseType(diseaseType, true);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.newDiseaseType(diseaseType);
+        } catch (OHServiceException e) {
+            throw e;
 		}  catch(OHException e){
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
@@ -79,7 +86,13 @@ public class DiseaseTypeBrowserManager {
 	 */
 	public boolean updateDiseaseType(DiseaseType diseaseType) throws OHServiceException {
 		try {
+            List<OHExceptionMessage> errors = validateDiseaseType(diseaseType, false);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.updateDiseaseType(diseaseType);
+        } catch (OHServiceException e) {
+            throw e;
 		}  catch(OHException e){
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
@@ -95,7 +108,7 @@ public class DiseaseTypeBrowserManager {
 		}
 	}
 
-	/**
+    /**
 	 * Checks if the specified code is already used by any {@link DiseaseType}.
 	 * @param code the code to check.
 	 * @return <code>true</code> if the code is used, false otherwise.
@@ -142,4 +155,29 @@ public class DiseaseTypeBrowserManager {
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
+
+    private List<OHExceptionMessage> validateDiseaseType(DiseaseType diseaseType, boolean insert) throws OHServiceException {
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        String key = diseaseType.getCode();
+        if (key.equals("")){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),  MessageBundle.getMessage("angal.distype.pleaseinsertacode"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (key.length()>2){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),  MessageBundle.getMessage("angal.distype.codetoolongmaxchars"),
+                    OHSeverityLevel.ERROR));
+        }
+
+        if(insert){
+            if (codeControl(key)){
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),  MessageBundle.getMessage("angal.common.codealreadyinuse"),
+                        OHSeverityLevel.ERROR));
+            }
+        }
+        if (diseaseType.getDescription().equals("")){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),  MessageBundle.getMessage("angal.distype.pleaseinsertavaliddescription"),
+                    OHSeverityLevel.ERROR));
+        }
+        return errors;
+    }
 }
