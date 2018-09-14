@@ -15,15 +15,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
-import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.jobjects.*;
-import org.isf.generaldata.MessageBundle;
-
-
-
 import org.isf.admtype.manager.AdmissionTypeBrowserManager;
 import org.isf.admtype.model.AdmissionType;
+import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class AdmissionTypeBrowserEdit extends JDialog{
 
@@ -194,53 +191,8 @@ public class AdmissionTypeBrowserEdit extends JDialog{
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					String key = codeTextField.getText();
 					AdmissionTypeBrowserManager manager = new AdmissionTypeBrowserManager();
-					if (key.equals("")){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.admtype.pleaseinsertacode"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}	
-					//System.out.print(key.length());
-					if (key.length()>10){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.admtype.codetoolongmaxchars"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						
-						return;	
-					}
-					try{
-						if(insert){
-							if (manager.codeControl(key)){
-								JOptionPane.showMessageDialog(				
-										null,
-										MessageBundle.getMessage("angal.common.codealreadyinuse"),
-										MessageBundle.getMessage("angal.hospital"),
-										JOptionPane.PLAIN_MESSAGE);
-								codeTextField.setText("");
-								return;	
-							}
-						}
-					}catch(OHServiceException ex){
-						if(ex.getMessages() != null){
-							for(OHExceptionMessage msg : ex.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
-					}
-					if (descriptionTextField.getText().equals("")){
-						JOptionPane.showMessageDialog(				
-		                        null,
-		                        MessageBundle.getMessage("angal.admtype.pleaseinsertavaliddescription"),
-		                        MessageBundle.getMessage("angal.hospital"),
-		                        JOptionPane.PLAIN_MESSAGE);
-						return;	
-					}
+
 					if (descriptionTextField.getText().equals(lastdescription)){
 						dispose();	
 					}
@@ -251,18 +203,14 @@ public class AdmissionTypeBrowserEdit extends JDialog{
 					if (insert) {      // inserting
 						try {
 							result = manager.newAdmissionType(admissionType);
+                            if (result) {
+                                fireAdmissionInserted(admissionType);
+                            }
+                            if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.admtype.thedatacouldnotbesaved"));
+                            else  dispose();
 						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(ex);
 						}
-						if (result) {
-                           fireAdmissionInserted(admissionType);
-                        }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.admtype.thedatacouldnotbesaved"));
-	                    else  dispose();
                     }
                     else {                          // updating
                     	if (descriptionTextField.getText().equals(lastdescription)){
@@ -270,18 +218,14 @@ public class AdmissionTypeBrowserEdit extends JDialog{
     					}else{
     						try {
 								result = manager.updateAdmissionType(admissionType);
+                                if (result) {
+                                    fireAdmissionUpdated();
+                                }
+                                if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.admtype.thedatacouldnotbesaved"));
+                                else  dispose();
     						}catch(OHServiceException ex){
-    							if(ex.getMessages() != null){
-    								for(OHExceptionMessage msg : ex.getMessages()){
-    									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-    								}
-    							}
+    							OHServiceExceptionUtil.showMessages(ex);
     						}
-						if (result) {
-							fireAdmissionUpdated();
-                        }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.admtype.thedatacouldnotbesaved"));
-                        else  dispose();
     					}
                     	
 					}

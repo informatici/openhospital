@@ -1,6 +1,7 @@
 package org.isf.admtype.manager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.admtype.model.AdmissionType;
 import org.isf.admtype.service.AdmissionTypeIoOperation;
@@ -50,7 +51,13 @@ public class AdmissionTypeBrowserManager {
 	 */
 	public boolean newAdmissionType(AdmissionType admissionType) throws OHServiceException {
 		try {
+            List<OHExceptionMessage> errors = validateAdmissionType(admissionType, true);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.newAdmissionType(admissionType);
+        } catch (OHServiceException e) {
+            throw e;
 		} catch (OHException e) {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
@@ -74,7 +81,13 @@ public class AdmissionTypeBrowserManager {
 	 */
 	public boolean updateAdmissionType(AdmissionType admissionType) throws OHServiceException {
 		try {
+            List<OHExceptionMessage> errors = validateAdmissionType(admissionType, false);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.updateAdmissionType(admissionType);
+        } catch (OHServiceException e) {
+            throw e;
 		} catch (OHException e) {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
@@ -137,4 +150,29 @@ public class AdmissionTypeBrowserManager {
 					MessageBundle.getMessage("angal.admtype.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
+
+    protected List<OHExceptionMessage> validateAdmissionType(AdmissionType admissionType, boolean insert) throws OHServiceException {
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        String key = admissionType.getCode();
+        if (key.equals("")){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),MessageBundle.getMessage("angal.admtype.pleaseinsertacode"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (key.length()>10){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),MessageBundle.getMessage("angal.admtype.codetoolongmaxchars"),
+                    OHSeverityLevel.ERROR));
+        }
+
+            if(insert){
+                if (codeControl(key)){
+                    errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),MessageBundle.getMessage("angal.common.codealreadyinuse"),
+                            OHSeverityLevel.ERROR));
+                }
+            }
+        if (admissionType.getDescription().equals("")){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),MessageBundle.getMessage("angal.admtype.pleaseinsertavaliddescription"),
+                    OHSeverityLevel.ERROR));
+        }
+        return errors;
+    }
 }
