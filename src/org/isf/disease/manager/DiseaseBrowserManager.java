@@ -11,6 +11,7 @@ package org.isf.disease.manager;
  *------------------------------------------*/
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.disease.model.Disease;
 import org.isf.disease.service.DiseaseIoOperations;
@@ -286,7 +287,13 @@ public class DiseaseBrowserManager {
 	 */
 	public boolean newDisease(Disease disease) throws OHServiceException {
 		try {
+            List<OHExceptionMessage> errors = validateDisease(disease, true);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.newDisease(disease);
+        } catch (OHServiceException e) {
+            throw e;
 		}  catch(OHException e){
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
@@ -336,7 +343,13 @@ public class DiseaseBrowserManager {
 	 */
 	public boolean updateDisease(Disease disease) throws OHServiceException {
 		try {
+            List<OHExceptionMessage> errors = validateDisease(disease, true);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.updateDisease(disease);
+        } catch (OHServiceException e) {
+            throw e;
 		}  catch(OHException e){
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
@@ -429,4 +442,45 @@ public class DiseaseBrowserManager {
 		}	
 	}
 
+    private List<OHExceptionMessage> validateDisease(Disease disease, boolean insert) throws OHServiceException {
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+
+        if (insert){
+            String key = disease.getCode();
+            if (key.equals("")){
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.disease.pleaseinsertacode"),
+                        OHSeverityLevel.ERROR));
+            }
+            if (key.length()>10){
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.disease.codetoolongmaxchars"),
+                        OHSeverityLevel.ERROR));
+            }
+            if (codeControl(key)){
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.common.codealreadyinuse"),
+                        OHSeverityLevel.ERROR));
+            }
+        }
+
+        if (disease.getDescription().equals("")){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.disease.pleaseinsertavaliddescription"),
+                    OHSeverityLevel.ERROR));
+        }
+
+        Disease oldDisease = null;
+        if(!insert){
+            oldDisease = getDiseaseByCode(Integer.valueOf(disease.getCode()));
+        }
+        String lastDescription = oldDisease == null ? null : oldDisease.getDescription();
+        //if inserting or description has changed on updating
+        //avoid two disease with the same description for the same type
+        if (lastDescription == null || !lastDescription.equals(disease.getDescription())) {
+            if (descriptionControl(disease.getDescription(),
+                    disease.getType().getCode())){
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.disease.diseasealreadypresent"),
+                        OHSeverityLevel.ERROR));
+            }
+        }
+
+	    return errors;
+    }
 }
