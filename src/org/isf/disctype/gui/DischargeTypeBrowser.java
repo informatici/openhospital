@@ -199,34 +199,27 @@ public class DischargeTypeBrowser extends ModalJFrame implements DischargeTypeLi
 					} else {
 						DischargeType dis = (DischargeType) (((DischargeTypeBrowserModel) model)
 								.getValueAt(jTable.getSelectedRow(), -1));
-						if(dis.getCode().equals("D")){
-							JOptionPane.showMessageDialog(null,
-									MessageBundle.getMessage("angal.disctype.youcannotdeletethisrecord"), MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							
-						}else{
-						int n = JOptionPane.showConfirmDialog(null,
-								MessageBundle.getMessage("angal.disctype.deleterow") + " \" "+dis.getDescription() + "\" ?",
-								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
-						
-						if ((n == JOptionPane.YES_OPTION)) {
-							
-							boolean deleted;
-							
-							try {
-								deleted = manager.deleteDischargeType(dis);
-							} catch (OHServiceException e) {
-								deleted = false;
-								OHServiceExceptionUtil.showMessages(e);
-							}
-							
-							if (true == deleted) {
-								pDischargeType.remove(jTable.getSelectedRow());
-								model.fireTableDataChanged();
-								jTable.updateUI();
-							}
-						}
-						}
+                        int n = JOptionPane.showConfirmDialog(null,
+                                MessageBundle.getMessage("angal.disctype.deleterow") + " \" "+dis.getDescription() + "\" ?",
+                                MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
+
+                        if ((n == JOptionPane.YES_OPTION)) {
+
+                            boolean deleted;
+
+                            try {
+                                deleted = manager.deleteDischargeType(dis);
+                            } catch (OHServiceException e) {
+                                deleted = false;
+                                OHServiceExceptionUtil.showMessages(e);
+                            }
+
+                            if (true == deleted) {
+                                pDischargeType.remove(jTable.getSelectedRow());
+                                model.fireTableDataChanged();
+                                jTable.updateUI();
+                            }
+                        }
 					}
 				}
 				
