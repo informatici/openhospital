@@ -12,11 +12,13 @@ package org.isf.disease.gui;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.EventListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -37,10 +39,6 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
-import java.awt.GridLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
 public class DiseaseEdit extends JDialog {
 	
@@ -271,77 +269,7 @@ public class DiseaseEdit extends JDialog {
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					DiseaseBrowserManager manager = new DiseaseBrowserManager();
-					String diseaseDesc = descriptionTextField.getText();
-					if (insert){
-						String key = codeTextField.getText().trim();
-						if (key.equals("")){
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.disease.pleaseinsertacode"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							return;
-						}	
-						if (key.length()>10){
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.disease.codetoolongmaxchars"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							
-							return;	
-						}
-						try{
-							if (manager.codeControl(key)){
-								JOptionPane.showMessageDialog(				
-										null,
-										MessageBundle.getMessage("angal.common.codealreadyinuse"),
-										MessageBundle.getMessage("angal.hospital"),
-										JOptionPane.PLAIN_MESSAGE);
 
-								return;	
-							}
-						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
-							return;
-						}
-					}
-					if (diseaseDesc.equals("")){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.disease.pleaseinsertavaliddescription"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;	
-					}
-
-					//if inserting or description has changed on updating
-					if (lastDescription == null || !lastDescription.equals(diseaseDesc)) {
-						try{
-							if (manager.descriptionControl(descriptionTextField.getText(),
-									((DiseaseType)typeComboBox.getSelectedItem()).getCode())){
-								JOptionPane.showMessageDialog(				
-										null,
-										MessageBundle.getMessage("angal.disease.diseasealreadypresent"),
-										MessageBundle.getMessage("angal.hospital"),
-										JOptionPane.PLAIN_MESSAGE);
-
-								return;	
-							}
-						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
-							return;
-						}
-					}
-					
 					disease.setType((DiseaseType)typeComboBox.getSelectedItem());
 					disease.setDescription(descriptionTextField.getText());
 					disease.setCode(codeTextField.getText().trim().toUpperCase());
@@ -371,6 +299,9 @@ public class DiseaseEdit extends JDialog {
 								fireDiseaseUpdated();
 							}
 						}
+
+                        if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.disease.thedatacouldnotbesaved"));
+                        else  dispose();
 					}catch(OHServiceException ex){
 						if(ex.getMessages() != null){
 							for(OHExceptionMessage msg : ex.getMessages()){
@@ -378,8 +309,6 @@ public class DiseaseEdit extends JDialog {
 							}
 						}
 					}
-					if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.disease.thedatacouldnotbesaved"));
-					else  dispose();
 				}
 			});
 		}

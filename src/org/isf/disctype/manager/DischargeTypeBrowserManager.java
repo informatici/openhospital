@@ -1,6 +1,7 @@
 package org.isf.disctype.manager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.disctype.model.DischargeType;
 import org.isf.disctype.service.DischargeTypeIoOperation;
@@ -51,7 +52,13 @@ public class DischargeTypeBrowserManager {
 	 */
 	public boolean newDischargeType(DischargeType dischargeType) throws OHServiceException {
 		try {
+            List<OHExceptionMessage> errors = validateDischargeType(dischargeType, true);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.newDischargeType(dischargeType);
+        } catch (OHServiceException e) {
+            throw e;
 		} catch (OHException e) {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
@@ -75,7 +82,13 @@ public class DischargeTypeBrowserManager {
 	 */
 	public boolean updateDischargeType(DischargeType dischargeType) throws OHServiceException {
 		try {
+            List<OHExceptionMessage> errors = validateDischargeType(dischargeType, false);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.newDischargeType(dischargeType);
+        } catch (OHServiceException e) {
+            throw e;
 		} catch (OHException e) {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
@@ -123,7 +136,13 @@ public class DischargeTypeBrowserManager {
 	 */
 	public boolean deleteDischargeType(DischargeType dischargeType) throws OHServiceException {
 		try {
+            List<OHExceptionMessage> errors = validateDeleteDischargeType(dischargeType);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.deleteDischargeType(dischargeType);
+        } catch (OHServiceException e) {
+            throw e;
 		} catch (OHException e) {
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
@@ -138,4 +157,36 @@ public class DischargeTypeBrowserManager {
 		}
 	}
 
+    private List<OHExceptionMessage> validateDeleteDischargeType(DischargeType dischargeType) throws OHServiceException {
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        if(dischargeType.getCode().equals("D")){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.disctype.youcannotdeletethisrecord"),
+                    OHSeverityLevel.ERROR));
+        }
+        return errors;
+	}
+    private List<OHExceptionMessage> validateDischargeType(DischargeType dischargeType, boolean insert) throws OHServiceException {
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        String key = dischargeType.getCode();
+        if (key.equals("")){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.disctype.pleaseinsertacode"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (key.length()>10){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.disctype.codetoolongmaxchars"),
+                    OHSeverityLevel.ERROR));
+        }
+
+        if(insert){
+            if(codeControl(key)){
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.common.codealreadyinuse"),
+                        OHSeverityLevel.ERROR));
+            }
+        }
+        if (dischargeType.getDescription().equals("")){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.disctype.pleaseinsertavaliddescription"),
+                    OHSeverityLevel.ERROR));
+        }
+        return errors;
+	}
 }

@@ -1,6 +1,7 @@
 package org.isf.agetype.manager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.agetype.model.AgeType;
 import org.isf.agetype.service.AgeTypeIoOperations;
@@ -50,7 +51,13 @@ public class AgeTypeBrowserManager {
 	 */
 	public boolean updateAgeType(ArrayList<AgeType> ageTypes) throws OHServiceException {
 		try{
+            List<OHExceptionMessage> errors = validateAgeTypes(ageTypes);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.updateAgeType(ageTypes);
+        } catch (OHServiceException e) {
+            throw e;
 		}  catch(OHException e){
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message
@@ -66,7 +73,8 @@ public class AgeTypeBrowserManager {
 		}
 	}
 
-	/**
+
+    /**
 	 * Retrieves the {@link AgeType} code using the age value.
 	 * @param age the age value.
 	 * @return the retrieved code, <code>null</code> if age value is out of any range.
@@ -121,4 +129,19 @@ public class AgeTypeBrowserManager {
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
+
+    private List<OHExceptionMessage> validateAgeTypes(ArrayList<AgeType> ageTypes) {
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        for (int i = 1; i < ageTypes.size(); i++) {
+            if (ageTypes.get(i).getFrom() <= ageTypes.get(i-1).getTo()) {
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),MessageBundle.getMessage("angal.agetype.rangesoverlappleasecheck"),
+                        OHSeverityLevel.ERROR));
+            }
+            if (ageTypes.get(i).getFrom() - ageTypes.get(i-1).getTo() > 1) {
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),MessageBundle.getMessage("angal.agetype.rangesnotdefinedpleasecheck"),
+                        OHSeverityLevel.ERROR));
+            }
+        }
+        return errors;
+    }
 }

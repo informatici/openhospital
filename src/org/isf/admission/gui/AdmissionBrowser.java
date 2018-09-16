@@ -861,7 +861,15 @@ public class AdmissionBrowser extends JDialog {
 			DeliveryTypeBrowserManager dtbm = new DeliveryTypeBrowserManager();
 			deliveryTypeBox = new JComboBox();
 			deliveryTypeBox.addItem("");
-			deliveryTypeList = dtbm.getDeliveryType();
+            try{
+                deliveryTypeList = dtbm.getDeliveryType();
+            }catch(OHServiceException e){
+                if(e.getMessages() != null){
+                    for(OHExceptionMessage msg : e.getMessages()){
+                        JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+                    }
+                }
+            }
 			if(deliveryTypeList != null){
 				for (DeliveryType elem : deliveryTypeList) {
 					deliveryTypeBox.addItem(elem);
