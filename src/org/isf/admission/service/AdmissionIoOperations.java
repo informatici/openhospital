@@ -90,7 +90,7 @@ public class AdmissionIoOperations
 	}
 
 	/**
-	 * Returns the only one admission without dimission date (or null if none) for the specified patient.
+	 * Returns the current admission (or null if none) for the specified patient.
 	 * @param patient the patient target of the admission.
 	 * @return the patient admission.
 	 * @throws OHException if an error occurs during database request.
@@ -98,7 +98,7 @@ public class AdmissionIoOperations
 	public Admission getCurrentAdmission(
 			Patient patient) throws OHException 
 	{ 
-		Admission admission = repository.findAllWherePatient(patient.getCode()).get(0);
+		Admission admission = repository.findOneWherePatientIn(patient.getCode());
 		
 		
 		return admission;
@@ -244,16 +244,7 @@ public class AdmissionIoOperations
 		GregorianCalendar now = new GregorianCalendar();
 		GregorianCalendar first = null;
 		GregorianCalendar last = null;
-		Admission admission = null;
 		
-		
-		// de Felice - 20/01/2008 - richiesta di james che, per la sola
-		// maternita', chiede di ripartire
-		// da 1 il primo di luglio. questo e' implementato ora nel modo
-		// seguente:
-		// per il reparto maternity (M) il progressivo riparte il primo luglio
-		// questo per ogni anno d'ora in poi se il parametro
-		// MATERNITYRESTARTINJUNE in generalData.properties � uguale a yes!!
 		if (wardId.equalsIgnoreCase("M") && GeneralData.MATERNITYRESTARTINJUNE) 
 		{
 			if (now.get(Calendar.MONTH) < 6) 
@@ -274,10 +265,10 @@ public class AdmissionIoOperations
 			last = new GregorianCalendar(now.get(Calendar.YEAR), 11, 31);
 		}
 		
-		admission = repository.findAllWhereWardAndDates(wardId, first, last).get(0);
-		if (admission != null) 
+		List<Admission> admissions = repository.findAllWhereWardAndDates(wardId, first, last);
+		if (!admissions.isEmpty())
 		{
-			next = admission.getYProg() + 1; 		
+			next = admissions.get(0).getYProg() + 1; 		
 		} 
 		
 		return next;
@@ -312,7 +303,7 @@ public class AdmissionIoOperations
 	public int getUsedWardBed(
 			String wardId) throws OHException 
 	{
-    	List<Admission> admissionList = repository.findAllWhereIn1(wardId);
+    	List<Admission> admissionList = repository.findAllWhereWardIn(wardId);
 		
 
 		return admissionList.size();

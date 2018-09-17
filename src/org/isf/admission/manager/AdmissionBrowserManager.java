@@ -145,7 +145,7 @@ public class AdmissionBrowserManager {
 	/**
 	 * Returns the next prog in the year for a certain ward.
 	 * @param wardId the ward id.
-	 * @return the next prog or <code>null</code> if the operation fails.
+	 * @return the next prog
 	 * @throws OHServiceException 
 	 */
 	public int getNextYProg(String wardId) throws OHServiceException{
