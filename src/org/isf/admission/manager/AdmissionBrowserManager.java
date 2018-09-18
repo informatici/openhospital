@@ -630,7 +630,6 @@ public class AdmissionBrowserManager {
                             OHSeverityLevel.ERROR));
                 }
             }
-            //TODO
         }
         return errors;
     }
