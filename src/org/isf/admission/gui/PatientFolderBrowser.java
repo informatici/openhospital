@@ -45,7 +45,7 @@ import org.isf.stat.gui.report.GenericReportDischarge;
 import org.isf.stat.gui.report.GenericReportOpd;
 import org.isf.stat.gui.report.GenericReportPatient;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.table.TableSorter;
 import org.isf.ward.manager.WardBrowserManager;
@@ -508,38 +508,22 @@ public class PatientFolderBrowser extends ModalJFrame implements
 			try {
 				admList = manager.getAdmissions(patient);
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			try {
 				disease = dbm.getDiseaseAll();
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			try {
 				ward = wbm.getWards();
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			try {
 				opdList = opd.getOpdList(patient.getCode());
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		
@@ -681,7 +665,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 				labList = lbm.getLaboratory(patient);
 			} catch (OHServiceException e) {
 				labList = new ArrayList<Laboratory>();
-				JOptionPane.showMessageDialog(null, e.getMessage());
+                OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		

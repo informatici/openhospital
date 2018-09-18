@@ -273,9 +273,12 @@ public class AdmissionIoOperations
 			first = new GregorianCalendar(now.get(Calendar.YEAR), 0, 1);
 			last = new GregorianCalendar(now.get(Calendar.YEAR), 11, 31);
 		}
-		
-		admission = repository.findAllWhereWardAndDates(wardId, first, last).get(0);
-		if (admission != null) 
+
+        List<Admission> admissions = repository.findAllWhereWardAndDates(wardId, first, last);
+		if(!admissions.isEmpty()){
+            admission = admissions.get(0);
+        }
+		if (admission != null)
 		{
 			next = admission.getYProg() + 1; 		
 		} 

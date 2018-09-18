@@ -1,7 +1,5 @@
 package org.isf.patient.manager;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -261,51 +259,43 @@ public class PatientBrowserManager {
 					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
-	
-	/**
-	 * method that merge all clinic details under the same PAT_ID
-	 * 
-	 * @param mergedPatient
-	 * @param patient2
-	 * @return true - if no OHExceptions occurred
-	 * @throws OHException 
-	 */
-	private boolean mergePatientHistory(Patient mergedPatient, Patient patient2) throws OHServiceException, OHException{
-		boolean admitted = false;
-		AdmissionBrowserManager admMan = new AdmissionBrowserManager();
-		if (admMan.getCurrentAdmission(mergedPatient) != null) admitted = true;
-		else if (admMan.getCurrentAdmission(patient2) != null) admitted = true;
-		if (admitted) {
-			List<OHExceptionMessage> messages = new ArrayList<OHExceptionMessage>();
-			messages.add(new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"), 
-					MessageBundle.getMessage("angal.admission.cannotmergeadmittedpatients"), OHSeverityLevel.ERROR));
-			messages.add(new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"), 
-					MessageBundle.getMessage("angal.admission.patientscannothavependingtask"), OHSeverityLevel.INFO));
-			throw new OHServiceException(messages);
-		}
-		
-		boolean billPending = false;
-		BillBrowserManager billMan = new BillBrowserManager();
-		ArrayList<Bill> bills = billMan.getPendingBills(mergedPatient.getCode());
-		bills = billMan.getPendingBills(mergedPatient.getCode());
-		if (bills != null && !bills.isEmpty()) billPending = true;
-		else {
-			bills = billMan.getPendingBills(patient2.getCode());
-			if (bills != null && !bills.isEmpty()) billPending = true;
-		}
-		if (billPending) {
-			List<OHExceptionMessage> messages = new ArrayList<OHExceptionMessage>();
-			messages.add(new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"), 
-					MessageBundle.getMessage("angal.admission.cannotmergewithpendingbills"), OHSeverityLevel.ERROR));
-			messages.add(new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"), 
-					MessageBundle.getMessage("angal.admission.patientscannothavependingtask"), OHSeverityLevel.INFO));
-			throw new OHServiceException(messages);
-		}
-		
-		return ioOperations.mergePatientHistory(mergedPatient, patient2);
-	}
 
-	/**
+    protected List<OHExceptionMessage> validateMergePatients(Patient mergedPatient, Patient patient2) throws OHServiceException {
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        boolean admitted = false;
+        AdmissionBrowserManager admMan = new AdmissionBrowserManager();
+        if (admMan.getCurrentAdmission(mergedPatient) != null) admitted = true;
+        else if (admMan.getCurrentAdmission(patient2) != null) admitted = true;
+        if (admitted) {
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"),
+                    MessageBundle.getMessage("angal.admission.cannotmergeadmittedpatients"), OHSeverityLevel.ERROR));
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"),
+                    MessageBundle.getMessage("angal.admission.patientscannothavependingtask"), OHSeverityLevel.INFO));
+        }
+
+        boolean billPending = false;
+        BillBrowserManager billMan = new BillBrowserManager();
+        ArrayList<Bill> bills = billMan.getPendingBills(mergedPatient.getCode());
+        bills = billMan.getPendingBills(mergedPatient.getCode());
+        if (bills != null && !bills.isEmpty()) billPending = true;
+        else {
+            bills = billMan.getPendingBills(patient2.getCode());
+            if (bills != null && !bills.isEmpty()) billPending = true;
+        }
+        if (billPending) {
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"),
+                    MessageBundle.getMessage("angal.admission.cannotmergewithpendingbills"), OHSeverityLevel.ERROR));
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"),
+                    MessageBundle.getMessage("angal.admission.patientscannothavependingtask"), OHSeverityLevel.INFO));
+        }
+        if (mergedPatient.getSex() != patient2.getSex()) {
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"), MessageBundle.getMessage("angal.admission.selectedpatientshavedifferentsex"),
+                    OHSeverityLevel.ERROR));
+        }
+        return errors;
+    }
+
+    /**
 	 * method that logically delete a Patient (not phisically deleted)
 	 * 
 	 * @param aPatient
@@ -449,8 +439,12 @@ public class PatientBrowserManager {
 				String note = mergedPatient.getNote();
 				mergedPatient.setNote(patient2.getNote()+"\n\n"+note);
 			}
-			
-			return mergePatientHistory(mergedPatient, patient2);
+
+            List<OHExceptionMessage> errors = validateMergePatients(mergedPatient, patient2);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
+            return ioOperations.mergePatientHistory(mergedPatient, patient2);
 		}catch(OHServiceException e){
 			//Already managed, ready to return OHServiceException
 			logger.error("", e);
