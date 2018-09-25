@@ -16,7 +16,6 @@ import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryForPrint;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.lab.service.LabIoOperations;
-import org.isf.menu.gui.Menu;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -39,9 +38,8 @@ public class LabManager {
 	 * @param ioOperations
 	 */
 	public LabManager(LabIoOperations ioOperations) {
-		if (ioOperations == null)
-			this.ioOperations = Menu.getApplicationContext().getBean(LabIoOperations.class);
-		else this.ioOperations = ioOperations;
+		if (ioOperations != null)
+			this.ioOperations = ioOperations;
 	}
 	
 	/**

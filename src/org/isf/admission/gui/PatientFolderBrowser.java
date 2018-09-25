@@ -32,8 +32,11 @@ import org.isf.disease.manager.DiseaseBrowserManager;
 import org.isf.disease.model.Disease;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.lab.manager.LabManager;
 import org.isf.lab.model.Laboratory;
+import org.isf.lab.service.LabIoOperations;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.gui.Menu;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.patient.gui.PatientInsert;
@@ -660,7 +663,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 		private static final long serialVersionUID = -8245833681073162426L;
 
 		public LabBrowserModel() {
-			org.isf.lab.manager.LabManager lbm = new org.isf.lab.manager.LabManager(null);
+			LabManager lbm = new LabManager(Menu.getApplicationContext().getBean(LabIoOperations.class));
 			try {
 				labList = lbm.getLaboratory(patient);
 			} catch (OHServiceException e) {

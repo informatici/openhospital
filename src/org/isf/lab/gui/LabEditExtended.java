@@ -50,6 +50,8 @@ import org.isf.lab.manager.LabManager;
 import org.isf.lab.manager.LabRowManager;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
+import org.isf.lab.service.LabIoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
@@ -656,7 +658,7 @@ public class LabEditExtended extends JDialog {
 					}
 					
 					ArrayList<String> labRow = new ArrayList<String>();
-					LabManager manager = new LabManager(null);
+					LabManager manager = new LabManager(Menu.getApplicationContext().getBean(LabIoOperations.class));
 					lab.setDate(new GregorianCalendar());
 					lab.setExamDate(gregDate);
 					RememberDates.setLastLabExamDate(gregDate);
