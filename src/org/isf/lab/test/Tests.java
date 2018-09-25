@@ -5,24 +5,24 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
-import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.exception.OHException;
 import org.isf.exa.model.Exam;
 import org.isf.exa.test.TestExam;
 import org.isf.exa.test.TestExamContext;
 import org.isf.exatype.model.ExamType;
 import org.isf.exatype.test.TestExamType;
 import org.isf.exatype.test.TestExamTypeContext;
+import org.isf.lab.manager.LabManager;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryForPrint;
 import org.isf.lab.model.LaboratoryRow;
-import org.isf.lab.test.TestLaboratoryRow;
-import org.isf.lab.test.TestLaboratoryRowContext;
 import org.isf.lab.service.LabIoOperations;
-import org.isf.lab.test.TestLaboratory;
 import org.isf.patient.model.Patient;
 import org.isf.patient.test.TestPatient;
 import org.isf.patient.test.TestPatientContext;
+import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -30,6 +30,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -194,12 +195,11 @@ public class Tests
 	{
 		int id = 0;
 		
-		
 		try 
-		{		
+		{	
 			id = _setupTestLaboratoryRow(false);
-			LaboratoryRow foundLaboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, id); 
-			ArrayList<LaboratoryRow> laboratoryRows = labIoOperation.getLabRow(id);
+			LaboratoryRow foundLaboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, id);
+			ArrayList<LaboratoryRow> laboratoryRows = labIoOperation.getLabRow(foundLaboratoryRow.getLabId().getCode());
 			
 			assertEquals(true, laboratoryRows.contains(foundLaboratoryRow));
 		} 
@@ -268,7 +268,7 @@ public class Tests
 		{		
 			id = _setupTestLaboratory(false);
 			Laboratory foundLaboratory = (Laboratory)jpa.find(Laboratory.class, id); 
-			ArrayList<LaboratoryForPrint> laboratories = labIoOperation.getLaboratoryForPrint(foundLaboratory.getExam().getDescription(), foundLaboratory.getDate(), foundLaboratory.getDate());
+			ArrayList<LaboratoryForPrint> laboratories = labIoOperation.getLaboratoryForPrint(foundLaboratory.getExam().getDescription(), foundLaboratory.getExamDate(), foundLaboratory.getExamDate());
 			
 			assertEquals(foundLaboratory.getCode(), laboratories.get(0).getCode());
 		} 
@@ -291,7 +291,7 @@ public class Tests
 		{				
 			jpa.beginTransaction();	
 			ExamType examType = testExamType.setup(false);		
-			Exam exam = testExam.setup(examType, false);
+			Exam exam = testExam.setup(examType, 1, false);
 			Patient patient = testPatient.setup(false);			
 			jpa.persist(examType);
 			jpa.persist(exam);
@@ -324,7 +324,7 @@ public class Tests
 		{				
 			jpa.beginTransaction();	
 			ExamType examType = testExamType.setup(false);		
-			Exam exam = testExam.setup(examType, false);
+			Exam exam = testExam.setup(examType, 2, false);
 			Patient patient = testPatient.setup(false);			
 			jpa.persist(examType);
 			jpa.persist(exam);
@@ -344,6 +344,108 @@ public class Tests
 			assertEquals(true, false);
 		}
 		
+		return;
+	}
+	
+	@Test
+	public void testIoNewLabSecondProcedureTransaction() 
+	{
+		boolean result = false;
+		ArrayList<String> labRow = new ArrayList<String>();
+		Laboratory laboratory = null;
+		
+		try 
+		{				
+			jpa.beginTransaction();	
+			ExamType examType = testExamType.setup(false);		
+			Exam exam = testExam.setup(examType, 2, false);
+			Patient patient = testPatient.setup(false);			
+			jpa.persist(examType);
+			jpa.persist(exam);
+			jpa.persist(patient);
+			jpa.commitTransaction();
+			
+			laboratory = testLaboratory.setup(exam, patient, false);
+			labRow.add("TestLabRow");
+			labRow.add("TestLabRowTestLabRowTestLabRowTestLabRowTestLabRowTestLabRow"); // Causing rollback
+			result = labIoOperation.newLabSecondProcedure(laboratory, labRow);
+			
+			assertEquals(true, result);
+			_checkLaboratoryIntoDb(laboratory.getCode());
+		}
+		catch (OHServiceException e) 
+		{
+			System.out.println("==> Voluntary Exception: " + e);
+			try {
+				Laboratory foundlaboratory = (Laboratory)jpa.find(Laboratory.class, laboratory.getCode());
+				assertEquals(null, foundlaboratory);
+			}
+			catch (Exception e1)
+			{
+				System.out.println("==> Test Exception: " + e);		
+				assertEquals(true, false);
+			}
+		}
+		catch (Exception e)
+		{
+			System.out.println("==> Test Exception: " + e);		
+			assertEquals(true, false);
+		}
+
+		return;
+	}
+	
+	@Test
+	public void testManagerNewLaboratoryTransaction()
+	{
+		boolean result = false;
+		Laboratory laboratory = null;
+		ArrayList<Laboratory> laboratories = new ArrayList<Laboratory>();
+		ArrayList<ArrayList<String>> labRowList = new ArrayList<ArrayList<String>>();
+		
+		try 
+		{				
+			jpa.beginTransaction();	
+			ExamType examType = testExamType.setup(false);		
+			Exam exam = testExam.setup(examType, 1, false);
+			Exam exam2 = testExam.setup(examType, 2, false);
+			exam2.setCode("ZZZ");
+			Patient patient = testPatient.setup(false);			
+			jpa.persist(examType);
+			jpa.persist(exam);
+			jpa.persist(exam2);
+			jpa.persist(patient);
+			jpa.commitTransaction();
+			
+			// laboratory 1, Procedure One
+			ArrayList<String> labRow = new ArrayList<String>();
+			laboratory = testLaboratory.setup(exam, patient, false);
+			laboratories.add(laboratory);
+			labRowList.add(labRow);
+			
+			// laboratory 2, Procedure Two
+			Laboratory laboratory2 = testLaboratory.setup(exam2, patient, false);
+			laboratories.add(laboratory2);
+			labRow.add("TestLabRow");
+			labRow.add("TestLabRowTestLabRowTestLabRowTestLabRowTestLabRowTestLabRow"); // Causing rollback
+			labRowList.add(labRow);
+			
+			LabManager labMan = new LabManager(labIoOperation); 
+			result = labMan.newLaboratory(laboratories, labRowList);
+			
+			assertEquals(true, result);
+			_checkLaboratoryIntoDb(laboratory.getCode());
+		}
+		catch (OHServiceException e) 
+		{
+			System.out.println("==> Voluntary Exception: ");
+			for (OHExceptionMessage error : e.getMessages()) System.out.println("    " + error.getMessage());
+		}
+		catch (Exception e)
+		{
+			System.out.println("==> Test Exception: " + e);		
+			assertEquals(true, false);
+		} 
 		return;
 	}
 	
@@ -388,7 +490,7 @@ public class Tests
 			code = _setupTestLaboratoryRow(false);
 			LaboratoryRow foundLaboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, code); 
 			labRow.add("Update");
-			result = labIoOperation.editLabSecondProcedure(foundLaboratoryRow.getLabId(), labRow);
+			result = labIoOperation.updateLabSecondProcedure(foundLaboratoryRow.getLabId(), labRow);
 			LaboratoryRow updateLaboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, (code + 1)); 
 			
 			assertEquals(true, result);
@@ -420,6 +522,12 @@ public class Tests
 			result = labIoOperation.isCodePresent(code);			
 			assertEquals(false, result);
 		} 
+		catch (OHServiceException e) 
+		{
+			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();
+			assertEquals(true, false);
+		}
 		catch (Exception e) 
 		{
 			System.out.println("==> Test Exception: " + e);		
@@ -459,14 +567,13 @@ public class Tests
 	{
 		Laboratory laboratory;
 		ExamType examType = testExamType.setup(false);		
-		Exam exam = testExam.setup(examType, false);
+		Exam exam = testExam.setup(examType, 1, false);
 		Patient patient = testPatient.setup(false);
 		
 	
 		jpa.beginTransaction();	
 		laboratory = testLaboratory.setup(exam, patient, usingSet);
 		jpa.persist(examType);
-		exam.setProcedure(2);
 		jpa.persist(exam);
 		jpa.persist(patient);
 		jpa.persist(laboratory);
@@ -492,7 +599,7 @@ public class Tests
 	{			
 		LaboratoryRow laboratoryRow;
 		ExamType examType = testExamType.setup(false);		
-		Exam exam = testExam.setup(examType, false);
+		Exam exam = testExam.setup(examType, 2, false);
 		Patient patient = testPatient.setup(false);
 		Laboratory laboratory = testLaboratory.setup(exam, patient, false);
 		

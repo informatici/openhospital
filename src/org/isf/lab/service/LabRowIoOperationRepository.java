@@ -1,5 +1,7 @@
 package org.isf.lab.service;
 
+import java.util.ArrayList;
+
 import org.isf.lab.model.LaboratoryRow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,5 +16,10 @@ public interface LabRowIoOperationRepository extends JpaRepository<LaboratoryRow
 	@Transactional
     @Query(value = "DELETE FROM LABORATORYROW WHERE LABR_LAB_ID = :id", nativeQuery= true)
 	public void deleteWhereLab(@Param("id") Integer id);
+	
+	@Modifying
+	@Transactional
+    @Query(value = "SELECT * FROM LABORATORYROW WHERE LABR_LAB_ID = :id", nativeQuery= true)
+	public ArrayList<LaboratoryRow> findAllByLaboratoryCode(@Param("id") Integer id);
         
 }

@@ -245,7 +245,7 @@ public class Tests
 		try 
 		{		
 			ExamType examType = testExamType.setup(false);
-			Exam exam = testExam.setup(examType, false);
+			Exam exam = testExam.setup(examType, 2, false);
 			
 			
 			jpa.beginTransaction();	
@@ -281,7 +281,7 @@ public class Tests
 			jpa.beginTransaction();	
 			jpa.persist(examType);
 			jpa.commitTransaction();
-			Exam exam = testExam.setup(examType, false);
+			Exam exam = testExam.setup(examType, 1, false);
 			result = examIoOperation.newExam(exam);
 			
 			assertEquals(true, result);
@@ -384,7 +384,7 @@ public class Tests
 		try 
 		{		
 			ExamType examType = testExamType.setup(false);
-			Exam exam = testExam.setup(examType, false);
+			Exam exam = testExam.setup(examType, 1, false);
 			
 			jpa.beginTransaction();	
 			jpa.persist(examType);
@@ -432,7 +432,7 @@ public class Tests
 		
 	
 		jpa.beginTransaction();	
-		exam = testExam.setup(examType, usingSet);
+		exam = testExam.setup(examType, 1, usingSet);
 		jpa.persist(examType);
 		jpa.persist(exam);
 		jpa.commitTransaction();
@@ -456,7 +456,7 @@ public class Tests
 			boolean usingSet) throws OHException 
 	{		
 		ExamType examType = testExamType.setup(false);		
-		Exam exam = testExam.setup(examType, false);
+		Exam exam = testExam.setup(examType, 2, false);
 		ExamRow examRow;
 		
 

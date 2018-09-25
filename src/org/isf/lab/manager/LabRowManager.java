@@ -7,7 +7,6 @@ import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.lab.service.LabIoOperations;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -29,9 +28,8 @@ public class LabRowManager {
 	public ArrayList<LaboratoryRow> getLabRowByLabId(Integer code) throws OHServiceException{
 		try {
 			return ioOperations.getLabRow(code);
-		} catch (OHException e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch (OHServiceException e) {
+			throw e;
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,

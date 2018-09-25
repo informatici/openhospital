@@ -49,6 +49,7 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.lab.manager.LabManager;
 import org.isf.lab.model.Laboratory;
+import org.isf.menu.gui.Menu;
 import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
@@ -95,7 +96,7 @@ public class LabNew extends JDialog implements SelectionListener {
 		jButtonPickPatient.setToolTipText(MessageBundle.getMessage("angal.labnew.tooltip.changethepatientassociatedwiththisexams")); //$NON-NLS-1$
 		jButtonTrashPatient.setEnabled(true);
 		inOut = getIsAdmitted();
-		if (inOut.equalsIgnoreCase("R")) jRadioButtonOPD.setSelected(true);
+		if (inOut.equalsIgnoreCase("O")) jRadioButtonOPD.setSelected(true);
 		else jRadioButtonIPD.setSelected(true);
 	}
 	
@@ -170,7 +171,7 @@ public class LabNew extends JDialog implements SelectionListener {
 	
 	//Arrays for this Patient
 	ArrayList<ArrayList<String>> examResults = new ArrayList<ArrayList<String>>();
-	ArrayList<Laboratory> examItems = new ArrayList<Laboratory>();
+	ArrayList<Laboratory> labLists = new ArrayList<Laboratory>();
 	
 	public LabNew(JFrame owner) {
 		super(owner, true);
@@ -245,50 +246,17 @@ public class LabNew extends JDialog implements SelectionListener {
 
 				public void actionPerformed(ActionEvent e) {
 					
-					//Check Results
-					if (examItems.size() == 0) {
-						JOptionPane.showMessageDialog(LabNew.this,
-								MessageBundle.getMessage("angal.labnew.noexamsinserted"), //$NON-NLS-1$
-								"Error", //$NON-NLS-1$
-								JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-					for (Laboratory lab : examItems) {
-						
-						if (lab.getResult() == null) {
-							JOptionPane.showMessageDialog(LabNew.this,
-									MessageBundle.getMessage("angal.labnew.someexamswithoutresultpleasecheck"), //$NON-NLS-1$
-									"Error", //$NON-NLS-1$
-									JOptionPane.WARNING_MESSAGE);
-							return;
-						}
-					}
-					//Check Patient
-					if (patientSelected == null) { 
-						JOptionPane.showMessageDialog(LabNew.this,
-								MessageBundle.getMessage("angal.labnew.pleaseselectapatient"), //$NON-NLS-1$
-								"Error", //$NON-NLS-1$
-								JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-					//Check Date
-					if (jCalendarDate.getDate() == null) {
-						JOptionPane.showMessageDialog(LabNew.this,
-								MessageBundle.getMessage("angal.labnew.pleaseinsertadate"), //$NON-NLS-1$
-								"Error", //$NON-NLS-1$
-								JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-					//CREATING DB OBJECT
 					GregorianCalendar newDate = new GregorianCalendar();
-					newDate.setTimeInMillis(jCalendarDate.getDate().getTime());
+					try {
+						newDate.setTime(jCalendarDate.getDate());
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(LabNew.this, 
+								MessageBundle.getMessage("angal.lab.pleaseinsertavalidexamdate"));
+						return;
+					}
 					RememberDates.setLastLabExamDate(newDate);
-					String inOut = jRadioButtonOPD.isSelected() ? "R" : "I";
-					Laboratory labOne = (Laboratory)jTableExams.getValueAt(jTableExams.getSelectedRow(), -1);
-					labOne.setNote(jTextAreaNote.getText().trim()); //Workaround if Note typed just before saving
-					
-					for (Laboratory lab : examItems) {
-						
+					String inOut = jRadioButtonOPD.isSelected() ? "O" : "I";
+					for (Laboratory lab : labLists) {
 						lab.setAge(patientSelected.getAge());
 						lab.setDate(newDate);
 						lab.setExamDate(newDate);
@@ -299,34 +267,21 @@ public class LabNew extends JDialog implements SelectionListener {
 					}
 					
 					boolean result = false;
-					LabManager labManager = new LabManager();
-					Laboratory lab;
-					for (int i = 0; i < examItems.size(); i++) {
-						
-						lab = examItems.get(i);
-						if (lab.getExam().getProcedure() == 1) {
-							try {
-								result = labManager.newLabFirstProcedure(lab);
-							} catch (OHServiceException e1) {
-								result = false;
-								OHServiceExceptionUtil.showMessages(e1);
-							}
-						} else {
-							try {
-								result = labManager.newLabSecondProcedure(lab, examResults.get(i));
-							} catch (OHServiceException e1) {
-								result = false;
-								OHServiceExceptionUtil.showMessages(e1);
-							}
-						}
-						if (!result) {
-							JOptionPane.showMessageDialog(null,
-									MessageBundle.getMessage("angal.labnew.thedatacouldnotbesaved"));
-							return;
-						}
+					
+					LabManager labManager = Menu.getApplicationContext().getBean(LabManager.class);
+					try {
+						result = labManager.newLaboratory(labLists, examResults);
+					} catch (OHServiceException e1) {
+						result = false;
+						OHServiceExceptionUtil.showMessages(e1);
 					}
-					fireLabInserted();
-					dispose();
+					if (!result)
+						JOptionPane.showMessageDialog(null,
+								MessageBundle.getMessage("angal.lab.thedatacouldnotbesaved"));
+					else {
+						fireLabInserted();
+						dispose();
+					}
 				}
 			});
 		}
@@ -341,7 +296,7 @@ public class LabNew extends JDialog implements SelectionListener {
 		}catch(OHServiceException e){
 			OHServiceExceptionUtil.showMessages(e);
 		}
-		return (adm==null?"R":"I");					
+		return (adm==null?"O":"I");					
 	}
 
 	private JPanel getJPanelButtons() {
@@ -712,7 +667,7 @@ public class LabNew extends JDialog implements SelectionListener {
 					                    exaArray.toArray(),
 					                    ""); //$NON-NLS-1$
 					if (exa == null) return;
-					for (Laboratory labItem : examItems) {
+					for (Laboratory labItem : labLists) {
 						if (labItem.getExam() == exa) {
 							JOptionPane.showMessageDialog(LabNew.this,  
 									MessageBundle.getMessage("angal.labnew.thisexamisalreadypresent"),
@@ -757,16 +712,16 @@ public class LabNew extends JDialog implements SelectionListener {
 	}
 	
 	private void addItem(Laboratory lab) {
-		examItems.add(lab);
+		labLists.add(lab);
 		examResults.add(new ArrayList<String>());
 		jTableExams.updateUI();
-		int index = examItems.size()-1;
+		int index = labLists.size()-1;
 		jTableExams.setRowSelectionInterval(index, index);
 		
 	}
 
 	private void removeItem(int selectedRow) {
-		examItems.remove(selectedRow);
+		labLists.remove(selectedRow);
 		jTableExams.updateUI();
 	}
 	
@@ -813,20 +768,21 @@ public class LabNew extends JDialog implements SelectionListener {
 		}
 
 		public int getRowCount() {
-			if (examItems == null)
+			if (labLists == null)
 				return 0;
-			return examItems.size();
+			return labLists.size();
 		}
 
 		public Object getValueAt(int r, int c) {
+			Laboratory lab = labLists.get(r);
 			if (c == -1) {
-				return examItems.get(r);
+				return lab;
 			}
 			if (c == 0) {
-				return examItems.get(r).getExam().getDescription();
+				return lab.getExam().getDescription();
 			}
 			if (c == 1) {
-				return examItems.get(r).getResult();
+				return lab.getResult();
 			}
 			return null;
 		}

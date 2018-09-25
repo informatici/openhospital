@@ -12,13 +12,13 @@ import org.springframework.data.repository.query.Param;
 public interface LabIoOperationRepository extends JpaRepository<Laboratory, Integer> {
 
     @Query(value = "SELECT * FROM LABORATORY JOIN EXAM ON LAB_EXA_ID_A = EXA_ID_A "
-    		+ "WHERE LAB_EXAM_DATE >= DATE(:dateFrom) AND LAB_EXAM_DATE <= DATE(:dateTo) ORDER BY LAB_EXAM_DATE", nativeQuery= true)
-    public List<Laboratory> findAllWhereDatesByOrderExamDate(
+    		+ "WHERE LAB_EXAM_DATE >= DATE(:dateFrom) AND LAB_EXAM_DATE <= DATE(:dateTo) ORDER BY LAB_EXAM_DATE DESC", nativeQuery= true)
+    public List<Laboratory> findAllWhereDatesByOrderExamDateDesc(
     		@Param("dateFrom") GregorianCalendar dateFrom,
     		@Param("dateTo") GregorianCalendar dateTo);
     @Query(value = "SELECT * FROM LABORATORY JOIN EXAM ON LAB_EXA_ID_A = EXA_ID_A "
-    		+ "WHERE LAB_EXAM_DATE >= DATE(:dateFrom) AND LAB_EXAM_DATE <= DATE(:dateTo) AND EXA_DESC = :exam ORDER BY LAB_EXAM_DATE", nativeQuery= true)
-    public List<Laboratory> findAllWhereDatesAndExamByOrderExamDate(
+    		+ "WHERE LAB_EXAM_DATE >= DATE(:dateFrom) AND LAB_EXAM_DATE <= DATE(:dateTo) AND EXA_DESC = :exam ORDER BY LAB_EXAM_DATE DESC", nativeQuery= true)
+    public List<Laboratory> findAllWhereDatesAndExamByOrderExamDateDesc(
     		@Param("dateFrom") GregorianCalendar dateFrom,
     		@Param("dateTo") GregorianCalendar dateTo,
     		@Param("exam") String exam);
