@@ -18,7 +18,6 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -77,7 +76,7 @@ import org.isf.patient.model.Patient;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ShadowBorder;
 import org.isf.utils.jobjects.VoDateTextField;
@@ -399,30 +398,18 @@ public class AdmissionBrowser extends JDialog {
 		try {
 			diseaseOutList = dbm.getDiseaseIpdOut();
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+            OHServiceExceptionUtil.showMessages(e);
 		}
 		try {
 			diseaseInList = dbm.getDiseaseIpdIn();
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+            OHServiceExceptionUtil.showMessages(e);
 		}
 		if (editing) {
 			try {
 				admission = admMan.getCurrentAdmission(patient);
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			if (admission.getWard().getCode().equalsIgnoreCase("M")) {
 				viewingPregnancy = true;
@@ -469,29 +456,17 @@ public class AdmissionBrowser extends JDialog {
 		try {
 			diseaseOutList = dbm.getDiseaseIpdOut();
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+            OHServiceExceptionUtil.showMessages(e);
 		}
 		try {
 			diseaseInList = dbm.getDiseaseIpdIn();
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+            OHServiceExceptionUtil.showMessages(e);
 		}
 		try {
 			admission = admMan.getAdmission(anAdmission.getId());
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+            OHServiceExceptionUtil.showMessages(e);
 		}
 		if (admission.getWard().getCode().equalsIgnoreCase("M")) {
 			viewingPregnancy = true;
@@ -762,11 +737,7 @@ public class AdmissionBrowser extends JDialog {
 			try {
 				treatmTypeList = abm.getPregnantTreatmentType();
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			if(treatmTypeList != null){
 				for (PregnantTreatmentType elem : treatmTypeList) {
@@ -832,11 +803,7 @@ public class AdmissionBrowser extends JDialog {
 			try {
 				deliveryResultTypeList = drtbm.getDeliveryResultType();
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			if(deliveryResultTypeList != null){
 				for (DeliveryResultType elem : deliveryResultTypeList) {
@@ -864,11 +831,7 @@ public class AdmissionBrowser extends JDialog {
             try{
                 deliveryTypeList = dtbm.getDeliveryType();
             }catch(OHServiceException e){
-                if(e.getMessages() != null){
-                    for(OHExceptionMessage msg : e.getMessages()){
-                        JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-                    }
-                }
+                OHServiceExceptionUtil.showMessages(e);
             }
 			if(deliveryTypeList != null){
 				for (DeliveryType elem : deliveryTypeList) {
@@ -1010,11 +973,7 @@ public class AdmissionBrowser extends JDialog {
 				wardList = wbm.getWards();
 			}catch(OHServiceException e){
 				wardList = new ArrayList<Ward>();
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			for (Ward ward : wardList) {
 				// if patient is a male you don't see pregnancy case
@@ -1052,11 +1011,7 @@ public class AdmissionBrowser extends JDialog {
 							try {
 								nextProg = abm.getNextYProg(wardId);
 							}catch(OHServiceException ex){
-								if(ex.getMessages() != null){
-									for(OHExceptionMessage msg : ex.getMessages()){
-										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-									}
-								}
+                                OHServiceExceptionUtil.showMessages(ex);
 							}
 							yProgTextField.setText("" + nextProg);
 
@@ -1066,11 +1021,7 @@ public class AdmissionBrowser extends JDialog {
 							try {
 								usedBeds = abm.getUsedWardBed(wardId);
 							}catch(OHServiceException ex){
-								if(ex.getMessages() != null){
-									for(OHExceptionMessage msg : ex.getMessages()){
-										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-									}
-								}
+                                OHServiceExceptionUtil.showMessages(ex);
 							}
 							int freeBeds = nBeds - usedBeds;
 							if (freeBeds <= 0)
@@ -1142,11 +1093,7 @@ public class AdmissionBrowser extends JDialog {
 			try {
 				if (diseaseAllList == null) diseaseAllList = dbm.getDiseaseAll();
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			for (Disease elem : diseaseAllList) {
 				if (diseaseIn.getCode().equalsIgnoreCase(elem.getCode())) {
@@ -1199,11 +1146,7 @@ public class AdmissionBrowser extends JDialog {
 			try {
 				admTypeList = admMan.getAdmissionType();
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			for (AdmissionType elem : admTypeList) {
 				admTypeBox.addItem(elem);
@@ -1312,12 +1255,7 @@ public class AdmissionBrowser extends JDialog {
 			try {
 				if (diseaseAllList == null) diseaseAllList = dbm.getDiseaseAll();
 			} catch (OHServiceException e) {
-				if (e.getMessages() != null) {
-					for (OHExceptionMessage msg : e.getMessages()) {
-						JOptionPane.showMessageDialog(null, msg.getMessage(),
-								msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			for (Disease elem : diseaseAllList) {
 				if (diseaseOut1.getCode().equalsIgnoreCase(elem.getCode())) {
@@ -1377,12 +1315,7 @@ public class AdmissionBrowser extends JDialog {
 			try {
 				if (diseaseAllList == null) diseaseAllList = dbm.getDiseaseAll();
 			} catch (OHServiceException e) {
-				if (e.getMessages() != null) {
-					for (OHExceptionMessage msg : e.getMessages()) {
-						JOptionPane.showMessageDialog(null, msg.getMessage(),
-								msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			for (Disease elem : diseaseAllList) {
 				if (diseaseOut2.getCode().equalsIgnoreCase(elem.getCode())) {
@@ -1442,12 +1375,7 @@ public class AdmissionBrowser extends JDialog {
 			try {
 				diseaseAllList = dbm.getDiseaseAll();
 			} catch (OHServiceException e) {
-				if (e.getMessages() != null) {
-					for (OHExceptionMessage msg : e.getMessages()) {
-						JOptionPane.showMessageDialog(null, msg.getMessage(),
-								msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			for (Disease elem : diseaseAllList) {
 				if (diseaseOut3.getCode().equalsIgnoreCase(elem.getCode())) {
@@ -1494,11 +1422,7 @@ public class AdmissionBrowser extends JDialog {
 			try {
 				operationList = obm.getOperation();
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			if(operationList != null){
 				for (Operation elem : operationList) {
@@ -1630,11 +1554,7 @@ public class AdmissionBrowser extends JDialog {
 			try {
 				disTypeList = admMan.getDischargeType();
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			for (DischargeType elem : disTypeList) {
 				disTypeBox.addItem(elem);
@@ -1743,11 +1663,7 @@ public class AdmissionBrowser extends JDialog {
 					try {
 						lastPatex = examManager.getLastByPatID(patient.getCode());
 					}catch(OHServiceException ex){
-						if(ex.getMessages() != null){
-							for(OHExceptionMessage msg : ex.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
+                        OHServiceExceptionUtil.showMessages(ex);
 					}
 					if (lastPatex != null) {
 						patex = examManager.getFromLastPatientExamination(lastPatex);
@@ -1809,7 +1725,7 @@ public class AdmissionBrowser extends JDialog {
 						 * instead of enabling them before every single <code>return</code>.
 						 */
 						BusyState.setBusyState(AdmissionBrowser.this, true);
-
+//y
 						/*
 						 * Initizalize AdmissionBrowserManager
 						 */
@@ -1818,11 +1734,7 @@ public class AdmissionBrowser extends JDialog {
 						try {
 							admList = abm.getAdmissions(patient);
 						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+                            OHServiceExceptionUtil.showMessages(ex);
 							admList = new ArrayList<Admission>();
 						}
 
@@ -1830,7 +1742,7 @@ public class AdmissionBrowser extends JDialog {
 						 * Today Gregorian Calendar
 						 */
 						GregorianCalendar today = new GregorianCalendar();
-
+//Y
 						/*
 						 * is it an admission update or a discharge? if we have a
 						 * valid discharge date isDischarge will be true
@@ -1899,18 +1811,7 @@ public class AdmissionBrowser extends JDialog {
 						}
 	
 						// get year prog ( not null)
-						try {
-							int x = Integer.parseInt(yProgTextField.getText());
-							if (x < 0) {
-								JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertacorrectprogressiveid"));
-								return;
-							} else {
-								admission.setYProg(x);
-							}
-						} catch (Exception ex) {
-							JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertacorrectprogressiveid"));
-							return;
-						}
+                        admission.setYProg(Integer.parseInt(yProgTextField.getText()));
 
 						// get FHU (it can be null)
 						String s = FHUTextField.getText();
@@ -1919,50 +1820,15 @@ public class AdmissionBrowser extends JDialog {
 						} else {
 							admission.setFHU(FHUTextField.getText());
 						}
-	
-						// check and get date in (not null)
-						String d = currentDateFormat.format(dateInFieldCal.getDate());
-	
-						try {
-							currentDateFormat.setLenient(false);
-							Date date = currentDateFormat.parse(d);
-							dateIn = new GregorianCalendar();
-							//dateIn.setTime(date);
-							dateIn.setTime(dateInFieldCal.getDate());
-							if (dateIn.after(today)) {
-								JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.futuredatenotallowed"));
-								d = currentDateFormat.format(today);
-								dateInFieldCal.setDate(currentDateFormat.parse(d));
-								return;
-							}
-							if (dateIn.before(today)) {
-								// check for invalid date
-								for (Admission ad : admList) {
-									if (editing && ad.getId() == admission.getId()) {
-										continue;
-									}
-									if ((ad.getAdmDate().before(dateIn) || ad.getAdmDate().compareTo(dateIn) == 0) 
-											&& (ad.getDisDate() != null && ad.getDisDate().after(dateIn))) {
-										JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.ininserteddatepatientwasalreadyadmitted"));
-										d = currentDateFormat.format(today);
-										dateInFieldCal.setDate(currentDateFormat.parse(d));
-										return;
-									}
-								}
-							}
-							// updateDisplay
-							d = currentDateFormat.format(date);
-							dateInFieldCal.setDate(currentDateFormat.parse(d));
-							admission.setAdmDate(dateIn);
-							RememberDates.setLastAdmInDate(dateIn);
 
-						} catch (ParseException pe) {
-							JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidadmissiondate"));
-							return;
-						} catch (IllegalArgumentException iae) {
-							JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidadmissiondate"));
-							return;
-						}
+						if(dateInFieldCal.getDate() != null) {
+						    dateIn = new GregorianCalendar();
+                            dateIn.setTime(dateInFieldCal.getDate());
+                            admission.setAdmDate(dateIn);
+                            RememberDates.setLastAdmInDate(dateIn);
+                        }else{
+                            admission.setAdmDate(null);
+                        }
 
 						// get admission type (not null)
 						if (admTypeBox.getSelectedIndex() == 0) {
@@ -1975,109 +1841,13 @@ public class AdmissionBrowser extends JDialog {
 						// check and get date out (it can be null)
 						// if set date out, isDischarge is set
 						if (dateOutFieldCal.getDate() != null) {
-							d = currentDateFormat.format(dateOutFieldCal.getDate());
-						} else
-							d = "";
-
-						if (d.equals("")) {
-							// only if we are editing the last admission
-							// or if it is a new admission
-							// no if we are editing an old admission
-							Admission last = null;
-							if (admList.size() > 0) {
-								last = admList.get(admList.size() - 1);
-							} else {
-								last = admission;
-							}
-							if (!editing || (editing && admission.getId() == last.getId())) {
-								// ok
-							} else {
-								JOptionPane.showMessageDialog(AdmissionBrowser.this,
-										MessageBundle.getMessage("angal.admission.pleaseinsertadischargedate") + ", " + MessageBundle.getMessage("angal.admission.youareeditinganoldadmission"));
-								return;
-
-							}
-
-							admission.setDisDate(null);
-						} else {
-							try {
-								currentDateFormat.setLenient(false);
-								Date date = currentDateFormat.parse(d);
-								dateOut = new GregorianCalendar();
-								//dateOut.setTime(date);
-								dateOut.setTime(dateOutFieldCal.getDate());
-	
-								// date control
-								if (dateOut.before(dateIn)) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.dischargedatemustbeafteradmissiondate"));
-									return;
-								}
-								if (dateOut.after(today)) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.futuredatenotallowed"));
-									return;
-								} else {
-									// check for invalid date
-									boolean invalidDate = false;
-									Date invalidStart = new Date();
-									Date invalidEnd = new Date();
-									for (Admission ad : admList) {
-										// case current admission : let it be
-										if (editing && ad.getId() == admission.getId()) {
-											continue;
-										}
-										// found an open admission
-										// only if i close my own first of it
-										if (ad.getDisDate() == null) {
-											if (!dateOut.after(ad.getAdmDate()))
-												;// ok
-											else {
-												JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.intheselecteddatepatientwasadmittedagain"));
-												return;
-											}
-										}
-										// general case
-										else {
-											// DateIn >= adOut
-											if (dateIn.after(ad.getDisDate()) || dateIn.equals(ad.getDisDate())) {
-												// ok
-											}
-											// dateOut <= adIn
-											else if (dateOut.before(ad.getAdmDate()) || dateOut.equals(ad.getAdmDate())) {
-												// ok
-											} else {
-												invalidDate = true;
-												invalidStart = ad.getAdmDate().getTime();
-												invalidEnd = ad.getDisDate().getTime();
-												break;
-											}
-										}
-									}
-									if (invalidDate) {
-										JOptionPane.showMessageDialog(AdmissionBrowser.this,
-												MessageBundle.getMessage("angal.admission.invalidadmissionperiod") + MessageBundle.getMessage("angal.admission.theadmissionbetween") + " "
-														+ currentDateFormat.format(invalidStart) + " " + MessageBundle.getMessage("angal.admission.and") + " " + currentDateFormat.format(invalidEnd) + " "
-														+ MessageBundle.getMessage("angal.admission.alreadyexists"));
-										dateOutFieldCal.setDate(null);
-										return;
-									}
-
-								}
-
-								// updateDisplay
-								d = currentDateFormat.format(date);
-								dateOutFieldCal.setDate(currentDateFormat.parse(d));
-								admission.setDisDate(dateOut);
-								isDischarge = true;
-							} catch (ParseException pe) {
-								System.out.println(pe);
-								JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavaliddischargedate"));
-								return;
-							} catch (IllegalArgumentException iae) {
-								System.out.println(iae);
-								JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavaliddischargedate"));
-								return;
-							}
-						}
+						    dateOut = new GregorianCalendar();
+						    dateOut.setTime(dateOutFieldCal.getDate());
+                            admission.setDisDate(dateOut);
+                            isDischarge = true;
+						}else{
+                            admission.setDisDate(null);
+                        }
 
 						// get operation ( it can be null)
 						if (operationBox.getSelectedIndex() == 0) {
@@ -2087,44 +1857,13 @@ public class AdmissionBrowser extends JDialog {
 						}
 
 						// get operation date (may be null)
-						if (operationDateFieldCal.getDate() != null) {
-							d = currentDateFormat.format(operationDateFieldCal.getDate());
-						} else
-							d = "";
-						if (d.equals("")) {
-							admission.setOpDate(null);
-						} else {
-							try {
-								Date date = currentDateFormat.parse(d);
-								operationDate = new GregorianCalendar();
-								operationDate.setTime(date);
-								// updateDisplay
-								d = currentDateFormat.format(date);
-								operationDateFieldCal.setDate(currentDateFormat.parse(d));
-
-								GregorianCalendar limit;
-								if (admission.getDisDate() == null) {
-									limit = today;
-								} else {
-									limit = admission.getDisDate();
-								}
-
-								if (operationDate.before(dateIn) || operationDate.after(limit)) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidvisitdate"));
-									return;
-								}
-
-								admission.setOpDate(operationDate);
-							} catch (ParseException pe) {
-								JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidvisitdate"));
-								operationDateField.setText(currentDateFormat.format(operationDate.getTime()));
-								return;
-							} catch (IllegalArgumentException iae) {
-								JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidvisitdate"));
-								operationDateField.setText(currentDateFormat.format(operationDate.getTime()));
-								return;
-							}
-						}// else
+                        if(operationDateFieldCal.getDate() != null) {
+                            operationDate = new GregorianCalendar();
+                            operationDate.setTime(operationDateFieldCal.getDate());
+                            admission.setOpDate(operationDate);
+                        }else{
+                            admission.setOpDate(null);
+                        }
 
 						// get operation result (can be null)
 						if (operationResultRadioN.isSelected()) {
@@ -2156,30 +1895,6 @@ public class AdmissionBrowser extends JDialog {
 							}
 						}
 
-						// get the disease out n.1 (it can be null)
-						// if isDischarge, null value not allowed
-						if (admission.getDiseaseOut1() == null) {
-							if (isDischarge) {
-								int yes = JOptionPane.showConfirmDialog(null, MessageBundle.getMessage("angal.admission.diagnosisoutsameasdiagnosisin"));
-								if (yes == JOptionPane.YES_OPTION) {
-									if (diseaseOutList.contains(diseaseInBox.getSelectedItem()))
-										admission.setDiseaseOut1(admission.getDiseaseIn());
-									else {
-										JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseselectavaliddiagnosisout"));
-										return;
-									}
-								} else {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseselectatleastfirstdiagnosisout"));
-									return;
-								}
-							}
-						} else {
-							if (admission.getDisDate() == null) {
-								JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertadischargedate"));
-								return;
-							}
-						}
-	
 						// field notes
 						if (textArea.getText().equals("")) {
 							admission.setNote(null);
@@ -2199,58 +1914,13 @@ public class AdmissionBrowser extends JDialog {
 						// fields for pregnancy status
 						if (isPregnancy) {
 
-							// get visit date (may be null)
-							if (visitDateFieldCal.getDate() != null) {
-								d = currentDateFormat.format(visitDateFieldCal.getDate());
-							} else
-								d = "";
-							if (d.equals("")) {
-								admission.setVisitDate(null);
-							} else {
-								try {
-									Date date = currentDateFormat.parse(d);
-									visitDate = new GregorianCalendar();
-									visitDate.setTime(date);
-									// updateDisplay
-									d = currentDateFormat.format(date);
-									visitDateFieldCal.setDate(currentDateFormat.parse(d));
-
-									GregorianCalendar limit;
-									if (admission.getDisDate() == null) {
-										limit = today;
-									} else {
-										limit = admission.getDisDate();
-									}
-
-									if (visitDate.before(dateIn) || visitDate.after(limit)) {
-										JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidvisitdate"));
-										return;
-									}
-	
-									admission.setVisitDate(visitDate);
-								} catch (ParseException pe) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidvisitdate"));
-									visitDateField.setText(currentDateFormat.format(visitDate.getTime()));// CONTROLLARE
-									return;
-								} catch (IllegalArgumentException iae) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidvisitdate"));
-									visitDateField.setText(currentDateFormat.format(visitDate.getTime()));// CONTROLLARE
-									return;
-								}
-							}// else
-
 							// get weight (it can be null)
 							try {
 								if (weightField.getText().equals("")) {
 									admission.setWeight(null);
 								} else {
-									float f = Float.parseFloat(weightField.getText());
-									if (f < 0.0f) {
-										JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidweightvalue"));
-										return;
-									} else {
-										admission.setWeight(new Float(f));
-									}
+                                    float f = Float.parseFloat(weightField.getText());
+                                    admission.setWeight(new Float(f));
 								}
 							} catch (Exception ex) {
 								JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidweightvalue"));
@@ -2267,54 +1937,12 @@ public class AdmissionBrowser extends JDialog {
 
 							// get delivery date
 							if (deliveryDateFieldCal.getDate() != null) {
-								d = currentDateFormat.format(deliveryDateFieldCal.getDate());
-							} else
-								d = "";
-
-							if (d.equals("")) {
-								admission.setDeliveryDate(null);
-							} else {
-								try {
-									Date date = currentDateFormat.parse(d);
-									deliveryDate = new GregorianCalendar();
-									deliveryDate.setTime(date);
-
-									// date control
-									GregorianCalendar start;
-									if (admission.getVisitDate() == null) {
-										start = admission.getAdmDate();
-									} else {
-										start = admission.getVisitDate();
-									}
-
-									GregorianCalendar limit;
-									if (admission.getDisDate() == null) {
-										limit = today;
-									} else {
-										limit = admission.getDisDate();
-									}
-
-									if (deliveryDate.before(start) || deliveryDate.after(limit)) {
-										JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavaliddeliverydate"));
-										deliveryDateFieldCal.setDate(null);
-										return;
-									}
-
-									// updateDisplay
-									d = currentDateFormat.format(date);
-									deliveryDateFieldCal.setDate(currentDateFormat.parse(d));
-									admission.setDeliveryDate(deliveryDate);
-
-								} catch (ParseException pe) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavaliddeliverydate"));
-									deliveryDateField.setText("");// CONTROLLARE
-									return;
-								} catch (IllegalArgumentException iae) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavaliddeliverydate"));
-									deliveryDateField.setText("");// CONTROLLARE
-									return;
-								}
-							}
+                                deliveryDate = new GregorianCalendar();
+                                deliveryDate.setTime(deliveryDateFieldCal.getDate());
+                                admission.setDeliveryDate(deliveryDate);
+							} else{
+                                admission.setDeliveryDate(null);
+                            }
 
 							// get delivery type
 							if (deliveryTypeBox.getSelectedIndex() == 0) {
@@ -2332,139 +1960,30 @@ public class AdmissionBrowser extends JDialog {
 
 							// get ctrl1 date
 							if (ctrl1DateFieldCal.getDate() != null) {
-								d = currentDateFormat.format(ctrl1DateFieldCal.getDate());
-							} else
-								d = "";
-
-							if (d.equals("")) {
-								admission.setCtrlDate1(null);
-							} else {
-								try {
-									Date date = currentDateFormat.parse(d);
-									ctrl1Date = new GregorianCalendar();
-									ctrl1Date.setTime(date);
-
-									// date control
-									if (admission.getDeliveryDate() == null) {
-										JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.controln1datenodeliverydatefound"));
-										return;
-									}
-									GregorianCalendar limit;
-									if (admission.getDisDate() == null) {
-										limit = today;
-									} else {
-										limit = admission.getDisDate();
-									}
-									if (ctrl1Date.before(deliveryDate) || ctrl1Date.after(limit)) {
-										JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidcontroln1date"));
-										return;
-									}
-
-									// updateDisplay
-									d = currentDateFormat.format(date);
-									ctrl1DateFieldCal.setDate(currentDateFormat.parse(d));
-									admission.setCtrlDate1(ctrl1Date);
-
-								} catch (ParseException pe) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidcontroln1date"));
-									ctrl1DateFieldCal.setDate(null);
-									return;
-								} catch (IllegalArgumentException iae) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidcontroln1date"));
-									ctrl1DateFieldCal.setDate(null);
-									return;
-								}
-							}
+                                ctrl1Date = new GregorianCalendar();
+                                ctrl1Date.setTime(ctrl1DateFieldCal.getDate() );
+                                admission.setCtrlDate1(ctrl1Date);
+							} else{
+                                admission.setCtrlDate1(null);
+                            }
 
 							// get ctrl2 date
 							if (ctrl2DateFieldCal.getDate() != null) {
-								d = currentDateFormat.format(ctrl2DateFieldCal.getDate());
-							} else
-								d = "";
-
-							if (d.equals("")) {
-								admission.setCtrlDate2(null);
-							} else {
-								if (admission.getCtrlDate1() == null) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.controldaten2controldaten1notfound"));
-									ctrl2DateFieldCal.setDate(null);
-									return;
-								}
-								try {
-									Date date = currentDateFormat.parse(d);
-									ctrl2Date = new GregorianCalendar();
-									ctrl2Date.setTime(date);
-
-									// date control
-									GregorianCalendar limit;
-									if (admission.getDisDate() == null) {
-										limit = today;
-									} else {
-										limit = admission.getDisDate();
-									}
-									if (ctrl2Date.before(ctrl1Date) || ctrl2Date.after(limit)) {
-										JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidcontroln2date"));
-										return;
-									}
-
-									// updateDisplay
-									d = currentDateFormat.format(date);
-									ctrl2DateFieldCal.setDate(currentDateFormat.parse(d));
-									admission.setCtrlDate2(ctrl2Date);
-
-								} catch (ParseException pe) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidcontroln2date"));
-									ctrl2DateFieldCal.setDate(null);
-									return;
-								} catch (IllegalArgumentException iae) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidcontroln2date"));
-									ctrl2DateFieldCal.setDate(null);
-									return;
-								}
-							}
+                                ctrl2Date = new GregorianCalendar();
+                                ctrl2Date.setTime(ctrl2DateFieldCal.getDate());
+                                admission.setCtrlDate2(ctrl2Date);
+							} else{
+                                admission.setCtrlDate2(null);
+                            }
 
 							// get abort date
 							if (abortDateFieldCal.getDate() != null) {
-								d = currentDateFormat.format(abortDateFieldCal.getDate());
-							} else
-								d = "";
-
-							if (d.equals("")) {
-								admission.setAbortDate(null);
-							} else {
-								try {
-									Date date = currentDateFormat.parse(d);
-									abortDate = new GregorianCalendar();
-									abortDate.setTime(date);
-
-									// date control
-									GregorianCalendar limit;
-									if (admission.getDisDate() == null) {
-										limit = today;
-									} else {
-										limit = admission.getDisDate();
-									}
-									if (ctrl2Date != null && abortDate.before(ctrl2Date) || ctrl1Date != null && abortDate.before(ctrl1Date) || abortDate.before(visitDate) || abortDate.after(limit)) {
-										JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidabortdate"));
-										return;
-									}
-
-									// updateDisplay
-									d = currentDateFormat.format(date);
-									abortDateFieldCal.setDate(currentDateFormat.parse(d));
-									admission.setAbortDate(abortDate);
-
-								} catch (ParseException pe) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidabortdate"));
-									abortDateFieldCal.setDate(null);
-									return;
-								} catch (IllegalArgumentException iae) {
-									JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.pleaseinsertavalidabortdate"));
-									abortDateFieldCal.setDate(null);
-									return;
-								}
-							}
-	
+                                abortDate = new GregorianCalendar();
+                                abortDate.setTime(abortDateFieldCal.getDate());
+                                admission.setAbortDate(abortDate);
+							} else{
+                                admission.setAbortDate(null);
+                            }
 						}// isPregnancy
 
 						// set not editable fields
@@ -2500,11 +2019,7 @@ public class AdmissionBrowser extends JDialog {
 							try {
 								newKey = admMan.newAdmissionReturnKey(admission);
 							}catch(OHServiceException exc){
-								if(exc.getMessages() != null){
-									for(OHExceptionMessage msg : exc.getMessages()){
-										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-									}
-								}
+                                OHServiceExceptionUtil.showMessages(exc);
 							}
 							if (newKey > 0) {
 								result = true;
@@ -2520,11 +2035,7 @@ public class AdmissionBrowser extends JDialog {
 							try {
 								result = admMan.newAdmission(admission);
 							}catch(OHServiceException ex){
-								if(ex.getMessages() != null){
-									for(OHExceptionMessage msg : ex.getMessages()){
-										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-									}
-								}
+                                OHServiceExceptionUtil.showMessages(ex);
 							}
 							if (result) {
 								fireAdmissionUpdated(admission);
@@ -2535,22 +2046,14 @@ public class AdmissionBrowser extends JDialog {
 								try {
 									recordUpdated = admMan.isAdmissionModified(admission);
 								}catch(OHServiceException ex){
-									if(ex.getMessages() != null){
-										for(OHExceptionMessage msg : ex.getMessages()){
-											JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-										}
-									}
+									OHServiceExceptionUtil.showMessages(ex);
 								}
 								if (!recordUpdated) { 
 									// it was not updated
 									try {
 										result = admMan.updateAdmission(admission);
 									}catch(OHServiceException ex){
-										if(ex.getMessages() != null){
-											for(OHExceptionMessage msg : ex.getMessages()){
-												JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-											}
-										}
+                                        OHServiceExceptionUtil.showMessages(ex);
 									}
 								} else { 
 									// it was updated by someone else
@@ -2563,11 +2066,7 @@ public class AdmissionBrowser extends JDialog {
 										try {
 											result = admMan.updateAdmission(admission);
 										}catch(OHServiceException ex){
-											if(ex.getMessages() != null){
-												for(OHExceptionMessage msg : ex.getMessages()){
-													JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-												}
-											}
+                                            OHServiceExceptionUtil.showMessages(ex);
 										}
 									}
 								}
