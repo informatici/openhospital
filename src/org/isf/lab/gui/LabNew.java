@@ -264,6 +264,7 @@ public class LabNew extends JDialog implements SelectionListener {
 						lab.setPatId(patientSelected);
 						lab.setPatName(patientSelected.getName());
 						lab.setSex(patientSelected.getSex()+"");
+						lab.setNote(jTextAreaNote.getText().trim());
 					}
 					
 					boolean result = false;
@@ -352,7 +353,7 @@ public class LabNew extends JDialog implements SelectionListener {
 						jTableExams.updateUI();
 					}
 				});
-				jPanelResults.add(jComboBoxExamResults);
+				if (jComboBoxExamResults.getItemCount()>0) jPanelResults.add(jComboBoxExamResults);
 				
 				
 			} else {
@@ -685,23 +686,28 @@ public class LabNew extends JDialog implements SelectionListener {
 								exaRowTemp.add(exaRow);
 							}
 						}
-	
-						icon = new ImageIcon("rsc/icons/list_dialog.png"); //$NON-NLS-1$
-						ExamRow exaRow = (ExamRow)JOptionPane.showInputDialog(
-						                    LabNew.this,
-						                    MessageBundle.getMessage("angal.labnew.selectaresult"), //$NON-NLS-1$
-						                    MessageBundle.getMessage("angal.labnew.result"), //$NON-NLS-1$
-						                    JOptionPane.PLAIN_MESSAGE,
-						                    icon,
-						                    exaRowTemp.toArray(),
-						                    ""); //$NON-NLS-1$
-						
-						if (exaRow != null) lab.setResult(exaRow.getDescription());
-						else return;
+						if (!exaRowTemp.isEmpty()) {
+							
+							icon = new ImageIcon("rsc/icons/list_dialog.png"); //$NON-NLS-1$
+							ExamRow exaRow = (ExamRow)JOptionPane.showInputDialog(
+							                    LabNew.this,
+							                    MessageBundle.getMessage("angal.labnew.selectaresult"), //$NON-NLS-1$
+							                    MessageBundle.getMessage("angal.labnew.result"), //$NON-NLS-1$
+							                    JOptionPane.PLAIN_MESSAGE,
+							                    icon,
+							                    exaRowTemp.toArray(),
+							                    ""); //$NON-NLS-1$
+							
+							if (exaRow != null) lab.setResult(exaRow.getDescription());
+							else return;
+						} else {
+							
+							lab.setResult(exa.getDefaultResult());
+						}
 					} else {
+						
 						lab.setResult(MessageBundle.getMessage("angal.labnew.multipleresults"));
 					}
-					
 					lab.setExam(exa);
 					lab.setMaterial(mat);
 					addItem(lab);

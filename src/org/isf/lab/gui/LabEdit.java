@@ -21,10 +21,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.EventListener;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -136,7 +133,6 @@ public class LabEdit extends JDialog {
 
 //	private VoDateTextField examDateField = null;
 	private JDateChooser examDateFieldCal = null;
-	private DateFormat currentDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.ITALIAN);
 	private GregorianCalendar dateIn = null;
 
 	
@@ -636,7 +632,7 @@ public class LabEdit extends JDialog {
 					examRowComboBox.addItem(r.getDescription());
 			}
 		}
-		resultPanel.add(examRowComboBox);
+		if (examRowComboBox.getItemCount() > 0) resultPanel.add(examRowComboBox);
 
 		return resultPanel;
 	}

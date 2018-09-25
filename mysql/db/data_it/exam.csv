@@ -1,7 +1,7 @@
 01.01;1.1 HB;HB;1;>=12 (NORMALE);1
 01.02;1.2 WBC Count;HB;1;4000 - 7000 (NORMALE);1
-01.03;1.3 Differential ;HB;1;;0
-01.04;1.4 Film Comment;HB;1;;0
+01.03;1.3 Differential ;HB;1;RISULTATI IN NOTA;0
+01.04;1.4 Film Comment;HB;1;RISULTATI IN NOTA;0
 01.05;1.5 ESR;HB;1;NORMALE;1
 01.06;1.6 Sickling Test;HB;1;NEGATIVO;1
 02.01;2.1 Grouping;BT;1;;2
