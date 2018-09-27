@@ -8,8 +8,9 @@ import java.util.List;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.SmsParameters;
+import org.isf.menu.gui.Menu;
 import org.isf.sms.model.Sms;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,11 +38,11 @@ public class SmsSender implements Runnable {
 	public void run() {
 		while (running) {
 			logger.info("SMS Sender running...");
-			SmsOperations smsOp = new SmsOperations();
+			SmsOperations smsOp = Menu.getApplicationContext().getBean(SmsOperations.class);
 			List<Sms> smsList = null;
 			try {
 				smsList = smsOp.getList();
-			} catch (OHException e1) {
+			} catch (OHServiceException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
@@ -58,7 +59,7 @@ public class SmsSender implements Runnable {
 									sms.setSmsDateSent(new Date());
 									try {
 										smsOp.saveOrUpdate(sms);
-									} catch (OHException e) {
+									} catch (OHServiceException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 									}
@@ -86,7 +87,7 @@ public class SmsSender implements Runnable {
 									sms.setSmsDateSent(new Date());
 									try {
 										smsOp.saveOrUpdate(sms);
-									} catch (OHException e) {
+									} catch (OHServiceException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 									}

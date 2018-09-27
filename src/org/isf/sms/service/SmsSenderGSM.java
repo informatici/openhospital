@@ -13,7 +13,7 @@ import java.util.List;
 import org.apache.log4j.PropertyConfigurator;
 import org.isf.sms.model.Sms;
 import org.isf.sms.providers.GSMParameters;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,7 +179,7 @@ public class SmsSenderGSM implements SmsSenderInterface, SerialPortEventListener
 		List<Sms> smsList = null;
 		try {
 			smsList = smsOp.getList();
-		} catch (OHException e) {
+		} catch (OHServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

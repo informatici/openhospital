@@ -38,6 +38,7 @@ import org.isf.patient.model.Patient;
 import org.isf.sms.manager.SmsManager;
 import org.isf.sms.model.Sms;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.JDateAndTimeChooserDialog;
 
 import com.toedter.calendar.JDateChooser;
@@ -69,8 +70,7 @@ public class SmsEdit extends JDialog implements SelectionListener {
 	private JButton JTimeButton;
 	private JButton jPatientButton;
 	
-	private final int MAX_LENGHT = 160;
-	private final String NUMBER_REGEX = "^\\+?\\d+$"; //$NON-NLS-1$
+	private int MAX_LENGHT;
 	
 	private SmsManager smsManager = new SmsManager();
 	
@@ -91,7 +91,12 @@ public class SmsEdit extends JDialog implements SelectionListener {
 	 */
 	public SmsEdit(JFrame owner) {
 		super(owner, true);
+		initialize();
 		initComponents();
+	}
+	
+	private void initialize() {
+		MAX_LENGHT = smsManager.getMAX_LENGHT();
 	}
 
 	private void initComponents() {
@@ -273,55 +278,46 @@ public class SmsEdit extends JDialog implements SelectionListener {
 					String text = jTextArea.getText();
 					Date schedDate = jSchedDateChooser.getDate();
 					
-					if (!number.matches(NUMBER_REGEX)) {
-						JOptionPane.showMessageDialog(SmsEdit.this, 
-								MessageBundle.getMessage("angal.sms.pleaseinsertavalidtelephonenumber")); //$NON-NLS-1$
-						return;
-					}
+					Sms smsToSend = new Sms();
+					smsToSend.setSmsNumber(number);
+					smsToSend.setSmsDateSched(schedDate);
+					smsToSend.setSmsUser(MainMenu.getUser());
+					smsToSend.setSmsText(text);
+					smsToSend.setModule("smsmanager");
 					
-					if (text.equals("")) { //$NON-NLS-1$
-						JOptionPane.showMessageDialog(SmsEdit.this, 
-								MessageBundle.getMessage("angal.sms.pleaseinsertatext")); //$NON-NLS-1$
-						return;
-					}
-															
-					int textLenght = text.length();
-					int textParts = (textLenght + MAX_LENGHT - 1) / MAX_LENGHT;
-					if (textLenght > MAX_LENGHT) {
-						int ok = JOptionPane.showConfirmDialog(SmsEdit.this, 
-								MessageBundle.getMessage("angal.sms.themessageislongerthen") + " " + MAX_LENGHT + " " + MessageBundle.getMessage("angal.sms.chars") + //$NON-NLS-1$ //$NON-NLS-2$
-								"\n" + MessageBundle.getMessage("angal.sms.doyouwanttospliinmoremessages") + "(" + textParts + ")?" ); //$NON-NLS-1$ //$NON-NLS-2$
-						if (ok == JOptionPane.YES_OPTION) {
-							String[] parts = split(text);
-							for (String part : parts) {
-								Sms smsToSend = new Sms();
-								smsToSend.setSmsNumber(number);
-								smsToSend.setSmsDateSched(schedDate);
-								smsToSend.setSmsUser(MainMenu.getUser());
-								smsToSend.setSmsText(part);
-								smsToSend.setModule("smsmanager");
-								smsToSend.setModuleID(null);
+					try {
+						
+						smsManager.saveOrUpdate(smsToSend, false);
+						
+					} catch (OHServiceException e1) {
+						
+						if (e1.getMessages().get(0).getTitle().equals("testMaxLenghtError")) {
+							
+							int textLenght = text.length();
+							int textParts = (textLenght + MAX_LENGHT - 1) / MAX_LENGHT;
+							StringBuilder message = new StringBuilder();
+							message.append(e1.getMessages().get(0).getMessage())
+								.append("\n")
+								.append(MessageBundle.getMessage("angal.sms.doyouwanttosplitinmoremessages"))
+								.append(" (").append(textParts).append(")?");
+							
+							int ok = JOptionPane.showConfirmDialog(SmsEdit.this, message.toString());
+							if (ok == JOptionPane.YES_OPTION) {
 								
 								try {
-									smsManager.saveOrUpdate(smsToSend);
-								} catch (OHServiceException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
+									
+									smsManager.saveOrUpdate(smsToSend, true);
+									
+								} catch (OHServiceException e2) {
+									OHServiceExceptionUtil.showMessages(e2, SmsEdit.this);
+									return;
 								}
-							}
-						} else return;
-					} else {
-						Sms smsToSend = new Sms();
-						smsToSend.setSmsNumber(number);
-						smsToSend.setSmsDateSched(schedDate);
-						smsToSend.setSmsUser(MainMenu.getUser());
-						smsToSend.setSmsText(text);
-						smsToSend.setModule("smsmanager");
-						try {
-							smsManager.saveOrUpdate(smsToSend);
-						} catch (OHServiceException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+								
+							} else return;
+							
+						} else {
+							OHServiceExceptionUtil.showMessages(e1, SmsEdit.this);
+							return;
 						}
 					}
 					dispose();
@@ -331,29 +327,6 @@ public class SmsEdit extends JDialog implements SelectionListener {
 		return jOkButton;
 	}
 	
-	private String[] split(String text) {
-		int len = text.length();
-		if (len <= MAX_LENGHT) {
-			String[] messages = {text};
-			return messages;
-		}
-		
-		// Number of parts
-	    int nParts = (len + MAX_LENGHT - 1) / MAX_LENGHT;
-	    String parts[] = new String[nParts];
-
-	    // Break into parts
-	    int offset= 0;
-	    int i = 0;
-	    while (i < nParts)
-	    {
-	        parts[i] = text.substring(offset, Math.min(offset + MAX_LENGHT, len));
-	        offset += MAX_LENGHT;
-	        i++;
-	    }
-		return parts;
-	}
-
 	private JButton getJCancelButton() {
 		if (jCancelButton == null) {
 			jCancelButton = new JButton(MessageBundle.getMessage("angal.common.cancel")); //$NON-NLS-1$
