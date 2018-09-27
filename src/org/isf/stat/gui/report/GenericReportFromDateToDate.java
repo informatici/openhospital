@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 
 /*--------------------------------------------------------
@@ -28,30 +27,11 @@ import java.io.File;
 
 		public  GenericReportFromDateToDate(String fromDate, String toDate, String jasperFileName, String defaultName, boolean toExcel) {
 			try{
-				
-				StringBuilder sbFilename = new StringBuilder();
-				sbFilename.append("rpt");
-				sbFilename.append(File.separator);
-				sbFilename.append(jasperFileName);
-				sbFilename.append(".jasper");
-				File jasperFile = new File(sbFilename.toString());
-				
-				sbFilename = new StringBuilder();
-				sbFilename.append("PDF");
-				sbFilename.append(File.separator);
-				sbFilename.append(defaultName);
-				File defaultFilename = new File(sbFilename.toString());
-				
                 JasperReportsManager jasperReportsManager = new JasperReportsManager();
+                File defaultFilename = new File(jasperReportsManager.compileDefaultFilename(defaultName));
+                
 				if (toExcel) {
-					JFileChooser fcExcel = new JFileChooser();
-					FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xlsx)","xlsx");
-					FileNameExtensionFilter excelFilter2003 = new FileNameExtensionFilter("Excel 97-2003 (*.xls)","xls");
-					fcExcel.addChoosableFileFilter(excelFilter);
-					fcExcel.addChoosableFileFilter(excelFilter2003);
-					fcExcel.setFileFilter(excelFilter);
-					fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);
-					fcExcel.setSelectedFile(defaultFilename);
+					JFileChooser fcExcel = jasperReportsManager.getJFileChooserExcel(defaultFilename);
 
                     int iRetVal = fcExcel.showSaveDialog(null);
                     if(iRetVal == JFileChooser.APPROVE_OPTION)
@@ -74,4 +54,5 @@ import java.io.File;
                 JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.stat.reporterror"), MessageBundle.getMessage("angal.hospital"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
+
 	}
