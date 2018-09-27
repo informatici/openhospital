@@ -44,10 +44,9 @@ public class ExamRow
 		super();
     }
 	
-	public ExamRow(int aCode, Exam aExam, String aDescription){
-		code=aCode;
-		description=aDescription;
-		exam=aExam;
+	public ExamRow(Exam aExam, String aDescription){
+		this.description=aDescription;
+		this.exam=aExam;
 	}
 
 	public Exam getExamCode() {

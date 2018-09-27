@@ -9,7 +9,6 @@ import static org.junit.Assert.assertEquals;
 
 public class TestExamRow 
 {	
-    private int code = 999;
     private String description = "TestDescription";
     
 			
@@ -28,7 +27,7 @@ public class TestExamRow
 		else
 		{
 			// Create ExamRow with all parameters 
-			examRow = new ExamRow(code, exam, description);
+			examRow = new ExamRow(exam, description);
 		}
 				    	
 		return examRow;
@@ -38,7 +37,6 @@ public class TestExamRow
 			ExamRow examRow,
 			Exam exam) 
 	{	
-		examRow.setCode(code);
 		examRow.setDescription(description);
 		examRow.setExamCode(exam);
 		
@@ -49,7 +47,6 @@ public class TestExamRow
 			ExamRow examRow) 
 	{		
     	System.out.println("Check ExamRow: " + examRow.getCode());
-    	assertEquals(code, examRow.getCode());
     	assertEquals(description, examRow.getDescription());
 		
 		return;
