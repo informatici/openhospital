@@ -191,6 +191,39 @@ public class TimeTools {
 		SimpleDateFormat format = new SimpleDateFormat(pattern);  //$NON-NLS-1$
 		return format.format(dateTime.getTime());
 	}
+
+	/**
+	 * Return a string representation of the dateTime in the form "yyyy-MM-dd HH:mm:ss"
+	 * @param dateTime - a GregorianCalendar object
+	 * @return the String represetation of the GregorianCalendar
+	 */
+	public static String formatDateTimeReport(GregorianCalendar time) {
+		return formatDateTime(time, null);
+	}
+	
+	/**
+	 * Return the first istant of the current date
+	 * @return
+	 */
+	public static GregorianCalendar getDateToday0() {
+		GregorianCalendar date = new GregorianCalendar();
+		date.set(GregorianCalendar.HOUR_OF_DAY, 0);
+		date.set(GregorianCalendar.MINUTE, 0);
+		date.set(GregorianCalendar.SECOND, 0);
+		return date;
+	}
+	
+	/**
+	 * Return the last istant of the current date
+	 * @return
+	 */
+	public static GregorianCalendar getDateToday24() {
+		GregorianCalendar date = new GregorianCalendar();
+		date.set(GregorianCalendar.HOUR_OF_DAY, 23);
+		date.set(GregorianCalendar.MINUTE, 59);
+		date.set(GregorianCalendar.SECOND, 59);
+		return date;
+	}
 	
 	/**
 	 * Return a {@link GregorianCalendar} representation of the string using the given pattern
@@ -215,4 +248,6 @@ public class TimeTools {
 		
 		return calendar;
 	}
+	
+	
 }

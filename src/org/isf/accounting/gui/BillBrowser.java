@@ -20,7 +20,6 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -48,10 +47,12 @@ import org.isf.accounting.gui.PatientBillEdit.PatientBillListener;
 import org.isf.accounting.manager.BillBrowserManager;
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillPayments;
+import org.isf.accounting.service.AccountingIoOperations;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.gui.Menu;
 import org.isf.stat.gui.report.GenericReportBill;
 import org.isf.stat.gui.report.GenericReportFromDateToDate;
 import org.isf.stat.gui.report.GenericReportUserInDate;
@@ -59,6 +60,7 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ModalJFrame;
+import org.isf.utils.time.TimeTools;
 import org.joda.time.DateTime;
 
 import com.toedter.calendar.JDateChooser;
@@ -105,7 +107,6 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private JButton jButtonDelete;
 	private JButton jButtonClose;
 	private JButton jButtonReport;
-	@SuppressWarnings("rawtypes")
 	private JComboBox jComboUsers;
 	private JMonthChooser jComboBoxMonths;
 	private JYearChooser jComboBoxYears;
@@ -115,20 +116,19 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private JDateChooser jCalendarFrom;
 	private GregorianCalendar dateFrom = new GregorianCalendar();
 	private GregorianCalendar dateTo = new GregorianCalendar();
-	private GregorianCalendar dateToday0 = new GregorianCalendar();
-	private GregorianCalendar dateToday24 = new GregorianCalendar();
+	private GregorianCalendar dateToday0 = TimeTools.getDateToday0();
+	private GregorianCalendar dateToday24 = TimeTools.getDateToday24();
 
 	private JButton jButtonToday;
 	
-//	private String status;
-	private String[] columsNames = {MessageBundle.getMessage("angal.billbrowser.id"),
-			MessageBundle.getMessage("angal.common.date"), 
-			MessageBundle.getMessage("angal.billbrowser.patientID"),
-			MessageBundle.getMessage("angal.billbrowser.patient"), 
-			MessageBundle.getMessage("angal.billbrowser.amount"), 
-			MessageBundle.getMessage("angal.billbrowser.lastpayment"), 
-			MessageBundle.getMessage("angal.billbrowser.status"), 
-			MessageBundle.getMessage("angal.billbrowser.balance")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+	private String[] columsNames = {MessageBundle.getMessage("angal.billbrowser.id"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.common.date"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.billbrowser.patientID"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.billbrowser.patient"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.billbrowser.amount"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.billbrowser.lastpayment"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.billbrowser.status"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.billbrowser.balance")};  //$NON-NLS-1$
 	private int[] columsWidth = {50, 150, 50, 50, 100, 150, 50, 100};
 	private int[] maxWidth = {150, 150, 150, 200, 100, 150, 50, 100};
 	private boolean[] columsResizable = {false, false, false, true, false, false, false, false};
@@ -136,11 +136,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private boolean[] alignCenter = {true, true, true, false, false, true, true, false};
 	private boolean[] boldCenter = {true, false, false, false, false, false, false, false};
 	
-//	private final int TabbedWidth = 800;
-//	private final int TabbedHeight = 400;
-//	private final int TotalWidth = TabbedWidth / 2;
-//	private final int TotalHeight = 20;
-	
+	//Totals
 	private BigDecimal totalToday;
 	private BigDecimal balanceToday;
 	private BigDecimal totalPeriod;
@@ -151,7 +147,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private int year;
 	
 	//Bills & Payments
-	private BillBrowserManager billManager = new BillBrowserManager();
+	private BillBrowserManager billManager = new BillBrowserManager(Menu.getApplicationContext().getBean(AccountingIoOperations.class));
 	private ArrayList<Bill> billPeriod;
 	private HashMap<Integer, Bill> mapBill = new HashMap<Integer, Bill>();
 	private ArrayList<BillPayments> paymentsPeriod;
@@ -243,11 +239,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 
 	private JDateChooser getJCalendarFrom() {
 		if (jCalendarFrom == null) {
-			dateFrom.set(GregorianCalendar.HOUR_OF_DAY, 0);
-			dateFrom.set(GregorianCalendar.MINUTE, 0);
-			dateFrom.set(GregorianCalendar.SECOND, 0);
-			dateToday0.setTime(dateFrom.getTime());
-			jCalendarFrom = new JDateChooser(dateFrom.getTime()); // Calendar
+			jCalendarFrom = new JDateChooser(dateToday0.getTime()); // Calendar
 			jCalendarFrom.setLocale(new Locale(GeneralData.LANGUAGE));
 			jCalendarFrom.setDateFormatString("dd/MM/yy"); //$NON-NLS-1$
 			jCalendarFrom.addPropertyChangeListener("date", new PropertyChangeListener() { //$NON-NLS-1$
@@ -270,11 +262,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 
 	private JDateChooser getJCalendarTo() {
 		if (jCalendarTo == null) {
-			dateTo.set(GregorianCalendar.HOUR_OF_DAY, 23);
-			dateTo.set(GregorianCalendar.MINUTE, 59);
-			dateTo.set(GregorianCalendar.SECOND, 59);
-			dateToday24.setTime(dateTo.getTime());
-			jCalendarTo = new JDateChooser(dateTo.getTime()); // Calendar
+			jCalendarTo = new JDateChooser(dateToday24.getTime()); // Calendar
 			jCalendarTo.setLocale(new Locale(GeneralData.LANGUAGE));
 			jCalendarTo.setDateFormatString("dd/MM/yy"); //$NON-NLS-1$
 			jCalendarTo.addPropertyChangeListener("date", new PropertyChangeListener() { //$NON-NLS-1$
@@ -336,8 +324,8 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 					
 					if (options.indexOf(option) == i) {
 							
-							from = formatDateTimeReport(dateToday0);
-							to = formatDateTimeReport(dateToday24);
+							from = TimeTools.formatDateTimeReport(dateToday0);
+							to = TimeTools.formatDateTimeReport(dateToday24);
 							String user;
 							if (GeneralData.SINGLEUSER) {
 								user = "admin";
@@ -355,13 +343,13 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 						}
 					if (options.indexOf(option) == ++i) {
 						
-						from = formatDateTimeReport(dateToday0);
-						to = formatDateTimeReport(dateToday24);
+						from = TimeTools.formatDateTimeReport(dateToday0);
+						to = TimeTools.formatDateTimeReport(dateToday24);
 					}
 					if (options.indexOf(option) == ++i) {
 						
-						from = formatDateTimeReport(dateFrom);
-						to = formatDateTimeReport(dateTo);
+						from = TimeTools.formatDateTimeReport(dateFrom);
+						to = TimeTools.formatDateTimeReport(dateTo);
 					}
 					if (options.indexOf(option) == ++i) {
 						
@@ -372,8 +360,8 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 						thisMonthFrom.set(GregorianCalendar.DAY_OF_MONTH, 1);
 						thisMonthTo.set(GregorianCalendar.MONTH, month);
 						thisMonthTo.set(GregorianCalendar.DAY_OF_MONTH, dateFrom.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
-						from = formatDateTimeReport(thisMonthFrom);
-						to = formatDateTimeReport(thisMonthTo);
+						from = TimeTools.formatDateTimeReport(thisMonthFrom);
+						to = TimeTools.formatDateTimeReport(thisMonthTo);
 					}
 					if (options.indexOf(option) == ++i) {
 						
@@ -402,8 +390,8 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 						thisMonthFrom.set(GregorianCalendar.DAY_OF_MONTH, 1);
 						thisMonthTo.set(GregorianCalendar.MONTH, month);
 						thisMonthTo.set(GregorianCalendar.DAY_OF_MONTH, dateFrom.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
-						from = formatDateTimeReport(thisMonthFrom);
-						to = formatDateTimeReport(thisMonthTo);
+						from = TimeTools.formatDateTimeReport(thisMonthFrom);
+						to = TimeTools.formatDateTimeReport(thisMonthTo);
 					}
 
 					options = new ArrayList<String>();
@@ -667,7 +655,6 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 		return jPanelRange;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JComboBox getJComboUsers() {
 		if (jComboUsers == null) {
 			jComboUsers = new JComboBox();
@@ -694,15 +681,8 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 			jButtonToday.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {
-//					System.out.println("==> dateToday0  : " + dateToday0.toString());
-//					System.out.println("==> dateToday24 : " + dateToday24.toString());
-//					System.out.println("==> Date From   : " + dateFrom.toString());
-//					System.out.println("==> Date To     : " + dateTo.toString());
 					dateFrom.setTime(dateToday0.getTime());
 					dateTo.setTime(dateToday24.getTime());
-//					System.out.println("==> Date From   : " + dateFrom.toString());
-//					System.out.println("==> Date To     : " + dateTo.toString());
-					
 					jCalendarFrom.setDate(dateFrom.getTime());
 					jCalendarTo.setDate(dateTo.getTime());
 					
@@ -1183,7 +1163,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 				return thisBill.getId();
 			}
 			if (c == ++index) {
-				return formatDateTime(thisBill.getDate());
+				return TimeTools.formatDateTime(thisBill.getDate(), "dd/MM/yy - HH:mm:ss");
 			}
 			if (c == ++index) {
 				int patID = thisBill.getPatient().getCode();
@@ -1196,7 +1176,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 				return thisBill.getAmount();
 			}
 			if (c == ++index) {
-				return formatDateTime(thisBill.getUpdate());
+				return TimeTools.formatDateTime(thisBill.getUpdate(), "dd/MM/yy - HH:mm:ss");
 			}
 			if (c == ++index) {
 				return thisBill.getStatus();
@@ -1211,21 +1191,6 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 			return false;
 		}
 
-	}
-	
-	public String formatDate(GregorianCalendar time) {
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy");  //$NON-NLS-1$
-		return format.format(time.getTime());
-	}
-	
-	public String formatDateTime(GregorianCalendar time) {
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy - HH:mm:ss");  //$NON-NLS-1$
-		return format.format(time.getTime());
-	}
-	
-	public String formatDateTimeReport(GregorianCalendar time) {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  //$NON-NLS-1$
-		return format.format(time.getTime());
 	}
 	
 	public boolean isSameDay(GregorianCalendar aDate, GregorianCalendar today) {

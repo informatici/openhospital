@@ -7,8 +7,8 @@ import java.util.GregorianCalendar;
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Persistence class for Accounting module.
  */
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class AccountingIoOperations {	
 	
 	@Autowired
@@ -33,9 +33,9 @@ public class AccountingIoOperations {
 	 * Returns all the pending {@link Bill}s for the specified patient.
 	 * @param patID the patient id.
 	 * @return the list of pending bills.
-	 * @throws OHException if an error occurs retrieving the pending bills.
+	 * @throws OHServiceException if an error occurs retrieving the pending bills.
 	 */
-	public ArrayList<Bill> getPendingBills(int patID) throws OHException {
+	public ArrayList<Bill> getPendingBills(int patID) throws OHServiceException {
 		if (patID != 0)
 			return new ArrayList<Bill>(billRepository.findByStatusAndPatient_codeOrderByDateDesc("O", patID));
 
@@ -45,9 +45,9 @@ public class AccountingIoOperations {
 	/**
 	 * Get all the {@link Bill}s.
 	 * @return a list of bills.
-	 * @throws OHException if an error occurs retrieving the bills.
+	 * @throws OHServiceException if an error occurs retrieving the bills.
 	 */
-	public ArrayList<Bill> getBills() throws OHException {
+	public ArrayList<Bill> getBills() throws OHServiceException {
 		return new ArrayList<Bill>(billRepository.findAllByOrderByDateDesc());
 	}
 	
@@ -55,18 +55,18 @@ public class AccountingIoOperations {
 	 * Get the {@link Bill} with specified billID.
 	 * @param billID
 	 * @return the {@link Bill}.
-	 * @throws OHException if an error occurs retrieving the bill.
+	 * @throws OHServiceException if an error occurs retrieving the bill.
 	 */
-	public Bill getBill(int billID) throws OHException {
+	public Bill getBill(int billID) throws OHServiceException {
 		return billRepository.findOne(billID);
 	}
 
 	/**
 	 * Returns all user ids from {@link BillPayments}.
 	 * @return a list of user id.
-	 * @throws OHException if an error occurs retrieving the users list.
+	 * @throws OHServiceException if an error occurs retrieving the users list.
 	 */
-    public ArrayList<String> getUsers() throws OHException {
+    public ArrayList<String> getUsers() throws OHServiceException {
 
 		return new ArrayList<String>(billPaymentRepository.findUserDistinctByOrderByUserAsc());
 	}
@@ -76,9 +76,9 @@ public class AccountingIoOperations {
 	 * the stored {@link BillItems} if no id is provided. 
 	 * @param billID the bill id or <code>0</code>.
 	 * @return a list of {@link BillItems} associated to the bill id or all the stored bill items.
-	 * @throws OHException if an error occurs retrieving the bill items.
+	 * @throws OHServiceException if an error occurs retrieving the bill items.
 	 */
-	public ArrayList<BillItems> getItems(int billID) throws OHException {
+	public ArrayList<BillItems> getItems(int billID) throws OHServiceException {
 		ArrayList<BillItems> billItems = null;
 		
 		
@@ -99,11 +99,11 @@ public class AccountingIoOperations {
 	 * @param dateFrom low endpoint, inclusive, for the date range. 
 	 * @param dateTo high endpoint, inclusive, for the date range.
 	 * @return a list of {@link BillPayments} for the specified date range.
-	 * @throws OHException if an error occurs retrieving the bill payments.
+	 * @throws OHServiceException if an error occurs retrieving the bill payments.
 	 */
 	public ArrayList<BillPayments> getPayments(
 		GregorianCalendar dateFrom, 
-		GregorianCalendar dateTo) throws OHException {
+		GregorianCalendar dateTo) throws OHServiceException {
 
 		return new ArrayList<BillPayments>(
 			billPaymentRepository.findByDateBetweenOrderByIdAscDateAsc(dateFrom.getTime(), dateTo.getTime()));
@@ -114,10 +114,10 @@ public class AccountingIoOperations {
 	 * the stored {@link BillPayments} if no id is indicated.
 	 * @param billID the bill id or <code>0</code>.
 	 * @return the list of bill payments.
-	 * @throws OHException if an error occurs retrieving the bill payments.
+	 * @throws OHServiceException if an error occurs retrieving the bill payments.
 	 */
 	public ArrayList<BillPayments> getPayments(
-			int billID) throws OHException 
+			int billID) throws OHServiceException 
 	{ 
 		ArrayList<BillPayments> payments = null;
 				
@@ -157,9 +157,9 @@ public class AccountingIoOperations {
 	 * Stores a new {@link Bill}.
 	 * @param newBill the bill to store.
 	 * @return the generated {@link Bill} id.
-	 * @throws OHException if an error occurs storing the bill.
+	 * @throws OHServiceException if an error occurs storing the bill.
 	 */
-	public int newBill(Bill newBill) throws OHException {
+	public int newBill(Bill newBill) throws OHServiceException {
 
 		return billRepository.save(newBill).getId();
 	}
@@ -169,11 +169,11 @@ public class AccountingIoOperations {
 	 * @param billID the bill id.
 	 * @param billItems the bill items to store.
 	 * @return <code>true</code> if the {@link BillItems} have been store, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the store operation.
+	 * @throws OHServiceException if an error occurs during the store operation.
 	 */
 	public boolean newBillItems(
 			Bill bill,
-			ArrayList<BillItems> billItems) throws OHException 
+			ArrayList<BillItems> billItems) throws OHServiceException 
 	{
 		boolean result = true;
 		
@@ -186,7 +186,7 @@ public class AccountingIoOperations {
 	}
 	
 	private boolean _deleteBillsInsideBillItems(
-			int id) throws OHException 
+			int id) throws OHServiceException 
     {	
 		boolean result = true;
         		
@@ -198,7 +198,7 @@ public class AccountingIoOperations {
 	
 	private boolean _insertNewBillInsideBillItems(
 			Bill bill,
-			ArrayList<BillItems> billItems) throws OHException 
+			ArrayList<BillItems> billItems) throws OHServiceException 
     {	
 		boolean result = true;
         		
@@ -222,11 +222,11 @@ public class AccountingIoOperations {
 	 * @param billID the bill id.
 	 * @param payItems the bill payments.
 	 * @return <code>true</code> if the payment have stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the store procedure.
+	 * @throws OHServiceException if an error occurs during the store procedure.
 	 */
 	public boolean newBillPayments(
 			Bill bill, 
-			ArrayList<BillPayments> payItems) throws OHException 
+			ArrayList<BillPayments> payItems) throws OHServiceException 
 	{
 		boolean result = true;
 		
@@ -239,7 +239,7 @@ public class AccountingIoOperations {
 	}
 	
 	private boolean _deleteBillsInsideBillPayments(
-			int id) throws OHException 
+			int id) throws OHServiceException 
     {	
 		boolean result = true;
         		
@@ -251,7 +251,7 @@ public class AccountingIoOperations {
 	
 	private boolean _insertNewBillInsideBillPayments(
 			Bill bill,
-			ArrayList<BillPayments> billPayments) throws OHException 
+			ArrayList<BillPayments> billPayments) throws OHServiceException 
     {	
 
 		boolean result = true;
@@ -273,10 +273,10 @@ public class AccountingIoOperations {
 	 * Updates the specified {@link Bill}.
 	 * @param updateBill the bill to update.
 	 * @return <code>true</code> if the bill has been updated, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the update.
+	 * @throws OHServiceException if an error occurs during the update.
 	 */
 	public boolean updateBill(
-			Bill updateBill) throws OHException 
+			Bill updateBill) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -291,10 +291,10 @@ public class AccountingIoOperations {
 	 * Deletes the specified {@link Bill}.
 	 * @param deleteBill the bill to delete.
 	 * @return <code>true</code> if the bill has been deleted, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs deleting the bill.
+	 * @throws OHServiceException if an error occurs deleting the bill.
 	 */
 	public boolean deleteBill(
-			Bill deleteBill) throws OHException 
+			Bill deleteBill) throws OHServiceException 
 	{
 		boolean result = true;
         		
@@ -309,11 +309,11 @@ public class AccountingIoOperations {
 	 * @param dateFrom the low date range endpoint, inclusive. 
 	 * @param dateTo the high date range endpoint, inclusive.
 	 * @return a list of retrieved {@link Bill}s.
-	 * @throws OHException if an error occurs retrieving the bill list.
+	 * @throws OHServiceException if an error occurs retrieving the bill list.
 	 */
 	public ArrayList<Bill> getBills(
 			GregorianCalendar dateFrom, 
-			GregorianCalendar dateTo) throws OHException 
+			GregorianCalendar dateTo) throws OHServiceException 
 	{
 		ArrayList<Bill> bills = (ArrayList<Bill>) billRepository.findAllWhereDates(
 				new Timestamp(dateFrom.getTime().getTime()),
@@ -327,10 +327,10 @@ public class AccountingIoOperations {
 	 * Gets all the {@link Bill}s associated to the passed {@link BillPayments}.
 	 * @param payments the {@link BillPayments} associated to the bill to retrieve.
 	 * @return a list of {@link Bill} associated to the passed {@link BillPayments}.
-	 * @throws OHException if an error occurs retrieving the bill list.
+	 * @throws OHServiceException if an error occurs retrieving the bill list.
 	 */
 	public ArrayList<Bill> getBills(
-			ArrayList<BillPayments> payments) throws OHException 
+			ArrayList<BillPayments> payments) throws OHServiceException 
 	{
 		ArrayList<Integer> pBillCode = null;
 		ArrayList<Bill> pBill = new ArrayList<Bill>();
@@ -353,10 +353,10 @@ public class AccountingIoOperations {
 	 * Retrieves all the {@link BillPayments} associated to the passed {@link Bill} list.
 	 * @param bills the bill list.
 	 * @return a list of {@link BillPayments} associated to the passed bill list.
-	 * @throws OHException if an error occurs retrieving the payments.
+	 * @throws OHServiceException if an error occurs retrieving the payments.
 	 */
 	public ArrayList<BillPayments> getPayments(
-			ArrayList<Bill> bills) throws OHException 
+			ArrayList<Bill> bills) throws OHServiceException 
 	{
 
 		ArrayList<Integer> pPaymentCode = null;

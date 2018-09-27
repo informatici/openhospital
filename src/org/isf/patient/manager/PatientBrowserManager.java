@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.isf.accounting.manager.BillBrowserManager;
 import org.isf.accounting.model.Bill;
+import org.isf.accounting.service.AccountingIoOperations;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
@@ -274,7 +275,7 @@ public class PatientBrowserManager {
         }
 
         boolean billPending = false;
-        BillBrowserManager billMan = new BillBrowserManager();
+        BillBrowserManager billMan = new BillBrowserManager(Menu.getApplicationContext().getBean(AccountingIoOperations.class));
         ArrayList<Bill> bills = billMan.getPendingBills(mergedPatient.getCode());
         bills = billMan.getPendingBills(mergedPatient.getCode());
         if (bills != null && !bills.isEmpty()) billPending = true;
