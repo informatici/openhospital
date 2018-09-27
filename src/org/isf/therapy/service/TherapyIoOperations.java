@@ -2,15 +2,15 @@ package org.isf.therapy.service;
 
 import java.util.ArrayList;
 import org.isf.therapy.model.TherapyRow;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class TherapyIoOperations {
 
 	@Autowired
@@ -22,10 +22,10 @@ public class TherapyIoOperations {
 	 * @param thRow - the {@link TherapyRow} (therapy)
 	 * @param numTherapy - the therapy progressive number for the patient
 	 * @return the therapyID
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public TherapyRow newTherapy(
-			TherapyRow thRow) throws OHException 
+			TherapyRow thRow) throws OHServiceException 
 	{
 		TherapyRow savedTherapy = repository.save(thRow);
 		
@@ -39,10 +39,10 @@ public class TherapyIoOperations {
 	 * 
 	 * @param patID - the Patient ID
 	 * @return the list of {@link TherapyRow}s (therapies)
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public ArrayList<TherapyRow> getTherapyRows(
-			int patID) throws OHException 
+			int patID) throws OHServiceException 
 	{
 		ArrayList<TherapyRow> therapyList = null;
 
@@ -63,10 +63,10 @@ public class TherapyIoOperations {
 	 * 
 	 * @param patID - the Patient ID
 	 * @return <code>true</code> if the therapies have been deleted, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean deleteAllTherapies(
-			int patID) throws OHException 
+			int patID) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -81,10 +81,10 @@ public class TherapyIoOperations {
 	 *
 	 * @param code - the therapy code
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean isCodePresent(
-			Integer code) throws OHException
+			Integer code) throws OHServiceException
 	{
 		boolean result = true;
 	

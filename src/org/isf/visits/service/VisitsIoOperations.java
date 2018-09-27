@@ -3,16 +3,16 @@ package org.isf.visits.service;
 import java.util.ArrayList;
 
 import org.isf.patient.model.Patient;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.visits.model.Visit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class VisitsIoOperations {
 
 	@Autowired
@@ -23,10 +23,10 @@ public class VisitsIoOperations {
 	 * 
 	 * @param patID - the {@link Patient} ID. If <code>0</code> return the list of all {@link Visit}s
 	 * @return the list of {@link Visit}s
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public ArrayList<Visit> getVisits(
-			Integer patID) throws OHException 
+			Integer patID) throws OHServiceException 
 	{
 		ArrayList<Visit> visits = null;
 
@@ -47,10 +47,10 @@ public class VisitsIoOperations {
 	 * 
 	 * @param visit - the {@link Visit} related to patID. 
 	 * @return the visitID
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public int newVisit(
-			Visit visit) throws OHException 
+			Visit visit) throws OHServiceException 
 	{		
 		Visit savedVisit = repository.save(visit);
 		    	
@@ -62,10 +62,10 @@ public class VisitsIoOperations {
 	 * 
 	 * @param patID - the {@link Patient} ID
 	 * @return <code>true</code> if the list has been deleted, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean deleteAllVisits(
-			int patID) throws OHException 
+			int patID) throws OHServiceException 
 	{
 		boolean result = true;
 
@@ -80,10 +80,10 @@ public class VisitsIoOperations {
 	 *
 	 * @param code - the visit code
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean isCodePresent(
-			Integer code) throws OHException
+			Integer code) throws OHServiceException
 	{
 		boolean result = true;
 	

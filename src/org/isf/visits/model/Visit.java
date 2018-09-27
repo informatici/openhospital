@@ -116,9 +116,19 @@ public class Visit
 		
 		return formatDateTime(this.date);
 	}
+	
+	public String toStringSMS() {
+		
+		return formatDateTimeSMS(this.date);
+	}
 
 	public String formatDateTime(GregorianCalendar time) {
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy - HH:mm:ss"); //$NON-NLS-1$
+		return format.format(time.getTime());
+	}
+	
+	public String formatDateTimeSMS(GregorianCalendar time) {
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy HH:mm"); //$NON-NLS-1$
 		return format.format(time.getTime());
 	}
 	

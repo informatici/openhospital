@@ -22,7 +22,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -49,6 +48,7 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
+import org.isf.menu.gui.Menu;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.therapy.manager.TherapyManager;
@@ -131,8 +131,8 @@ public class TherapyEdit extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	private MedicalBrowsingManager medBrowser = new MedicalBrowsingManager();
-	private TherapyManager thManager = new TherapyManager();
-	private VisitManager vstManager = new VisitManager();
+	private TherapyManager thManager = Menu.getApplicationContext().getBean(TherapyManager.class);
+	private VisitManager vstManager = Menu.getApplicationContext().getBean(VisitManager.class);
 	private ArrayList<Medical> medArray;
 	private ArrayList<Double> qtyArray = new ArrayList<Double>();
 	private ArrayList<Therapy> therapies = new ArrayList<Therapy>();
@@ -261,11 +261,8 @@ public class TherapyEdit extends JDialog {
 
 	private void showTherapy(Therapy th) {
 		for (GregorianCalendar gc : th.getDates()) {
-			// System.out.println(th.numTherapy+"-"+formatDate(gc));
 			if (gc.get(GregorianCalendar.YEAR) == yearChooser.getYear()) {
 				if (gc.get(GregorianCalendar.MONTH) == monthChooser.getMonth()) {
-					// jAgenda.addElement(index, th,
-					// gc.get(GregorianCalendar.DAY_OF_MONTH));
 					jAgenda.addElement(th, gc.get(GregorianCalendar.DAY_OF_MONTH));
 					notifyCheckBox.setSelected(th.isNotify());
 				}
@@ -275,11 +272,8 @@ public class TherapyEdit extends JDialog {
 
 	private void showVisits() {
 		for (Visit visit : visits) {
-			// System.out.println(th.numTherapy+"-"+formatDate(gc));
 			if (visit.getDate().get(GregorianCalendar.YEAR) == yearChooser.getYear()) {
 				if (visit.getDate().get(GregorianCalendar.MONTH) == monthChooser.getMonth()) {
-					// jAgenda.addElement(index, th,
-					// gc.get(GregorianCalendar.DAY_OF_MONTH));
 					jAgenda.addElement(visit, visit.getDate().get(GregorianCalendar.DAY_OF_MONTH));
 				}
 			}
@@ -410,7 +404,6 @@ public class TherapyEdit extends JDialog {
 						visit.setDate(date);
 						visit.setPatient(patient);
 						
-						VisitManager vstManager = new VisitManager();
 						int visitID = 0;
 						try {
 							visitID = vstManager.newVisit(visit);
@@ -593,7 +586,7 @@ public class TherapyEdit extends JDialog {
 	}
 
 	/*
-	 * TODO: riattivarlo in seguito.
+	 * TODO: to be enabled in the future.
 	 * 
 	 * private JButton getReportButton() {
 		if (reportButton == null) {
@@ -678,29 +671,36 @@ public class TherapyEdit extends JDialog {
 					/*
 					 * Check visits before save.
 					 */
-					try {
-						if (visitModified) {
-							if (visits.isEmpty()) {
-								ok = JOptionPane.showConfirmDialog(
-										TherapyEdit.this,
-										MessageBundle.getMessage("angal.therapy.deleteallvisitsfor") + " " + patient.getName(),
-										MessageBundle.getMessage("angal.therapy.novisits"),
-										JOptionPane.CANCEL_OPTION); //$NON-NLS-1$
-								if (ok == JOptionPane.YES_OPTION) {
+					if (visitModified) {
+						if (visits.isEmpty()) {
+							ok = JOptionPane.showConfirmDialog(
+									TherapyEdit.this,
+									MessageBundle.getMessage("angal.therapy.deleteallvisitsfor") + " " + patient.getName(),
+									MessageBundle.getMessage("angal.therapy.novisits"),
+									JOptionPane.CANCEL_OPTION); //$NON-NLS-1$
+							if (ok == JOptionPane.YES_OPTION) {
+								try {
 									vstManager.deleteAllVisits(patient.getCode());
-								} else 	return;
-							} else {
-								if (vstManager.newVisits(visits)) {
-									JOptionPane.showMessageDialog(TherapyEdit.this,
-											MessageBundle.getMessage("angal.therapy.patientvisitssaved")); //$NON-NLS-1$
-								} else {
-									JOptionPane.showMessageDialog(TherapyEdit.this,
-											MessageBundle.getMessage("angal.therapy.patientvisitscouldnotbesaved")); //$NON-NLS-1$
+								} catch (OHServiceException ex) {
+									OHServiceExceptionUtil.showMessages(ex);
 								}
+							} else 	return;
+						} else {
+							boolean result = false;
+							try {
+								result = vstManager.newVisits(visits);
+								
+							} catch (OHServiceException ex) {
+								OHServiceExceptionUtil.showMessages(ex);
+							}
+							if (result) {
+								JOptionPane.showMessageDialog(TherapyEdit.this,
+										MessageBundle.getMessage("angal.therapy.patientvisitssaved")); //$NON-NLS-1$
+							} else {
+								JOptionPane.showMessageDialog(TherapyEdit.this,
+										MessageBundle.getMessage("angal.therapy.patientvisitscouldnotbesaved")); //$NON-NLS-1$
 							}
 						}
-					} catch (OHServiceException ex) {
-						OHServiceExceptionUtil.showMessages(ex);
 					}
 					
 					if (!therapyModified && !visitModified) {
@@ -716,16 +716,18 @@ public class TherapyEdit extends JDialog {
 					}
 					
 					if (saveTherapies) {
+						boolean result = false;
 						try {
-							if (thManager.newTherapies(thRows)) {
-								JOptionPane.showMessageDialog(TherapyEdit.this,
-										MessageBundle.getMessage("angal.therapy.therapiesplansaved"));
-							} else {
-								JOptionPane.showMessageDialog(TherapyEdit.this,
-										MessageBundle.getMessage("angal.therapy.therapiesplancouldnotbesaved"));
-							}
+							result = thManager.newTherapies(thRows);
 						} catch (OHServiceException ex) {
 							OHServiceExceptionUtil.showMessages(ex);
+						}
+						if (result) {
+							JOptionPane.showMessageDialog(TherapyEdit.this,
+									MessageBundle.getMessage("angal.therapy.therapiesplansaved"));
+						} else {
+							JOptionPane.showMessageDialog(TherapyEdit.this,
+									MessageBundle.getMessage("angal.therapy.therapiesplancouldnotbesaved"));
 						}
 					}
 					
@@ -848,11 +850,11 @@ public class TherapyEdit extends JDialog {
 	protected void showMedOutOfStock(ArrayList<Medical> medOutStock) {
 
 		if (medOutStock.size() > 0) {
-			String message = MessageBundle.getMessage("angal.therapy.followingdrugsarefewornotavailable"); //$NON-NLS-1$
+			StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.therapy.followingdrugsarefewornotavailable")); //$NON-NLS-1$
 			for (Medical med : medOutStock) {
-				message += med.toString() + "\n";
+				message.append("\n").append(med.toString());
 			}
-			JOptionPane.showMessageDialog(TherapyEdit.this, message,
+			JOptionPane.showMessageDialog(TherapyEdit.this, message.toString(),
 					MessageBundle.getMessage("angal.therapy.therapynotavailable"), JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
 		}
 	}
@@ -1162,17 +1164,8 @@ public class TherapyEdit extends JDialog {
 	}
 
 	public void therapyInserted() {
-		System.out.println("Terapia Inserita"); //$NON-NLS-1$
+		System.out.println("Therapy successfully inserted"); //$NON-NLS-1$
 
 	}
 
-	public String formatDate(GregorianCalendar time) {
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy"); //$NON-NLS-1$
-		return format.format(time.getTime());
-	}
-
-	public String formatDateTime(GregorianCalendar time) {
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yy - HH:mm:ss"); //$NON-NLS-1$
-		return format.format(time.getTime());
-	}
 }

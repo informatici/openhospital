@@ -43,11 +43,12 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
+import org.isf.menu.gui.Menu;
 import org.isf.therapy.manager.TherapyManager;
 import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.IconButton;
 import org.isf.utils.time.TimeTools;
 import org.joda.time.DateTime;
@@ -138,7 +139,7 @@ public class TherapyEntryForm extends JDialog {
 			this.medArray = medBrowser.getMedicals();
 		} catch (OHServiceException e) {
 			this.medArray = new ArrayList<Medical>();
-			JOptionPane.showMessageDialog(null, e.getMessage());
+			OHServiceExceptionUtil.showMessages(e, TherapyEntryForm.this);
 		}
 		this.therapy = th;
 		this.patID = patID;
@@ -762,16 +763,12 @@ public class TherapyEntryForm extends JDialog {
 					boolean notify = false;
 					boolean sms = false;
 
-					TherapyManager thManager = new TherapyManager();
+					TherapyManager thManager = Menu.getApplicationContext().getBean(TherapyManager.class);
 					try {
 						thRow = thManager.newTherapy(therapyID, patID, startDate, endDate, medical, qty, unitID, freqInDay, freqInPeriod, note, notify, sms);
 						therapyID = thRow.getTherapyID();
-					}catch(OHServiceException e){
-						if(e.getMessages() != null){
-							for(OHExceptionMessage msg : e.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
+					} catch (OHServiceException e){
+						OHServiceExceptionUtil.showMessages(e, TherapyEntryForm.this);
 					}
 					if (therapyID > 0) {
 						thRow.setTherapyID(therapyID);

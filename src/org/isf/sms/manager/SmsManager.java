@@ -15,13 +15,18 @@ import org.isf.utils.exception.model.OHSeverityLevel;
 
 public class SmsManager {
 
-	private final int MAX_LENGHT = 160;
+	public final static int MAX_LENGHT = 160;
 	private final String NUMBER_REGEX = "^\\+?\\d+$"; //$NON-NLS-1$
 	
 	private SmsOperations smsOperations = Menu.getApplicationContext().getBean(SmsOperations.class);
 	
 	public SmsManager(){}
 	
+	/**
+	 * Verify if the object is valid for CRUD and return a list of errors, if any
+	 * @param sms
+	 * @return list of {@link OHExceptionMessage}
+	 */
 	private List<OHExceptionMessage> validateSms(Sms sms) {
 		List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
 		String number = sms.getSmsNumber();
