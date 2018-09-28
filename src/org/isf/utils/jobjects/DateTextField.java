@@ -2,7 +2,7 @@
  * 02-mar-2006
  * @author Theo
  */
-package org.isf.medicalstock.manager;
+package org.isf.utils.jobjects;
 
 import java.awt.FlowLayout;
 import java.awt.event.FocusEvent;
@@ -52,8 +52,7 @@ public class DateTextField extends JPanel{
 
 	}
 	public void initialize(){
-		day = new JTextField(2);
-		day.setDocument(new DocumentoLimitato(2));
+		day = new VoLimitedTextField(2,2);
 		day.addFocusListener(new FocusListener() {
 			public void focusLost(FocusEvent e) {
 				if (day.getText().length() != 0) {
@@ -70,8 +69,7 @@ public class DateTextField extends JPanel{
 			public void focusGained(FocusEvent e) {
 			}
 		});
-		month = new JTextField(2);
-		month.setDocument(new DocumentoLimitato(2));
+		month = new VoLimitedTextField(2,2);
 		month.addFocusListener(new FocusListener() {
 			public void focusLost(FocusEvent e) {
 				if (month.getText().length() != 0) {
@@ -88,8 +86,7 @@ public class DateTextField extends JPanel{
 			public void focusGained(FocusEvent e) {
 			}
 		});
-		year = new JTextField(4);
-		year.setDocument(new DocumentoLimitato(4));
+		year = new VoLimitedTextField(4,4);
 		year.addFocusListener(new FocusListener() {
 			public void focusLost(FocusEvent e) {
 				if (year.getText().length() == 4) {
@@ -208,39 +205,4 @@ public class DateTextField extends JPanel{
 			year.setEnabled(false);
 		}
 	}
-
-	/**
-	 * This class extends DefaultStyledDocument and is needed to limit of each input field
-	 * @author someone (found on the web)
-	 */
-	
-	public class DocumentoLimitato extends DefaultStyledDocument {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private final int NUMERO_MASSIMO_CARATTERI;
-
-		public DocumentoLimitato(int numeroMassimoCaratteri) {
-			NUMERO_MASSIMO_CARATTERI = numeroMassimoCaratteri;
-		}
-
-		public void insertString(int off, String text, AttributeSet att)
-				throws BadLocationException {
-			int numeroCaratteriNelDocumento = getLength();
-			int lunghezzaNuovoTesto = text.length();
-			if (numeroCaratteriNelDocumento + lunghezzaNuovoTesto > NUMERO_MASSIMO_CARATTERI) {
-				int numeroCaratteriInseribili = NUMERO_MASSIMO_CARATTERI
-						- numeroCaratteriNelDocumento;
-				if (numeroCaratteriInseribili > 0) {
-					String parteNuovoTesto = text.substring(0,
-							numeroCaratteriInseribili);
-					super.insertString(off, parteNuovoTesto, att);
-				}
-			} else {
-				super.insertString(off, text, att);
-			}
-		}
-	}
-
 }

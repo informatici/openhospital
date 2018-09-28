@@ -41,7 +41,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -65,8 +64,11 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoLimitedTextField;
+import org.isf.utils.time.TimeTools;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -88,6 +90,9 @@ public class WardPharmacy extends ModalJFrame implements
 	}
 	
 	private static final long serialVersionUID = 1L;
+	
+	private static Logger logger = LoggerFactory.getLogger(WardPharmacy.class);
+	
 	private JComboBox jComboBoxWard;
 	private JLabel jLabelWard;
 	private JLabel jLabelFrom;
@@ -1222,18 +1227,9 @@ public class WardPharmacy extends ModalJFrame implements
 			jExportToExcelButton.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent arg0) {
-					JFileChooser fcExcel = new JFileChooser();
-					FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
-					fcExcel.setFileFilter(excelFilter);
-					fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);
-					int index = jTabbedPaneWard.getSelectedIndex();
-					if (index == 0) {
-						fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicalstockward.outcomes") + ".xls"));
-					} else if (index == 1) {
-						fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicalstockward.incomings") + ".xls"));
-					} else if (index == 2) {
-						fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicalstockward.drugs") + ".xls"));
-					}
+					String fileName = compileFileName();
+					File defaultFileName = new File(fileName);
+					JFileChooser fcExcel = ExcelExporter.getJFileChooserExcel(defaultFileName);
 					
 					int iRetVal = fcExcel.showSaveDialog(WardPharmacy.this);
 					if(iRetVal == JFileChooser.APPROVE_OPTION) {
@@ -1242,7 +1238,7 @@ public class WardPharmacy extends ModalJFrame implements
 							if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
 							
 							ExcelExporter xlsExport = new ExcelExporter();
-							
+							int index = jTabbedPaneWard.getSelectedIndex();
 							if (index == 0) {
 								xlsExport.exportTableToExcel(jTableOutcomes, exportFile);
 							} else if (index == 1) {
@@ -1251,8 +1247,12 @@ public class WardPharmacy extends ModalJFrame implements
 								xlsExport.exportTableToExcel(jTableDrugs, exportFile);
 							}
 							
-						} catch (IOException e) {
-							e.printStackTrace();
+						} catch (IOException exc) {
+							JOptionPane.showMessageDialog(WardPharmacy.this,
+									exc.getMessage(),
+			                        MessageBundle.getMessage("angal.hospital"),
+			                        JOptionPane.PLAIN_MESSAGE);	
+							logger.info("Export to excel error : "+ exc.getMessage());
 						}
 						
 					}
@@ -1262,6 +1262,35 @@ public class WardPharmacy extends ModalJFrame implements
 		return jExportToExcelButton;
 	}
 	
+	private String compileFileName() {
+		StringBuilder filename = new StringBuilder("StockWard Ledger");
+		filename.append("_").append(jComboBoxWard.getSelectedItem());
+		int index = jTabbedPaneWard.getSelectedIndex();
+		if (index == 0) {
+			filename.append("_").append(MessageBundle.getMessage("angal.medicalstockward.outcomes"));
+		} else if (index == 1) {
+			filename.append("_").append(MessageBundle.getMessage("angal.medicalstockward.incomings"));
+		} else if (index == 2) {
+			filename.append("_").append(MessageBundle.getMessage("angal.medicalstockward.drugs"));
+		}
+		if (jComboBoxTypes.isEnabled()
+				&& !jComboBoxTypes.getSelectedItem().equals(
+						MessageBundle.getMessage("angal.medicalstockward.alltypes"))) {
+			
+			filename.append("_").append(jComboBoxTypes.getSelectedItem());
+		}
+		if (jComboBoxMedicals.isEnabled()
+				&& !jComboBoxMedicals.getSelectedItem().equals(
+						MessageBundle.getMessage("angal.medicalstockward.allmedicals"))) {
+			
+			filename.append("_").append(jComboBoxMedicals.getSelectedItem());
+		}
+		filename.append("_").append(TimeTools.formatDateTime(jCalendarFrom.getDate(), "yyyyMMdd"))
+			.append("_").append(TimeTools.formatDateTime(jCalendarTo.getDate(), "yyyyMMdd"));
+		
+		return filename.toString();
+	}
+
 	class CenterBoldTableCellRenderer extends DefaultTableCellRenderer {  
 		   
 		/**

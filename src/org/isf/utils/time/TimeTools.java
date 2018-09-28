@@ -191,6 +191,20 @@ public class TimeTools {
 		SimpleDateFormat format = new SimpleDateFormat(pattern);  //$NON-NLS-1$
 		return format.format(dateTime.getTime());
 	}
+	
+	/**
+	 * Return a string representation of the dateTime with the given pattern
+	 * @param dateTime - a Date object
+	 * @param pattern - the pattern. If <code>null</code> "yyyy-MM-dd HH:mm:ss" will be used
+	 * @return the String represetation of the GregorianCalendar
+	 */
+	public static String formatDateTime(Date date, String pattern) {
+		if (pattern == null) pattern = "yyyy-MM-dd HH:mm:ss";
+		GregorianCalendar dateTime = new GregorianCalendar();
+		dateTime.setTime(date);
+		SimpleDateFormat format = new SimpleDateFormat(pattern);  //$NON-NLS-1$
+		return format.format(dateTime.getTime());
+	}
 
 	/**
 	 * Return a string representation of the dateTime in the form "yyyy-MM-dd HH:mm:ss"
@@ -198,6 +212,17 @@ public class TimeTools {
 	 * @return the String represetation of the GregorianCalendar
 	 */
 	public static String formatDateTimeReport(GregorianCalendar time) {
+		return formatDateTime(time, null);
+	}
+	
+	/**
+	 * Return a string representation of the dateTime in the form "yyyy-MM-dd HH:mm:ss"
+	 * @param dateTime - a Date object
+	 * @return the String represetation of the Date
+	 */
+	public static String formatDateTimeReport(Date date) {
+		GregorianCalendar time = new GregorianCalendar();
+		time.setTime(date);
 		return formatDateTime(time, null);
 	}
 	

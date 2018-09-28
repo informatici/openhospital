@@ -5,6 +5,7 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
+import org.isf.utils.excel.ExcelExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ import java.io.File;
                 File defaultFilename = new File(jasperReportsManager.compileDefaultFilename(defaultName));
                 
 				if (toExcel) {
-					JFileChooser fcExcel = jasperReportsManager.getJFileChooserExcel(defaultFilename);
+					JFileChooser fcExcel = ExcelExporter.getJFileChooserExcel(defaultFilename);
 
                     int iRetVal = fcExcel.showSaveDialog(null);
                     if(iRetVal == JFileChooser.APPROVE_OPTION)

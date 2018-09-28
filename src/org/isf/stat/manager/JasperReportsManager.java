@@ -9,9 +9,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.hospital.model.Hospital;
@@ -578,16 +575,4 @@ public class JasperReportsManager {
 		sbFilename.append(defaultFileName);
         return  sbFilename.toString();
     }
-    
-    public JFileChooser getJFileChooserExcel(File defaultFilename) {
-		JFileChooser fcExcel = new JFileChooser();
-		FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xlsx)","xlsx");
-		FileNameExtensionFilter excelFilter2003 = new FileNameExtensionFilter("Excel 97-2003 (*.xls)","xls");
-		fcExcel.addChoosableFileFilter(excelFilter);
-		fcExcel.addChoosableFileFilter(excelFilter2003);
-		fcExcel.setFileFilter(excelFilter);
-		fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		fcExcel.setSelectedFile(defaultFilename);
-		return fcExcel;
-	}
 }

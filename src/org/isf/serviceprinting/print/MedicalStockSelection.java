@@ -27,7 +27,6 @@ import javax.swing.JTextField;
 
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
-import org.isf.medicalstock.manager.DateTextField;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstock.service.MedicalStockIoOperations;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
@@ -40,6 +39,7 @@ import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.jobjects.DateTextField;
 import org.isf.ward.model.Ward;
 
 public class MedicalStockSelection extends JDialog implements ActionListener{

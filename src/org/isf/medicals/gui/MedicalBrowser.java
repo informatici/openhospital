@@ -30,7 +30,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -288,18 +287,15 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		buttonExport.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
 				
-				JFileChooser fcExcel = new JFileChooser();
-				FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
-				fcExcel.setFileFilter(excelFilter);
-				fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);  
-				fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicals.stock")));
+				String fileName = compileFileName();
+				File defaultFileName = new File(fileName);
+				JFileChooser fcExcel = ExcelExporter.getJFileChooserExcel(defaultFileName);
 				
 				int iRetVal = fcExcel.showSaveDialog(MedicalBrowser.this);
 				if(iRetVal == JFileChooser.APPROVE_OPTION)
 				{
 					File exportFile = fcExcel.getSelectedFile();
 					if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
-					
 					ExcelExporter xlsExport = new ExcelExporter();
 					try
 					{
@@ -310,7 +306,7 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 								exc.getMessage(),
 		                        MessageBundle.getMessage("angal.hospital"),
 		                        JOptionPane.PLAIN_MESSAGE);	
-						logger.error("Export to excel error : "+exc.getMessage());
+						logger.error("Export to excel error : "+ exc.getMessage());
 					}
 				}
 			}
@@ -318,6 +314,17 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		return buttonExport;
 	}
 
+	private String compileFileName() {
+		StringBuilder filename = new StringBuilder("Stock");
+		if (pbox.isEnabled() 
+				&& !pbox.getSelectedItem().equals(
+						MessageBundle.getMessage("angal.medicals.allm"))) {
+			
+			filename.append("_").append(pbox.getSelectedItem());
+		}
+		return filename.toString();
+	}
+	
 	private JButton getJButtonDelete() {
 		JButton buttonDelete = new JButton(MessageBundle.getMessage("angal.common.delete"));
 		buttonDelete.setMnemonic(KeyEvent.VK_D);
