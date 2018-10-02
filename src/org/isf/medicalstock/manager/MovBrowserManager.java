@@ -7,7 +7,6 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstock.service.MedicalStockIoOperations;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -25,28 +24,14 @@ public class MovBrowserManager {
 	public MovBrowserManager(){
 		ioOperations = Menu.getApplicationContext().getBean(MedicalStockIoOperations.class);
 	}
-
+	
 	/**
 	 * Retrieves all the {@link Movement}s.
 	 * @return the retrieved movements.
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Movement> getMovements() throws OHServiceException{
-		try {
-			return ioOperations.getMovements();
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getMovements();
 	}
 
 	/**
@@ -58,21 +43,7 @@ public class MovBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Movement> getMovements(String wardId, GregorianCalendar dateFrom, GregorianCalendar dateTo) throws OHServiceException{
-		try {
-			return ioOperations.getMovements(wardId, dateFrom, dateTo);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getMovements(wardId, dateFrom, dateTo);
 	}
 	
 	/**
@@ -82,21 +53,7 @@ public class MovBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Movement> getMovementsByReference(String refNo) throws OHServiceException{
-		try {
-			return ioOperations.getMovementsByReference(refNo);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getMovementsByReference(refNo);
 	}
 
 	/**
@@ -119,37 +76,23 @@ public class MovBrowserManager {
 			GregorianCalendar lotPrepFrom,GregorianCalendar lotPrepTo,
 			GregorianCalendar lotDueFrom,GregorianCalendar lotDueTo) throws OHServiceException {
 
-		try {
-			if (medicalCode == null && 
-					medicalType == null && 
-					movType == null && 
-					movFrom == null &&
-					movTo == null && 
-					lotPrepFrom == null && 
-					lotPrepTo == null && 
-					lotDueFrom == null && 
-					lotDueTo == null) {
-				return getMovements();
-			}
-			
-			check(movFrom, movTo, "angal.medicalstock.chooseavalidmovementdate");
-			check(lotPrepFrom, lotPrepTo, "angal.medicalstock.chooseavalidmovementdate");
-			check(lotDueFrom, lotDueTo, "angal.medicalstock.chooseavalidduedate");
-			
-			return ioOperations.getMovements(medicalCode,medicalType,wardId,movType,movFrom,movTo,lotPrepFrom,lotPrepTo,lotDueFrom,lotDueTo);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
+		if (medicalCode == null && 
+				medicalType == null && 
+				movType == null && 
+				movFrom == null &&
+				movTo == null && 
+				lotPrepFrom == null && 
+				lotPrepTo == null && 
+				lotDueFrom == null && 
+				lotDueTo == null) {
+			return getMovements();
 		}
+		
+		check(movFrom, movTo, "angal.medicalstock.chooseavalidmovementdate");
+		check(lotPrepFrom, lotPrepTo, "angal.medicalstock.chooseavalidmovementdate");
+		check(lotDueFrom, lotDueTo, "angal.medicalstock.chooseavalidduedate");
+		
+		return ioOperations.getMovements(medicalCode,medicalType,wardId,movType,movFrom,movTo,lotPrepFrom,lotPrepTo,lotDueFrom,lotDueTo);
 	}
 	
 	private void check(GregorianCalendar from, GregorianCalendar to, String errMsgKey) throws OHServiceException {

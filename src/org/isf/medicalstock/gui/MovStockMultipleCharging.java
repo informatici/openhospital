@@ -15,8 +15,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -52,6 +50,7 @@ import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
+import org.isf.menu.gui.Menu;
 import org.isf.supplier.manager.SupplierBrowserManager;
 import org.isf.supplier.model.Supplier;
 import org.isf.utils.db.NormalizeString;
@@ -61,6 +60,7 @@ import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
 import org.isf.utils.jobjects.TextPrompt.Show;
+import org.isf.utils.time.TimeTools;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -69,9 +69,9 @@ public class MovStockMultipleCharging extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final String DATE_FORMAT_DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
-	private static final String DATE_FORMAT_DD_MM_YYYY = "dd/MM/yyyy"; //$NON-NLS-1$
-	private static final int CODE_COLUMN_WIDTH = 100;
+	private final String DATE_FORMAT_DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
+	private final String DATE_FORMAT_DD_MM_YYYY = "dd/MM/yyyy"; //$NON-NLS-1$
+	private final int CODE_COLUMN_WIDTH = 100;
 	
 	private JPanel mainPanel;
 	private JTextField jTextFieldReference;
@@ -93,8 +93,8 @@ public class MovStockMultipleCharging extends JDialog {
 			MessageBundle.getMessage("angal.medicalstock.multiplecharging.total") //$NON-NLS-1$
 	};
 	private final Class[] columnClasses = { String.class, String.class, Integer.class, Integer.class, String.class, Integer.class, String.class, String.class, Double.class, Double.class };
-	private boolean[] columnEditable = { true, false, false, true, true, false, !GeneralData.AUTOMATICLOT, true, true, false };
-	private int[] columnWidth = { 50, 100, 70, 50, 70, 50, 50, 80, 50, 80 };
+	private boolean[] columnEditable = { false, false, false, true, true, false, !GeneralData.AUTOMATICLOT, false, false, false };
+	private int[] columnWidth = { 50, 100, 70, 50, 70, 50, 50, 100, 50, 80 };
 	private boolean[] columnResizable = { false, true, false, false, false, false, false, false, false, false };
 	private boolean[] columnVisible = { true, true, true, true, true, true, !GeneralData.AUTOMATICLOT, true, GeneralData.LOTWITHCOST, GeneralData.LOTWITHCOST };
 	private int[] columnAlignment = { SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.CENTER, SwingConstants.CENTER, SwingConstants.CENTER, SwingConstants.CENTER, SwingConstants.CENTER,
@@ -105,16 +105,17 @@ public class MovStockMultipleCharging extends JDialog {
 	private JTableModel model;
 	private String[] qtyOption = new String[] {
 			MessageBundle.getMessage("angal.medicalstock.multiplecharging.units"), //$NON-NLS-2$
-			MessageBundle.getMessage("angal.medicalstock.multiplecharging.packet") //$NON-NLS-2$
+			MessageBundle.getMessage("angal.medicalstock.multiplecharging.packets") //$NON-NLS-2$
 	};
 	private JComboBox comboBoxUnits = new JComboBox(qtyOption);
 	private final int UNITS = 0;
 	private final int PACKETS = 1;
 	private int optionSelected = UNITS;
+	
+	MovStockInsertingManager movManager = Menu.getApplicationContext().getBean(MovStockInsertingManager.class);
 
 	/**
 	 * Launch the application.
-	 * TODO: externalize strings
 	 */
 	public static void main(String[] args) {
 		try {
@@ -369,7 +370,10 @@ public class MovStockMultipleCharging extends JDialog {
 			jTextFieldSearch.setHorizontalAlignment(SwingConstants.LEFT);
 			
 			jTextFieldSearch.setColumns(10);
-			TextPrompt suggestion = new TextPrompt(MessageBundle.getMessage("angal.medicalstock.multiplecharging.typeacodeoradescriptionandpressenter"), jTextFieldSearch, Show.FOCUS_LOST); //$NON-NLS-1$
+			TextPrompt suggestion = new TextPrompt(
+					MessageBundle.getMessage("angal.medicalstock.multiplecharging.typeacodeoradescriptionandpressenter"), //$NON-NLS-1$ 
+					jTextFieldSearch, 
+					Show.FOCUS_LOST); 
 			{
 				suggestion.setFont(new Font("Tahoma", Font.PLAIN, 14)); //$NON-NLS-1$
 				suggestion.setForeground(Color.GRAY);
@@ -400,40 +404,39 @@ public class MovStockMultipleCharging extends JDialog {
 
 						// Lot (PreparationDate && ExpiringDate)
 						Lot lot = null;
+						boolean isNewLot = false;
 						if (isAutomaticLot()) {
 							GregorianCalendar preparationDate = new GregorianCalendar();
 							GregorianCalendar expiringDate = askExpiringDate();
 							lot = new Lot("", preparationDate, expiringDate); //$NON-NLS-1$
 							// Cost
-							double cost;
+							double cost = 0;
 							if (GeneralData.LOTWITHCOST) {
-								cost = askCost();
-								if (cost == 0.) {
-									double total = askTotalCost();
-									//if (total == 0.) return;
-									cost = total / qty;
-								}
-								lot.setCost(cost);
-							}
-						} else {
-							lot = chooseLot(med);
-							if (lot == null) {
-								lot = askLot();
-								if (lot == null) {
+								cost = askCost(qty);
+								if (cost == 0.) 
 									return;
-								}
-								// Cost
-								double cost;
-								if (GeneralData.LOTWITHCOST) {
-									cost = askCost();
-									if (cost == 0.) {
-										double total = askTotalCost();
-										//if (total == 0.) return;
-										cost = total / qty;
+							}
+							isNewLot = true;
+							lot.setCost(cost);
+						} else {
+							do {
+								lot = chooseLot(med);
+								if (lot == null) {
+									lot = askLot();
+									if (lot == null) {
+										return;
 									}
+									// Lot Cost
+									double cost = 0;
+									if (GeneralData.LOTWITHCOST) {
+										cost = askCost(qty);
+										if (cost == 0.) 
+											return;
+									}
+									isNewLot = true;
 									lot.setCost(cost);
 								}
-							}
+							} while (lot == null);
 						}
 
 						// Date
@@ -441,10 +444,10 @@ public class MovStockMultipleCharging extends JDialog {
 						date.setTime(jDateChooser.getDate());
 						
 						// RefNo
-						String refNo = jTextFieldReference.getText();
+						String refNo = jTextFieldReference.getText().trim();
 						
 						Movement movement = new Movement(med, (MovementType) jComboBoxChargeType.getSelectedItem(), null, lot, date, qty, new Supplier(), refNo);
-						model.addItem(movement);
+						model.addItem(movement, new Boolean(isNewLot));
 
 						units.add(PACKETS);
 
@@ -487,23 +490,35 @@ public class MovStockMultipleCharging extends JDialog {
 		return jComboBoxChargeType;
 	}
 
-	protected double askCost() {
-		String input = JOptionPane.showInputDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.unitcost"), 0.); //$NON-NLS-1$
+	protected double askCost(int qty) {
 		double cost = 0.;
-		if (input != null) {
-			try {
-				cost = Double.parseDouble(input);
-				if (cost < 0)
-					throw new NumberFormatException();
-			} catch (NumberFormatException nfe) {
-				JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertavalidvalue")); //$NON-NLS-1$
-			}
-		}
+		do {
+			String input = JOptionPane.showInputDialog(MovStockMultipleCharging.this, 
+					MessageBundle.getMessage("angal.medicalstock.multiplecharging.unitcost"),  //$NON-NLS-1$
+					0.);
+			if (input != null) {
+				try {
+					cost = Double.parseDouble(input);
+					if (cost < 0)
+						throw new NumberFormatException();
+					else if (cost == 0.) {
+						double total = askTotalCost();
+						//if (total == 0.) return;
+						cost = total / qty;
+					}
+				} catch (NumberFormatException nfe) {
+					JOptionPane.showMessageDialog(MovStockMultipleCharging.this, 
+							MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertavalidvalue")); //$NON-NLS-1$
+				}
+			} else return cost;
+		} while (cost == 0.);
 		return cost;
 	}
 	
 	protected double askTotalCost() {
-		String input = JOptionPane.showInputDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.totalcost"), 0.); //$NON-NLS-1$
+		String input = JOptionPane.showInputDialog(MovStockMultipleCharging.this, 
+				MessageBundle.getMessage("angal.medicalstock.multiplecharging.totalcost"), //$NON-NLS-1$
+				0.);
 		double total = 0.;
 		if (input != null) {
 			try {
@@ -511,7 +526,8 @@ public class MovStockMultipleCharging extends JDialog {
 				if (total < 0)
 					throw new NumberFormatException();
 			} catch (NumberFormatException nfe) {
-				JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertavalidvalue")); //$NON-NLS-1$
+				JOptionPane.showMessageDialog(MovStockMultipleCharging.this, 
+						MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertavalidvalue")); //$NON-NLS-1$
 			}
 		}
 		return total;
@@ -526,7 +542,9 @@ public class MovStockMultipleCharging extends JDialog {
 		lotNameTextField.addAncestorListener(new RequestFocusListener());
 		if (isAutomaticLot())
 			lotNameTextField.setEnabled(false);
-		TextPrompt suggestion = new TextPrompt(MessageBundle.getMessage("angal.medicalstock.multiplecharging.lotid"), lotNameTextField); //$NON-NLS-1$
+		TextPrompt suggestion = new TextPrompt(
+				MessageBundle.getMessage("angal.medicalstock.multiplecharging.lotid"), //$NON-NLS-1$
+				lotNameTextField); 
 		{
 			suggestion.setFont(new Font("Tahoma", Font.PLAIN, 14)); //$NON-NLS-1$
 			suggestion.setForeground(Color.GRAY);
@@ -550,18 +568,40 @@ public class MovStockMultipleCharging extends JDialog {
 		panel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdate"))); //$NON-NLS-1$
 		panel.add(expireDateChooser);
 
-		int ok = JOptionPane.showConfirmDialog(MovStockMultipleCharging.this, panel, MessageBundle.getMessage("angal.medicalstock.multiplecharging.lotinformations"), JOptionPane.OK_CANCEL_OPTION); //$NON-NLS-1$
-
-		if (ok == JOptionPane.OK_OPTION) {
-			String lotName = lotNameTextField.getText();
-			if (expireDateChooser.getDate().before(preparationDateChooser.getDate())) {
-				JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.expirydatebeforepreparationdate"));
+		do {
+			int ok = JOptionPane.showConfirmDialog(
+					MovStockMultipleCharging.this, 
+					panel, 
+					MessageBundle.getMessage("angal.medicalstock.multiplecharging.lotinformations"), //$NON-NLS-1$
+					JOptionPane.OK_CANCEL_OPTION);
+			
+			if (ok == JOptionPane.OK_OPTION) {
+				String lotName = lotNameTextField.getText();
+				
+				if (expireDateChooser.getDate().before(preparationDateChooser.getDate())) 
+				{
+					JOptionPane.showMessageDialog(
+							MovStockMultipleCharging.this, 
+							MessageBundle.getMessage("angal.medicalstock.multiplecharging.expirydatebeforepreparationdate")); //$NON-NLS-1$
+				} 
+				else if (expireDateChooser.getDate().before(jDateChooser.getDate())) 
+				{
+					JOptionPane.showMessageDialog(
+							MovStockMultipleCharging.this, 
+							MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdateinthepastnotallowed")); //$NON-NLS-1$
+				} 
+				else 
+				{
+					expiringDate.setTime(expireDateChooser.getDate());
+					preparationDate.setTime(preparationDateChooser.getDate());
+					lot = new Lot(lotName, preparationDate, expiringDate);
+				}
+			} else {
+				
 				return null;
 			}
-			expiringDate.setTime(expireDateChooser.getDate());
-			preparationDate.setTime(preparationDateChooser.getDate());
-			lot = new Lot(lotName, preparationDate, expiringDate);
 		}
+		while (lot == null);
 		return lot;
 	}
 	
@@ -581,7 +621,11 @@ public class MovStockMultipleCharging extends JDialog {
 			JPanel panel = new JPanel();
 			panel.add(new JScrollPane(medTable));
 			
-			int ok = JOptionPane.showConfirmDialog(MovStockMultipleCharging.this, panel, MessageBundle.getMessage("angal.medicalstock.multiplecharging.chooseamedical"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+			int ok = JOptionPane.showConfirmDialog(
+					MovStockMultipleCharging.this, 
+					panel, 
+					MessageBundle.getMessage("angal.medicalstock.multiplecharging.chooseamedical"), //$NON-NLS-1$ 
+					JOptionPane.YES_NO_OPTION);
 			
 			if (ok == JOptionPane.OK_OPTION) {
 				int row = medTable.getSelectedRow();
@@ -593,10 +637,9 @@ public class MovStockMultipleCharging extends JDialog {
 	}
 
 	protected Lot chooseLot(Medical med) {
-		MovStockInsertingManager movBrowser = new MovStockInsertingManager();
 		ArrayList<Lot> lots;
 		try {
-			lots = movBrowser.getLotByMedical(med);
+			lots = movManager.getLotByMedical(med);
 		} catch (OHServiceException e) {
 			lots = new ArrayList<Lot>();
 			OHServiceExceptionUtil.showMessages(e);
@@ -608,24 +651,27 @@ public class MovStockMultipleCharging extends JDialog {
 			JPanel panel = new JPanel(new BorderLayout());
 			panel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.multiplecharging.useanexistinglot")), BorderLayout.NORTH); //$NON-NLS-1$
 			panel.add(new JScrollPane(lotTable), BorderLayout.CENTER);
-			Object[] options = {MessageBundle.getMessage("angal.medicalstock.multiplecharging.selectedlot"), MessageBundle.getMessage("angal.medicalstock.multiplecharging.newlot")};
+			Object[] options = {
+					MessageBundle.getMessage("angal.medicalstock.multiplecharging.selectedlot"), //$NON-NLS-1$
+					MessageBundle.getMessage("angal.medicalstock.multiplecharging.newlot")}; //$NON-NLS-1$
 						
 			int row = -1;
 			do {
 				
 				int ok = JOptionPane.showOptionDialog(MovStockMultipleCharging.this, 
 						panel, 
-						MessageBundle.getMessage("angal.medicalstock.multiplecharging.existinglot"), 
+						MessageBundle.getMessage("angal.medicalstock.multiplecharging.existinglot"), //$NON-NLS-1$
 						JOptionPane.YES_NO_OPTION, 
 						JOptionPane.QUESTION_MESSAGE, 
 						null, 
 						options, 
-						options[0]); //$NON-NLS-1$
+						options[0]);
 
 				if (ok == JOptionPane.YES_OPTION) {
 					row = lotTable.getSelectedRow();
 					if (row != -1) lot = lots.get(row);
-					else JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.common.pleaseselectarow"));
+					else JOptionPane.showMessageDialog(MovStockMultipleCharging.this, 
+							MessageBundle.getMessage("angal.common.pleaseselectarow")); //$NON-NLS-1$
 				} else row = 0;
 				
 			} while (row == -1);
@@ -643,7 +689,9 @@ public class MovStockMultipleCharging extends JDialog {
 		panel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdate"))); //$NON-NLS-1$
 		panel.add(expireDateChooser);
 
-		int ok = JOptionPane.showConfirmDialog(MovStockMultipleCharging.this, panel, MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdate"), JOptionPane.OK_CANCEL_OPTION); //$NON-NLS-1$
+		int ok = JOptionPane.showConfirmDialog(MovStockMultipleCharging.this, panel, 
+				MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdate"), //$NON-NLS-1$
+				JOptionPane.OK_CANCEL_OPTION); 
 
 		if (ok == JOptionPane.OK_OPTION) {
 			date.setTime(expireDateChooser.getDate());
@@ -652,32 +700,35 @@ public class MovStockMultipleCharging extends JDialog {
 	}
 
 	protected int askQuantity(Medical med) {
-		StringBuilder title = new StringBuilder(MessageBundle.getMessage("angal.common.quantity"));
+		StringBuilder title = new StringBuilder(MessageBundle.getMessage("angal.common.quantity")); //$NON-NLS-1$
 		StringBuilder message = new StringBuilder(med.toString());
 		String prodCode = med.getProd_code();
 		if (prodCode != null && !prodCode.equals("")) {
-			title.append(" ").append(MessageBundle.getMessage("angal.common.code"));
-			title.append(": ").append(prodCode);
+			title.append(" ").append(MessageBundle.getMessage("angal.common.code")); //$NON-NLS-1$ //$NON-NLS-2$
+			title.append(": ").append(prodCode); //$NON-NLS-1$
 		} else { 
-			title.append(": ");
+			title.append(": "); //$NON-NLS-1$
 		}
-		String quantity = JOptionPane.showInputDialog(MovStockMultipleCharging.this, 
-				message.toString(), 
-				title.toString(),
-				JOptionPane.QUESTION_MESSAGE); //$NON-NLS-1$
 		int qty = 0;
-		if (quantity != null) {
-			try {
-				qty = Integer.parseInt(quantity);
-				if (qty == 0)
-					return 0;
-				if (qty < 0)
-					throw new NumberFormatException();
-			} catch (NumberFormatException nfe) {
-				JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertavalidvalue")); //$NON-NLS-1$
-				qty = 0;
-			}
-		}
+		do {
+			String quantity = JOptionPane.showInputDialog(MovStockMultipleCharging.this, 
+					message.toString(), 
+					title.toString(),
+					JOptionPane.QUESTION_MESSAGE);
+			if (quantity != null) {
+				try {
+					qty = Integer.parseInt(quantity);
+					if (qty == 0)
+						return 0;
+					if (qty < 0)
+						throw new NumberFormatException();
+				} catch (NumberFormatException nfe) {
+					JOptionPane.showMessageDialog(MovStockMultipleCharging.this, 
+							MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertavalidvalue")); //$NON-NLS-1$
+					qty = 0;
+				}
+			} else return qty;
+		} while (qty == 0);
 		return qty;
 	}
 
@@ -704,6 +755,8 @@ public class MovStockMultipleCharging extends JDialog {
 	public class JTableModel extends AbstractTableModel {
 
 		private ArrayList<Movement> movements;
+		private ArrayList<Boolean> newLots;
+		
 		/**
 		 * 
 		 */
@@ -711,6 +764,7 @@ public class MovStockMultipleCharging extends JDialog {
 
 		public JTableModel() {
 			movements = new ArrayList<Movement>();
+			newLots = new ArrayList<Boolean>();
 		}
 		
 		public ArrayList<Movement> getMovements() {
@@ -720,11 +774,13 @@ public class MovStockMultipleCharging extends JDialog {
 		public void removeItem(int row) {
 			movements.remove(row);
 			units.remove(row);
+			newLots.remove(row);
 			fireTableDataChanged();
 		}
 
-		public void addItem(Movement movement) {
+		public void addItem(Movement movement, Boolean isNewLot) {
 			movements.add(movement);
+			newLots.add(isNewLot);
 			fireTableDataChanged();
 		}
 
@@ -749,8 +805,10 @@ public class MovStockMultipleCharging extends JDialog {
 		}
 
 		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnEditable[columnIndex];
+		public boolean isCellEditable(int r, int c) {
+			if (c == 6 || c == 7 || c == 8)
+				return newLots.get(r).booleanValue();
+			return columnEditable[c];
 		}
 
 		/*
@@ -786,7 +844,7 @@ public class MovStockMultipleCharging extends JDialog {
 			} else if (c == 6) {
 				return lotName.equals("") ? "AUTO" : lotName; //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (c == 7) {
-				return format(lot.getDueDate());
+				return TimeTools.formatDateTime(lot.getDueDate(), DATE_FORMAT_DD_MM_YYYY);
 			} else if (c == 8) {
 				return cost;
 			} else if (c == 9) {
@@ -814,13 +872,17 @@ public class MovStockMultipleCharging extends JDialog {
 			} else if (c == 3) {
 				movement.setQuantity((Integer) value);
 			} else if (c == 4) {
-				units.set(r, comboBoxUnits.getSelectedIndex());
+				int newOption = 0;
+				if (value == qtyOption[1]) newOption = 1; 
+				units.set(r, newOption);
 			} else if (c == 6) {
 				lot.setCode((String) value);
 			} else if (c == 7) {
 				try {
-					lot.setDueDate(convertToDate((String) value));
-				} catch (ParseException e) {
+					GregorianCalendar date = TimeTools.parseDate((String) value, DATE_FORMAT_DD_MM_YYYY, true);
+					lot.setDueDate(date);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			} else if (c == 8) {
 				lot.setCost((Double) value);
@@ -832,43 +894,13 @@ public class MovStockMultipleCharging extends JDialog {
 	
 	private boolean checkAndPrepareMovements() {
 		boolean ok = true;
-		MovStockInsertingManager manager = new MovStockInsertingManager();
-		
-		// Check the Date
-		GregorianCalendar today = new GregorianCalendar();
-		GregorianCalendar thisDate = new GregorianCalendar();
-		thisDate.setTime(jDateChooser.getDate());
-		GregorianCalendar lastDate;
-		try {
-			lastDate = manager.getLastMovementDate();
-		} catch (OHServiceException e) {
-			lastDate = null;
-			OHServiceExceptionUtil.showMessages(e);
-		}
-		if (thisDate.after(today)) {
-			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.futuredatenotallowed")); //$NON-NLS-1$ //$NON-NLS-2$
+
+		ArrayList<Movement> movements = model.getMovements();
+		if (movements.isEmpty()) {
+			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, 
+					MessageBundle.getMessage("angal.medicalstock.multiplecharging.noelementtosave")); //$NON-NLS-1$
 			return false;
 		}
-		if (lastDate != null && thisDate.compareTo(lastDate) < 0) {
-			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.datebeforelastmovement") + format(lastDate) + MessageBundle.getMessage("angal.medicalstock.multiplecharging.notallowed")); //$NON-NLS-1$ //$NON-NLS-2$
-			return false;
-		}
-		
-		// Check the RefNo
-		String refNo = jTextFieldReference.getText();
-		if (refNo.equals("")) { //$NON-NLS-1$
-			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertareferencenumber")); //$NON-NLS-1$
-			return false;
-		} else
-			try {
-				if (manager.refNoExists(refNo)) {
-					JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.theinsertedreferencenumberalreadyexists")); //$NON-NLS-1$
-					return false;
-				}
-			} catch (OHServiceException e) {
-				OHServiceExceptionUtil.showMessages(e);
-				return false;
-			}
 		
 		// Check supplier
 		Object supplier = jComboBoxSupplier.getSelectedItem();
@@ -877,38 +909,19 @@ public class MovStockMultipleCharging extends JDialog {
 			return false;
 		}
 		
-		// Check movements
-		ArrayList<Movement> movements = model.getMovements();
-		if (movements.isEmpty()) {
-			JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.noelementtosave")); //$NON-NLS-1$
-			return false;
-		}
+		GregorianCalendar thisDate = new GregorianCalendar();
+		thisDate.setTime(jDateChooser.getDate());
 		
 		// Check and set all movements
 		for (int i = 0; i < movements.size(); i++) {
 			Movement mov = movements.get(i);
-			Lot lot = mov.getLot();
-			GregorianCalendar expiringDate = mov.getLot().getDueDate();
 			int option = units.get(i);
-			if (expiringDate.compareTo(thisDate) < 0) {
-				JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdateinthepastnotallowed")); //$NON-NLS-1$
-				jTableMovements.getSelectionModel().setSelectionInterval(i, i);
-				return false;
-			}
-			if (GeneralData.LOTWITHCOST) {
-				Double cost = lot.getCost();
-				if (cost == null || cost.doubleValue() <= 0.) {
-					JOptionPane.showMessageDialog(MovStockMultipleCharging.this, MessageBundle.getMessage("angal.medicalstock.multiplecharging.zerocostsnotallowed")); //$NON-NLS-1$
-					jTableMovements.getSelectionModel().setSelectionInterval(i, i);
-					return false;
-				}
-			}
 			mov.setDate(thisDate);
-			mov.setRefNo(refNo);
+			mov.setRefNo(jTextFieldReference.getText());
 			mov.setQuantity(calcTotal(mov, option));
 			mov.setType((MovementType) jComboBoxChargeType.getSelectedItem());
 			mov.setSupplier(((Supplier) jComboBoxSupplier.getSelectedItem()));
-			mov.getLot().setPreparationDate(thisDate);
+			//mov.getLot().setPreparationDate(thisDate);
 		}
 		return ok;
 	}
@@ -924,37 +937,16 @@ public class MovStockMultipleCharging extends JDialog {
 	
 	private boolean save() {
 		boolean ok = true;
-		MovStockInsertingManager movManager = new MovStockInsertingManager();
 		ArrayList<Movement> movements = model.getMovements();
-		int movSize = movements.size();
-		int index;
 		try {
-			index = movManager.newMultipleChargingMovements(movements);
-			
-			if (index < movSize) {
-				jTableMovements.getSelectionModel().setSelectionInterval(index, index);
-				ok = false;
-			}
+			movManager.newMultipleChargingMovements(movements, movements.get(0).getRefNo());
 		} catch (OHServiceException e) {
 			ok = false;
 			OHServiceExceptionUtil.showMessages(e);
-		}
-		
+		} 
 		return ok;
 	}
-
-	public String format(GregorianCalendar gc) {
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_DD_MM_YYYY);
-		return sdf.format(gc.getTime());
-	}
-
-	public GregorianCalendar convertToDate(String string) throws ParseException {
-		GregorianCalendar date = new GregorianCalendar();
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_DD_MM_YYYY);
-		date.setTime(sdf.parse(string));
-		return date;
-	}
-
+	
 	class EnabledTableCellRenderer extends DefaultTableCellRenderer {
 		/**
 		 * 
@@ -964,8 +956,10 @@ public class MovStockMultipleCharging extends JDialog {
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			setHorizontalAlignment(columnAlignment[column]);
-			if (!columnEditable[column]) {
+			if (!table.isCellEditable(row, column)) {
 				cell.setBackground(Color.LIGHT_GRAY);
+			} else {
+				cell.setBackground(Color.WHITE);
 			}
 			if (columnBold[column]) { 
 				cell.setFont(new Font(null, Font.BOLD, 12));
@@ -986,8 +980,10 @@ public class MovStockMultipleCharging extends JDialog {
 			Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			value = formatter.format((Number) value);
 			setHorizontalAlignment(columnAlignment[column]);
-			if (!columnEditable[column]) {
+			if (!table.isCellEditable(row, column)) {
 				cell.setBackground(Color.LIGHT_GRAY);
+			} else {
+				cell.setBackground(Color.WHITE);
 			}
 			if (columnBold[column]) { 
 				cell.setFont(new Font(null, Font.BOLD, 12));
@@ -1047,9 +1043,9 @@ public class MovStockMultipleCharging extends JDialog {
 			} else if (c == 0) {
 				return lot.getCode();
 			} else if (c == 1) {
-				return format(lot.getPreparationDate());
+				return TimeTools.formatDateTime(lot.getPreparationDate(), DATE_FORMAT_DD_MM_YYYY);
 			} else if (c == 2) {
-				return format(lot.getDueDate());
+				return TimeTools.formatDateTime(lot.getDueDate(), DATE_FORMAT_DD_MM_YYYY);
 			} else if (c == 3) {
 				return lot.getQuantity();
 			} else if (c == 4) {

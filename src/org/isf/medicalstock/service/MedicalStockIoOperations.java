@@ -7,21 +7,20 @@ import java.util.List;
 import java.util.Random;
 
 import org.isf.generaldata.GeneralData;
-import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
 import org.isf.medicals.service.MedicalsIoOperationRepository;
 import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
+import org.isf.medicalstockward.model.MedicalWard;
+import org.isf.medicalstockward.service.MedicalStockWardIoOperationRepository;
+import org.isf.medstockmovtype.service.MedicalStockMovementTypeIoOperationRepository;
 import org.isf.utils.db.DbQueryLogger;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.ward.model.Ward;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.isf.medicalstockward.model.MedicalWard;
-import org.isf.medicalstockward.service.MedicalStockWardIoOperationRepository;
-import org.isf.medstockmovtype.service.MedicalStockMovementTypeIoOperationRepository;
 
 /**
  * Persistence class for MedicalStock module.
@@ -31,8 +30,8 @@ import org.isf.medstockmovtype.service.MedicalStockMovementTypeIoOperationReposi
  * 			- added complete Ward and Movement construction in getMovement()
  */
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class MedicalStockIoOperations {
 
 	@Autowired
@@ -67,10 +66,10 @@ public class MedicalStockIoOperations {
 	 * Retrieves all medicals referencing the specified code.
 	 * @param lotCode the lot code.
 	 * @return the ids of medicals referencing the specified lot.
-	 * @throws OHException if an error occurs retrieving the referencing medicals.
+	 * @throws OHServiceException if an error occurs retrieving the referencing medicals.
 	 */
 	public List<Integer> getMedicalsFromLot(
-			String lotCode) throws OHException
+			String lotCode) throws OHServiceException
 	{
 		List<Integer> medicalIds = repository.findAllByLot(lotCode);
 		
@@ -81,14 +80,13 @@ public class MedicalStockIoOperations {
 	 * Store the specified {@link Movement} by using automatically the most old lots
 	 * @param movement - the {@link Movement} to store
 	 * @return <code>true</code> if the movement has been stored, <code>false</code> otherwise.
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean newAutomaticDischargingMovement(
-			Movement movement) throws OHException 
+			Movement movement) throws OHServiceException 
 	{
 		boolean result = false;
 	
-		
 		try
 		{			
 			ArrayList<Lot> lots = getLotsByMedical(movement.getMedical());
@@ -121,9 +119,9 @@ public class MedicalStockIoOperations {
 				}
 			}
 		}
-		catch (Exception e)
+		catch (OHServiceException e)
 		{
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);			
+			throw e;	
 		}
 		
 		return result;
@@ -133,10 +131,10 @@ public class MedicalStockIoOperations {
 	 * Stores the specified {@link Movement}.
 	 * @param movement - the movement to store.
 	 * @return <code>true</code> if the movement has been stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the store operation.
+	 * @throws OHServiceException if an error occurs during the store operation.
 	 */
 	public boolean newMovement(
-			Movement movement) throws OHException 
+			Movement movement) throws OHServiceException 
 	{
 		String lotCode = null;
 		
@@ -193,10 +191,10 @@ public class MedicalStockIoOperations {
 	 * @param dbQuery - the session with the DB
 	 * @param movement - the movement to store.
 	 * @return <code>true</code> if the movement has been stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the store operation.
+	 * @throws OHServiceException if an error occurs during the store operation.
 	 */
 	public boolean prepareChargingMovement(
-			Movement movement) throws OHException 
+			Movement movement) throws OHServiceException 
 	{ 
 		return newMovement(movement);
 	}
@@ -206,10 +204,10 @@ public class MedicalStockIoOperations {
 	 * @param dbQuery - the session with the DB
 	 * @param movement - the movement to store.
 	 * @return <code>true</code> if the movement has been stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the store operation.
+	 * @throws OHServiceException if an error occurs during the store operation.
 	 */
 	public boolean prepareDischargingMovement(
-			Movement movement) throws OHException 
+			Movement movement) throws OHServiceException 
 	{
 		String lotCode = null;
 		
@@ -242,11 +240,11 @@ public class MedicalStockIoOperations {
 	 * @param movement the movement to store.
 	 * @param lotCode the {@link Lot} code to use.
 	 * @return <code>true</code> if the movement has stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs storing the movement.
+	 * @throws OHServiceException if an error occurs storing the movement.
 	 */
 	protected boolean storeMovement(
 			Movement movement, 
-			String lotCode) throws OHException
+			String lotCode) throws OHServiceException
 	{
 		boolean result = true;
 	
@@ -263,28 +261,20 @@ public class MedicalStockIoOperations {
 	 * Creates a new unique lot code.
 	 * @param dbQuery the {@link DbQueryLogger} to use.
 	 * @return the new unique code.
-	 * @throws OHException if an error occurs during the code generation.
+	 * @throws OHServiceException if an error occurs during the code generation.
 	 */
-	protected String generateLotCode() throws OHException
+	protected String generateLotCode() throws OHServiceException
 	{
 		Random random = new Random();
 		long candidateCode = 0;
 		Lot lot = null;
 				
-		
-		try 
+		do 
 		{
-			do 
-			{
-				candidateCode = Math.abs(random.nextLong());
+			candidateCode = Math.abs(random.nextLong());
 
-				lot = (Lot)lotRepository.findOne(String.valueOf(candidateCode)); 
-			} while (lot !=null);
-		} 
-		catch (Exception e) 
-		{
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 
+			lot = (Lot)lotRepository.findOne(String.valueOf(candidateCode)); 
+		} while (lot !=null); 
 
 		return String.valueOf(candidateCode);
 	}
@@ -294,26 +284,19 @@ public class MedicalStockIoOperations {
 	 * @param dbQuery the {@link DbQueryLogger} to use for the check.
 	 * @param lotCode the lot code.
 	 * @return <code>true</code> if exists, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @throws OHServiceException if an error occurs during the check.
 	 */
 	public boolean lotExists(
-			String lotCode) throws OHException
+			String lotCode) throws OHServiceException
 	{
 		Lot lot = null;
 		boolean result = false;
 		
 		
-		try 
+		lot = (Lot)lotRepository.findOne(lotCode); 
+		if (lot != null)
 		{
-			lot = (Lot)lotRepository.findOne(lotCode); 
-			if (lot != null)
-			{
-				result = true;
-			}
-		} 
-		catch (Exception e) 
-		{
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+			result = true;
 		} 
 		
 		return result;
@@ -325,25 +308,18 @@ public class MedicalStockIoOperations {
 	 * @param lotCode the {@link Lot} code.
 	 * @param lot the lot to store.
 	 * @return <code>true</code> if the lot has been stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurred storing the lot.
+	 * @throws OHServiceException if an error occurred storing the lot.
 	 */
 	protected boolean storeLot(
 			String lotCode, 
-			Lot lot) throws OHException 
+			Lot lot) throws OHServiceException 
 	{
 		boolean result = false;
 
 		
-		try 
-		{
-			lot.setCode(lotCode);
-			lotRepository.save(lot);
-			result = true;	
-		} 
-		catch (Exception e) 
-		{
-			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
-		} 
+		lot.setCode(lotCode);
+		lotRepository.save(lot);
+		result = true; 
 		
 		return result;
 	}
@@ -353,10 +329,10 @@ public class MedicalStockIoOperations {
 	 * @param dbQuery the {@link DbQueryLogger} to use.
 	 * @param movement the movement.
 	 * @return <code>true</code> if the quantity has been updated, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the update.
+	 * @throws OHServiceException if an error occurs during the update.
 	 */
 	protected boolean updateStockQuantity(
-			Movement movement) throws OHException 
+			Movement movement) throws OHServiceException 
 	{
 		if (movement.getType().getType().contains("+")) 
 		{
@@ -398,11 +374,11 @@ public class MedicalStockIoOperations {
 	 * @param medicalCode the medical code.
 	 * @param incrementQuantity the quantity to add.
 	 * @return <code>true</code> if the quantity has been updated, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the update.
+	 * @throws OHServiceException if an error occurs during the update.
 	 */
 	protected boolean updateMedicalIncomingQuantity(
 			int medicalCode, 
-			double incrementQuantity) throws OHException
+			double incrementQuantity) throws OHServiceException
 	{
 		boolean result = true;
 				
@@ -420,11 +396,11 @@ public class MedicalStockIoOperations {
 	 * @param medicalCode the medical code.
 	 * @param incrementQuantity the quantity to add to the current outcoming quantity.
 	 * @return <code>true</code> if the outcoming quantity has been updated <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the update.
+	 * @throws OHServiceException if an error occurs during the update.
 	 */
 	protected boolean updateMedicalOutcomingQuantity(
 			int medicalCode, 
-			double incrementQuantity) throws OHException
+			double incrementQuantity) throws OHServiceException
 	{
 		boolean result = true;
 				
@@ -443,13 +419,13 @@ public class MedicalStockIoOperations {
 	 * @param medicalCode the medical code.
 	 * @param quantity the quantity to add to the current medical quantity.
 	 * @return <code>true</code> if the quantity has been updated/inserted, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the update.
+	 * @throws OHServiceException if an error occurs during the update.
 	 */
 	@SuppressWarnings("unchecked")
 	protected boolean updateMedicalWardQuantity(
 			String wardCode, 
 			int medicalCode, 
-			int quantity) throws OHException
+			int quantity) throws OHServiceException
 	{
 		MedicalWard medicalWard = (MedicalWard)medicalStockRepository.findOneWhereCodeAndMedical(wardCode, medicalCode);		
 				
@@ -470,9 +446,9 @@ public class MedicalStockIoOperations {
 	/**
 	 * Gets all the stored {@link Movement}.
 	 * @return all retrieved movement
-	 * @throws OHException if an error occurs retrieving the movements.
+	 * @throws OHServiceException if an error occurs retrieving the movements.
 	 */
-	public ArrayList<Movement> getMovements() throws OHException 
+	public ArrayList<Movement> getMovements() throws OHServiceException 
 	{
 		return getMovements(null, null, null);
 	}
@@ -483,12 +459,12 @@ public class MedicalStockIoOperations {
 	 * @param dateTo 
 	 * @param dateFrom 
 	 * @return the list of retrieved movements.
-	 * @throws OHException if an error occurs retrieving the movements.
+	 * @throws OHServiceException if an error occurs retrieving the movements.
 	 */
 	public ArrayList<Movement> getMovements(
 			String wardId, 
 			GregorianCalendar dateFrom, 
-			GregorianCalendar dateTo) throws OHException 
+			GregorianCalendar dateTo) throws OHServiceException 
 	{
 		ArrayList<Integer> pMovementCode = null;
 		ArrayList<Movement> pMovement = new ArrayList<Movement>();
@@ -520,7 +496,7 @@ public class MedicalStockIoOperations {
 	 * @param lotDueFrom the lower bound for the lot due date range.
 	 * @param lotDueTo the lower bound for the lot due date range.
 	 * @return all the retrieved movements.
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public ArrayList<Movement> getMovements(
 			Integer medicalCode,
@@ -532,7 +508,7 @@ public class MedicalStockIoOperations {
 			GregorianCalendar lotPrepFrom, 
 			GregorianCalendar lotPrepTo,
 			GregorianCalendar lotDueFrom, 
-			GregorianCalendar lotDueTo) throws OHException 
+			GregorianCalendar lotDueTo) throws OHServiceException 
 	{
 		ArrayList<Integer> pMovementCode = null;
 		ArrayList<Movement> pMovement = new ArrayList<Movement>();
@@ -564,7 +540,7 @@ public class MedicalStockIoOperations {
 	 * @param lotCode the lot code.
 	 * @param order the result order.
 	 * @return the retrieved movements.
-	 * @throws OHException if an error occurs retrieving the movements.
+	 * @throws OHServiceException if an error occurs retrieving the movements.
 	 */
 	public ArrayList<Movement> getMovementForPrint(
 			String medicalDescription,
@@ -574,7 +550,7 @@ public class MedicalStockIoOperations {
 			GregorianCalendar movFrom, 
 			GregorianCalendar movTo, 
 			String lotCode,
-			MovementOrder order) throws OHException 
+			MovementOrder order) throws OHServiceException 
 	{
 
 		ArrayList<Integer> pMovementCode = null;
@@ -600,10 +576,10 @@ public class MedicalStockIoOperations {
 	 * Retrieves lot referred to the specified {@link Medical}.
 	 * @param medical the medical.
 	 * @return a list of {@link Lot}.
-	 * @throws OHException if an error occurs retrieving the lot list.
+	 * @throws OHServiceException if an error occurs retrieving the lot list.
 	 */
 	public ArrayList<Lot> getLotsByMedical(
-			Medical medical) throws Exception 
+			Medical medical) throws OHServiceException
 	{
 		ArrayList<Lot> lots = null;
 	
@@ -616,6 +592,14 @@ public class MedicalStockIoOperations {
 			
 			lots.add(lot);
 		}
+		
+		// remve empy lots
+		ArrayList<Lot> emptyLots = new ArrayList<Lot>();
+		for (Lot aLot : lots) {
+			if (aLot.getQuantity() == 0)
+				emptyLots.add(aLot);
+		}
+		lots.removeAll(emptyLots);
 		
 		return lots;
 	}	
@@ -649,9 +633,9 @@ public class MedicalStockIoOperations {
 	/**
 	 * returns the date of the last movement
 	 * @return 
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
-	public GregorianCalendar getLastMovementDate() throws OHException 
+	public GregorianCalendar getLastMovementDate() throws OHServiceException 
 	{
 		GregorianCalendar gc = new GregorianCalendar();
 				
@@ -672,10 +656,10 @@ public class MedicalStockIoOperations {
 	/**
 	 * check if the reference number is already used
 	 * @return <code>true</code> if is already used, <code>false</code> otherwise.
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean refNoExists(
-			String refNo) throws OHException 
+			String refNo) throws OHServiceException 
 	{
 		boolean result = false;
 		
@@ -693,10 +677,10 @@ public class MedicalStockIoOperations {
 	 * In case of error a message error is shown and a <code>null</code> value is returned.
 	 * @param refNo the reference number.
 	 * @return the retrieved movements.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public ArrayList<Movement> getMovementsByReference(
-			String refNo) throws OHException 
+			String refNo) throws OHServiceException 
 	{
 		ArrayList<Movement> movements = (ArrayList<Movement>) repository.findAllByRefNo(refNo);
 						

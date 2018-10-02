@@ -463,9 +463,9 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 									medicalType,wardSelected ,movementType, movFrom, movTo, lot,MedicalStockIoOperations.MovementOrder.TYPE);
 							break;
 					}
-					} catch (OHException exception) {
-						JOptionPane.showMessageDialog(null, exception.getMessage());
-						return ;
+					} catch (OHServiceException exception) {
+						OHServiceExceptionUtil.showMessages(exception);
+						return;
 					}
 					ArrayList<Movement4Print> pMovements2 = convertToPrint(pMovements);
 					try {
