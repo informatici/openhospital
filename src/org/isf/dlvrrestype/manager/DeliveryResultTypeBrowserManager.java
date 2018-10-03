@@ -38,12 +38,12 @@ public class DeliveryResultTypeBrowserManager {
 	        		OHSeverityLevel.ERROR));
         }
         if(key.length()>1){
-	        errors.add(new OHExceptionMessage("codeEmptyError", 
+	        errors.add(new OHExceptionMessage("codeTooLongError", 
 	        		MessageBundle.getMessage("angal.dlvrrestype.codetoolongmaxchar"), 
 	        		OHSeverityLevel.ERROR));
         }
         if(description.isEmpty() ){
-            errors.add(new OHExceptionMessage("descrptionEmptyError", 
+            errors.add(new OHExceptionMessage("descriptionEmptyError", 
             		MessageBundle.getMessage("angal.dlvrrestype.pleaseinsertavaliddescription"), 
             		OHSeverityLevel.ERROR));
         }

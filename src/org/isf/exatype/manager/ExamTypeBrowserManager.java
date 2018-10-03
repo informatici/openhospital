@@ -35,12 +35,12 @@ public class ExamTypeBrowserManager {
 	        		OHSeverityLevel.ERROR));
         }
         if(key.length()>2){
-	        errors.add(new OHExceptionMessage("codeEmptyError", 
+	        errors.add(new OHExceptionMessage("codeTooLongError", 
 	        		MessageBundle.getMessage("angal.exatype.codetoolongmaxchar"), 
 	        		OHSeverityLevel.ERROR));
         }
         if(description.isEmpty() ){
-            errors.add(new OHExceptionMessage("descrptionEmptyError", 
+            errors.add(new OHExceptionMessage("descriptionEmptyError", 
             		MessageBundle.getMessage("angal.exatype.pleaseinsertavaliddescription"), 
             		OHSeverityLevel.ERROR));
         }
