@@ -5,14 +5,13 @@
 package org.isf.medicals.manager;
 
 import java.util.ArrayList;
-
-//import javax.swing.JOptionPane;
+import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
 import org.isf.medicals.service.MedicalsIoOperations;
+import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -40,21 +39,7 @@ public class MedicalBrowsingManager {
 	 * @throws OHServiceException 
 	 */
 	public Medical getMedical(int code) throws OHServiceException {
-		try {
-			return ioOperations.getMedical(code);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getMedical(code);
 	}
 
 	/**
@@ -64,21 +49,7 @@ public class MedicalBrowsingManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Medical> getMedicals() throws OHServiceException {
-		try {
-			return ioOperations.getMedicals();
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getMedicals();
 	}
 
 	/**
@@ -88,114 +59,89 @@ public class MedicalBrowsingManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Medical> getMedicals(String description) throws OHServiceException {
-		try {
-			return ioOperations.getMedicals(description);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getMedicals(description);
 	}
 
 	/**
 	 * Return all the medicals with the specified criteria.
 	 * @param description the medical description or <code>null</code>
 	 * @param type the medical type or <code>null</code>.
-	 * @param expiring <code>true</code> to include only expiring medicals.
+	 * @param critical <code>true</code> to include only medicals under critical level.
 	 * @return the retrieved medicals.
 	 * @throws OHServiceException
 	 */
-	public ArrayList<Medical> getMedicals(String description, String type, boolean expiring) throws OHServiceException {
-		try {
-			return ioOperations.getMedicals(description, type, expiring);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+	public ArrayList<Medical> getMedicals(String description, String type, boolean critical) throws OHServiceException {
+		return ioOperations.getMedicals(description, type, critical);
+	}
+	
+	/**
+	 * Saves the specified {@link Medical}. The medical is updated with the generated id.
+	 * In case of wrong parameters values a message error is shown and a <code>false</code> value is returned.
+	 * @param medical - the medical to store.
+	 * @return <code>true</code> if the medical has been stored, <code>false</code> otherwise.
+	 * @throws OHServiceException 
+	 */
+	public boolean newMedical(Medical medical) throws OHServiceException {
+		return newMedical(medical, false);
 	}
 
 	/**
 	 * Saves the specified {@link Medical}. The medical is updated with the generated id.
 	 * In case of wrong parameters values a message error is shown and a <code>false</code> value is returned.
 	 * @param medical - the medical to store.
-	 * @param validate - if <code>true</code> performs validation method checkMedicalForInsert(medical).
+	 * @param ignoreSimilar - if <code>true</code>, it ignore the warning "similarsFoundWarning".
 	 * @return <code>true</code> if the medical has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException 
 	 */
-	public boolean newMedical(Medical medical, boolean validate) throws OHServiceException {
-		try {
-			if (validate) checkMedicalForInsert(medical);
-			return ioOperations.newMedical(medical);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+	public boolean newMedical(Medical medical, boolean ignoreSimilar) throws OHServiceException {
+		List<OHExceptionMessage> errors = checkMedicalForInsert(medical, ignoreSimilar);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+		return ioOperations.newMedical(medical);
+	}
+	
+	/**
+	 * Updates the specified medical.
+	 * @param medical - the medical to update.
+	 * @return <code>true</code> if update is successful, false if abortIfLocked == true and the record is locked.
+	 * 		 Otherwise throws an OHServiceException
+	 * @throws OHServiceException 
+	 */
+	public boolean updateMedical(Medical medical) throws OHServiceException {
+		return updateMedical(medical, false);
 	}
 
 	/**
 	 * Updates the specified medical.
-	 * @param newMedical - the medical to update.
-	 * @param abortIfLocked - if <code>false</code> the {@link Medical} will be overwritten when already updated from someone else.
-	 * @return <code>true</code> if update is successful, false if abortIfLocked == true and the record is locked. Otherwise throws an OHServiceException
+	 * @param medical - the medical to update.
+	 * @param ignoreSimilar - if <code>true</code>, it ignore the warning "similarsFoundWarning".
+	 * @return <code>true</code> if update is successful, false if abortIfLocked == true and the record is locked.
+	 * 		 Otherwise throws an OHServiceException
 	 * @throws OHServiceException 
 	 */
-	public boolean updateMedical(Medical oldMedical, Medical newMedical, boolean abortIfLocked) throws OHServiceException {
-		try {
-			int lock = ioOperations.getMedicalLock(newMedical.getCode());
-			if (lock>=0) {
-				//ok the record is present, it was not deleted
-				if (lock!=newMedical.getLock()) {
-					if (true == abortIfLocked) {
-						return false;
-					} else {
-						return ioOperations.updateMedical(newMedical);
-					}
-				} else {
-					//ok it was not updated
-					return ioOperations.updateMedical(newMedical);
-				}
+	public boolean updateMedical(Medical medical, boolean ignoreSimilar) throws OHServiceException {
+		List<OHExceptionMessage> errors = checkMedicalForUpdate(medical, ignoreSimilar);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+		int lock = ioOperations.getMedicalLock(medical.getCode());
+		if (lock>=0) {
+			//ok the record is present, it was not deleted
+			if (lock!=medical.getLock()) {
+				//error: the record has been updated since last read
+				throw new OHServiceException(new OHExceptionMessage("recordUpdatedError", 
+						MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse"), 
+						OHSeverityLevel.ERROR));
 			} else {
-				//the record was deleted since the last read
-				throw new OHException(MessageBundle.getMessage("angal.medicals.couldntfindthedataithasprobablybeendeleted"));
+				//ok it was not updated
+				return ioOperations.updateMedical(medical);
 			}
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+		} else {
+			//the record was deleted since the last read
+			throw new OHServiceException(new OHExceptionMessage("recordDeletedError", 
+					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), 
+					OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -206,100 +152,117 @@ public class MedicalBrowsingManager {
 	 * @throws OHServiceException
 	 */
 	public boolean deleteMedical(Medical medical) throws OHServiceException {
-		try {
-			boolean inStockMovement = ioOperations.isMedicalReferencedInStockMovement(medical.getCode());
+		boolean inStockMovement = ioOperations.isMedicalReferencedInStockMovement(medical.getCode());
 
-			if(inStockMovement){
-				throw new OHException(MessageBundle.getMessage("angal.medicals.therearestockmovementsreferredtothismedical"));
-			}
-			
-			return ioOperations.deleteMedical(medical);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicals.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
-	}
-	
-	private void checkMedicalCommon(Medical medical) throws OHException {
-		if(medical.getMinqty()<0){
-			throw new OHException(MessageBundle.getMessage("angal.medicals.minquantitycannotbelessthan0"));
+		if(inStockMovement){
+			throw new OHServiceException(new OHExceptionMessage("existingReferencesError", 
+					MessageBundle.getMessage("angal.medicals.therearestockmovementsreferredtothismedical"), 
+					OHSeverityLevel.ERROR));
 		}
 		
-		if(medical.getPcsperpck()<0){
-			throw new OHException(MessageBundle.getMessage("angal.medicals.insertavalidpackaging"));
+		return ioOperations.deleteMedical(medical);
+	}
+	
+	/**
+	 * Common checks to validate a {@link Medical} for insert or update
+	 * @param medical - the {@link Medical} to insert or update
+	 * @return list of {@link OHExceptionMessage}
+	 */
+	private List<OHExceptionMessage> checkMedicalCommon(Medical medical) {
+		List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+		if(medical.getMinqty()<0)
+		{
+			errors.add(new OHExceptionMessage("quantityLesserThanZeroError", 
+					MessageBundle.getMessage("angal.medicals.minquantitycannotbelessthan0"), 
+					OHSeverityLevel.ERROR));
 		}
-
-		if(medical.getDescription().equalsIgnoreCase("")){
-			throw new OHException(MessageBundle.getMessage("angal.medicals.inseravaliddescription"));
+		if(medical.getPcsperpck()<0)
+		{
+			errors.add(new OHExceptionMessage("packagingLesserThanZeroError", 
+					MessageBundle.getMessage("angal.medicals.insertavalidpackaging"), 
+					OHSeverityLevel.ERROR));
 		}
+		if(medical.getDescription().equalsIgnoreCase(""))
+		{
+			errors.add(new OHExceptionMessage("nullOrEmptyDescriptionError", 
+					MessageBundle.getMessage("angal.medicals.inseravaliddescription"), 
+					OHSeverityLevel.ERROR));
+		}
+		return errors;
 	}
 	
 	/**
 	 * Perform several checks on the provided medical, useful for insert
-	 * @param medical
+	 * @param medical - the {@link Medical} to check
+	 * @param ignoreSimilar - if <code>true</code>, it will not perform a similiraty check. 
+	 * 	{@code warning}: same Medical description in the same {@link MedicalType} category is not allowed anyway
 	 * @return <code>true</code> if the {@link Medical} is ok for inserting, <code>false</code> otherwise
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
-	public boolean checkMedicalForInsert(Medical medical) throws OHException {
-		checkMedicalCommon(medical);
-		boolean productCodeExists = !medical.getProd_code().equals("") && ioOperations.productCodeExists(medical, false);
-		boolean medicalExists = ioOperations.medicalExists(medical, false);
-		ArrayList<Medical> similarMedicals = ioOperations.medicalCheck(medical, false);
-		if (productCodeExists) {
-			throw new OHException(MessageBundle.getMessage("angal.medicals.thecodeisalreadyused"));
-		} else if (medicalExists) {
-			StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.medicals.thetypemedicalyouinsertedwasalreadyinuse")).append("\n");
-			message.append("[").append(medical.getType().getDescription()).append("] ");
-			message.append(medical.toString()).append("\n");
-			throw new OHException(message.toString());
-		} else if (!similarMedicals.isEmpty()) {
-			StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.medicals.themedicalyouinsertedseemsalreadyinuse")).append("\n");
-			for (Medical med : similarMedicals) {
-				String prod_code = med.getProd_code() == null || med.getProd_code().equals("") ? MessageBundle.getMessage("angal.common.notapplicable") : med.getProd_code();
-				message.append("[").append(med.getType().getDescription()).append("] ");
-				if (!med.getProd_code().equals("")) message.append("[").append(prod_code).append("] ");
-				message.append(med.toString()).append("\n");
-			}
-			throw new OHException(message.toString(), new Throwable("similarsFound"));
-		} else return true;
+	private List<OHExceptionMessage> checkMedicalForInsert(Medical medical, boolean ignoreSimilar) throws OHServiceException {
+		return checkMedical(medical, ignoreSimilar, false);
 	}
 	
 	/**
 	 * Perform several checks on the provided medical, useful for update
-	 * @param medical
+	 * @param medical - the {@link Medical} to check
+	 * @param ignoreSimilar - if <code>true</code>, it will not perform a similiraty check. 
+	 * 	{@code warning}: same Medical description in the same {@link MedicalType} category is not allowed anyway
 	 * @return <code>true</code> if the {@link Medical} is ok for updating, <code>false</code> otherwise
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
-	public boolean checkMedicalForUpdate(Medical oldMedical, Medical medical) throws OHException {
-		checkMedicalCommon(medical);		
-		boolean productCodeExists = !medical.getProd_code().equals("") && ioOperations.productCodeExists(medical, true);
-		boolean medicalExists = ioOperations.medicalExists(medical, true);
-		ArrayList<Medical> similarMedicals = ioOperations.medicalCheck(medical, true);
-		if (productCodeExists) {
-			throw new OHException(MessageBundle.getMessage("angal.medicals.thecodeisalreadyused"));
-		} else if (medicalExists) {
-			StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.medicals.thetypemedicalyouinsertedwasalreadyinuse")).append("\n");
+	public List<OHExceptionMessage> checkMedicalForUpdate(Medical medical, boolean ignoreSimilar) throws OHServiceException {
+		return checkMedical(medical, ignoreSimilar, true);
+	}
+	
+	/**
+	 * Perform several checks on the provided medical, useful for update
+	 * @param medical - the {@link Medical} to check
+	 * @param ignoreSimilar - if <code>true</code>, it will not perform a similiraty check. 
+	 * 	{@code warning}: same Medical description in the same {@link MedicalType} category is not allowed anyway
+	 * @param update - if <code>true</code>, it will not consider the actual {@link Medical}
+	 * @return <code>true</code> if the {@link Medical} is ok for updating, <code>false</code> otherwise
+	 * @throws OHServiceException
+	 */
+	public List<OHExceptionMessage> checkMedical(Medical medical, boolean ignoreSimilar, boolean update) throws OHServiceException {
+		List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+		
+		//check commons
+		errors.addAll(checkMedicalCommon(medical));
+		
+		//check existing data
+		boolean productCodeExists = !medical.getProd_code().equals("") && ioOperations.productCodeExists(medical, update);
+		boolean medicalExists = ioOperations.medicalExists(medical, update);
+		ArrayList<Medical> similarMedicals = ioOperations.medicalCheck(medical, update);
+		
+		if (productCodeExists) 
+		{
+			errors.add(new OHExceptionMessage("productCodeExistsError", 
+					MessageBundle.getMessage("angal.medicals.thecodeisalreadyused"), 
+					OHSeverityLevel.ERROR));
+		} 
+		else if (medicalExists) 
+		{
+			StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.medicals.thepairtypemedicalalreadyexists")).append("\n");
 			message.append("[").append(medical.getType().getDescription()).append("] ");
 			message.append(medical.toString()).append("\n");
-			throw new OHException(message.toString());
-		} else if (!similarMedicals.isEmpty()) {
+			errors.add(new OHExceptionMessage("pairTypeMedicalExistsError", 
+					message.toString(), 
+					OHSeverityLevel.ERROR));
+		} 
+		else if (!ignoreSimilar && !similarMedicals.isEmpty()) 
+		{
 			StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.medicals.themedicalyouinsertedseemsalreadyinuse")).append("\n");
 			for (Medical med : similarMedicals) {
 				message.append("[").append(med.getType().getDescription()).append("] ");
 				if (!med.getProd_code().equals("")) message.append("[").append(med.getProd_code()).append("] ");
 				message.append(med.toString()).append("\n");
 			}
-			throw new OHException(message.toString(), new Throwable("similarsFound"));
-		} else return true;
+			errors.add(new OHExceptionMessage("similarsFoundWarning", 
+					message.toString(), 
+					OHSeverityLevel.WARNING));
+		};
+		return errors;
 	}
 	
 }

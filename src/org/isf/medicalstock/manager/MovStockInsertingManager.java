@@ -232,24 +232,10 @@ public class MovStockInsertingManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean alertCriticalQuantity(Medical medicalSelected, int specifiedQuantity) throws OHServiceException {
-		try {
-			Medical medical = ioOperationsMedicals.getMedical(medicalSelected.getCode());
-			double totalQuantity = medical.getTotalQuantity();
-			double residual = totalQuantity - specifiedQuantity;
-			return residual < medical.getMinqty();
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
-		}
+		Medical medical = ioOperationsMedicals.getMedical(medicalSelected.getCode());
+		double totalQuantity = medical.getTotalQuantity();
+		double residual = totalQuantity - specifiedQuantity;
+		return residual < medical.getMinqty();
 	}
 
 	/**

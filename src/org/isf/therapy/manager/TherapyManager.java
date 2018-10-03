@@ -21,6 +21,7 @@ import org.isf.therapy.model.TherapyRow;
 import org.isf.therapy.service.TherapyIoOperations;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,12 +101,12 @@ public class TherapyManager {
 			//System.out.println(formatDate(dates[i]));
 		}
 		
-		MedicalsIoOperations medicalIoOperations = Menu.getApplicationContext().getBean(MedicalsIoOperations.class);
+		MedicalBrowsingManager medManager = new MedicalBrowsingManager();
 		Medical med = null;
 		try {
-			med = medicalIoOperations.getMedical(medId);
-		} catch (OHException e) {
-			logger.warn("", e);
+			med = medManager.getMedical(medId);
+		} catch (OHServiceException e) {
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		Therapy th = new Therapy(therapyID,	patID, dates, med, qty, "", freqInDay, note, notify, sms);
 		datesArray.clear();

@@ -15,19 +15,19 @@ public interface MedicalsIoOperationRepository extends JpaRepository<Medical, In
     public List<Medical> findAllWhereDescriptionOrderByDescription(@Param("description") String description );    
     
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A where (MDSR_DESC like %:description% OR MDSR_CODE like %:description%) and (MDSRT_ID_A=:type) and ((MDSR_INI_STOCK_QTI+MDSR_IN_QTI-MDSR_OUT_QTI)<MDSR_MIN_STOCK_QTI) order BY MDSR_MDSRT_ID_A, MDSR_DESC", nativeQuery= true)
-    public List<Medical> findAllWhereDescriptionAndTypeAndExpiringOrderByTypeAndDescritpion(@Param("description") String description, @Param("type") String type);  
+    public List<Medical> findAllWhereDescriptionAndTypeAndCriticalOrderByTypeAndDescritpion(@Param("description") String description, @Param("type") String type);  
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A where (MDSR_DESC like %:description% OR MDSR_CODE like %:description%) and (MDSRT_ID_A=:type) order BY MDSR_MDSRT_ID_A, MDSR_DESC", nativeQuery= true)   
     public List<Medical> findAllWhereDescriptionAndTypeOrderByTypeAndDescritpion(@Param("description")String description, @Param("type") String type);  
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A where (MDSR_DESC like %:description% OR MDSR_CODE like %:description%) and ((MDSR_INI_STOCK_QTI+MDSR_IN_QTI-MDSR_OUT_QTI)<MDSR_MIN_STOCK_QTI) order BY MDSR_MDSRT_ID_A, MDSR_DESC", nativeQuery= true)
-    public List<Medical> findAllWhereDescriptionAndExpiringOrderByTypeAndDescritpion(@Param("description")String description);  
+    public List<Medical> findAllWhereDescriptionAndCriticalOrderByTypeAndDescritpion(@Param("description")String description);  
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A where (MDSR_DESC like %:description% OR MDSR_CODE like %:description%) order BY MDSR_MDSRT_ID_A, MDSR_DESC", nativeQuery= true)
     public List<Medical> findAllWhereDescriptionOrderByTypeAndDescritpion(@Param("description")String description);      
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A where (MDSRT_ID_A=:type) and ((MDSR_INI_STOCK_QTI+MDSR_IN_QTI-MDSR_OUT_QTI)<MDSR_MIN_STOCK_QTI) order BY MDSR_MDSRT_ID_A, MDSR_DESC", nativeQuery= true)
-    public List<Medical> findAllWhereTypeAndExpiringOrderByTypeAndDescritpion(@Param("type") String type);  
+    public List<Medical> findAllWhereTypeAndCriticalOrderByTypeAndDescritpion(@Param("type") String type);  
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A where (MDSRT_ID_A=:type) order BY MDSR_MDSRT_ID_A, MDSR_DESC", nativeQuery= true)   
     public List<Medical> findAllWhereTypeOrderByTypeAndDescritpion(@Param("type") String type);  
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A where ((MDSR_INI_STOCK_QTI+MDSR_IN_QTI-MDSR_OUT_QTI)<MDSR_MIN_STOCK_QTI) order BY MDSR_MDSRT_ID_A, MDSR_DESC", nativeQuery= true)
-    public List<Medical> findAllWhereExpiringOrderByTypeAndDescritpion();  
+    public List<Medical> findAllWhereCriticalOrderByTypeAndDescritpion();  
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A order BY MDSR_MDSRT_ID_A, MDSR_DESC", nativeQuery= true)
     public List<Medical> findAllByOrderByTypeAndDescritpion();  
     

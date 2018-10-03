@@ -29,7 +29,6 @@ import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.Menu;
 import org.isf.serviceprinting.manager.PrintManager;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
@@ -257,8 +256,8 @@ public class MedicalPrintSelection extends JDialog implements ActionListener{
 				}
 				try {
 					pMedicals=ioOperations.getMedicals(medical,medicalType,expiring);
-				} catch (OHException e1) {
-					JOptionPane.showMessageDialog(null, e1.getMessage());
+				} catch (OHServiceException e1) {
+					OHServiceExceptionUtil.showMessages(e1);
 					return;
 				}
 				pMedicals4Print = convertToPrint(pMedicals);
