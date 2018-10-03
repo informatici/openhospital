@@ -244,7 +244,7 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 
 								} else {
 									JOptionPane.showMessageDialog(null,
-											MessageBundle.getMessage("angal.priceslist.thedatacouldnotbesaved"));
+											MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 								}
 							}catch(OHServiceException e){
 								OHServiceExceptionUtil.showMessages(e);

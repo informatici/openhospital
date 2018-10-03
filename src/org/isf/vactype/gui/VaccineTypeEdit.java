@@ -250,7 +250,7 @@ public class VaccineTypeEdit extends JDialog{
 						if (result) {
 						    fireVaccineInserted();
                         }
-						if (!result) JOptionPane.showMessageDialog(null,  MessageBundle.getMessage("angal.vactype.thedatacouldnotbesaved"));
+						if (!result) JOptionPane.showMessageDialog(null,  MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 	                    else  dispose();
                     }
                     else { // updating
@@ -265,7 +265,7 @@ public class VaccineTypeEdit extends JDialog{
 						if (result) {
 							fireVaccineUpdated();
                         }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.vactype.thedatacouldnotbesaved"));
+						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                         else  dispose();
     					}
                     	

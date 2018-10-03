@@ -239,7 +239,7 @@ public class PregnantTreatmentTypeEdit extends JDialog{
 								if (result) {
 									firePregnantTreatmentInserted();
 								}
-								if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.preagtreattype.thedatacouldnotbesaved"));
+								if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 								else  dispose();
 							}
 							else {                          // updating
@@ -250,7 +250,7 @@ public class PregnantTreatmentTypeEdit extends JDialog{
 									if (result) {
 										firePregnantTreatmentUpdated();
 									}
-									if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.preagtreattype.thedatacouldnotbesaved"));
+									if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 									else  dispose();
 								}
 

@@ -289,7 +289,7 @@ public class VaccineEdit extends JDialog {
                                 manager.updateVaccine(vaccine);
                             } else {
                                 // it was updated by someone else
-                                String message = MessageBundle.getMessage("angal.admission.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
+                                String message = MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
                                 int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
                                 boolean overWrite = response== JOptionPane.OK_OPTION;
                                 if (overWrite) {
@@ -305,7 +305,7 @@ public class VaccineEdit extends JDialog {
                             fireVaccineUpdated();
                         }
                     }
-                    if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.vaccine.thedatacouldnotbesaved"));
+                    if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                     else  dispose();
                 }
 			});

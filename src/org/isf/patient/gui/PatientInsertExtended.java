@@ -511,7 +511,7 @@ public class PatientInsertExtended extends JDialog {
 								firePatientInserted(patient);
 
 							if (!result)
-								JOptionPane.showMessageDialog(PatientInsertExtended.this, MessageBundle.getMessage("angal.patient.thedatacouldnotbesaved"));
+								JOptionPane.showMessageDialog(PatientInsertExtended.this, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 							else {
 								if (justSave) {
 									insert = false;
@@ -607,7 +607,7 @@ public class PatientInsertExtended extends JDialog {
 							firePatientUpdated(patient);
 						}
 						if (!result)
-							JOptionPane.showMessageDialog(PatientInsertExtended.this, MessageBundle.getMessage("angal.patient.thedatacouldnotbesaved"));
+							JOptionPane.showMessageDialog(PatientInsertExtended.this, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						else
 							dispose();
 					}

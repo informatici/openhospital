@@ -71,7 +71,7 @@ public class ExamRowBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -96,7 +96,7 @@ public class ExamRowBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -116,7 +116,7 @@ public class ExamRowBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 }

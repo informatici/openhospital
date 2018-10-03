@@ -47,7 +47,7 @@ public class PatientBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.patient.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -90,7 +90,7 @@ public class PatientBrowserManager {
 //		try {
 //			if (!ioOperations.updatePatient(patient, check)) {
 //				int ok = JOptionPane.showConfirmDialog(null,
-//						MessageBundle.getMessage("angal.patient.thedatahasbeenupdatedbysomeoneelse") + ".\n" + MessageBundle.getMessage("angal.patient.doyouwanttooverwritethedata") + "?",
+//						MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse") + ".\n" + MessageBundle.getMessage("angal.patient.doyouwanttooverwritethedata") + "?",
 //						MessageBundle.getMessage("angal.patient.select"), JOptionPane.YES_NO_OPTION);
 //				if (ok != JOptionPane.OK_OPTION)
 //					return false;

@@ -282,7 +282,7 @@ public class UserEdit extends JDialog {
                         }
 					}
 
-					if (!result) JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.menu.thedatacouldnotbesaved"));
+					if (!result) JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 					else {
 						dispose();
 					}

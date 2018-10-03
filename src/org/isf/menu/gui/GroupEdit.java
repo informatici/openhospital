@@ -227,7 +227,7 @@ public class GroupEdit extends JDialog {
 							fireGroupUpdated();
                         }
 					}
-					if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.menu.thedatacouldnotbesaved"));
+					if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                     else  dispose();
                 }
 			});

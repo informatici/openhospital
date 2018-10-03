@@ -202,7 +202,7 @@ public class DeliveryResultTypeBrowserEdit extends JDialog{
 								fireDeliveryResultInserted();
 								dispose();
 							} else 
-								JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"));
+								JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						}
 						else {            // updating
 							if (descriptionTextField.getText().equals(lastdescription)){
@@ -212,7 +212,7 @@ public class DeliveryResultTypeBrowserEdit extends JDialog{
 									fireDeliveryResultUpdated();
 									dispose();
 								} else 
-									JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"));
+									JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 							}
 						}
 					}catch(OHServiceException ex){

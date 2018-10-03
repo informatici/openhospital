@@ -470,7 +470,7 @@ public class WardEdit extends JDialog {
 							boolean isConfirmedOverwriteRecord = false;
 							if (isLocked) {
 								isConfirmedOverwriteRecord = (JOptionPane.showConfirmDialog(null, 
-										MessageBundle.getMessage("angal.ward.thedatahasbeenupdatedbysomeoneelse") + ". " +
+										MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse") + ". " +
 												MessageBundle.getMessage("angal.ward.doyouwanttooverwritethedata") + "?", 
 												MessageBundle.getMessage("angal.ward.select"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION);
 							}
@@ -484,7 +484,7 @@ public class WardEdit extends JDialog {
 							fireWardUpdated();
 						}
 					}
-					if (!result) JOptionPane.showMessageDialog(WardEdit.this, MessageBundle.getMessage("angal.ward.thedatacouldnotbesaved"));
+					if (!result) JOptionPane.showMessageDialog(WardEdit.this, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 					else  dispose();
 				}
 			});

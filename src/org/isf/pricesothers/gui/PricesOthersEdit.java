@@ -171,7 +171,7 @@ public class PricesOthersEdit extends JDialog {
 						OHServiceExceptionUtil.showMessages(e);
 					}
 					if (!result) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.pricesothers.thedatacouldnotbesaved")); //$NON-NLS-1$
+						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved")); //$NON-NLS-1$
 						dispose();
 					}
 					else  dispose();

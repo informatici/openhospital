@@ -242,10 +242,10 @@ public class ExamEdit extends JDialog {
 								fireExamInserted();
 								dispose();
 							} else 
-								JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exa.thedatacouldnotbesaved"));
+								JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						} else {
 							if (false == manager.updateExam(exam)) {
-								StringBuilder prompt = new StringBuilder(MessageBundle.getMessage("angal.exa.thedatahasbeenupdatedbysomeoneelse"))
+								StringBuilder prompt = new StringBuilder(MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse"))
 										.append("\n")
 										.append(MessageBundle.getMessage("angal.exa.doyouwanttooverwritethedata"))
 										.append("?");
@@ -258,7 +258,7 @@ public class ExamEdit extends JDialog {
 										fireExamUpdated();
 										dispose();
 									} else 
-										JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exa.thedatacouldnotbesaved"));
+										JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 								}
 							} else {
 								fireExamUpdated();

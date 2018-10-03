@@ -213,7 +213,7 @@ public class ExamTypeEdit extends JDialog{
 	                           fireExamTypeInserted();
 	                           dispose();
 	                        } else
-	                        	JOptionPane.showMessageDialog(null,  MessageBundle.getMessage("angal.exatype.thedatacouldnotbesaved"));
+	                        	JOptionPane.showMessageDialog(null,  MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 	                    }
 	                    else {            // updating
 	                    	if (descriptionTextField.getText().equals(lastdescription)){
@@ -223,7 +223,7 @@ public class ExamTypeEdit extends JDialog{
 									fireExamTypeUpdated();
 									dispose();
 		                        }else
-		                        	JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.exatype.thedatacouldnotbesaved"));
+		                        	JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 	    					}
 						}
 					} catch(OHServiceException ex){

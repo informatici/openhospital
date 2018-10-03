@@ -39,7 +39,7 @@ public class DischargeTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.disctype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -69,7 +69,7 @@ public class DischargeTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.disctype.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -99,7 +99,7 @@ public class DischargeTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.disctype.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -123,7 +123,7 @@ public class DischargeTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.disctype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -153,7 +153,7 @@ public class DischargeTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.disctype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 

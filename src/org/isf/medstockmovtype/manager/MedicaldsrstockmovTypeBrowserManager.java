@@ -42,7 +42,7 @@ public class MedicaldsrstockmovTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medstockmovtype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -66,7 +66,7 @@ public class MedicaldsrstockmovTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medstockmovtype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -90,7 +90,7 @@ public class MedicaldsrstockmovTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medstockmovtype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -114,7 +114,7 @@ public class MedicaldsrstockmovTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medstockmovtype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -138,7 +138,7 @@ public class MedicaldsrstockmovTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medstockmovtype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 

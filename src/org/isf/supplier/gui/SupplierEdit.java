@@ -278,7 +278,7 @@ public class SupplierEdit extends JDialog {
 							fireSupplierUpdated();
 						}
 					}
-					if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.supplier.thedatacouldnotbesaved"));
+					if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 					else  dispose();
 				}
 			});

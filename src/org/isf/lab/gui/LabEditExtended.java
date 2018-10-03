@@ -702,7 +702,7 @@ public class LabEditExtended extends JDialog {
 					}
 					if (!result)
 						JOptionPane.showMessageDialog(null,
-								MessageBundle.getMessage("angal.lab.thedatacouldnotbesaved"));
+								MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 					else {
 						fireLabUpdated();
 						dispose();

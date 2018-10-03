@@ -62,7 +62,7 @@ public class ExamTypeBrowserManager {
 			logger.error("", e);
 			throw new OHServiceException(e,
 					new OHExceptionMessage(null,
-							MessageBundle.getMessage("angal.exatype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+							MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -95,7 +95,7 @@ public class ExamTypeBrowserManager {
 			logger.error("", e);
 			throw new OHServiceException(e,
 					new OHExceptionMessage(MessageBundle.getMessage("angal.exatype.newexamtype"),
-							MessageBundle.getMessage("angal.exatype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+							MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -121,7 +121,7 @@ public class ExamTypeBrowserManager {
 			logger.error("", e);
 			throw new OHServiceException(e,
 					new OHExceptionMessage(null,
-							MessageBundle.getMessage("angal.exatype.thedatacouldnotbesaved"),
+							MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"),
 							OHSeverityLevel.ERROR));
 		}
 	}
@@ -143,7 +143,7 @@ public class ExamTypeBrowserManager {
 			logger.error("", e);
 			throw new OHServiceException(e,
 					new OHExceptionMessage(null,
-							MessageBundle.getMessage("angal.exatype.problemsoccurredwiththesqlistruction"),
+							MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"),
 							OHSeverityLevel.ERROR));
 		}
 	}
@@ -165,7 +165,7 @@ public class ExamTypeBrowserManager {
 			logger.error("", e);
 			throw new OHServiceException(e,
 					new OHExceptionMessage(MessageBundle.getMessage("angal.exatype.deleteexamtype"),
-							MessageBundle.getMessage("angal.exatype.problemsoccurredwiththesqlistruction"),
+							MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"),
 							OHSeverityLevel.ERROR));
 		}
 	}

@@ -258,7 +258,7 @@ public class MedicalTypeBrowserEdit extends JDialog{
 						if (result) {
                            fireMedicalInserted();
                         }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medtype.thedatacouldnotbesaved"));
+						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 	                    else  dispose();
                     }
                     else {                          // updating
@@ -274,7 +274,7 @@ public class MedicalTypeBrowserEdit extends JDialog{
 						if (result) {
 							fireMedicalUpdated();
                         }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medtype.thedatacouldnotbesaved"));
+						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                         else  dispose();
     					}
                     	

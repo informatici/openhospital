@@ -337,7 +337,7 @@ public class PatientInsert extends JDialog implements ActionListener{
 											firePatientInserted(patient);
 										}
 										if (!result) {
-											JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patient.thedatacouldnotbesaved"));
+											JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 										} else { 
 											dispose();
 										}
@@ -414,7 +414,7 @@ public class PatientInsert extends JDialog implements ActionListener{
 						if (result) {
 							firePatientUpdated(patient);
 						}
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patient.thedatacouldnotbesaved"));
+						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						else  dispose();
 						
 					}

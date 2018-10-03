@@ -2057,7 +2057,7 @@ public class AdmissionBrowser extends JDialog {
 									}
 								} else { 
 									// it was updated by someone else
-									String message = MessageBundle.getMessage("angal.admission.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
+									String message = MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
 									int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
 									boolean overWrite = response== JOptionPane.OK_OPTION;
 
@@ -2081,7 +2081,7 @@ public class AdmissionBrowser extends JDialog {
 						}
 
 						if (!result) {
-							JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.thedatacouldnotbesaved"));
+							JOptionPane.showMessageDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						} else {
 							dispose();
 						}

@@ -256,7 +256,7 @@ public class OperationTypeEdit extends JDialog{
 						if (result) {
                            fireOperationInserted();
                         }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opetype.thedatacouldnotbesaved"));
+						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 	                    else  dispose();
                     }
                     else {                          // updating
@@ -272,7 +272,7 @@ public class OperationTypeEdit extends JDialog{
 						if (result) {
 							fireOperationUpdated();
                         }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opetype.thedatacouldnotbesaved"));
+						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                         else  dispose();
     					}
                     	

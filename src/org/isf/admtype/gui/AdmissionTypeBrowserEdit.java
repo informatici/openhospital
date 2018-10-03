@@ -206,7 +206,7 @@ public class AdmissionTypeBrowserEdit extends JDialog{
                             if (result) {
                                 fireAdmissionInserted(admissionType);
                             }
-                            if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.admtype.thedatacouldnotbesaved"));
+                            if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                             else  dispose();
 						}catch(OHServiceException ex){
 							OHServiceExceptionUtil.showMessages(ex);
@@ -221,7 +221,7 @@ public class AdmissionTypeBrowserEdit extends JDialog{
                                 if (result) {
                                     fireAdmissionUpdated();
                                 }
-                                if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.admtype.thedatacouldnotbesaved"));
+                                if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                                 else  dispose();
     						}catch(OHServiceException ex){
     							OHServiceExceptionUtil.showMessages(ex);

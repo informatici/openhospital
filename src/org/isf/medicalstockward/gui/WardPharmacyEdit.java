@@ -356,7 +356,7 @@ private JButton getJButtonTrashMedical() {
 						fireMovementWardUpdated();
 					}
 					if (!result)
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstockwardedit.thedatacouldnotbesaved")); //$NON-NLS-1$
+						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved")); //$NON-NLS-1$
 					else
 						dispose();
 				}

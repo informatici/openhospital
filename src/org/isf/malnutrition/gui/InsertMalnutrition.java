@@ -195,7 +195,7 @@ public class InsertMalnutrition extends JDialog {
 							
 							if (false == updated) {
 								// failed because of valid lock, ask user if they want to update anyway
-								String msg = MessageBundle.getMessage("angal.malnutrition.thedatahasbeenupdatedbysomeoneelse") +
+								String msg = MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse") +
 										MessageBundle.getMessage("angal.malnutrition.doyouwanttooverwritethedata");
 								
 								int response = JOptionPane.showConfirmDialog(null, msg, MessageBundle.getMessage("angal.malnutrition.select"), JOptionPane.YES_NO_OPTION);

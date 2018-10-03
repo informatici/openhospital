@@ -64,7 +64,7 @@ public class ExamBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), 
 					OHSeverityLevel.ERROR));
 		}
 	}
@@ -95,7 +95,7 @@ public class ExamBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"), 
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), 
 					OHSeverityLevel.ERROR));
 		}
 	}
@@ -115,7 +115,7 @@ public class ExamBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"),
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"),
 					OHSeverityLevel.ERROR));
 		}
 	}
@@ -139,7 +139,7 @@ public class ExamBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"),
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"),
 					OHSeverityLevel.ERROR));
 		}
 	}
@@ -172,7 +172,7 @@ public class ExamBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"),
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"),
 					OHSeverityLevel.ERROR));
 		}
 	}
@@ -213,7 +213,7 @@ public class ExamBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"),
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"),
 					OHSeverityLevel.ERROR));
 		}
 	}
@@ -234,7 +234,7 @@ public class ExamBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.exa.problemsoccurredwiththesqlistruction"),
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"),
 					OHSeverityLevel.ERROR));
 		}
 	}

@@ -34,7 +34,7 @@ public class OperationTypeBrowserManager {
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.opetype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -54,7 +54,7 @@ public class OperationTypeBrowserManager {
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.opetype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -74,7 +74,7 @@ public class OperationTypeBrowserManager {
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.opetype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -94,7 +94,7 @@ public class OperationTypeBrowserManager {
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.opetype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -113,7 +113,7 @@ public class OperationTypeBrowserManager {
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.opetype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 }

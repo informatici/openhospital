@@ -70,7 +70,7 @@ public class DeliveryResultTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), 
 					OHSeverityLevel.ERROR));
 		}
 	}
@@ -107,7 +107,7 @@ public class DeliveryResultTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), 
 					OHSeverityLevel.ERROR));
 		}
 	}
@@ -139,7 +139,7 @@ public class DeliveryResultTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), 
 					OHSeverityLevel.ERROR));
 		}
 	}
@@ -165,7 +165,7 @@ public class DeliveryResultTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), 
 					OHSeverityLevel.ERROR));
 		}
 	}
@@ -191,7 +191,7 @@ public class DeliveryResultTypeBrowserManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"), 
+					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), 
 					OHSeverityLevel.ERROR));
 		}
 	}

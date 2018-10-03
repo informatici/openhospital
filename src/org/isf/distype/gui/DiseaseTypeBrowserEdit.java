@@ -208,7 +208,7 @@ public class DiseaseTypeBrowserEdit extends JDialog{
                             if (result) {
                                 fireDiseaseInserted();
                             }
-                            if (!result) JOptionPane.showMessageDialog(null,  MessageBundle.getMessage("angal.distype.thedatacouldnotbesaved"));
+                            if (!result) JOptionPane.showMessageDialog(null,  MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                             else  dispose();
                         }
                         else {                          // updating
@@ -219,7 +219,7 @@ public class DiseaseTypeBrowserEdit extends JDialog{
                                 if (result) {
                                     fireDiseaseUpdated();
                                 }
-                                if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.distype.thedatacouldnotbesaved"));
+                                if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                                 else  dispose();
                             }
 

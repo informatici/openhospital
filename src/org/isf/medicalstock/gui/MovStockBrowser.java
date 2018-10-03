@@ -771,7 +771,7 @@ public class MovStockBrowser extends ModalJFrame {
 						query.setData(s, true);
 					} catch (IOException err) {
 						JOptionPane.showMessageDialog(null,
-								MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithserverconnection"));
+								MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"));
 						err.printStackTrace();
 					} catch (SQLException err) {
 						JOptionPane.showMessageDialog(null,

@@ -278,7 +278,7 @@ public class LabNew extends JDialog implements SelectionListener {
 					}
 					if (!result)
 						JOptionPane.showMessageDialog(null,
-								MessageBundle.getMessage("angal.lab.thedatacouldnotbesaved"));
+								MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 					else {
 						fireLabInserted();
 						dispose();

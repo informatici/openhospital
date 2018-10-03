@@ -162,7 +162,7 @@ public class ListEdit extends JDialog {
 					}
 					if (!result) JOptionPane.showMessageDialog(
 											null,
-											MessageBundle.getMessage("angal.priceslist.thedatacouldnotbesaved")); //$NON-NLS-1$
+											MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved")); //$NON-NLS-1$
 					else  dispose();
 					
 				}

@@ -318,7 +318,7 @@ public class MedicalEdit extends JDialog {
 					}
 					if (!result)
 						JOptionPane.showMessageDialog(MedicalEdit.this,
-								MessageBundle.getMessage("angal.medicals.thedatacouldnotbesaved"));
+								MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 				}
 
 				private int manageSimilarFoundWarning(OHExceptionMessage error) {

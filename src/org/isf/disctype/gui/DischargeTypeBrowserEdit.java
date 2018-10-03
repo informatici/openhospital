@@ -204,7 +204,7 @@ public class DischargeTypeBrowserEdit extends JDialog{
                             if (result) {
                                 fireDischargeInserted(dischargeType);
                             }
-                            if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.disctype.thedatacouldnotbesaved"));
+                            if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                             else  dispose();
 						} catch (OHServiceException e1) {
 							OHServiceExceptionUtil.showMessages(e1);
@@ -219,7 +219,7 @@ public class DischargeTypeBrowserEdit extends JDialog{
                                 if (result) {
                                     fireDischargeUpdated();
                                 }
-                                if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.disctype.thedatacouldnotbesaved"));
+                                if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                                 else  dispose();
 							} catch (OHServiceException e1) {
 								OHServiceExceptionUtil.showMessages(e1);

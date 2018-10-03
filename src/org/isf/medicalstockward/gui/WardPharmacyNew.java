@@ -455,7 +455,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 							fireMovementWardInserted();
 						}
 						if (!result)
-							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstockwardedit.thedatacouldnotbesaved"));
+							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						else
 							dispose();
 					} else {
@@ -491,7 +491,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 							fireMovementWardInserted();
 						}
 						if (!result)
-							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstockwardedit.thedatacouldnotbesaved"));
+							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						else
 							dispose();
 					}
