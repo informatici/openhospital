@@ -87,6 +87,7 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 	private JPanel jCodeLabelPanel = null;
 	private JPanel jDescriptionLabelPanel = null;
 	private JLabel jDescripitonLabel = null;
+	
 	/**
      * 
 	 * This is the default constructor; we pass the arraylist and the selectedrow
@@ -196,77 +197,17 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					String key = codeTextField.getText();
 					String key2 = (String) typeComboBox.getSelectedItem();
-					MedicaldsrstockmovTypeBrowserManager manager = new MedicaldsrstockmovTypeBrowserManager();
-					if (key.equals("")){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.medstockmovtype.pleaseinsertacode"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}	
-					//System.out.print(key.length());
-					if (key.length()>10){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.medstockmovtype.codetoolongmaxchars"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						
-						return;	
-					}
-					if (key2.length()>2){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.medstockmovtype.typetoolongmaxchars"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						
-						return;	
-					}
-					if(insert){
-					boolean codeControl;
-					try {
-						codeControl = manager.codeControl(key);
-					} catch (OHServiceException e1) {
-						codeControl = false;
-						OHServiceExceptionUtil.showMessages(e1);
-					}
-					
-					if (true == codeControl){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.common.codealreadyinuse"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						codeTextField.setText("");
-						return;	
-					}};
-					if (descriptionTextField.getText().equals("")){
-						JOptionPane.showMessageDialog(				
-		                        null,
-		                        MessageBundle.getMessage("angal.medstockmovtype.pleaseinsertavaliddescription"),
-		                        MessageBundle.getMessage("angal.hospital"),
-		                        JOptionPane.PLAIN_MESSAGE);
-						return;	
-					}
-//					if (key2.equals("")){
-//						JOptionPane.showMessageDialog(				
-//		                        null,
-//		                        MessageBundle.getMessage("angal.medstockmovtype.pleaseinsertavalidtype"),
-//		                        MessageBundle.getMessage("angal.hospital"),
-//		                        JOptionPane.PLAIN_MESSAGE);
-//						return;	
-//					}
-					if (descriptionTextField.getText().equals(lastdescription)){
+					String description = descriptionTextField.getText();
+					if (description.equals(lastdescription)){
 						dispose();	
 					}
+					MedicaldsrstockmovTypeBrowserManager manager = new MedicaldsrstockmovTypeBrowserManager();
 				
-					medicaldsrstockmovType.setDescription(descriptionTextField.getText());
+					medicaldsrstockmovType.setDescription(description);
 					medicaldsrstockmovType.setCode(codeTextField.getText());
 					medicaldsrstockmovType.setType(key2);
 					boolean result;
-					if (insert) {      // inserting
+					if (insert) { // inserting
 						try {
 							result = manager.newMedicaldsrstockmovType(medicaldsrstockmovType);
 						} catch (OHServiceException e1) {
@@ -274,28 +215,30 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 							OHServiceExceptionUtil.showMessages(e1);
 						}
 						if (result) {
-                           fireMedicaldsrstockmovInserted(medicaldsrstockmovType);
-                        }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
-	                    else  dispose();
-                    }
-                    else {                          // updating
-                    	if (descriptionTextField.getText().equals(lastdescription)){
-    						dispose();	
-    					}else{
-    						try {
-								result = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
-							} catch (OHServiceException e1) {
-								result = false;
-								OHServiceExceptionUtil.showMessages(e1);
-							}
+							fireMedicaldsrstockmovInserted(medicaldsrstockmovType);
+						}
+						if (!result)
+							JOptionPane.showMessageDialog(null,
+									MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+						else
+							dispose();
+					}
+					else { // updating
+						try {
+							result = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
+						} catch (OHServiceException e1) {
+							result = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
 						if (result) {
 							fireMedicaldsrstockmovUpdated();
-                        }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
-                        else  dispose();
-    					}
-                    	
+						}
+						if (!result)
+							JOptionPane.showMessageDialog(null,
+									MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+						else
+							dispose();
+
 					}
 					
                 }

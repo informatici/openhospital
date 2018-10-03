@@ -59,9 +59,6 @@ public class MedicaldsrstockmovTypeBrowser extends ModalJFrame implements Medica
 	private MovementType medicaldsrstockmovType = null;
 	private final JFrame myFrame;
 	
-	
-	
-	
 	/**
 	 * This method initializes 
 	 * 
@@ -239,18 +236,12 @@ public class MedicaldsrstockmovTypeBrowser extends ModalJFrame implements Medica
 		}return jTable;
 	}
 	
-	
-	
-	
-	
-	
-class MedicaldsrstockmovTypeBrowserModel extends DefaultTableModel {
-		
-		
+	class MedicaldsrstockmovTypeBrowserModel extends DefaultTableModel {
+
 		/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+		* 
+		*/
+		private static final long serialVersionUID = 1L;
 
 		public MedicaldsrstockmovTypeBrowserModel() {
 			MedicaldsrstockmovTypeBrowserManager manager = new MedicaldsrstockmovTypeBrowserManager();
@@ -261,13 +252,13 @@ class MedicaldsrstockmovTypeBrowserModel extends DefaultTableModel {
 				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
-		
+
 		public int getRowCount() {
 			if (pMedicaldsrstockmovType == null)
 				return 0;
 			return pMedicaldsrstockmovType.size();
 		}
-		
+
 		public String getColumnName(int c) {
 			return pColums[c];
 		}
@@ -277,21 +268,22 @@ class MedicaldsrstockmovTypeBrowserModel extends DefaultTableModel {
 		}
 
 		public Object getValueAt(int r, int c) {
+			MovementType movType = pMedicaldsrstockmovType.get(r);
 			if (c == 0) {
-				return pMedicaldsrstockmovType.get(r).getCode();
+				return movType.getCode();
 			} else if (c == -1) {
-				return pMedicaldsrstockmovType.get(r);
+				return movType;
 			} else if (c == 1) {
-				return pMedicaldsrstockmovType.get(r).getDescription();
+				return movType.getDescription();
 			} else if (c == 2) {
-				return pMedicaldsrstockmovType.get(r).getType();
+				return movType.getType();
 			}
 			return null;
 		}
-		
+
 		@Override
 		public boolean isCellEditable(int arg0, int arg1) {
-			//return super.isCellEditable(arg0, arg1);
+			// return super.isCellEditable(arg0, arg1);
 			return false;
 		}
 	}
@@ -299,22 +291,22 @@ class MedicaldsrstockmovTypeBrowserModel extends DefaultTableModel {
 
 
 
-public void medicaldsrstockmovTypeUpdated(AWTEvent e) {
-	pMedicaldsrstockmovType.set(selectedrow, medicaldsrstockmovType);
-	((MedicaldsrstockmovTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
-	jTable.updateUI();
-	if ((jTable.getRowCount() > 0) && selectedrow > -1)
-		jTable.setRowSelectionInterval(selectedrow, selectedrow);
-}
-
-
-public void medicaldsrstockmovTypeInserted(AWTEvent e) {
-	medicaldsrstockmovType = (MovementType)e.getSource();
-	pMedicaldsrstockmovType.add(0, medicaldsrstockmovType);
-	((MedicaldsrstockmovTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
-	if (jTable.getRowCount() > 0)
-		jTable.setRowSelectionInterval(0, 0);
-}
+	public void medicaldsrstockmovTypeUpdated(AWTEvent e) {
+		pMedicaldsrstockmovType.set(selectedrow, medicaldsrstockmovType);
+		((MedicaldsrstockmovTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
+		jTable.updateUI();
+		if ((jTable.getRowCount() > 0) && selectedrow > -1)
+			jTable.setRowSelectionInterval(selectedrow, selectedrow);
+	}
+	
+	
+	public void medicaldsrstockmovTypeInserted(AWTEvent e) {
+		medicaldsrstockmovType = (MovementType)e.getSource();
+		pMedicaldsrstockmovType.add(0, medicaldsrstockmovType);
+		((MedicaldsrstockmovTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
+		if (jTable.getRowCount() > 0)
+			jTable.setRowSelectionInterval(0, 0);
+	}
 	
 	
 }

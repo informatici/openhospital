@@ -1,12 +1,12 @@
 package org.isf.medstockmovtype.manager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.medstockmovtype.service.MedicalStockMovementTypeIoOperation;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -24,26 +24,45 @@ public class MedicaldsrstockmovTypeBrowserManager {
 	private MedicalStockMovementTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(MedicalStockMovementTypeIoOperation.class);
 
 	/**
+	 * Verify if the object is valid for CRUD and return a list of errors, if any
+	 * @param movementType
+	 * @return list of {@link OHExceptionMessage}
+	 */
+	protected List<OHExceptionMessage> validateMovementType(MovementType movementType) {
+		String key = movementType.getCode();
+		String key2 = movementType.getType();
+		String description = movementType.getDescription();
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        if(key.isEmpty() ){
+	        errors.add(new OHExceptionMessage("codeEmptyError", 
+	        		MessageBundle.getMessage("angal.medstockmovtype.pleaseinsertacode"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        if(key.length()>10){
+	        errors.add(new OHExceptionMessage("codeTooLongError", 
+	        		MessageBundle.getMessage("angal.medstockmovtype.codetoolongmaxchar"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        if(key2.length()>2){
+	        errors.add(new OHExceptionMessage("codeTypeTooLongError", 
+	        		MessageBundle.getMessage("angal.medstockmovtype.typetoolongmaxchars"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        if(description.isEmpty() ){
+            errors.add(new OHExceptionMessage("descriptionEmptyError", 
+            		MessageBundle.getMessage("angal.medstockmovtype.pleaseinsertavaliddescription"), 
+            		OHSeverityLevel.ERROR));
+        }
+        return errors;
+    }
+	
+	/**
 	 * Returns all the medical stock movement types.
 	 * @return all the medical stock movement types.
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<MovementType> getMedicaldsrstockmovType() throws OHServiceException {
-		try {
-			return ioOperations.getMedicaldsrstockmovType();
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getMedicaldsrstockmovType();
 	}
 
 	/**
@@ -53,21 +72,16 @@ public class MedicaldsrstockmovTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newMedicaldsrstockmovType(MovementType medicaldsrstockmovType) throws OHServiceException {
-		try {
-			return ioOperations.newMedicaldsrstockmovType(medicaldsrstockmovType);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+		List<OHExceptionMessage> errors = validateMovementType(medicaldsrstockmovType);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+		if (codeControl(medicaldsrstockmovType.getCode())){
+			throw new OHServiceException(new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.common.codealreadyinuse"), 
+					OHSeverityLevel.ERROR));
 		}
+		return ioOperations.newMedicaldsrstockmovType(medicaldsrstockmovType);
 	}
 
 	/**
@@ -77,21 +91,11 @@ public class MedicaldsrstockmovTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateMedicaldsrstockmovType(MovementType medicaldsrstockmovType) throws OHServiceException {
-		try {	
-			return ioOperations.updateMedicaldsrstockmovType(medicaldsrstockmovType);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+		List<OHExceptionMessage> errors = validateMovementType(medicaldsrstockmovType);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+		return ioOperations.updateMedicaldsrstockmovType(medicaldsrstockmovType);
 	}
 
 	/**
@@ -101,21 +105,7 @@ public class MedicaldsrstockmovTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean codeControl(String code) throws OHServiceException {
-		try {
-			return ioOperations.isCodePresent(code);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.isCodePresent(code);
 	}
 
 	/**
@@ -125,21 +115,7 @@ public class MedicaldsrstockmovTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean deleteMedicaldsrstockmovType(MovementType medicaldsrstockmovType) throws OHServiceException {
-		try {
-			return ioOperations.deleteMedicaldsrstockmovType(medicaldsrstockmovType);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.deleteMedicaldsrstockmovType(medicaldsrstockmovType);
 	}
 
 }
