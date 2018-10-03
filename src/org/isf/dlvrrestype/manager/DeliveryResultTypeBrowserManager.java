@@ -90,7 +90,7 @@ public class DeliveryResultTypeBrowserManager {
             }
 			if (codeControl(deliveryresultType.getCode())){
 				throw new OHServiceException(new OHExceptionMessage(null, 
-						MessageBundle.getMessage("angal.dlvrrestype.codealreadyinuse"), 
+						MessageBundle.getMessage("angal.common.codealreadyinuse"), 
 						OHSeverityLevel.ERROR));
 			}
             return ioOperations.newDeliveryResultType(deliveryresultType);

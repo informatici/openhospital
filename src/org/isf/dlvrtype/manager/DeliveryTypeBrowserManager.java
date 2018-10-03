@@ -172,7 +172,7 @@ public class DeliveryTypeBrowserManager {
         }
         if(insert){
             if (codeControl(key)){
-                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),  MessageBundle.getMessage("angal.dlvrtype.codealreadyinuse"),
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),  MessageBundle.getMessage("angal.common.codealreadyinuse"),
                         OHSeverityLevel.ERROR));
             }
         }
