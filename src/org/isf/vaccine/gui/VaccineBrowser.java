@@ -160,7 +160,7 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 				} catch (OHServiceException e1) {
 					OHServiceExceptionUtil.showMessages(e1);
 				}
-				jSelectionCombo.addItem(new Vaccine("", MessageBundle.getMessage("angal.vaccine.all"),new VaccineType("",""),0));
+				jSelectionCombo.addItem(new Vaccine("", MessageBundle.getMessage("angal.vaccine.all"),new VaccineType("","")));
 				if(allVacType != null){
 					for (VaccineType elem : allVacType) {
 						jSelectionCombo.addItem(elem);
@@ -231,7 +231,7 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 			jNewButton.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent event) {
-					vaccine=new Vaccine(null,"",new VaccineType("",""),0);	//operation will reference the new record
+					vaccine=new Vaccine(null,"",new VaccineType("",""));	//operation will reference the new record
 					VaccineEdit newrecord = new VaccineEdit(VaccineBrowser.this, vaccine, true);
 					newrecord.addVaccineListener(VaccineBrowser.this);
 					newrecord.setVisible(true);

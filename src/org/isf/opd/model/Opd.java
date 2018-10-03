@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.isf.disease.model.Disease;
@@ -82,7 +83,7 @@ public class Opd
 	@JoinColumn(name="OPD_DIS_ID_A_3")
 	private Disease disease3;
 
-	@NotNull
+	@Version
 	@Column(name="OPD_LOCK")
 	private int lock;
 
@@ -121,15 +122,13 @@ public class Opd
      * @param aDate
      * @param aAge
      * @param aDisease
-     * @param aLock
      */
 	
-	public Opd(int aProgYear,char aSex,int aAge,Disease aDisease,int aLock) {
+	public Opd(int aProgYear,char aSex,int aAge,Disease aDisease) {
 		prog_year=aProgYear;
 		sex=aSex;
 		age=aAge;
 		disease=aDisease;
-		lock=aLock;
 	}
 	
 	public String getNote() {

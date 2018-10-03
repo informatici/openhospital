@@ -55,27 +55,6 @@ public class MalnutritionIoOperation {
 	}
 
 	/**
-	 * Retrieves the lock value for the specified {@link Malnutrition} code.
-	 * @param malnutritionCode the {@link Malnutrition} code.
-	 * @return the retrieved code or -1 if no malnutrition has been found. 
-	 * @throws OHException if an error occurs retrieving the code.
-	 */
-	public int getMalnutritionLock(
-			int malnutritionCode) throws OHException
-	{
-		int lock = 0;		
-		Malnutrition malnutrition = repository.findOne(malnutritionCode);
-		
-		
-		if (malnutrition != null)
-		{
-			lock = malnutrition.getLock();
-		}
-				
-		return lock;
-	}
-
-	/**
 	 * Updates the specified {@link Malnutrition}.
 	 * @param malnutrition the malnutrition to update.
 	 * @return <code>true</code> if the malnutrition has been updated, <code>false</code> otherwise.

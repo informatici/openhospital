@@ -228,34 +228,6 @@ public class Tests
 	}
 	
 	@Test
-	public void testIoUpdateWardConfirmetOverriden() 
-	{
-		String code = "";
-		boolean result = false;
-		
-		
-		try 
-		{		
-			code = _setupTestWard(false);
-			Ward cloneWard= testWard.setup(false);
-			cloneWard.setLock(cloneWard.getLock()+1);
-			cloneWard.setDescription("Update");
-			result = wardIoOperation.updateWard(cloneWard);
-			Ward updateWard = (Ward)jpa.find(Ward.class, code); 
-			
-			assertEquals(true, result);
-			assertEquals("Update", updateWard.getDescription());
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("==> Test Exception: " + e);		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}
-
-	@Test
 	public void testIoDeleteWard() 
 	{
 		String code = "";
@@ -346,54 +318,6 @@ public class Tests
 		return;
 	}
 
-	@Test
-	public void testIoIsLockWard() 
-	{
-		String code = "";
-		boolean result = false;
-				
-
-		try 
-		{		
-			code = _setupTestWard(false);
-			Ward foundWard = (Ward)jpa.find(Ward.class, code);
-			int lock = wardIoOperation.getWardLock(code);
-			
-			assertEquals(foundWard.getLock(), (Integer)lock);
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("==> Test Exception: " + e);		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}	
-
-	@Test
-	public void testIoIsLockWardFalse() 
-	{
-		int result = 0;
-				
-		try 
-		{		
-			_setupTestWard(false);
-			Ward cloneWard = testWard.setup(false);
-			cloneWard.setLock(cloneWard.getLock()+1);
-			result = wardIoOperation.getWardLock(cloneWard.getCode());
-			
-			assertEquals(0, result);
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("==> Test Exception: " + e);		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}	
-	
-	
 	private void _saveContext() throws OHException 
     {	
 		testWardContext.saveAll(jpa);

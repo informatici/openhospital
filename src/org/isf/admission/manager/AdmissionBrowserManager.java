@@ -278,30 +278,6 @@ public class AdmissionBrowserManager {
 		}
 	}
 
-    /**
-	 * Check is the specified {@link Admission} object modified.
-	 * @param admission the admission object to update.
-	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
-	 * @throws OHServiceException 
-	 */
-	public boolean isAdmissionModified(Admission admission) throws OHServiceException{
-		try {
-			return ioOperations.hasAdmissionModified(admission);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-	}
-	
 	/**
 	 * Updates the specified {@link Admission} object.
 	 * @param admission the admission object to update.

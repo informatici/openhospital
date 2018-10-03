@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 
@@ -57,7 +58,7 @@ public class Hospital
 	@Column(name="HOS_CURR_COD")
     private String currencyCod;
 
-	@NotNull
+	@Version
 	@Column(name="HOS_LOCK")
     private Integer lock;
 
@@ -73,7 +74,6 @@ public class Hospital
      * @param aFax
      * @param aEmail
      * @param aCurrencyCod
-     * @param aLock
      */
     public Hospital(){
     	super();
@@ -85,12 +85,11 @@ public class Hospital
         this.fax = null;
         this.email = null;
         this.currencyCod = null;
-        this.lock = null;
     }
     
     public Hospital(String aCode, String aDescription, String aAddress, 
     		String aCity, String aTelephone, String aFax, 
-    		String aEmail, String aCurrencyCod, Integer aLock) {
+    		String aEmail, String aCurrencyCod) {
         super();
         this.code = aCode;
         this.description = aDescription;
@@ -100,7 +99,6 @@ public class Hospital
         this.fax = aFax;
         this.email = aEmail;
         this.currencyCod = aCurrencyCod;
-        this.lock = aLock;
     }
     
     public String getAddress() {

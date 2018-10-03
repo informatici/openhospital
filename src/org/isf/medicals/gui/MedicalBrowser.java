@@ -403,7 +403,7 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 			public void actionPerformed(ActionEvent event) 
 			{
 				// medical will reference the new record
-				medical = new Medical(null, new MedicalType("", ""), "", "", 0, 0, 0, 0, 0, 0);
+				medical = new Medical(null, new MedicalType("", ""), "", "", 0, 0, 0, 0, 0);
 				MedicalEdit newrecord = new MedicalEdit(medical, true, me);
 				newrecord.addMedicalListener(MedicalBrowser.this);
 				newrecord.setVisible(true);

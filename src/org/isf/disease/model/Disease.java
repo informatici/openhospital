@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.NotFound;
@@ -48,7 +49,7 @@ public class Disease
 	@JoinColumn(name="DIS_DCL_ID_A")
 	private DiseaseType diseaseType; 
 
-	@NotNull
+	@Version
 	@Column(name="DIS_LOCK")
 	private Integer lock;
 
@@ -76,14 +77,12 @@ public class Disease
      * @param aCode
      * @param aDescription
      * @param aType
-     * @param aLock
      */
-    public Disease(String aCode, String aDescription, DiseaseType aType, Integer aLock) {
+    public Disease(String aCode, String aDescription, DiseaseType aType) {
         super();
         this.code = aCode;
         this.description = aDescription;
         this.diseaseType = aType;
-        this.lock = aLock;
     }
     
     public String getCode() {
@@ -148,7 +147,7 @@ public class Disease
                 : (getCode().equals(((Disease) anObject).getCode())
                         && getDescription().equalsIgnoreCase(
                                 ((Disease) anObject).getDescription()) && getType()
-                        .equals(((Disease) anObject).getType()) && (getLock().equals(((Disease) anObject).getLock())));
+                        .equals(((Disease) anObject).getType()));
     }
 
     public String toString() {

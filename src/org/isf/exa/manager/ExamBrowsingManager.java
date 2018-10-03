@@ -178,7 +178,6 @@ public class ExamBrowsingManager {
 	}
 
 	/**
-	 * 
 	 * Updates an existing {@link Exam} in the db
 	 * 
 	 * @param exam -  the {@link Exam} to update
@@ -186,24 +185,12 @@ public class ExamBrowsingManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateExam(Exam exam) throws OHServiceException {
-		return this.updateExam(exam, true);
-	}
-	
-	/**
-	 * Updates an existing {@link Exam} in the db
-	 * 
-	 * @param exam -  the {@link Exam} to update
-	 * @param check - if <code>true</code> check if the {@link Exam} has been modified since last read
-	 * @return <code>true</code> if the existing {@link Exam} has been updated, <code>false</code> otherwise
-	 * @throws OHServiceException 
-	 */
-	public boolean updateExam(Exam exam, boolean check) throws OHServiceException {
 		try {
 			List<OHExceptionMessage> errors = validateExam(exam);
             if(!errors.isEmpty()){
                 throw new OHServiceException(errors);
             }
-			return ioOperations.updateExam(exam, check);
+			return ioOperations.updateExam(exam);
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));

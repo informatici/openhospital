@@ -146,25 +146,6 @@ public class OpdIoOperations {
 	}
 	
 	/**
-	 * Checks if the specified {@link Opd} has been modified.
-	 * @param opd - the {@link Opd} to check.
-	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
-	 */
-	public boolean hasOpdModified(
-			Opd opd) throws OHException 
-	{
-		boolean result = false;
-		Opd foundOpd;
-		
-	
-		foundOpd = repository.findOne(opd.getCode());
-		result = foundOpd.getLock() != opd.getLock();
-    			
-		return result;
-	}
-	
-	/**
 	 * modify an {@link OPD} in the db
 	 * 
 	 * @param an {@link OPD}

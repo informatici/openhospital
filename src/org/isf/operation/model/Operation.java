@@ -7,6 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.isf.opetype.model.OperationType;
@@ -51,7 +52,7 @@ public class Operation
 	@Column(name="OPE_STAT")
     private Integer major;
 
-	@NotNull
+	@Version
 	@Column(name="OPE_LOCK")
     private Integer lock;
 
@@ -68,15 +69,13 @@ public class Operation
      * @param aCode
      * @param aDescription
      * @param aType
-     * @param aLock
      */
-    public Operation(String aCode, String aDescription, OperationType aType, Integer major, Integer aLock) {
+    public Operation(String aCode, String aDescription, OperationType aType, Integer major) {
         super();
         this.code = aCode;
         this.description = aDescription;
         this.type = aType;
         this.major = major;
-        this.lock = aLock;
     }
     
     public String getCode() {
@@ -133,8 +132,7 @@ public class Operation
 		return (this.getCode().equals(operation.getCode()) &&
 				this.getDescription().equalsIgnoreCase(operation.getDescription()) &&
 				this.getType().equals(operation.getType()) &&
-				this.getMajor().equals(operation.getMajor()) &&
-				this.getLock().equals(operation.getLock()));
+				this.getMajor().equals(operation.getMajor()));
     }
     
     @Override

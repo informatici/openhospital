@@ -188,10 +188,10 @@ public class PatVacBrowser extends ModalJFrame {
 
 				public void actionPerformed(ActionEvent event) {
 					patientVaccine = new PatientVaccine(0,0,new GregorianCalendar(),new Patient(),
-							                new Vaccine ("","",new VaccineType("",""),0),0);
+							                new Vaccine ("","",new VaccineType("","")),0);
 							
 					PatientVaccine  last = new PatientVaccine(0,0,new GregorianCalendar(),new Patient(),
-							                     new Vaccine ("","",new VaccineType("",""),0),0);
+							                     new Vaccine ("","",new VaccineType("","")),0);
                     new PatVacEdit (myFrame, patientVaccine, true);
                     
                     if (!last.equals(patientVaccine)) {
@@ -637,7 +637,7 @@ public class PatVacBrowser extends ModalJFrame {
 		VaccineBrowserManager manager = new VaccineBrowserManager();
 			
 		ArrayList<Vaccine> allVac = null ;
-		vaccineComboBox.addItem( new Vaccine ( "", MessageBundle.getMessage("angal.patvac.allvaccine"),new VaccineType ("",""), (Integer) null));
+		vaccineComboBox.addItem( new Vaccine ( "", MessageBundle.getMessage("angal.patvac.allvaccine"),new VaccineType ("","")));
         try {
             if (((VaccineType)vaccineTypeComboBox.getSelectedItem()).getDescription().equals(MessageBundle.getMessage("angal.patvac.allvaccinetype"))){
                 allVac = manager.getVaccine();

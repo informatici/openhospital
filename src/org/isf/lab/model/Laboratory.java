@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.isf.exa.model.Exam;
@@ -54,7 +55,7 @@ public class Laboratory
 	@Column(name="LAB_RES")
 	private String result;
 
-	@NotNull
+	@Version
 	@Column(name="LAB_LOCK")
 	private int lock;
 	
@@ -83,12 +84,11 @@ public class Laboratory
 	public Laboratory() { }
 	
 	public Laboratory(int aCode,Exam aExam,GregorianCalendar aDate,String aResult,
-			int aLock, String aNote, Patient aPatId, String aPatName){
+			String aNote, Patient aPatId, String aPatName){
 		code=aCode;
 		exam=aExam;
 		registrationDate=aDate;
 		result=aResult;
-		lock=aLock;
 		note=aNote;
 		patient=aPatId;
 		patName=aPatName;

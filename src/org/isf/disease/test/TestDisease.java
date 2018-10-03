@@ -11,7 +11,6 @@ public class TestDisease
 {	
     private String code = "999";
     private String description = "TestDescription";
-    private Integer lock = 10;
     
 			
 	public Disease setup(
@@ -29,7 +28,7 @@ public class TestDisease
 		else
 		{
 			// Create Disease with all parameters 
-			disease = new Disease(code, description, diseaseType, lock);
+			disease = new Disease(code, description, diseaseType);
 		}
 				    	
 		return disease;
@@ -42,7 +41,6 @@ public class TestDisease
 		disease.setCode(code);
 		disease.setDescription(description);
 		disease.setType(diseaseType);
-		disease.setLock(lock);
 		
 		return;
 	}

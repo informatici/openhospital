@@ -310,30 +310,6 @@ public class DiseaseBrowserManager {
 	}
 	
 	/**
-	 * Checks if the specified {@link Disease} has been modified.
-	 * @param disease the disease to check.
-	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
-	 * @throws OHServiceException if an error occurred during the check.
-	 */
-	public boolean hasDiseaseModified(Disease disease) throws OHServiceException {
-		try {
-			return ioOperations.hasDiseaseModified(disease);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}	
-	}
-
-	/**
 	 * Updates the specified {@link Disease}.
 	 * If the disease has been updated concurrently a overwrite confirmation message is shown.
 	 * In case of error a message error is shown and a <code>false</code> value is returned.

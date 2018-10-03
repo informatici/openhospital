@@ -212,30 +212,9 @@ public class DiseaseIoOperations {
 		boolean result = true;
 	
 		
-		disease.setLock(disease.getLock() + 1);
+		//disease.setLock(disease.getLock() + 1);
 		Disease savedDisease = repository.save(disease);
 		result = (savedDisease != null);
-		
-		return result;
-	}
-
-	/**
-	 * Checks if the specified {@link Disease} has been modified.
-	 * @param disease the disease to check.
-	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
-	 * @throws OHException if an error occurred during the check.
-	 */
-	public boolean hasDiseaseModified(
-			Disease disease) throws OHException
-	{ 
-		Disease foundDisease = repository.findOne(disease.getCode()); 
-		boolean result = false;
-		
-		
-		if (foundDisease.getLock() != disease.getLock())
-		{
-			result = true;
-		}
 		
 		return result;
 	}

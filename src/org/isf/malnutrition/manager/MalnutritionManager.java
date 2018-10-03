@@ -108,26 +108,12 @@ public class MalnutritionManager {
 	 *  throws an exception if the update fails for some other reason
 	 *  
 	 * @param malnutrition
-	 * @param abortIfLocked
-	 * @return
+	 * @return {@code true} if the object has been updated, {@code false} otherwise
 	 * @throws OHServiceException
 	 */
-	public boolean updateMalnutrition(Malnutrition malnutrition, boolean abortIfLocked) throws OHServiceException {
+	public boolean updateMalnutrition(Malnutrition malnutrition) throws OHServiceException {
 		try {
-			int currentLock = ioOperation.getMalnutritionLock(malnutrition.getCode());
-			if (currentLock>=0) {
-				if (currentLock!=malnutrition.getLock()) {
-					if (true == abortIfLocked) {
-						return false;
-					} else {
-						return ioOperation.updateMalnutrition(malnutrition);
-					}
-				} else {
-					return ioOperation.updateMalnutrition(malnutrition);
-				}
-			}else{
-				throw new OHException(MessageBundle.getMessage("angal.malnutrition.couldntfindthedataithasporbablybeendelete"));
-			}
+			return ioOperation.updateMalnutrition(malnutrition);
 
 		} catch (OHException e) {
 			logger.error("", e);

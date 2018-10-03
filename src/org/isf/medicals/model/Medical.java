@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.isf.medtype.model.MedicalType;
@@ -107,7 +108,7 @@ public class Medical implements Comparable<Medical>, Cloneable {
 	/**
 	 * Lock control
 	 */
-	@NotNull
+	@Version
 	@Column(name="MDSR_LOCK")
 	private Integer lock;
 	
@@ -121,7 +122,7 @@ public class Medical implements Comparable<Medical>, Cloneable {
 	 * Constructor
 	 */
 	public Medical(Integer code, MedicalType type, String prod_code, String description,
-			double initialqty, Integer pcsperpck, double minqty, double inqty, double outqty, Integer lock) {
+			double initialqty, Integer pcsperpck, double minqty, double inqty, double outqty) {
 		super();
 		this.code = code;
 		this.type = type;
@@ -132,7 +133,6 @@ public class Medical implements Comparable<Medical>, Cloneable {
 		this.minqty=minqty;
 		this.inqty = inqty;
 		this.outqty = outqty;
-		this.lock = lock;
 	}
 	
 	public double getTotalQuantity()
@@ -230,9 +230,7 @@ public class Medical implements Comparable<Medical>, Cloneable {
 						&& getType().equals(((Medical) anObject).getType())
 						&& getInitialqty()==(((Medical) anObject).getInitialqty()) 
 						&& getInqty()==(((Medical) anObject).getInqty())
-						&& getOutqty()==(((Medical) anObject).getOutqty())
-						&& (getLock()
-						.equals(((Medical) anObject).getLock())));
+						&& getOutqty()==(((Medical) anObject).getOutqty()));
 	}
 
 	public String toString() {

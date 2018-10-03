@@ -122,7 +122,6 @@ public class PatientInsert extends JDialog implements ActionListener{
 	private JLabel jNextKinLabel = null;
 	private JTextField jNextKinTextField = null;
 //	private int oldAge;
-	private int lock;
 	private PatientBrowserManager manager = new PatientBrowserManager();
 	private JLabel jLabel1 = null;
 	private JLabel jLabel = null;
@@ -167,8 +166,6 @@ public class PatientInsert extends JDialog implements ActionListener{
 		super(owner, true);
 		patient=old;
 		insert=inserting;
-		if(!insert)lock=patient.getLock();
-		//if(!insert)oldAge=patient.getAge();
 		initialize();
 	}
 	
@@ -176,8 +173,6 @@ public class PatientInsert extends JDialog implements ActionListener{
 		super(owner, true);
 		patient=old;
 		insert=inserting;
-		if(!insert)lock=patient.getLock();
-		//if(!insert)oldAge=patient.getAge();
 		initialize();
 	}
 	
@@ -373,7 +368,6 @@ public class PatientInsert extends JDialog implements ActionListener{
 							ok=true;
 						}
 						if(ok){
-						if(lock!=patient.getLock()){patient.setLock(lock);};
 						
 						patient.setFirstName(jFirstNameTextField.getText());
 						patient.setSecondName(jSecondNameTextField.getText());

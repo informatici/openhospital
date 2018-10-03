@@ -307,7 +307,7 @@ public class Tests
 			code = _setupTestExam(false);
 			Exam foundExam = (Exam)jpa.find(Exam.class, code); 
 			foundExam.setDescription("Update");
-			result = examIoOperation.updateExam(foundExam, true);
+			result = examIoOperation.updateExam(foundExam);
 			Exam updateExam = (Exam)jpa.find(Exam.class, code); 
 			
 			assertEquals(true, result);

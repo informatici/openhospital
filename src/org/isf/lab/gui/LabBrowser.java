@@ -243,8 +243,8 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 
 				public void actionPerformed(ActionEvent event) {
 					laboratory = new Laboratory(0, new Exam("", "",
-							new ExamType("", ""), 0, "", 0),
-							new GregorianCalendar(), "P", 0, "", new Patient(), "");
+							new ExamType("", ""), 0, ""),
+							new GregorianCalendar(), "P", "", new Patient(), "");
 					if (GeneralData.LABEXTENDED) {
 						if (GeneralData.LABMULTIPLEINSERT) {
 							LabNew editrecord = new LabNew(myFrame);
@@ -399,8 +399,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		if (comboExams == null) {
 			comboExams = new JComboBox();
 			comboExams.setPreferredSize(new Dimension(200, 30));
-			comboExams.addItem(new Exam("", MessageBundle.getMessage("angal.lab.all"), new ExamType("", ""), 0, "",
-					0));
+			comboExams.addItem(new Exam("", MessageBundle.getMessage("angal.lab.all"), new ExamType("", ""), 0, ""));
 			ArrayList<Exam> type;
 			try {
 				type = managerExams.getExams();

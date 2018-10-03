@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -68,7 +69,7 @@ public class Ward {
 	@Column(name="WRD_IS_FEMALE")    
     private boolean isFemale;
 
-	@NotNull
+	@Version
 	@Column(name="WRD_LOCK")
     private Integer lock;
     
@@ -94,7 +95,7 @@ public class Ward {
      */
     public Ward(String code, String description, String telephone, String fax,
 			String email, Integer beds, Integer nurs, Integer docs,
-			boolean isPharmacy, boolean isMale, boolean isFemale, Integer lock) 
+			boolean isPharmacy, boolean isMale, boolean isFemale) 
     {
 		super();
 		this.code = code;
@@ -108,12 +109,10 @@ public class Ward {
 		this.isPharmacy = isPharmacy;
 		this.isMale = isMale;
 		this.isFemale = isFemale;
-		this.lock = lock;
 	}
     
     public Ward(String code, String description, String telephone, String fax,
-			String email, Integer beds, Integer nurs, Integer docs, boolean isMale, boolean isFemale,
-			Integer lock) 
+			String email, Integer beds, Integer nurs, Integer docs, boolean isMale, boolean isFemale) 
     {
 		super();
 		this.code = code;
@@ -127,7 +126,6 @@ public class Ward {
 		this.isPharmacy = false;
 		this.isMale = isMale;
 		this.isFemale = isFemale;
-		this.lock = lock;
 	}
 
     public Integer getBeds() {
@@ -238,8 +236,7 @@ public class Ward {
                         .equalsIgnoreCase(((Ward) anObject).getEmail()) && (getBeds()
                         .equals(((Ward) anObject).getBeds()) && (getNurs()
                         .equals(((Ward) anObject).getNurs()) && (getDocs()
-                        .equals(((Ward) anObject).getDocs()) && (getLock()
-                        .equals(((Ward) anObject).getLock()))))))));
+                        .equals(((Ward) anObject).getDocs())))))));
     }
 
     public String toString() {

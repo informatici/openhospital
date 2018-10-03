@@ -405,7 +405,7 @@ public class PatVacEdit extends JDialog {
 		VaccineBrowserManager manager = new VaccineBrowserManager();
 
 		ArrayList<Vaccine> allVac = null;
-		vaccineComboBox.addItem(new Vaccine("", MessageBundle.getMessage("angal.patvac.allvaccine"), new VaccineType("", ""), (Integer) null));
+		vaccineComboBox.addItem(new Vaccine("", MessageBundle.getMessage("angal.patvac.allvaccine"), new VaccineType("", "")));
         try{
             if (((VaccineType) vaccineTypeComboBox.getSelectedItem()).getDescription().equals(MessageBundle.getMessage("angal.patvac.allvaccinetype"))) {
                 allVac = manager.getVaccine();
@@ -749,7 +749,7 @@ public class PatVacEdit extends JDialog {
 					if (!result)
 						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patvac.thedatacouldnobesaved"));
 					else {
-						patVac = new PatientVaccine(0, 0, new GregorianCalendar(), new Patient(), new Vaccine("", "", new VaccineType("", ""), 0), 0);
+						patVac = new PatientVaccine(0, 0, new GregorianCalendar(), new Patient(), new Vaccine("", "", new VaccineType("", "")), 0);
 						dispose();
 					}
 				}

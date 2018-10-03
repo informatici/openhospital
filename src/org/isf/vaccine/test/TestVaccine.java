@@ -11,7 +11,6 @@ public class TestVaccine
 {	
     private String code = "Z";
     private String description = "TestDescription";
-    private Integer lock = 0;
     
 			
 	public Vaccine setup(
@@ -29,7 +28,7 @@ public class TestVaccine
 		else
 		{
 			// Create Vaccine with all parameters 
-			vaccine = new Vaccine(code, description, vaccineType, lock);
+			vaccine = new Vaccine(code, description, vaccineType);
 		}
 				    	
 		return vaccine;
@@ -42,7 +41,6 @@ public class TestVaccine
 		vaccine.setCode(code);
 		vaccine.setDescription(description);
 		vaccine.setVaccineType(vaccineType);
-		vaccine.setLock(lock);
 		
 		return;
 	}
@@ -53,7 +51,6 @@ public class TestVaccine
     	System.out.println("Check Vaccine: " + vaccine.getCode());
     	assertEquals(code, vaccine.getCode());
     	assertEquals(description, vaccine.getDescription());
-    	assertEquals(lock, vaccine.getLock());
 		
 		return;
 	}

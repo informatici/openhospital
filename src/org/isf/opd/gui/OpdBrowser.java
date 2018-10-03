@@ -201,7 +201,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 		initialize();
         setVisible(true);
         //if(bOpenEdit)
-        Opd newOpd = new Opd(0,' ',-1,new Disease(),0);
+        Opd newOpd = new Opd(0,' ',-1,new Disease());
         OpdEditExtended editrecord = new OpdEditExtended(myFrame, newOpd, patient, true);
         editrecord.addSurgeryListener(OpdBrowser.this);
 		editrecord.setVisible(true);
@@ -281,7 +281,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 			jNewButton.addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent event) {
-					Opd newOpd = new Opd(0,' ',-1,new Disease(),0);
+					Opd newOpd = new Opd(0,' ',-1,new Disease());
 					if (GeneralData.OPDEXTENDED) {
 						OpdEditExtended newrecord = new OpdEditExtended(myFrame, newOpd, true);
 						newrecord.addSurgeryListener(OpdBrowser.this);
@@ -752,7 +752,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 				}
 			}
 		}
-		Disease allDisease = new Disease(MessageBundle.getMessage("angal.opd.alldisease"), MessageBundle.getMessage("angal.opd.alldisease"), allType, 0);
+		Disease allDisease = new Disease(MessageBundle.getMessage("angal.opd.alldisease"), MessageBundle.getMessage("angal.opd.alldisease"), allType);
 		jDiseaseBox.addItem(allDisease);
 		if(diseases != null){
 			for (Disease elem : diseases) {

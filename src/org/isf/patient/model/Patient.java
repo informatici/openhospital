@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.isf.opd.model.Opd;
@@ -139,7 +140,7 @@ public class Patient {
 	@Transient
 	private float weight;
 	
-	//@Version
+	@Version
 	@Column(name="PAT_LOCK")
 	private int lock;
 	
@@ -177,7 +178,6 @@ public class Patient {
 		this.taxCode = "";
 		this.height = 0;
 		this.weight = 0;
-		this.lock = 0;
 	}
 	
 	public Patient(Opd opd) {
@@ -200,13 +200,12 @@ public class Patient {
 		this.bloodType = "";
 		this.hasInsurance = ' ';
 		this.parentTogether = ' ';
-		this.lock = 0;
 	}
 	
 	public Patient(String firstName, String secondName, Date birthDate, int age, String agetype, char sex,
 			String address, String city, String nextKin, String telephone,
 			String mother_name, char mother, String father_name, char father,
-			String bloodType, char economicStatut, char parentTogether, int lock, String personalCode) { //Changed EduLev with bloodType
+			String bloodType, char economicStatut, char parentTogether, String personalCode) { //Changed EduLev with bloodType
 		this.firstName = firstName;
 		this.secondName = secondName;
 		this.name = this.firstName + " " + this.secondName;
@@ -228,14 +227,13 @@ public class Patient {
 		this.taxCode = personalCode;
 		this.height = 0;
 		this.weight = 0;
-		this.lock = lock;
 	}
 		
 	public Patient(int code, String firstName, String secondName, String name, Date birthDate, int age, String agetype, char sex,
 			String address, String city, String nextKin, String telephone, String note,
 			String mother_name, char mother, String father_name, char father,
 			String bloodType, char economicStatut, char parentTogether, String taxCode,
-			float height, float weight, int lock, Blob photo, Image photoImage) { //Changed EduLev with bloodType
+			float height, float weight, Blob photo, Image photoImage) { //Changed EduLev with bloodType
 		this.code = code;
 		this.firstName = firstName;
 		this.secondName = secondName;
@@ -259,7 +257,6 @@ public class Patient {
 		this.taxCode = taxCode;
 		this.height = height;
 		this.weight = weight;
-		this.lock = lock;
 		this.photo = photo;
 		this.photoImage = photoImage;
 	}

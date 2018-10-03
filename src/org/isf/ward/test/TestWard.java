@@ -19,7 +19,6 @@ public class TestWard
     private boolean isPharmacy = true;    
     private boolean isFemale = false;  
     private boolean isMale = true;
-    private Integer lock = 0;
     
 			
 	public Ward setup(
@@ -37,7 +36,7 @@ public class TestWard
 		{
 			// Create Ward with all parameters 
 			ward = new Ward(code, description, telephone, fax, email, beds, nurs, docs,
-					isPharmacy, isMale, isFemale, lock);
+					isPharmacy, isMale, isFemale);
 		}
 				    	
 		return ward;
@@ -53,7 +52,6 @@ public class TestWard
 		ward.setEmail(email);
 		ward.setFax(fax);
 		ward.setFemale(isFemale);
-		ward.setLock(lock);
 		ward.setMale(isMale);
 		ward.setNurs(nurs);
 		ward.setPharmacy(isPharmacy);
@@ -73,7 +71,6 @@ public class TestWard
     	assertEquals(email, ward.getEmail());
     	assertEquals(fax, ward.getFax());
     	assertEquals(isFemale, ward.isFemale());
-    	assertEquals(lock, ward.getLock());
     	assertEquals(isMale, ward.isMale());
     	assertEquals(nurs, ward.getNurs());
     	assertEquals(isPharmacy, ward.isPharmacy());

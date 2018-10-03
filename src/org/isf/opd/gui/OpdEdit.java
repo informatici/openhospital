@@ -57,6 +57,7 @@ import org.isf.menu.gui.MainMenu;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoDateTextField;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -597,19 +598,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 							opd.setDisease3(disease3);
 							opd.setVisitDate(gregDate);
 
-							boolean recordUpdated = manager.hasOpdModified(opd);
-							boolean overWrite = false;
-							if (recordUpdated)  { 
-								// it was updated by someone else
-								String message = MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
-								int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
-								overWrite = response== JOptionPane.OK_OPTION;
-							}
-							if (!recordUpdated || overWrite) {
-								// the user has confirmed he wants to overwrite the record
-								manager.updateOpd(opd);
-							}
-
+							manager.updateOpd(opd);
 							if (result) {
 								fireSurgeryUpdated(opd);
 							};
@@ -617,11 +606,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 							else  dispose();
 						}
 					}catch(OHServiceException ex){
-						if(ex.getMessages() != null){
-							for(OHExceptionMessage msg : ex.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
+						OHServiceExceptionUtil.showMessages(ex);
 					}
 				};
 			}

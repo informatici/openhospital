@@ -252,37 +252,14 @@ public class Tests
 	}
 		
 	@Test
-	public void testUpdatePatientFalse() 
-	{		
-		try 
-		{		
-			Integer code = _setupTestPatient(false);
-			Patient patient = (Patient)jpa.find(Patient.class, code); 
-			boolean result = patientIoOperation.updatePatient(patient, false);
-			
-			assertEquals(true, result);
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("==> Test Exception: " + e);		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}
-		
-	@Test
 	public void testUpdatePatientTrue() 
 	{
-		int lock = 0;
-		
 		
 		try 
 		{		
 			Integer code = _setupTestPatient(false);
 			Patient patient = (Patient)jpa.find(Patient.class, code); 
-			lock = patient.getLock();
-			boolean result = patientIoOperation.updatePatient(patient, true);
+			boolean result = patientIoOperation.updatePatient(patient);
 			
 			assertEquals(true, result);
 		} 

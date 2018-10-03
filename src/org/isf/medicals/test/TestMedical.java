@@ -16,7 +16,6 @@ public class TestMedical
 	private double inqty = 20.20;
 	private double outqty = 30.30;
 	private double minqty = 40.40;
-	private Integer lock = 1;
     
 			
 	public Medical setup(
@@ -34,7 +33,7 @@ public class TestMedical
 		else
 		{
 			// Create Medical with all parameters 
-			medical = new Medical(code, medicalType, prod_code, description, initialqty, pcsperpck, minqty, inqty, outqty, lock);
+			medical = new Medical(code, medicalType, prod_code, description, initialqty, pcsperpck, minqty, inqty, outqty);
 		}
 				    	
 		return medical;
@@ -52,7 +51,6 @@ public class TestMedical
 		medical.setPcsperpck(pcsperpck);
 		medical.setProd_code(prod_code);
 		medical.setType(medicalType);
-		medical.setLock(lock);
 		
 		return;
 	}
@@ -68,7 +66,6 @@ public class TestMedical
     	assertEquals(outqty, medical.getOutqty(), 0.1);
     	assertEquals(pcsperpck, medical.getPcsperpck());
     	assertEquals(prod_code, medical.getProd_code());
-    	assertEquals(lock, medical.getLock());
 		
 		return;
 	}

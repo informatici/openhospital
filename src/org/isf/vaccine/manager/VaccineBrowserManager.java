@@ -88,29 +88,6 @@ public class VaccineBrowserManager {
         }
 	}
 
-    /**
-     * updates the specified {@link Vaccine} object.
-     * @param vaccine - the {@link Vaccine} object to update.
-     * @return <code>true</code> if has been updated, <code>false</code> otherwise.
-     */
-    public boolean hasVaccineModified(Vaccine vaccine) throws OHServiceException {
-        try {
-            return ioOperations.hasVaccineModified(vaccine);
-        } catch (OHException e) {
-				/*Already cached exception with OH specific error message -
-				 * create ready to return OHServiceException and keep existing error message
-				 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
-        }catch(Exception e){
-            //Any exception
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
-        }
-    }
-
 	/**
 	 * updates the specified {@link Vaccine} object.
 	 * @param vaccine - the {@link Vaccine} object to update.

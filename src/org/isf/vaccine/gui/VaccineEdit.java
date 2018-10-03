@@ -283,20 +283,6 @@ public class VaccineEdit extends JDialog {
                         }
                     }else{
                         try{
-                            boolean recordUpdated = manager.hasVaccineModified(vaccine);
-                            if (!recordUpdated) {
-                                // it was not updated
-                                manager.updateVaccine(vaccine);
-                            } else {
-                                // it was updated by someone else
-                                String message = MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
-                                int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
-                                boolean overWrite = response== JOptionPane.OK_OPTION;
-                                if (overWrite) {
-                                    // the user has confirmed he wants to overwrite the record
-                                    manager.updateVaccine(vaccine);
-                                }
-                            }
                             result = manager.updateVaccine(vaccine);
                         } catch (OHServiceException e1) {
                             OHServiceExceptionUtil.showMessages(e1);

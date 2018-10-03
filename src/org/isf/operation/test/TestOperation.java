@@ -12,7 +12,6 @@ public class TestOperation
     private String code = "999";
     private String description = "TestDescription";
     private Integer major = 99;
-    private Integer lock = 10;
     
 			
 	public Operation setup(
@@ -30,7 +29,7 @@ public class TestOperation
 		else
 		{
 			// Create Operation with all parameters 
-			operation = new Operation(code, description, operationType, major, lock);
+			operation = new Operation(code, description, operationType, major);
 		}
 				    	
 		return operation;
@@ -43,7 +42,6 @@ public class TestOperation
 		operation.setCode(code);
 		operation.setDescription(description);
 		operation.setType(operationType);
-		operation.setLock(lock);
 		operation.setMajor(major);
 		
 		return;

@@ -35,7 +35,6 @@ import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class ExamEdit extends JDialog {
@@ -236,41 +235,27 @@ public class ExamEdit extends JDialog {
 					exam.setDefaultResult(defTextField.getText().trim().toUpperCase());
 					
 					ExamBrowsingManager manager = new ExamBrowsingManager();
+					boolean result = false;
 					try {
 						if (insert) {
-							if (true == manager.newExam(exam)) {
+							result = manager.newExam(exam);
+							if (result) {
 								fireExamInserted();
 								dispose();
-							} else 
-								JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+							}
 						} else {
-							if (false == manager.updateExam(exam)) {
-								StringBuilder prompt = new StringBuilder(MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse"))
-										.append("\n")
-										.append(MessageBundle.getMessage("angal.exa.doyouwanttooverwritethedata"))
-										.append("?");
-								int ok = JOptionPane.showConfirmDialog(null,
-										prompt.toString(),
-										MessageBundle.getMessage("angal.exa.select"), JOptionPane.YES_NO_OPTION);
-								
-								if (JOptionPane.YES_OPTION == ok) {
-									if (true == manager.updateExam(exam, false)) {
-										fireExamUpdated();
-										dispose();
-									} else 
-										JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
-								}
-							} else {
+							result = manager.updateExam(exam);
+							if (result) {
 								fireExamUpdated();
 								dispose();
 							}
 						}
+						if (!result) {
+                        	JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+                        }
+                        else  dispose();
 					} catch (OHServiceException e1) {
-						if(e1.getMessages() != null){
-							for(OHExceptionMessage msg : e1.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
+						OHServiceExceptionUtil.showMessages(e1);
 					}
 				}
 			});

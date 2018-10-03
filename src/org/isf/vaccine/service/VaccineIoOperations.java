@@ -72,28 +72,6 @@ public class VaccineIoOperations {
 	}
 	
 	/**
-	 * checks if the specified {@link Vaccine} has been modified.
-	 * 
-	 * @param vaccine - the {@link Vaccine} to check.
-	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
-	 */
-	public boolean hasVaccineModified(
-			Vaccine vaccine) throws OHException 
-	{
-		boolean result = false;
-		Vaccine foundVaccine = repository.findOne(vaccine.getCode());
-		
-		
-		if (foundVaccine.getLock() != vaccine.getLock())
-		{
-			result = true;
-		}
-		
-		return result;
-	}
-
-	/**
 	 * updates a {@link Vaccine} in the DB
 	 *
 	 * @param vaccine - the item to update
@@ -105,8 +83,6 @@ public class VaccineIoOperations {
 	{
 		boolean result = true;
 	
-
-		vaccine.setLock(vaccine.getLock()+1);
 		Vaccine savedVaccine = repository.save(vaccine);
 		result = (savedVaccine != null);
 		

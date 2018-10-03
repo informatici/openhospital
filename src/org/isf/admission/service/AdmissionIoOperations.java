@@ -167,27 +167,6 @@ public class AdmissionIoOperations
 	}
 
 	/**
-	 * Checks if the specified {@link Admission} has been modified.
-	 * @param admission the admission to check.
-	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
-	 */
-	public boolean hasAdmissionModified(
-			Admission admission) throws OHException 
-	{
-		boolean result = false;
-				
-		
-		Admission foundAdmission = repository.findOne(admission.getId()); 
-		if (foundAdmission.getLock() != admission.getLock())
-		{
-			result = true;
-		}		
-
-		return result;
-	}
-
-	/**
 	 * Updates the specified {@link Admission} object.
 	 * @param admission the admission object to update.
 	 * @return <code>true</code> if has been updated, <code>false</code> otherwise.

@@ -177,19 +177,16 @@ public class PatientIoOperations
 	 * method that update an existing {@link Patient} in the db
 	 * 
 	 * @param patient - the {@link Patient} to update
-	 * @param check - if <code>true</code> it will performs an integrity check
 	 * @return true - if the existing {@link Patient} has been updated
 	 * @throws OHException
 	 */
 	public boolean updatePatient(
-			Patient patient, 
-			boolean check) throws OHException 
+			Patient patient) throws OHException 
 	{
 		int lock = 0;
 		boolean result = false;
 				
 
-		lock = _getUpdatePatientLock(patient.getCode(), check);
 		if (repository.updateLockByCode(
 				patient.getFirstName(), patient.getSecondName(), patient.getName(),
 				patient.getBirthDate(), patient.getAge(), patient.getAgetype(), patient.getSex(), patient.getAddress(), patient.getCity(),
@@ -232,24 +229,6 @@ public class PatientIoOperations
 		return byteArray;
 	}
 	
-	private int _getUpdatePatientLock(
-			Integer code, 
-			boolean check) throws OHException 
-	{
-		int lock = 0;
-
-		
-		if (check == true) 
-		{
-			Patient patient = repository.findOne(code);
-			
-			
-			lock = patient.getLock();
-		}
-		
-		return lock;
-	}
-
 	/**
 	 * method that logically delete a Patient (not physically deleted)
 	 * 

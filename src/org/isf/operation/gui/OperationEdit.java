@@ -316,18 +316,7 @@ public class OperationEdit extends JDialog {
 							}
 						}
 						else {                          // updating
-							boolean recordUpdated = manager.hasOperationModified(operation);
-							boolean overWrite = false;
-							if (recordUpdated){ 
-								// it was updated by someone else
-								String message = MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
-								int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
-								overWrite = response== JOptionPane.OK_OPTION;
-							}
-							if (!recordUpdated || overWrite) {
-								// the user has confirmed he wants to overwrite the record
-								result = manager.updateOperation(operation);
-							}
+							result = manager.updateOperation(operation);
 							if (result) {
 								fireOperationUpdated();
 							}

@@ -18,7 +18,6 @@ public class TestLaboratory
 	private GregorianCalendar registrationDate = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);
 	private GregorianCalendar examDate = new GregorianCalendar(now.get(Calendar.YEAR), 10, 11);
 	private String result = "TestResult";
-	private int lock = 1;
 	private String note = "TestNote";
 	private String patName = "TestPatientName";
 	private String InOutPatient = "O";
@@ -42,7 +41,7 @@ public class TestLaboratory
 		else
 		{
 			// Create Laboratory with all parameters 
-			laboratory = new Laboratory(code, exam, registrationDate, result, lock, note, patient, patName);
+			laboratory = new Laboratory(code, exam, registrationDate, result, note, patient, patName);
 			laboratory.setAge(age);
 			laboratory.setExamDate(examDate);
 			laboratory.setInOutPatient(InOutPatient);
@@ -70,7 +69,6 @@ public class TestLaboratory
 		laboratory.setPatName(patName);
 		laboratory.setResult(result);
 		laboratory.setSex(sex);
-		laboratory.setLock(lock);
 		
 		return;
 	}
@@ -88,7 +86,6 @@ public class TestLaboratory
     	assertEquals(patName, laboratory.getPatName());		
     	assertEquals(result, laboratory.getResult());	
     	assertEquals(sex, laboratory.getSex());		
-    	assertEquals(lock, laboratory.getLock());
 		
 		return;
 	}

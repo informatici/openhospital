@@ -341,29 +341,6 @@ public class Tests
 	}
 	
 	@Test
-	public void testIoGetMedicalLock() 
-	{
-		int code = 0;
-		
-		
-		try 
-		{		
-			code = _setupTestMedical(false);
-			Medical foundMedical = (Medical)jpa.find(Medical.class, code); 
-			int lock = medicalsIoOperations.getMedicalLock(code);
-			
-			assertEquals(foundMedical.getLock(), (Integer)lock);
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("==> Test Exception: " + e);		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}
-	
-	@Test
 	public void testIsMedicalReferencedInStockMovement() 
 	{
 		int code = 0;

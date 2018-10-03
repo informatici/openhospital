@@ -428,30 +428,6 @@ public class Tests
 	}
 
 	@Test
-	public void testIoHasAdmissionModified()
-	{
-		int id = 0;
-		boolean result = true;
-		
-		
-		try 
-		{		
-			id = _setupTestAdmission(false);
-			Admission foundAdmission = (Admission)jpa.find(Admission.class, id); 
-			result = admissionIoOperation.hasAdmissionModified(foundAdmission);
-			
-			assertEquals(false, result);
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("==> Test Exception: " + e);		
-			assertEquals(true, false);
-		}
-	
-		return;
-	}
-
-	@Test
 	public void testIoUpdateAdmission() 
 	{
 		int id = 0;

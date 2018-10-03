@@ -15,7 +15,6 @@ public class TestHospital
     private String fax = "TestFax";
     private String email = "TestEmail";
     private String currencyCod = "Cod";
-	private Integer lock = 1;
     
 			
 	public Hospital setup(
@@ -32,7 +31,7 @@ public class TestHospital
 		else
 		{
 			// Create Hospital with all parameters 
-			hospital = new Hospital(code, description, address, city, telephone, fax, email, currencyCod, lock);
+			hospital = new Hospital(code, description, address, city, telephone, fax, email, currencyCod);
 		}
 				    	
 		return hospital;
@@ -49,7 +48,6 @@ public class TestHospital
 		hospital.setEmail(email);
 		hospital.setFax(fax);
 		hospital.setCurrencyCod(currencyCod);
-		hospital.setLock(lock);
 		
 		return;
 	}
@@ -66,7 +64,6 @@ public class TestHospital
     	assertEquals(email, hospital.getEmail());
     	assertEquals(fax, hospital.getFax());
     	assertEquals(currencyCod, hospital.getCurrencyCod());
-    	assertEquals(lock, hospital.getLock());
 		
 		return;
 	}

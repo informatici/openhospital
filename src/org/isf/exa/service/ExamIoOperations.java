@@ -15,7 +15,6 @@ import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.exatype.model.ExamType;
 import org.isf.exatype.service.ExamTypeIoOperationRepository;
-import org.isf.generaldata.MessageBundle;
 import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,29 +166,14 @@ public class ExamIoOperations {
 	/**
 	 * Update an already existing {@link Exam}.
 	 * @param exam - the {@link Exam} to update
-	 * @param check - if <code>true</code> it will perform an integrity check
 	 * @return <code>true</code> if the {@link Exam} has been updated, <code>false</code> otherwise
 	 * @throws OHException
 	 */
 	public boolean updateExam(
-			Exam exam, 
-			boolean check) throws OHException 
+			Exam exam) throws OHException 
 	{
 		boolean result = true;
 		
-		
-		if (check) 
-		{ 
-			Exam foundExam = repository.findOne(exam.getCode()); 
-			if (foundExam == null)
-			{
-				throw new OHException(MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"));		
-			}
-			else if (foundExam.getLock() != exam.getLock())
-			{
-				result = false;
-			}		
-		}	
 		repository.save(exam);
     	
 		return result;	

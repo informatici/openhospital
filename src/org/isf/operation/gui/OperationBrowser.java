@@ -132,7 +132,7 @@ public class OperationBrowser extends ModalJFrame implements OperationEdit.Opera
 		buttonNew.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent event) {
-				operation=new Operation(null,"",new OperationType("",""), 0,0);	//operation will reference the new record
+				operation=new Operation(null,"",new OperationType("",""), 0);	//operation will reference the new record
 				OperationEdit newrecord = new OperationEdit(myFrame,operation,true);
 				newrecord.addOperationListener(OperationBrowser.this);
 				newrecord.setVisible(true);

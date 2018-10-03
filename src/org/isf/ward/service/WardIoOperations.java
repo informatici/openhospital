@@ -166,23 +166,4 @@ public class WardIoOperations {
     	return result;
 	}
 	
-	/**
-	 * Returns the stored Ward's lock value.
-	 * @parama code - the Ward's code
-	 * @return the stored lock value.
-	 * @throws OHServiceException if an error occurs during the check.
-	 */
-	public int getWardLock(
-			String code) throws OHServiceException 
-	{
-		int lock = -1;
-		
-		Ward foundWard = repository.findOne(code);
-		if (foundWard != null)
-		{
-			lock = foundWard.getLock();
-		}
-		
-		return lock;
-	}
 }

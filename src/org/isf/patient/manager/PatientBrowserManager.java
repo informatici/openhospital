@@ -61,7 +61,7 @@ public class PatientBrowserManager {
 	 */
 	public boolean updatePatient(Patient patient) throws OHServiceException {
 		try {
-			return ioOperations.updatePatient(patient, true);
+			return ioOperations.updatePatient(patient);
 		}catch(OHException e){
 			/*Already cached exception with OH specific error message - 
 			 * create ready to return OHServiceException and keep existing error message

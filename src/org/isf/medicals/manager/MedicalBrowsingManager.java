@@ -125,24 +125,7 @@ public class MedicalBrowsingManager {
         if(!errors.isEmpty()){
             throw new OHServiceException(errors);
         }
-		int lock = ioOperations.getMedicalLock(medical.getCode());
-		if (lock>=0) {
-			//ok the record is present, it was not deleted
-			if (lock!=medical.getLock()) {
-				//error: the record has been updated since last read
-				throw new OHServiceException(new OHExceptionMessage("recordUpdatedError", 
-						MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse"), 
-						OHSeverityLevel.ERROR));
-			} else {
-				//ok it was not updated
-				return ioOperations.updateMedical(medical);
-			}
-		} else {
-			//the record was deleted since the last read
-			throw new OHServiceException(new OHExceptionMessage("recordDeletedError", 
-					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), 
-					OHSeverityLevel.ERROR));
-		}
+        return ioOperations.updateMedical(medical);
 	}
 
 	/**

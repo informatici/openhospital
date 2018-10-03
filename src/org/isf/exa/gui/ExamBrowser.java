@@ -279,7 +279,7 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 			jButtonNew.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent event) {
-					exam = new Exam("", "", new ExamType("", ""), 0, "", 0);
+					exam = new Exam("", "", new ExamType("", ""), 0, "");
 					ExamEdit newrecord = new ExamEdit(myFrame, exam, true);
 					newrecord.addExamListener(ExamBrowser.this);
 					newrecord.setVisible(true);

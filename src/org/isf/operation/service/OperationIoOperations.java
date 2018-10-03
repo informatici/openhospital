@@ -76,27 +76,6 @@ public class OperationIoOperations {
 		return result;
 	}
 	
-	/**
-	 * Checks if the specified {@link Operation} has been modified.
-	 * @param operation - the {@link Operation} to check.
-	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
-	 */
-	public boolean hasOperationModified(
-			Operation operation) throws OHException 
-	{ 
-		Operation foundOperation = repository.findOne(operation.getCode()); 
-		boolean result = false;
-		
-		
-		if (foundOperation.getLock() != operation.getLock())
-		{
-			result = true;
-		}
-		
-		return result;
-	}
-	
 	/** 
 	 * updates an {@link Operation} in the DB
 	 * 
@@ -109,8 +88,6 @@ public class OperationIoOperations {
 	{
 		boolean result = true;
 	
-		
-		operation.setLock(operation.getLock()+1);
 		Operation savedOperation = repository.save(operation);
 		result = (savedOperation != null);
     	

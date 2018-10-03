@@ -709,7 +709,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				patient = (AdmittedPatient) table.getValueAt(table.getSelectedRow(), -1);
 				
 				if (patient  != null) {
-					Opd opd = new Opd(0,' ', -1, new Disease(), 0);
+					Opd opd = new Opd(0,' ', -1, new Disease());
 					OpdEditExtended newrecord = new OpdEditExtended(myFrame, opd, patient.getPatient(), true);
 					newrecord.setVisible(true);
 					

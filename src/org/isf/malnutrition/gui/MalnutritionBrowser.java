@@ -106,8 +106,8 @@ public class MalnutritionBrowser extends JDialog {
 		newButton.setMnemonic(KeyEvent.VK_N);
 		newButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				malnutrition = new Malnutrition(0, null, null, adm, 0, 0, 0);
-				Malnutrition last = new Malnutrition(0, null, null, adm, 0, 0, 0);
+				malnutrition = new Malnutrition(0, null, null, adm, 0, 0);
+				Malnutrition last = new Malnutrition(0, null, null, adm, 0, 0);
 				new InsertMalnutrition(myDialog, malnutrition, true);	
 				if (!last.equals(malnutrition)) {
 					pMaln.add(pMaln.size(), malnutrition);
@@ -139,7 +139,7 @@ public class MalnutritionBrowser extends JDialog {
 							malnutrition.getCode(), malnutrition.getDateSupp(),
 							malnutrition.getDateConf(),
 							malnutrition.getAdmission(), malnutrition.getHeight(),
-							malnutrition.getWeight(), malnutrition.getCode());
+							malnutrition.getWeight());
 					new InsertMalnutrition(myDialog, malnutrition, false);
 					if (!last.equals(malnutrition)) {
 						pMaln.set(selectedrow, malnutrition);

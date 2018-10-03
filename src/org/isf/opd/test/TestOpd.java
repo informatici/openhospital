@@ -18,7 +18,6 @@ public class TestOpd
 	private char sex = 'F';
 	private String note = "TestNote";
 	private int prog_year = 2008;
-	private int lock = 0;
 	private char newPatient = 'N';
 	private String referralFrom = "R";
 	private String referralTo = "R";
@@ -41,7 +40,7 @@ public class TestOpd
 		else
 		{
 			// Create Opd with all parameters 
-			opd = new Opd(prog_year, sex, age, disease, lock);
+			opd = new Opd(prog_year, sex, age, disease);
 			opd.setVisitDate(visitDate);
 			opd.setNote(note);
 			opd.setNewPatient(newPatient); 
@@ -66,7 +65,6 @@ public class TestOpd
 		opd.setSex(sex);
 		opd.setNote(note);
 		opd.setProgYear(prog_year);
-		opd.setLock(lock);
 		opd.setNewPatient(newPatient);
 		opd.setReferralFrom(referralFrom);
 		opd.setReferralTo(referralTo);
@@ -88,7 +86,6 @@ public class TestOpd
     	assertEquals(sex, opd.getSex());
     	assertEquals(note, opd.getNote());
     	assertEquals(prog_year, opd.getProgYear());
-    	assertEquals(lock, opd.getLock());
     	assertEquals(newPatient, opd.getNewPatient());
     	assertEquals(referralFrom, opd.getReferralFrom());
     	assertEquals(referralTo, opd.getReferralTo());

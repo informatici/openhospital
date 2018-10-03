@@ -2042,34 +2042,11 @@ public class AdmissionBrowser extends JDialog {
 								dispose();
 							}
 						} else {
-								boolean recordUpdated = false;
-								try {
-									recordUpdated = admMan.isAdmissionModified(admission);
-								}catch(OHServiceException ex){
-									OHServiceExceptionUtil.showMessages(ex);
-								}
-								if (!recordUpdated) { 
-									// it was not updated
-									try {
-										result = admMan.updateAdmission(admission);
-									}catch(OHServiceException ex){
-                                        OHServiceExceptionUtil.showMessages(ex);
-									}
-								} else { 
-									// it was updated by someone else
-									String message = MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
-									int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
-									boolean overWrite = response== JOptionPane.OK_OPTION;
-
-									if (overWrite) {
-										// the user has confirmed he wants to overwrite the record
-										try {
-											result = admMan.updateAdmission(admission);
-										}catch(OHServiceException ex){
-                                            OHServiceExceptionUtil.showMessages(ex);
-										}
-									}
-								}
+							try {
+								result = admMan.updateAdmission(admission);
+							}catch(OHServiceException ex){
+                                OHServiceExceptionUtil.showMessages(ex);
+							}
 							if (result) {
 								fireAdmissionUpdated(admission);
 								if (GeneralData.XMPPMODULEENABLED) {

@@ -11,8 +11,6 @@ public class TestExam
     private String code = "ZZ";
     private String description = "TestDescription";
 	private String defaultResult = "TestDefaultResult";
-	private Integer lock = 1;
-    
 			
 	public Exam setup(
 			ExamType examtype,
@@ -30,7 +28,7 @@ public class TestExam
 		else
 		{
 			// Create Exam with all parameters 
-			exam = new Exam(code, description, examtype, procedure, defaultResult, lock);
+			exam = new Exam(code, description, examtype, procedure, defaultResult);
 		}
 				    	
 		return exam;
@@ -45,7 +43,6 @@ public class TestExam
 		exam.setDescription(description);
 		exam.setExamtype(examtype);
 		exam.setProcedure(procedure);
-		exam.setLock(lock);
 		exam.setDefaultResult(defaultResult);
 		
 		return;
@@ -57,7 +54,6 @@ public class TestExam
     	System.out.println("Check Exam: " + exam.getCode());
     	assertEquals(code, exam.getCode());
     	assertEquals(description, exam.getDescription());
-    	assertEquals(lock, exam.getLock());
     	assertEquals(defaultResult, exam.getDefaultResult());
 		
 		return;

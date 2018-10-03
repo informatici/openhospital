@@ -246,27 +246,6 @@ public class MedicalsIoOperations
 	}
 
 	/**
-	 * Returns the stored medical lock value.
-	 * @param code the medical code.
-	 * @return the stored lock value.
-	 * @throws OHServiceException if an error occurs retrieving the lock value.
-	 */
-	public int getMedicalLock(
-			int code) throws OHServiceException 
-	{		
-		int lock = -1;
-				
-		
-		Medical foundMedical = repository.findOne(code);
-		if (foundMedical != null)
-		{
-			lock = foundMedical.getLock();
-		}
-		
-		return lock;
-	}
-
-	/**
 	 * Updates the specified {@link Medical}.
 	 * @param medical the medical to update.
 	 * @return <code>true</code> if the medical has been updated <code>false</code> otherwise.

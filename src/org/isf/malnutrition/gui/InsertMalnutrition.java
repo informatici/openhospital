@@ -171,48 +171,26 @@ public class InsertMalnutrition extends JDialog {
 				if (inserting) {
 					
 					if (true == isValidForInsert(maln)) {
-						boolean inserted;
-						
+						boolean inserted = false;
 						try {
 							inserted = manager.newMalnutrition(maln);
 						} catch (OHServiceException e) {
-							inserted = false;
 							OHServiceExceptionUtil.showMessages(e);
 						}
-						
 						if (true == inserted) {
 							myDialog.dispose();
 						}
 					}
 					
 				} else {
-					
-					if (true == isValidForUpdate(maln)) {
-						boolean updated;
-						
-						try {
-							updated = manager.updateMalnutrition(maln, true);
-							
-							if (false == updated) {
-								// failed because of valid lock, ask user if they want to update anyway
-								String msg = MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse") +
-										MessageBundle.getMessage("angal.malnutrition.doyouwanttooverwritethedata");
-								
-								int response = JOptionPane.showConfirmDialog(null, msg, MessageBundle.getMessage("angal.malnutrition.select"), JOptionPane.YES_NO_OPTION);
-								if (response == JOptionPane.YES_OPTION){
-									updated = manager.updateMalnutrition(maln, false);
-								}
-							}
-						} catch (OHServiceException e) {
-							// either the record was deleted during update by another user or the sql failed for some other reason
-							// so show the error message propagated up from the exception
-							updated = false;
-							OHServiceExceptionUtil.showMessages(e);
-						}
-						
-						if (true == updated) {
-							myDialog.dispose();
-						}
+					boolean updated = false;
+					try {
+						updated = manager.updateMalnutrition(maln);
+					} catch (OHServiceException e) {
+						OHServiceExceptionUtil.showMessages(e);
+					}
+					if (true == updated) {
+						myDialog.dispose();
 					}
 				}
 			}

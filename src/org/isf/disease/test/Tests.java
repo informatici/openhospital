@@ -207,38 +207,12 @@ public class Tests
 		{		
 			code = _setupTestDisease(false);
 			Disease foundDisease = (Disease)jpa.find(Disease.class, code); 
-			int lock = foundDisease.getLock().intValue();
 			foundDisease.setDescription("Update");
 			result = diseaseIoOperation.updateDisease(foundDisease);
 			Disease updateDisease = (Disease)jpa.find(Disease.class, code); 
 			
 			assertEquals(true, result);
 			assertEquals("Update", updateDisease.getDescription());
-			assertEquals(lock + 1, updateDisease.getLock().intValue());
-		} 
-		catch (Exception e) 
-		{
-			System.out.println("==> Test Exception: " + e);		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}
-	
-	@Test
-	public void testIoHasDiseaseModified() 
-	{
-		String code = "";
-		boolean result = false;
-		
-		
-		try 
-		{		
-			code = _setupTestDisease(false);
-			Disease foundDisease = (Disease)jpa.find(Disease.class, code);
-			result = diseaseIoOperation.hasDiseaseModified(foundDisease);
-			
-			assertEquals(false, result);
 		} 
 		catch (Exception e) 
 		{

@@ -136,30 +136,6 @@ public class OpdBrowserManager {
 	}
 
 	/**
-	 * Checks if the specified {@link Opd} has been modified.
-	 * @param opd - the {@link Opd} to check.
-	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
-	 * @throws OHServiceException if an error occurs during the check.
-	 */
-	public boolean hasOpdModified(Opd opd) throws OHServiceException{
-		try {
-			return ioOperations.hasOpdModified(opd);
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-	}
-	
-	/**
 	 * Updates the specified {@link Opd} object.
 	 * @param opd - the {@link Opd} object to update.
 	 * @return <code>true</code> if has been updated, <code>false</code> otherwise.

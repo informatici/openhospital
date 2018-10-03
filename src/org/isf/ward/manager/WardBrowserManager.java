@@ -123,29 +123,7 @@ public class WardBrowserManager {
         if(!errors.isEmpty()){
             throw new OHServiceException(errors);
         }
-		int lock = ioOperations.getWardLock(ward.getCode());
-		if (lock>=0) {
-			//ok the record is present, it was not deleted
-			if (lock!=ward.getLock()) {
-				//error: the record has been updated since last read
-				throw new OHServiceException(new OHExceptionMessage("recordUpdatedError", 
-						MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse"), 
-						OHSeverityLevel.ERROR));
-			} else {
-				int admitted_patients_in_ward = getCurrentOccupation(ward);
-				if (ward.getBeds() < admitted_patients_in_ward) {
-					throw new OHServiceException(new OHExceptionMessage("patientAdmittedError", 
-							MessageBundle.getMessagePattern("angal.ward.pattern.patientsarestilladmittedinward", admitted_patients_in_ward), 
-							OHSeverityLevel.ERROR));
-				}
-				return ioOperations.updateWard(ward);
-			}
-		} else {
-			//the record was deleted since the last read
-			throw new OHServiceException(new OHExceptionMessage("recordDeletedError", 
-					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), 
-					OHSeverityLevel.ERROR));
-		}
+		return ioOperations.updateWard(ward);
 	}
 
 	/**
@@ -218,8 +196,7 @@ public class WardBrowserManager {
 				2, //Doctors
 				false, //isPharmacy
 				false, //isMale
-				true, //isFemale
-				0); //LOCK (version)
+				true); //isFemale
 		return maternity;
 	}
 	
