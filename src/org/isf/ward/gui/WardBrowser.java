@@ -97,9 +97,7 @@ public class WardBrowser extends ModalJFrame implements WardEdit.WardListener {
 		//check if in the db maternity ward exists
 		WardBrowserManager manager = new WardBrowserManager();
 		try {
-			if(!manager.maternityControl()) {
-				manager.newWard(new Ward("M",MessageBundle.getMessage("angal.admission.maternity"),"234/52544","54324/5424","maternity@stluke.org",20,3,2,false,false,true,0));
-			}
+			manager.maternityControl(true);
 		}catch(OHServiceException e){
 			OHServiceExceptionUtil.showMessages(e);
 		}

@@ -356,10 +356,10 @@ public class Tests
 		try 
 		{		
 			code = _setupTestWard(false);
-			Ward foundWard = (Ward)jpa.find(Ward.class, code); 
-			result = wardIoOperation.isLockWard(foundWard);
+			Ward foundWard = (Ward)jpa.find(Ward.class, code);
+			int lock = wardIoOperation.getWardLock(code);
 			
-			assertEquals(true, result);
+			assertEquals(foundWard.getLock(), (Integer)lock);
 		} 
 		catch (Exception e) 
 		{
@@ -373,17 +373,16 @@ public class Tests
 	@Test
 	public void testIoIsLockWardFalse() 
 	{
-		boolean result = false;
+		int result = 0;
 				
-
 		try 
 		{		
 			_setupTestWard(false);
-			Ward cloneWard= testWard.setup(false);
+			Ward cloneWard = testWard.setup(false);
 			cloneWard.setLock(cloneWard.getLock()+1);
-			result = wardIoOperation.isLockWard(cloneWard);
+			result = wardIoOperation.getWardLock(cloneWard.getCode());
 			
-			assertEquals(false, result);
+			assertEquals(0, result);
 		} 
 		catch (Exception e) 
 		{
