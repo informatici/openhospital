@@ -194,7 +194,7 @@ public class Tests
 	}
 	
 	@Test
-	public void testMovemetnWardGets() 
+	public void testMovementWardGets() 
 	{
 		int id = 0;
 			
@@ -202,7 +202,7 @@ public class Tests
 		try 
 		{		
 			id = _setupTestMovementWard(false);
-			_checkMovemetnWardIntoDb(id);
+			_checkMovementWardIntoDb(id);
 		} 
 		catch (Exception e) 
 		{
@@ -214,7 +214,7 @@ public class Tests
 	}
 	
 	@Test
-	public void testMovemetnWardSets() 
+	public void testMovementWardSets() 
 	{
 		int id = 0;
 			
@@ -222,7 +222,7 @@ public class Tests
 		try 
 		{		
 			id = _setupTestMovementWard(true);
-			_checkMovemetnWardIntoDb(id);
+			_checkMovementWardIntoDb(id);
 		} 
 		catch (Exception e) 
 		{
@@ -263,18 +263,16 @@ public class Tests
 	}
 	
 	@Test
-	public void testIoGetCurrentQuantity() 
+	public void testIoGetCurrentQuantityInWard() 
 	{	
+		boolean result = false;
+		
 		try 
 		{		
 			MedicalType medicalType = testMedicalType.setup(false);
 			Medical medical= testMedical.setup(medicalType, false);
 			Ward ward = testWard.setup(false);
 			Patient patient = testPatient.setup(false);
-			MovementType movementType = testMovementType.setup(false);
-			Lot lot = testLot.setup(false);
-			Supplier supplier = testSupplier.setup(false);		
-			
 		
 			jpa.beginTransaction();	
 			jpa.persist(medicalType);
@@ -283,18 +281,14 @@ public class Tests
 			jpa.persist(patient);
 			MovementWard movementWard = testMovementWard.setup(ward, patient, medical, false);
 			jpa.persist(movementWard);
-			jpa.persist(supplier);
-			jpa.persist(lot);
-			movementType.setCode("testDisc");
-			jpa.persist(movementType);
-			Movement movement = testMovement.setup(medical, movementType, ward, lot, supplier, false);
-			jpa.persist(movement);
 			jpa.commitTransaction();
 			
-			int quantity = medicalIoOperation.getCurrentQuantity(
+			result = medicalIoOperation.newMovementWard(movementWard);
+			int quantity = medicalIoOperation.getCurrentQuantityInWard(
 					ward,
 					medical);
 
+			_checkMovementWardIntoDb(movementWard.getCode());
 			assertEquals(-46, quantity);
 		} 
 		catch (Exception e) 
@@ -329,9 +323,10 @@ public class Tests
 			jpa.commitTransaction();
 			movementWard = testMovementWard.setup(ward, patient, medical, false);
 			result = medicalIoOperation.newMovementWard(movementWard);
+			Double quantity = (double) medicalIoOperation.getCurrentQuantityInWard(ward, medical);
 			
-			assertEquals(true, result);
-			_checkMovemetnWardIntoDb(movementWard.getCode());
+			_checkMovementWardIntoDb(movementWard.getCode());
+			assertEquals(quantity.compareTo(-movementWard.getQuantity()), 0);
 		} 
 		catch (Exception e) 
 		{
@@ -504,7 +499,7 @@ public class Tests
 		return movementWard.getCode();
 	}
 		
-	private void  _checkMovemetnWardIntoDb(
+	private void  _checkMovementWardIntoDb(
 			int id) throws OHException 
 	{
 		MovementWard foundMovementWard;

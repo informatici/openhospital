@@ -35,9 +35,8 @@ import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
-import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class WardPharmacyEdit extends JDialog {
@@ -250,7 +249,7 @@ public class WardPharmacyEdit extends JDialog {
 		return jTextFieldSearchMedical;
 	}
 	
-private JButton getJButtonTrashMedical() {
+	private JButton getJButtonTrashMedical() {
 		
 		if (jButtonTrashMedical == null) {
 			jButtonTrashMedical = new JButton();

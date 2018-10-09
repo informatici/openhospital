@@ -939,18 +939,19 @@ public class WardPharmacy extends ModalJFrame implements
 		}
 
 		public Object getValueAt(int r, int c) {
+			Movement mov = wardIncomes.get(r);
 			if (c == -1) {
-				return wardIncomes.get(r);
+				return mov;
 			}
 			if (c == 0) {
-				return formatDate(wardIncomes.get(r).getDate());
+				return formatDate(mov.getDate());
 			}
 			if (c == 1) {
-				return wardIncomes.get(r).getMedical();
+				return mov.getMedical();
 			}
 			if (c == 2) {
-				int pieces = wardIncomes.get(r).getQuantity();
-				int pcsPerPck = wardIncomes.get(r).getMedical().getPcsperpck();
+				int pieces = mov.getQuantity();
+				int pcsPerPck = mov.getMedical().getPcsperpck();
 				int packets = 0;
 				if (pcsPerPck != 0) {
 					packets = pieces / pcsPerPck;

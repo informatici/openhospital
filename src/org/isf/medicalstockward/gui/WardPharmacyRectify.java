@@ -244,6 +244,10 @@ public class WardPharmacyRectify extends JDialog {
 					public void actionPerformed(ActionEvent e) {
 						
 						Medical med;
+						
+						/*
+						 *  To override MovWardBrowserManager.validateMovementWard() behaviour
+						 */
 						try {
 							med = (Medical) jComboBoxMedical.getSelectedItem();
 						} catch (ClassCastException e1) {
@@ -251,6 +255,9 @@ public class WardPharmacyRectify extends JDialog {
 							return;
 						}
 						
+						/*
+						 *  To override MovWardBrowserManager.validateMovementWard() behaviour
+						 */
 						String reason = jTextFieldReason.getText().trim();
 						if (reason.equals("")) { //$NON-NLS-1$
 							JOptionPane.showMessageDialog(WardPharmacyRectify.this, MessageBundle.getMessage("angal.medicalstockward.rectify.pleasespecifythereason")); //$NON-NLS-1$
@@ -273,16 +280,16 @@ public class WardPharmacyRectify extends JDialog {
 									med, 
 									quantity,
 									MessageBundle.getMessage("angal.medicalstockward.rectify.pieces")));
+							if (result) {
+								fireMovementWardInserted();
+								dispose();
+							} else return;
+							
 						} catch (OHServiceException e1) {
 							result = false;
 							OHServiceExceptionUtil.showMessages(e1);
-						} //$NON-NLS-1$
-						if (!result) {
-							
-							return;
 						}
-						fireMovementWardInserted();
-						dispose();
+						
 					}
 				});
 				jButtonPanel.add(jButtonOk);

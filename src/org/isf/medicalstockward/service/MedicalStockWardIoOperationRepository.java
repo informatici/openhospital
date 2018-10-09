@@ -15,16 +15,11 @@ public interface MedicalStockWardIoOperationRepository extends JpaRepository<Med
     @Query(value = "SELECT * FROM MEDICALDSRWARD WHERE MDSRWRD_WRD_ID_A = :ward AND MDSRWRD_MDSR_ID = :medical", nativeQuery= true)
     public MedicalWard findOneWhereCodeAndMedical(@Param("ward") String ward, @Param("medical") int medical);    
     
-    @Query(value = "SELECT SUM(MMV_QTY) MAIN FROM MEDICALDSRSTOCKMOV M WHERE MMV_MMVT_ID_A = 'testDisc' AND MMV_MDSR_ID = :medical", nativeQuery= true)
-    public Double findMainQuantityWhereMedical(@Param("medical") int medical);
-    @Query(value = "SELECT SUM(MMV_QTY) MAIN FROM MEDICALDSRSTOCKMOV M WHERE MMV_MMVT_ID_A = 'testDisc' AND MMV_MDSR_ID = :medical AND MMV_WRD_ID_A = :ward", nativeQuery= true)
-    public Double findMainQuantityWhereMedicalAndWard(@Param("medical") int medical, @Param("ward") String ward);
+    @Query(value = "SELECT SUM(MDSRWRD_IN_QTI-MDSRWRD_OUT_QTI) QTY FROM MEDICALDSRWARD WHERE MDSRWRD_MDSR_ID = :medical", nativeQuery= true)
+    public Double findQuantityInWardWhereMedical(@Param("medical") int medical);
+    @Query(value = "SELECT SUM(MDSRWRD_IN_QTI-MDSRWRD_OUT_QTI) QTY FROM MEDICALDSRWARD WHERE MDSRWRD_MDSR_ID = :medical AND MDSRWRD_WRD_ID_A = :ward", nativeQuery= true)
+    public Double findQuantityInWardWhereMedicalAndWard(@Param("medical") int medical, @Param("ward") String ward);
 	
-    @Query(value = "SELECT SUM(MMVN_MDSR_QTY) DISCHARGE FROM MEDICALDSRSTOCKMOVWARD WHERE MMVN_MDSR_ID = :medical", nativeQuery= true)
-    public Double findDischargeQuantityWhereMedical(@Param("medical") int medical);
-    @Query(value = "SELECT SUM(MMVN_MDSR_QTY) DISCHARGE FROM MEDICALDSRSTOCKMOVWARD WHERE MMVN_MDSR_ID = :medical AND MMVN_WRD_ID_A = :ward", nativeQuery= true)
-    public Double findDischargeQuantityWhereMedicalAndWard(@Param("medical") int medical, @Param("ward") String ward);
-        
     @Modifying 
     @Transactional
     @Query(value = "UPDATE MEDICALDSRWARD SET MDSRWRD_IN_QTI = MDSRWRD_IN_QTI + :quantity WHERE MDSRWRD_WRD_ID_A = :ward AND MDSRWRD_MDSR_ID = :medical", nativeQuery= true)

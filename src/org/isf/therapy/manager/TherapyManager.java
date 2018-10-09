@@ -284,7 +284,7 @@ public class TherapyManager {
 				// CALCULATING STOCK QUANTITIES
 				Medical med = medArray.get(medArray.indexOf(th.getMedical()));
 				actualQty = med.getInitialqty() + med.getInqty() - med.getOutqty(); // MAIN STORE
-				int currentQuantity = wardManager.getCurrentQuantity(null, med);
+				int currentQuantity = wardManager.getCurrentQuantityInWard(null, med);
 				actualQty += currentQuantity;
 
 				if (neededQty > actualQty) {

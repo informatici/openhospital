@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
@@ -15,7 +16,6 @@ import org.isf.menu.gui.Menu;
 import org.isf.serviceprinting.print.MedicalWardForPrint;
 import org.isf.serviceprinting.print.MovementForPrint;
 import org.isf.serviceprinting.print.MovementWardForPrint;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -28,6 +28,31 @@ public class MovWardBrowserManager {
 	private final Logger logger = LoggerFactory.getLogger(MovWardBrowserManager.class);
 	private MedicalStockWardIoOperations ioOperations=Menu.getApplicationContext().getBean(MedicalStockWardIoOperations.class);
 
+	/**
+	 * Verify if the object is valid for CRUD and return a list of errors, if any
+	 * @param exam
+	 * @return list of {@link OHExceptionMessage}
+	 */
+	protected List<OHExceptionMessage> validateMovementWard(MovementWard mov) {
+		String description = mov.getDescription();
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        if(description.isEmpty() && mov.isPatient()){
+	        errors.add(new OHExceptionMessage("descriptionPatientEmptyError", 
+	        		MessageBundle.getMessage("angal.medicalstockwardedit.pleaseselectapatient"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        if(description.isEmpty() && !mov.isPatient()){
+	        errors.add(new OHExceptionMessage("descriptionInternalUseEmptyError", 
+	        		MessageBundle.getMessage("angal.medicalstockwardedit.pleaseinsertadescriptionfortheinternaluse"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        if (mov.getMedical() == null) {
+        	errors.add(new OHExceptionMessage("medicalEmptyError", 
+	        		MessageBundle.getMessage("angal.medicalstockwardedit.pleaseselectadrug"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        return errors;
+    }
 
 	/**
 	 * Gets all the {@link MovementWard}s.
@@ -36,21 +61,7 @@ public class MovWardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	@Deprecated public ArrayList<MovementWard> getMovementWard() throws OHServiceException {
-		try {
-			return ioOperations.getWardMovements(null, null, null);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getWardMovements(null, null, null);
 	}
 
 	/**
@@ -60,21 +71,7 @@ public class MovWardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<MedicalWard> getMedicalsWard(char wardId) throws OHServiceException {
-		try {
-			return ioOperations.getMedicalsWard(wardId);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getMedicalsWard(wardId);
 	}
 
 	/**
@@ -86,21 +83,7 @@ public class MovWardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<MovementWard> getMovementWard(String wardId, GregorianCalendar dateFrom, GregorianCalendar dateTo) throws OHServiceException {
-		try {
-			return ioOperations.getWardMovements(wardId, dateFrom, dateTo);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getWardMovements(wardId, dateFrom, dateTo);
 	}
 
 	/**
@@ -110,21 +93,11 @@ public class MovWardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newMovementWard(MovementWard newMovement) throws OHServiceException {
-		try {
-			return ioOperations.newMovementWard(newMovement);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		List<OHExceptionMessage> errors = validateMovementWard(newMovement);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+		return ioOperations.newMovementWard(newMovement);
 	}
 
 	/**
@@ -134,21 +107,19 @@ public class MovWardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newMovementWard(ArrayList<MovementWard> newMovements) throws OHServiceException {
-		try {
-			return ioOperations.newMovementWard(newMovements);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+		if (newMovements.size() == 0) {
+			throw new OHServiceException(new OHExceptionMessage(
+					"emptyMovementListError", 
+					MessageBundle.getMessage("angal.medicalstockwardedit.pleaseselectadrug"), 
+					OHSeverityLevel.ERROR));
 		}
+		for (MovementWard mov : newMovements) {
+			List<OHExceptionMessage> errors = validateMovementWard(mov);
+	        if(!errors.isEmpty()){
+	            throw new OHServiceException(errors);
+	        }
+		}
+		return ioOperations.newMovementWard(newMovements);
 	}
 
 	/**
@@ -158,21 +129,7 @@ public class MovWardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateMovementWard(MovementWard updateMovement) throws OHServiceException {
-		try {
-			return ioOperations.updateMovementWard(updateMovement);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.updateMovementWard(updateMovement);
 	}
 
 	/**
@@ -181,47 +138,19 @@ public class MovWardBrowserManager {
 	 * @return <code>true</code> if the movement has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException 
 	 */
-	public boolean deleteMovementWard(MovementWard movement) throws OHServiceException {
-		try {
-			return ioOperations.deleteMovementWard(movement);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+	protected boolean deleteMovementWard(MovementWard movement) throws OHServiceException {
+		return ioOperations.deleteMovementWard(movement);
 	}
 
 	/**
-	 * Gets the current quantity for the specified {@link Medical}.
-	 * @param ward the medical ward, or <code>null</code>.
-	 * @param medical the medical.
+	 * Gets the current quantity for the specified {@link Medical} and specified {@link Ward}.
+	 * @param ward - if {@code null} the quantity is counted for the whole hospital
+	 * @param medical - the {@link Medical} to check.
 	 * @return the total quantity.
-	 * @throws OHServiceException 
+	 * @throws OHServiceException if an error occurs retrieving the quantity.
 	 */
-	public int getCurrentQuantity(Ward ward, Medical medical) throws OHServiceException {
-		try {
-			return ioOperations.getCurrentQuantity(ward, medical);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
-		}
+	public int getCurrentQuantityInWard(Ward ward, Medical medical) throws OHServiceException {
+		return ioOperations.getCurrentQuantityInWard(ward, medical);
 	}
 
 	public ArrayList<MovementWardForPrint> convertMovementWardForPrint(ArrayList<MovementWard> wardOutcomes) {
