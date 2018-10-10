@@ -25,7 +25,7 @@ public class OHServiceExceptionTranslator {
 		try {
 			return pjp.proceed();
 		} catch (DataIntegrityViolationException e) {
-			throw new OHServiceException(e, new OHExceptionMessage(null, MessageBundle.getMessage("angal.sql.constraintviolation"), OHSeverityLevel.ERROR));
+			throw new OHServiceException(e, new OHExceptionMessage(null, MessageBundle.getMessage("angal.sql.theselecteditemisstillusedsomewhere"), OHSeverityLevel.ERROR));
 		} catch (InvalidDataAccessResourceUsageException e) {
 			throw new OHServiceException(e, new OHExceptionMessage(null, MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		} catch (CannotCreateTransactionException e) {
