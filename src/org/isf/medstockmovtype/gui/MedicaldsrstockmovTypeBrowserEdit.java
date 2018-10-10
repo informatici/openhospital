@@ -195,49 +195,45 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					String key = codeTextField.getText();
-					String key2 = (String) typeComboBox.getSelectedItem();
+					
 					String description = descriptionTextField.getText();
-					if (description.equals(lastdescription)){
-						dispose();	
-					}
-					MedicaldsrstockmovTypeBrowserManager manager = new MedicaldsrstockmovTypeBrowserManager();
-				
 					medicaldsrstockmovType.setDescription(description);
 					medicaldsrstockmovType.setCode(codeTextField.getText());
-					medicaldsrstockmovType.setType(key2);
+					medicaldsrstockmovType.setType((String) typeComboBox.getSelectedItem());
+					
+					MedicaldsrstockmovTypeBrowserManager manager = new MedicaldsrstockmovTypeBrowserManager();
 					boolean result;
 					if (insert) { // inserting
 						try {
 							result = manager.newMedicaldsrstockmovType(medicaldsrstockmovType);
+							if (result) {
+								fireMedicaldsrstockmovInserted(medicaldsrstockmovType);
+								dispose();
+							} else
+								JOptionPane.showMessageDialog(null,
+										MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						} catch (OHServiceException e1) {
 							result = false;
 							OHServiceExceptionUtil.showMessages(e1);
 						}
-						if (result) {
-							fireMedicaldsrstockmovInserted(medicaldsrstockmovType);
-						}
-						if (!result)
-							JOptionPane.showMessageDialog(null,
-									MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
-						else
-							dispose();
 					}
 					else { // updating
-						try {
-							result = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
-						} catch (OHServiceException e1) {
-							result = false;
-							OHServiceExceptionUtil.showMessages(e1);
+						if (description.equals(lastdescription)){
+							dispose();	
+						} else {
+							try {
+								result = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
+								if (result) {
+									fireMedicaldsrstockmovUpdated();
+									dispose();
+								} else
+									JOptionPane.showMessageDialog(null,
+											MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+							} catch (OHServiceException e1) {
+								result = false;
+								OHServiceExceptionUtil.showMessages(e1);
+							}
 						}
-						if (result) {
-							fireMedicaldsrstockmovUpdated();
-						}
-						if (!result)
-							JOptionPane.showMessageDialog(null,
-									MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
-						else
-							dispose();
 
 					}
 					
