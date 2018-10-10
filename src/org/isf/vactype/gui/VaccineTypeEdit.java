@@ -201,13 +201,10 @@ public class VaccineTypeEdit extends JDialog{
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					
-					if (descriptionTextField.getText().equals(lastdescription)){
-						dispose();	
-					}
 					vaccineType.setDescription(descriptionTextField.getText());
 					vaccineType.setCode(codeTextField.getText());
 					
-					boolean result = false;
+					boolean result;
 					VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
 					if (insert) {// inserting
 						try {
@@ -219,12 +216,13 @@ public class VaccineTypeEdit extends JDialog{
 								JOptionPane.showMessageDialog(null,
 										MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						} catch (OHServiceException e1) {
+							result = false;
 							OHServiceExceptionUtil.showMessages(e1);
 						}
 					} else { // updating
-						if (descriptionTextField.getText().equals(lastdescription)) {
-							dispose();
-						} else {
+						if (descriptionTextField.getText().equals(lastdescription)){
+							dispose();	
+						}else {
 							try {
 								result = manager.updateVaccineType(vaccineType);
 								if (result) {
@@ -234,6 +232,7 @@ public class VaccineTypeEdit extends JDialog{
 									JOptionPane.showMessageDialog(null,
 											MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 							} catch (OHServiceException e1) {
+								result = false;
 								OHServiceExceptionUtil.showMessages(e1);
 							}
 						}

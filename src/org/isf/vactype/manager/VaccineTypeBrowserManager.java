@@ -42,7 +42,7 @@ public class VaccineTypeBrowserManager {
         }
         if(key.length()>1){
 	        errors.add(new OHExceptionMessage("codeTooLongError", 
-	        		MessageBundle.getMessage("angal.dlvrrestype.codetoolongmaxchar"), 
+	        		MessageBundle.getMessage("angal.vactype.codemaxchars"), 
 	        		OHSeverityLevel.ERROR));
         }
         if(description.isEmpty() ){

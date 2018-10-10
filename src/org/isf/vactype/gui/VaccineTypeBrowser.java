@@ -152,9 +152,9 @@ public class VaccineTypeBrowser extends ModalJFrame implements VaccineTypeListen
 						selectedrow = jTable.getSelectedRow();
 						vaccineType = (VaccineType) (((VaccineTypeBrowserModel) model)
 								.getValueAt(selectedrow, -1));
-						VaccineTypeEdit newrecord = new VaccineTypeEdit(myFrame,vaccineType, false);
-						newrecord.addVaccineTypeListener(VaccineTypeBrowser.this);
-						newrecord.setVisible(true);
+						VaccineTypeEdit editrecord = new VaccineTypeEdit(myFrame,vaccineType, false);
+						editrecord.addVaccineTypeListener(VaccineTypeBrowser.this);
+						editrecord.setVisible(true);
 					}
 				}
 			});
