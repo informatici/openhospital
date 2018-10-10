@@ -10,16 +10,16 @@ package org.isf.vactype.service;
 
 import java.util.ArrayList;
 
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.vactype.model.VaccineType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class VacTypeIoOperation {
 
 	@Autowired
@@ -29,9 +29,9 @@ public class VacTypeIoOperation {
 	 * returns all {@link VaccineType}s from DB	
 	 * 	
 	 * @return the list of {@link VaccineType}s
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<VaccineType> getVaccineType() throws OHException 
+	public ArrayList<VaccineType> getVaccineType() throws OHServiceException 
 	{
 		return new ArrayList<VaccineType>(repository.findAllByOrderByDescriptionAsc()); 
 	}
@@ -41,10 +41,10 @@ public class VacTypeIoOperation {
 	 * 
 	 * @param vaccineType - the {@link VaccineType} to insert 
 	 * @return <code>true</code> if the item has been inserted, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean newVaccineType(
-			VaccineType vaccineType) throws OHException 
+			VaccineType vaccineType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -60,10 +60,10 @@ public class VacTypeIoOperation {
 	 *
 	 * @param vaccineType - the item to update
 	 * @return <code>true</code> if the item has been updated, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean updateVaccineType(
-			VaccineType vaccineType) throws OHException 
+			VaccineType vaccineType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -79,10 +79,10 @@ public class VacTypeIoOperation {
 	 *
 	 * @param vaccineType - the item to delete
 	 * @return <code>true</code> if the item has been deleted, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean deleteVaccineType(
-			VaccineType vaccineType) throws OHException 
+			VaccineType vaccineType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -98,10 +98,10 @@ public class VacTypeIoOperation {
 	 *
 	 * @param code - the {@link VaccineType} code
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean isCodePresent(
-			String code) throws OHException
+			String code) throws OHServiceException
 	{
 		boolean result = true;
 	
