@@ -36,10 +36,16 @@ public class Malnutrition
 	@Column(name="MLN_ID")
 	private int code;
 
+	/*
+	 * Date of this control
+	 */
 	@NotNull
 	@Column(name="MLN_DATE_SUPP")
 	private GregorianCalendar dateSupp;
 
+	/*
+	 * Date of next control
+	 */
 	@Column(name="MNL_DATE_CONF")
 	private GregorianCalendar dateConf;
 

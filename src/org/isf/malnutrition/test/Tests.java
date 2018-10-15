@@ -269,18 +269,20 @@ public class Tests
 	public void testIoUpdateMalnutrition() 
 	{
 		int code = 0;
-		boolean result = false;
+		Malnutrition result = null;
 		
 		
 		try 
 		{		
 			code = _setupTestMalnutrition(false);
-			Malnutrition foundMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code); 
+			Malnutrition foundMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code);
+			jpa.flush();
 			foundMalnutrition.setHeight(200);
 			result = malnutritionIoOperation.updateMalnutrition(foundMalnutrition);
-			Malnutrition updateMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code); 
+			Malnutrition updateMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code);
 			
-			assertEquals(true, result);
+			
+			assertEquals(true, (result != null));
 			assertEquals(200.0, updateMalnutrition.getHeight(), 0.000001d);
 		} 
 		catch (Exception e) 
@@ -364,7 +366,9 @@ public class Tests
 		try 
 		{		
 			code = _setupTestMalnutrition(false);
-			Malnutrition foundMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code); 
+			Malnutrition foundMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code);
+			jpa.flush();
+			
 			result = malnutritionIoOperation.deleteMalnutrition(foundMalnutrition);
 			
 			assertEquals(true, result);

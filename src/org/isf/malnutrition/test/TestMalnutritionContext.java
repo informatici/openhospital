@@ -33,10 +33,10 @@ public class TestMalnutritionContext
     public void deleteNews(
     		DbJpaUtil jpa) throws OHException 
     {
-		jpa.beginTransaction();			
+    	jpa.beginTransaction();	
 		jpa.createQuery("SELECT * FROM MALNUTRITIONCONTROL", Malnutrition.class, false);
-		List<Malnutrition> Malnutritions = (List<Malnutrition>)jpa.getList();
-		for (Malnutrition malnutrition: Malnutritions) 
+		List<Malnutrition> malnutritions = (List<Malnutrition>)jpa.getList();
+		for (Malnutrition malnutrition: malnutritions) 
 		{    		
 			int index = savedMalnutrition.indexOf(malnutrition);
 			

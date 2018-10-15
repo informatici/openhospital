@@ -20,17 +20,36 @@ import javax.swing.table.DefaultTableModel;
 
 import org.isf.admission.model.Admission;
 import org.isf.generaldata.MessageBundle;
+import org.isf.malnutrition.gui.InsertMalnutrition.MalnutritionListener;
 import org.isf.malnutrition.manager.MalnutritionManager;
 import org.isf.malnutrition.model.Malnutrition;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.time.TimeTools;
 
-public class MalnutritionBrowser extends JDialog {
+public class MalnutritionBrowser extends JDialog implements MalnutritionListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	@Override
+	public void malnutritionInserted() {
+		pMaln.add(pMaln.size(), malnutrition);
+		((MalnBrowsingModel) table.getModel()).fireTableDataChanged();
+		if (table.getRowCount() > 0)
+			table.setRowSelectionInterval(0, 0);
+	}
+
+	@Override
+	public void malnutritionUpdated(Malnutrition maln) {
+		pMaln.set(selectedrow, maln);
+		((MalnBrowsingModel) table.getModel()).fireTableDataChanged();
+		table.updateUI();
+		if ((table.getRowCount() > 0) && selectedrow > -1)
+			table.setRowSelectionInterval(selectedrow,selectedrow);
+	}
 
 	private Malnutrition malnutrition;
 
@@ -46,13 +65,15 @@ public class MalnutritionBrowser extends JDialog {
 
 	private JButton editButton;
 
-	private JDialog myDialog;
 
 	private String admId;
 
 	private JTable table;
 
-	private String[] pColums = { MessageBundle.getMessage("angal.malnutrition.datesuppm"),MessageBundle.getMessage("angal.malnutrition.dateconfm"),MessageBundle.getMessage("angal.malnutrition.heightm"),MessageBundle.getMessage("angal.malnutrition.weightm") };
+	private String[] pColums = { MessageBundle.getMessage("angal.malnutrition.datesuppm"),
+			MessageBundle.getMessage("angal.malnutrition.dateconfm"),
+			MessageBundle.getMessage("angal.malnutrition.heightm"),
+			MessageBundle.getMessage("angal.malnutrition.weightm") };
 
 	private int[] pColumwidth = { 200, 200, 150, 150 };
 
@@ -66,7 +87,6 @@ public class MalnutritionBrowser extends JDialog {
 
 	public MalnutritionBrowser(JFrame owner, Admission aAdm) {
 		super(owner, true);
-		myDialog = this;
 		adm = aAdm;
 		admId = String.valueOf(adm.getId());
 		setTitle(MessageBundle.getMessage("angal.malnutrition.malnutritionbrowser"));
@@ -96,8 +116,8 @@ public class MalnutritionBrowser extends JDialog {
 		buttonPanel = new JPanel();
 		buttonPanel.add(getNewButton());
 		buttonPanel.add(getEditButton());
-		buttonPanel.add(getCloseButton());
 		buttonPanel.add(getDeleteButton());
+		buttonPanel.add(getCloseButton());
 		return buttonPanel;
 	}
 
@@ -107,15 +127,9 @@ public class MalnutritionBrowser extends JDialog {
 		newButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				malnutrition = new Malnutrition(0, null, null, adm, 0, 0);
-				Malnutrition last = new Malnutrition(0, null, null, adm, 0, 0);
-				new InsertMalnutrition(myDialog, malnutrition, true);	
-				if (!last.equals(malnutrition)) {
-					pMaln.add(pMaln.size(), malnutrition);
-					((MalnBrowsingModel) table.getModel())
-							.fireTableDataChanged();
-					if (table.getRowCount() > 0)
-						table.setRowSelectionInterval(0, 0);
-				}
+				InsertMalnutrition newRecord = new InsertMalnutrition(MalnutritionBrowser.this, malnutrition, true);
+				newRecord.addMalnutritionListener(MalnutritionBrowser.this);
+				newRecord.setVisible(true);
 			}
 		});
 		return newButton;
@@ -128,28 +142,18 @@ public class MalnutritionBrowser extends JDialog {
 		editButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				if (table.getSelectedRow() < 0) {
-					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.common.pleaseselectarow"),
-							MessageBundle.getMessage("angal.hospital"), JOptionPane.PLAIN_MESSAGE);
+					JOptionPane.showMessageDialog(
+							MalnutritionBrowser.this, 
+							MessageBundle.getMessage("angal.common.pleaseselectarow"),
+							MessageBundle.getMessage("angal.hospital"), 
+							JOptionPane.PLAIN_MESSAGE);
 					return;
 				} else {
 					selectedrow = table.getSelectedRow();
-					malnutrition = (Malnutrition) (((MalnBrowsingModel) model)
-							.getValueAt(selectedrow, -1));
-					Malnutrition last = new Malnutrition(
-							malnutrition.getCode(), malnutrition.getDateSupp(),
-							malnutrition.getDateConf(),
-							malnutrition.getAdmission(), malnutrition.getHeight(),
-							malnutrition.getWeight());
-					new InsertMalnutrition(myDialog, malnutrition, false);
-					if (!last.equals(malnutrition)) {
-						pMaln.set(selectedrow, malnutrition);
-						((MalnBrowsingModel) table.getModel())
-								.fireTableDataChanged();
-						table.updateUI();
-						if ((table.getRowCount() > 0) && selectedrow > -1)
-							table.setRowSelectionInterval(selectedrow,
-									selectedrow);
-					}
+					malnutrition = (Malnutrition) (((MalnBrowsingModel) model).getValueAt(selectedrow, -1));
+					InsertMalnutrition editRecord = new InsertMalnutrition(MalnutritionBrowser.this, malnutrition, false);
+					editRecord.addMalnutritionListener(MalnutritionBrowser.this);
+					editRecord.setVisible(true);
 				}
 			}
 		});
@@ -163,8 +167,11 @@ public class MalnutritionBrowser extends JDialog {
 			public void actionPerformed(ActionEvent event) {
 				MalnutritionManager manager = new MalnutritionManager();
 				if (table.getSelectedRow() < 0) {
-					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.common.pleaseselectarow"),
-							MessageBundle.getMessage("angal.hospital"), JOptionPane.PLAIN_MESSAGE);
+					JOptionPane.showMessageDialog(
+							MalnutritionBrowser.this,
+							MessageBundle.getMessage("angal.common.pleaseselectarow"),
+							MessageBundle.getMessage("angal.hospital"), 
+							JOptionPane.PLAIN_MESSAGE);
 					return;
 				} else {
 					Malnutrition m = (Malnutrition) (((MalnBrowsingModel) model)
@@ -175,7 +182,9 @@ public class MalnutritionBrowser extends JDialog {
 
 					if (n == JOptionPane.YES_OPTION) {	
 						if(m==null){
-							JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.common.pleaseselectarow"));
+							JOptionPane.showMessageDialog(
+									MalnutritionBrowser.this,
+									MessageBundle.getMessage("angal.common.pleaseselectarow"));
 						} else {
 							boolean deleted;
 							try {
@@ -204,7 +213,7 @@ public class MalnutritionBrowser extends JDialog {
 		closeButton.setMnemonic(KeyEvent.VK_C);
 		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				myDialog.dispose();
+				dispose();
 			};
 		});
 		return closeButton;
@@ -239,7 +248,9 @@ public class MalnutritionBrowser extends JDialog {
 					OHServiceExceptionUtil.showMessages(e);
 				}				
 			} else {
-				JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.malnutrition.nonameselected"));
+				JOptionPane.showMessageDialog(
+						MalnutritionBrowser.this,
+						MessageBundle.getMessage("angal.malnutrition.nonameselected"));
 			}
 		}
 
@@ -258,16 +269,17 @@ public class MalnutritionBrowser extends JDialog {
 		}
 
 		public Object getValueAt(int r, int c) {
+			Malnutrition malnutrition = pMaln.get(r);
 			if (c == -1) {
-				return pMaln.get(r);
+				return malnutrition;
 			} else if (c == 0) {
-				return getConvertedString(pMaln.get(r).getDateSupp());
+				return getConvertedString(malnutrition.getDateSupp());
 			} else if (c == 1) {
-				return getConvertedString(pMaln.get(r).getDateConf());
+				return getConvertedString(malnutrition.getDateConf());
 			} else if (c == 2) {
-				return pMaln.get(r).getHeight();
+				return malnutrition.getHeight();
 			} else if (c == 3) {
-				return pMaln.get(r).getWeight();
+				return malnutrition.getWeight();
 			}
 			return null;
 		}
@@ -282,13 +294,6 @@ public class MalnutritionBrowser extends JDialog {
 	private String getConvertedString(GregorianCalendar time) {
 		if (time == null)
 			return MessageBundle.getMessage("angal.malnutrition.nodate");
-		String string = String
-				.valueOf(time.get(GregorianCalendar.DAY_OF_MONTH));
-		string += "/" + String.valueOf(time.get(GregorianCalendar.MONTH) + 1);
-		String year = String.valueOf(time.get(GregorianCalendar.YEAR));
-		year = year.substring(2, year.length());
-		string += "/" + year;
-		return string;
+		return TimeTools.formatDateTime(time.getTime(), "dd/MM/yyyy");
 	}
-
 }
