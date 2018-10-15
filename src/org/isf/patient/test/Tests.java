@@ -259,6 +259,7 @@ public class Tests
 		{		
 			Integer code = _setupTestPatient(false);
 			Patient patient = (Patient)jpa.find(Patient.class, code); 
+			jpa.flush();
 			boolean result = patientIoOperation.updatePatient(patient);
 			
 			assertEquals(true, result);

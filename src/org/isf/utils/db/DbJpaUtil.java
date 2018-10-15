@@ -16,7 +16,6 @@ import javax.persistence.Query;
 import javax.persistence.QueryTimeoutException;
 import javax.persistence.RollbackException;
 import javax.persistence.TransactionRequiredException;
-import javax.transaction.Transaction;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHException;

@@ -215,8 +215,10 @@ public class Tests
 		{		
 			code = _setupTestOpd(false);
 			Opd foundOpd = (Opd)jpa.find(Opd.class, code); 
+			jpa.flush();
 			foundOpd.setNote("Update");
 			result = opdIoOperation.updateOpd(foundOpd);
+			jpa.open();
 			Opd updateOpd = (Opd)jpa.find(Opd.class, code); 
 			
 			assertEquals(true, result);

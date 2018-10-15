@@ -306,6 +306,7 @@ public class Tests
 		{		
 			code = _setupTestExam(false);
 			Exam foundExam = (Exam)jpa.find(Exam.class, code); 
+			jpa.flush();
 			foundExam.setDescription("Update");
 			result = examIoOperation.updateExam(foundExam);
 			Exam updateExam = (Exam)jpa.find(Exam.class, code); 

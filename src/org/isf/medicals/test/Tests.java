@@ -269,7 +269,8 @@ public class Tests
 		try 
 		{		
 			code = _setupTestMedical(false);
-			Medical foundMedical = (Medical)jpa.find(Medical.class, code); 
+			Medical foundMedical = (Medical)jpa.find(Medical.class, code);
+			jpa.flush();
 			foundMedical.setDescription("Update");
 			result = medicalsIoOperations.updateMedical(foundMedical);
 			Medical updateMedical = (Medical)jpa.find(Medical.class, code); 

@@ -458,7 +458,8 @@ public class Tests
 		try 
 		{		
 			code = _setupTestLaboratory(false);
-			Laboratory foundlaboratory = (Laboratory)jpa.find(Laboratory.class, code); 
+			Laboratory foundlaboratory = (Laboratory)jpa.find(Laboratory.class, code);
+			jpa.flush();
 			foundlaboratory.setNote("Update");
 			result = labIoOperation.updateLabFirstProcedure(foundlaboratory);
 			Laboratory updateLaboratory = (Laboratory)jpa.find(Laboratory.class, code); 

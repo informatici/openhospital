@@ -163,7 +163,7 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 			public void actionPerformed(ActionEvent event) {
 				if (table.getSelectedRow() < 0) {
 					JOptionPane.showMessageDialog(				
-	                        null,
+							ExamBrowser.this,
 	                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
 	                        MessageBundle.getMessage("angal.hospital"),
 	                        JOptionPane.PLAIN_MESSAGE);				
@@ -208,70 +208,6 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 		return jButtonDelete;
 	}
 
-	private JButton getJButtonShow() {
-		if (jButtonShow == null) {
-			jButtonShow = new JButton(MessageBundle.getMessage("angal.exa.results"));
-			jButtonShow.setMnemonic(KeyEvent.VK_S);
-			jButtonShow.addActionListener(new ActionListener() {
-	
-				public void actionPerformed(ActionEvent event) {
-					if (table.getSelectedRow() < 0) {
-						JOptionPane.showMessageDialog(				
-		                        null,
-		                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
-		                        MessageBundle.getMessage("angal.hospital"),
-		                        JOptionPane.PLAIN_MESSAGE);				
-						return;									
-					}else {		
-						selectedrow = table.getSelectedRow();
-						exam = (Exam)(((ExamBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
-						new ExamShow(myFrame, exam);
-					}
-				}
-			});
-		}
-		return jButtonShow;
-	}
-
-
-	private JButton getJButtonClose() {
-		if (jButtonClose == null) {
-			jButtonClose = new JButton(MessageBundle.getMessage("angal.common.close"));
-			jButtonClose.setMnemonic(KeyEvent.VK_C);
-			jButtonClose.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					dispose();
-				}
-			});
-		}
-		return jButtonClose;
-	}
-
-
-	private JButton getJButtonEdit() {
-		if (jButtonEdit == null) {
-			jButtonEdit = new JButton(MessageBundle.getMessage("angal.common.edit"));
-			jButtonEdit.setMnemonic(KeyEvent.VK_E);
-			jButtonEdit.addActionListener(new ActionListener() {
-	
-				public void actionPerformed(ActionEvent event) {
-					if (table.getSelectedRow() < 0) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.common.pleaseselectarow"),
-								MessageBundle.getMessage("angal.hospital"), JOptionPane.PLAIN_MESSAGE);
-						return;
-					} else {
-						selectedrow = table.getSelectedRow();
-						exam = (Exam) (((ExamBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
-						ExamEdit editrecord = new ExamEdit(myFrame, exam, false);
-						editrecord.addExamListener(ExamBrowser.this);
-						editrecord.setVisible(true);
-					} 				
-				}
-			});
-		}
-		return jButtonEdit;
-	}
-
 	private JButton getJButtonNew() {
 		if (jButtonNew == null) {
 			jButtonNew = new JButton(MessageBundle.getMessage("angal.common.new"));
@@ -288,7 +224,72 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 		}
 		return jButtonNew;
 	}
-		
+
+	private JButton getJButtonEdit() {
+		if (jButtonEdit == null) {
+			jButtonEdit = new JButton(MessageBundle.getMessage("angal.common.edit"));
+			jButtonEdit.setMnemonic(KeyEvent.VK_E);
+			jButtonEdit.addActionListener(new ActionListener() {
+	
+				public void actionPerformed(ActionEvent event) {
+					if (table.getSelectedRow() < 0) {
+						JOptionPane.showMessageDialog(
+								ExamBrowser.this,
+								MessageBundle.getMessage("angal.common.pleaseselectarow"),
+								MessageBundle.getMessage("angal.hospital"), 
+								JOptionPane.PLAIN_MESSAGE);
+						return;
+					} else {
+						selectedrow = table.getSelectedRow();
+						exam = (Exam) (((ExamBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
+						ExamEdit editrecord = new ExamEdit(myFrame, exam, false);
+						editrecord.addExamListener(ExamBrowser.this);
+						editrecord.setVisible(true);
+					} 				
+				}
+			});
+		}
+		return jButtonEdit;
+	}
+	
+	private JButton getJButtonShow() {
+		if (jButtonShow == null) {
+			jButtonShow = new JButton(MessageBundle.getMessage("angal.exa.results"));
+			jButtonShow.setMnemonic(KeyEvent.VK_S);
+			jButtonShow.addActionListener(new ActionListener() {
+	
+				public void actionPerformed(ActionEvent event) {
+					if (table.getSelectedRow() < 0) {
+						JOptionPane.showMessageDialog(				
+								ExamBrowser.this,
+		                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
+		                        MessageBundle.getMessage("angal.hospital"),
+		                        JOptionPane.PLAIN_MESSAGE);				
+						return;									
+					}else {		
+						selectedrow = table.getSelectedRow();
+						exam = (Exam)(((ExamBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
+						new ExamShow(myFrame, exam);
+					}
+				}
+			});
+		}
+		return jButtonShow;
+	}
+	
+	private JButton getJButtonClose() {
+		if (jButtonClose == null) {
+			jButtonClose = new JButton(MessageBundle.getMessage("angal.common.close"));
+			jButtonClose.setMnemonic(KeyEvent.VK_C);
+			jButtonClose.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					dispose();
+				}
+			});
+		}
+		return jButtonClose;
+	}
+
 	class ExamBrowsingModel extends DefaultTableModel {
 		
 		/**
