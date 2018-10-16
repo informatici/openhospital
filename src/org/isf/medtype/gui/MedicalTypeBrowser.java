@@ -57,9 +57,6 @@ public class MedicalTypeBrowser extends ModalJFrame implements MedicalTypeListen
 	private MedicalType medicalType = null;
 	private final JFrame myFrame;
 	
-	
-	
-	
 	/**
 	 * This method initializes 
 	 * 
@@ -70,7 +67,6 @@ public class MedicalTypeBrowser extends ModalJFrame implements MedicalTypeListen
 		initialize();
 		setVisible(true);
 	}
-	
 	
 	private void initialize() {
 		Toolkit kit = Toolkit.getDefaultToolkit();
@@ -84,7 +80,6 @@ public class MedicalTypeBrowser extends ModalJFrame implements MedicalTypeListen
 		this.setContentPane(getJContainPanel());
 		//pack();	
 	}
-	
 	
 	private JPanel getJContainPanel() {
 		if (jContainPanel == null) {
@@ -108,7 +103,6 @@ public class MedicalTypeBrowser extends ModalJFrame implements MedicalTypeListen
 		}
 		return jButtonPanel;
 	}
-	
 	
 	private JButton getJNewButton() {
 		if (jNewButton == null) {
@@ -142,7 +136,7 @@ public class MedicalTypeBrowser extends ModalJFrame implements MedicalTypeListen
 				
 				public void actionPerformed(ActionEvent event) {
 					if (jTable.getSelectedRow() < 0) {
-						JOptionPane.showMessageDialog(null,
+						JOptionPane.showMessageDialog(MedicalTypeBrowser.this,
 								MessageBundle.getMessage("angal.common.pleaseselectarow"), MessageBundle.getMessage("angal.hospital"),
 								JOptionPane.PLAIN_MESSAGE);
 						return;
@@ -192,8 +186,10 @@ public class MedicalTypeBrowser extends ModalJFrame implements MedicalTypeListen
 			jDeteleButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent event) {
 					if (jTable.getSelectedRow() < 0) {
-						JOptionPane.showMessageDialog(null,
-								MessageBundle.getMessage("angal.common.pleaseselectarow"), MessageBundle.getMessage("angal.hospital"),
+						JOptionPane.showMessageDialog(
+								MedicalTypeBrowser.this,
+								MessageBundle.getMessage("angal.common.pleaseselectarow"), 
+								MessageBundle.getMessage("angal.hospital"),
 								JOptionPane.PLAIN_MESSAGE);
 						return;
 					} else {
@@ -203,11 +199,15 @@ public class MedicalTypeBrowser extends ModalJFrame implements MedicalTypeListen
 								MessageBundle.getMessage("angal.medtype.deletemedicaltype")+" \" "+dis.getDescription() + "\" ?",
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
 						
-						if ((n == JOptionPane.YES_OPTION)
-								&& (manager.deleteMedicalType(dis))) {
-							pMedicalType.remove(jTable.getSelectedRow());
-							model.fireTableDataChanged();
-							jTable.updateUI();
+						try {
+							if ((n == JOptionPane.YES_OPTION)
+									&& (manager.deleteMedicalType(dis))) {
+								pMedicalType.remove(jTable.getSelectedRow());
+								model.fireTableDataChanged();
+								jTable.updateUI();
+							}
+						} catch (OHServiceException e) {
+							OHServiceExceptionUtil.showMessages(e);
 						}
 					}
 				}
@@ -227,13 +227,13 @@ public class MedicalTypeBrowser extends ModalJFrame implements MedicalTypeListen
 	}
 	
 	
-class MedicalTypeBrowserModel extends DefaultTableModel {
+	class MedicalTypeBrowserModel extends DefaultTableModel {
 		
 		
 		/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 		public MedicalTypeBrowserModel() {
 			MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
@@ -260,12 +260,13 @@ class MedicalTypeBrowserModel extends DefaultTableModel {
 		}
 
 		public Object getValueAt(int r, int c) {
-			if (c == 0) {
-				return pMedicalType.get(r).getCode();
-			} else if (c == -1) {
-				return pMedicalType.get(r);
+			MedicalType medType = pMedicalType.get(r);
+			if (c == -1) {
+				return medType;
+			} else if (c == 0) {
+				return medType.getCode();
 			} else if (c == 1) {
-				return pMedicalType.get(r).getDescription();
+				return medType.getDescription();
 			}
 			return null;
 		}
@@ -277,21 +278,19 @@ class MedicalTypeBrowserModel extends DefaultTableModel {
 		}
 	}
 
-public void medicalTypeUpdated(AWTEvent e) {
-	pMedicalType.set(selectedrow, medicalType);
-	((MedicalTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
-	jTable.updateUI();
-	if ((jTable.getRowCount() > 0) && selectedrow > -1)
-		jTable.setRowSelectionInterval(selectedrow, selectedrow);
-}
-
-
-public void medicalTypeInserted(AWTEvent e) {
-	pMedicalType.add(0, medicalType);
-	((MedicalTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
-	if (jTable.getRowCount() > 0)
-		jTable.setRowSelectionInterval(0, 0);
-}
+	public void medicalTypeUpdated(AWTEvent e) {
+		pMedicalType.set(selectedrow, medicalType);
+		((MedicalTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
+		jTable.updateUI();
+		if ((jTable.getRowCount() > 0) && selectedrow > -1)
+			jTable.setRowSelectionInterval(selectedrow, selectedrow);
+	}
 	
 	
+	public void medicalTypeInserted(AWTEvent e) {
+		pMedicalType.add(0, medicalType);
+		((MedicalTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
+		if (jTable.getRowCount() > 0)
+			jTable.setRowSelectionInterval(0, 0);
+	}
 }
