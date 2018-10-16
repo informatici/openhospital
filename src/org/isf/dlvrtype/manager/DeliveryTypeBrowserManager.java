@@ -167,7 +167,7 @@ public class DeliveryTypeBrowserManager {
                     OHSeverityLevel.ERROR));
         }
         if (key.length()>1){
-            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),  MessageBundle.getMessage("angal.dlvrtype.codetoolongmaxchar"),
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),  MessageBundle.getMessage("angal.dlvrtype.codetoolongmaxchars"),
                     OHSeverityLevel.ERROR));
         }
         if(insert){
