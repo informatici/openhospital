@@ -56,7 +56,7 @@ public class MalnutritionIoOperation {
 	/**
 	 * Updates the specified {@link Malnutrition}.
 	 * @param malnutrition the malnutrition to update.
-	 * @return <code>true</code> if the malnutrition has been updated, <code>false</code> otherwise.
+	 * @return the updated {@link Malnutrition}
 	 * @throws OHServiceException if an error occurs updating the malnutrition.
 	 */
 	public Malnutrition updateMalnutrition(

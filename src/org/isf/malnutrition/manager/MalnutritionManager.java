@@ -106,8 +106,8 @@ public class MalnutritionManager {
 	 *  
 	 *  throws an exception if the update fails for some other reason
 	 *  
-	 * @param malnutrition
-	 * @return {@code true} if the object has been updated, {@code false} otherwise
+	 * @param the {@link Malnutrition} to update
+	 * @return the updated {@link Malnutrition}
 	 * @throws OHServiceException
 	 */
 	public Malnutrition updateMalnutrition(Malnutrition malnutrition) throws OHServiceException {
