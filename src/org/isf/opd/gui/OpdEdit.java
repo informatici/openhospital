@@ -58,13 +58,12 @@ import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoDateTextField;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
 
 
-public class OpdEdit extends JDialog implements ActionListener {
+public class OpdEdit extends JDialog {
 	
 	private static final long serialVersionUID = -7369841416710920082L;
 
@@ -104,10 +103,6 @@ public class OpdEdit extends JDialog implements ActionListener {
 		EventListener[] listeners = surgeryListeners.getListeners(SurgeryListener.class);
 		for (int i = 0; i < listeners.length; i++)
 			((SurgeryListener)listeners[i]).surgeryUpdated(event, opd);
-	}
-	
-	public void actionPerformed(ActionEvent e) {
-//		sexSelect=e.getActionCommand();
 	}
 	
 	private static final String VERSION=MessageBundle.getMessage("angal.versione"); 
@@ -150,19 +145,38 @@ public class OpdEdit extends JDialog implements ActionListener {
 	private Opd opd;
 	private boolean insert;
 	private char sex;
-//	private String sexSelect="Male";
 	private int oldAge;
-	private DiseaseType allType= new DiseaseType(MessageBundle.getMessage("angal.opd.alltype"),MessageBundle.getMessage("angal.opd.alltype"));
+	private DiseaseType allType = new DiseaseType(
+			MessageBundle.getMessage("angal.opd.alltype"),
+			MessageBundle.getMessage("angal.opd.alltype")
+	);
+	
+	/*
+	 * Managers and Arrays
+	 */
+	private DiseaseTypeBrowserManager typeManager = new DiseaseTypeBrowserManager();
+	private DiseaseBrowserManager diseaseManager = new DiseaseBrowserManager();
+	private OpdBrowserManager opdManager = new OpdBrowserManager();
+	private ArrayList<DiseaseType> types;
+	private ArrayList<Disease> diseasesAll;
+	
 
 	/**
 	 * This method initializes 
 	 * 
 	 */
 	public OpdEdit(JFrame owner,Opd old,boolean inserting) {
-		super(owner,true);
-		opd=old;
-		insert=inserting;
-		if(!insert)oldAge=opd.getAge();
+		super(owner, true);
+		opd = old;
+		insert = inserting;
+		try{
+			types = typeManager.getDiseaseType();
+			diseasesAll = diseaseManager.getDiseaseAll();
+		} catch (OHServiceException e) {
+			OHServiceExceptionUtil.showMessages(e);
+		}
+		if (!insert)
+			oldAge = opd.getAge();
 		initialize();
 	}
 	
@@ -212,7 +226,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 			insertPanel.add(getJDiseaseTypePanel(), null);
 			insertPanel.add(getDiseaseTypeBox(), null);
 			insertPanel.add(getJDiseasePanel(), null);
-			insertPanel.add(getDiseaseBox(), null);
+			insertPanel.add(getDiseaseBox1(), null);
 			insertPanel.add(getJDiseasePanel2(), null);
 			insertPanel.add(getDiseaseBox2(), null);
 			insertPanel.add(getJDiseasePanel3(), null);
@@ -237,22 +251,11 @@ public class OpdEdit extends JDialog implements ActionListener {
 			diseaseTypeBox = new JComboBox();
 			DiseaseType elem2 = null;
 			diseaseTypeBox.setMaximumSize(new Dimension(400,50));
-			DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
 			diseaseTypeBox.addItem(allType);
-			ArrayList<DiseaseType> types = null;
-			try {
-				types = manager.getDiseaseType();
-			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
-			}
 			if(types != null){
 				for (DiseaseType elem : types) {
-					if (!insert && opd.getDiseaseType() != null){
-						if(opd.getDiseaseType().equals(elem.getCode())){
+					if (!insert && opd.getDisease().getType() != null){
+						if(opd.getDisease().getType().equals(elem.getCode())){
 							elem2=elem;}
 					}
 					diseaseTypeBox.addItem(elem);
@@ -267,7 +270,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 			diseaseTypeBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					diseaseBox.removeAllItems();
-					getDiseaseBox();					
+					getDiseaseBox1();					
 				}
 			});
 		}
@@ -279,61 +282,43 @@ public class OpdEdit extends JDialog implements ActionListener {
 	 * 	
 	 * @return javax.swing.JComboBox	
 	 */
-	public JComboBox getDiseaseBox() {
+	public JComboBox getDiseaseBox1() {
 		if (diseaseBox == null) {
 			diseaseBox = new JComboBox();
 			diseaseBox.setMaximumSize(new Dimension(400, 50));
 		}
-		Disease elem2=null;
+		Disease thisDiseaseEdit = null;
 		ArrayList<Disease> diseases = null;
-		DiseaseBrowserManager manager = new DiseaseBrowserManager();
-		//if (((DiseaseType)DiseaseTypeBox.getSelectedItem()).getDescription().equals("All Type")){
 		try {
 			if (diseaseTypeBox.getSelectedIndex() == 0) {
-				diseases = manager.getDiseaseOpd();
+				diseases = diseaseManager.getDiseaseOpd();
 			}else{
 				String code = ((DiseaseType)diseaseTypeBox.getSelectedItem()).getCode();
-				diseases = manager.getDiseaseOpd(code);
+				diseases = diseaseManager.getDiseaseOpd(code);
 			}
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		diseaseBox.addItem("");
 		if(diseases != null){
 			for (Disease elem : diseases) {
 				diseaseBox.addItem(elem);
-				if(!insert && opd.getDisease()!=null){
-					if(opd.getDisease().equals(elem.getCode())){
-						elem2 = elem;}
+				if (!insert && opd.getDisease() != null) {
+					if (opd.getDisease().getCode().equals(elem.getCode())) {
+						thisDiseaseEdit = elem;}
 				}
 			}
 		}
 		if (!insert) {
-			if (elem2!= null) {
-				diseaseBox.setSelectedItem(elem2);
-			} else { //try in the canceled diseases
+			if (thisDiseaseEdit != null) {
+				diseaseBox.setSelectedItem(thisDiseaseEdit);
+			} else { //try in the cancelled diseases
 				if (opd.getDisease() != null) {
-					ArrayList<Disease> diseasesAll = null;
-					try {
-						diseasesAll = manager.getDiseaseAll();
-					}catch(OHServiceException e){
-						if(e.getMessages() != null){
-							for(OHExceptionMessage msg : e.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
-					}
-					if(diseasesAll != null){
-						for (Disease elem : diseasesAll) {
-							if (opd.getDisease().getCode().compareTo(elem.getCode()) == 0) {
-								JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.opd.disease1mayhavebeencanceled"));
-								diseaseBox.addItem(elem);
-								diseaseBox.setSelectedItem(elem);
-							}
+					for (Disease elem : diseasesAll) {
+						if (opd.getDisease().getCode().equals(elem.getCode())) {
+							JOptionPane.showMessageDialog(OpdEdit.this,MessageBundle.getMessage("angal.opd.disease1mayhavebeencancelled"));
+							diseaseBox.addItem(elem);
+							diseaseBox.setSelectedItem(elem);
 						}
 					}
 				}
@@ -354,40 +339,26 @@ public class OpdEdit extends JDialog implements ActionListener {
 		try {
 			diseases = manager.getDiseaseOpd();
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		diseaseBox2.addItem("");
 		if(diseases != null){
 			for (Disease elem : diseases) {
 				diseaseBox2.addItem(elem);
 				if(!insert && opd.getDisease2()!=null){
-					if(opd.getDisease2().equals(elem.getCode())){
+					if (opd.getDisease2().getCode().equals(elem.getCode())) {
 						elem2 = elem;}
 				}
 			}
 		}
 		if (elem2!= null) {
 			diseaseBox2.setSelectedItem(elem2);
-		} else { //try in the canceled diseases
+		} else { //try in the cancelled diseases
 			if (opd.getDisease2()!=null) {
-				ArrayList<Disease> diseasesAll = null;
-				try {
-					diseasesAll = manager.getDiseaseAll();
-				}catch(OHServiceException e){
-					if(e.getMessages() != null){
-						for(OHExceptionMessage msg : e.getMessages()){
-							JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-						}
-					}
-				}
 				if(diseasesAll != null){
 					for (Disease elem : diseasesAll) {
-						if (opd.getDisease2().getCode().compareTo(elem.getCode()) == 0) {
-							JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.opd.disease2mayhavebeencanceled"));
+						if (opd.getDisease2().getCode().equals(elem.getCode())) {
+							JOptionPane.showMessageDialog(OpdEdit.this,MessageBundle.getMessage("angal.opd.disease2mayhavebeencancelled"));
 							diseaseBox2.addItem(elem);
 							diseaseBox2.setSelectedItem(elem);
 						}
@@ -409,40 +380,26 @@ public class OpdEdit extends JDialog implements ActionListener {
 		try {
 			diseases = manager.getDiseaseOpd();
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		diseaseBox3.addItem("");
 		if(diseases != null){
 			for (Disease elem : diseases) {
 				diseaseBox3.addItem(elem);
 				if(!insert && opd.getDisease3()!=null){
-					if(opd.getDisease3().equals(elem.getCode())){
+					if (opd.getDisease3().getCode().equals(elem.getCode())) {
 						elem2 = elem;}
 				}
 			}
 		}
 		if (elem2!= null) {
 			diseaseBox3.setSelectedItem(elem2);
-		} else { //try in the canceled diseases
+		} else { //try in the cancelled diseases
 			if (opd.getDisease3()!=null) {
-				ArrayList<Disease> diseasesAll = null;
-				try {
-					diseasesAll = manager.getDiseaseAll();
-				}catch(OHServiceException e){
-					if(e.getMessages() != null){
-						for(OHExceptionMessage msg : e.getMessages()){
-							JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-						}
-					}
-				}
 				if(diseasesAll != null){
 					for (Disease elem : diseasesAll) {
-						if (opd.getDisease3().getCode().compareTo(elem.getCode()) == 0) {
-							JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.opd.disease3mayhavebeencanceled"));
+						if (opd.getDisease3().getCode().equals(elem.getCode())) {
+							JOptionPane.showMessageDialog(OpdEdit.this,MessageBundle.getMessage("angal.opd.disease3mayhavebeencancelled"));
 							diseaseBox3.addItem(elem);
 							diseaseBox3.setSelectedItem(elem);
 						}
@@ -480,7 +437,6 @@ public class OpdEdit extends JDialog implements ActionListener {
             okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					OpdBrowserManager manager= new OpdBrowserManager();
 					boolean result = false;
 					GregorianCalendar gregDate = new GregorianCalendar();
 					char newPatient=' ';
@@ -489,16 +445,6 @@ public class OpdEdit extends JDialog implements ActionListener {
 					Disease disease=null;
 					Disease disease2=null;
 					Disease disease3=null;
-
-					if (diseaseBox.getSelectedIndex()==0) {
-						JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.opd.pleaseselectadisease"));
-						return;
-					}
-
-					if (age < 0) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opd.insertage"));
-						return;
-					}
 
 					if (newPatientCheckBox.isSelected()) {
 						newPatient = 'N';
@@ -517,7 +463,6 @@ public class OpdEdit extends JDialog implements ActionListener {
 					} else {
 						referralFrom = "";
 					}
-
 					
 					//disease
 					if (diseaseBox.getSelectedIndex()>0) {
@@ -534,7 +479,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 					// visit date	
 					String d = OpdDateField.getText().trim();
 					if (d.equals("")) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opd.pleaseinsertattendancedate"));
+						JOptionPane.showMessageDialog(OpdEdit.this, MessageBundle.getMessage("angal.opd.pleaseinsertattendancedate"));
 						return;
 					}
 					else {
@@ -543,69 +488,57 @@ public class OpdEdit extends JDialog implements ActionListener {
 							Date myDate = currentDateFormat.parse(d);
 							gregDate.setTime(myDate);
 						} catch (ParseException pe) {
-							System.out.println(pe);
-							JOptionPane.showMessageDialog(null,
+							JOptionPane.showMessageDialog(OpdEdit.this,
 									MessageBundle.getMessage("angal.opd.pleaseinsertavalidattendancedate"));
-							//dateOutField.setText("");
 							return;
 						}
 					}
 					
+					if (radiof.isSelected()) {
+						sex='F';
+					} else {
+						sex='M';
+					}
+					
+					opd.setNewPatient(newPatient);
+					opd.setReferralFrom(referralFrom);
+					opd.setReferralTo(referralTo);
+					opd.setAge(age);
+					opd.setSex(sex);
+					opd.setDisease(disease);				
+					opd.setDisease2(disease2);
+					opd.setDisease3(disease3);
+					opd.setVisitDate(gregDate);
+					opd.setNote("");
+					opd.setUserID(MainMenu.getUser());
 					
 					try {
-						if (insert){
-							if (radiof.isSelected()) {
-								sex='F';
-							} else {
-								sex='M';
-							}
-							GregorianCalendar date =new GregorianCalendar();
-							opd.setNewPatient(newPatient);
-							opd.setReferralFrom(referralFrom);
-							opd.setReferralTo(referralTo);
-							opd.setAge(age);
-							opd.setSex(sex);
-							opd.setProgYear(manager.getProgYear(date.get(GregorianCalendar.YEAR))+1);
-							opd.setDisease(disease);				
-							opd.setDisease2(disease2);
-							opd.setDisease3(disease3);
-							opd.setVisitDate(gregDate);
-							opd.setNote("");
-							opd.setUserID(MainMenu.getUser());
+						if (insert){    //Insert
+							GregorianCalendar date = new GregorianCalendar();
+							opd.setProgYear(opdManager.getProgYear(date.get(GregorianCalendar.YEAR))+1);
 
 							//remember for later use
 							RememberDates.setLastOpdVisitDate(gregDate);
-							result = manager.newOpd(opd);
+							
+							result = opdManager.newOpd(opd);
 							if (result) {
 								fireSurgeryInserted(opd);
-							}
-							if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
-							else  dispose();
+								dispose();
+							} else 
+								JOptionPane.showMessageDialog(OpdEdit.this, 
+									MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						}
 						else {    //Update
-							if (radiof.isSelected()) {
-								sex='F';
-							} else {
-								sex='M';
-							}
-							opd.setNewPatient(newPatient);
-							opd.setReferralFrom(referralFrom);
-							opd.setReferralTo(referralTo);
-							opd.setAge(age);
-							opd.setSex(sex);
-							opd.setDisease(disease);				
-							opd.setDisease2(disease2);
-							opd.setDisease3(disease3);
-							opd.setVisitDate(gregDate);
 
-							manager.updateOpd(opd);
-							if (result) {
-								fireSurgeryUpdated(opd);
-							};
-							if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
-							else  dispose();
+							Opd updatedOpd = opdManager.updateOpd(opd);
+							if (updatedOpd != null) {
+								fireSurgeryUpdated(updatedOpd);
+								dispose();
+							} else 
+								JOptionPane.showMessageDialog(OpdEdit.this, 
+									MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						}
-					}catch(OHServiceException ex){
+					} catch(OHServiceException ex){
 						OHServiceExceptionUtil.showMessages(ex);
 					}
 				};
@@ -660,7 +593,7 @@ public class OpdEdit extends JDialog implements ActionListener {
 					age = Integer.parseInt(ageField.getText());
 					if (age < 0 || age > 200) {
 						ageField.setText("0");
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opd.insertvalidage"));
+						JOptionPane.showMessageDialog(OpdEdit.this, MessageBundle.getMessage("angal.opd.insertvalidage"));
 					}
 				} catch (NumberFormatException ex) {
 					ageField.setText("0");

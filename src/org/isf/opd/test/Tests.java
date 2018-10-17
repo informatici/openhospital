@@ -208,7 +208,7 @@ public class Tests
 	public void testIoUpdateOpd() 
 	{
 		int code = 0;
-		boolean result = false;
+		Opd result = null;
 		
 		
 		try 
@@ -221,7 +221,7 @@ public class Tests
 			jpa.open();
 			Opd updateOpd = (Opd)jpa.find(Opd.class, code); 
 			
-			assertEquals(true, result);
+			assertEquals(true, (result != null));
 			assertEquals("Update", updateOpd.getNote());
 		} 
 		catch (Exception e) 

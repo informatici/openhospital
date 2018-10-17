@@ -118,10 +118,19 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 	private ButtonGroup groupNewPatient=null;
 	private Integer ageTo = 0;
 	private Integer ageFrom = 0;
-	private DiseaseType allType= new DiseaseType(MessageBundle.getMessage("angal.opd.alltype"),MessageBundle.getMessage("angal.opd.alltype"));
-	//private String[] pColums = { MessageBundle.getMessage("angal.common.datem"), MessageBundle.getMessage("angal.opd.fullname"), MessageBundle.getMessage("angal.opd.sexm"), MessageBundle.getMessage("angal.opd.agem"),MessageBundle.getMessage("angal.opd.diseasem"),MessageBundle.getMessage("angal.opd.diseasetypem"),MessageBundle.getMessage("angal.opd.patientstatus")};
-	//MODIFIED : alex
-	private String[] pColums = { MessageBundle.getMessage("angal.common.datem"), MessageBundle.getMessage("angal.opd.patientid"), MessageBundle.getMessage("angal.opd.fullname"), MessageBundle.getMessage("angal.opd.sexm"), MessageBundle.getMessage("angal.opd.agem"),MessageBundle.getMessage("angal.opd.diseasem"),MessageBundle.getMessage("angal.opd.diseasetypem"),MessageBundle.getMessage("angal.opd.patientstatus")};
+	private DiseaseType allType= new DiseaseType(
+			MessageBundle.getMessage("angal.opd.alltype"),
+			MessageBundle.getMessage("angal.opd.alltype"));
+	private String[] pColums = { 
+			MessageBundle.getMessage("angal.common.datem"), 
+			MessageBundle.getMessage("angal.opd.patientid"), 
+			MessageBundle.getMessage("angal.opd.fullname"), 
+			MessageBundle.getMessage("angal.opd.sexm"), 
+			MessageBundle.getMessage("angal.opd.agem"),
+			MessageBundle.getMessage("angal.opd.diseasem"),
+			MessageBundle.getMessage("angal.opd.diseasetypem"),
+			MessageBundle.getMessage("angal.opd.patientstatus")
+	};
 	private ArrayList<Opd> pSur;
 	private JTable jTable = null;
 	private OpdBrowsingModel model;
@@ -151,7 +160,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 			TableColumnModel columnModel = jTable.getColumnModel();
 			DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();
 			cellRenderer.setHorizontalAlignment(JLabel.RIGHT);
-			for (int i = 0; i < pColums.length; i++) {
+			for (int i = 0; i < model.getColumnCount(); i++) {
 				columnModel.getColumn(i).setMinWidth(pColumwidth[i]);
 				columnModel.getColumn(i).setCellRenderer(new AlignmentCellRenderer());
 				if (!columnResizable[i])
@@ -207,7 +216,6 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 		editrecord.setVisible(true);
 	}
 	
-	
 	/**
 	 * This method initializes jButtonPanel
 	 * 
@@ -223,9 +231,6 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 		}
 		return jButtonPanel;
 	}
-	
-	
-	
 	
 	/**
 	 * This method initializes this
@@ -386,14 +391,19 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 						catch (Exception ex){
 						}
 		
+						StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.opd.deletefollowingopd"))
+								.append("\n").append(MessageBundle.getMessage("angal.opd.registrationdate"))
+								.append("=").append(dateFormat.format(opd.getDate()))
+								.append("\n").append(MessageBundle.getMessage("angal.opd.disease"))
+								.append(" = ").append(((opd.getDisease().getDescription()==null)? "["+MessageBundle.getMessage("angal.opd.notspecified")+"]": opd.getDisease().getDescription()))
+								.append("\n").append(MessageBundle.getMessage("angal.opd.age"))
+								.append(" = ").append(opd.getAge())
+								.append(", Sex = ").append(opd.getSex())
+								.append("\n").append(MessageBundle.getMessage("angal.opd.visitdate"))
+								.append(" = ").append(dt).append("?");
 						
 						int n = JOptionPane.showConfirmDialog(null,
-								MessageBundle.getMessage("angal.opd.deletefollowingopd") +
-								"\n"+MessageBundle.getMessage("angal.opd.registrationdate")+"="+dateFormat.format(opd.getDate()) + 
-								"\n"+MessageBundle.getMessage("angal.opd.disease")+"= "+ ((opd.getDiseaseDesc()==null)? "["+MessageBundle.getMessage("angal.opd.notspecified")+"]": opd.getDiseaseDesc()) + 
-								"\n"+MessageBundle.getMessage("angal.opd.age")+"="+ opd.getAge()+", "+"Sex="+" " +opd.getSex()+
-								"\n"+MessageBundle.getMessage("angal.opd.visitdate")+"=" + dt +
-								"\n ?",
+								message.toString(),
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
 						try{
 							if ((n == JOptionPane.YES_OPTION)
@@ -977,17 +987,12 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 		}
 		
 		public int getColumnCount() {
-			int c = 0;
-			for (int i = 0; i < columnsVisible.length; i++) {
-				if (columnsVisible[i]) {
-					c++;
-				}
-			}
-			return c;
+			return pColums.length;
 		}
 		
 		public Object getValueAt(int r, int c) {
 			Opd opd = pSur.get(pSur.size() - r - 1);
+			Patient pat = opd.getPatient();
 			if (c == -1) {
 				return opd;
 			} else if (c == 0) {
@@ -999,17 +1004,17 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 				}
 				return sVisitDate;
 			} else if (c == 1) {
-				return opd.getPatient().getCode(); //MODIFIED: alex
+				return pat != null ? opd.getPatient().getCode() : null;
 			} else if (c == 2) {
-				return opd.getFullName(); //MODIFIED: alex
+				return pat != null ? opd.getFullName() : null;
 			} else if (c == 3) {
 				return opd.getSex();
 			} else if (c == 4) {
 				return opd.getAge();
 			} else if (c == 5) {
-				return opd.getDiseaseDesc();
+				return opd.getDisease().getDescription();
 			} else if (c == 6) {
-				return opd.getDiseaseTypeDesc();
+				return opd.getDisease().getType().getDescription();
 			} else if (c == 7) {
 				String patientStatus;
 				if (opd.getNewPatient() == 'N'){
@@ -1030,27 +1035,6 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 			return false;
 		}
 		
-		/** 
-	     * This method converts a column number in the table
-	     * to the right number of the datas.
-	     */
-	    protected int getNumber(int col) {
-	    	// right number to return
-	        int n = col;    
-	        int i = 0;
-	        do {
-	            if (!columnsVisible[i]) {
-	            	n++;
-	            }
-	            i++;
-	        } while (i < n);
-	        // If we are on an invisible column, 
-	        // we have to go one step further
-	        while (!columnsVisible[n]) {
-	        	n++;
-	        }
-	        return n;
-	    }
 	}
 	
 	
