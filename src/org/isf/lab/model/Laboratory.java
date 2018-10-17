@@ -141,10 +141,10 @@ public class Laboratory
 	public void setMaterial(String material) {
 		this.material = material;
 	}
-	public Patient getPatId() {
+	public Patient getPatient() {
 		return patient;
 	}
-	public void setPatId(Patient patient) {
+	public void setPatient(Patient patient) {
 		this.patient = patient;
 	}
 	public int getAge() {

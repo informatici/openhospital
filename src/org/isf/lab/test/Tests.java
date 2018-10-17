@@ -244,7 +244,7 @@ public class Tests
 		{		
 			id = _setupTestLaboratoryRow(false);
 			LaboratoryRow foundLaboratoryRow = (LaboratoryRow)jpa.find(LaboratoryRow.class, id); 
-			ArrayList<Laboratory> laboratories = labIoOperation.getLaboratory(foundLaboratoryRow.getLabId().getPatId());
+			ArrayList<Laboratory> laboratories = labIoOperation.getLaboratory(foundLaboratoryRow.getLabId().getPatient());
 			
 			assertEquals(foundLaboratoryRow.getLabId().getCode(), laboratories.get(0).getCode());
 		} 

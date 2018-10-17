@@ -261,7 +261,7 @@ public class LabNew extends JDialog implements SelectionListener {
 						lab.setDate(newDate);
 						lab.setExamDate(newDate);
 						lab.setInOutPatient(inOut);
-						lab.setPatId(patientSelected);
+						lab.setPatient(patientSelected);
 						lab.setPatName(patientSelected.getName());
 						lab.setSex(patientSelected.getSex()+"");
 						lab.setNote(jTextAreaNote.getText().trim());

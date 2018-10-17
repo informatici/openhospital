@@ -145,6 +145,8 @@ public class LabEdit extends JDialog {
 	
 	private ArrayList<ExamRow> eRows = null;
 
+	private Patient patSelected;
+
 	public LabEdit(JFrame owner, Laboratory laboratory, boolean inserting) {
 		super(owner, true);
 		insert = inserting;
@@ -283,23 +285,6 @@ public class LabEdit extends JDialog {
 		return dataPanel;
 	}
 
-	
-// REPLACED BY CALENDAR	
-//	private VoDateTextField getExamDateField() {
-//		String d = "";
-//		java.util.Date myDate = null;
-//		if (insert)
-//			dateIn=RememberDates.getLastLabExamDateGregorian();
-//		 else 
-//			dateIn  = lab.getExamDate();
-//
-//		if (dateIn!=null) {
-//			myDate = dateIn.getTime();
-//			d = currentDateFormat.format(myDate);
-//		}
-//		return (new VoDateTextField("dd/mm/yy", d, 15));
-//	}
-
 	private JDateChooser getExamDateFieldCal() {
 		java.util.Date myDate = null;
 		if (insert) {
@@ -323,10 +308,16 @@ public class LabEdit extends JDialog {
 		return inPatientCheckBox;
 	}
 
+	/*
+	 * TODO: Patient Selection like in LabNew
+	 * with the difference that here will be optional
+	 * If no patient is chosen only Name, Age and Sex will be saved
+	 * in LABORATORY table (Name can be empty)
+	 */
 	private JComboBox getPatientComboBox() {
 		if (patientComboBox == null) {
 			patientComboBox = new JComboBox();
-			Patient patSelected=null;
+			patSelected=null;
 			PatientBrowserManager patBrowser = new PatientBrowserManager();
 			ArrayList<Patient> pat = null;
 			try {
@@ -337,8 +328,8 @@ public class LabEdit extends JDialog {
 			patientComboBox.addItem(MessageBundle.getMessage("angal.lab.selectapatient"));
 			if(pat != null){
 				for (Patient elem : pat) {
-					if (!insert) {
-						if (elem.getCode()==lab.getPatId().getCode()) {
+					if (lab.getPatient() != null && !insert) {
+						if (elem.getCode() == lab.getPatient().getCode()) {
 							patSelected=elem;
 						}
 					}
@@ -352,13 +343,13 @@ public class LabEdit extends JDialog {
 				public void actionPerformed(ActionEvent arg0) {
 					if (patientComboBox.getSelectedIndex()>0) {
 						AdmissionBrowserManager admMan = new AdmissionBrowserManager();
-						Patient pat=(Patient)patientComboBox.getSelectedItem();
-						patTextField.setText(pat.getName());
-						ageTextField.setText(pat.getAge()+"");
-						sexTextField.setText(pat.getSex()+"");
+						patSelected = (Patient)patientComboBox.getSelectedItem();
+						patTextField.setText(patSelected.getName());
+						ageTextField.setText(patSelected.getAge()+"");
+						sexTextField.setText(patSelected.getSex()+"");
 						Admission admission = null;
 						try {
-							admission = admMan.getCurrentAdmission(pat);
+							admission = admMan.getCurrentAdmission(patSelected);
 						}catch(OHServiceException e){
 							OHServiceExceptionUtil.showMessages(e);
 						}
@@ -531,29 +522,16 @@ public class LabEdit extends JDialog {
 					
 					// exam date	
 					GregorianCalendar gregDate = new GregorianCalendar();
-					try {
-						gregDate.setTime(examDateFieldCal.getDate());
-					} catch (Exception pe) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.lab.pleaseinsertavalidexamdate"));
-						return;
-					}
-					
-					String sex=sexTextField.getText().toUpperCase();
-					if (!(sex.equals("M") || sex.equals("F"))) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.lab.pleaseinsertmformaleorfforfemale"));
-						return;
-					}
-					
 					ArrayList<String> labRow = new ArrayList<String>();
-					LabManager manager = new LabManager(Menu.getApplicationContext().getBean(LabIoOperations.class));
 					RememberDates.setLastLabExamDate(gregDate);
+					
 					lab.setDate(new GregorianCalendar());
 					lab.setExamDate(gregDate);
 					lab.setMaterial(matSelected);
 					lab.setExam(examSelected);
 					lab.setNote(noteTextArea.getText());
 					lab.setInOutPatient((inPatientCheckBox.isSelected()?"I":"O"));
-					lab.setPatId(new Patient());
+					lab.setPatient(patSelected);
 					lab.setPatName(patTextField.getText());
 					int tmpAge=0;
 					try {
@@ -561,7 +539,7 @@ public class LabEdit extends JDialog {
 					} catch (Exception ex) {
 						JOptionPane.showMessageDialog(LabEdit.this, MessageBundle.getMessage("angal.lab.insertvalidage"));
 					}
-					lab.setSex(sexTextField.getText());
+					lab.setSex(sexTextField.getText().toUpperCase());
 					
 					if (examSelected.getProcedure() == 1)
 						lab.setResult(examRowComboBox.getSelectedItem().toString());
@@ -574,6 +552,7 @@ public class LabEdit extends JDialog {
 							}
 						}
 					}
+					LabManager manager = new LabManager(Menu.getApplicationContext().getBean(LabIoOperations.class));
 					boolean result = false;
 					if (insert) {
 						lab.setAge(tmpAge);

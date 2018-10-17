@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
@@ -86,7 +87,12 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 	private JComboBox comboExams = null;
 	private int pfrmHeight;
 	private ArrayList<Laboratory> pLabs;
-	private String[] pColums = { MessageBundle.getMessage("angal.common.datem"), MessageBundle.getMessage("angal.lab.patient"), MessageBundle.getMessage("angal.lab.examm"), MessageBundle.getMessage("angal.lab.resultm") };
+	private String[] pColums = { 
+			MessageBundle.getMessage("angal.common.datem"), 
+			MessageBundle.getMessage("angal.lab.patient"), 
+			MessageBundle.getMessage("angal.lab.examm"), 
+			MessageBundle.getMessage("angal.lab.resultm") 
+	};
 	private boolean[] columnsResizable = {false, true, true, false};
 	private int[] pColumwidth = { 100, 200, 200, 200 };
 	private int[] maxWidth = {150, 200, 200, 200};
@@ -165,8 +171,9 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 			if (MainMenu.checkUserGrants("btnlaboratorynew")) jButtonPanel.add(getButtonNew(), null);
 			if (MainMenu.checkUserGrants("btnlaboratoryedit")) jButtonPanel.add(getButtonEdit(), null);
 			if (MainMenu.checkUserGrants("btnlaboratorydel")) jButtonPanel.add(getButtonDelete(), null);
-			jButtonPanel.add((getCloseButton()), null);
 			jButtonPanel.add((getPrintTableButton()), null);
+			jButtonPanel.add((getCloseButton()), null);
+			
 		}
 		return jButtonPanel;
 	}
@@ -376,13 +383,16 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		if (jTable == null) {
 			model = new LabBrowsingModel();
 			jTable = new JTable(model);
-			int columnLengh = pColumwidth.length;
-			if (!GeneralData.LABEXTENDED) {
-				columnLengh--;
-			}
-			for (int i=0;i<columnLengh; i++){
+			TableColumnModel columnModel = jTable.getColumnModel();
+			for (int i = 0; i < model.getColumnCount(); i++) {
 				jTable.getColumnModel().getColumn(i).setMinWidth(pColumwidth[i]);
-				if (!columnsResizable[i]) jTable.getColumnModel().getColumn(i).setMaxWidth(maxWidth[i]);
+				if (!columnsResizable[i]) 
+					columnModel.getColumn(i).setMaxWidth(maxWidth[i]);
+				if (!columnsVisible[i]) {
+					columnModel.getColumn(i).setMaxWidth(0);
+					columnModel.getColumn(i).setMinWidth(0);
+					columnModel.getColumn(i).setPreferredWidth(0);
+				}
 			}
 		}
 		return jTable;
@@ -544,41 +554,13 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		}
 
 		public String getColumnName(int c) {
-			return pColums[getNumber(c)];
+			return pColums[c];
 		}
 
 		public int getColumnCount() {
-			int c = 0;
-			for (int i = 0; i < columnsVisible.length; i++) {
-				if (columnsVisible[i]) {
-					c++;
-				}
-			}
-			return c;
+			return pColums.length;
 		}
 
-		/** 
-	     * This method converts a column number in the table
-	     * to the right number of the datas.
-	     */
-	    protected int getNumber(int col) {
-	    	// right number to return
-	        int n = col;    
-	        int i = 0;
-	        do {
-	            if (!columnsVisible[i]) {
-	            	n++;
-	            }
-	            i++;
-	        } while (i < n);
-	        // If we are on an invisible column, 
-	        // we have to go one step further
-	        while (!columnsVisible[n]) {
-	        	n++;
-	        }
-	        return n;
-	    }
-	    
 		/**
 		 * Note: We must get the objects in a reversed way because of the query
 		 * 
@@ -588,13 +570,13 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 			Laboratory lab = pLabs.get(r);
 			if (c == -1) {
 				return lab;
-			} else if (getNumber(c) == 0) {
+			} else if (c == 0) {
 				return dateFormat.format(lab.getExamDate().getTime());
-			} else if (getNumber(c) == 1) {
-				return lab.getPatName(); //Alex: added
-			} else if (getNumber(c) == 2) {
+			} else if (c == 1) {
+				return lab.getPatName();
+			} else if (c == 2) {
 				return lab.getExam();
-			} else if (getNumber(c) == 3) {
+			} else if (c == 3) {
 				return lab.getResult();
 			}
 			return null;

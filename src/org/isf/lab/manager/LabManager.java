@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryForPrint;
@@ -49,7 +50,55 @@ public class LabManager {
 	 */
 	protected List<OHExceptionMessage> validateLaboratory(Laboratory laboratory) {
         List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
-        if(laboratory.getResult().isEmpty()){
+        String sex = laboratory.getSex().toUpperCase();
+        if (laboratory.getDate() == null) laboratory.setDate(new GregorianCalendar());
+        if (laboratory.getExam().getProcedure() == 2) 
+		{
+			laboratory.setResult(MessageBundle.getMessage("angal.lab.multipleresults"));
+		}
+        
+        //Check Exam Date
+  		if (laboratory.getExamDate() == null) {
+  			errors.add(new OHExceptionMessage("noExamDateError", 
+  	        		MessageBundle.getMessage("angal.lab.pleaseinsertavalidexamdate"), 
+  	        		OHSeverityLevel.ERROR));
+  		}
+  		//Check Patient
+		if (GeneralData.LABEXTENDED && laboratory.getPatient() == null) 
+		{
+			errors.add(new OHExceptionMessage("patientNullError", 
+	        		MessageBundle.getMessage("angal.lab.pleaseselectapatient"), 
+	        		OHSeverityLevel.ERROR));
+		}
+		else if (GeneralData.LABEXTENDED && laboratory.getPatient() != null) 
+		{
+			/*
+			 * Age and Sex has not to be updated 
+			 * for reporting purposes
+			 */
+			laboratory.setPatName(laboratory.getPatient().getName());
+			laboratory.setAge(laboratory.getPatient().getAge());
+			laboratory.setSex(String.valueOf(laboratory.getPatient().getSex()));
+		} 
+		else if (laboratory.getPatient() == null) 
+		{
+			if (!(sex.equals("M") || sex.equals("F"))) {
+				errors.add(new OHExceptionMessage("invalidSexError", 
+		        		MessageBundle.getMessage("angal.lab.pleaseinsertmformaleorfforfemale"), 
+		        		OHSeverityLevel.ERROR));
+			}
+			if (laboratory.getAge()<0) {
+				errors.add(new OHExceptionMessage("invalidAgeError", 
+		        		MessageBundle.getMessage("angal.lab.insertvalidage"), 
+		        		OHSeverityLevel.ERROR));
+			}
+		}
+		if(laboratory.getExam() == null){
+	        errors.add(new OHExceptionMessage("examNullOrEmptyError", 
+	        		MessageBundle.getMessage("angal.lab.pleaseselectanexam"), 
+	        		OHSeverityLevel.ERROR));
+        }
+		if (laboratory.getResult().isEmpty()){
 	        errors.add(new OHExceptionMessage("labRowNullOrEmptyError", 
 	        		MessageBundle.getMessage("angal.labnew.someexamswithoutresultpleasecheck"), 
 	        		OHSeverityLevel.ERROR));
@@ -67,11 +116,6 @@ public class LabManager {
         if(laboratory.getInOutPatient().isEmpty()){
 	        errors.add(new OHExceptionMessage("ipdOPDEmptyError", 
 	        		MessageBundle.getMessage("angal.lab.pleaseinsertiforipdoroforopd"), 
-	        		OHSeverityLevel.ERROR));
-        }
-        if(laboratory.getSex().isEmpty()){
-	        errors.add(new OHExceptionMessage("ipdOPDEmptyError", 
-	        		MessageBundle.getMessage("angal.lab.pleaseinsertmformaleorfforfemale"), 
 	        		OHSeverityLevel.ERROR));
         }
         return errors;

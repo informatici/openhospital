@@ -65,7 +65,7 @@ public class TestLaboratory
 		laboratory.setInOutPatient(InOutPatient);
 		laboratory.setMaterial(material);
 		laboratory.setNote(note);
-		laboratory.setPatId(patient);
+		laboratory.setPatient(patient);
 		laboratory.setPatName(patName);
 		laboratory.setResult(result);
 		laboratory.setSex(sex);

@@ -374,24 +374,29 @@ public class LabEditExtended extends JDialog {
 		return inPatientCheckBox;
 	}
 
+	/*
+	 * TODO: Patient Selection like in LabNew
+	 */
 	private JComboBox getPatientComboBox(String s) {
 		
 		//String key = s;
 		PatientBrowserManager patBrowser = new PatientBrowserManager();
-		if (insert){
-			try {
+		try {
+			if (insert){
 				pat = patBrowser.getPatient();
-			} catch (OHServiceException e) {
-				OHServiceExceptionUtil.showMessages(e);
+			} else  {
+				pat = patBrowser.getPatient();
 			}
+		} catch (OHServiceException e) {
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		if (patientComboBox == null) {
 			patientComboBox = new JComboBox();
 			patientComboBox.addItem(MessageBundle.getMessage("angal.lab.selectapatient"));
 			
-			if (!insert) {
+			if (!insert && lab.getPatient() != null) {
 				try{
-					labPat = patBrowser.getPatientAll(lab.getPatId().getCode());
+					labPat = patBrowser.getPatientAll(lab.getPatient().getCode());
 					patientComboBox.addItem(labPat);
 					patientComboBox.setSelectedItem(labPat);
 					patientComboBox.setEnabled(false);
@@ -664,7 +669,7 @@ public class LabEditExtended extends JDialog {
 					lab.setExam(examSelected);
 					lab.setNote(noteTextArea.getText());
 					lab.setInOutPatient((inPatientCheckBox.isSelected()?"I":"O"));
-					lab.setPatId(labPat);
+					lab.setPatient(labPat);
 					lab.setPatName(labPat.getName());
 					lab.setSex(labPat.getSex()+"");
 					
