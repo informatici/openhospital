@@ -3,15 +3,15 @@ package org.isf.pregtreattype.service;
 import java.util.ArrayList;
 
 import org.isf.pregtreattype.model.PregnantTreatmentType;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class PregnantTreatmentTypeIoOperation {
 
 	@Autowired
@@ -22,9 +22,9 @@ public class PregnantTreatmentTypeIoOperation {
 	 * return the list of {@link PregnantTreatmentType}s
 	 * 
 	 * @return the list of {@link PregnantTreatmentType}s
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<PregnantTreatmentType> getPregnantTreatmentType() throws OHException 
+	public ArrayList<PregnantTreatmentType> getPregnantTreatmentType() throws OHServiceException 
 	{
 		return new ArrayList<PregnantTreatmentType>(repository.findAllByOrderByDescriptionAsc()); 
 	}
@@ -34,10 +34,10 @@ public class PregnantTreatmentTypeIoOperation {
 	 * 
 	 * @param pregnantTreatmentType - the {@link PregnantTreatmentType} to insert
 	 * @return <code>true</code> if the item has been inserted, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean newPregnantTreatmentType(
-			PregnantTreatmentType pregnantTreatmentType) throws OHException 
+			PregnantTreatmentType pregnantTreatmentType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -53,10 +53,10 @@ public class PregnantTreatmentTypeIoOperation {
 	 * 
 	 * @param pregnantTreatmentType - the {@link PregnantTreatmentType} to update
 	 * @return <code>true</code> if the item has been updated, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean updatePregnantTreatmentType(
-			PregnantTreatmentType pregnantTreatmentType) throws OHException 
+			PregnantTreatmentType pregnantTreatmentType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -72,10 +72,10 @@ public class PregnantTreatmentTypeIoOperation {
 	 * 
 	 * @param pregnantTreatmentType - the {@link PregnantTreatmentType} to delete
 	 * @return <code>true</code> if the item has been deleted, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean deletePregnantTreatmentType(
-			PregnantTreatmentType pregnantTreatmentType) throws OHException 
+			PregnantTreatmentType pregnantTreatmentType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -90,10 +90,10 @@ public class PregnantTreatmentTypeIoOperation {
 	 * 
 	 * @param code - the code
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean isCodePresent(
-			String code) throws OHException
+			String code) throws OHServiceException
 	{
 		boolean result = true;
 	

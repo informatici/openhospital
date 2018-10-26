@@ -2,21 +2,13 @@ package org.isf.pregtreattype.manager;
 
 import java.util.ArrayList;
 
-import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.pregtreattype.service.PregnantTreatmentTypeIoOperation;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PregnantTreatmentTypeBrowserManager {
 
-	private final Logger logger = LoggerFactory.getLogger(PregnantTreatmentTypeBrowserManager.class);
-	
 	private PregnantTreatmentTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(PregnantTreatmentTypeIoOperation.class);
 	
 	/**
@@ -26,21 +18,7 @@ public class PregnantTreatmentTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<PregnantTreatmentType> getPregnantTreatmentType() throws OHServiceException {
-		try {
-			return ioOperations.getPregnantTreatmentType();
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getPregnantTreatmentType();
 	}
 	
 	/**
@@ -51,21 +29,7 @@ public class PregnantTreatmentTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newPregnantTreatmentType(PregnantTreatmentType pregnantTreatmentType) throws OHServiceException {
-		try {
-			return ioOperations.newPregnantTreatmentType(pregnantTreatmentType);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.newPregnantTreatmentType(pregnantTreatmentType);
 	}
 
 	/**
@@ -76,21 +40,7 @@ public class PregnantTreatmentTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updatePregnantTreatmentType(PregnantTreatmentType pregnantTreatmentType) throws OHServiceException {
-		try {
-			return ioOperations.updatePregnantTreatmentType(pregnantTreatmentType);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.updatePregnantTreatmentType(pregnantTreatmentType);
 	}
 	
 	/**
@@ -101,21 +51,7 @@ public class PregnantTreatmentTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean deletePregnantTreatmentType(PregnantTreatmentType pregnantTreatmentType) throws OHServiceException {
-		try {
-			return ioOperations.deletePregnantTreatmentType(pregnantTreatmentType);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.deletePregnantTreatmentType(pregnantTreatmentType);
 	}
 	
 	/**
@@ -126,20 +62,6 @@ public class PregnantTreatmentTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean codeControl(String code) throws OHServiceException {
-		try {
-			return ioOperations.isCodePresent(code);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.isCodePresent(code);
 	}
 }
