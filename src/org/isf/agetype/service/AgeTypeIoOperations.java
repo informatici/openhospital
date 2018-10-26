@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.agetype.model.AgeType;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class AgeTypeIoOperations 
 {
 	@Autowired
@@ -26,9 +26,9 @@ public class AgeTypeIoOperations
 	/**
 	 * Returns all available age types.
 	 * @return a list of {@link AgeType}.
-	 * @throws OHException if an error occurs retrieving the age types.
+	 * @throws OHServiceException if an error occurs retrieving the age types.
 	 */
-	public ArrayList<AgeType> getAgeType() throws OHException 
+	public ArrayList<AgeType> getAgeType() throws OHServiceException 
 	{
 		return new ArrayList<AgeType>(repository.findAllByOrderByCodeAsc());
 	}
@@ -37,10 +37,10 @@ public class AgeTypeIoOperations
 	 * Updates the list of {@link AgeType}s.
 	 * @param ageType the {@link AgeType} to update.
 	 * @return <code>true</code> if the list has been updated, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the update.
+	 * @throws OHServiceException if an error occurs during the update.
 	 */
 	public boolean updateAgeType(
-			ArrayList<AgeType> ageType) throws OHException 
+			ArrayList<AgeType> ageType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -55,10 +55,10 @@ public class AgeTypeIoOperations
 	 * Gets the {@link AgeType} from the code index.
 	 * @param index the code index.
 	 * @return the retrieved element, <code>null</code> otherwise.
-	 * @throws OHException if an error occurs retrieving the item.
+	 * @throws OHServiceException if an error occurs retrieving the item.
 	 */
 	public AgeType getAgeTypeByCode(
-			int index) throws OHException 
+			int index) throws OHServiceException 
 	{	
 		String code = "";
 		AgeType ageType = null;
