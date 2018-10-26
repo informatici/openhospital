@@ -5,7 +5,6 @@ import java.util.*;
 import org.isf.menu.gui.Menu;
 import org.isf.menu.model.*;
 import org.isf.menu.service.*;
-import org.isf.utils.exception.OHException;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -26,13 +25,8 @@ public class UserBrowsingManager {
 	public ArrayList<User> getUser() throws OHServiceException {
 		try {
 			return ioOperations.getUser();
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -49,13 +43,8 @@ public class UserBrowsingManager {
 	public ArrayList<User> getUser(String groupID) throws OHServiceException {
 		try {
 			return ioOperations.getUser(groupID);
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -79,13 +68,8 @@ public class UserBrowsingManager {
 			} else{
 			    return ioOperations.newUser(user);
             }
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -103,13 +87,8 @@ public class UserBrowsingManager {
 	public boolean updateUser(User user) throws OHServiceException {
 		try {
 			return ioOperations.updateUser(user);
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -126,13 +105,8 @@ public class UserBrowsingManager {
 	public boolean updatePassword(User user) throws OHServiceException {
 		try {
 			return ioOperations.updatePassword(user);
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -149,15 +123,11 @@ public class UserBrowsingManager {
 	public boolean deleteUser(User user) throws OHServiceException {
 		try {
 			if (user.getUserName().equals("admin"))
-				throw new OHException(MessageBundle.getMessage("angal.menu.youcantdeleteadminuser"), null);
+			    throw new OHServiceException(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.menu.youcantdeleteadminuser"), OHSeverityLevel.ERROR));
 			return ioOperations.deleteUser(user);
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -173,13 +143,8 @@ public class UserBrowsingManager {
 	public ArrayList<UserGroup> getUserGroup() throws OHServiceException {
 		try {
 			return ioOperations.getUserGroup();
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -196,13 +161,8 @@ public class UserBrowsingManager {
 	public ArrayList<UserMenuItem> getMenu(User aUser) throws OHServiceException {
 		try {
 			return ioOperations.getMenu(aUser);
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -219,13 +179,8 @@ public class UserBrowsingManager {
 	public ArrayList<UserMenuItem> getGroupMenu(UserGroup aGroup) throws OHServiceException {
 		try {
 			return ioOperations.getGroupMenu(aGroup);
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -243,13 +198,8 @@ public class UserBrowsingManager {
 	public boolean setGroupMenu(UserGroup aGroup, ArrayList<UserMenuItem> menu) throws OHServiceException {
 		try {
 			return ioOperations.setGroupMenu(aGroup,menu,false);
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -266,13 +216,8 @@ public class UserBrowsingManager {
 	public String getUsrInfo(String userName) throws OHServiceException {
 		try {
 			return ioOperations.getUsrInfo(userName);
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -299,13 +244,8 @@ public class UserBrowsingManager {
 		}
 		try {
 			return ioOperations.deleteGroup(aGroup);
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -329,13 +269,8 @@ public class UserBrowsingManager {
 			} else{
 			    return ioOperations.newUserGroup(aGroup);
             }
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -352,13 +287,8 @@ public class UserBrowsingManager {
 	public boolean updateUserGroup(UserGroup aGroup) throws OHServiceException {
 		try {
 			return ioOperations.updateUserGroup(aGroup);
-        }catch(OHException e){
-			/*Already cached exception with OH specific error message -
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
