@@ -6,7 +6,6 @@ import org.isf.dicom.model.FileDicom;
 import org.isf.dicom.service.DicomIoOperations;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -42,13 +41,8 @@ public class SqlDicomManager implements DicomManagerInterface{
     	
     	try {
     		serieDetails = ioOperations.getSerieDetail(idPaziente, numeroSerie);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -71,13 +65,8 @@ public class SqlDicomManager implements DicomManagerInterface{
     	boolean result = false;
     	try {
     		result = ioOperations.deleteSerie(idPaziente, numeroSerie);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -102,13 +91,8 @@ public class SqlDicomManager implements DicomManagerInterface{
 
     	try {
     		result = ioOperations.exist(dicom);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -131,13 +115,8 @@ public class SqlDicomManager implements DicomManagerInterface{
     	
     	try {
 			dicom = ioOperations.loadDettaglio(idFile, idPaziente, numeroSerie);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -161,13 +140,8 @@ public class SqlDicomManager implements DicomManagerInterface{
     	
     	try {
     		dicom = ioOperations.loadDettaglio(idFile, idPaziente, numeroSerie);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -190,13 +164,8 @@ public class SqlDicomManager implements DicomManagerInterface{
     	
     	try {
 			dicoms = ioOperations.loadFilesPaziente(idPaziente);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -216,13 +185,8 @@ public class SqlDicomManager implements DicomManagerInterface{
     {
     	try {
 			ioOperations.saveFile(dicom);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
