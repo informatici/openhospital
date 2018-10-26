@@ -26,16 +26,16 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import org.isf.patient.model.Patient;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class PatientIoOperations 
 {
 	@Autowired
@@ -45,9 +45,9 @@ public class PatientIoOperations
 	 * method that returns the full list of Patients not logically deleted
 	 * 
 	 * @return the list of patients
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
-	public ArrayList<Patient> getPatients() throws OHException 
+	public ArrayList<Patient> getPatients() throws OHServiceException 
 	{
 		ArrayList<Patient> pPatient = null;
 		
@@ -62,10 +62,10 @@ public class PatientIoOperations
 	 * 
 	 * @param regex
 	 * @return the full list of Patients with Height and Weight
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public ArrayList<Patient> getPatientsWithHeightAndWeight(
-			String regex) throws OHException 
+			String regex) throws OHServiceException 
 	{
 		ArrayList<Integer> pPatientCode = null;
 		ArrayList<Patient> pPatient = new ArrayList<Patient>();
@@ -89,10 +89,10 @@ public class PatientIoOperations
 	 * 
 	 * @param name
 	 * @return the Patient that match specified name
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public Patient getPatient(
-			String name) throws OHException 
+			String name) throws OHServiceException 
 	{
 		ArrayList<Patient> pPatient = null;
 		Patient patient = null;	
@@ -112,10 +112,10 @@ public class PatientIoOperations
 	 * 
 	 * @param code
 	 * @return the Patient
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public Patient getPatient(
-			Integer code) throws OHException 
+			Integer code) throws OHServiceException 
 	{
 		ArrayList<Patient> pPatient = null;
 		Patient patient = null;	
@@ -135,10 +135,10 @@ public class PatientIoOperations
 	 * 
 	 * @param code
 	 * @return the list of Patients
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public Patient getPatientAll(
-			Integer code) throws OHException 
+			Integer code) throws OHServiceException 
 	{
 		ArrayList<Patient> pPatient = null;
 		Patient patient = null;	
@@ -158,10 +158,10 @@ public class PatientIoOperations
 	 * 
 	 * @param patient
 	 * @return true - if the new Patient has been inserted
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean newPatient(
-			Patient patient) throws OHException 
+			Patient patient) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -178,10 +178,10 @@ public class PatientIoOperations
 	 * 
 	 * @param patient - the {@link Patient} to update
 	 * @return true - if the existing {@link Patient} has been updated
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean updatePatient(
-			Patient patient) throws OHException 
+			Patient patient) throws OHServiceException 
 	{
 		int lock = 0;
 		boolean result = false;
@@ -234,10 +234,10 @@ public class PatientIoOperations
 	 * 
 	 * @param aPatient
 	 * @return true - if the Patient has been deleted (logically)
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean deletePatient(
-			Patient patient) throws OHException 
+			Patient patient) throws OHServiceException 
 	{
 		boolean result = false;
 		int updates = 0;
@@ -257,10 +257,10 @@ public class PatientIoOperations
 	 * 
 	 * @param name
 	 * @return true - if the patient is already present
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean isPatientPresent(
-			String name) throws OHException 
+			String name) throws OHServiceException 
 	{
 		boolean result = false;
 		
@@ -281,9 +281,9 @@ public class PatientIoOperations
 	 * Method that get next PAT_ID is going to be used.
 	 * 
 	 * @return code
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
-	public int getNextPatientCode() throws OHException 
+	public int getNextPatientCode() throws OHServiceException 
 	{
 		Integer code = repository.findMaxCode();
 
@@ -295,12 +295,12 @@ public class PatientIoOperations
 	 * 
 	 * @param mergedPatient
 	 * @param patient2
-	 * @return true - if no OHExceptions occurred
-	 * @throws OHException 
+	 * @return true - if no OHServiceExceptions occurred
+	 * @throws OHServiceException 
 	 */
 	public boolean mergePatientHistory(
 			Patient mergedPatient, 
-			Patient patient2) throws OHException {
+			Patient patient2) throws OHServiceException {
 		int mergedID = mergedPatient.getCode();
 		int obsoleteID = patient2.getCode();
 		boolean result = false;
@@ -331,10 +331,10 @@ public class PatientIoOperations
 	 *
 	 * @param code - the patient code
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean isCodePresent(
-			Integer code) throws OHException
+			Integer code) throws OHServiceException
 	{
 		boolean result = true;
 	

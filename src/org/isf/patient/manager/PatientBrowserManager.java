@@ -12,7 +12,6 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.patient.model.Patient;
 import org.isf.patient.service.PatientIoOperations;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -36,13 +35,8 @@ public class PatientBrowserManager {
 	public boolean newPatient(Patient patient) throws OHServiceException {
 		try {
 			return ioOperations.newPatient(patient);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -62,13 +56,8 @@ public class PatientBrowserManager {
 	public boolean updatePatient(Patient patient) throws OHServiceException {
 		try {
 			return ioOperations.updatePatient(patient);
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -122,13 +111,8 @@ public class PatientBrowserManager {
 	public ArrayList<Patient> getPatient() throws OHServiceException {
 		try {
 			return ioOperations.getPatients();
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -147,13 +131,8 @@ public class PatientBrowserManager {
 	public Patient getPatient(String name) throws OHServiceException {
 		try {
 			return ioOperations.getPatient(name);
-		} catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -172,13 +151,8 @@ public class PatientBrowserManager {
 	public Patient getPatient(Integer code) throws OHServiceException {
 		try {
 			return ioOperations.getPatient(code);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -222,13 +196,8 @@ public class PatientBrowserManager {
 	public Patient getPatientAll(Integer code) throws OHServiceException {
 		try {
 			return ioOperations.getPatientAll(code);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -246,13 +215,8 @@ public class PatientBrowserManager {
 	public int getNextPatientCode() throws OHServiceException {
 		try {
 			return ioOperations.getNextPatientCode();
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -306,13 +270,8 @@ public class PatientBrowserManager {
 	public boolean deletePatient(Patient patient) throws OHServiceException {
 		try {
 			return ioOperations.deletePatient(patient);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -331,13 +290,8 @@ public class PatientBrowserManager {
 	public boolean isPatientPresent(String name) throws OHServiceException {
 		try {
 			return ioOperations.isPatientPresent(name);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -357,13 +311,8 @@ public class PatientBrowserManager {
 	public ArrayList<Patient> getPatientWithHeightAndWeight(String regex) throws OHServiceException{
 		try {
 			return ioOperations.getPatientsWithHeightAndWeight(regex);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -446,17 +395,8 @@ public class PatientBrowserManager {
                 throw new OHServiceException(errors);
             }
             return ioOperations.mergePatientHistory(mergedPatient, patient2);
-		}catch(OHServiceException e){
-			//Already managed, ready to return OHServiceException
-			logger.error("", e);
-			throw e;
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
