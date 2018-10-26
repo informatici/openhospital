@@ -18,8 +18,8 @@ package org.isf.disease.service;
 import java.util.ArrayList;
 
 import org.isf.disease.model.Disease;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Rick, Vero
  */
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class DiseaseIoOperations {
 
 	@Autowired
@@ -42,10 +42,10 @@ public class DiseaseIoOperations {
 	 * Gets a {@link Disease} with the specified code.
 	 * @param code the disease code.
 	 * @return the found disease, <code>null</code> if no disease has found.
-	 * @throws OHException if an error occurred getting the disease.
+	 * @throws OHServiceException if an error occurred getting the disease.
 	 */
 	public Disease getDiseaseByCode(
-			int code) throws OHException 
+			int code) throws OHServiceException 
 	{
 		return repository.findOneByCode(code);
 	}
@@ -57,13 +57,13 @@ public class DiseaseIoOperations {
 	 * @param ipdIn - select only diseases related to in patient admission
 	 * @param ipdOut - select only diseases related to in patient outcome
 	 * @return the retrieved diseases.
-	 * @throws OHException if an error occurs retrieving the diseases.
+	 * @throws OHServiceException if an error occurs retrieving the diseases.
 	 */
 	public ArrayList<Disease> getDiseases(
 			String disTypeCode, 
 			boolean opd, 
 			boolean ipdIn, 
-			boolean ipdOut) throws OHException 
+			boolean ipdOut) throws OHServiceException 
 	{
 		ArrayList<Disease> diseases = null;
     	
@@ -186,10 +186,10 @@ public class DiseaseIoOperations {
 	 * Stores the specified {@link Disease}. 
 	 * @param disease the disease to store.
 	 * @return <code>true</code> if the disease has been stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs storing the disease.
+	 * @throws OHServiceException if an error occurs storing the disease.
 	 */
 	public boolean newDisease(
-			Disease disease) throws OHException
+			Disease disease) throws OHServiceException
 	{
 		boolean result = true;
 	
@@ -204,10 +204,10 @@ public class DiseaseIoOperations {
 	 * Updates the specified {@link Disease}.
 	 * @param disease the {@link Disease} to update.
 	 * @return <code>true</code> if the disease has been updated, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the update.
+	 * @throws OHServiceException if an error occurs during the update.
 	 */
 	public boolean updateDisease(
-			Disease disease) throws OHException 
+			Disease disease) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -223,10 +223,10 @@ public class DiseaseIoOperations {
 	 * Mark as deleted the specified {@link Disease}.
 	 * @param disease the disease to make delete.
 	 * @return <code>true</code> if the disease has been marked, <code>false</code> otherwise.
-	 * @throws OHException if an error occurred during the delete operation.
+	 * @throws OHServiceException if an error occurred during the delete operation.
 	 */
 	public boolean deleteDisease(
-			Disease disease) throws OHException
+			Disease disease) throws OHServiceException
 	{
 		boolean result = true;
 	
@@ -243,10 +243,10 @@ public class DiseaseIoOperations {
 	 * Check if the specified code is used by other {@link Disease}s.
 	 * @param code the code to check.
 	 * @return <code>true</code> if it is already used, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @throws OHServiceException if an error occurs during the check.
 	 */
 	public boolean isCodePresent(
-			String code) throws OHException
+			String code) throws OHServiceException
 	{
 		boolean result = true;
 	
@@ -261,11 +261,11 @@ public class DiseaseIoOperations {
 	 * @param description the description to check.
 	 * @param typeCode the disease type code.
 	 * @return <code>true</code> if is used, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @throws OHServiceException if an error occurs during the check.
 	 */
 	public boolean isDescriptionPresent(
 			String description, 
-			String typeCode) throws OHException
+			String typeCode) throws OHServiceException
 	{
 		boolean present = false;
 		

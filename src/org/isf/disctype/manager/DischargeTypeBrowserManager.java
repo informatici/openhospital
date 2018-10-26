@@ -7,7 +7,6 @@ import org.isf.disctype.model.DischargeType;
 import org.isf.disctype.service.DischargeTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -29,12 +28,8 @@ public class DischargeTypeBrowserManager {
 	public ArrayList<DischargeType> getDischargeType() throws OHServiceException {
 		try {
 			return ioOperations.getDischargeType();
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -59,12 +54,6 @@ public class DischargeTypeBrowserManager {
 			return ioOperations.newDischargeType(dischargeType);
         } catch (OHServiceException e) {
             throw e;
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -89,12 +78,6 @@ public class DischargeTypeBrowserManager {
 			return ioOperations.newDischargeType(dischargeType);
         } catch (OHServiceException e) {
             throw e;
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -113,12 +96,8 @@ public class DischargeTypeBrowserManager {
 	public boolean codeControl(String code) throws OHServiceException {
 		try {
 			return ioOperations.isCodePresent(code);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -143,12 +122,6 @@ public class DischargeTypeBrowserManager {
 			return ioOperations.deleteDischargeType(dischargeType);
         } catch (OHServiceException e) {
             throw e;
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);

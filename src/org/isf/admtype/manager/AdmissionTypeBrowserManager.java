@@ -7,7 +7,6 @@ import org.isf.admtype.model.AdmissionType;
 import org.isf.admtype.service.AdmissionTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -28,13 +27,8 @@ public class AdmissionTypeBrowserManager {
 	public ArrayList<AdmissionType> getAdmissionType() throws OHServiceException {
 		try {
 			return ioOperations.getAdmissionType();
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -58,13 +52,6 @@ public class AdmissionTypeBrowserManager {
 			return ioOperations.newAdmissionType(admissionType);
         } catch (OHServiceException e) {
             throw e;
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -88,13 +75,6 @@ public class AdmissionTypeBrowserManager {
 			return ioOperations.updateAdmissionType(admissionType);
         } catch (OHServiceException e) {
             throw e;
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -112,13 +92,8 @@ public class AdmissionTypeBrowserManager {
 	public boolean codeControl(String code) throws OHServiceException {
 		try {
 			return ioOperations.isCodePresent(code);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -136,13 +111,8 @@ public class AdmissionTypeBrowserManager {
 	public boolean deleteAdmissionType(AdmissionType admissionType) throws OHServiceException {
 		try {
 			return ioOperations.deleteAdmissionType(admissionType);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);

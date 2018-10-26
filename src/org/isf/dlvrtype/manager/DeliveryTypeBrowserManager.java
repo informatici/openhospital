@@ -7,7 +7,6 @@ import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.dlvrtype.service.DeliveryTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -32,13 +31,8 @@ public class DeliveryTypeBrowserManager {
     public ArrayList<DeliveryType> getDeliveryType() throws OHServiceException {
         try {
             return ioOperations.getDeliveryType();
-        }  catch(OHException e){
-            /*Already cached exception with OH specific error message -
-             * create ready to return OHServiceException and keep existing error message
-             */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(null,
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -63,13 +57,6 @@ public class DeliveryTypeBrowserManager {
             return ioOperations.newDeliveryType(deliveryType);
         } catch (OHServiceException e) {
             throw e;
-        }  catch(OHException e){
-            /*Already cached exception with OH specific error message -
-             * create ready to return OHServiceException and keep existing error message
-             */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(null,
-                    e.getMessage(), OHSeverityLevel.ERROR));
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -94,13 +81,6 @@ public class DeliveryTypeBrowserManager {
             return ioOperations.updateDeliveryType(deliveryType);
         } catch (OHServiceException e) {
             throw e;
-        }  catch(OHException e){
-            /*Already cached exception with OH specific error message -
-             * create ready to return OHServiceException and keep existing error message
-             */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(null,
-                    e.getMessage(), OHSeverityLevel.ERROR));
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -119,13 +99,8 @@ public class DeliveryTypeBrowserManager {
     public boolean codeControl(String code) throws OHServiceException {
         try {
             return ioOperations.isCodePresent(code);
-        }  catch(OHException e){
-            /*Already cached exception with OH specific error message -
-             * create ready to return OHServiceException and keep existing error message
-             */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(null,
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
@@ -144,13 +119,8 @@ public class DeliveryTypeBrowserManager {
     public boolean deleteDeliveryType(DeliveryType deliveryType) throws OHServiceException {
         try {
             return ioOperations.deleteDeliveryType(deliveryType);
-        }  catch(OHException e){
-            /*Already cached exception with OH specific error message -
-             * create ready to return OHServiceException and keep existing error message
-             */
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(null,
-                    e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
         }catch(Exception e){
             //Any exception
             logger.error("", e);
