@@ -3,15 +3,15 @@ package org.isf.opetype.service;
 import java.util.ArrayList;
 
 import org.isf.opetype.model.OperationType;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class OperationTypeIoOperation {
 
 	@Autowired
@@ -21,9 +21,9 @@ public class OperationTypeIoOperation {
 	 * return the list of {@link OperationType}s
 	 * 
 	 * @return the list of {@link OperationType}s. It could be <code>empty</code> or <code>null</code>.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<OperationType> getOperationType() throws OHException 
+	public ArrayList<OperationType> getOperationType() throws OHServiceException 
 	{
 		return new ArrayList<OperationType>(repository.findAllByOrderByDescriptionAsc()); 
 	}
@@ -33,10 +33,10 @@ public class OperationTypeIoOperation {
 	 * 
 	 * @param operationType - the {@link OperationType} to insert
 	 * @return <code>true</code> if the {@link OperationType} has been inserted, <code>false</code> otherwise.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean newOperationType(
-			OperationType operationType) throws OHException 
+			OperationType operationType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -52,10 +52,10 @@ public class OperationTypeIoOperation {
 	 * 
 	 * @param operationType - the {@link OperationType} to update
 	 * @return <code>true</code> if the {@link OperationType} has been updated, <code>false</code> otherwise.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean updateOperationType(
-			OperationType operationType) throws OHException 
+			OperationType operationType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -71,10 +71,10 @@ public class OperationTypeIoOperation {
 	 * 
 	 * @param operationType - the {@link OperationType} to delete
 	 * @return <code>true</code> if the {@link OperationType} has been delete, <code>false</code> otherwise.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean deleteOperationType(
-			OperationType operationType) throws OHException 
+			OperationType operationType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -88,10 +88,10 @@ public class OperationTypeIoOperation {
 	 * checks if an {@link OperationType} code has already been used
 	 * @param code - the code
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean isCodePresent(
-			String code) throws OHException
+			String code) throws OHServiceException
 	{
 		boolean result = true;
 	

@@ -6,7 +6,6 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.opetype.model.OperationType;
 import org.isf.opetype.service.OperationTypeIoOperation;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -28,9 +27,8 @@ public class OperationTypeBrowserManager {
 	public ArrayList<OperationType> getOperationType() throws OHServiceException {
 		try {
 			return ioOperations.getOperationType();
-		} catch (OHException e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
@@ -48,9 +46,8 @@ public class OperationTypeBrowserManager {
 	public boolean newOperationType(OperationType operationType) throws OHServiceException {
 		try {
 			return ioOperations.newOperationType(operationType);
-		} catch (OHException e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
@@ -68,9 +65,8 @@ public class OperationTypeBrowserManager {
 	public boolean updateOperationType(OperationType operationType) throws OHServiceException {
 		try {
 			return ioOperations.updateOperationType(operationType);
-		} catch (OHException e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
@@ -88,9 +84,8 @@ public class OperationTypeBrowserManager {
 	public boolean deleteOperationType(OperationType operationType) throws OHServiceException {
 		try {
 			return ioOperations.deleteOperationType(operationType);
-		} catch (OHException e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
@@ -107,9 +102,8 @@ public class OperationTypeBrowserManager {
 	public boolean codeControl(String code) throws OHServiceException {
 		try {
 			return ioOperations.isCodePresent(code);
-		} catch (OHException e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null,
