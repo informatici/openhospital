@@ -10,15 +10,11 @@ import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The manager class for the DeliveryType module.
  */
 public class DeliveryTypeBrowserManager {
-
-    private final Logger logger = LoggerFactory.getLogger(DeliveryTypeBrowserManager.class);
 
     private DeliveryTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(DeliveryTypeIoOperation.class);
 
@@ -29,16 +25,7 @@ public class DeliveryTypeBrowserManager {
      * @throws OHServiceException
      */
     public ArrayList<DeliveryType> getDeliveryType() throws OHServiceException {
-        try {
-            return ioOperations.getDeliveryType();
-        } catch (OHServiceException e) {
-            throw e;
-        }catch(Exception e){
-            //Any exception
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(null,
-                    MessageBundle.getMessage("angal.dlvrtype.thdatacouldnotbesaved"), OHSeverityLevel.ERROR));
-        }
+        return ioOperations.getDeliveryType();
     }
 
     /**
@@ -49,20 +36,11 @@ public class DeliveryTypeBrowserManager {
      * @throws OHServiceException
      */
     public boolean newDeliveryType(DeliveryType deliveryType) throws OHServiceException {
-        try {
-            List<OHExceptionMessage> errors = validateDeliveryType(deliveryType, true);
-            if(!errors.isEmpty()){
-                throw new OHServiceException(errors);
-            }
-            return ioOperations.newDeliveryType(deliveryType);
-        } catch (OHServiceException e) {
-            throw e;
-        }catch(Exception e){
-            //Any exception
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(null,
-                    MessageBundle.getMessage("angal.dlvrtype.thdatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        List<OHExceptionMessage> errors = validateDeliveryType(deliveryType, true);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
         }
+        return ioOperations.newDeliveryType(deliveryType);
     }
 
     /**
@@ -73,20 +51,11 @@ public class DeliveryTypeBrowserManager {
      * @throws OHServiceException
      */
     public boolean updateDeliveryType(DeliveryType deliveryType) throws OHServiceException {
-        try {
-            List<OHExceptionMessage> errors = validateDeliveryType(deliveryType, false);
-            if(!errors.isEmpty()){
-                throw new OHServiceException(errors);
-            }
-            return ioOperations.updateDeliveryType(deliveryType);
-        } catch (OHServiceException e) {
-            throw e;
-        }catch(Exception e){
-            //Any exception
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(null,
-                    MessageBundle.getMessage("angal.dlvrtype.thdatacouldnotbesaved"), OHSeverityLevel.ERROR));
+        List<OHExceptionMessage> errors = validateDeliveryType(deliveryType, false);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
         }
+        return ioOperations.updateDeliveryType(deliveryType);
     }
 
     /**
@@ -97,16 +66,7 @@ public class DeliveryTypeBrowserManager {
      * @throws OHServiceException
      */
     public boolean codeControl(String code) throws OHServiceException {
-        try {
-            return ioOperations.isCodePresent(code);
-        } catch (OHServiceException e) {
-            throw e;
-        }catch(Exception e){
-            //Any exception
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(null,
-                    MessageBundle.getMessage("angal.dlvrtype.thdatacouldnotbesaved"), OHSeverityLevel.ERROR));
-        }
+        return ioOperations.isCodePresent(code);
     }
 
     /**
@@ -117,16 +77,7 @@ public class DeliveryTypeBrowserManager {
      * @throws OHServiceException
      */
     public boolean deleteDeliveryType(DeliveryType deliveryType) throws OHServiceException {
-        try {
-            return ioOperations.deleteDeliveryType(deliveryType);
-        } catch (OHServiceException e) {
-            throw e;
-        }catch(Exception e){
-            //Any exception
-            logger.error("", e);
-            throw new OHServiceException(e, new OHExceptionMessage(null,
-                    MessageBundle.getMessage("angal.dlvrtype.thdatacouldnotbesaved"), OHSeverityLevel.ERROR));
-        }
+        return ioOperations.deleteDeliveryType(deliveryType);
     }
 
     private List<OHExceptionMessage> validateDeliveryType(DeliveryType deliveryType, boolean insert) throws OHServiceException {

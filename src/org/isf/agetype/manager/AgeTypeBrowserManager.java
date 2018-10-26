@@ -10,13 +10,9 @@ import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AgeTypeBrowserManager {
 
-	private final Logger logger = LoggerFactory.getLogger(AgeTypeBrowserManager.class);
-	
 	private AgeTypeIoOperations ioOperations = Menu.getApplicationContext().getBean(AgeTypeIoOperations.class);
 
 	/**
@@ -25,16 +21,7 @@ public class AgeTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<AgeType> getAgeType() throws OHServiceException {
-		try{
-			return ioOperations.getAgeType();
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getAgeType();
 	}
 
 	/**
@@ -44,20 +31,11 @@ public class AgeTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateAgeType(ArrayList<AgeType> ageTypes) throws OHServiceException {
-		try{
-            List<OHExceptionMessage> errors = validateAgeTypes(ageTypes);
-            if(!errors.isEmpty()){
-                throw new OHServiceException(errors);
-            }
-			return ioOperations.updateAgeType(ageTypes);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        List<OHExceptionMessage> errors = validateAgeTypes(ageTypes);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        return ioOperations.updateAgeType(ageTypes);
 	}
 
 
@@ -68,24 +46,15 @@ public class AgeTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public String getTypeByAge(int age) throws OHServiceException {
-		try{
-			ArrayList<AgeType> ageTable = ioOperations.getAgeType();
+        ArrayList<AgeType> ageTable = ioOperations.getAgeType();
 
-			for (AgeType ageType : ageTable) {
+        for (AgeType ageType : ageTable) {
 
-				if (age >= ageType.getFrom() && age <= ageType.getTo()) {
-					return ageType.getCode();
-				}
-			}
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-		return null;
+            if (age >= ageType.getFrom() && age <= ageType.getTo()) {
+                return ageType.getCode();
+            }
+        }
+        return null;
 	}
 
 	/**
@@ -95,16 +64,7 @@ public class AgeTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public AgeType getTypeByCode(int index) throws OHServiceException {
-		try{
-			return ioOperations.getAgeTypeByCode(index);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getAgeTypeByCode(index);
 	}
 
     private List<OHExceptionMessage> validateAgeTypes(ArrayList<AgeType> ageTypes) {

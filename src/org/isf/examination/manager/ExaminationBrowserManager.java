@@ -7,22 +7,14 @@ import java.util.Date;
 import org.isf.examination.model.PatientExamination;
 import org.isf.examination.service.ExaminationOperations;
 import org.isf.generaldata.ExaminationParameters;
-import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ExaminationBrowserManager {
 
-	private final Logger logger = LoggerFactory.getLogger(ExaminationBrowserManager.class);
-
 	private ExaminationOperations ioOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
-	
-	
+
 	/**
 	 * Default PatientExamination
 	 */
@@ -50,29 +42,11 @@ public class ExaminationBrowserManager {
 	 * @throws OHException 
 	 */
 	public void saveOrUpdate(PatientExamination patex) throws OHServiceException {
-		try{
-			ioOperations.saveOrUpdate(patex);
-        } catch (OHServiceException e) {
-            throw e;
-        } catch (Exception e) {
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        ioOperations.saveOrUpdate(patex);
 	}
 
 	public PatientExamination getByID(int id) throws OHServiceException{
-		try{
-			return ioOperations.getByID(id);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getByID(id);
 	}
 
 	public PatientExamination getLastByPatID(int patID) throws OHServiceException {
@@ -82,29 +56,11 @@ public class ExaminationBrowserManager {
 	}
 
 	public ArrayList<PatientExamination> getLastNByPatID(int patID, int number) throws OHServiceException {
-		try{
-			return ioOperations.getLastNByPatID(patID, number);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getLastNByPatID(patID, number);
 	}
 
 	public ArrayList<PatientExamination> getByPatID(int patID) throws OHServiceException {
-		try{
-			return ioOperations.getByPatID(patID);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getByPatID(patID);
 	}
 
 }

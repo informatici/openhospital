@@ -10,13 +10,9 @@ import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AdmissionTypeBrowserManager {
 
-	private final Logger logger = LoggerFactory.getLogger(AdmissionTypeBrowserManager.class);
-	
 	private AdmissionTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(AdmissionTypeIoOperation.class);
 
 	/**
@@ -25,16 +21,7 @@ public class AdmissionTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<AdmissionType> getAdmissionType() throws OHServiceException {
-		try {
-			return ioOperations.getAdmissionType();
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getAdmissionType();
 	}
 
 	/**
@@ -44,20 +31,11 @@ public class AdmissionTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newAdmissionType(AdmissionType admissionType) throws OHServiceException {
-		try {
-            List<OHExceptionMessage> errors = validateAdmissionType(admissionType, true);
-            if(!errors.isEmpty()){
-                throw new OHServiceException(errors);
-            }
-			return ioOperations.newAdmissionType(admissionType);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        List<OHExceptionMessage> errors = validateAdmissionType(admissionType, true);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        return ioOperations.newAdmissionType(admissionType);
 	}
 
 	/**
@@ -67,20 +45,11 @@ public class AdmissionTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateAdmissionType(AdmissionType admissionType) throws OHServiceException {
-		try {
-            List<OHExceptionMessage> errors = validateAdmissionType(admissionType, false);
-            if(!errors.isEmpty()){
-                throw new OHServiceException(errors);
-            }
-			return ioOperations.updateAdmissionType(admissionType);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        List<OHExceptionMessage> errors = validateAdmissionType(admissionType, false);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        return ioOperations.updateAdmissionType(admissionType);
 	}
 
 	/**
@@ -90,16 +59,7 @@ public class AdmissionTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean codeControl(String code) throws OHServiceException {
-		try {
-			return ioOperations.isCodePresent(code);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.isCodePresent(code);
 	}
 
 	/**
@@ -109,16 +69,7 @@ public class AdmissionTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean deleteAdmissionType(AdmissionType admissionType) throws OHServiceException {
-		try {
-			return ioOperations.deleteAdmissionType(admissionType);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.deleteAdmissionType(admissionType);
 	}
 
     protected List<OHExceptionMessage> validateAdmissionType(AdmissionType admissionType, boolean insert) throws OHServiceException {

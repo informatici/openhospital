@@ -2,20 +2,13 @@ package org.isf.opetype.manager;
 
 import java.util.ArrayList;
 
-import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.opetype.model.OperationType;
 import org.isf.opetype.service.OperationTypeIoOperation;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class OperationTypeBrowserManager {
 
-	private final Logger logger = LoggerFactory.getLogger(OperationTypeBrowserManager.class);
-	
 	private OperationTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(OperationTypeIoOperation.class);
 	
 	/**
@@ -25,15 +18,7 @@ public class OperationTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<OperationType> getOperationType() throws OHServiceException {
-		try {
-			return ioOperations.getOperationType();
-        } catch (OHServiceException e) {
-            throw e;
-		} catch (Exception e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getOperationType();
 	}
 	
 	/**
@@ -44,15 +29,7 @@ public class OperationTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newOperationType(OperationType operationType) throws OHServiceException {
-		try {
-			return ioOperations.newOperationType(operationType);
-        } catch (OHServiceException e) {
-            throw e;
-		} catch (Exception e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.newOperationType(operationType);
 	}
 
 	/**
@@ -63,15 +40,7 @@ public class OperationTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateOperationType(OperationType operationType) throws OHServiceException {
-		try {
-			return ioOperations.updateOperationType(operationType);
-        } catch (OHServiceException e) {
-            throw e;
-		} catch (Exception e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.updateOperationType(operationType);
 	}
 	
 	/**
@@ -82,15 +51,7 @@ public class OperationTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean deleteOperationType(OperationType operationType) throws OHServiceException {
-		try {
-			return ioOperations.deleteOperationType(operationType);
-        } catch (OHServiceException e) {
-            throw e;
-		} catch (Exception e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.deleteOperationType(operationType);
 	}
 	
 	/**
@@ -100,14 +61,6 @@ public class OperationTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean codeControl(String code) throws OHServiceException {
-		try {
-			return ioOperations.isCodePresent(code);
-        } catch (OHServiceException e) {
-            throw e;
-		} catch (Exception e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.isCodePresent(code);
 	}
 }
