@@ -2,14 +2,10 @@ package org.isf.distype.manager;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JOptionPane;
-
 import org.isf.distype.model.DiseaseType;
 import org.isf.distype.service.DiseaseTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -33,13 +29,8 @@ public class DiseaseTypeBrowserManager {
 	public ArrayList<DiseaseType> getDiseaseType() throws OHServiceException {
 		try {
 			return ioOperations.getDiseaseTypes();
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -63,13 +54,6 @@ public class DiseaseTypeBrowserManager {
 			return ioOperations.newDiseaseType(diseaseType);
         } catch (OHServiceException e) {
             throw e;
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -93,13 +77,6 @@ public class DiseaseTypeBrowserManager {
 			return ioOperations.updateDiseaseType(diseaseType);
         } catch (OHServiceException e) {
             throw e;
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -117,13 +94,8 @@ public class DiseaseTypeBrowserManager {
 	public boolean codeControl(String code) throws OHServiceException {
 		try {
 			return ioOperations.isCodePresent(code);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);
@@ -141,13 +113,8 @@ public class DiseaseTypeBrowserManager {
 	public boolean deleteDiseaseType(DiseaseType diseaseType) throws OHServiceException {
 		try {
 			return ioOperations.deleteDiseaseType(diseaseType);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
+        } catch (OHServiceException e) {
+            throw e;
 		}catch(Exception e){
 			//Any exception
 			logger.error("", e);

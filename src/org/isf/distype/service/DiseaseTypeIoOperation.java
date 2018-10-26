@@ -3,8 +3,8 @@ package org.isf.distype.service;
 import java.util.ArrayList;
 
 import org.isf.distype.model.DiseaseType;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Persistence class for the DisType module.
  */
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class DiseaseTypeIoOperation {
 
 	@Autowired
@@ -23,9 +23,9 @@ public class DiseaseTypeIoOperation {
 	/**
 	 * Returns all the stored {@link DiseaseType}s.
 	 * @return a list of disease type.
-	 * @throws OHException if an error occurs retrieving the diseases list.
+	 * @throws OHServiceException if an error occurs retrieving the diseases list.
 	 */
-	public ArrayList<DiseaseType> getDiseaseTypes() throws OHException 
+	public ArrayList<DiseaseType> getDiseaseTypes() throws OHServiceException 
 	{
 		return new ArrayList<DiseaseType>(repository.findAllByOrderByDescriptionAsc());
 	}
@@ -34,10 +34,10 @@ public class DiseaseTypeIoOperation {
 	 * Updates the specified {@link DiseaseType}.
 	 * @param diseaseType the disease type to update.
 	 * @return <code>true</code> if the disease type has been updated, false otherwise.
-	 * @throws OHException if an error occurs during the update operation.
+	 * @throws OHServiceException if an error occurs during the update operation.
 	 */
 	public boolean updateDiseaseType(
-			DiseaseType diseaseType) throws OHException 
+			DiseaseType diseaseType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -52,10 +52,10 @@ public class DiseaseTypeIoOperation {
 	 * Store the specified {@link DiseaseType}.
 	 * @param diseaseType the disease type to store.
 	 * @return <code>true</code> if the {@link DiseaseType} has been stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the store operation.
+	 * @throws OHServiceException if an error occurs during the store operation.
 	 */
 	public boolean newDiseaseType(
-			DiseaseType diseaseType) throws OHException 
+			DiseaseType diseaseType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -70,10 +70,10 @@ public class DiseaseTypeIoOperation {
 	 * Deletes the specified {@link DiseaseType}.
 	 * @param diseaseType the disease type to remove.
 	 * @return <code>true</code> if the disease has been removed, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the delete procedure.
+	 * @throws OHServiceException if an error occurs during the delete procedure.
 	 */
 	public boolean deleteDiseaseType(
-			DiseaseType diseaseType) throws OHException 
+			DiseaseType diseaseType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -87,10 +87,10 @@ public class DiseaseTypeIoOperation {
 	 * Checks if the specified code is already used by any {@link DiseaseType}.
 	 * @param code the code to check.
 	 * @return <code>true</code> if the code is used, false otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @throws OHServiceException if an error occurs during the check.
 	 */
 	public boolean isCodePresent(
-			String code) throws OHException
+			String code) throws OHServiceException
 	{
 		boolean result = true;
 	
