@@ -12,25 +12,15 @@ package org.isf.patvac.manager;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
-import javax.swing.JOptionPane;
-
-import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.patvac.model.PatientVaccine;
 import org.isf.patvac.service.PatVacIoOperations;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 
 public class PatVacManager {
 
-	private final Logger logger = LoggerFactory.getLogger(PatVacManager.class);
-	
 	private PatVacIoOperations ioOperations = Menu.getApplicationContext().getBean(PatVacIoOperations.class);
 	
 	/**
@@ -41,21 +31,7 @@ public class PatVacManager {
 	 * @throws OHServiceException 
 	 */  
 	public ArrayList<PatientVaccine> getPatientVaccine(boolean minusOneWeek) throws OHServiceException {
-		try {
-			return  ioOperations.getPatientVaccine(minusOneWeek);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return  ioOperations.getPatientVaccine(minusOneWeek);
 	}
 	
 	/**
@@ -75,21 +51,7 @@ public class PatVacManager {
 	public ArrayList<PatientVaccine> getPatientVaccine(String vaccineTypeCode,String vaccineCode, 
 													   GregorianCalendar dateFrom, GregorianCalendar dateTo, 
 													   char sex, int ageFrom, int ageTo) throws OHServiceException {
-		try {
-			return ioOperations.getPatientVaccine(vaccineTypeCode, vaccineCode, dateFrom, dateTo, sex, ageFrom, ageTo);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getPatientVaccine(vaccineTypeCode, vaccineCode, dateFrom, dateTo, sex, ageFrom, ageTo);
 	}
 
 	/**
@@ -100,21 +62,7 @@ public class PatVacManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newPatientVaccine(PatientVaccine patVac) throws OHServiceException {
-		try {
-			return ioOperations.newPatientVaccine(patVac);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.newPatientVaccine(patVac);
 	}
 
 	/**
@@ -125,21 +73,7 @@ public class PatVacManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updatePatientVaccine(PatientVaccine patVac) throws OHServiceException {
-		try {
-			return ioOperations.updatePatientVaccine(patVac);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.updatePatientVaccine(patVac);
 	}
 
 	/**
@@ -150,21 +84,7 @@ public class PatVacManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean deletePatientVaccine(PatientVaccine patVac) throws OHServiceException {
-		try {
-			return ioOperations.deletePatientVaccine(patVac);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.deletePatientVaccine(patVac);
 	}
 	
 	/**
@@ -175,21 +95,7 @@ public class PatVacManager {
 	 * @throws OHServiceException 
 	 */
 	public int getProgYear(int year) throws OHServiceException {
-		try {
-			return ioOperations.getProgYear(year);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getProgYear(year);
 	}
 }
 
