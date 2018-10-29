@@ -1,11 +1,16 @@
 package org.isf.pregtreattype.manager;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.pregtreattype.service.PregnantTreatmentTypeIoOperation;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.util.StringUtils;
 
 public class PregnantTreatmentTypeBrowserManager {
 
@@ -29,6 +34,10 @@ public class PregnantTreatmentTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newPregnantTreatmentType(PregnantTreatmentType pregnantTreatmentType) throws OHServiceException {
+        List<OHExceptionMessage> errors = validatePregnantTreatmentType(pregnantTreatmentType, true);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
         return ioOperations.newPregnantTreatmentType(pregnantTreatmentType);
 	}
 
@@ -40,6 +49,10 @@ public class PregnantTreatmentTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updatePregnantTreatmentType(PregnantTreatmentType pregnantTreatmentType) throws OHServiceException {
+        List<OHExceptionMessage> errors = validatePregnantTreatmentType(pregnantTreatmentType, false);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
         return ioOperations.updatePregnantTreatmentType(pregnantTreatmentType);
 	}
 	
@@ -64,4 +77,32 @@ public class PregnantTreatmentTypeBrowserManager {
 	public boolean codeControl(String code) throws OHServiceException {
         return ioOperations.isCodePresent(code);
 	}
+
+    protected List<OHExceptionMessage> validatePregnantTreatmentType(PregnantTreatmentType pregnantTreatmentType, boolean insert) throws OHServiceException {
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        String key = pregnantTreatmentType.getCode();
+        if (StringUtils.isEmpty(key)){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.preagtreattype.pleaseinsertacode"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (key.length()>10){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.preagtreattype.codetoolong"),
+                    OHSeverityLevel.ERROR));
+        }
+        if(insert){
+            if (codeControl(key)){
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),MessageBundle.getMessage("angal.common.codealreadyinuse"),
+                        OHSeverityLevel.ERROR));
+            }
+        }
+        if (StringUtils.isEmpty(pregnantTreatmentType.getDescription())){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.preagtreattype.pleaseinsertavaliddescription"),
+                    OHSeverityLevel.ERROR));
+        }
+
+        return errors;
+    }
 }
