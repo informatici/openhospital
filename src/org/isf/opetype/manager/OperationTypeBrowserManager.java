@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.Menu;
 import org.isf.opetype.model.OperationType;
 import org.isf.opetype.service.OperationTypeIoOperation;
@@ -34,7 +33,7 @@ public class OperationTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newOperationType(OperationType operationType) throws OHServiceException {
-        List<OHExceptionMessage> errors = validateOperationType(operationType);
+        List<OHExceptionMessage> errors = validateOperationType(operationType, true);
         if(!errors.isEmpty()){
             throw new OHServiceException(errors);
         }
@@ -54,7 +53,7 @@ public class OperationTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateOperationType(OperationType operationType) throws OHServiceException {
-        List<OHExceptionMessage> errors = validateOperationType(operationType);
+        List<OHExceptionMessage> errors = validateOperationType(operationType, false);
         if(!errors.isEmpty()){
             throw new OHServiceException(errors);
         }
@@ -82,7 +81,7 @@ public class OperationTypeBrowserManager {
         return ioOperations.isCodePresent(code);
 	}
 
-    protected List<OHExceptionMessage> validateOperationType(OperationType operationType) {
+    protected List<OHExceptionMessage> validateOperationType(OperationType operationType, boolean insert) throws OHServiceException {
         String key = operationType.getCode();
         String description = operationType.getDescription();
         List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
@@ -95,6 +94,12 @@ public class OperationTypeBrowserManager {
             errors.add(new OHExceptionMessage("codeTooLongError",
                     MessageBundle.getMessage("angal.opetype.codetoolongmaxchars"),
                     OHSeverityLevel.ERROR));
+        }
+        if(insert){
+            if (codeControl(key)){
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),MessageBundle.getMessage("angal.common.codealreadyinuse"),
+                        OHSeverityLevel.ERROR));
+            }
         }
         if(description == null || description.isEmpty() ){
             errors.add(new OHExceptionMessage("descriptionEmptyError",
