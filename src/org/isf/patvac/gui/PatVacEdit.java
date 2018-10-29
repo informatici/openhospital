@@ -38,7 +38,6 @@ import org.isf.patvac.manager.PatVacManager;
 import org.isf.patvac.model.PatientVaccine;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
 import org.isf.vaccine.manager.VaccineBrowserManager;
@@ -514,22 +513,14 @@ public class PatVacEdit extends JDialog {
 			try {
 				pat = patBrowser.getPatientWithHeightAndWeight(regExp);
 			}catch(OHServiceException ex){
-				if(ex.getMessages() != null){
-					for(OHExceptionMessage msg : ex.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+				OHServiceExceptionUtil.showMessages(ex);
 				pat = new ArrayList<Patient>();
 			}
 		}else{
 			try {
 				pat = patBrowser.getPatient();
 			} catch (OHServiceException e) {
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		if(pat != null){
