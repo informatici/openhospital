@@ -3,6 +3,7 @@ package org.isf.priceslist.manager;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.Price;
@@ -10,6 +11,9 @@ import org.isf.priceslist.model.PriceList;
 import org.isf.priceslist.service.PricesListIoOperations;
 import org.isf.serviceprinting.print.PriceForPrint;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.util.StringUtils;
 
 public class PriceListManager {
 
@@ -52,6 +56,10 @@ public class PriceListManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newList(PriceList list) throws OHServiceException {
+	    java.util.List<OHExceptionMessage> errors = validatePriceList(list);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
         return ioOperations.newList(list);
 	}
 
@@ -63,6 +71,10 @@ public class PriceListManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateList(PriceList updateList) throws OHServiceException {
+        java.util.List<OHExceptionMessage> errors = validatePriceList(updateList);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
         return ioOperations.updateList(updateList);
 	}
 
@@ -117,4 +129,30 @@ public class PriceListManager {
 		}
 		return pricePrint;
 	}
+
+    protected java.util.List<OHExceptionMessage> validatePriceList(PriceList priceList){
+        java.util.List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+
+        if (StringUtils.isEmpty(priceList.getCode())) { //$NON-NLS-1$
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.priceslist.pleaseinsertacode"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (StringUtils.isEmpty(priceList.getName())){ //$NON-NLS-1$
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.priceslist.pleaseinsertaname"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (StringUtils.isEmpty(priceList.getDescription())) { //$NON-NLS-1$
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.priceslist.pleaseinsertadescription"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (StringUtils.isEmpty(priceList.getCurrency())){ //$NON-NLS-1$
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.priceslist.pleaseinsertacurrency"),
+                    OHSeverityLevel.ERROR));
+        }
+        return errors;
+    }
 }
