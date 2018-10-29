@@ -86,7 +86,7 @@ public class OperationTypeBrowserManager {
         String key = operationType.getCode();
         String description = operationType.getDescription();
         List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
-        if(key.isEmpty() ){
+        if(key == null || key.isEmpty() ){
             errors.add(new OHExceptionMessage("codeEmptyError",
                     MessageBundle.getMessage("angal.opetype.pleaseinsertacode"),
                     OHSeverityLevel.ERROR));
@@ -96,7 +96,7 @@ public class OperationTypeBrowserManager {
                     MessageBundle.getMessage("angal.opetype.codetoolongmaxchars"),
                     OHSeverityLevel.ERROR));
         }
-        if(description.isEmpty() ){
+        if(description == null || description.isEmpty() ){
             errors.add(new OHExceptionMessage("descriptionEmptyError",
                     MessageBundle.getMessage("angal.opetype.pleaseinsertavaliddescription"),
                     OHSeverityLevel.ERROR));

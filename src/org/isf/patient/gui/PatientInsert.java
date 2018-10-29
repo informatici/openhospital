@@ -31,7 +31,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
 public class PatientInsert extends JDialog implements ActionListener{
 	
@@ -285,11 +285,7 @@ public class PatientInsert extends JDialog implements ActionListener{
 											}
 										}
 									}catch(OHServiceException ex){
-										if(ex.getMessages() != null){
-											for(OHExceptionMessage msg : ex.getMessages()){
-												JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-											}
-										}
+                                        OHServiceExceptionUtil.showMessages(ex);
 									}
 									if (ok) {
 										patient.setFirstName(jFirstNameTextField.getText());
@@ -322,11 +318,7 @@ public class PatientInsert extends JDialog implements ActionListener{
 										try{
 											result = manager.newPatient(patient);
 										}catch(OHServiceException ex){
-											if(ex.getMessages() != null){
-												for(OHExceptionMessage msg : ex.getMessages()){
-													JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-												}
-											}
+                                            OHServiceExceptionUtil.showMessages(ex);
 										}
 										if (result) {
 											firePatientInserted(patient);
@@ -358,11 +350,7 @@ public class PatientInsert extends JDialog implements ActionListener{
 									}
 								}
 							}catch(OHServiceException ex){
-								if(ex.getMessages() != null){
-									for(OHExceptionMessage msg : ex.getMessages()){
-										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-									}
-								}
+                                OHServiceExceptionUtil.showMessages(ex);
 							}
 						}else{
 							ok=true;
@@ -399,11 +387,7 @@ public class PatientInsert extends JDialog implements ActionListener{
 						try{
 							result = manager.updatePatient(patient);
 						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+                            OHServiceExceptionUtil.showMessages(ex);
 						}
 						if (result) {
 							firePatientUpdated(patient);

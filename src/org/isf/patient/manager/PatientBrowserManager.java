@@ -15,6 +15,7 @@ import org.isf.patient.service.PatientIoOperations;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.util.StringUtils;
 
 
 public class PatientBrowserManager {
@@ -29,6 +30,10 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newPatient(Patient patient) throws OHServiceException {
+        List<OHExceptionMessage> errors = validatePatient(patient);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
         return ioOperations.newPatient(patient);
 	}
 	
@@ -41,6 +46,10 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updatePatient(Patient patient) throws OHServiceException {
+        List<OHExceptionMessage> errors = validatePatient(patient);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
         return ioOperations.updatePatient(patient);
 	}
 	
@@ -239,4 +248,40 @@ public class PatientBrowserManager {
             }
             return ioOperations.mergePatientHistory(mergedPatient, patient2);
 	}
+
+    protected List<OHExceptionMessage> validatePatient(Patient patient){
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+
+        if (StringUtils.isEmpty(patient.getFirstName())) {
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.patient.insertfirstname"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (StringUtils.isEmpty(patient.getSecondName())) {
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.patient.insertsecondname"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (!checkAge(patient)) {
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.patient.insertvalidage"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (StringUtils.isEmpty(String.valueOf(patient.getSex()))) {
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), "Please select a sex",
+                    OHSeverityLevel.ERROR));
+        }
+
+        return errors;
+    }
+
+    private boolean checkAge(Patient patient) {
+	    Date now = new Date();
+        Date birthDate = patient.getBirthDate();
+
+        if(birthDate == null || birthDate.after(now)){
+            return false;
+        }
+        if(patient.getAge() < 0 || patient.getAge() > 200){
+            return false;
+        }
+        return true;
+    }
 }

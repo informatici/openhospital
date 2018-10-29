@@ -48,7 +48,7 @@ import org.isf.generaldata.SmsParameters;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.video.gui.PatientPhotoPanel;
 import org.joda.time.DateTime;
@@ -424,11 +424,7 @@ public class PatientInsertExtended extends JDialog {
 								}
 							}
 						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+                            OHServiceExceptionUtil.showMessages(ex);
 						}
 						if (ok) {
 							patient.setFirstName(firstName);
@@ -499,11 +495,7 @@ public class PatientInsertExtended extends JDialog {
 							try{
 								result = manager.newPatient(patient);
 							}catch(OHServiceException ex){
-								if(ex.getMessages() != null){
-									for(OHExceptionMessage msg : ex.getMessages()){
-										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-									}
-								}
+								OHServiceExceptionUtil.showMessages(ex);
 							}
 							BusyState.setBusyState(PatientInsertExtended.this, false);
 							if (result)
@@ -595,11 +587,7 @@ public class PatientInsertExtended extends JDialog {
 						try{
 							result = manager.updatePatient(patient);
 						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+                            OHServiceExceptionUtil.showMessages(ex);
 						}
 						BusyState.setBusyState(PatientInsertExtended.this, false);
 						if (result) {
@@ -660,11 +648,7 @@ public class PatientInsertExtended extends JDialog {
 				try {
 					ageType = at.getTypeByCode(index);
 				}catch(OHServiceException e){
-					if(e.getMessages() != null){
-						for(OHExceptionMessage msg : e.getMessages()){
-							JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-						}
-					}
+                    OHServiceExceptionUtil.showMessages(e);
 				}
 			} else
 				return false;
@@ -1467,11 +1451,7 @@ public class PatientInsertExtended extends JDialog {
 				ageList = at.getAgeType();
 			}catch(OHServiceException e){
 				ageList = new ArrayList<AgeType>();
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 			jAgeDescComboBox.addItem("");
 			for (AgeType ag : ageList) {
