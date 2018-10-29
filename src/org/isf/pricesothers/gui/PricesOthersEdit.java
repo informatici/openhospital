@@ -131,19 +131,7 @@ public class PricesOthersEdit extends JDialog {
 			jButtonOK.addActionListener(new ActionListener() {
 				
 				public void actionPerformed(ActionEvent event) {
-					if (jTextFieldCode.getText().equals("")) {  //$NON-NLS-1$
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.pricesothers.pleaseinsertacode"));  //$NON-NLS-1$
-						return;
-					}	
-					if (jTextFieldDescription.getText().equals("")) {  //$NON-NLS-1$
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.pricesothers.pleaseinsertadescription")); //$NON-NLS-1$
-						return;
-					}
-								
+
 					pOther.setCode(jTextFieldCode.getText());
 					pOther.setDescription(jTextFieldDescription.getText());
 					pOther.setOpdInclude(jCheckBoxOPD.isSelected());
