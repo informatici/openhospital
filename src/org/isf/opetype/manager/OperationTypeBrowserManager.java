@@ -37,11 +37,6 @@ public class OperationTypeBrowserManager {
         if(!errors.isEmpty()){
             throw new OHServiceException(errors);
         }
-        if (codeControl(operationType.getCode())){
-            throw new OHServiceException(new OHExceptionMessage(null,
-                    MessageBundle.getMessage("angal.common.codealreadyinuse"),
-                    OHSeverityLevel.ERROR));
-        }
         return ioOperations.newOperationType(operationType);
 	}
 
