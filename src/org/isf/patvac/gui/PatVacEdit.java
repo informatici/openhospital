@@ -686,32 +686,10 @@ public class PatVacEdit extends JDialog {
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					// vaccine date
-					if (null == vaccineDateFieldCal.getDate()) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patvac.pleaseinsertvaccinedate"));
-						return;
-					}
 
 					GregorianCalendar gregDate = new GregorianCalendar();
 					gregDate.setTime(vaccineDateFieldCal.getDate());
-					// check on progressive
-					try {
-						int prg = Integer.parseInt(progrTextField.getText());
-						if (prg < 0) {
-							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patvac.pleaseinsertavalidprogressive"));
-							return;
-						}
-						patVac.setProgr(prg);
-
-					} catch (NumberFormatException xx) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patvac.pleaseinsertavalidprogressive"));
-						return;
-					}
-					// check on vaccine
-					if (vaccineComboBox.getSelectedIndex() == 0) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patvac.pleaseselectavaccine"));
-						return;
-					}
+                    patVac.setProgr(Integer.parseInt(progrTextField.getText()));
 
 					// check on patient
 					if (selectedPatient == null) {

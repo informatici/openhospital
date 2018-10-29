@@ -11,12 +11,16 @@ package org.isf.patvac.manager;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.patvac.model.PatientVaccine;
 import org.isf.patvac.service.PatVacIoOperations;
 import org.isf.utils.exception.OHServiceException;
-
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.util.StringUtils;
 
 
 public class PatVacManager {
@@ -62,6 +66,10 @@ public class PatVacManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newPatientVaccine(PatientVaccine patVac) throws OHServiceException {
+        List<OHExceptionMessage> errors = validatePatientVaccine(patVac);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
         return ioOperations.newPatientVaccine(patVac);
 	}
 
@@ -73,6 +81,10 @@ public class PatVacManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updatePatientVaccine(PatientVaccine patVac) throws OHServiceException {
+        List<OHExceptionMessage> errors = validatePatientVaccine(patVac);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
         return ioOperations.updatePatientVaccine(patVac);
 	}
 
@@ -97,5 +109,34 @@ public class PatVacManager {
 	public int getProgYear(int year) throws OHServiceException {
         return ioOperations.getProgYear(year);
 	}
+
+    protected List<OHExceptionMessage> validatePatientVaccine(PatientVaccine patientVaccine){
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+
+        if(patientVaccine.getVaccineDate() == null){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.patvac.pleaseinsertvaccinedate"),
+                    OHSeverityLevel.ERROR));
+        }
+        if(patientVaccine.getProgr() < 0){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.patvac.pleaseinsertavalidprogressive"),
+                    OHSeverityLevel.ERROR));
+        }
+        if(patientVaccine.getVaccine() == null){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.patvac.pleaseselectavaccine"),
+                    OHSeverityLevel.ERROR));
+        }
+        if(patientVaccine.getPatient() == null
+                || StringUtils.isEmpty(patientVaccine.getPatName())
+                || StringUtils.isEmpty(String.valueOf(patientVaccine.getPatSex()))){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.patvac.pleaseselectapatient"),
+                    OHSeverityLevel.ERROR));
+        }
+
+        return errors;
+    }
 }
 
