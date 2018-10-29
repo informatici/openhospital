@@ -191,43 +191,8 @@ public class PregnantTreatmentTypeEdit extends JDialog{
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					String key = codeTextField.getText();
 					PregnantTreatmentTypeBrowserManager manager = new PregnantTreatmentTypeBrowserManager();
-					if (key.equals("")){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.preagtreattype.pleaseinsertacode"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}	
-					//System.out.print(key.length());
-					if (key.length()>10){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.preagtreattype.codetoolong"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						
-						return;	
-					}
+
 					try{
-						if(insert){
-							if (manager.codeControl(key)){
-								JOptionPane.showMessageDialog(				
-										null,
-										MessageBundle.getMessage("angal.common.codealreadyinuse"),
-										MessageBundle.getMessage("angal.hospital"),
-										JOptionPane.PLAIN_MESSAGE);
-								codeTextField.setText("");
-								return;	
-							}};
-							if (descriptionTextField.getText().equals("")){
-								JOptionPane.showMessageDialog(				
-										null,
-										MessageBundle.getMessage("angal.preagtreattype.pleaseinsertavaliddescription"),
-										MessageBundle.getMessage("angal.hospital"),
-										JOptionPane.PLAIN_MESSAGE);
-								return;	
-							}
 							if (descriptionTextField.getText().equals(lastdescription)){
 								dispose();	
 							}

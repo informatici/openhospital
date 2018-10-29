@@ -12,18 +12,14 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
 import org.isf.patient.model.Patient;
 import org.isf.patient.service.PatientIoOperations;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 
 public class PatientBrowserManager {
 	
-	private final Logger logger = LoggerFactory.getLogger(PatientBrowserManager.class);
-
 	private PatientIoOperations ioOperations = Menu.getApplicationContext().getBean(PatientIoOperations.class);
 	
 	/**
@@ -34,21 +30,11 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newPatient(Patient patient) throws OHServiceException {
-		try {
-			return ioOperations.newPatient(patient);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        List<OHExceptionMessage> errors = validatePatient(patient);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        return ioOperations.newPatient(patient);
 	}
 	
 	/**
@@ -60,58 +46,12 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updatePatient(Patient patient) throws OHServiceException {
-		try {
-			return ioOperations.updatePatient(patient);
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}	
+        List<OHExceptionMessage> errors = validatePatient(patient);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        return ioOperations.updatePatient(patient);
 	}
-	
-	/**
-	 * 
-	 * method that update an existing Patient in the db
-	 * 
-	 * @param patient
-	 * @param check - if true check if the Patient has been modified since last read
-	 * @return true - if the existing Patient has been updated
-	 * @throws OHServiceException 
-	 */
-//	private boolean updatePatient(Patient patient, boolean check) throws OHServiceException {
-//		try {
-//			if (!ioOperations.updatePatient(patient, check)) {
-//				int ok = JOptionPane.showConfirmDialog(null,
-//						MessageBundle.getMessage("angal.sql.thedatahasbeenupdatedbysomeoneelse") + ".\n" + MessageBundle.getMessage("angal.patient.doyouwanttooverwritethedata") + "?",
-//						MessageBundle.getMessage("angal.patient.select"), JOptionPane.YES_NO_OPTION);
-//				if (ok != JOptionPane.OK_OPTION)
-//					return false;
-//				else 
-//					return this.updatePatient(patient, false);
-//			} else 
-//				return true;
-//		} catch(OHException e){
-//			/*Already cached exception with OH specific error message - 
-//			 * create ready to return OHServiceException and keep existing error message
-//			 */
-//			logger.error("", e);
-//			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.patient.titleedit"), 
-//					e.getMessage(), OHSeverityLevel.ERROR));
-//		}catch(Exception e){
-//			//Any exception
-//			logger.error("", e);
-//			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.patient.titleedit"), 
-//					MessageBundle.getMessage("angal.admission.cannotmergeadmittedpatients"), OHSeverityLevel.ERROR));
-//		}	
-//	}
 	
 	/**
 	 * method that returns the full list of Patients not logically deleted
@@ -120,21 +60,7 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Patient> getPatient() throws OHServiceException {
-		try {
-			return ioOperations.getPatients();
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}	
+        return ioOperations.getPatients();
 	}
 	
 	/**
@@ -145,21 +71,7 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public Patient getPatient(String name) throws OHServiceException {
-		try {
-			return ioOperations.getPatient(name);
-		} catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getPatient(name);
 	}
 
 	/**
@@ -170,48 +82,10 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public Patient getPatient(Integer code) throws OHServiceException {
-		try {
-			return ioOperations.getPatient(code);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getPatient(code);
 	}
 	
-	/**
-	 * Retrieve patient's photo for the specified patient
-	 * 
-	 * @param patient - the specified patient
-	 * @return {@link Patient} with photo (if any)
-	 * @throws OHServiceException
-	 */
-//	public Patient getPatientPhoto(Patient patient) throws OHServiceException {
-//		try {
-//			return ioOperations.getPatientPhoto(patient);
-//		}  catch(OHException e){
-//			/*Already cached exception with OH specific error message - 
-//			 * create ready to return OHServiceException and keep existing error message
-//			 */
-//			logger.error("", e);
-//			throw new OHServiceException(e, new OHExceptionMessage(null, 
-//					e.getMessage(), OHSeverityLevel.ERROR));
-//		}catch(Exception e){
-//			//Any exception
-//			logger.error("", e);
-//			throw new OHServiceException(e, new OHExceptionMessage(null, 
-//					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-//		}
-//	}
-	
+
 	/**
 	 * get a Patient by his/her ID, even if he/her has been logically deleted
 	 * 
@@ -220,21 +94,7 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public Patient getPatientAll(Integer code) throws OHServiceException {
-		try {
-			return ioOperations.getPatientAll(code);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getPatientAll(code);
 	}
 	
 	/**
@@ -244,21 +104,7 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public int getNextPatientCode() throws OHServiceException {
-		try {
-			return ioOperations.getNextPatientCode();
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getNextPatientCode();
 	}
 
     protected List<OHExceptionMessage> validateMergePatients(Patient mergedPatient, Patient patient2) throws OHServiceException {
@@ -304,21 +150,7 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean deletePatient(Patient patient) throws OHServiceException {
-		try {
-			return ioOperations.deletePatient(patient);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.deletePatient(patient);
 	}
 	
 	/**
@@ -329,21 +161,7 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean isPatientPresent(String name) throws OHServiceException {
-		try {
-			return ioOperations.isPatientPresent(name);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.isPatientPresent(name);
 	}
 	
 	/**
@@ -355,21 +173,7 @@ public class PatientBrowserManager {
 	 * @throws OHException
 	 */
 	public ArrayList<Patient> getPatientWithHeightAndWeight(String regex) throws OHServiceException{
-		try {
-			return ioOperations.getPatientsWithHeightAndWeight(regex);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getPatientsWithHeightAndWeight(regex);
 	}
 
 	/**
@@ -380,9 +184,6 @@ public class PatientBrowserManager {
 	 * @return true - if no OHServiceException occurred
 	 */
 	public boolean mergePatient(Patient mergedPatient, Patient patient2) throws OHServiceException {
-		
-		try{
-			
 			if (mergedPatient.getBirthDate() != null &&
 					mergedPatient.getAgetype().compareTo("") == 0) {
 				//mergedPatient only Age
@@ -446,22 +247,41 @@ public class PatientBrowserManager {
                 throw new OHServiceException(errors);
             }
             return ioOperations.mergePatientHistory(mergedPatient, patient2);
-		}catch(OHServiceException e){
-			//Already managed, ready to return OHServiceException
-			logger.error("", e);
-			throw e;
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"), 
-					MessageBundle.getMessage("angal.admission.cannotmergeadmittedpatients"), OHSeverityLevel.ERROR));
-		}
 	}
+
+    protected List<OHExceptionMessage> validatePatient(Patient patient){
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+
+        if (StringUtils.isEmpty(patient.getFirstName())) {
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.patient.insertfirstname"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (StringUtils.isEmpty(patient.getSecondName())) {
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.patient.insertsecondname"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (!checkAge(patient)) {
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.patient.insertvalidage"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (StringUtils.isEmpty(String.valueOf(patient.getSex()))) {
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), "Please select a sex",
+                    OHSeverityLevel.ERROR));
+        }
+
+        return errors;
+    }
+
+    private boolean checkAge(Patient patient) {
+	    Date now = new Date();
+        Date birthDate = patient.getBirthDate();
+
+        if(birthDate == null || birthDate.after(now)){
+            return false;
+        }
+        if(patient.getAge() < 0 || patient.getAge() > 200){
+            return false;
+        }
+        return true;
+    }
 }

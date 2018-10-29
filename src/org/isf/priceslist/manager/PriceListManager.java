@@ -10,17 +10,13 @@ import org.isf.priceslist.model.Price;
 import org.isf.priceslist.model.PriceList;
 import org.isf.priceslist.service.PricesListIoOperations;
 import org.isf.serviceprinting.print.PriceForPrint;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 public class PriceListManager {
 
-	private final Logger logger = LoggerFactory.getLogger(PriceListManager.class);
-	
 	private PricesListIoOperations ioOperations = Menu.getApplicationContext().getBean(PricesListIoOperations.class);
 	
 	/**
@@ -29,21 +25,7 @@ public class PriceListManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<PriceList> getLists() throws OHServiceException {
-		try {
-			return ioOperations.getLists();
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getLists();
 	}
 	
 	/**
@@ -52,21 +34,7 @@ public class PriceListManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Price> getPrices() throws OHServiceException {
-		try {
-			return ioOperations.getPrices();
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getPrices();
 	}
 
 	/**
@@ -77,21 +45,7 @@ public class PriceListManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updatePrices(PriceList list, ArrayList<Price> prices) throws OHServiceException {
-		try {
-			return ioOperations.updatePrices(list, prices);
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.updatePrices(list, prices);
 	}
 
 	/**
@@ -102,21 +56,11 @@ public class PriceListManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newList(PriceList list) throws OHServiceException {
-		try {
-			return ioOperations.newList(list);
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+	    java.util.List<OHExceptionMessage> errors = validatePriceList(list);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        return ioOperations.newList(list);
 	}
 
 	/**
@@ -127,21 +71,11 @@ public class PriceListManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateList(PriceList updateList) throws OHServiceException {
-		try {
-			return ioOperations.updateList(updateList);
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        java.util.List<OHExceptionMessage> errors = validatePriceList(updateList);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        return ioOperations.updateList(updateList);
 	}
 
 	/**
@@ -152,21 +86,7 @@ public class PriceListManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean deleteList(PriceList deleteList) throws OHServiceException {
-		try {
-			return ioOperations.deleteList(deleteList);
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.deleteList(deleteList);
 	}
 
 	/**
@@ -190,21 +110,7 @@ public class PriceListManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean copyList(PriceList list, double factor, double step) throws OHServiceException {
-		try {
-			return ioOperations.copyList(list, factor, step);
-		}catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.copyList(list, factor, step);
 	}
 	
 	public ArrayList<PriceForPrint> convertPrice(PriceList listSelected, ArrayList<Price> prices) {
@@ -223,4 +129,30 @@ public class PriceListManager {
 		}
 		return pricePrint;
 	}
+
+    protected java.util.List<OHExceptionMessage> validatePriceList(PriceList priceList){
+        java.util.List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+
+        if (StringUtils.isEmpty(priceList.getCode())) { //$NON-NLS-1$
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.priceslist.pleaseinsertacode"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (StringUtils.isEmpty(priceList.getName())){ //$NON-NLS-1$
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.priceslist.pleaseinsertaname"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (StringUtils.isEmpty(priceList.getDescription())) { //$NON-NLS-1$
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.priceslist.pleaseinsertadescription"),
+                    OHSeverityLevel.ERROR));
+        }
+        if (StringUtils.isEmpty(priceList.getCurrency())){ //$NON-NLS-1$
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.priceslist.pleaseinsertacurrency"),
+                    OHSeverityLevel.ERROR));
+        }
+        return errors;
+    }
 }

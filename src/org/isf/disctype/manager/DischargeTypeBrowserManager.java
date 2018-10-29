@@ -10,13 +10,9 @@ import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DischargeTypeBrowserManager {
 
-	private final Logger logger = LoggerFactory.getLogger(DischargeTypeBrowserManager.class);
-	
 	private DischargeTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(DischargeTypeIoOperation.class);
 
 	/**
@@ -26,16 +22,7 @@ public class DischargeTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<DischargeType> getDischargeType() throws OHServiceException {
-		try {
-			return ioOperations.getDischargeType();
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getDischargeType();
 	}
 
 	/**
@@ -46,20 +33,11 @@ public class DischargeTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newDischargeType(DischargeType dischargeType) throws OHServiceException {
-		try {
-            List<OHExceptionMessage> errors = validateDischargeType(dischargeType, true);
-            if(!errors.isEmpty()){
-                throw new OHServiceException(errors);
-            }
-			return ioOperations.newDischargeType(dischargeType);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        List<OHExceptionMessage> errors = validateDischargeType(dischargeType, true);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        return ioOperations.newDischargeType(dischargeType);
 	}
 
 	/**
@@ -70,20 +48,11 @@ public class DischargeTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateDischargeType(DischargeType dischargeType) throws OHServiceException {
-		try {
-            List<OHExceptionMessage> errors = validateDischargeType(dischargeType, false);
-            if(!errors.isEmpty()){
-                throw new OHServiceException(errors);
-            }
-			return ioOperations.newDischargeType(dischargeType);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        List<OHExceptionMessage> errors = validateDischargeType(dischargeType, false);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        return ioOperations.newDischargeType(dischargeType);
 	}
 
 	/**
@@ -94,16 +63,7 @@ public class DischargeTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean codeControl(String code) throws OHServiceException {
-		try {
-			return ioOperations.isCodePresent(code);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.isCodePresent(code);
 	}
 
 	/**
@@ -114,20 +74,11 @@ public class DischargeTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean deleteDischargeType(DischargeType dischargeType) throws OHServiceException {
-		try {
-            List<OHExceptionMessage> errors = validateDeleteDischargeType(dischargeType);
-            if(!errors.isEmpty()){
-                throw new OHServiceException(errors);
-            }
-			return ioOperations.deleteDischargeType(dischargeType);
-        } catch (OHServiceException e) {
-            throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+        List<OHExceptionMessage> errors = validateDeleteDischargeType(dischargeType);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        return ioOperations.deleteDischargeType(dischargeType);
 	}
 
     private List<OHExceptionMessage> validateDeleteDischargeType(DischargeType dischargeType) throws OHServiceException {

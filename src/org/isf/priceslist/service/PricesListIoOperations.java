@@ -5,15 +5,15 @@ import java.util.List;
 
 import org.isf.priceslist.model.Price;
 import org.isf.priceslist.model.PriceList;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class PricesListIoOperations {
 
 	@Autowired
@@ -26,9 +26,9 @@ public class PricesListIoOperations {
 	 * return the list of {@link List}s in the DB
 	 * 
 	 * @return the list of {@link List}s
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<PriceList> getLists() throws OHException {
+	public ArrayList<PriceList> getLists() throws OHServiceException {
 		ArrayList<PriceList> pList = null;
 			
 
@@ -41,9 +41,9 @@ public class PricesListIoOperations {
 	 * return the list of {@link Price}s in the DB
 	 * 
 	 * @return the list of {@link Price}s
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<Price> getPrices() throws OHException {
+	public ArrayList<Price> getPrices() throws OHServiceException {
 		ArrayList<Price> pPrice = null;
 						
 
@@ -58,11 +58,11 @@ public class PricesListIoOperations {
 	 * @param list - the {@link List}
 	 * @param prices - the list of {@link Price}s
 	 * @return <code>true</code> if the list has been replaced, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean updatePrices(
 			PriceList list, 
-			ArrayList<Price> prices) throws OHException {
+			ArrayList<Price> prices) throws OHServiceException {
 		boolean result = true;
 		
 		
@@ -74,7 +74,7 @@ public class PricesListIoOperations {
 	}
 	
 	private boolean _deletePricesInsideList(
-			int id) throws OHException 
+			int id) throws OHServiceException 
     {			
 		boolean result = true;
 
@@ -86,7 +86,7 @@ public class PricesListIoOperations {
 	
 	private boolean _insertNewPricesInsideList(
 			PriceList list,
-			ArrayList<Price> prices) throws OHException 
+			ArrayList<Price> prices) throws OHServiceException 
     {	
 		boolean result = true;
         		
@@ -107,10 +107,10 @@ public class PricesListIoOperations {
 	 * 
 	 * @param list - the {@link List}
 	 * @return <code>true</code> if the list has been inserted, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean newList(
-			PriceList list) throws OHException {
+			PriceList list) throws OHServiceException {
 		boolean result = true;
         		
 		
@@ -124,10 +124,10 @@ public class PricesListIoOperations {
 	 * 
 	 * @param list - the {@link List} to update
 	 * @return <code>true</code> if the list has been updated, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean updateList(
-			PriceList list) throws OHException {
+			PriceList list) throws OHServiceException {
 		boolean result = false;
         				
 
@@ -144,10 +144,10 @@ public class PricesListIoOperations {
 	 * 
 	 * @param list - the {@link List} to delete
 	 * @return <code>true</code> if the list has been deleted, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean deleteList(
-			PriceList list) throws OHException {
+			PriceList list) throws OHServiceException {
 		boolean result = true;
 
 		
@@ -159,7 +159,7 @@ public class PricesListIoOperations {
 	}	
 	
 	private boolean _deletePriceList(
-			int id) throws OHException 
+			int id) throws OHServiceException 
     {	
 		boolean result = true;
 		
@@ -176,12 +176,12 @@ public class PricesListIoOperations {
 	 * @param factor - the multiplying factor
 	 * @param step - the rounding step
 	 * @return <code>true</code> if the list has been duplicated, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean copyList(
 			PriceList list, 
 			double factor, 
-			double step) throws OHException 
+			double step) throws OHServiceException 
 	{
     	PriceList newList = _insertNewPriceList(list);
 		boolean result = true; 			
@@ -212,7 +212,7 @@ public class PricesListIoOperations {
     }
 
 	private PriceList _insertNewPriceList(
-			PriceList list) throws OHException 
+			PriceList list) throws OHServiceException 
     {					
 		PriceList newList = new PriceList();
 		
