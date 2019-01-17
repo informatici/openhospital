@@ -27,6 +27,69 @@
 		</resources>
 		<plugins>
 			<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>build-helper-maven-plugin</artifactId>
+			<version>1.9.1</version>
+			<executions>
+				<execution>
+					<id>add-test-source</id>
+					<phase>process-resources</phase>
+					<goals>
+						<goal>add-test-source</goal>
+					</goals>
+					<configuration>
+						<sources>
+							<source>src/org/isf/accounting/test</source>
+							<source>src/org/isf/admission/test</source>
+							<source>src/org/isf/admtype/test</source>
+							<source>src/org/isf/agetype/test</source>
+							<source>src/org/isf/dicom/test</source>
+							<source>src/org/isf/disctype/test</source>
+							<source>src/org/isf/disease/test</source>
+							<source>src/org/isf/distype/test</source>
+							<source>src/org/isf/dlvrrestype/test</source>
+							<source>src/org/isf/dlvrtype/test</source>
+							<source>src/org/isf/exa/test</source>
+							<source>src/org/isf/examination/test</source>
+							<source>src/org/isf/exatype/test</source>
+							<source>src/org/isf/generaldata/test</source>
+							<source>src/org/isf/help/test</source>
+							<source>src/org/isf/hospital/test</source>
+							<source>src/org/isf/lab/test</source>
+							<source>src/org/isf/malnutrition/test</source>
+							<source>src/org/isf/medicals/test</source>
+							<source>src/org/isf/medicalstock/test</source>
+							<source>src/org/isf/medicalstockward/test</source>
+							<source>src/org/isf/medstockmovtype/test</source>
+							<source>src/org/isf/medtype/test</source>
+							<source>src/org/isf/menu/test</source>
+							<source>src/org/isf/opd/test</source>
+							<source>src/org/isf/operation/test</source>
+							<source>src/org/isf/opetype/test</source>
+							<source>src/org/isf/patient/test</source>
+							<source>src/org/isf/patvac/test</source>
+							<source>src/org/isf/pregtreattype/test</source>
+							<source>src/org/isf/priceslist/test</source>
+							<source>src/org/isf/pricesothers/test</source>
+							<source>src/org/isf/serviceprinting/test</source>
+							<source>src/org/isf/sms/test</source>
+							<source>src/org/isf/stat/test</source>
+							<source>src/org/isf/supplier/test</source>
+							<source>src/org/isf/test/test</source>
+							<source>src/org/isf/therapy/test</source>
+							<source>src/org/isf/utils/test</source>
+							<source>src/org/isf/vaccine/test</source>
+							<source>src/org/isf/vactype/test</source>
+							<source>src/org/isf/video/test</source>
+							<source>src/org/isf/visits/test</source>
+							<source>src/org/isf/ward/test</source>
+							<source>src/org/isf/xmpp/test</source>
+						</sources>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
