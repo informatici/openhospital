@@ -7,7 +7,7 @@
 	<version>2.0</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.framework.version>4.3.10.RELEASE</spring.framework.version>
+		<spring.framework.version>4.3.18.RELEASE</spring.framework.version>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
