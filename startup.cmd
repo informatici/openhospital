@@ -3,11 +3,13 @@ set OH_HOME=%~dps0
 REM if java is not in the system path set JAVA_HOME variable
 REM set JAVA_HOME=%OH_HOME%jvm\bin
 
-for %%i in (java.exe) do set JAVA=%%~$PATH:i
+for %%i in (java.exe) do set JAVA=%%~s$PATH:i
 
 IF NOT DEFINED JAVA (
 	@echo Java not found
 	EXIT /B
+) ELSE (
+	@Echo Java found at %JAVA%
 )
 
 set OH_BIN=%OH_HOME%bin
