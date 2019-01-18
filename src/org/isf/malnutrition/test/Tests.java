@@ -243,29 +243,6 @@ public class Tests
 	}
 
 	@Test
-	public void testIoGetMalnutritionLock() 
-	{
-		int code = 0;
-		
-		
-		try 
-		{		
-			code = _setupTestMalnutrition(false);
-			Malnutrition foundMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code); 
-			int lock = malnutritionIoOperation.getMalnutritionLock(code);
-			
-			assertEquals(foundMalnutrition.getLock(), lock);
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}	
-
-	@Test
 	public void testIoGetLastMalnutrition() 
 	{
 		int code = 0;

@@ -5,23 +5,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
-import org.isf.operation.model.Operation;
-import org.isf.operation.test.TestOperation;
-import org.isf.operation.test.TestOperationContext;
-import org.isf.opetype.model.OperationType;
-import org.isf.opetype.test.TestOperationType;
-import org.isf.opetype.test.TestOperationTypeContext;
-import org.isf.patient.model.Patient;
-import org.isf.patient.test.TestPatient;
-import org.isf.patient.test.TestPatientContext;
-import org.isf.pregtreattype.model.PregnantTreatmentType;
-import org.isf.pregtreattype.test.TestPregnantTreatmentType;
-import org.isf.pregtreattype.test.TestPregnantTreatmentTypeContext;
-import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.exception.OHException;
-import org.isf.ward.model.Ward;
-import org.isf.ward.test.TestWard;
-import org.isf.ward.test.TestWardContext;
 import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
 import org.isf.admission.service.AdmissionIoOperations;
@@ -43,6 +26,23 @@ import org.isf.dlvrrestype.test.TestDeliveryResultTypeContext;
 import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.dlvrtype.test.TestDeliveryType;
 import org.isf.dlvrtype.test.TestDeliveryTypeContext;
+import org.isf.operation.model.Operation;
+import org.isf.operation.test.TestOperation;
+import org.isf.operation.test.TestOperationContext;
+import org.isf.opetype.model.OperationType;
+import org.isf.opetype.test.TestOperationType;
+import org.isf.opetype.test.TestOperationTypeContext;
+import org.isf.patient.model.Patient;
+import org.isf.patient.test.TestPatient;
+import org.isf.patient.test.TestPatientContext;
+import org.isf.pregtreattype.model.PregnantTreatmentType;
+import org.isf.pregtreattype.test.TestPregnantTreatmentType;
+import org.isf.pregtreattype.test.TestPregnantTreatmentTypeContext;
+import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.exception.OHException;
+import org.isf.ward.model.Ward;
+import org.isf.ward.test.TestWard;
+import org.isf.ward.test.TestWardContext;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -437,8 +437,11 @@ public class Tests
 		try 
 		{		
 			id = _setupTestAdmission(false);
-			Admission foundAdmission = (Admission)jpa.find(Admission.class, id); 
-			result = admissionIoOperation.hasAdmissionModified(foundAdmission);
+			Admission foundAdmission = (Admission)jpa.find(Admission.class, id);
+			jpa.flush();
+			foundAdmission.setNote("Update");
+			result = admissionIoOperation.updateAdmission(foundAdmission);
+			Admission updateAdmission = (Admission)jpa.find(Admission.class, id); 
 			
 			assertEquals(false, result);
 		} 
