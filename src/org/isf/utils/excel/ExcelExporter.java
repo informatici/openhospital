@@ -22,7 +22,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JFileChooser;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableModel;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -669,5 +671,17 @@ public class ExcelExporter {
 				cell.setCellValue(val);
 			}
 		}
+	}
+	
+	public static JFileChooser getJFileChooserExcel(File defaultFilename) {
+		JFileChooser fcExcel = new JFileChooser();
+		FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xlsx)","xlsx");
+		FileNameExtensionFilter excelFilter2003 = new FileNameExtensionFilter("Excel 97-2003 (*.xls)","xls");
+		fcExcel.addChoosableFileFilter(excelFilter);
+		fcExcel.addChoosableFileFilter(excelFilter2003);
+		fcExcel.setFileFilter(excelFilter);
+		fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fcExcel.setSelectedFile(defaultFilename);
+		return fcExcel;
 	}
 }

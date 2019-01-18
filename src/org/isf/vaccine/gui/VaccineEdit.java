@@ -229,84 +229,39 @@ public class VaccineEdit extends JDialog {
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					if (insert){
-						String key = codeTextField.getText().trim();
-						if (key.equals("")){
-							JOptionPane.showMessageDialog(
-			                        null,
-			                        MessageBundle.getMessage("angal.vaccine.pleaseinsertacode"),
-			                        MessageBundle.getMessage("angal.hospital"),
-			                        JOptionPane.PLAIN_MESSAGE);
-							return;
-						}
-					    VaccineBrowserManager manager = new VaccineBrowserManager();
-                        try{
-                            if (manager.codeControl(key)){
-                                JOptionPane.showMessageDialog(
-                                        null,
-                                        MessageBundle.getMessage("angal.common.codealreadyinuse"),
-                                        MessageBundle.getMessage("angal.hospital"),
-                                        JOptionPane.PLAIN_MESSAGE);
-
-                                return;
-                            }
-                        } catch (OHServiceException e1) {
-                            OHServiceExceptionUtil.showMessages(e1);
-                        }
-
-					}
-					if (descriptionTextField.getText().trim().equals("")){
-						JOptionPane.showMessageDialog(
-		                        null,
-		                        MessageBundle.getMessage("angal.vaccine.pleaseinsertadescription"),
-		                        MessageBundle.getMessage("angal.hospital"),
-		                        JOptionPane.PLAIN_MESSAGE);
-						return;
-					}
-
-					VaccineBrowserManager manager = new VaccineBrowserManager();
-
+					
 					vaccine.setDescription(descriptionTextField.getText());
 					vaccine.setCode(codeTextField.getText());
 					vaccine.setVaccineType(new VaccineType(((VaccineType)vaccineTypeComboBox.getSelectedItem()).getCode(),
 							                        ((VaccineType)vaccineTypeComboBox.getSelectedItem()).getDescription()));
 
                     boolean result = false;
+                    VaccineBrowserManager manager = new VaccineBrowserManager();
                     if (insert) {
                         try {
                             result = manager.newVaccine(vaccine);
+                            if (result) {
+                                fireVaccineInserted();
+                                dispose();
+                            } else
+                            	JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                         } catch (OHServiceException e1) {
                             OHServiceExceptionUtil.showMessages(e1);
                         }
-                        if (result) {
-                            fireVaccineInserted();
-                        }
+                        
                     }else{
                         try{
-                            boolean recordUpdated = manager.hasVaccineModified(vaccine);
-                            if (!recordUpdated) {
-                                // it was not updated
-                                manager.updateVaccine(vaccine);
-                            } else {
-                                // it was updated by someone else
-                                String message = MessageBundle.getMessage("angal.admission.thedatahasbeenupdatedbysomeoneelse")	+ MessageBundle.getMessage("angal.admission.doyouwanttooverwritethedata");
-                                int response = JOptionPane.showConfirmDialog(null, message, MessageBundle.getMessage("angal.admission.select"), JOptionPane.YES_NO_OPTION);
-                                boolean overWrite = response== JOptionPane.OK_OPTION;
-                                if (overWrite) {
-                                    // the user has confirmed he wants to overwrite the record
-                                    manager.updateVaccine(vaccine);
-                                }
-                            }
                             result = manager.updateVaccine(vaccine);
+                            if (result) {
+                                fireVaccineUpdated();
+                                dispose();
+                            }
+                            else 
+                            	JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                         } catch (OHServiceException e1) {
                             OHServiceExceptionUtil.showMessages(e1);
                         }
-                        if (result) {
-                            fireVaccineUpdated();
-                        }
                     }
-                    if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.vaccine.thedatacouldnotbesaved"));
-                    else  dispose();
                 }
 			});
 		}

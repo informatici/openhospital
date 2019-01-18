@@ -6,11 +6,12 @@ package org.isf.examination.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+
 import org.isf.examination.model.PatientExamination;
 import org.isf.generaldata.ExaminationParameters;
 import org.isf.patient.model.Patient;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  */
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class ExaminationOperations {
 
 	@Autowired
@@ -57,10 +58,10 @@ public class ExaminationOperations {
 	 * 
 	 * @param path
 	 *            - the PatientHistory to save
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public void saveOrUpdate(
-			PatientExamination patex) throws OHException 
+			PatientExamination patex) throws OHServiceException 
 	{
 		repository.save(patex);
 		
@@ -68,7 +69,7 @@ public class ExaminationOperations {
 	}
 
 	public PatientExamination getByID(
-			int ID) throws OHException 
+			int ID) throws OHServiceException 
 	{
 		PatientExamination foundPatientExamination = repository.findOne(ID);
 		
@@ -76,7 +77,7 @@ public class ExaminationOperations {
 	}
 
 	public PatientExamination getLastByPatID(
-			int patID) throws OHException 
+			int patID) throws OHServiceException 
 	{
 		ArrayList<PatientExamination> patExamination = getByPatID(patID);
 		
@@ -85,13 +86,13 @@ public class ExaminationOperations {
 
 	public ArrayList<PatientExamination> getLastNByPatID(
 			int patID, 
-			int number) throws OHException 
+			int number) throws OHServiceException 
 	{
 		return (ArrayList<PatientExamination>)repository.findAllByIdOrderDescLimited(patID, number);
 	}
 
 	public ArrayList<PatientExamination> getByPatID(
-			int patID) throws OHException 
+			int patID) throws OHServiceException 
 	{
 		return (ArrayList<PatientExamination>)repository.findAllByIdOrderDesc(patID);
 	}

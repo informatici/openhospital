@@ -9,7 +9,6 @@ package org.isf.vactype.gui;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
-import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.util.EventListener;
 
@@ -23,12 +22,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.jobjects.*;
+import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.vactype.manager.VaccineTypeBrowserManager;
 import org.isf.vactype.model.VaccineType;
-import org.isf.generaldata.MessageBundle;
 
 public class VaccineTypeEdit extends JDialog{
 
@@ -201,76 +200,43 @@ public class VaccineTypeEdit extends JDialog{
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					String key = codeTextField.getText();
-					VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
-					if (key.equals("")){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.vactype.pleaseinsertacode"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}	
-					if(insert){
-					try {
-						if (manager.codeControl(key)){
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.common.codealreadyinuse"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							codeTextField.setText("");
-							return;	
-						}
-					} catch (OHServiceException e1) {
-                        OHServiceExceptionUtil.showMessages(e1);
-					}};
 					
-					if (descriptionTextField.getText().equals("")){
-						JOptionPane.showMessageDialog(				
-		                        null,
-		                        MessageBundle.getMessage("angal.vactype.pleaseinsertavaliddescription"),
-		                        MessageBundle.getMessage("angal.hospital"),
-		                        JOptionPane.PLAIN_MESSAGE);
-						return;	
-					}
-					if (descriptionTextField.getText().equals(lastdescription)){
-						dispose();	
-					}
 					vaccineType.setDescription(descriptionTextField.getText());
 					vaccineType.setCode(codeTextField.getText());
-					boolean result = false;
 					
+					boolean result;
+					VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
 					if (insert) {// inserting
 						try {
 							result = manager.newVaccineType(vaccineType);
+							if (result) {
+								fireVaccineInserted();
+								dispose();
+							} else
+								JOptionPane.showMessageDialog(null,
+										MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						} catch (OHServiceException e1) {
+							result = false;
 							OHServiceExceptionUtil.showMessages(e1);
 						}
-						if (result) {
-						    fireVaccineInserted();
-                        }
-						if (!result) JOptionPane.showMessageDialog(null,  MessageBundle.getMessage("angal.vactype.thedatacouldnotbesaved"));
-	                    else  dispose();
-                    }
-                    else { // updating
-                    	if (descriptionTextField.getText().equals(lastdescription)){
-    						dispose();	
-    					}else{
-    						try {
+					} else { // updating
+						if (descriptionTextField.getText().equals(lastdescription)){
+							dispose();	
+						}else {
+							try {
 								result = manager.updateVaccineType(vaccineType);
+								if (result) {
+									fireVaccineUpdated();
+									dispose();
+								} else
+									JOptionPane.showMessageDialog(null,
+											MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 							} catch (OHServiceException e1) {
+								result = false;
 								OHServiceExceptionUtil.showMessages(e1);
 							}
-						if (result) {
-							fireVaccineUpdated();
-                        }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.vactype.thedatacouldnotbesaved"));
-                        else  dispose();
-    					}
-                    	
+						}
 					}
-					
                 }
 			});
 		}

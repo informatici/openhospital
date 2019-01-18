@@ -7,15 +7,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -53,13 +50,14 @@ import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
+import org.isf.menu.gui.Menu;
 import org.isf.utils.db.NormalizeString;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.BusyState;
-import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
 import org.isf.utils.jobjects.TextPrompt.Show;
+import org.isf.utils.time.TimeTools;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.isf.xmpp.gui.CommunicationFrame;
@@ -72,9 +70,9 @@ public class MovStockMultipleDischarging extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final String DATE_FORMAT_DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
-	private static final String DATE_FORMAT_DD_MM_YYYY = "dd/MM/yyyy"; //$NON-NLS-1$
-	private static final int CODE_COLUMN_WIDTH = 100;
+	private final String DATE_FORMAT_DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
+	private final String DATE_FORMAT_DD_MM_YYYY = "dd/MM/yyyy"; //$NON-NLS-1$
+	private final int CODE_COLUMN_WIDTH = 100;
 	
 	private JPanel mainPanel;
 	private JTextField jTextFieldReference;
@@ -94,7 +92,7 @@ public class MovStockMultipleDischarging extends JDialog {
 			MessageBundle.getMessage("angal.medicalstock.multipledischarging.expiringdate") //$NON-NLS-1$
 	}; 
 	private final Class[] columnClasses = { String.class, String.class, Integer.class, Integer.class, String.class, Integer.class, String.class, String.class};
-	private boolean[] columnEditable = { false, false, false, false, true, false, false, false};
+	private boolean[] columnEditable = { false, false, false, true, true, false, false, false};
 	private int[] columnWidth = { 50, 100, 70, 50, 70, 50, 100, 80};
 	private boolean[] columnResizable = { false, true, false, false, false, false, false, false};
 	private boolean[] columnVisible = { true, true, true, true, true, true, !GeneralData.AUTOMATICLOT, !GeneralData.AUTOMATICLOT };
@@ -106,7 +104,7 @@ public class MovStockMultipleDischarging extends JDialog {
 	private JTableModel model;
 	private String[] qtyOption = new String[] {
 			MessageBundle.getMessage("angal.medicalstock.multipledischarging.units"), //$NON-NLS-1$
-			MessageBundle.getMessage("angal.medicalstock.multipledischarging.packet") //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstock.multipledischarging.packets") //$NON-NLS-1$
 	}; 
 	private final int UNITS = 0;
 	private final int PACKETS = 1;
@@ -115,10 +113,11 @@ public class MovStockMultipleDischarging extends JDialog {
 	private JComboBox shareWith = null;
 	private Interaction share;
 	private ArrayList<Medical> pool = new ArrayList<Medical>();
+	
+	MovStockInsertingManager movManager = Menu.getApplicationContext().getBean(MovStockInsertingManager.class);
 
 	/**
 	 * Launch the application.
-	 * TODO: externalize strings
 	 */
 	public static void main(String[] args) {
 		try {
@@ -245,7 +244,10 @@ public class MovStockMultipleDischarging extends JDialog {
 			jTextFieldSearch.setPreferredSize(new Dimension(300, 30));
 			jTextFieldSearch.setHorizontalAlignment(SwingConstants.LEFT);
 			jTextFieldSearch.setColumns(10);
-			TextPrompt suggestion = new TextPrompt(MessageBundle.getMessage("angal.medicalstock.multipledischarging.typeacodeoradescriptionandpressenter"), jTextFieldSearch, Show.FOCUS_LOST); //$NON-NLS-1$
+			TextPrompt suggestion = new TextPrompt(
+					MessageBundle.getMessage("angal.medicalstock.multipledischarging.typeacodeoradescriptionandpressenter"), //$NON-NLS-1$ 
+					jTextFieldSearch, 
+					Show.FOCUS_LOST); 
 			{
 				suggestion.setFont(new Font("Tahoma", Font.PLAIN, 14)); //$NON-NLS-1$
 				suggestion.setForeground(Color.GRAY);
@@ -278,26 +280,19 @@ public class MovStockMultipleDischarging extends JDialog {
 						// Quantity
 						int qty = askQuantity(med);
 						if (qty == 0) return;
-						if (!checkQuantity(med, qty)) return;
 	
 						// Lot (PreparationDate && ExpiringDate)
-						MovStockInsertingManager movBrowser = new MovStockInsertingManager();
 						ArrayList<Lot> lots;
 						try {
-							lots = movBrowser.getLotByMedical(med);
+							lots = movManager.getLotByMedical(med);
 						} catch (OHServiceException e1) {
 							lots = null;
 							OHServiceExceptionUtil.showMessages(e1);
 						}
 						Lot lot = null;
 						if (!isAutomaticLot()) {
-							lot = chooseLot(lots);
+							lot = chooseLot(lots, qty);
 							if (lot == null) return;
-							double lotQty = lot.getQuantity();
-							if (qty > lotQty) {
-								JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.movementquantityisgreaterthanthequantityof")); //$NON-NLS-1$
-								return;
-							}
 						} else {
 							lot = new Lot("", null, null); //$NON-NLS-1$
 						}
@@ -310,8 +305,10 @@ public class MovStockMultipleDischarging extends JDialog {
 						String refNo = jTextFieldReference.getText();
 						
 						Movement movement = new Movement(med, (MovementType) jComboBoxDischargeType.getSelectedItem(), null, lot, date, qty, null, refNo);
-						model.addItem(movement);
-						units.add(UNITS);
+						if (med.getPcsperpck() > 1) 
+							model.addItem(movement, PACKETS);
+						else
+							model.addItem(movement, UNITS);
 	
 						jTextFieldSearch.setText(""); //$NON-NLS-1$
 						jTextFieldSearch.requestFocus();
@@ -324,9 +321,10 @@ public class MovStockMultipleDischarging extends JDialog {
 
 	protected boolean isAvailable(Medical med) {
 		if (med.getTotalQuantity() == 0) {
-			StringBuilder message = new StringBuilder();
-			message.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.outofstock")); //$NON-NLS-1$
-			message.append("\n").append(med.getDescription()); //$NON-NLS-1$
+			StringBuilder message = new StringBuilder()
+				.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.outofstock")) //$NON-NLS-1$
+				.append("\n") //$NON-NLS-1$
+				.append(med.getDescription()); //$NON-NLS-1$
 			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, message.toString());
 			return false;
 		}
@@ -337,9 +335,10 @@ public class MovStockMultipleDischarging extends JDialog {
 		ArrayList<Movement> movements = model.getMovements();
 		for (Movement mov : movements) {
 			if (mov.getMedical() == med) {
-				StringBuilder message = new StringBuilder();
-				message.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.alreadyinthisform")); //$NON-NLS-1$
-				message.append("\n").append(med.getDescription()); //$NON-NLS-1$
+				StringBuilder message = new StringBuilder()
+					.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.alreadyinthisform")) //$NON-NLS-1$
+					.append("\n") //$NON-NLS-1$
+					.append(med.getDescription()); //$NON-NLS-1$
 				JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, message.toString());
 				return true;
 			}
@@ -539,10 +538,14 @@ public class MovStockMultipleDischarging extends JDialog {
 			JPanel panel = new JPanel();
 			panel.add(new JScrollPane(medTable));
 			
-			int ok = JOptionPane.showConfirmDialog(MovStockMultipleDischarging.this, panel, MessageBundle.getMessage("angal.medicalstock.multipledischarging.chooseamedical"), JOptionPane.YES_NO_OPTION); //$NON-NLS-1$
+			int ok = JOptionPane.showConfirmDialog(MovStockMultipleDischarging.this, 
+					panel, 
+					MessageBundle.getMessage("angal.medicalstock.multipledischarging.chooseamedical"), //$NON-NLS-1$ 
+					JOptionPane.YES_NO_OPTION); 
 			
 			if (ok == JOptionPane.OK_OPTION) {
 				int row = medTable.getSelectedRow();
+				if (row < 0) return null;
 				med = medList.get(row);
 			}
 			return med;
@@ -550,7 +553,7 @@ public class MovStockMultipleDischarging extends JDialog {
 		return null;
 	}
 
-	protected Lot chooseLot(ArrayList<Lot> lots) {
+	protected Lot chooseLot(ArrayList<Lot> lots, double qty) {
 		Lot lot = null;
 		if (!lots.isEmpty()) {
 			stripeLots(lots);
@@ -561,15 +564,32 @@ public class MovStockMultipleDischarging extends JDialog {
 			panel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.multipledischarging.selectalot")), BorderLayout.NORTH); //$NON-NLS-1$
 			panel.add(new JScrollPane(lotTable), BorderLayout.CENTER);
 			
-			int ok = JOptionPane.showConfirmDialog(MovStockMultipleDischarging.this, panel, MessageBundle.getMessage("angal.medicalstock.multipledischarging.lotinformations"), JOptionPane.OK_CANCEL_OPTION); //$NON-NLS-1$
-
-			if (ok == JOptionPane.OK_OPTION) {
-				int row = lotTable.getSelectedRow();
-				lot = lots.get(row);
-			}
-			return lot;
+			do {
+				int ok = JOptionPane.showConfirmDialog(MovStockMultipleDischarging.this, 
+						panel, 
+						MessageBundle.getMessage("angal.medicalstock.multipledischarging.lotinformations"), //$NON-NLS-1$ 
+						JOptionPane.OK_CANCEL_OPTION);
+	
+				if (ok == JOptionPane.OK_OPTION) {
+					int row = lotTable.getSelectedRow();
+					lot = lots.get(row);
+				}
+				
+				if (!checkQuantityInLot(lot, qty)) lot = null;
+				else return lot;
+			} while (lot == null);
 		} 
 		return lot;
+	}
+	
+	private boolean checkQuantityInLot(Lot lot, double qty) {
+		double lotQty = lot.getQuantity();
+		if (qty > lotQty) {
+			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, 
+					MessageBundle.getMessage("angal.medicalstock.movementquantityisgreaterthanthequantityof")); //$NON-NLS-1$
+			return false;
+		} 
+		return true;
 	}
 
 	private void stripeLots(ArrayList<Lot> lots) {
@@ -593,95 +613,65 @@ public class MovStockMultipleDischarging extends JDialog {
 		}
 	}
 
-	protected GregorianCalendar askExpiringDate() {
-		GregorianCalendar date = new GregorianCalendar();
-		JDateChooser expireDateChooser = new JDateChooser(new Date());
-		{
-			expireDateChooser.setDateFormatString(DATE_FORMAT_DD_MM_YYYY);
-		}
-		JPanel panel = new JPanel(new GridLayout(1, 2));
-		panel.add(new JLabel(MessageBundle.getMessage("angal.medicalstock.multipledischarging.expiringdate"))); //$NON-NLS-1$
-		panel.add(expireDateChooser);
-
-		int ok = JOptionPane.showConfirmDialog(MovStockMultipleDischarging.this, panel, MessageBundle.getMessage("angal.medicalstock.multipledischarging.expiringdate"), JOptionPane.OK_CANCEL_OPTION); //$NON-NLS-1$
-
-		if (ok == JOptionPane.OK_OPTION) {
-			date.setTime(expireDateChooser.getDate());
-		}
-		return date;
-	}
-
-	private boolean checkQuantity(Medical med, double qty) {
+	private boolean checkQuantityAllMovements(Medical med, double qty) {
 		double totalQty = med.getTotalQuantity();
-		double criticalLevel = med.getMinqty();
+		double newTotalQty;
 		
 		// update remaining quantity with already inserted movements
 		ArrayList<Movement> movements = model.getMovements();
 		double usedQty = 0;
-		for (Movement mov : movements) {
+		for (int i = 0; i < movements.size(); i++) {
+			Movement mov = movements.get(i);
 			if (mov.getMedical() == med) {
-				usedQty+=mov.getQuantity();
+				usedQty+=calcTotal(mov, mov.getQuantity(), units.get(i));
 			}
 		}
-		totalQty = totalQty - usedQty;
 		
-		if (qty > totalQty) {
-			StringBuilder message = new StringBuilder();
-			message.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.thequantityisnotavailable")); //$NON-NLS-1$
-			message.append("\n").append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.lyinginstock")).append(totalQty); //$NON-NLS-1$ //$NON-NLS-2$
-			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, message.toString());
-			return false;
-		}
-		
-		if (totalQty - qty < criticalLevel) {
-			StringBuilder message = new StringBuilder();
-			message.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.youaregoingundercriticalevel")); //$NON-NLS-1$
-			message.append(" (").append(criticalLevel).append(") "); //$NON-NLS-1$ //$NON-NLS-2$
-			message.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.procedere")); //$NON-NLS-1$
-			int ok = JOptionPane.showConfirmDialog(MovStockMultipleDischarging.this, message.toString());
-			
-			if (ok != JOptionPane.OK_OPTION) {
-				return false;
-			} else {
-				if(isXmpp()) {
-					shareWith.setEnabled(true);
-					pool.add(med);
-				}
-				return true;
-			}
-		}
-		return true;
+		newTotalQty = totalQty - usedQty;
+		return checkQuantity(med, newTotalQty, qty);
 	}
 	
-	private boolean checkQuantity(Movement movement, double qty) {
+	private boolean checkQuantityInMovement(Movement movement, double qty) {
 		Medical med = movement.getMedical();
 		double totalQty = med.getTotalQuantity();
-		double criticalLevel = med.getMinqty();
+		double newTotalQty;
 		
-		// update remaining quantity with already inserted movements
+		// update remaining quantity with already inserted movements 
+		// but not the current one
 		ArrayList<Movement> movements = model.getMovements();
 		double usedQty = 0;
-		for (Movement mov : movements) {
+		for (int i = 0; i < movements.size(); i++) {
+			Movement mov = movements.get(i);
 			if (mov.getCode() == movement.getCode()) continue;
 			if (mov.getMedical() == med) {
-				usedQty+=mov.getQuantity();
+				usedQty+=calcTotal(mov, mov.getQuantity(), units.get(i));
 			}
 		}
-		totalQty = totalQty - usedQty;
 		
+		newTotalQty = totalQty - usedQty;
+		if (!checkQuantityInLot(movement.getLot(), qty)) return false;
+		return checkQuantity(med, newTotalQty, qty);
+	}
+	
+	private boolean checkQuantity(Medical med, double totalQty, double qty) {
+		double criticalLevel = med.getMinqty();
 		if (qty > totalQty) {
 			StringBuilder message = new StringBuilder();
-			message.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.thequantityisnotavailable")); //$NON-NLS-1$
-			message.append("\n").append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.lyinginstock")).append(totalQty); //$NON-NLS-1$ //$NON-NLS-2$
+			message.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.thequantityisnotavailable")) //$NON-NLS-1$
+				.append("\n") //$NON-NLS-1$
+				.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.lyinginstock")) //$NON-NLS-1$
+				.append(totalQty);
 			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, message.toString());
 			return false;
 		}
 		
 		if (totalQty - qty < criticalLevel) {
 			StringBuilder message = new StringBuilder();
-			message.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.youaregoingundercriticalevel")); //$NON-NLS-1$
-			message.append(" (").append(criticalLevel).append(") "); //$NON-NLS-1$ //$NON-NLS-2$
-			message.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.procedere")); //$NON-NLS-1$
+			message.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.youaregoingundercriticalevel")) //$NON-NLS-1$
+				.append(" (") //$NON-NLS-1$
+				.append(criticalLevel)
+				.append(") ") //$NON-NLS-1$
+				.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.proceed")); //$NON-NLS-1$
 			int ok = JOptionPane.showConfirmDialog(MovStockMultipleDischarging.this, message.toString());
 			
 			if (ok != JOptionPane.OK_OPTION) {
@@ -711,34 +701,42 @@ public class MovStockMultipleDischarging extends JDialog {
 		totalQty = totalQty - usedQty;
 		
 		StringBuilder message = new StringBuilder();
-		message.append(med.toString());
-		message.append("\n").append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.lyinginstock")).append(totalQty); //$NON-NLS-1$ //$NON-NLS-2$
+		message.append(med.toString())
+			.append("\n") //$NON-NLS-1$
+			.append(MessageBundle.getMessage("angal.medicalstock.multipledischarging.lyinginstock")) //$NON-NLS-1$
+			.append(totalQty); //$NON-NLS-1$
 		
-		StringBuilder title = new StringBuilder(MessageBundle.getMessage("angal.common.quantity"));
+		StringBuilder title = new StringBuilder(MessageBundle.getMessage("angal.common.quantity")); //$NON-NLS-1$
 		String prodCode = med.getProd_code();
-		if (prodCode != null && !prodCode.equals("")) {
-			title.append(" ").append(MessageBundle.getMessage("angal.common.code"));
-			title.append(": ").append(prodCode);
+		if (prodCode != null && !prodCode.equals("")) { //$NON-NLS-1$
+			title.append(" ") //$NON-NLS-1$
+			.append(MessageBundle.getMessage("angal.common.code")) //$NON-NLS-1$
+			.append(": ") //$NON-NLS-1$
+			.append(prodCode);
 		} else { 
-			title.append(": ");
+			title.append(": "); //$NON-NLS-1$
 		}
-		String quantity = JOptionPane.showInputDialog(MovStockMultipleDischarging.this, 
-				message.toString(), 
-				title.toString(),
-				JOptionPane.QUESTION_MESSAGE); //$NON-NLS-1$
 		int qty = 0;
-		if (quantity != null) {
-			try {
-				qty = Integer.parseInt(quantity);
-				if (qty == 0)
-					return 0;
-				if (qty < 0)
-					throw new NumberFormatException();
-			} catch (NumberFormatException nfe) {
-				JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.pleaseinsertavalidvalue")); //$NON-NLS-1$
-				qty = 0;
-			}
-		}
+		do {
+			String quantity = JOptionPane.showInputDialog(MovStockMultipleDischarging.this, 
+					message.toString(), 
+					title.toString(),
+					JOptionPane.QUESTION_MESSAGE);
+			if (quantity != null) {
+				try {
+					qty = Integer.parseInt(quantity);
+					if (qty == 0)
+						return 0;
+					if (qty < 0)
+						throw new NumberFormatException();
+					if (!checkQuantityAllMovements(med, qty)) qty = 0;
+				} catch (NumberFormatException nfe) {
+					JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, 
+							MessageBundle.getMessage("angal.medicalstock.multipledischarging.pleaseinsertavalidvalue")); //$NON-NLS-1$
+					qty = 0;
+				}
+			} else return qty;
+		} while (qty == 0);
 		
 		return qty;
 	}
@@ -767,9 +765,8 @@ public class MovStockMultipleDischarging extends JDialog {
 		return jComboBoxDestination;
 	}
 	
-	private int calcTotal(Movement mov, int option) {
+	private int calcTotal(Movement mov, int qty, int option) {
 		Medical medical = mov.getMedical();
-		int qty = mov.getQuantity();
 		int ppp = medical.getPcsperpck().intValue() == 0 ? 1 : medical.getPcsperpck().intValue();
 		int total = option == UNITS ? qty : ppp * qty;
 		
@@ -799,8 +796,9 @@ public class MovStockMultipleDischarging extends JDialog {
 			fireTableDataChanged();
 		}
 
-		public void addItem(Movement movement) {
+		public void addItem(Movement movement, Integer unit) {
 			movements.add(movement);
+			units.add(unit);
 			fireTableDataChanged();
 		}
 
@@ -841,7 +839,7 @@ public class MovStockMultipleDischarging extends JDialog {
 			Lot lot = movement.getLot();
 			String lotName = lot.getCode();
 			int option = units.get(r);
-			int total = calcTotal(movement, option);
+			int total = calcTotal(movement, movement.getQuantity(), option);
 			if (c == -1) {
 				return movement;
 			} else if (c == 0) {
@@ -860,7 +858,7 @@ public class MovStockMultipleDischarging extends JDialog {
 				return lotName.equals("") ? "AUTO" : lotName; //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (c == 7) {
 				if (lot.getDueDate() != null)
-					return format(lot.getDueDate());
+					return TimeTools.formatDateTime(lot.getDueDate(), DATE_FORMAT_DD_MM_YYYY);
 				else 
 					return "AUTO"; //$NON-NLS-1$
 			} 
@@ -876,6 +874,7 @@ public class MovStockMultipleDischarging extends JDialog {
 		@Override
 		public void setValueAt(Object value, int r, int c) {
 			Movement movement = movements.get(r);
+			int option = units.get(r);
 			if (c == 0) {
 				String key = String.valueOf(value);
 				if (medicalMap.containsKey(key)) {
@@ -884,18 +883,18 @@ public class MovStockMultipleDischarging extends JDialog {
 				}
 			} else if (c == 3) {
 				int qty = (Integer) value;
-				movement.setQuantity(qty);
-			} else if (c == 4) {
-				int option = comboBoxUnits.getSelectedIndex();
-				int total = calcTotal(movement, option);
-				if (checkQuantity(movement, total)) {
-					units.set(r, option);
+				int total = calcTotal(movement, qty, option);
+				if (checkQuantityInMovement(movement, total))
+				{
+					movement.setQuantity(qty);
 				}
-			} else if (c == 7) {
-				Lot lot = movement.getLot();
-				try {
-					lot.setDueDate(convertToDate((String) value));
-				} catch (ParseException e) {
+			} else if (c == 4) {
+				int newOption = 0;
+				if (value == qtyOption[1]) newOption = 1; 
+				int total = calcTotal(movement, movement.getQuantity(), newOption);
+				if (checkQuantityInMovement(movement, total))
+				{
+					units.set(r, newOption);
 				}
 			} 
 			movements.set(r, movement);
@@ -905,58 +904,25 @@ public class MovStockMultipleDischarging extends JDialog {
 	
 	private boolean checkAndPrepareMovements() {
 		boolean ok = true;
-		MovStockInsertingManager manager = new MovStockInsertingManager();
 		
-		// Check the Date
-		GregorianCalendar today = new GregorianCalendar();
-		GregorianCalendar thisDate = new GregorianCalendar();
-		thisDate.setTime(jDateChooser.getDate());
-		GregorianCalendar lastDate;
-		try {
-			lastDate = manager.getLastMovementDate();
-		} catch (OHServiceException e) {
-			lastDate = null;
-			OHServiceExceptionUtil.showMessages(e);
-		}
-		if (thisDate.after(today)) {
-			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.futuredatenotallowed")); //$NON-NLS-1$ //$NON-NLS-2$
+		ArrayList<Movement> movements = model.getMovements();
+		if (movements.isEmpty()) {
+			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, 
+					MessageBundle.getMessage("angal.medicalstock.multipledischarging.noelementtosave")); //$NON-NLS-1$
 			return false;
-		}
-		if (lastDate != null && thisDate.compareTo(lastDate) < 0) {
-			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.datebeforelastmovement") + format(lastDate) + MessageBundle.getMessage("angal.medicalstock.multipledischarging.notallowed")); //$NON-NLS-1$ //$NON-NLS-2$
-			return false;
-		}
-		
-		// Check the RefNo
-		String refNo = jTextFieldReference.getText();
-		if (refNo.equals("")) { //$NON-NLS-1$
-			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.pleaseinsertareferencenumber")); //$NON-NLS-1$
-			return false;
-		} else {
-			try {
-				if (manager.refNoExists(refNo)) {
-					JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.theinsertedreferencenumberalreadyexists")); //$NON-NLS-1$
-					return false;
-				}
-			} catch (OHServiceException e) {
-				OHServiceExceptionUtil.showMessages(e);
-				return false;
-			}
 		}
 		
 		// Check destination
 		Object ward = jComboBoxDestination.getSelectedItem();
 		if (ward instanceof String) {
-			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.pleaseselectaward")); //$NON-NLS-1$
+			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, 
+					MessageBundle.getMessage("angal.medicalstock.multipledischarging.pleaseselectaward")); //$NON-NLS-1$
 			return false;
 		}
 		
-		// Check destination
-		ArrayList<Movement> movements = model.getMovements();
-		if (movements.isEmpty()) {
-			JOptionPane.showMessageDialog(MovStockMultipleDischarging.this, MessageBundle.getMessage("angal.medicalstock.multipledischarging.noelementtosave")); //$NON-NLS-1$
-			return false;
-		}
+		// Check the Date
+		GregorianCalendar thisDate = new GregorianCalendar();
+		thisDate.setTime(jDateChooser.getDate());
 		
 		// Check and set all movements
 		for (int i = 0; i < movements.size(); i++) {
@@ -964,10 +930,10 @@ public class MovStockMultipleDischarging extends JDialog {
 			int option = units.get(i);
 			mov.setWard((Ward) jComboBoxDestination.getSelectedItem());
 			mov.setDate(thisDate);
-			mov.setRefNo(refNo);
-			mov.setQuantity(calcTotal(mov, option));
+			mov.setRefNo(jTextFieldReference.getText());
+			mov.setQuantity(calcTotal(mov, mov.getQuantity(), option));
 			mov.setType((MovementType) jComboBoxDischargeType.getSelectedItem());
-			mov.getLot().setPreparationDate(thisDate);
+			//mov.getLot().setPreparationDate(thisDate);
 		}
 		return ok;
 	}
@@ -975,43 +941,28 @@ public class MovStockMultipleDischarging extends JDialog {
 	private boolean save() {
 		boolean ok = true;
 		ArrayList<Movement> movements = model.getMovements();
-		int movSize = movements.size();
-		MovStockInsertingManager movManager = new MovStockInsertingManager();
-		int index;
 		try {
-			index = movManager.newMultipleDischargingMovements(movements);
+			movManager.newMultipleDischargingMovements(movements, movements.get(0).getRefNo());
 			
-			if (index < movSize) {
-				jTableMovements.getSelectionModel().setSelectionInterval(index, index);
-				ok = false;
-			} else {
-				if (isXmpp()) {
-					if(shareWith.isEnabled()&& (!(((String)shareWith.getSelectedItem())==MessageBundle.getMessage("angal.medicalstock.multipledischarging.sharealertwithnobody")))){ //$NON-NLS-1$
-						CommunicationFrame frame= (CommunicationFrame)CommunicationFrame.getFrame();
-						for (Medical med : pool) {
-							frame.sendMessage(MessageBundle.getMessage("angal.medicalstock.multipledischarging.alert") + med.getDescription() + MessageBundle.getMessage("angal.medicalstock.multipledischarging.isabouttoend"), (String)shareWith.getSelectedItem(), false); //$NON-NLS-1$ //$NON-NLS-2$
-						}
+			if (isXmpp()) {
+				if(shareWith.isEnabled()&& (!(((String)shareWith.getSelectedItem())==MessageBundle.getMessage("angal.medicalstock.multipledischarging.sharealertwithnobody")))){ //$NON-NLS-1$
+					CommunicationFrame frame= (CommunicationFrame)CommunicationFrame.getFrame();
+					for (Medical med : pool) {
+						frame.sendMessage(
+								MessageBundle.getMessage("angal.medicalstock.multipledischarging.alert") + //$NON-NLS-1$ 
+								med.getDescription() + 
+								MessageBundle.getMessage("angal.medicalstock.multipledischarging.isabouttoend"), //$NON-NLS-1$
+								(String)shareWith.getSelectedItem(), 
+								false);
 					}
 				}
 			}
+			
 		} catch (OHServiceException e) {
 			ok = false;
 			OHServiceExceptionUtil.showMessages(e);
-		}
-		
+		} 
 		return ok;
-	}
-
-	public String format(GregorianCalendar gc) {
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_DD_MM_YYYY);
-		return sdf.format(gc.getTime());
-	}
-
-	public GregorianCalendar convertToDate(String string) throws ParseException {
-		GregorianCalendar date = new GregorianCalendar();
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_DD_MM_YYYY);
-		date.setTime(sdf.parse(string));
-		return date;
 	}
 
 	class EnabledTableCellRenderer extends DefaultTableCellRenderer {
@@ -1025,7 +976,8 @@ public class MovStockMultipleDischarging extends JDialog {
 			setHorizontalAlignment(columnAlignment[column]);
 			if (!columnEditable[column]) {
 				cell.setBackground(Color.LIGHT_GRAY);
-			}
+			} else 
+				cell.setBackground(Color.WHITE);
 			if (columnBold[column]) { 
 				cell.setFont(new Font(null, Font.BOLD, 12));
 			}
@@ -1076,9 +1028,9 @@ public class MovStockMultipleDischarging extends JDialog {
 			} else if (c == 0) {
 				return lotList.get(r).getCode();
 			} else if (c == 1) {
-				return format(lotList.get(r).getPreparationDate());
+				return TimeTools.formatDateTime(lotList.get(r).getPreparationDate(), DATE_FORMAT_DD_MM_YYYY);
 			} else if (c == 2) {
-				return format(lotList.get(r).getDueDate());
+				return TimeTools.formatDateTime(lotList.get(r).getDueDate(), DATE_FORMAT_DD_MM_YYYY);
 			} else if (c == 3) {
 				return lotList.get(r).getQuantity();
 			}

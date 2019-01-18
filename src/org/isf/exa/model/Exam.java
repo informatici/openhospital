@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.isf.exatype.model.ExamType;
@@ -53,7 +54,7 @@ public class Exam
 	@JoinColumn(name="EXA_EXC_ID_A")
 	private ExamType examtype;
 
-	@NotNull
+	@Version
 	@Column(name="EXA_LOCK")
 	private Integer lock;
 
@@ -66,12 +67,11 @@ public class Exam
     }
 	
 	public Exam(String code, String description, ExamType examtype,
-			Integer procedure, String defaultResult, Integer lock) {
+			Integer procedure, String defaultResult) {
 		super();
 		this.code = code;
 		this.description = description;
 		this.examtype = examtype;
-		this.lock = lock;
 		this.defaultResult = defaultResult;
 		this.procedure = procedure;
 	}
@@ -131,8 +131,7 @@ public class Exam
 						&& getDescription().equalsIgnoreCase(
 								((Exam) anObject).getDescription())
 						&& getExamtype()
-								.equals(((Exam) anObject).getExamtype()) && (getLock()
-						.equals(((Exam) anObject).getLock())));
+								.equals(((Exam) anObject).getExamtype()));
 	}
 
 	public String toString() {

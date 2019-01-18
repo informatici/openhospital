@@ -3,8 +3,8 @@ package org.isf.medtype.service;
 import java.util.ArrayList;
 
 import org.isf.medtype.model.MedicalType;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Persistence class for the medical type module.
  */
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class MedicalTypeIoOperation {
 
 	@Autowired
@@ -23,9 +23,9 @@ public class MedicalTypeIoOperation {
 	/**
 	 * Retrieves all the stored {@link MedicalType}s.
 	 * @return the stored medical types.
-	 * @throws OHException if an error occurs retrieving the medical types.
+	 * @throws OHServiceException if an error occurs retrieving the medical types.
 	 */
-	public ArrayList<MedicalType> getMedicalTypes() throws OHException 
+	public ArrayList<MedicalType> getMedicalTypes() throws OHServiceException 
 	{
 		return new ArrayList<MedicalType>(repository.findAllByOrderByDescriptionAsc()); 
 	}
@@ -34,10 +34,10 @@ public class MedicalTypeIoOperation {
 	 * Updates the specified {@link MedicalType}.
 	 * @param medicalType the medical type to update.
 	 * @return <code>true</code> if the medical type has been updated, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs updating the medical type.
+	 * @throws OHServiceException if an error occurs updating the medical type.
 	 */
 	public boolean updateMedicalType(
-			MedicalType medicalType) throws OHException 
+			MedicalType medicalType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -52,10 +52,10 @@ public class MedicalTypeIoOperation {
 	 * Stores the specified {@link MedicalType}.
 	 * @param medicalType the medical type to store.
 	 * @return <code>true</code> if the medical type has been stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs storing the new medical type.
+	 * @throws OHServiceException if an error occurs storing the new medical type.
 	 */
 	public boolean newMedicalType(
-			MedicalType medicalType) throws OHException 
+			MedicalType medicalType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -70,10 +70,10 @@ public class MedicalTypeIoOperation {
 	 * Deletes the specified {@link MedicalType}.
 	 * @param medicalType the medical type to delete.
 	 * @return <code>true</code> if the medical type has been deleted, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs deleting the medical type.
+	 * @throws OHServiceException if an error occurs deleting the medical type.
 	 */
 	public boolean deleteMedicalType(
-			MedicalType medicalType) throws OHException 
+			MedicalType medicalType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -87,10 +87,10 @@ public class MedicalTypeIoOperation {
 	 * Checks if the specified {@link MedicalType} code is already stored.
 	 * @param code the {@link MedicalType} code to check.
 	 * @return <code>true</code> if the medical code is already stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @throws OHServiceException if an error occurs during the check.
 	 */
 	public boolean isCodePresent(
-			String code) throws OHException 
+			String code) throws OHServiceException 
 	{
 		boolean result = true;
 	

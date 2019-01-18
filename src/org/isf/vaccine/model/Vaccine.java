@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.isf.vactype.model.VaccineType;
@@ -43,7 +44,7 @@ public class Vaccine
 	@JoinColumn(name="VAC_VACT_ID_A")
     private VaccineType vaccineType;
 
-	@NotNull
+	@Version
 	@Column(name="VAC_LOCK")
     private Integer lock;
 
@@ -55,12 +56,11 @@ public class Vaccine
      * @param aDescription
      * @param avaccineType
      */
-    public Vaccine(String aCode, String aDescription, VaccineType aVaccineType, Integer aLock) {
+    public Vaccine(String aCode, String aDescription, VaccineType aVaccineType) {
         super();
         this.code = aCode;
         this.description = aDescription;
         this.vaccineType = aVaccineType; 
-        this.lock = aLock;
     }
 
 	public String getCode() {
@@ -86,7 +86,6 @@ public class Vaccine
     public void setVaccineType(VaccineType aVaccineType) {
         this.vaccineType = aVaccineType;
     }
-    
     
     public Integer getLock() {
         return this.lock;

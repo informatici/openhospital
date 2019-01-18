@@ -13,6 +13,7 @@ import org.isf.menu.gui.MainMenu;
 import org.isf.menu.gui.Menu;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
+import org.isf.sms.manager.SmsManager;
 import org.isf.sms.model.Sms;
 import org.isf.sms.service.SmsOperations;
 import org.isf.therapy.model.Therapy;
@@ -20,32 +21,55 @@ import org.isf.therapy.model.TherapyRow;
 import org.isf.therapy.service.TherapyIoOperations;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+@Component
 public class TherapyManager {
 	
 	private final Logger logger = LoggerFactory.getLogger(TherapyManager.class);
 	
-	private TherapyIoOperations ioOperations = Menu.getApplicationContext().getBean(TherapyIoOperations.class);
-	private SmsOperations smsOp = Menu.getApplicationContext().getBean(SmsOperations.class);
+	public TherapyManager(){}
 	
+	@Autowired
+	private TherapyIoOperations ioOperations;
+	
+	@Autowired
+	private SmsOperations smsOp;
+	
+	/**
+	 * Returns a {@link Therapy} object from a {@link TherapyRow} (DB record)
+	 * @param th - the {@link TherapyRow}
+	 * @return the {@link Therapy}
+	 * @throws OHServiceException
+	 */
 	public Therapy createTherapy(TherapyRow th) throws OHServiceException {
-		try{
-			return createTherapy(th.getTherapyID(), th.getPatID().getCode(), th.getMedical(), th.getQty(),
-					th.getStartDate(), th.getEndDate(), th.getFreqInPeriod(), th.getFreqInDay(), 
-					th.getNote(), th.isNotify(), th.isSms());
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.therapy.notavailable"), OHSeverityLevel.ERROR));
-		}
+		return createTherapy(th.getTherapyID(), th.getPatID().getCode(), th.getMedical(), th.getQty(),
+				th.getStartDate(), th.getEndDate(), th.getFreqInPeriod(), th.getFreqInDay(), 
+				th.getNote(), th.isNotify(), th.isSms());
 	}
 	
+	/**
+	 * Creates a {@link Therapy} from its parameters, fecthing the {@link Medical} 
+	 * and building the array of Dates ({@link GregorianCalendar})
+	 * @param therapyID
+	 * @param patID
+	 * @param medId
+	 * @param qty
+	 * @param startDate
+	 * @param endDate
+	 * @param freqInPeriod
+	 * @param freqInDay
+	 * @param note
+	 * @param notify
+	 * @param sms
+	 * @return the {@link Therapy}
+	 */
 	private Therapy createTherapy(int therapyID, int patID, Integer medId, Double qty,
 			GregorianCalendar startDate, GregorianCalendar endDate, int freqInPeriod,
 			int freqInDay, String note, boolean notify, boolean sms) {
@@ -77,12 +101,12 @@ public class TherapyManager {
 			//System.out.println(formatDate(dates[i]));
 		}
 		
-		MedicalsIoOperations medicalIoOperations = Menu.getApplicationContext().getBean(MedicalsIoOperations.class);
+		MedicalBrowsingManager medManager = new MedicalBrowsingManager();
 		Medical med = null;
 		try {
-			med = medicalIoOperations.getMedical(medId);
-		} catch (OHException e) {
-			logger.warn("", e);
+			med = medManager.getMedical(medId);
+		} catch (OHServiceException e) {
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		Therapy th = new Therapy(therapyID,	patID, dates, med, qty, "", freqInDay, note, notify, sms);
 		datesArray.clear();
@@ -90,7 +114,13 @@ public class TherapyManager {
 		
 		return th;
 	}
-
+	
+	/**
+	 * Returns a list of {@link Therapy}s from a list of {@link TherapyRow}s (DB records)
+	 * @param thRows - the list of {@link TherapyRow}s
+	 * @return the list of {@link Therapy}s
+	 * @throws OHServiceException
+	 */
 	public ArrayList<Therapy> getTherapies(ArrayList<TherapyRow> thRows) throws OHServiceException {
 		
 		if (thRows != null) {
@@ -116,21 +146,7 @@ public class TherapyManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<TherapyRow> getTherapyRows(int code) throws OHServiceException {
-		try {
-			return ioOperations.getTherapyRows(code);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.therapy.notavailable"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getTherapyRows(code);
 	}
 	
 	/**
@@ -141,21 +157,7 @@ public class TherapyManager {
 	 * @throws OHServiceException 
 	 */
 	public TherapyRow newTherapy(TherapyRow thRow) throws OHServiceException {
-		try {
-			return ioOperations.newTherapy(thRow);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.therapy.patienttherapiescouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.newTherapy(thRow);
 	}
 	
 	/**
@@ -165,69 +167,63 @@ public class TherapyManager {
 	 * @return <code>true</code> if the row has been inserted, <code>false</code> otherwise
 	 * @throws OHServiceException 
 	 */
+	@Transactional(rollbackFor=OHServiceException.class)
 	public boolean newTherapies(ArrayList<TherapyRow> thRows) throws OHServiceException {
 		if (!thRows.isEmpty()) {
 			DateTime now = new DateTime();
 			
 			PatientBrowserManager patMan = new PatientBrowserManager();
-			try {
-				int patID = thRows.get(0).getPatID().getCode();
-				ioOperations.deleteAllTherapies(patID);
-				smsOp.deleteByModuleModuleID("therapy", String.valueOf(patID));
+			int patID = thRows.get(0).getPatID().getCode();
+			ioOperations.deleteAllTherapies(patID);
+			smsOp.deleteByModuleModuleID("therapy", String.valueOf(patID));
 
-				for (TherapyRow thRow : thRows) {
+			for (TherapyRow thRow : thRows) {
 
-					ioOperations.newTherapy(thRow);
-					if (thRow.isSms()) {
-						Therapy th = createTherapy(thRow);
-						GregorianCalendar[] dates = th.getDates();						
-						for (GregorianCalendar date : dates) {
-							date.set(Calendar.HOUR_OF_DAY, 8);
-							if (date.after(now.toDateMidnight().toGregorianCalendar())) {
-								Patient pat = patMan.getPatient(thRow.getPatID().getName());
+				ioOperations.newTherapy(thRow);
+				if (thRow.isSms()) {
+					Therapy th = createTherapy(thRow);
+					GregorianCalendar[] dates = th.getDates();						
+					for (GregorianCalendar date : dates) {
+						date.set(Calendar.HOUR_OF_DAY, 8);
+						if (date.after(now.toDateMidnight().toGregorianCalendar())) {
+							Patient pat = patMan.getPatient(thRow.getPatID().getName());
 
-
-								Sms sms = new Sms();
-								sms.setSmsDateSched(date.getTime());
-								sms.setSmsNumber(pat.getTelephone());
-								sms.setSmsText(prepareSmsFromTherapy(th));
-								sms.setSmsUser(MainMenu.getUser());
-								sms.setModule("therapy");
-								sms.setModuleID(String.valueOf(patID));
-								smsOp.saveOrUpdate(sms);
-							}
+							Sms sms = new Sms();
+							sms.setSmsDateSched(date.getTime());
+							sms.setSmsNumber(pat.getTelephone());
+							sms.setSmsText(prepareSmsFromTherapy(th));
+							sms.setSmsUser(MainMenu.getUser());
+							sms.setModule("therapy");
+							sms.setModuleID(String.valueOf(patID));
+							smsOp.saveOrUpdate(sms);
 						}
 					}
 				}
-			} catch (OHException e) {
-				/*Already cached exception with OH specific error message - 
-				 * create ready to return OHServiceException and keep existing error message
-				 */
-				logger.error("", e);
-				throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-						e.getMessage(), OHSeverityLevel.ERROR));
-			}catch(Exception e){
-				//Any exception
-				logger.error("", e);
-				throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-						MessageBundle.getMessage("angal.therapy.patienttherapiescouldnotbesaved"), OHSeverityLevel.ERROR));
 			}
 		}
 		return true;
 	}
 
+	/**
+	 * Builds the {@link Sms} text for the specified {@link Therapy}
+	 * If lenght exceed {@link SmsManager.MAX_LENGHT} the message will be cropped
+	 * (example: 
+	 * "REMINDER: {@link Medical} 3pcs - 2pd - {@link Thearapy.getNote()}")
+	 * @param th - the {@link Therapy}s
+	 * @return a string containing the text
+	 */
 	private String prepareSmsFromTherapy(Therapy th) {
 
 		String note = th.getNote();
 		StringBuilder sb = new StringBuilder(MessageBundle.getMessage("angal.therapy.reminderm")).append(": ");
-		sb.append(th.getMedical().toString());
+		sb.append(th.getMedical().toString()).append(" - ");
 		sb.append(th.getQty()).append(th.getUnits()).append(" - ");
 		sb.append(th.getFreqInDay()).append("pd");
 		if (note != null && !note.equals("")) {
 			sb.append(" - ").append(note);
 		}
-		if (sb.toString().length() > 160) {
-		    return sb.toString().substring(0, 160);
+		if (sb.toString().length() > SmsManager.MAX_LENGHT) {
+		    return sb.toString().substring(0, SmsManager.MAX_LENGHT);
 		}
 		return sb.toString();
 	}
@@ -239,99 +235,76 @@ public class TherapyManager {
 	 * @return <code>true</code> if the therapies have been deleted, <code>false</code> otherwise
 	 * @throws OHServiceException 
 	 */
+	@Transactional(rollbackFor=OHServiceException.class)
 	public boolean deleteAllTherapies(Integer code) throws OHServiceException {
-		try {
-			ioOperations.deleteAllTherapies(code);
-			smsOp.deleteByModuleModuleID("therapy", String.valueOf(code));
-			return true;
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		ioOperations.deleteAllTherapies(code);
+		smsOp.deleteByModuleModuleID("therapy", String.valueOf(code));
+		return true;
 	}
 
+	/**
+	 * Returns the {@link Medical}s that are not available for the specified list of {@link Therapy}s
+	 * @param therapies - the list of {@link Therapy}s
+	 * @return the list of {@link Medical}s out of stock
+	 * @throws OHServiceException
+	 */
+	@Transactional(rollbackFor=OHServiceException.class)
 	public ArrayList<Medical> getMedicalsOutOfStock(ArrayList<Therapy> therapies) throws OHServiceException {
 		MovWardBrowserManager wardManager = new MovWardBrowserManager();
 		MedicalBrowsingManager medManager = new MedicalBrowsingManager();
 		ArrayList<Medical> medOutStock = new ArrayList<Medical>();
 
-		try{
-			ArrayList<Medical> medArray = medManager.getMedicals();
+		ArrayList<Medical> medArray = medManager.getMedicals();
 
-			Double neededQty = 0.;
-			Double actualQty = 0.;
+		Double neededQty = 0.;
+		Double actualQty = 0.;
 
-			for (Therapy th : therapies) {
+		for (Therapy th : therapies) {
 
-				// CALCULATING NEEDINGS
-				Double qty = th.getQty();
-				int freq = th.getFreqInDay();
-				GregorianCalendar now = new GregorianCalendar();
-				GregorianCalendar todayDate = new GregorianCalendar(now
-						.get(GregorianCalendar.YEAR), now
-						.get(GregorianCalendar.MONTH), now
-						.get(GregorianCalendar.DAY_OF_MONTH));
+			// CALCULATING NEEDINGS
+			Double qty = th.getQty();
+			int freq = th.getFreqInDay();
+			GregorianCalendar now = new GregorianCalendar();
+			GregorianCalendar todayDate = new GregorianCalendar(now
+					.get(GregorianCalendar.YEAR), now
+					.get(GregorianCalendar.MONTH), now
+					.get(GregorianCalendar.DAY_OF_MONTH));
 
-				// todayDate.set(2010, 0, 1);
-				int dayCount = 0;
-				for (GregorianCalendar date : th.getDates()) {
-					if (date.after(todayDate) || date.equals(todayDate))
-						dayCount++;
-				}
+			// todayDate.set(2010, 0, 1);
+			int dayCount = 0;
+			for (GregorianCalendar date : th.getDates()) {
+				if (date.after(todayDate) || date.equals(todayDate))
+					dayCount++;
+			}
 
-				if (dayCount != 0) {
+			if (dayCount != 0) {
 
-					neededQty = qty * freq * dayCount;
+				neededQty = qty * freq * dayCount;
 
-					// CALCULATING STOCK QUANTITIES
-					Medical med = medArray.get(medArray.indexOf(th.getMedical()));
-					actualQty = med.getInitialqty() + med.getInqty() - med.getOutqty(); // MAIN STORE
-					int currentQuantity = wardManager.getCurrentQuantity(null, med);
-					actualQty += currentQuantity;
+				// CALCULATING STOCK QUANTITIES
+				Medical med = medArray.get(medArray.indexOf(th.getMedical()));
+				actualQty = med.getInitialqty() + med.getInqty() - med.getOutqty(); // MAIN STORE
+				int currentQuantity = wardManager.getCurrentQuantityInWard(null, med);
+				actualQty += currentQuantity;
 
-					if (neededQty > actualQty) {
-						if(!medOutStock.contains(med)){
-							medOutStock.add(med);
-						}
+				if (neededQty > actualQty) {
+					if(!medOutStock.contains(med)){
+						medOutStock.add(med);
 					}
 				}
 			}
-			return medOutStock;
-		} catch (OHServiceException e) {
-			throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.utils.dbserverconnectionfailure"), OHSeverityLevel.ERROR));
 		}
+		return medOutStock;
 	}
 
 	public TherapyRow newTherapy(int therapyID, int patID, GregorianCalendar startDate, GregorianCalendar endDate,
-			Medical medical, Double qty, int unitID, int freqInDay, int freqInPeriod, String note, boolean notify,
-			boolean sms) throws OHServiceException {
-		try{
-			PatientBrowserManager patientManager = new PatientBrowserManager();
-			Patient patient = patientManager.getPatient(patID);
-			TherapyRow thRow = new TherapyRow(therapyID, patient, startDate, endDate, medical, qty, unitID, freqInDay, freqInPeriod, note, notify, sms);
-			return newTherapy(thRow);
-		} catch (OHServiceException e) {
-			throw e;
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		Medical medical, Double qty, int unitID, int freqInDay, int freqInPeriod, String note, boolean notify,
+		boolean sms) throws OHServiceException {
+		
+		PatientBrowserManager patientManager = new PatientBrowserManager();
+		Patient patient = patientManager.getPatient(patID);
+		TherapyRow thRow = new TherapyRow(therapyID, patient, startDate, endDate, medical, qty, unitID, freqInDay, freqInPeriod, note, notify, sms);
+		return newTherapy(thRow);
 	}
 
 }

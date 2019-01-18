@@ -1,6 +1,7 @@
 package org.isf.exatype.manager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.exatype.model.ExamType;
 import org.isf.exatype.service.ExamTypeIoOperation;
@@ -20,6 +21,33 @@ public class ExamTypeBrowserManager {
 	private ExamTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(ExamTypeIoOperation.class);
 
 	/**
+	 * Verify if the object is valid for CRUD and return a list of errors, if any
+	 * @param examType
+	 * @return list of {@link OHExceptionMessage}
+	 */
+	protected List<OHExceptionMessage> validateExamType(ExamType examType) {
+		String key = examType.getCode();
+		String description = examType.getDescription();
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        if(key.isEmpty() ){
+	        errors.add(new OHExceptionMessage("codeEmptyError", 
+	        		MessageBundle.getMessage("angal.exatype.pleaseinsertacode"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        if(key.length()>2){
+	        errors.add(new OHExceptionMessage("codeTooLongError", 
+	        		MessageBundle.getMessage("angal.exatype.codetoolongmaxchar"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        if(description.isEmpty() ){
+            errors.add(new OHExceptionMessage("descriptionEmptyError", 
+            		MessageBundle.getMessage("angal.exatype.pleaseinsertavaliddescription"), 
+            		OHSeverityLevel.ERROR));
+        }
+        return errors;
+    }
+	
+	/**
 	 * Return the list of {@link ExamType}s.
 	 * @return the list of {@link ExamType}s. It could be <code>null</code>
 	 * @throws OHServiceException 
@@ -34,7 +62,7 @@ public class ExamTypeBrowserManager {
 			logger.error("", e);
 			throw new OHServiceException(e,
 					new OHExceptionMessage(null,
-							MessageBundle.getMessage("angal.exatype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+							MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -47,16 +75,27 @@ public class ExamTypeBrowserManager {
 	 */
 	public boolean newExamType(ExamType examType) throws OHServiceException {
 		try {
+			List<OHExceptionMessage> errors = validateExamType(examType);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
+			if (codeControl(examType.getCode())){
+				throw new OHServiceException(new OHExceptionMessage(null, 
+						MessageBundle.getMessage("angal.common.codealreadyinuse"), 
+						OHSeverityLevel.ERROR));
+			}
 			return ioOperations.newExamType(examType);
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(
 					MessageBundle.getMessage("angal.exatype.newexamtype"), e.getMessage(), OHSeverityLevel.ERROR));
+		} catch(OHServiceException e){
+			throw e;
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e,
 					new OHExceptionMessage(MessageBundle.getMessage("angal.exatype.newexamtype"),
-							MessageBundle.getMessage("angal.exatype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+							MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 
@@ -68,15 +107,21 @@ public class ExamTypeBrowserManager {
 	 */
 	public boolean updateExamType(ExamType examType) throws OHServiceException {
 		try {
+			List<OHExceptionMessage> errors = validateExamType(examType);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.updateExamType(examType);
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch(OHServiceException e){
+			throw e;
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new OHServiceException(e,
 					new OHExceptionMessage(null,
-							MessageBundle.getMessage("angal.exatype.thedatacouldnotbesaved"),
+							MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"),
 							OHSeverityLevel.ERROR));
 		}
 	}
@@ -98,7 +143,7 @@ public class ExamTypeBrowserManager {
 			logger.error("", e);
 			throw new OHServiceException(e,
 					new OHExceptionMessage(null,
-							MessageBundle.getMessage("angal.exatype.problemsoccurredwiththesqlistruction"),
+							MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"),
 							OHSeverityLevel.ERROR));
 		}
 	}
@@ -120,7 +165,7 @@ public class ExamTypeBrowserManager {
 			logger.error("", e);
 			throw new OHServiceException(e,
 					new OHExceptionMessage(MessageBundle.getMessage("angal.exatype.deleteexamtype"),
-							MessageBundle.getMessage("angal.exatype.problemsoccurredwiththesqlistruction"),
+							MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"),
 							OHSeverityLevel.ERROR));
 		}
 	}

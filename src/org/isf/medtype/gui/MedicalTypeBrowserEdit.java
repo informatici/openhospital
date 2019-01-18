@@ -194,93 +194,46 @@ public class MedicalTypeBrowserEdit extends JDialog{
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					String key = codeTextField.getText();
 					MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
-					if (key.equals("")){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.medtype.pleaseinsertacode"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}	
-					//System.out.print(key.length());
-					if (key.length()>1){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.medtype.codetoolongmaxchar"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						
-						return;	
-					}
-					if(insert){
-						boolean inserted;
-						
-						try {
-							inserted = manager.codeControl(key);
-						} catch (OHServiceException e1) {
-							inserted = false;
-							OHServiceExceptionUtil.showMessages(e1);
-						}
-						
-						if (true == inserted){
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.common.codealreadyinuse"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							codeTextField.setText("");
-							return;	
-						}
-					};
-					if (descriptionTextField.getText().equals("")){
-						JOptionPane.showMessageDialog(				
-		                        null,
-		                        MessageBundle.getMessage("angal.medtype.pleaseinsertavaliddescription"),
-		                        MessageBundle.getMessage("angal.hospital"),
-		                        JOptionPane.PLAIN_MESSAGE);
-						return;	
-					}
-					if (descriptionTextField.getText().equals(lastdescription)){
-						dispose();	
-					}
+
 					medicalType.setDescription(descriptionTextField.getText());
 					medicalType.setCode(codeTextField.getText());
+
 					boolean result;
-					if (insert) {      // inserting
+					if (insert) { // inserting
 						try {
 							result = manager.newMedicalType(medicalType);
+							if (result) {
+								fireMedicalInserted();
+								dispose();
+							} else
+								JOptionPane.showMessageDialog(MedicalTypeBrowserEdit.this,
+										MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+
 						} catch (OHServiceException e1) {
 							result = false;
 							OHServiceExceptionUtil.showMessages(e1);
 						}
-						if (result) {
-                           fireMedicalInserted();
-                        }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medtype.thedatacouldnotbesaved"));
-	                    else  dispose();
-                    }
-                    else {                          // updating
-                    	if (descriptionTextField.getText().equals(lastdescription)){
-    						dispose();	
-    					}else{
-    						try {
+					} else { // updating
+						if (descriptionTextField.getText().equals(lastdescription)) {
+							dispose();
+						} else {
+							try {
 								result = manager.updateMedicalType(medicalType);
+								if (result) {
+									fireMedicalUpdated();
+									dispose();
+								} else
+									JOptionPane.showMessageDialog(MedicalTypeBrowserEdit.this,
+											MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+
 							} catch (OHServiceException e1) {
 								result = false;
 								OHServiceExceptionUtil.showMessages(e1);
 							}
-						if (result) {
-							fireMedicalUpdated();
-                        }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medtype.thedatacouldnotbesaved"));
-                        else  dispose();
-    					}
-                    	
+						}
 					}
-					
-                }
+				}
 			});
 		}
 		return okButton;
@@ -309,7 +262,7 @@ public class MedicalTypeBrowserEdit extends JDialog{
 	 */
 	private JTextField getCodeTextField() {
 		if (codeTextField == null) {
-			codeTextField = new VoLimitedTextField(2);
+			codeTextField = new VoLimitedTextField(1);
 			if (!insert) {
 				codeTextField.setText(medicalType.getCode());
 				codeTextField.setEnabled(false);
@@ -343,7 +296,7 @@ public class MedicalTypeBrowserEdit extends JDialog{
 	private JLabel getJCodeLabel() {
 		if (jCodeLabel == null) {
 			jCodeLabel = new JLabel();
-			jCodeLabel.setText(MessageBundle.getMessage("angal.medtype.codemaxchar"));
+			jCodeLabel.setText(MessageBundle.getMessage("angal.medtype.codemaxchars"));
 		}
 		return jCodeLabel;
 	}

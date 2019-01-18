@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
@@ -43,7 +44,9 @@ import org.isf.lab.gui.LabNew.LabListener;
 import org.isf.lab.manager.LabManager;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryForPrint;
+import org.isf.lab.service.LabIoOperations;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.gui.Menu;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
@@ -69,6 +72,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 	private static final String VERSION=MessageBundle.getMessage("angal.versione");
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 	
 	private JPanel jContentPane = null;
 	private JPanel jButtonPanel = null;
@@ -83,7 +87,12 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 	private JComboBox comboExams = null;
 	private int pfrmHeight;
 	private ArrayList<Laboratory> pLabs;
-	private String[] pColums = { MessageBundle.getMessage("angal.common.datem"), MessageBundle.getMessage("angal.lab.patient"), MessageBundle.getMessage("angal.lab.examm"), MessageBundle.getMessage("angal.lab.resultm") };
+	private String[] pColums = { 
+			MessageBundle.getMessage("angal.common.datem"), 
+			MessageBundle.getMessage("angal.lab.patient"), 
+			MessageBundle.getMessage("angal.lab.examm"), 
+			MessageBundle.getMessage("angal.lab.resultm") 
+	};
 	private boolean[] columnsResizable = {false, true, true, false};
 	private int[] pColumwidth = { 100, 200, 200, 200 };
 	private int[] maxWidth = {150, 200, 200, 200};
@@ -97,13 +106,17 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 	private VoDateTextField dateTo = null;
 	private final JFrame myFrame;
 
+	private JPanel jPanelDateFrom;
+
+	private JPanel jPanelDateTo;
+
 	/**
 	 * This is the default constructor
 	 */
 	public LabBrowser() {
 		super();
 		myFrame = this;
-		manager = new LabManager();
+		manager = new LabManager(Menu.getApplicationContext().getBean(LabIoOperations.class));
 		initialize();
 		setResizable(false);
 		setVisible(true);
@@ -158,8 +171,9 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 			if (MainMenu.checkUserGrants("btnlaboratorynew")) jButtonPanel.add(getButtonNew(), null);
 			if (MainMenu.checkUserGrants("btnlaboratoryedit")) jButtonPanel.add(getButtonEdit(), null);
 			if (MainMenu.checkUserGrants("btnlaboratorydel")) jButtonPanel.add(getButtonDelete(), null);
-			jButtonPanel.add((getCloseButton()), null);
 			jButtonPanel.add((getPrintTableButton()), null);
+			jButtonPanel.add((getCloseButton()), null);
+			
 		}
 		return jButtonPanel;
 	}
@@ -236,8 +250,8 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 
 				public void actionPerformed(ActionEvent event) {
 					laboratory = new Laboratory(0, new Exam("", "",
-							new ExamType("", ""), 0, "", 0),
-							new GregorianCalendar(), "P", 0, "", new Patient(), "");
+							new ExamType("", ""), 0, ""),
+							new GregorianCalendar(), "P", "", new Patient(), "");
 					if (GeneralData.LABEXTENDED) {
 						if (GeneralData.LABMULTIPLEINSERT) {
 							LabNew editrecord = new LabNew(myFrame);
@@ -278,14 +292,9 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 					} else {
 						Laboratory lab = (Laboratory) (((LabBrowsingModel) model)
 								.getValueAt(jTable.getSelectedRow(), -1));
-						int n = JOptionPane.showConfirmDialog(null,
-								MessageBundle.getMessage("angal.lab.deletefollowinglabexam")+"; " +
-								"\n"+ MessageBundle.getMessage("angal.lab.registationdate")+"=" + getConvertedString(lab.getDate()) + 
-								"\n "+ MessageBundle.getMessage("angal.lab.examdate")+"=" + getConvertedString(lab.getExamDate()) + 
-								"\n "+ MessageBundle.getMessage("angal.lab.exam")+"=" + lab.getExam() + 
-								"\n "+ MessageBundle.getMessage("angal.lab.patient")+" =" + lab.getPatName() + 
-								"\n "+ MessageBundle.getMessage("angal.lab.result")+" =" + lab.getResult() + 
-								"\n ?",
+						
+						int n = JOptionPane.showConfirmDialog(LabBrowser.this,
+								getLabMessage(lab),
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
 
 						if (n == JOptionPane.YES_OPTION) {
@@ -299,7 +308,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 							}
 							
 							if (true == deleted) {
-								pLabs.remove(pLabs.size() - jTable.getSelectedRow() - 1);
+								pLabs.remove(jTable.getSelectedRow());
 								model.fireTableDataChanged();
 								jTable.updateUI();
 							}
@@ -310,6 +319,22 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 			});
 		}
 		return buttonDelete;
+	}
+
+	protected String getLabMessage(Laboratory lab) {
+		StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.lab.deletefollowinglabexam"))
+				.append(";\n")
+				.append(MessageBundle.getMessage("angal.lab.registationdate")).append("=").append(dateFormat.format(lab.getDate().getTime()))
+				.append("\n")
+				.append(MessageBundle.getMessage("angal.lab.examdate")).append("=").append(dateTimeFormat.format(lab.getExamDate().getTime()))
+				.append("\n")
+				.append(MessageBundle.getMessage("angal.lab.exam")).append("=").append(lab.getExam())
+				.append("\n")
+				.append(MessageBundle.getMessage("angal.lab.patient")).append("=").append(lab.getPatName())
+				.append("\n")
+				.append(MessageBundle.getMessage("angal.lab.result")).append("=").append(lab.getResult())
+				.append("\n ?");
+		return message.toString();
 	}
 
 	/**
@@ -339,11 +364,9 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		if (jSelectionPanel == null) {
 			jSelectionPanel = new JPanel();
 			jSelectionPanel.setPreferredSize(new Dimension(200, pfrmHeight));
-			jSelectionPanel.add(new JLabel(MessageBundle.getMessage("angal.lab.selectanexam")), null);
-			jSelectionPanel.add(getComboExams(), null);
-			jSelectionPanel.add(new JLabel(MessageBundle.getMessage("angal.common.datem") +":"+ MessageBundle.getMessage("angal.common.from")), null);
+			jSelectionPanel.add(new JLabel(MessageBundle.getMessage("angal.lab.selectanexam")));
+			jSelectionPanel.add(getComboExams());
 			jSelectionPanel.add(getDateFromPanel());
-			jSelectionPanel.add(new JLabel(MessageBundle.getMessage("angal.common.to") +"     "), null);
 			jSelectionPanel.add(getDateToPanel());
 			jSelectionPanel.add(getFilterButton());
 		}
@@ -360,13 +383,16 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		if (jTable == null) {
 			model = new LabBrowsingModel();
 			jTable = new JTable(model);
-			int columnLengh = pColumwidth.length;
-			if (!GeneralData.LABEXTENDED) {
-				columnLengh--;
-			}
-			for (int i=0;i<columnLengh; i++){
+			TableColumnModel columnModel = jTable.getColumnModel();
+			for (int i = 0; i < model.getColumnCount(); i++) {
 				jTable.getColumnModel().getColumn(i).setMinWidth(pColumwidth[i]);
-				if (!columnsResizable[i]) jTable.getColumnModel().getColumn(i).setMaxWidth(maxWidth[i]);
+				if (!columnsResizable[i]) 
+					columnModel.getColumn(i).setMaxWidth(maxWidth[i]);
+				if (!columnsVisible[i]) {
+					columnModel.getColumn(i).setMaxWidth(0);
+					columnModel.getColumn(i).setMinWidth(0);
+					columnModel.getColumn(i).setPreferredWidth(0);
+				}
 			}
 		}
 		return jTable;
@@ -383,8 +409,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		if (comboExams == null) {
 			comboExams = new JComboBox();
 			comboExams.setPreferredSize(new Dimension(200, 30));
-			comboExams.addItem(new Exam("", MessageBundle.getMessage("angal.lab.all"), new ExamType("", ""), 0, "",
-					0));
+			comboExams.addItem(new Exam("", MessageBundle.getMessage("angal.lab.all"), new ExamType("", ""), 0, ""));
 			ArrayList<Exam> type;
 			try {
 				type = managerExams.getExams();
@@ -414,13 +439,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		return comboExams;
 	}
 
-	/**
-	 * This method initializes dateFrom, which is the Panel that contains the
-	 * date (From) input for the filtering
-	 * 
-	 * @return dateFrom (JPanel)
-	 */
-	private VoDateTextField getDateFromPanel() {
+	private VoDateTextField getDateFieldFromPanel() {
 		if (dateFrom == null) {
 			GregorianCalendar now = new GregorianCalendar();
 			//04/01/2009 - ross - do not use roll, use add(week,-1)!
@@ -430,20 +449,46 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		}
 		return dateFrom;
 	}
-
+	
 	/**
-	 * This method initializes dateTo, which is the Panel that contains the date
-	 * (To) input for the filtering
+	 * This method initializes dateFrom, which is the Panel that contains the
+	 * date (From) input for the filtering
 	 * 
-	 * @return dateTo (JPanel)
+	 * @return dateFrom (JPanel)
 	 */
-	private VoDateTextField getDateToPanel() {
+	private JPanel getDateFromPanel() {
+		if (jPanelDateFrom == null) {
+			jPanelDateFrom = new JPanel();
+			jPanelDateFrom.add(new JLabel(MessageBundle.getMessage("angal.common.datem") +" "+ MessageBundle.getMessage("angal.common.from") + ": "), null);
+			jPanelDateFrom.add(getDateFieldFromPanel());
+			
+		}
+		return jPanelDateFrom;
+	}
+
+	private VoDateTextField getDateFieldToPanel() {
 		if (dateTo == null) {
 			GregorianCalendar now = new GregorianCalendar();
 			dateTo = new VoDateTextField("dd/mm/yyyy", now, 10);
 			dateTo.setDate(now);
 		}
 		return dateTo;
+	}
+	
+	/**
+	 * This method initializes dateTo, which is the Panel that contains the date
+	 * (To) input for the filtering
+	 * 
+	 * @return dateTo (JPanel)
+	 */
+	private JPanel getDateToPanel() {
+		if (jPanelDateTo == null) {
+			jPanelDateTo = new JPanel();
+			jPanelDateTo.add(new JLabel(MessageBundle.getMessage("angal.common.datem") +" "+ MessageBundle.getMessage("angal.common.to") + ": "), null);
+			jPanelDateTo.add(getDateFieldToPanel());
+			
+		}
+		return jPanelDateTo;
 	}
 
 	/**
@@ -482,7 +527,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private LabManager manager = new LabManager();
+		private LabManager manager = new LabManager(Menu.getApplicationContext().getBean(LabIoOperations.class));
 
 		public LabBrowsingModel(String exam, GregorianCalendar dateFrom, GregorianCalendar dateTo) {
 			try {
@@ -494,7 +539,6 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		}
 
 		public LabBrowsingModel() {
-			LabManager manager = new LabManager();
 			try {
 				pLabs = manager.getLaboratory();
 			} catch (OHServiceException e) {
@@ -510,58 +554,30 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		}
 
 		public String getColumnName(int c) {
-			return pColums[getNumber(c)];
+			return pColums[c];
 		}
 
 		public int getColumnCount() {
-			int c = 0;
-			for (int i = 0; i < columnsVisible.length; i++) {
-				if (columnsVisible[i]) {
-					c++;
-				}
-			}
-			return c;
+			return pColums.length;
 		}
 
-		/** 
-	     * This method converts a column number in the table
-	     * to the right number of the datas.
-	     */
-	    protected int getNumber(int col) {
-	    	// right number to return
-	        int n = col;    
-	        int i = 0;
-	        do {
-	            if (!columnsVisible[i]) {
-	            	n++;
-	            }
-	            i++;
-	        } while (i < n);
-	        // If we are on an invisible column, 
-	        // we have to go one step further
-	        while (!columnsVisible[n]) {
-	        	n++;
-	        }
-	        return n;
-	    }
-	    
 		/**
 		 * Note: We must get the objects in a reversed way because of the query
 		 * 
 		 * @see org.isf.lab.service.LabIoOperations
 		 */
 		public Object getValueAt(int r, int c) {
+			Laboratory lab = pLabs.get(r);
 			if (c == -1) {
-				return pLabs.get(pLabs.size() - r - 1);
-			} else if (getNumber(c) == 0) {
-				return //getConvertedString(pLabs.get(pLabs.size() - r - 1).getDate());
-					   dateFormat.format(pLabs.get(pLabs.size() - r - 1).getExamDate().getTime());
-			} else if (getNumber(c) == 1) {
-				return pLabs.get(pLabs.size() - r - 1).getPatName(); //Alex: added
-			} else if (getNumber(c) == 2) {
-				return pLabs.get(pLabs.size() - r - 1).getExam();
-			} else if (getNumber(c) == 3) {
-				return pLabs.get(pLabs.size() - r - 1).getResult();
+				return lab;
+			} else if (c == 0) {
+				return dateFormat.format(lab.getExamDate().getTime());
+			} else if (c == 1) {
+				return lab.getPatName();
+			} else if (c == 2) {
+				return lab.getExam();
+			} else if (c == 3) {
+				return lab.getResult();
 			}
 			return null;
 		}
@@ -578,44 +594,23 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 	 * Sets the focus on the same record as before
 	 * 
 	 */
-	/*public void laboratoryUpdated() {
+	public void laboratoryUpdated() {
 		pLabs.set(pLabs.size() - selectedrow - 1, laboratory);
 		((LabBrowsingModel) jTable.getModel()).fireTableDataChanged();
 		jTable.updateUI();
 		if ((jTable.getRowCount() > 0) && selectedrow > -1)
 			jTable.setRowSelectionInterval(selectedrow, selectedrow);
-	}*/
+	}
 
 	/**
 	 * This method updates the Table because a laboratory test has been inserted
 	 * Sets the focus on the first record
 	 * 
 	 */
-	/*public void laboratoryInserted() {
+	public void laboratoryInserted() {
 		pLabs.add(pLabs.size(), laboratory);
 		((LabBrowsingModel) jTable.getModel()).fireTableDataChanged();
 		if (jTable.getRowCount() > 0)
 			jTable.setRowSelectionInterval(0, 0);
-	}
-*/
-	/**
-	 * This method is needed to display the date in a more understandable format
-	 * 
-	 * @param time
-	 * @return String
-	 */
-	private String getConvertedString(GregorianCalendar time) {
-		String string = "";
-		if (time!=null) {
-			string=String
-					.valueOf(time.get(GregorianCalendar.DAY_OF_MONTH));
-			string += "/" + String.valueOf(time.get(GregorianCalendar.MONTH) + 1);
-			string += "/" + String.valueOf(time.get(GregorianCalendar.YEAR));
-			string += "  "
-					+ String.valueOf(time.get(GregorianCalendar.HOUR_OF_DAY));
-			string += ":" + String.valueOf(time.get(GregorianCalendar.MINUTE));
-			string += ":" + String.valueOf(time.get(GregorianCalendar.SECOND));
-		}
-		return string;
 	}
 }

@@ -11,24 +11,182 @@ import org.isf.medicals.service.MedicalsIoOperations;
 import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstock.service.MedicalStockIoOperations;
-import org.isf.menu.gui.Menu;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+@Component
 public class MovStockInsertingManager {
 
 	private final Logger logger = LoggerFactory.getLogger(MovStockInsertingManager.class);
 	
+	@Autowired
 	private MedicalStockIoOperations ioOperations;
+	@Autowired
 	private MedicalsIoOperations ioOperationsMedicals;
 
-	public MovStockInsertingManager() {
-		ioOperations = Menu.getApplicationContext().getBean(MedicalStockIoOperations.class);
-		ioOperationsMedicals = Menu.getApplicationContext().getBean(MedicalsIoOperations.class);
+	public MovStockInsertingManager() {}
+	
+	/**
+	 * Verify if the object is valid for CRUD and return a list of errors, if any
+	 * @param Movement - the movement to validate
+	 * @param checkReference - if {@code true} it will use {@link #checkReferenceNumber(String) checkReferenceNumber}
+	 * @return list of {@link OHExceptionMessage}
+	 * @throws OHServiceException 
+	 */
+	protected List<OHExceptionMessage> validateMovement(Movement movement, boolean checkReference) throws OHServiceException {
+		List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+		
+		// Check the Date
+		GregorianCalendar today = new GregorianCalendar();
+		GregorianCalendar movDate = movement.getDate();
+		GregorianCalendar lastDate = getLastMovementDate();
+		if (movDate.after(today)) {
+			errors.add(new OHExceptionMessage("movementDateInFutureError",
+					MessageBundle.getMessage("angal.medicalstock.multiplecharging.futuredatenotallowed"), //$NON-NLS-1$
+					OHSeverityLevel.ERROR));
+		}
+		if (lastDate != null && movDate.compareTo(lastDate) < 0) {
+			errors.add(new OHExceptionMessage("movementDateBeforeLastDateError",
+					MessageBundle.getMessage("angal.medicalstock.multiplecharging.datebeforelastmovement"), //$NON-NLS-1$
+					OHSeverityLevel.ERROR));
+		}
+		
+		// Check the RefNo
+		if (checkReference) {
+			String refNo = movement.getRefNo();
+			errors.addAll(checkReferenceNumber(refNo));
+		}
+		
+		// Check supplier
+		if (movement.getType().getType().contains("+")) {
+			Object supplier = movement.getSupplier();
+			if (supplier == null || supplier instanceof String) {
+				errors.add(new OHExceptionMessage("emptyOrNullSupplierError",
+						MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseselectasupplier"), //$NON-NLS-1$
+						OHSeverityLevel.ERROR));
+			}
+		} else {
+			Object ward = movement.getWard();
+			if (ward == null || ward instanceof String) {
+				errors.add(new OHExceptionMessage("emptyOrNullWardError",
+						MessageBundle.getMessage("angal.medicalstock.multipledischarging.pleaseselectaward"), //$NON-NLS-1$
+						OHSeverityLevel.ERROR));
+			}
+		}
+		
+		// Check quantity
+		Lot lot = movement.getLot();
+		if (movement.getQuantity() == 0) {
+			errors.add(new OHExceptionMessage("zeroQuantityError",
+					MessageBundle.getMessage("angal.medicalstock.thequantitymustnotbezero"), //$NON-NLS-1$
+					OHSeverityLevel.ERROR));
+		}
+		if ((movement.getType().getType().contains("-")) && (movement.getQuantity() > lot.getQuantity())) {
+			errors.add(new OHExceptionMessage("quantityGreaterThanLotError",
+					MessageBundle.getMessage("angal.medicalstock.movementquantityisgreaterthanthequantityof"), //$NON-NLS-1$
+					OHSeverityLevel.ERROR));
+		}
+
+		// Check Medical
+		if (movement.getMedical() == null) {
+			errors.add(new OHExceptionMessage("emptyOrNullMedicalError",
+					MessageBundle.getMessage("angal.medicalstock.chooseamedical"), //$NON-NLS-1$
+					OHSeverityLevel.ERROR));
+		}
+
+		// Check Movement Type
+		if (movement.getType() == null) {
+			errors.add(new OHExceptionMessage("emptyOrNullMovementTypeError",
+					MessageBundle.getMessage("angal.medicalstock.chooseatype"), //$NON-NLS-1$
+					OHSeverityLevel.ERROR));
+		}
+		
+		// Check Lot
+		{
+			List<Integer> medicalIds = ioOperations.getMedicalsFromLot(lot.getCode());
+			if (!(medicalIds.size() == 0 || (medicalIds.size() == 1 && medicalIds.get(0).intValue() == movement.getMedical().getCode().intValue()))) {
+				errors.add(new OHExceptionMessage("sharedLotError",
+						MessageBundle.getMessage("angal.medicalstock.thislotreferstoanothermedical"), //$NON-NLS-1$
+						OHSeverityLevel.ERROR));
+			}
+			if (GeneralData.LOTWITHCOST) {
+				Double cost = lot.getCost();
+				if (cost == null || cost.doubleValue() <= 0.) {
+					errors.add(new OHExceptionMessage("zeroLotCostError",
+							MessageBundle.getMessage("angal.medicalstock.multiplecharging.zerocostsnotallowed"), //$NON-NLS-1$
+							OHSeverityLevel.ERROR));
+				}
+			}
+			errors.addAll(validateLot(lot));
+		}
+		return errors;
+	}
+	
+	/**
+	 * Verify if the object is valid for CRUD and return a list of errors, if any
+	 * @param Lot - the lot to validate
+	 * @return list of {@link OHExceptionMessage}
+	 * @throws OHServiceException 
+	 */
+	protected List<OHExceptionMessage> validateLot(Lot lot) throws OHServiceException {
+		List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+		
+		if (lot != null) {
+
+			if (lot.getCode().length() >= 50) {
+				errors.add(new OHExceptionMessage("lotIdTooLongError",
+						MessageBundle.getMessage("angal.medicalstock.changethelotidbecauseitstoolong"), //$NON-NLS-1$
+						OHSeverityLevel.ERROR));
+			}
+
+			if (lot.getDueDate() == null) {
+				errors.add(new OHExceptionMessage("invalidDueDateError",
+						MessageBundle.getMessage("angal.medicalstock.insertavalidduedate"), //$NON-NLS-1$
+						OHSeverityLevel.ERROR));
+			}
+			
+			if (lot.getPreparationDate() == null) {
+				errors.add(new OHExceptionMessage("invalidPreparationDateError",
+						MessageBundle.getMessage("angal.medicalstock.insertavalidpreparationdate"), //$NON-NLS-1$
+						OHSeverityLevel.ERROR));
+			}
+
+			if (lot.getPreparationDate().compareTo(lot.getDueDate()) > 0) {
+				errors.add(new OHExceptionMessage("preparationDateAfterDueDate",
+						MessageBundle.getMessage("angal.medicalstock.preparationdatecannotbelaterthanduedate"), //$NON-NLS-1$
+						OHSeverityLevel.ERROR));
+			}
+		}
+		return errors;
+	}
+	
+	/**
+	 * Verify if the referenceNumber is valid for CRUD and return a list of errors, if any
+	 * @param referenceNumber - the lot to validate
+	 * @return list of {@link OHExceptionMessage}
+	 * @throws OHServiceException 
+	 */
+	protected List<OHExceptionMessage> checkReferenceNumber(String referenceNumber) throws OHServiceException {
+		List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+		if (referenceNumber == null || referenceNumber.isEmpty()) { //$NON-NLS-1$
+			errors.add(new OHExceptionMessage("emptyOrNullRefNumberError",
+					MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertareferencenumber"), //$NON-NLS-1$
+					OHSeverityLevel.ERROR));
+		} else {
+			if (refNoExists(referenceNumber)) {
+				errors.add(new OHExceptionMessage("existingRefNumberError",
+						MessageBundle.getMessage("angal.medicalstock.multiplecharging.theinsertedreferencenumberalreadyexists"), //$NON-NLS-1$
+						OHSeverityLevel.ERROR));
+			}
+		}
+		return errors;
 	}
 
 	// Replaced by getMedical in MedicalBrowsingManager
@@ -60,21 +218,7 @@ public class MovStockInsertingManager {
 		if (medical == null) {
 			return new ArrayList<Lot>();
 		}
-		try {
-			return ioOperations.getLotsByMedical(medical);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getLotsByMedical(medical);
 	}
 
 	/**
@@ -88,24 +232,10 @@ public class MovStockInsertingManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean alertCriticalQuantity(Medical medicalSelected, int specifiedQuantity) throws OHServiceException {
-		try {
-			Medical medical = ioOperationsMedicals.getMedical(medicalSelected.getCode());
-			double totalQuantity = medical.getTotalQuantity();
-			double residual = totalQuantity - specifiedQuantity;
-			return residual < medical.getMinqty();
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
-		}
+		Medical medical = ioOperationsMedicals.getMedical(medicalSelected.getCode());
+		double totalQuantity = medical.getTotalQuantity();
+		double residual = totalQuantity - specifiedQuantity;
+		return residual < medical.getMinqty();
 	}
 
 	/**
@@ -115,21 +245,7 @@ public class MovStockInsertingManager {
 	 * @throws OHServiceException 
 	 */
 	public GregorianCalendar getLastMovementDate() throws OHServiceException {
-		try {
-			return ioOperations.getLastMovementDate();
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getLastMovementDate();
 	}
 
 	/**
@@ -140,269 +256,145 @@ public class MovStockInsertingManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean refNoExists(String refNo) throws OHServiceException {
-		try {
-			return ioOperations.refNoExists(refNo);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.refNoExists(refNo);
 	}
-
+	
 	/**
-	 * insert a list of {@link Movement}s and related {@link MedicalCost}s
+	 * insert a list of {@link Movement}s and related {@link Lot}s
 	 * 
-	 * @param movements
-	 *            - the list of {@link Movement}s
-	 * @param costs
-	 *            - the related list of {@link MedicalCost}s
-	 * @return the list <code>size</code> if all {@link Movement}s have been
-	 *         inserted, otherwise the <code>index</code> of the problematic
-	 *         {@link Movement} in the list
+	 * @param movements - the list of {@link Movement}s
+	 * @return 
 	 * @throws OHServiceException 
 	 */
-	public int newMultipleChargingMovements(ArrayList<Movement> movements) throws OHServiceException {
-
-		int i = 0;
-		boolean ok = true;
-		int size = movements.size();
-		for (i = 0; i < size; i++) {
-			Movement mov = movements.get(i);
-			ok = prepareChargingMovement(mov);
-		}
-		if (ok) {
-			i++;
-		}
-		return i;
+	public boolean newMultipleChargingMovements(ArrayList<Movement> movements) throws OHServiceException {
+		return newMultipleChargingMovements(movements, null);
 	}
 
 	/**
-	 * Prepare the insert of the specified {@link Movement} (no commit)
+	 * Insert a list of charging {@link Movement}s and related {@link Lot}s
 	 * 
-	 * @param movement
-	 *            - the movement to store.
+	 * @param movements - the list of {@link Movement}s
+	 * @param referenceNumber - the reference number to be set for all movements
+	 * 		   if {@link null}, each movements must have a different referenceNumber 
+	 * @return 
+	 * @throws OHServiceException 
+	 */
+	@Transactional(rollbackFor=OHServiceException.class)
+	public boolean newMultipleChargingMovements(ArrayList<Movement> movements, String referenceNumber) throws OHServiceException {
+		
+		boolean ok = true;
+		boolean checkReference = referenceNumber == null;
+		if (!checkReference) { // referenceNumber != null
+			List<OHExceptionMessage> errors = checkReferenceNumber(referenceNumber);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
+		}
+		for (Movement mov : movements) {
+			try {
+				prepareChargingMovement(mov, checkReference);
+			} catch (OHServiceException e) {
+				List<OHExceptionMessage> errors = e.getMessages();
+				errors.add(new OHExceptionMessage("invalidMovement", 
+						mov.getMedical().getDescription(), 
+						OHSeverityLevel.INFO));
+				throw new OHServiceException(errors);
+			}
+		}
+		return ok;
+	}
+
+
+	/**
+	 * Prepare the insert of the specified charging {@link Movement}
+	 * 
+	 * @param movement - the movement to store.
+	 * @param checkReference - if {@code true} every movement must have unique reference number
 	 * @return <code>true</code> if the movement has been stored,
 	 *         <code>false</code> otherwise.
 	 * @throws OHServiceException 
 	 */
-	private boolean prepareChargingMovement(Movement movement) throws OHServiceException {
+	@Transactional(rollbackFor=OHServiceException.class)
+	private boolean prepareChargingMovement(Movement movement, boolean checkReference) throws OHServiceException {
 		try {
-			check(movement);
+			List<OHExceptionMessage> errors = validateMovement(movement, checkReference);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
 			return ioOperations.prepareChargingMovement(movement);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
-		}
-	}
-
-	private void check(Movement movement) throws OHException {
-		if (movement.getQuantity() == 0) {
-			throw new OHException(MessageBundle.getMessage("angal.medicalstock.thequantitymustnotbe"));
-		}
-
-		if (movement.getMedical() == null) {
-			throw new OHException(MessageBundle.getMessage("angal.medicalstock.chooseamedical"));
-		}
-
-		if (movement.getType() == null) {
-			throw new OHException(MessageBundle.getMessage("angal.medicalstock.chooseatype"));
-		}
-
-		if (movement.getLot() != null) {
-			
-			/*if (movement.getLot().getCode().equalsIgnoreCase("")) {
-				JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.insertavalidlotidentifier"));
-				return false;
-			}*/
-
-			if (movement.getLot().getCode().length() >= 50) {
-				throw new OHException(MessageBundle.getMessage("angal.medicalstock.changethelotidbecauseitstoolong"));
-			}
-
-			if (movement.getLot().getDueDate() == null) {
-				throw new OHException(MessageBundle.getMessage("angal.medicalstock.insertavalidduedate"));
-			}
-
-			if (movement.getLot().getPreparationDate() == null) {
-				throw new OHException(MessageBundle.getMessage("angal.medicalstock.insertavalidpreparationdate"));
-			}
-
-			if (movement.getLot().getPreparationDate().compareTo(movement.getLot().getDueDate()) > 0) {
-				throw new OHException(MessageBundle.getMessage("angal.medicalstock.preparationdatecannotbelaterthanduedate"));
-			}
-
-			if ((movement.getType().getType().contains("-")) && (movement.getQuantity() > movement.getLot().getQuantity())) {
-				throw new OHException(MessageBundle.getMessage("angal.medicalstock.movementquantityisgreaterthanthequantityof"));
-			}
-
-			// checks if the lot is already used by other medicals
-			List<Integer> medicalIds = ioOperations.getMedicalsFromLot(movement.getLot().getCode());
-			if (!(medicalIds.size() == 0 || (medicalIds.size() == 1 && medicalIds.get(0).intValue() == movement.getMedical().getCode().intValue()))) {
-				throw new OHException(MessageBundle.getMessage("angal.medicalstock.thislotreferstoanothermedical"));
-			}
-		}
-	}
-
-	public int newMultipleDischargingMovements(ArrayList<Movement> movements) throws OHServiceException {
-		int i = 0;
-		boolean ok = true;
-		int size = movements.size();
-		for (i = 0; i < size; i++) {
-			Movement mov = movements.get(i);
-			ok = prepareDishargingMovement(mov);
-		}
-		if (ok) {
-			i++;
-		}
-		return i;
-	}
-
-	private boolean prepareDishargingMovement(Movement movement) throws OHServiceException {
-		try {
-			boolean result;
-			if (isAutomaticLot()) {
-				result = ioOperations.newAutomaticDischargingMovement(movement);
-			} else
-				result = ioOperations.prepareDischargingMovement(movement);
-			return result;
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithsqlistruction"), OHSeverityLevel.ERROR));
+		} catch (OHServiceException e) {
+			throw e;
 		}
 	}
 	
-// not used	
-//	/**
-//	 * Stores the specified movement.
-//	 * 
-//	 * @param movement - the movement to store.
-//	 * @return <code>true</code> if the movement has been stored,
-//	 *         <code>false</code> otherwise.
-//	 */
-//	public boolean newMovement(Movement movement) {
-//
-//		try {
-//
-//			if (movement.getQuantity() == 0) {
-//				JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.thequantitymustnotbe"));
-//				return false;
-//			}
-//
-//			if (movement.getMedical() == null) {
-//				JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.chooseamedical"));
-//				return false;
-//			}
-//
-//			if (movement.getType() == null) {
-//				JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.chooseatype"));
-//				return false;
-//			}
-//			
-//			if (movement.getOrigin() == null) {
-//				JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.chooseasupplier"));
-//				return false;
-//			}
-//
-//			if (movement.getLot() != null) {
-//
-//				if (movement.getLot().getCode().equalsIgnoreCase("")) {
-//					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.insertavalidlotidentifier"));
-//					return false;
-//				}
-//
-//				if (movement.getLot().getCode().length() >= 50) {
-//					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.changethelotidbecauseitstoolong"));
-//					return false;
-//				}
-//
-//				if (movement.getLot().getDueDate() == null) {
-//					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.insertavalidduedate"));
-//					return false;
-//				}
-//
-//				if (movement.getLot().getPreparationDate() == null) {
-//					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.insertavalidpreparationdate"));
-//					return false;
-//				}
-//
-//				if (movement.getLot().getPreparationDate().compareTo(movement.getLot().getDueDate()) > 0) {
-//					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.preparationdatecannotbelaterthanduedate"));
-//					return false;
-//				}
-//
-//				if ((movement.getType().getType().contains("-")) && (movement.getQuantity() > movement.getLot().getQuantity())) {
-//					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.movementquantityisgreaterthanthequantityof"));
-//					return false;
-//				}
-//
-//				// checks if the lot is already used by other medicals
-//				List<Integer> medicalIds = ioOperations.getMedicalsFromLot(movement.getLot().getCode());
-//				if (!(medicalIds.size() == 0 || (medicalIds.size() == 1 && medicalIds.get(0).intValue() == movement.getMedical().getCode().intValue()))) {
-//					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.thislotreferstoanothermedical"));
-//					return false;
-//
-//				}
-//			}
-//
-//			// we check movement quantity in outgoing stock case
-//			if (!movement.getType().getType().contains("+")) {
-//
-//				Medical medical = ioOperationsMedicals.getMedical(movement.getMedical().getCode());
-//				double totalQuantity = medical.getTotalQuantity() - movement.getQuantity();
-//
-//				// we check if the outgoing movement has a quantity greater than
-//				// the stocked one
-//				if (totalQuantity < 0) {
-//					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstock.thetotalquantitycannotbelessthan"));
-//					return false;
-//				}
-//
-//				// we check if we are near to critical quantity
-//				if (totalQuantity < medical.getMinqty()) {
-//					int reply = JOptionPane.showConfirmDialog(null, MessageBundle.getMessage("angal.medicalstock.youaregoingtorununderthecritical"), MessageBundle
-//							.getMessage("angal.medicalstock.select"), JOptionPane.YES_NO_OPTION);
-//					boolean abort = reply == JOptionPane.NO_OPTION;
-//
-//					if (abort)
-//						return false;
-//				}
-//			}
-//			boolean result;
-//			if (isAutomaticLot() && movement.getType().getType().equals("-")) {
-//				result = ioOperations.newAutomaticDischargingMovement(movement);
-//			} else
-//				result = ioOperations.newMovement(movement);
-//			return result;
-//		} catch (OHException e) {
-//			JOptionPane.showMessageDialog(null, e.getMessage());
-//			return false;
-//		}
-//
-//	}
+	/**
+	 * Insert a list of discharging {@link Movement}s
+	 * 
+	 * @param movements - the list of {@link Movement}s
+	 * @return 
+	 * @throws OHServiceException 
+	 */
+	@Transactional(rollbackFor=OHServiceException.class)
+	public boolean newMultipleDischargingMovements(ArrayList<Movement> movements) throws OHServiceException {
+		return newMultipleDischargingMovements(movements, null);
+	}
+
+	/**
+	 * Insert a list of discharging {@link Movement}s
+	 * 
+	 * @param movements - the list of {@link Movement}s
+	 * @param referenceNumber - the reference number to be set for all movements
+	 * 		   if {@link null}, each movements must have a different referenceNumber 
+	 * @return 
+	 * @throws OHServiceException 
+	 */
+	@Transactional(rollbackFor=OHServiceException.class)
+	public boolean newMultipleDischargingMovements(ArrayList<Movement> movements, String referenceNumber) throws OHServiceException {
+		
+		boolean ok = true;
+		boolean checkReference = referenceNumber == null;
+		if (!checkReference) { // referenceNumber != null
+			List<OHExceptionMessage> errors = checkReferenceNumber(referenceNumber);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
+		}
+		for (Movement mov : movements) {
+			try {
+				prepareDishargingMovement(mov, checkReference);
+			} catch (OHServiceException e) {
+				List<OHExceptionMessage> errors = e.getMessages();
+				errors.add(new OHExceptionMessage("invalidMovement", 
+						mov.getMedical().getDescription(), 
+						OHSeverityLevel.INFO));
+				throw new OHServiceException(errors);
+			}
+		}
+		return ok;
+	}
+
+	/**
+	 * Prepare the insert of the specified {@link Movement}
+	 * 
+	 * @param movement - the movement to store.
+	 * @param checkReference - if {@code true} every movement must have unique reference number
+	 * @return <code>true</code> if the movement has been stored,
+	 *         <code>false</code> otherwise.
+	 * @throws OHServiceException 
+	 */
+	@Transactional(rollbackFor=OHServiceException.class)
+	private boolean prepareDishargingMovement(Movement movement, boolean checkReference) throws OHServiceException {
+		try {
+			List<OHExceptionMessage> errors = validateMovement(movement, checkReference);
+            if(!errors.isEmpty()){
+                throw new OHServiceException(errors);
+            }
+            if (isAutomaticLot()) {
+            	return ioOperations.newAutomaticDischargingMovement(movement);
+            } else 
+            	return ioOperations.prepareDischargingMovement(movement);
+		} catch (OHServiceException e) {
+			throw e;
+		}
+	}
 }

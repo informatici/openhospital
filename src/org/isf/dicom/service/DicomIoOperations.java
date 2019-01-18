@@ -3,8 +3,8 @@ package org.isf.dicom.service;
 import java.util.List;
 
 import org.isf.dicom.model.FileDicom;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  *------------------------------------------*/
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class DicomIoOperations 
 {
 	@Autowired
@@ -37,11 +37,11 @@ public class DicomIoOperations
 	 * @param idPaziente, the patient id
 	 * @param numeroSerie, the series number
 	 * @return
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public Long[] getSerieDetail(
 			int idPaziente, 
-			String numeroSerie) throws OHException 
+			String numeroSerie) throws OHServiceException 
 	{
 		List<FileDicom> dicomList  = repository.findAllWhereIdAndNumberByOrderNameAsc((long)idPaziente, numeroSerie);
 		Long[] dicomIdArray = new Long[dicomList.size()];	
@@ -61,11 +61,11 @@ public class DicomIoOperations
 	 * @param idPaziente, the id of patient
 	 * @param numeroSerie, the series number to delete
 	 * @return true if success
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean deleteSerie(
 			int idPaziente, 
-			String numeroSerie) throws OHException 
+			String numeroSerie) throws OHServiceException 
 	{
 		boolean result = true;
         
@@ -80,12 +80,12 @@ public class DicomIoOperations
 	 * 
 	 * @param, idFile
 	 * @return, FileDicomDettaglio
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public FileDicom loadDettaglio(
 			Long idFile, 
 			int idPaziente, 
-			String numeroSerie) throws OHException 
+			String numeroSerie) throws OHServiceException 
 	{
 		if (idFile == null)
 			return null;
@@ -99,12 +99,12 @@ public class DicomIoOperations
 	 * @param idPaziente, the id of patient
 	 * @param numeroSerie, numero della serie
 	 * @return details
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public FileDicom loadDettaglio(
 			long idFile, 
 			int idPaziente, 
-			String numeroSerie) throws OHException 
+			String numeroSerie) throws OHServiceException 
 	{
 		FileDicom dicom = repository.findOne(idFile);
 				
@@ -116,10 +116,10 @@ public class DicomIoOperations
 	 * 
 	 * @param idPaziente
 	 * @return
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public FileDicom[] loadFilesPaziente(
-			int idPaziente) throws OHException 
+			int idPaziente) throws OHServiceException 
 	{
 		List<FileDicom> dicomList = repository.findAllWhereIdGroupByUid((long) idPaziente);
 
@@ -139,10 +139,10 @@ public class DicomIoOperations
 	 * @param numeroSerie, the seres number
 	 * @param dicom, the detail od dicom
 	 * @return true if file exist
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean exist(
-			FileDicom dicom) throws OHException 
+			FileDicom dicom) throws OHServiceException 
 	{
 		List<FileDicom> dicomList = repository.findAllWhereIdAndFileAndUid((long) dicom.getPatId(), dicom.getDicomSeriesNumber(), dicom.getDicomInstanceUID());
 	
@@ -153,10 +153,10 @@ public class DicomIoOperations
 	 * save the DICOM file and metadata in the database
 	 * 
 	 * @param dicom
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public void saveFile(
-			FileDicom dicom) throws OHException 
+			FileDicom dicom) throws OHServiceException 
 	{
 		repository.save(dicom);
 		
@@ -168,10 +168,10 @@ public class DicomIoOperations
 	 *
 	 * @param code - the DICOM code
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean isCodePresent(
-			Long code) throws OHException
+			Long code) throws OHServiceException
 	{
 		boolean result = true;
 	

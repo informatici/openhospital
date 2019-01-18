@@ -2,6 +2,8 @@ package org.isf.exa.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -20,7 +22,8 @@ import javax.validation.constraints.NotNull;
 @Table(name="EXAMROW")
 public class ExamRow 
 {
-	@Id 
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="EXR_ID")	
 	private int code;
 
@@ -41,10 +44,9 @@ public class ExamRow
 		super();
     }
 	
-	public ExamRow(int aCode, Exam aExam, String aDescription){
-		code=aCode;
-		description=aDescription;
-		exam=aExam;
+	public ExamRow(Exam aExam, String aDescription){
+		this.description=aDescription;
+		this.exam=aExam;
 	}
 
 	public Exam getExamCode() {

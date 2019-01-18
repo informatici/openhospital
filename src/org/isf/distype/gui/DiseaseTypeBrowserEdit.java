@@ -194,79 +194,43 @@ public class DiseaseTypeBrowserEdit extends JDialog{
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					String key = codeTextField.getText();
 					DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
-					if (key.equals("")){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.distype.pleaseinsertacode"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}	
-					//System.out.print(key.length());
-					if (key.length()>2){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.distype.codetoolongmaxchars"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						
-						return;	
-					}
-					try{
-						if(insert){
-							if (manager.codeControl(key)){
-								JOptionPane.showMessageDialog(				
-										null,
-										MessageBundle.getMessage("angal.common.codealreadyinuse"),
-										MessageBundle.getMessage("angal.hospital"),
-										JOptionPane.PLAIN_MESSAGE);
-								codeTextField.setText("");
-								return;	
-							}};
-							if (descriptionTextField.getText().equals("")){
-								JOptionPane.showMessageDialog(				
-										null,
-										MessageBundle.getMessage("angal.distype.pleaseinsertavaliddescription"),
-										MessageBundle.getMessage("angal.hospital"),
-										JOptionPane.PLAIN_MESSAGE);
-								return;	
-							}
-							if (descriptionTextField.getText().equals(lastdescription)){
-								dispose();	
-							}
-							diseaseType.setDescription(descriptionTextField.getText());
-							diseaseType.setCode(codeTextField.getText());
-							boolean result = false;
-							if (insert) {      // inserting
-								result = manager.newDiseaseType(diseaseType);
-								if (result) {
-									fireDiseaseInserted();
-								}
-								if (!result) JOptionPane.showMessageDialog(null,  MessageBundle.getMessage("angal.distype.thedatacouldnotbesaved"));
-								else  dispose();
-							}
-							else {                          // updating
-								if (descriptionTextField.getText().equals(lastdescription)){
-									dispose();	
-								}else{
-									result = manager.updateDiseaseType(diseaseType);
-									if (result) {
-										fireDiseaseUpdated();
-									}
-									if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.distype.thedatacouldnotbesaved"));
-									else  dispose();
-								}
 
-							}
-					} catch (OHServiceException ex) {
-						if(ex.getMessages() != null){
-							for(OHExceptionMessage msg : ex.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
-					}
+                    try{
+                        if (descriptionTextField.getText().equals(lastdescription)){
+                            dispose();
+                        }
+                        diseaseType.setDescription(descriptionTextField.getText());
+                        diseaseType.setCode(codeTextField.getText());
+                        boolean result = false;
+                        if (insert) {      // inserting
+                            result = manager.newDiseaseType(diseaseType);
+                            if (result) {
+                                fireDiseaseInserted();
+                            }
+                            if (!result) JOptionPane.showMessageDialog(null,  MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+                            else  dispose();
+                        }
+                        else {                          // updating
+                            if (descriptionTextField.getText().equals(lastdescription)){
+                                dispose();
+                            }else{
+                                result = manager.updateDiseaseType(diseaseType);
+                                if (result) {
+                                    fireDiseaseUpdated();
+                                }
+                                if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+                                else  dispose();
+                            }
+
+                        }
+                    } catch (OHServiceException ex) {
+                        if(ex.getMessages() != null){
+                            for(OHExceptionMessage msg : ex.getMessages()){
+                                JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
+                            }
+                        }
+                    }
 				}
 			});
 		}

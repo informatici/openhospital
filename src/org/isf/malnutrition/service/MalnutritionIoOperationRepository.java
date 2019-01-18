@@ -14,6 +14,6 @@ public interface MalnutritionIoOperationRepository extends JpaRepository<Malnutr
     public List<Malnutrition> findAllWhereAdmissionByOrderDate(@Param("id") String id);
     
     @Query(value = "SELECT * FROM MALNUTRITIONCONTROL WHERE MLN_ADM_ID = :id ORDER BY MLN_DATE_SUPP DESC LIMIT 1", nativeQuery= true)
-    public List<Malnutrition> findAllWhereAdmissionByOrderDateLimit1(@Param("id") int patientID);
+    public List<Malnutrition> findAllWhereAdmissionByOrderDateDescLimit1(@Param("id") int patientID);
     
 }

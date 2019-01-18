@@ -394,106 +394,55 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 				public void actionPerformed(ActionEvent e) {
 
 					boolean isPatient;
-					String description;
+					String description = "";
 					int age = 0;
 					float weight = 0;
-					
-					if (jRadioPatient.isSelected()) {
-						if (patientSelected == null) {
-							JOptionPane.showMessageDialog(null,	MessageBundle.getMessage("angal.medicalstockwardedit.pleaseselectapatient")); //$NON-NLS-1$
-							return;
-						}
-						description = patientSelected.getName();
-						age = patientSelected.getAge();
-						weight = patientSelected.getWeight();
-						isPatient = true;
-					} else {
-						if (jTextFieldUse.getText().compareTo("") == 0) {
-							JOptionPane.showMessageDialog(null,	MessageBundle.getMessage("angal.medicalstockwardedit.pleaseinsertadescriptionfortheinternaluse")); //$NON-NLS-1$
-							jTextFieldUse.requestFocus();
-							return;
-						}
-						description = jTextFieldUse.getText();
-						isPatient = false;
-					}
-					
-					if (medItems.size() == 0) {
-						JOptionPane.showMessageDialog(null,	MessageBundle.getMessage("angal.medicalstockwardedit.pleaseselectadrug")); //$NON-NLS-1$
-						return;
-					}
-					
-					MovWardBrowserManager wardManager = new MovWardBrowserManager();
 					GregorianCalendar newDate = new GregorianCalendar();
 					
-					if (medItems.size() == 1) {
-						
-						MovementWard oneMovementWard = null;
+					if (jRadioPatient.isSelected()) {
+						isPatient = true;
+						if (patientSelected != null) {
+							description = patientSelected.getName();
+							age = patientSelected.getAge();
+							weight = patientSelected.getWeight();
+						}
+					} else {
+						isPatient = false;
+						description = jTextFieldUse.getText();
+					}
+					
+					ArrayList<MovementWard> manyMovementWard = new ArrayList<MovementWard>();
+					for (int i = 0; i < medItems.size(); i++) {
 						try {
-							oneMovementWard = new MovementWard(wardSelected,
-								 			newDate,
-								 			isPatient,
-								 			patientSelected,
-								 			age,
-								 			weight,
-								 			description,
-								 			medItems.get(0).getMedical(),
-								 			medItems.get(0).getQty(),
-											MessageBundle.getMessage("angal.medicalstockwardedit.pieces"));
+							manyMovementWard.add(new MovementWard(
+									wardSelected,
+									newDate,
+									isPatient,
+									patientSelected,
+									age,
+									weight,
+									description,
+									medItems.get(i).getMedical(),
+									medItems.get(i).getQty(),
+									MessageBundle.getMessage("angal.medicalstockwardedit.pieces")));
 						} catch (OHException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						
-						boolean result;
-						try {
-							result = wardManager.newMovementWard(oneMovementWard);
-						} catch (OHServiceException e1) {
-							result = false;
-							OHServiceExceptionUtil.showMessages(e1);
-						}
+					}
+					
+					MovWardBrowserManager wardManager = new MovWardBrowserManager();
+					boolean result;
+					try {
+						result = wardManager.newMovementWard(manyMovementWard);
 						if (result) {
 							fireMovementWardInserted();
-						}
-						if (!result)
-							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstockwardedit.thedatacouldnotbesaved"));
-						else
 							dispose();
-					} else {
-						
-						ArrayList<MovementWard> manyMovementWard = new ArrayList<MovementWard>();
-						for (int i = 0; i < medItems.size(); i++) {
-							try {
-								manyMovementWard.add(new MovementWard(
-										wardSelected,
-										newDate,
-										isPatient,
-										patientSelected,
-										age,
-										weight,
-										description,
-										medItems.get(i).getMedical(),
-										medItems.get(i).getQty(),
-										MessageBundle.getMessage("angal.medicalstockwardedit.pieces")));
-							} catch (OHException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-						}
-						
-						boolean result;
-						try {
-							result = wardManager.newMovementWard(manyMovementWard);
-						} catch (OHServiceException e1) {
-							result = false;
-							OHServiceExceptionUtil.showMessages(e1);
-						}
-						if (result) {
-							fireMovementWardInserted();
-						}
-						if (!result)
-							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.medicalstockwardedit.thedatacouldnotbesaved"));
-						else
-							dispose();
+						} else
+							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+					} catch (OHServiceException e1) {
+						result = false;
+						OHServiceExceptionUtil.showMessages(e1);
 					}
 				}
 			});

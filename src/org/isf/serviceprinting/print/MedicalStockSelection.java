@@ -27,7 +27,6 @@ import javax.swing.JTextField;
 
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
-import org.isf.medicalstock.manager.DateTextField;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstock.service.MedicalStockIoOperations;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
@@ -40,6 +39,7 @@ import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.jobjects.DateTextField;
 import org.isf.ward.model.Ward;
 
 public class MedicalStockSelection extends JDialog implements ActionListener{
@@ -463,9 +463,9 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 									medicalType,wardSelected ,movementType, movFrom, movTo, lot,MedicalStockIoOperations.MovementOrder.TYPE);
 							break;
 					}
-					} catch (OHException exception) {
-						JOptionPane.showMessageDialog(null, exception.getMessage());
-						return ;
+					} catch (OHServiceException exception) {
+						OHServiceExceptionUtil.showMessages(exception);
+						return;
 					}
 					ArrayList<Movement4Print> pMovements2 = convertToPrint(pMovements);
 					try {

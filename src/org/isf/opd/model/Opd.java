@@ -12,10 +12,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.isf.disease.model.Disease;
-import org.isf.distype.model.DiseaseType;
 import org.isf.patient.model.Patient;
 
 /*------------------------------------------
@@ -83,10 +83,6 @@ public class Opd
 	private Disease disease3;
 
 	@NotNull
-	@Column(name="OPD_LOCK")
-	private int lock;
-
-	@NotNull
 	@Column(name="OPD_NEW_PAT")
 	private char newPatient;	//n=NEW R=REATTENDANCE
 	
@@ -100,17 +96,13 @@ public class Opd
 	@Column(name="OPD_USR_ID_A")
 	private String userID;
 	
+	@Version
+	@Column(name="OPD_LOCK")
+	private int lock;
+	
 	@Transient
 	private volatile int hashCode = 0;
 
-
-	public char getNewPatient() {
-		return newPatient;
-	}
-
-	public void setNewPatient(char newPatient) {
-		this.newPatient = newPatient;
-	}
 
 	public Opd() {
 	}
@@ -121,15 +113,12 @@ public class Opd
      * @param aDate
      * @param aAge
      * @param aDisease
-     * @param aLock
      */
-	
-	public Opd(int aProgYear,char aSex,int aAge,Disease aDisease,int aLock) {
+	public Opd(int aProgYear,char aSex,int aAge,Disease aDisease) {
 		prog_year=aProgYear;
 		sex=aSex;
 		age=aAge;
 		disease=aDisease;
-		lock=aLock;
 	}
 	
 	public String getNote() {
@@ -159,43 +148,31 @@ public class Opd
 	}
 
 	public String getfirstName() {
-		return patient.getFirstName();
-	}
-
-	public void setfirstName(String firstName) {
-		this.patient.setFirstName(firstName);
+		return patient == null ? "" : patient.getFirstName();
 	}
 
 	public String getsecondName() {
-		return patient.getSecondName();
-	}
-
-	public void setsecondName(String secondName) {
-		this.patient.setSecondName(secondName);
+		return patient == null ? "" : patient.getSecondName();
 	}
 
 	public String getnextKin() {
-		return patient.getNextKin();
+		return patient == null ? "" : patient.getNextKin();
 	}
 
-	public void setnextKin(String nextKin) {
-		this.patient.setNextKin(nextKin);
-	}
-	
 	public String getcity() {
-		return patient.getCity();
-	}
-
-	public void setcity(String city) {
-		this.patient.setCity(city);
+		return patient == null ? "" : patient.getCity();
 	}
 
 	public String getaddress() {
-		return patient.getAddress();
+		return patient == null ? "" : patient.getAddress();
+	}
+	
+	public char getNewPatient() {
+		return newPatient;
 	}
 
-	public void setaddress(String address) {
-		this.patient.setAddress(address);
+	public void setNewPatient(char newPatient) {
+		this.newPatient = newPatient;
 	}
 
 	public String getReferralTo() {
@@ -231,27 +208,12 @@ public class Opd
 	}
 	public void setDisease(Disease disease) {
 		this.disease = disease;
-		if (disease!=null) {
-			if (disease.equals("")) {
-				this.disease=null;
-			}
-		}
 	}
 	public void setDisease2(Disease disease) {
 		this.disease2 = disease;
-		if (disease!=null) {
-			if (disease.equals("")) {
-				this.disease2=null;
-			}
-		}
 	}
 	public void setDisease3(Disease disease) {
 		this.disease3 = disease;
-		if (disease!=null) {
-			if (disease.equals("")) {
-				this.disease3=null;
-			}
-		}
 	}
 	public int getLock() {
 		return lock;
@@ -277,37 +239,17 @@ public class Opd
 	public char getSex() {
 		return sex;
 	}
+	
 	public void setSex(char sex) {
 		this.sex = sex;
 	}
+	
 	public int getProgYear() {
 		return prog_year;
 	}
+	
 	public void setProgYear(int prog_year) {
 		this.prog_year = prog_year;
-	}
-	public String getDiseaseDesc() {
-		return disease.getDescription();
-	}
-
-	public void setDiseaseDesc(String diseaseDesc) {
-		this.disease.setDescription(diseaseDesc);
-	}
-
-	public String getDiseaseTypeDesc() {
-		return disease.getType().getDescription();
-	}
-
-	public void setDiseaseTypeDesc(String diseaseTypeDesc) {
-		this.disease.getType().setDescription(diseaseTypeDesc);
-	}
-
-	public DiseaseType getDiseaseType() {
-		return disease.getType();
-	}
-
-	public void setDiseaseType(DiseaseType diseaseType) {
-		this.disease.setType(diseaseType);
 	}
 
 	public String getUserID() {

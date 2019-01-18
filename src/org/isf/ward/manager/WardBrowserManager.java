@@ -6,7 +6,6 @@ import java.util.List;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -29,27 +28,55 @@ public class WardBrowserManager {
 	private WardIoOperations ioOperations = Menu.getApplicationContext().getBean(WardIoOperations.class);
 
 	/**
+	 * Verify if the object is valid for CRUD and return a list of errors, if any
+	 * @param ward
+	 * @return list of {@link OHExceptionMessage}
+	 */
+	protected List<OHExceptionMessage> validateWard(Ward ward) {
+		String key = ward.getCode();
+		String description = ward.getDescription();
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        if(key.isEmpty() ){
+	        errors.add(new OHExceptionMessage("codeEmptyError", 
+	        		MessageBundle.getMessage("angal.ward.pleaseinsertacode"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        if(key.length()>1){
+	        errors.add(new OHExceptionMessage("codeTooLongError", 
+	        		MessageBundle.getMessage("angal.ward.codetoolongmaxchars"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        if(description.isEmpty() ){
+            errors.add(new OHExceptionMessage("descriptionEmptyError", 
+            		MessageBundle.getMessage("angal.ward.pleaseinsertavaliddescription"), 
+            		OHSeverityLevel.ERROR));
+        }
+        if (ward.getBeds()<0) {
+        	errors.add(new OHExceptionMessage("negativeBedsError", 
+            		MessageBundle.getMessage("angal.ward.bedsnumbermustbepositive"), 
+            		OHSeverityLevel.ERROR));
+		}
+		if (ward.getNurs()<0) {
+			errors.add(new OHExceptionMessage("negativeNursesError", 
+            		MessageBundle.getMessage("angal.ward.nursesnumbermustbepositive"), 
+            		OHSeverityLevel.ERROR));
+		}
+		if (ward.getDocs()<0) {
+			errors.add(new OHExceptionMessage("negativeDoctorsError", 
+            		MessageBundle.getMessage("angal.ward.doctorsnumbermustbepositive"), 
+            		OHSeverityLevel.ERROR));
+		}
+        return errors;
+    }
+	
+	/**
 	 * Returns all stored wards.
 	 * In case of error a message error is shown and a <code>null</code> value is returned.
 	 * @return the stored wards.
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Ward> getWards() throws OHServiceException {
-		try {
-			return ioOperations.getWards(null);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getWards(null);
 	}
 	
 	/**
@@ -60,21 +87,7 @@ public class WardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Ward> getWardsNoMaternity() throws OHServiceException {
-		try {
-			return ioOperations.getWardsNoMaternity();
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getWardsNoMaternity();
 	}
 
 	/**
@@ -85,45 +98,18 @@ public class WardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newWard(Ward ward) throws OHServiceException {
-		try {
-			return ioOperations.newWard(ward);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
+		List<OHExceptionMessage> errors = validateWard(ward);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+		if (codeControl(ward.getCode())){
+			throw new OHServiceException(new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.common.codealreadyinuse"), 
+					OHSeverityLevel.ERROR));
 		}
+		return ioOperations.newWard(ward);
 	}
 
-	/**
-	 * Check if the ward is locked
-	 * @return <code>true</code> if the ward is locked <code>false</code> otherwise.
-	 * @throws OHServiceException if an error occurs during the check.
-	 */
-	public boolean isLockWard(Ward ward) throws OHServiceException {
-		try {
-			return ioOperations.isLockWard(ward); 
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-	}
 	/**
 	 * Updates the specified {@link Ward}.
 	 * If the ward has been updated concurrently a overwrite confirmation message is shown.
@@ -133,29 +119,11 @@ public class WardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateWard(Ward ward) throws OHServiceException {
-		boolean isConfirmedOverwriteRecord = true;
-		int admitted_patients_in_ward = getCurrentOccupation(ward);
-		try {
-			if (ward.getBeds() < admitted_patients_in_ward) {
-				String message = MessageBundle.getMessagePattern("angal.ward.pattern.patientsarestilladmittedinward", admitted_patients_in_ward);
-				throw new OHException(message);
-			}
-			if (isConfirmedOverwriteRecord)
-				return ioOperations.updateWard(ward);
-			else return false;
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		List<OHExceptionMessage> errors = validateWard(ward);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+		return ioOperations.updateWard(ward);
 	}
 
 	/**
@@ -184,21 +152,7 @@ public class WardBrowserManager {
 					MessageBundle.getMessage("angal.ward.pleasecheckinadmissionpatients"), OHSeverityLevel.ERROR));
 			throw new OHServiceException(messages);
 		}
-		try {
-			return ioOperations.deleteWard(ward);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.deleteWard(ward);
 	}
 	
 	/**
@@ -209,46 +163,57 @@ public class WardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean codeControl(String code) throws OHServiceException {
-		try {
-			return ioOperations.isCodePresent(code);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.isCodePresent(code);
 	}
 	
 	/**
-	 * Check if the specified maternity is used by other {@link Ward}s.
-	 * In case of error a message error is shown and a <code>false</code> value is returned.
-	 * @param code the code to check.
-	 * @return <code>true</code> if it is already used, <code>false</code> otherwise.
+	 * Create default Maternity {@link Ward} as follow:
+	 * {'code' : "M",
+	 * 'Description' : MessageBundle.getMessage("angal.admission.maternity"),
+	 * 'Telephone' : "234/52544",
+	 * 'Fax' : "54324/5424",
+	 * 'Mail' :  "maternity@stluke.org",
+	 * 'Beds' : 20,
+	 * 'Nurses' : 3,
+	 * 'Doctors' : 2,
+	 * 'isPharmacy' : false,
+	 * 'isMale' : false,
+	 * 'isFemale' : true,
+	 * 'LOCK (version)' : 0,
+	 * }
+	 * 
+	 * @return maternity ward
+	 */
+	private Ward getDefaultMaternityWard() {
+		Ward maternity = new Ward(
+				"M",
+				MessageBundle.getMessage("angal.admission.maternity"),
+				"234/52544", //Telephone
+				"54324/5424", //Fax
+				"maternity@stluke.org",
+				20, //Beds
+				3, //Nurses
+				2, //Doctors
+				false, //isPharmacy
+				false, //isMale
+				true); //isFemale
+		return maternity;
+	}
+	
+	/**
+	 * Check if the Maternity {@link Ward} with code "M" exists or not.
+	 * @param createIfNotExists - if {@code true} it will create the missing {@link Ward} (with default values)
+	 * 	and will return {@link true} 
+	 * @return <code>true</code> if the Maternity {@link Ward} exists, <code>false</code> otherwise.
 	 * @throws OHServiceException 
 	 */
-	public boolean maternityControl() throws OHServiceException {
-		try {
-			return ioOperations.isMaternityPresent();
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
-		}
+	public boolean maternityControl(boolean createIfNotExists) throws OHServiceException {
+		boolean exists = ioOperations.isMaternityPresent();
+		if (!exists && createIfNotExists) {
+			Ward maternity = getDefaultMaternityWard();
+			newWard(maternity);
+			return true;
+		} else return exists;
 	}
 	
 	/**
@@ -258,21 +223,7 @@ public class WardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public int getCurrentOccupation(Ward ward) throws OHServiceException {
-		try {
-			return ioOperations.getCurrentOccupation(ward);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getCurrentOccupation(ward);
 	}
 	
 }

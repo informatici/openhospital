@@ -60,9 +60,8 @@ class MedicalStockWardIoOperationRepositoryImpl implements MedicalStockWardIoOpe
 			{
 				query.append("AND ");
 			}
-			query.append("MMVN_DATE > \"" + _convertToSQLDateLimited(dateFrom) + "\" AND MMVN_DATE < \"" + _convertToSQLDateLimited(dateTo) + "\"");
+			query.append("DATE(MMVN_DATE) BETWEEN DATE(\"" + _convertToSQLDateLimited(dateFrom) + "\") and DATE(\"" + _convertToSQLDateLimited(dateTo) + "\") ");
 		}
-		
 		query.append(" ORDER BY MMVN_DATE ASC");
 		
 		String result = query.toString();

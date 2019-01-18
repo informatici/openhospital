@@ -30,16 +30,16 @@ import org.isf.disctype.service.DischargeTypeIoOperationRepository;
 import org.isf.generaldata.GeneralData;
 import org.isf.patient.model.Patient;
 import org.isf.patient.service.PatientIoOperationRepository;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class AdmissionIoOperations 
 {
 	@Autowired
@@ -54,9 +54,9 @@ public class AdmissionIoOperations
 	/**
 	 * Returns all patients with ward in which they are admitted.
 	 * @return the patient list with associated ward.
-	 * @throws OHException if an error occurs during database request.
+	 * @throws OHServiceException if an error occurs during database request.
 	 */
-	public ArrayList<AdmittedPatient> getAdmittedPatients() throws OHException {
+	public ArrayList<AdmittedPatient> getAdmittedPatients() throws OHServiceException {
 		return getAdmittedPatients(null);
 	}
 
@@ -64,10 +64,10 @@ public class AdmissionIoOperations
 	 * Returns all patients with ward in which they are admitted filtering the list using the passed search term.
 	 * @param searchTerms the search terms to use for filter the patient list, <code>null</code> if no filter have to be applied.
 	 * @return the filtered patient list.
-	 * @throws OHException if an error occurs during database request.
+	 * @throws OHServiceException if an error occurs during database request.
 	 */
 	public ArrayList<AdmittedPatient> getAdmittedPatients(
-			String searchTerms) throws OHException 
+			String searchTerms) throws OHServiceException 
 	{
 		ArrayList<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
 		List<Object[]> admittedPatientsList = (List<Object[]>)repository.findAllBySearch(searchTerms);
@@ -90,15 +90,15 @@ public class AdmissionIoOperations
 	}
 
 	/**
-	 * Returns the only one admission without dimission date (or null if none) for the specified patient.
+	 * Returns the current admission (or null if none) for the specified patient.
 	 * @param patient the patient target of the admission.
 	 * @return the patient admission.
-	 * @throws OHException if an error occurs during database request.
+	 * @throws OHServiceException if an error occurs during database request.
 	 */
 	public Admission getCurrentAdmission(
-			Patient patient) throws OHException 
+			Patient patient) throws OHServiceException 
 	{ 
-		Admission admission = repository.findAllWherePatient(patient.getCode()).get(0);
+		Admission admission = repository.findOneWherePatientIn(patient.getCode());
 		
 		
 		return admission;
@@ -108,10 +108,10 @@ public class AdmissionIoOperations
 	 * Returns the admission with the selected id.
 	 * @param id the admission id.
 	 * @return the admission with the specified id, <code>null</code> otherwise.
-	 * @throws OHException if an error occurs during database request.
+	 * @throws OHServiceException if an error occurs during database request.
 	 */
 	public Admission getAdmission(
-			int id) throws OHException 
+			int id) throws OHServiceException 
 	{
 		Admission admission = repository.findOne(id);
 		
@@ -123,10 +123,10 @@ public class AdmissionIoOperations
 	 * Returns all the admissions for the specified patient.
 	 * @param patient the patient.
 	 * @return the admission list.
-	 * @throws OHException if an error occurs during database request.
+	 * @throws OHServiceException if an error occurs during database request.
 	 */
 	public ArrayList<Admission> getAdmissions(
-			Patient patient) throws OHException 
+			Patient patient) throws OHServiceException 
 	{
 		ArrayList<Admission> padmission = (ArrayList<Admission>) repository.findAllWherePatientByOrderByDate(patient.getCode());
 	
@@ -138,10 +138,10 @@ public class AdmissionIoOperations
 	 * Inserts a new admission.
 	 * @param admission the admission to insert.
 	 * @return <code>true</code> if the admission has been successfully inserted, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the insertion.
+	 * @throws OHServiceException if an error occurs during the insertion.
 	 */
 	public boolean newAdmission(
-			Admission admission) throws OHException 
+			Admission admission) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -156,10 +156,10 @@ public class AdmissionIoOperations
 	 * Inserts a new {@link Admission} and the returns the generated id.
 	 * @param admission the admission to insert.
 	 * @return the generated id.
-	 * @throws OHException if an error occurs during the insertion.
+	 * @throws OHServiceException if an error occurs during the insertion.
 	 */
 	public int newAdmissionReturnKey(
-			Admission admission) throws OHException 
+			Admission admission) throws OHServiceException 
 	{
 		newAdmission(admission);
 		
@@ -167,34 +167,13 @@ public class AdmissionIoOperations
 	}
 
 	/**
-	 * Checks if the specified {@link Admission} has been modified.
-	 * @param admission the admission to check.
-	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
-	 */
-	public boolean hasAdmissionModified(
-			Admission admission) throws OHException 
-	{
-		boolean result = false;
-				
-		
-		Admission foundAdmission = repository.findOne(admission.getId()); 
-		if (foundAdmission.getLock() != admission.getLock())
-		{
-			result = true;
-		}		
-
-		return result;
-	}
-
-	/**
 	 * Updates the specified {@link Admission} object.
 	 * @param admission the admission object to update.
 	 * @return <code>true</code> if has been updated, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs.
+	 * @throws OHServiceException if an error occurs.
 	 */
 	public boolean updateAdmission(
-			Admission admission) throws OHException 
+			Admission admission) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -208,9 +187,9 @@ public class AdmissionIoOperations
 	/**
 	 * Lists the {@link AdmissionType}s.
 	 * @return the admission types.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<AdmissionType> getAdmissionType() throws OHException 
+	public ArrayList<AdmissionType> getAdmissionType() throws OHServiceException 
 	{
 		ArrayList<AdmissionType> padmissiontype = (ArrayList<AdmissionType>) typeRepository.findAll();
 
@@ -221,9 +200,9 @@ public class AdmissionIoOperations
 	/**
 	 * Lists the {@link DischargeType}s.
 	 * @return the discharge types.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
-	public ArrayList<DischargeType> getDischargeType() throws OHException 
+	public ArrayList<DischargeType> getDischargeType() throws OHServiceException 
 	{
 		ArrayList<DischargeType> dischargeTypes = (ArrayList<DischargeType>) dischargeRepository.findAll();
 				
@@ -235,25 +214,16 @@ public class AdmissionIoOperations
 	 * Returns the next prog in the year for a certain ward.
 	 * @param wardId the ward id.
 	 * @return the next prog.
-	 * @throws OHException if an error occurs retrieving the value.
+	 * @throws OHServiceException if an error occurs retrieving the value.
 	 */
 	public int getNextYProg(
-			String wardId) throws OHException 
+			String wardId) throws OHServiceException 
 	{
 		int next = 1;
 		GregorianCalendar now = new GregorianCalendar();
 		GregorianCalendar first = null;
 		GregorianCalendar last = null;
-		Admission admission = null;
 		
-		
-		// de Felice - 20/01/2008 - richiesta di james che, per la sola
-		// maternita', chiede di ripartire
-		// da 1 il primo di luglio. questo e' implementato ora nel modo
-		// seguente:
-		// per il reparto maternity (M) il progressivo riparte il primo luglio
-		// questo per ogni anno d'ora in poi se il parametro
-		// MATERNITYRESTARTINJUNE in generalData.properties � uguale a yes!!
 		if (wardId.equalsIgnoreCase("M") && GeneralData.MATERNITYRESTARTINJUNE) 
 		{
 			if (now.get(Calendar.MONTH) < 6) 
@@ -274,10 +244,10 @@ public class AdmissionIoOperations
 			last = new GregorianCalendar(now.get(Calendar.YEAR), 11, 31);
 		}
 		
-		admission = repository.findAllWhereWardAndDates(wardId, first, last).get(0);
-		if (admission != null) 
+		List<Admission> admissions = repository.findAllWhereWardAndDates(wardId, first, last);
+		if (!admissions.isEmpty())
 		{
-			next = admission.getYProg() + 1; 		
+			next = admissions.get(0).getYProg() + 1; 		
 		} 
 		
 		return next;
@@ -287,10 +257,10 @@ public class AdmissionIoOperations
 	 * Sets an admission record to deleted.
 	 * @param admissionId the admission id.
 	 * @return <code>true</code> if the record has been set to delete.
-	 * @throws OHException if an error occurs.
+	 * @throws OHServiceException if an error occurs.
 	 */
 	public boolean setDeleted(
-			int admissionId) throws OHException 
+			int admissionId) throws OHServiceException 
 	{
 		boolean result = true;
 		
@@ -307,12 +277,12 @@ public class AdmissionIoOperations
 	 * Counts the number of used bed for the specified ward.
 	 * @param wardId the ward id.
 	 * @return the number of used beds.
-	 * @throws OHException if an error occurs retrieving the bed count.
+	 * @throws OHServiceException if an error occurs retrieving the bed count.
 	 */
 	public int getUsedWardBed(
-			String wardId) throws OHException 
+			String wardId) throws OHServiceException 
 	{
-    	List<Admission> admissionList = repository.findAllWhereIn1(wardId);
+    	List<Admission> admissionList = repository.findAllWhereWardIn(wardId);
 		
 
 		return admissionList.size();
@@ -322,10 +292,10 @@ public class AdmissionIoOperations
 	 * Deletes the patient photo.
 	 * @param patientId the patient id.
 	 * @return <code>true</code> if the photo has been deleted, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs.
+	 * @throws OHServiceException if an error occurs.
 	 */
 	public boolean deletePatientPhoto(
-			int patientId) throws OHException
+			int patientId) throws OHServiceException
 	{
 		boolean result = true;
 		

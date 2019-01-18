@@ -31,7 +31,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
 public class PatientInsert extends JDialog implements ActionListener{
 	
@@ -122,7 +122,6 @@ public class PatientInsert extends JDialog implements ActionListener{
 	private JLabel jNextKinLabel = null;
 	private JTextField jNextKinTextField = null;
 //	private int oldAge;
-	private int lock;
 	private PatientBrowserManager manager = new PatientBrowserManager();
 	private JLabel jLabel1 = null;
 	private JLabel jLabel = null;
@@ -167,8 +166,6 @@ public class PatientInsert extends JDialog implements ActionListener{
 		super(owner, true);
 		patient=old;
 		insert=inserting;
-		if(!insert)lock=patient.getLock();
-		//if(!insert)oldAge=patient.getAge();
 		initialize();
 	}
 	
@@ -176,8 +173,6 @@ public class PatientInsert extends JDialog implements ActionListener{
 		super(owner, true);
 		patient=old;
 		insert=inserting;
-		if(!insert)lock=patient.getLock();
-		//if(!insert)oldAge=patient.getAge();
 		initialize();
 	}
 	
@@ -290,11 +285,7 @@ public class PatientInsert extends JDialog implements ActionListener{
 											}
 										}
 									}catch(OHServiceException ex){
-										if(ex.getMessages() != null){
-											for(OHExceptionMessage msg : ex.getMessages()){
-												JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-											}
-										}
+                                        OHServiceExceptionUtil.showMessages(ex);
 									}
 									if (ok) {
 										patient.setFirstName(jFirstNameTextField.getText());
@@ -327,17 +318,13 @@ public class PatientInsert extends JDialog implements ActionListener{
 										try{
 											result = manager.newPatient(patient);
 										}catch(OHServiceException ex){
-											if(ex.getMessages() != null){
-												for(OHExceptionMessage msg : ex.getMessages()){
-													JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-												}
-											}
+                                            OHServiceExceptionUtil.showMessages(ex);
 										}
 										if (result) {
 											firePatientInserted(patient);
 										}
 										if (!result) {
-											JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patient.thedatacouldnotbesaved"));
+											JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 										} else { 
 											dispose();
 										}
@@ -363,17 +350,12 @@ public class PatientInsert extends JDialog implements ActionListener{
 									}
 								}
 							}catch(OHServiceException ex){
-								if(ex.getMessages() != null){
-									for(OHExceptionMessage msg : ex.getMessages()){
-										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-									}
-								}
+                                OHServiceExceptionUtil.showMessages(ex);
 							}
 						}else{
 							ok=true;
 						}
 						if(ok){
-						if(lock!=patient.getLock()){patient.setLock(lock);};
 						
 						patient.setFirstName(jFirstNameTextField.getText());
 						patient.setSecondName(jSecondNameTextField.getText());
@@ -405,16 +387,12 @@ public class PatientInsert extends JDialog implements ActionListener{
 						try{
 							result = manager.updatePatient(patient);
 						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+                            OHServiceExceptionUtil.showMessages(ex);
 						}
 						if (result) {
 							firePatientUpdated(patient);
 						}
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patient.thedatacouldnotbesaved"));
+						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 						else  dispose();
 						
 					}

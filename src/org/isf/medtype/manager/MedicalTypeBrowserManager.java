@@ -1,14 +1,12 @@
 package org.isf.medtype.manager;
 
 import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
+import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.medtype.model.MedicalType;
 import org.isf.medtype.service.MedicalTypeIoOperation;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -24,6 +22,33 @@ public class MedicalTypeBrowserManager {
 	private final Logger logger = LoggerFactory.getLogger(MedicalTypeBrowserManager.class);
 	
 	private MedicalTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(MedicalTypeIoOperation.class);
+	
+	/**
+	 * Verify if the object is valid for CRUD and return a list of errors, if any
+	 * @param medicalType
+	 * @return list of {@link OHExceptionMessage}
+	 */
+	protected List<OHExceptionMessage> validateMedicalType(MedicalType medicalType) {
+		String key = medicalType.getCode();
+		String description = medicalType.getDescription();
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        if(key.isEmpty() ){
+	        errors.add(new OHExceptionMessage("codeEmptyError", 
+	        		MessageBundle.getMessage("angal.medtype.pleaseinsertacode"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        if(key.length()>1){
+	        errors.add(new OHExceptionMessage("codeTooLongError", 
+	        		MessageBundle.getMessage("angal.medtype.codetoolongmaxchars"), 
+	        		OHSeverityLevel.ERROR));
+        }
+        if(description.isEmpty() ){
+            errors.add(new OHExceptionMessage("descriptionEmptyError", 
+            		MessageBundle.getMessage("angal.medtype.pleaseinsertavaliddescription"), 
+            		OHSeverityLevel.ERROR));
+        }
+        return errors;
+    }
 
 	/**
 	 * Retrieves all the medical types.
@@ -31,21 +56,7 @@ public class MedicalTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<MedicalType> getMedicalType() throws OHServiceException {
-		try {
-			return ioOperations.getMedicalTypes();
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medtype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getMedicalTypes();
 	}
 
 	/**
@@ -55,21 +66,16 @@ public class MedicalTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newMedicalType(MedicalType medicalType) throws OHServiceException {
-		try {
-			return ioOperations.newMedicalType(medicalType);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medtype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+		List<OHExceptionMessage> errors = validateMedicalType(medicalType);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        if (codeControl(medicalType.getCode())){
+			throw new OHServiceException(new OHExceptionMessage(null, 
+					MessageBundle.getMessage("angal.common.codealreadyinuse"), 
+					OHSeverityLevel.ERROR));
 		}
+		return ioOperations.newMedicalType(medicalType);
 	}
 
 	/**
@@ -79,21 +85,11 @@ public class MedicalTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateMedicalType(MedicalType medicalType) throws OHServiceException {
-		try {
-			return ioOperations.updateMedicalType(medicalType);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medtype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+		List<OHExceptionMessage> errors = validateMedicalType(medicalType);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+		return ioOperations.updateMedicalType(medicalType);
 	}
 
 	/**
@@ -103,21 +99,7 @@ public class MedicalTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean codeControl(String code) throws OHServiceException {
-		try {
-			return ioOperations.isCodePresent(code);
-		} catch (OHException e) {
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.medtype.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.isCodePresent(code);
 	}
 
 	/**
@@ -125,13 +107,9 @@ public class MedicalTypeBrowserManager {
 	 * In case of error a message error is shown and a <code>false</code> value is returned.
 	 * @param medicalType the medical type to delete.
 	 * @return <code>true</code> if the medical type has been deleted, <code>false</code> otherwise.
+	 * @throws OHServiceException 
 	 */
-	public boolean deleteMedicalType(MedicalType medicalType) {
-		try {
-			return ioOperations.deleteMedicalType(medicalType);
-		} catch (OHException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage());
-			return false;
-		}
+	public boolean deleteMedicalType(MedicalType medicalType) throws OHServiceException {
+		return ioOperations.deleteMedicalType(medicalType);
 	}
 }

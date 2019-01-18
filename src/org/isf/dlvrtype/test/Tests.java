@@ -143,10 +143,10 @@ public class Tests
 		try 
 		{		
 			code = _setupTestDeliveryType(false);
-			DeliveryType foundDeliveryType = (DeliveryType)jpa.find(DeliveryType.class, code); 
+			DeliveryType foundDeliveryType = (DeliveryType)jpa.find(DeliveryType.class, code);
+			jpa.flush();
 			foundDeliveryType.setDescription("Update");
 			result = deliveryTypeIoOperation.updateDeliveryType(foundDeliveryType);
-			jpa.flush();
 			DeliveryType updateDeliveryType = (DeliveryType)jpa.find(DeliveryType.class, code); 
 			
 			assertEquals(true, result);

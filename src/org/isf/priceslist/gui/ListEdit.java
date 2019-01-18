@@ -112,31 +112,6 @@ public class ListEdit extends JDialog {
 				
 				public void actionPerformed(ActionEvent event) {
 						
-					if (jTextFieldCode.getText().equals("")) { //$NON-NLS-1$
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.priceslist.pleaseinsertacode")); //$NON-NLS-1$
-							return;
-					}	
-					if (jTextFieldName.getText().equals("")) { //$NON-NLS-1$
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.priceslist.pleaseinsertaname")); //$NON-NLS-1$
-						return;
-					}
-					if (jTextFieldDescription.getText().equals("")) { //$NON-NLS-1$
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.priceslist.pleaseinsertadescription")); //$NON-NLS-1$
-						return;
-					}
-					if (jTextFieldCurrency.getText().equals("")) { //$NON-NLS-1$
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.priceslist.pleaseinsertacurrency")); //$NON-NLS-1$
-						return;
-					}
-					
 					list.setCode(jTextFieldCode.getText());
 					list.setName(jTextFieldName.getText());
 					list.setDescription(jTextFieldDescription.getText());
@@ -162,7 +137,7 @@ public class ListEdit extends JDialog {
 					}
 					if (!result) JOptionPane.showMessageDialog(
 											null,
-											MessageBundle.getMessage("angal.priceslist.thedatacouldnotbesaved")); //$NON-NLS-1$
+											MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved")); //$NON-NLS-1$
 					else  dispose();
 					
 				}

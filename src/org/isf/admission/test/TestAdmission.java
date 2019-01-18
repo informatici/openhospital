@@ -39,7 +39,6 @@ public class TestAdmission
 	private GregorianCalendar ctrlDate2 = new GregorianCalendar(8, 9, 10);
 	private GregorianCalendar abortDate = new GregorianCalendar(9, 8, 7);
 	private String userID = "TestUserId";	
-	private int lock = 0;	
 	private String deleted = "N";	
 	
 			
@@ -73,7 +72,7 @@ public class TestAdmission
 			admission = new Admission(id, admitted, type, ward, yProg, patient, admDate, admissionType, FHU, diseaseIn, 
 					diseaseOut1, diseaseOut2, diseaseOut3, operation, opResult, opDate, disDate, dischargeType, note, 
 					transUnit, visitDate, pregTreatmentType, deliveryDate, deliveryType, deliveryResult, weight, 
-					ctrlDate1, ctrlDate2, abortDate, userID, lock, deleted);
+					ctrlDate1, ctrlDate2, abortDate, userID, deleted);
 		}
 				    	
 		return admission;
@@ -111,7 +110,6 @@ public class TestAdmission
 		admission.setDiseaseOut3(diseaseOut3);
 		admission.setDisType(dischargeType);
 		admission.setFHU(FHU);
-		admission.setLock(lock);
 		admission.setNote(note);
 		admission.setOpDate(opDate);
 		admission.setOperation(operation);
@@ -141,7 +139,6 @@ public class TestAdmission
     	assertEquals(deliveryDate, admission.getDeliveryDate());
     	assertEquals(disDate, admission.getDisDate());
     	assertEquals(FHU, admission.getFHU());
-    	assertEquals(lock, admission.getLock());
     	assertEquals(note, admission.getNote());
     	assertEquals(opDate, admission.getOpDate());
     	assertEquals(opResult, admission.getOpResult());

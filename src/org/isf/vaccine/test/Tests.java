@@ -153,7 +153,8 @@ public class Tests
 		try 
 		{		
 			code = _setupTestVaccine(false);
-			Vaccine foundVaccine = (Vaccine)jpa.find(Vaccine.class, code); 
+			Vaccine foundVaccine = (Vaccine)jpa.find(Vaccine.class, code);
+			jpa.flush();
 			foundVaccine.setDescription("Update");
 			result = vaccineIoOperation.updateVaccine(foundVaccine);
 			Vaccine updateVaccine = (Vaccine)jpa.find(Vaccine.class, code); 

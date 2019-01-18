@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.isf.admtype.model.AdmissionType;
@@ -212,7 +213,7 @@ public class Admission implements Comparable<Admission>
 	@Column(name="ADM_USR_ID_A")
 	private String userID;					// the user ID
 
-	@NotNull
+	@Version
 	@Column(name="ADM_LOCK")
 	private int lock;						// default 0
 
@@ -259,13 +260,12 @@ public class Admission implements Comparable<Admission>
 	 * @param ctrlDate2
 	 * @param abortDate
 	 * @param userID
-	 * @param lock
 	 * @param deleted
 	 */
 	public Admission(int id, int admitted, String type, Ward ward, int prog, Patient patient, GregorianCalendar admDate, AdmissionType admType, String fhu, Disease diseaseIn, Disease diseaseOut1, Disease diseaseOut2, Disease diseaseOut3,
 			Operation operation, String opResult, GregorianCalendar opDate, GregorianCalendar disDate, DischargeType disType, String note, Float transUnit, GregorianCalendar visitDate,
 			PregnantTreatmentType pregTreatmentType, GregorianCalendar deliveryDate, DeliveryType deliveryType, DeliveryResultType deliveryResult, Float weight, GregorianCalendar ctrlDate1, GregorianCalendar ctrlDate2,
-			GregorianCalendar abortDate, String userID, int lock, String deleted) 
+			GregorianCalendar abortDate, String userID, String deleted) 
 	{
 		super();
 		this.id = id;
@@ -298,7 +298,6 @@ public class Admission implements Comparable<Admission>
 		this.ctrlDate2 = ctrlDate2;
 		this.abortDate = abortDate;
 		this.userID = userID;
-		this.lock = lock;
 		this.deleted = deleted;
 	}
 	

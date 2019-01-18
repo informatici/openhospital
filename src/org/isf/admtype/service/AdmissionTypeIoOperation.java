@@ -3,8 +3,8 @@ package org.isf.admtype.service;
 import java.util.ArrayList;
 
 import org.isf.admtype.model.AdmissionType;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
  * Persistence class for admtype module.
  */
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class AdmissionTypeIoOperation 
 {
 
@@ -24,9 +24,9 @@ public class AdmissionTypeIoOperation
 	/**
 	 * Returns all the available {@link AdmissionType}s.
 	 * @return a list of admission types.
-	 * @throws OHException if an error occurs.
+	 * @throws OHServiceException if an error occurs.
 	 */
-	public ArrayList<AdmissionType> getAdmissionType() throws OHException 
+	public ArrayList<AdmissionType> getAdmissionType() throws OHServiceException 
 	{
 		return new ArrayList<AdmissionType>(repository.findAllByOrderByDescriptionAsc());
 	}
@@ -35,10 +35,10 @@ public class AdmissionTypeIoOperation
 	 * Updates the specified {@link AdmissionType}.
 	 * @param admissionType the admission type to update.
 	 * @return <code>true</code> if the admission type has been updated, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the update.
+	 * @throws OHServiceException if an error occurs during the update.
 	 */
 	public boolean updateAdmissionType(
-			AdmissionType admissionType) throws OHException 
+			AdmissionType admissionType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -53,10 +53,10 @@ public class AdmissionTypeIoOperation
 	 * Stores a new {@link AdmissionType}.
 	 * @param admissionType the admission type to store.
 	 * @return <code>true</code> if the admission type has been stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the storing operation.
+	 * @throws OHServiceException if an error occurs during the storing operation.
 	 */
 	public boolean newAdmissionType(
-			AdmissionType admissionType) throws OHException 
+			AdmissionType admissionType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -71,10 +71,10 @@ public class AdmissionTypeIoOperation
 	 * Deletes the specified {@link AdmissionType}.
 	 * @param admissionType the admission type to delete.
 	 * @return <code>true</code> if the admission type has been deleted, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the delete operation.
+	 * @throws OHServiceException if an error occurs during the delete operation.
 	 */
 	public boolean deleteAdmissionType(
-			AdmissionType admissionType) throws OHException 
+			AdmissionType admissionType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -88,10 +88,10 @@ public class AdmissionTypeIoOperation
 	 * Checks if the specified Code is already used by others {@link AdmissionType}s.
 	 * @param code the admission type code to check.
 	 * @return <code>true</code> if the code is already used, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @throws OHServiceException if an error occurs during the check.
 	 */
 	public boolean isCodePresent(
-			String code) throws OHException
+			String code) throws OHServiceException
 	{
 		boolean result = true;
 	

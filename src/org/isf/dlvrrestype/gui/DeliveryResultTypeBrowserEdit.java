@@ -191,72 +191,30 @@ public class DeliveryResultTypeBrowserEdit extends JDialog{
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					String key = codeTextField.getText();
 					DeliveryResultTypeBrowserManager manager = new DeliveryResultTypeBrowserManager();
-					if (key.equals("")){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.dlvrrestype.pleaseinsertacode"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}	
-					//System.out.print(key.length());
-					if (key.length()>1){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.dlvrrestype.codetoolongmaxchars"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						
-						return;	
-					}
 					try{
-						if(insert){
-							if (manager.codeControl(key)){
-								JOptionPane.showMessageDialog(				
-										null,
-										MessageBundle.getMessage("angal.common.codealreadyinuse"),
-										MessageBundle.getMessage("angal.hospital"),
-										JOptionPane.PLAIN_MESSAGE);
-								codeTextField.setText("");
-								return;	
-							}};
-							if (descriptionTextField.getText().equals("")){
-								JOptionPane.showMessageDialog(				
-										null,
-										MessageBundle.getMessage("angal.dlvrrestype.pleaseinsertavaliddescription"),
-										MessageBundle.getMessage("angal.hospital"),
-										JOptionPane.PLAIN_MESSAGE);
-								return;	
-							}
+
+						deliveryresultType.setDescription(descriptionTextField.getText());
+						deliveryresultType.setCode(codeTextField.getText());
+						
+						if (insert) {     // inserting
+							if (true == manager.newDeliveryResultType(deliveryresultType)) {
+								fireDeliveryResultInserted();
+								dispose();
+							} else 
+								JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+						}
+						else {            // updating
 							if (descriptionTextField.getText().equals(lastdescription)){
 								dispose();	
+							} else {
+								if (true == manager.updateDeliveryResultType(deliveryresultType)) {
+									fireDeliveryResultUpdated();
+									dispose();
+								} else 
+									JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 							}
-							deliveryresultType.setDescription(descriptionTextField.getText());
-							deliveryresultType.setCode(codeTextField.getText());
-							boolean result = false;
-							if (insert) {      // inserting
-								result = manager.newDeliveryResultType(deliveryresultType);
-								if (result) {
-									fireDeliveryResultInserted();
-								}
-								if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"));
-								else  dispose();
-							}
-							else {                          // updating
-								if (descriptionTextField.getText().equals(lastdescription)){
-									dispose();	
-								}else{
-									result = manager.updateDeliveryResultType(deliveryresultType);
-									if (result) {
-										fireDeliveryResultUpdated();
-									}
-									if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.dlvrrestype.thedatacouldnotbesaved"));
-									else  dispose();
-								}
-
-							}
+						}
 					}catch(OHServiceException ex){
 						if(ex.getMessages() != null){
 							for(OHExceptionMessage msg : ex.getMessages()){

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.isf.admission.model.Admission;
 import org.isf.admission.service.AdmissionIoOperationRepository;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.isf.ward.model.Ward;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class WardIoOperations {
 
 	@Autowired
@@ -33,10 +33,10 @@ public class WardIoOperations {
 	 * Retrieves the number of patients currently admitted in the {@link Ward}
 	 * @param ward - the ward
 	 * @return the number of patients currently admitted
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public int getCurrentOccupation(
-			Ward ward) throws OHException 
+			Ward ward) throws OHServiceException 
 	{		
 		ArrayList<Admission> admissions = new ArrayList<Admission>(admissionRepository.findAllWhereWard(ward.getCode()));
 
@@ -46,9 +46,9 @@ public class WardIoOperations {
 	/**
 	 * Retrieves all stored {@link Ward}s with flag maternity equals <code>false</code>.
 	 * @return the retrieved wards.
-	 * @throws OHException if an error occurs retrieving the diseases.
+	 * @throws OHServiceException if an error occurs retrieving the diseases.
 	 */
-	public ArrayList<Ward> getWardsNoMaternity() throws OHException 
+	public ArrayList<Ward> getWardsNoMaternity() throws OHServiceException 
 	{		
 		ArrayList<Ward> wards = new ArrayList<Ward>(repository.findAllWhereWardIsM());
 
@@ -59,10 +59,10 @@ public class WardIoOperations {
 	 * Retrieves all stored {@link Ward}s with the specified ward ID.
 	 * @param wardID - the ward ID, can be <code>null</code>
 	 * @return the retrieved wards.
-	 * @throws OHException if an error occurs retrieving the wards.
+	 * @throws OHServiceException if an error occurs retrieving the wards.
 	 */
 	public ArrayList<Ward> getWards(
-			String wardID) throws OHException 
+			String wardID) throws OHServiceException 
 	{ 
 		ArrayList<Ward> wards = null;
 		
@@ -83,10 +83,10 @@ public class WardIoOperations {
 	 * Stores the specified {@link Ward}. 
 	 * @param ward the ward to store.
 	 * @return <code>true</code> if the ward has been stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs storing the ward.
+	 * @throws OHServiceException if an error occurs storing the ward.
 	 */
 	public boolean newWard(
-			Ward ward) throws OHException 
+			Ward ward) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -102,10 +102,10 @@ public class WardIoOperations {
 	 * @param disease the {@link Ward} to update.
 	 * @param isConfirmedOverwriteRecord if the user has confirmed he wants to overwrite the record
 	 * @return <code>true</code> if the ward has been updated, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the update.
+	 * @throws OHServiceException if an error occurs during the update.
 	 */
 	public boolean updateWard(
-			Ward ward) throws OHException
+			Ward ward) throws OHServiceException
 	{				
 		boolean result = true;
 	
@@ -120,10 +120,10 @@ public class WardIoOperations {
 	 * Mark as deleted the specified {@link Ward}.
 	 * @param ward the ward to make delete.
 	 * @return <code>true</code> if the ward has been marked, <code>false</code> otherwise.
-	 * @throws OHException if an error occurred during the delete operation.
+	 * @throws OHServiceException if an error occurred during the delete operation.
 	 */
 	public boolean deleteWard(
-			Ward ward) throws OHException
+			Ward ward) throws OHServiceException
 	{
 		boolean result = true;
 	
@@ -137,10 +137,10 @@ public class WardIoOperations {
 	 * Check if the specified code is used by other {@link Ward}s.
 	 * @param code the code to check.
 	 * @return <code>true</code> if it is already used, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @throws OHServiceException if an error occurs during the check.
 	 */
 	public boolean isCodePresent(
-			String code) throws OHException
+			String code) throws OHServiceException
 	{
 		boolean result = true;
 	
@@ -154,9 +154,9 @@ public class WardIoOperations {
 	/**
 	 * Check if the maternity ward exist
 	 * @return <code>true</code> if is exist, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @throws OHServiceException if an error occurs during the check.
 	 */
-	public boolean isMaternityPresent() throws OHException
+	public boolean isMaternityPresent() throws OHServiceException
 	{
 		boolean result = false;
 		
@@ -166,23 +166,4 @@ public class WardIoOperations {
     	return result;
 	}
 	
-	/**
-	 * Check if the ward is locked
-	 * @return <code>true</code> if the ward is locked <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
-	 */
-	public boolean isLockWard(
-			Ward ward) throws OHException 
-	{
-		boolean isLockWard = false;
-				
-
-		Ward foundWard = repository.findOne(ward.getCode()); 
-		if (foundWard.getLock() == ward.getLock())
-		{
-			isLockWard = true;
-		}
-
-		return isLockWard;
-	}
 }

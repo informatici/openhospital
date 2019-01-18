@@ -207,9 +207,10 @@ public class Tests
 		{		
 			code = _setupTestDisease(false);
 			Disease foundDisease = (Disease)jpa.find(Disease.class, code); 
-			int lock = foundDisease.getLock().intValue();
+			jpa.flush();
 			foundDisease.setDescription("Update");
 			result = diseaseIoOperation.updateDisease(foundDisease);
+			jpa.open();
 			Disease updateDisease = (Disease)jpa.find(Disease.class, code); 
 			
 			assertEquals(true, result);
@@ -259,9 +260,10 @@ public class Tests
 		try 
 		{		
 			code = _setupTestDisease(false);
-			Disease foundDisease = (Disease)jpa.find(Disease.class, code); 
+			Disease foundDisease = (Disease)jpa.find(Disease.class, code);
+			jpa.flush();
 			result = diseaseIoOperation.deleteDisease(foundDisease);
-			
+			jpa.open();
 			assertEquals(true, result);
 			assertEquals(false, foundDisease.getIpdInInclude());
 			assertEquals(false, foundDisease.getIpdOutInclude());

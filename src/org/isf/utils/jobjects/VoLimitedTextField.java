@@ -38,9 +38,9 @@ public class VoLimitedTextField extends JTextField {
 				int availableChars = MAXCHARS
 				- charsInDocument;
 				if (availableChars > 0) {
-					String parteNuovoTesto = text.substring(0,
+					String newTextPart = text.substring(0,
 							availableChars);
-					super.insertString(off, parteNuovoTesto, att);
+					super.insertString(off, newTextPart, att);
 				}
 			} else {
 				super.insertString(off, text, att);

@@ -21,10 +21,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.EventListener;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -58,6 +55,8 @@ import org.isf.lab.manager.LabManager;
 import org.isf.lab.manager.LabRowManager;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
+import org.isf.lab.service.LabIoOperations;
+import org.isf.menu.gui.Menu;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
@@ -134,7 +133,6 @@ public class LabEdit extends JDialog {
 
 //	private VoDateTextField examDateField = null;
 	private JDateChooser examDateFieldCal = null;
-	private DateFormat currentDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.ITALIAN);
 	private GregorianCalendar dateIn = null;
 
 	
@@ -146,6 +144,8 @@ public class LabEdit extends JDialog {
 
 	
 	private ArrayList<ExamRow> eRows = null;
+
+	private Patient patSelected;
 
 	public LabEdit(JFrame owner, Laboratory laboratory, boolean inserting) {
 		super(owner, true);
@@ -285,23 +285,6 @@ public class LabEdit extends JDialog {
 		return dataPanel;
 	}
 
-	
-// REPLACED BY CALENDAR	
-//	private VoDateTextField getExamDateField() {
-//		String d = "";
-//		java.util.Date myDate = null;
-//		if (insert)
-//			dateIn=RememberDates.getLastLabExamDateGregorian();
-//		 else 
-//			dateIn  = lab.getExamDate();
-//
-//		if (dateIn!=null) {
-//			myDate = dateIn.getTime();
-//			d = currentDateFormat.format(myDate);
-//		}
-//		return (new VoDateTextField("dd/mm/yy", d, 15));
-//	}
-
 	private JDateChooser getExamDateFieldCal() {
 		java.util.Date myDate = null;
 		if (insert) {
@@ -325,10 +308,16 @@ public class LabEdit extends JDialog {
 		return inPatientCheckBox;
 	}
 
+	/*
+	 * TODO: Patient Selection like in LabNew
+	 * with the difference that here will be optional
+	 * If no patient is chosen only Name, Age and Sex will be saved
+	 * in LABORATORY table (Name can be empty)
+	 */
 	private JComboBox getPatientComboBox() {
 		if (patientComboBox == null) {
 			patientComboBox = new JComboBox();
-			Patient patSelected=null;
+			patSelected=null;
 			PatientBrowserManager patBrowser = new PatientBrowserManager();
 			ArrayList<Patient> pat = null;
 			try {
@@ -339,8 +328,8 @@ public class LabEdit extends JDialog {
 			patientComboBox.addItem(MessageBundle.getMessage("angal.lab.selectapatient"));
 			if(pat != null){
 				for (Patient elem : pat) {
-					if (!insert) {
-						if (elem.getCode()==lab.getPatId().getCode()) {
+					if (lab.getPatient() != null && !insert) {
+						if (elem.getCode() == lab.getPatient().getCode()) {
 							patSelected=elem;
 						}
 					}
@@ -354,13 +343,13 @@ public class LabEdit extends JDialog {
 				public void actionPerformed(ActionEvent arg0) {
 					if (patientComboBox.getSelectedIndex()>0) {
 						AdmissionBrowserManager admMan = new AdmissionBrowserManager();
-						Patient pat=(Patient)patientComboBox.getSelectedItem();
-						patTextField.setText(pat.getName());
-						ageTextField.setText(pat.getAge()+"");
-						sexTextField.setText(pat.getSex()+"");
+						patSelected = (Patient)patientComboBox.getSelectedItem();
+						patTextField.setText(patSelected.getName());
+						ageTextField.setText(patSelected.getAge()+"");
+						sexTextField.setText(patSelected.getSex()+"");
 						Admission admission = null;
 						try {
-							admission = admMan.getCurrentAdmission(pat);
+							admission = admMan.getCurrentAdmission(patSelected);
 						}catch(OHServiceException e){
 							OHServiceExceptionUtil.showMessages(e);
 						}
@@ -451,8 +440,6 @@ public class LabEdit extends JDialog {
 		return matComboBox;
 	}
 
-	
-	//prova per gestire un campo note al posto di uno volimited
 	private JTextArea getNoteTextArea() {
 		if (noteTextArea == null) {
 			noteTextArea = new JTextArea(10,30);
@@ -466,8 +453,6 @@ public class LabEdit extends JDialog {
 		return noteTextArea;
 	}
 	
-	
-	
 	private VoLimitedTextField getPatientTextField() {
 		if (patTextField == null) {
 			patTextField = new VoLimitedTextField(100);
@@ -477,7 +462,6 @@ public class LabEdit extends JDialog {
 		}
 		return patTextField;
 	}
-
 	
 	private VoLimitedTextField getAgeTextField() {
 		if (ageTextField == null) {
@@ -533,64 +517,32 @@ public class LabEdit extends JDialog {
 						JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.lab.pleaseselectanexam"));
 						return;
 					}
-					//materiale
-					if (matComboBox.getSelectedIndex() == 0) {
-						JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.lab.pleaseselectamaterial"));
-						return;
-					}
 					String matSelected=(String)matComboBox.getSelectedItem();
 					examSelected=(Exam)examComboBox.getSelectedItem();
-					// exam  date	
-					String d = currentDateFormat.format(examDateFieldCal.getDate());
-					GregorianCalendar gregDate = new GregorianCalendar();
-					gregDate.setTime(examDateFieldCal.getDate());
-					if (d.equals("")) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.lab.pleaseinsertexamdate"));
-						return;
-					}
-					try {
-						currentDateFormat.setLenient(false);
-						Date myDate = currentDateFormat.parse(d);
-						gregDate.setTime(myDate);
-					} catch (ParseException pe) {
-						System.out.println(pe);
-						JOptionPane.showMessageDialog(null,MessageBundle.getMessage("angal.lab.pleaseinsertavalidexamdate"));
-						//dateOutField.setText("");
-						return;
-					}
-					//patient id
-					Integer patId=-1;
-					if (patientComboBox.getSelectedIndex()>0)
-						patId=((Patient)(patientComboBox.getSelectedItem())).getCode();
-					String sex=sexTextField.getText().toUpperCase();
-					if (!(sex.equals("M") || sex.equals("F"))) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.lab.pleaseinsertmformaleorfforfemale"));
-						return;
-					}
 					
+					// exam date	
+					GregorianCalendar gregDate = new GregorianCalendar();
 					ArrayList<String> labRow = new ArrayList<String>();
-					LabManager manager = new LabManager();
+					RememberDates.setLastLabExamDate(gregDate);
+					
 					lab.setDate(new GregorianCalendar());
 					lab.setExamDate(gregDate);
-					RememberDates.setLastLabExamDate(gregDate);
 					lab.setMaterial(matSelected);
 					lab.setExam(examSelected);
 					lab.setNote(noteTextArea.getText());
-					lab.setInOutPatient((inPatientCheckBox.isSelected()?"I":"R"));
-					lab.setPatId(new Patient());
+					lab.setInOutPatient((inPatientCheckBox.isSelected()?"I":"O"));
+					lab.setPatient(patSelected);
 					lab.setPatName(patTextField.getText());
 					int tmpAge=0;
 					try {
 						tmpAge=Integer.parseInt(ageTextField.getText());
+					} catch (Exception ex) {
+						JOptionPane.showMessageDialog(LabEdit.this, MessageBundle.getMessage("angal.lab.insertvalidage"));
 					}
-					catch (Exception ex) {
-					}
-					lab.setAge(tmpAge);
-					lab.setSex(sexTextField.getText());
+					lab.setSex(sexTextField.getText().toUpperCase());
 					
 					if (examSelected.getProcedure() == 1)
-						lab.setResult(examRowComboBox.getSelectedItem()
-								.toString());
+						lab.setResult(examRowComboBox.getSelectedItem().toString());
 					else if (examSelected.getProcedure() == 2) {
 						lab.setResult(MessageBundle.getMessage("angal.lab.multipleresults"));
 						for (int i = 0; i < resultPanel.getComponentCount(); i++) {
@@ -600,42 +552,27 @@ public class LabEdit extends JDialog {
 							}
 						}
 					}
+					LabManager manager = new LabManager(Menu.getApplicationContext().getBean(LabIoOperations.class));
 					boolean result = false;
 					if (insert) {
-						if (examSelected.getProcedure() == 1)
-							try {
-								result = manager.newLabFirstProcedure(lab);
-							} catch (OHServiceException e1) {
-								result = false;
-								OHServiceExceptionUtil.showMessages(e1);
-							}
-						else if (examSelected.getProcedure() == 2)
-							try {
-								result = manager.newLabSecondProcedure(lab,	labRow);
-							} catch (OHServiceException e1) {
-								result = false;
-								OHServiceExceptionUtil.showMessages(e1);
-							}
+						lab.setAge(tmpAge);
+						try {
+							result = manager.newLaboratory(lab,	labRow);
+						} catch (OHServiceException e1) {
+							result = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
 					} else {
-						if (examSelected.getProcedure() == 1)
-							try {
-								result = manager.editLabFirstProcedure(lab);
-							} catch (OHServiceException e1) {
-								result = false;
-								OHServiceExceptionUtil.showMessages(e1);
-							}
-						else if (examSelected.getProcedure() == 2)
-							try {
-								result = manager.editLabSecondProcedure(lab,	labRow);
-							} catch (OHServiceException e1) {
-								result = false;
-								OHServiceExceptionUtil.showMessages(e1);
-							}
+						try {
+							result = manager.updateLaboratory(lab, labRow);
+						} catch (OHServiceException e1) {
+							result = false;
+							OHServiceExceptionUtil.showMessages(e1);
+						}
 					}
-
 					if (!result)
 						JOptionPane.showMessageDialog(null,
-								MessageBundle.getMessage("angal.lab.thedatacouldnotbesaved"));
+								MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 					else {
 						fireLabUpdated();
 						dispose();
@@ -674,7 +611,7 @@ public class LabEdit extends JDialog {
 					examRowComboBox.addItem(r.getDescription());
 			}
 		}
-		resultPanel.add(examRowComboBox);
+		if (examRowComboBox.getItemCount() > 0) resultPanel.add(examRowComboBox);
 
 		return resultPanel;
 	}

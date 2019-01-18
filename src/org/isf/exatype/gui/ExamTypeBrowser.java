@@ -275,12 +275,13 @@ class ExamTypeBrowserModel extends DefaultTableModel {
 		}
 
 		public Object getValueAt(int r, int c) {
+			ExamType examType = pExamType.get(r);
 			if (c == 0) {
-				return pExamType.get(r).getCode();
+				return examType.getCode();
 			} else if (c == -1) {
-				return pExamType.get(r);
+				return examType;
 			} else if (c == 1) {
-				return pExamType.get(r).getDescription();
+				return examType.getDescription();
 			}
 			return null;
 		}
@@ -295,21 +296,21 @@ class ExamTypeBrowserModel extends DefaultTableModel {
 
 
 
-public void examTypeUpdated(AWTEvent e) {
-	pExamType.set(selectedrow, examType);
-	((ExamTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
-	jTable.updateUI();
-	if ((jTable.getRowCount() > 0) && selectedrow > -1)
-		jTable.setRowSelectionInterval(selectedrow, selectedrow);
-}
-
-
-public void examTypeInserted(AWTEvent e) {
-	pExamType.add(0, examType);
-	((ExamTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
-	if (jTable.getRowCount() > 0)
-		jTable.setRowSelectionInterval(0, 0);
-}
+	public void examTypeUpdated(AWTEvent e) {
+		pExamType.set(selectedrow, examType);
+		((ExamTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
+		jTable.updateUI();
+		if ((jTable.getRowCount() > 0) && selectedrow > -1)
+			jTable.setRowSelectionInterval(selectedrow, selectedrow);
+	}
+	
+	
+	public void examTypeInserted(AWTEvent e) {
+		pExamType.add(0, examType);
+		((ExamTypeBrowserModel) jTable.getModel()).fireTableDataChanged();
+		if (jTable.getRowCount() > 0)
+			jTable.setRowSelectionInterval(0, 0);
+	}
 	
 	
 }

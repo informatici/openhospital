@@ -10,13 +10,11 @@ public class TestExam
 {	
     private String code = "ZZ";
     private String description = "TestDescription";
-    private Integer procedure = 89;
 	private String defaultResult = "TestDefaultResult";
-	private Integer lock = 1;
-    
 			
 	public Exam setup(
 			ExamType examtype,
+			int procedure,
 			boolean usingSet) throws OHException 
 	{
 		Exam exam;
@@ -25,12 +23,12 @@ public class TestExam
 		if (usingSet == true)
 		{
 			exam = new Exam();
-			_setParameters(exam, examtype);
+			_setParameters(exam, procedure, examtype);
 		}
 		else
 		{
 			// Create Exam with all parameters 
-			exam = new Exam(code, description, examtype, procedure, defaultResult, lock);
+			exam = new Exam(code, description, examtype, procedure, defaultResult);
 		}
 				    	
 		return exam;
@@ -38,13 +36,13 @@ public class TestExam
 	
 	public void _setParameters(
 			Exam exam,
+			int procedure,
 			ExamType examtype) 
 	{	
 		exam.setCode(code);
 		exam.setDescription(description);
 		exam.setExamtype(examtype);
 		exam.setProcedure(procedure);
-		exam.setLock(lock);
 		exam.setDefaultResult(defaultResult);
 		
 		return;
@@ -55,8 +53,6 @@ public class TestExam
 	{		
     	assertEquals(code, exam.getCode());
     	assertEquals(description, exam.getDescription());
-    	assertEquals(procedure, exam.getProcedure());
-    	assertEquals(lock, exam.getLock());
     	assertEquals(defaultResult, exam.getDefaultResult());
 		
 		return;

@@ -187,7 +187,8 @@ public class Tests
 		try 
 		{		
 			code = _setupTestWard(false);
-			Ward foundWard = (Ward)jpa.find(Ward.class, code); 
+			Ward foundWard = (Ward)jpa.find(Ward.class, code);
+			jpa.flush();
 			foundWard.setDescription("Update");
 			result = wardIoOperation.updateWard(foundWard);
 			Ward updateWard = (Ward)jpa.find(Ward.class, code); 
@@ -393,8 +394,7 @@ public class Tests
 		
 		return;
 	}	
-	
-	
+
 	private void _saveContext() throws OHException 
     {	
 		testWardContext.saveAll(jpa);

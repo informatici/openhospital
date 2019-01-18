@@ -12,15 +12,15 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import org.isf.patvac.model.PatientVaccine;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class PatVacIoOperations {
 
 	@Autowired
@@ -31,10 +31,10 @@ public class PatVacIoOperations {
 	 * 
 	 * @param minusOneWeek - if <code>true</code> return the last week
 	 * @return the list of {@link PatientVaccine}s
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public ArrayList<PatientVaccine> getPatientVaccine(
-			boolean minusOneWeek) throws OHException 
+			boolean minusOneWeek) throws OHServiceException 
 	{
 		GregorianCalendar timeTo = new GregorianCalendar();
 		GregorianCalendar timeFrom = new GregorianCalendar();
@@ -60,7 +60,7 @@ public class PatVacIoOperations {
 	 * @param ageFrom
 	 * @param ageTo
 	 * @return the list of {@link PatientVaccine}s
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public ArrayList<PatientVaccine> getPatientVaccine(
 			String vaccineTypeCode, 
@@ -69,7 +69,7 @@ public class PatVacIoOperations {
 			GregorianCalendar dateTo, 
 			char sex, 
 			int ageFrom, 
-			int ageTo) throws OHException 
+			int ageTo) throws OHServiceException 
 	{
 		ArrayList<Integer> pPatientVaccineCode = null;
 		ArrayList<PatientVaccine> pPatientVaccine = new ArrayList<PatientVaccine>();
@@ -94,10 +94,10 @@ public class PatVacIoOperations {
 	 * 
 	 * @param patVac - the {@link PatientVaccine} to insert
 	 * @return <code>true</code> if the item has been inserted, <code>false</code> otherwise 
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean newPatientVaccine(
-			PatientVaccine patVac) throws OHException 
+			PatientVaccine patVac) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -113,10 +113,10 @@ public class PatVacIoOperations {
 	 * 
 	 * @param patVac - the {@link PatientVaccine} to update
 	 * @return <code>true</code> if the item has been updated, <code>false</code> otherwise 
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean updatePatientVaccine(
-			PatientVaccine patVac) throws OHException 
+			PatientVaccine patVac) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -132,10 +132,10 @@ public class PatVacIoOperations {
 	 * 
 	 * @param patVac - the {@link PatientVaccine} to delete
 	 * @return <code>true</code> if the item has been deleted, <code>false</code> otherwise 
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean deletePatientVaccine(
-			PatientVaccine patVac) throws OHException 
+			PatientVaccine patVac) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -150,10 +150,10 @@ public class PatVacIoOperations {
 	 * 
 	 * @param year
 	 * @return <code>int</code> - the progressive number in the year
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public int getProgYear(
-			int year) throws OHException 
+			int year) throws OHServiceException 
 	{
 		Integer progYear = 0;
 
@@ -175,10 +175,10 @@ public class PatVacIoOperations {
 	 *
 	 * @param code - the patient vaccine code
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean isCodePresent(
-			Integer code) throws OHException
+			Integer code) throws OHServiceException
 	{
 		boolean result = true;
 	

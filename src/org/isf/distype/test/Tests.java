@@ -144,7 +144,8 @@ public class Tests
 		try 
 		{		
 			code = _setupTestDiseaseType(false);
-			DiseaseType foundDiseaseType = (DiseaseType)jpa.find(DiseaseType.class, code); 
+			DiseaseType foundDiseaseType = (DiseaseType)jpa.find(DiseaseType.class, code);
+			jpa.flush();
 			foundDiseaseType.setDescription("Update");
 			result = diseaseTypeIoOperation.updateDiseaseType(foundDiseaseType);
 			DiseaseType updateDiseaseType = (DiseaseType)jpa.find(DiseaseType.class, code); 

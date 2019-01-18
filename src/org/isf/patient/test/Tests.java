@@ -274,15 +274,13 @@ public class Tests
 	@Test
 	public void testUpdatePatientTrue() 
 	{
-		int lock = 0;
-		
 		
 		try 
 		{		
 			Integer code = _setupTestPatient(false);
 			Patient patient = (Patient)jpa.find(Patient.class, code); 
-			lock = patient.getLock();
-			boolean result = patientIoOperation.updatePatient(patient, true);
+			jpa.flush();
+			boolean result = patientIoOperation.updatePatient(patient);
 			
 			assertEquals(true, result);
 		} 

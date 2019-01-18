@@ -142,7 +142,8 @@ public class Tests
 		try 
 		{		
 			code = _setupTestAdmissionType(false);
-			AdmissionType foundAdmissionType = (AdmissionType)jpa.find(AdmissionType.class, code); 
+			AdmissionType foundAdmissionType = (AdmissionType)jpa.find(AdmissionType.class, code);
+			jpa.flush();
 			foundAdmissionType.setDescription("Update");
 			result = admissionTypeIoOperation.updateAdmissionType(foundAdmissionType);
 			AdmissionType updateAdmissionType = (AdmissionType)jpa.find(AdmissionType.class, code); 

@@ -14,6 +14,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -34,10 +35,8 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.sms.manager.SmsManager;
 import org.isf.sms.model.Sms;
-import org.isf.sms.service.SmsOperations;
-//import org.isf.sms.service.SmsOperations;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -260,21 +259,23 @@ public class SmsBrowser extends ModalJFrame {
 								JOptionPane.PLAIN_MESSAGE);
 						return;
 					} else {
+						ArrayList<Sms> smsList = new ArrayList<Sms>();
 						int n = JOptionPane.showConfirmDialog(null, 
 								MessageBundle.getMessage("angal.sms.deleteselectedsms") + " ?", 
 								MessageBundle.getMessage("angal.hospital"),
 								JOptionPane.YES_NO_OPTION);
+						
 						if (n == JOptionPane.YES_OPTION) {
 							for (int i : indexes) {
-								SmsOperations smsOp = new SmsOperations();
 								Sms sms = (Sms) jSmsTable.getValueAt(i, -1);
-								try {
-									smsOp.delete(sms);
-								} catch (OHException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
+								smsList.add(sms);
 							}
+						}
+						
+						try {
+							smsManager.delete(smsList);
+						} catch (OHServiceException e1) {
+							OHServiceExceptionUtil.showMessages(e1, SmsBrowser.this);
 						}
 						updateModel(dateFrom, dateTo);
 						updateGUI();
@@ -289,8 +290,7 @@ public class SmsBrowser extends ModalJFrame {
 		try {
 			smsList = smsManager.getAll(from, to);
 		} catch (OHServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			OHServiceExceptionUtil.showMessages(e, SmsBrowser.this);
 		}
 	}
 	

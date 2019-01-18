@@ -120,7 +120,8 @@ public class Tests
 		try 
 		{		
 			code = _setupTestHospital(false);
-			Hospital foundHospital = (Hospital)jpa.find(Hospital.class, code); 
+			Hospital foundHospital = (Hospital)jpa.find(Hospital.class, code);
+			jpa.flush();
 			foundHospital.setDescription("Update");
 			result = hospitalIoOperation.updateHospital(foundHospital);
 			Hospital updateHospital = (Hospital)jpa.find(Hospital.class, code); 

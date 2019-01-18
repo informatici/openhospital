@@ -65,7 +65,8 @@ public class PrintManager {
 					}
 					break;
 				case 1:
-					JasperExportManager.exportReportToPdfFile(jasperPrint,"rpt/PDF/"+JOptionPane.showInputDialog(null,MessageBundle.getMessage("angal.serviceprinting.selectapathforthepdffile"),filename)+".pdf");
+					JasperExportManager.exportReportToPdfFile(jasperPrint,"rpt/PDF/"+JOptionPane.showInputDialog(null,MessageBundle.getMessage("angal.serviceprinting.selectapathforthepdffile"),
+							jasperFile.getParentFile().getAbsolutePath()+File.separator+filename)+".pdf");
 					break;
 				case 2:JasperPrintManager.printReport(jasperPrint, true);
 					break;

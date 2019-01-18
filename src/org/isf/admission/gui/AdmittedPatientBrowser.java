@@ -35,6 +35,7 @@ import javax.swing.table.DefaultTableModel;
 import org.isf.accounting.gui.PatientBillEdit;
 import org.isf.accounting.manager.BillBrowserManager;
 import org.isf.accounting.model.Bill;
+import org.isf.accounting.service.AccountingIoOperations;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
@@ -46,6 +47,7 @@ import org.isf.examination.model.PatientExamination;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.gui.Menu;
 import org.isf.opd.gui.OpdEditExtended;
 import org.isf.opd.model.Opd;
 import org.isf.patient.gui.PatientInsert;
@@ -55,7 +57,7 @@ import org.isf.patient.model.Patient;
 import org.isf.therapy.gui.TherapyEdit;
 import org.isf.utils.db.NormalizeString;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.time.TimeTools;
@@ -322,11 +324,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 			try {
 				pPatient = manager.getAdmittedPatients(null);
 			}catch(OHServiceException e){
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 		    BusyState.setBusyState(this, false);
 		}
@@ -394,11 +392,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				wardWithBeds = wbm.getWards();
 			}catch(OHServiceException e){
 				wardWithBeds = new ArrayList<Ward>();
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+				OHServiceExceptionUtil.showMessages(e);
 			}
 			
 			wardList = new ArrayList<Ward>();
@@ -554,11 +548,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 					try {
 						lastPatex = examManager.getLastByPatID(pat.getCode());
 					}catch(OHServiceException ex){
-						if(ex.getMessages() != null){
-							for(OHExceptionMessage msg : ex.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
+						OHServiceExceptionUtil.showMessages(ex);
 					}
 					if (lastPatex != null) {
 						patex = examManager.getFromLastPatientExamination(lastPatex);
@@ -654,11 +644,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 					try {
 						result = manager.deletePatient(pat);
 					}catch(OHServiceException e){
-						if(e.getMessages() != null){
-							for(OHExceptionMessage msg : e.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
+						OHServiceExceptionUtil.showMessages(e);
 					}
 					BusyState.setBusyState(AdmittedPatientBrowser.this, false);
 					if (result){
@@ -667,11 +653,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 						try {
 							patientAdmissions = abm.getAdmissions(pat);
 						}catch(OHServiceException ex){
-							if(ex.getMessages() != null){
-								for(OHExceptionMessage msg : ex.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+							OHServiceExceptionUtil.showMessages(ex);
 							patientAdmissions = new ArrayList<Admission>();
 						}
 
@@ -679,11 +661,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 							try {
 								abm.setDeleted(elem.getId());
 							}catch(OHServiceException e){
-								if(e.getMessages() != null){
-									for(OHExceptionMessage msg : e.getMessages()){
-										JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-									}
-								}
+								OHServiceExceptionUtil.showMessages(e);
 							}
 						}
 						fireMyDeletedPatient(pat);
@@ -731,7 +709,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				patient = (AdmittedPatient) table.getValueAt(table.getSelectedRow(), -1);
 				
 				if (patient  != null) {
-					Opd opd = new Opd(0,' ', -1, new Disease(), 0);
+					Opd opd = new Opd(0,' ', -1, new Disease());
 					OpdEditExtended newrecord = new OpdEditExtended(myFrame, opd, patient.getPatient(), true);
 					newrecord.setVisible(true);
 					
@@ -757,17 +735,13 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				
 				if (patient  != null) {
 					Patient pat = patient.getPatient();
-					BillBrowserManager billManager = new BillBrowserManager();
+					BillBrowserManager billManager = new BillBrowserManager(Menu.getApplicationContext().getBean(AccountingIoOperations.class));
 					ArrayList<Bill> patientPendingBills;
 					try {
 						patientPendingBills = billManager.getPendingBills(pat.getCode());
 					}catch(OHServiceException e){
 						patientPendingBills = new ArrayList<Bill>();
-						if(e.getMessages() != null){
-							for(OHExceptionMessage msg : e.getMessages()){
-								JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-							}
-						}
+						OHServiceExceptionUtil.showMessages(e);
 					}
 					if (patientPendingBills.isEmpty()) {
 						new PatientBillEdit(AdmittedPatientBrowser.this, pat);
@@ -870,14 +844,6 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				Patient patient1 = ((AdmittedPatient)table.getValueAt(indexes[0], -1)).getPatient();
 				Patient patient2 = ((AdmittedPatient)table.getValueAt(indexes[1], -1)).getPatient();
 				
-				//MergePatient mergedPatient = new MergePatient(patient1, patient2);
-				
-				if (patient1.getSex() != patient2.getSex()) {
-					JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.admission.selectedpatientshavedifferentsex"),
-							MessageBundle.getMessage("angal.admission.merge"), JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-				
 				//Select most recent patient
 				if (patient1.getCode() > patient2.getCode()) { 
 					mergedPatient = patient1;
@@ -944,11 +910,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 						fireMyDeletedPatient(patient2);
 					}
 				}catch(OHServiceException e){
-					if(e.getMessages() != null){
-						for(OHExceptionMessage msg : e.getMessages()){
-							JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-						}
-					}
+					OHServiceExceptionUtil.showMessages(e);
 				}
 			}
 		});
@@ -988,11 +950,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 		try {
 			pPatient = manager.getAdmittedPatients(key);
 		}catch(OHServiceException e){
-			if(e.getMessages() != null){
-				for(OHExceptionMessage msg : e.getMessages()){
-					JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-				}
-			}
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		BusyState.setBusyState(this, false);
 		filterPatient(null);

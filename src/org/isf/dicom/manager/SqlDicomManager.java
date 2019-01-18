@@ -4,14 +4,8 @@ import java.util.Properties;
 
 import org.isf.dicom.model.FileDicom;
 import org.isf.dicom.service.DicomIoOperations;
-import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Interface for definitions IO for Dicom acquired files
@@ -19,8 +13,6 @@ import org.slf4j.LoggerFactory;
  * @version 1.0.0 
  */
 public class SqlDicomManager implements DicomManagerInterface{   
-	
-	private final Logger logger = LoggerFactory.getLogger(SqlDicomManager.class);
 	
 	private DicomIoOperations ioOperations = Menu.getApplicationContext().getBean(DicomIoOperations.class);
 	/**
@@ -38,25 +30,7 @@ public class SqlDicomManager implements DicomManagerInterface{
      */
     public Long[] getSerieDetail(int idPaziente, String numeroSerie) throws OHServiceException
     {
-    	Long[] serieDetails = null;
-    	
-    	try {
-    		serieDetails = ioOperations.getSerieDetail(idPaziente, numeroSerie);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-    	
-    	return serieDetails;
+        return ioOperations.getSerieDetail(idPaziente, numeroSerie);
     }
 
     /**
@@ -68,25 +42,8 @@ public class SqlDicomManager implements DicomManagerInterface{
      */
     public boolean deleteSerie(int idPaziente, String numeroSerie) throws OHServiceException 
     {
-    	boolean result = false;
-    	try {
-    		result = ioOperations.deleteSerie(idPaziente, numeroSerie);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-    	
-    	return result;
-    }    
+    	return ioOperations.deleteSerie(idPaziente, numeroSerie);
+    }
     
     /**
     * ceck if dicom is loaded
@@ -98,25 +55,7 @@ public class SqlDicomManager implements DicomManagerInterface{
     */
     public boolean exist(FileDicom dicom) throws OHServiceException
     {
-    	boolean result = false;
-
-    	try {
-    		result = ioOperations.exist(dicom);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-    	
-    	return result;
+    	return ioOperations.exist(dicom);
     }
 
     /**
@@ -127,26 +66,8 @@ public class SqlDicomManager implements DicomManagerInterface{
      */
     public FileDicom loadDettaglio(Long idFile,int idPaziente, String numeroSerie) throws OHServiceException
     {
-    	FileDicom dicom = null;
-    	
-    	try {
-			dicom = ioOperations.loadDettaglio(idFile, idPaziente, numeroSerie);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-    	
-    	return dicom;
-    }  
+    	return  ioOperations.loadDettaglio(idFile, idPaziente, numeroSerie);
+    }
     
     /**
      * Load detail
@@ -157,26 +78,8 @@ public class SqlDicomManager implements DicomManagerInterface{
      */
     public FileDicom loadDettaglio(long idFile,int idPaziente, String numeroSerie) throws OHServiceException
     {
-    	FileDicom dicom = null;
-    	
-    	try {
-    		dicom = ioOperations.loadDettaglio(idFile, idPaziente, numeroSerie);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-    	
-    	return dicom;
-    }  
+    	return  ioOperations.loadDettaglio(idFile, idPaziente, numeroSerie);
+    }
 
     /**
      * load metadata from DICOM files fo the patient
@@ -186,26 +89,8 @@ public class SqlDicomManager implements DicomManagerInterface{
      */
     public FileDicom[] loadFilesPaziente(int idPaziente) throws OHServiceException
     {
-    	FileDicom[] dicoms = null;
-    	
-    	try {
-			dicoms = ioOperations.loadFilesPaziente(idPaziente);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-    	
-    	return dicoms;
-    }  
+    	return  ioOperations.loadFilesPaziente(idPaziente);
+    }
 
     /**
      * save the DICOM file and metadata
@@ -214,20 +99,6 @@ public class SqlDicomManager implements DicomManagerInterface{
      */
     public void saveFile(FileDicom dicom) throws OHServiceException
     {
-    	try {
 			ioOperations.saveFile(dicom);
-    	}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-    }  
+    }
 }

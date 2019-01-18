@@ -2,47 +2,100 @@ package org.isf.accounting.manager;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
 import org.isf.accounting.service.AccountingIoOperations;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+@Component
 public class BillBrowserManager {
 
+	@Autowired
 	private AccountingIoOperations ioOperations;
 
 	public BillBrowserManager() {
-		ioOperations = Menu.getApplicationContext().getBean(AccountingIoOperations.class);
+		
+	}
+	
+	public BillBrowserManager(AccountingIoOperations ioOperations) {
+		if (ioOperations != null) 
+			this.ioOperations = ioOperations;
 	}
 
+	/**
+	 * Verify if the object is valid for CRUD and return a list of errors, if any
+	 * @param billPayments 
+	 * @param billItems 
+	 * @param deliveryResultType
+	 * @return list of {@link OHExceptionMessage}
+	 */
+	public List<OHExceptionMessage> validateBill(Bill bill, 
+			ArrayList<BillItems> billItems, 
+			ArrayList<BillPayments> billPayments) 
+	{
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+        
+        GregorianCalendar today = new GregorianCalendar();
+        GregorianCalendar upDate = new GregorianCalendar();
+		GregorianCalendar firstPay = new GregorianCalendar();
+		GregorianCalendar lastPay = new GregorianCalendar();
+		GregorianCalendar billDate = bill.getDate();
+		if (billPayments.size() > 0) {
+			firstPay = billPayments.get(0).getDate();
+			lastPay = billPayments.get(billPayments.size()-1).getDate(); //most recent payment
+			upDate = lastPay;
+		} else {
+			upDate = billDate;
+		}
+		bill.setUpdate(upDate);
+        
+		if (billDate.after(today)) {
+			errors.add(new OHExceptionMessage("billAfterTodayError", 
+	        		MessageBundle.getMessage("angal.newbill.billsinfuturenotallowed"), 
+	        		OHSeverityLevel.ERROR));
+		}
+		if (lastPay.after(today)) {
+			errors.add(new OHExceptionMessage("paymentAfterTodayError", 
+	        		MessageBundle.getMessage("angal.newbill.payementinthefuturenotallowed"), 
+	        		OHSeverityLevel.ERROR));
+		}
+		if (billDate.after(firstPay)) {
+			errors.add(new OHExceptionMessage("billAfterFirstPaymentError", 
+	        		MessageBundle.getMessage("angal.newbill.billdateafterfirstpayment"), 
+	        		OHSeverityLevel.ERROR));
+		}
+		if (bill.getPatName().isEmpty()) {
+			errors.add(new OHExceptionMessage("patientNameEmptyError", 
+	        		MessageBundle.getMessage("angal.newbill.pleaseinsertanameforthepatient"), 
+	        		OHSeverityLevel.ERROR));
+		}
+		if (bill.getStatus().equals("C") && bill.getBalance() != 0) {
+			errors.add(new OHExceptionMessage("closeWithBalanceError", 
+	        		MessageBundle.getMessage("angal.newbill.youcannotcloseabillwithoutstandingbalance"), 
+	        		OHSeverityLevel.ERROR));
+		}
+        return errors;
+    }
+	
 	/**
 	 * Returns all the stored {@link BillItems}.
 	 * @return a list of {@link BillItems} or null if an error occurs.
 	 * @throws OHServiceException 
+	 * @deprecated this method shouls always be called with a parameter. 
+	 * See {@link #getItems(int) getItems} method.
 	 */
 	public ArrayList<BillItems> getItems() throws OHServiceException {
-		try {
-			return ioOperations.getItems(0);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getItems(0);
 	}
 
 	/**
@@ -53,44 +106,18 @@ public class BillBrowserManager {
 	 */
 	public ArrayList<BillItems> getItems(int billID) throws OHServiceException {
 		if (billID == 0) return new ArrayList<BillItems>();
-		try {
-			return ioOperations.getItems(billID);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getItems(billID);
 	}
 
 	/**
 	 * Retrieves all the stored {@link BillPayments}.
 	 * @return a list of bill payments or <code>null</code> if an error occurred.
-	 * @throws OHServiceException 
+	 * @throws OHServiceException
+	 * @deprecated this method shouls always be called with a parameter. 
+	 * See {@link #getPayments(int) getPayments} method.
 	 */
 	public ArrayList<BillPayments> getPayments() throws OHServiceException {
-		try {
-			return ioOperations.getPayments(0);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getPayments(0);
 	}
 
 	/**
@@ -101,46 +128,42 @@ public class BillBrowserManager {
 	 */
 	public ArrayList<BillPayments> getPayments(int billID) throws OHServiceException {
 		if (billID == 0) return new ArrayList<BillPayments>();
-		try {
-			return ioOperations.getPayments(billID);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getPayments(billID);
+	}
+	
+	/**
+	 * Stores a new {@link Bill} along with all its {@link BillItems} and {@link BillPayments}
+	 * @param newBill - the bill to store.
+	 * @param billItems - the list of bill's items
+	 * @param billPayments - the list of bill's payments
+	 * @return <code>true</code> if the bill has been stored, <code>false</code> otherwise.
+	 * @throws OHServiceException 
+	 */
+	@Transactional(rollbackFor=OHServiceException.class)
+	public boolean newBill(
+			Bill newBill, 
+			ArrayList<BillItems> billItems, 
+			ArrayList<BillPayments> billPayments) throws OHServiceException 
+	{
+		List<OHExceptionMessage> errors = validateBill(newBill, billItems, billPayments);
+		if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+		int billId = newBill(newBill);
+		boolean result = billId > 0;
+		if (!billItems.isEmpty()) result = newBillItems(billId, billItems);
+		if (!billPayments.isEmpty()) result = result && newBillPayments(billId, billPayments);
+		return result;
 	}
 
 	/**
 	 * Stores a new {@link Bill}.
 	 * @param newBill the bill to store.
 	 * @return the generated id.
-	 * @throws OHServiceException 
+	 * @throws OHServiceException
 	 */
-	public int newBill(Bill newBill) throws OHServiceException {
-		try {
-			return ioOperations.newBill(newBill);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-
+	private int newBill(Bill newBill) throws OHServiceException {
+		return ioOperations.newBill(newBill);
 	}
 
 	/**
@@ -148,49 +171,45 @@ public class BillBrowserManager {
 	 * @param billID the bill id.
 	 * @param billItems the bill items to store.
 	 * @return <code>true</code> if the {@link BillItems} have been store, <code>false</code> otherwise.
-	 * @throws OHServiceException 
+	 * @throws OHServiceException
 	 */
-	public boolean newBillItems(int billID, ArrayList<BillItems> billItems) throws OHServiceException {
-		try {
-			return ioOperations.newBillItems(ioOperations.getBill(billID), billItems);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+	private boolean newBillItems(int billID, ArrayList<BillItems> billItems) throws OHServiceException {
+		return ioOperations.newBillItems(ioOperations.getBill(billID), billItems);
 	}
-
+	
 	/**
 	 * Stores a list of {@link BillPayments} associated to a {@link Bill}.
 	 * @param billID the bill id.
 	 * @param payItems the bill payments.
-	 * @return <code>true</code> if the payment have stored, <code>false</code> otherwise.
-	 * @throws OHServiceException 
+	 * @return <code>true</code> if the payments have been stored, <code>false</code> otherwise.
+	 * @throws OHServiceException
 	 */
-	public boolean newBillPayments(int billID, ArrayList<BillPayments> payItems) throws OHServiceException {
-		try {
-			return ioOperations.newBillPayments(ioOperations.getBill(billID), payItems);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+	private boolean newBillPayments(int billID, ArrayList<BillPayments> payItems) throws OHServiceException {
+		return ioOperations.newBillPayments(ioOperations.getBill(billID), payItems);
+	}
+	
+	/**
+	 * Updates the specified {@link Bill} along with all its {@link BillItems} and {@link BillPayments}
+	 * @param updateBill - the bill to update.
+	 * @param billItems - the list of bill's items
+	 * @param billPayments - the list of bill's payments
+	 * @return <code>true</code> if the bill has been updated, <code>false</code> otherwise.
+	 * @throws OHServiceException
+	 */
+	@Transactional(rollbackFor=OHServiceException.class)
+	public boolean updateBill(Bill updateBill,
+			ArrayList<BillItems> billItems,
+			ArrayList<BillPayments> billPayments) throws OHServiceException 
+	{
+		List<OHExceptionMessage> errors = validateBill(updateBill, billItems, billPayments);
+		if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+		boolean result = updateBill(updateBill);
+		result = result && newBillItems(updateBill.getId(), billItems);
+		result = result && newBillPayments(updateBill.getId(), billPayments);
+		return result;
+		
 	}
 
 	/**
@@ -199,24 +218,10 @@ public class BillBrowserManager {
 	 * @return <code>true</code> if the bill has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException 
 	 */
-	public boolean updateBill(Bill updateBill) throws OHServiceException {
-		try {
-			return ioOperations.updateBill(updateBill);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+	private boolean updateBill(Bill updateBill) throws OHServiceException {
+		return ioOperations.updateBill(updateBill);
 	}
-
+	
 	/**
 	 * Returns all the pending {@link Bill}s for the specified patient.
 	 * @param patID the patient id.
@@ -224,44 +229,17 @@ public class BillBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Bill> getPendingBills(int patID) throws OHServiceException {
-		try {
-			return ioOperations.getPendingBills(patID);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getPendingBills(patID);
 	}
 
 	/**
 	 * Get all the {@link Bill}s.
 	 * @return a list of bills or <code>null</code> if an error occurred.
-	 * @throws OHServiceException 
+	 * @throws OHServiceException
+	 * @deprecated this method should not be called for its potentially huge resultset
 	 */
 	public ArrayList<Bill> getBills() throws OHServiceException {
-		try {
-			return ioOperations.getBills();
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getBills();
 	}
 	
 	/**
@@ -271,21 +249,7 @@ public class BillBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public Bill getBill(int billID) throws OHServiceException {
-		try {
-			return ioOperations.getBill(billID);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getBill(billID);
 	}
 
 	/**
@@ -294,21 +258,7 @@ public class BillBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<String> getUsers() throws OHServiceException {
-		try {
-			return ioOperations.getUsers();
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getUsers();
 	}
 
 	/**
@@ -318,21 +268,7 @@ public class BillBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean deleteBill(Bill deleteBill) throws OHServiceException {
-		try {
-			return ioOperations.deleteBill(deleteBill);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.deleteBill(deleteBill);
 	}
 
 	/**
@@ -343,21 +279,7 @@ public class BillBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Bill> getBills(GregorianCalendar dateFrom, GregorianCalendar dateTo) throws OHServiceException {
-		try {
-			return ioOperations.getBills(dateFrom, dateTo);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getBills(dateFrom, dateTo);
 	}
 
 	/**
@@ -368,21 +290,7 @@ public class BillBrowserManager {
 	 */
 	public ArrayList<Bill> getBills(ArrayList<BillPayments> billPayments) throws OHServiceException {
 		if (billPayments.isEmpty()) return new ArrayList<Bill>();
-		try {
-			return ioOperations.getBills(billPayments);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getBills(billPayments);
 	}
 
 	/**
@@ -393,21 +301,7 @@ public class BillBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<BillPayments> getPayments(GregorianCalendar dateFrom, GregorianCalendar dateTo) throws OHServiceException {
-		try {
-			return ioOperations.getPayments(dateFrom, dateTo);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getPayments(dateFrom, dateTo);
 	}
 
 	/**
@@ -417,20 +311,6 @@ public class BillBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<BillPayments> getPayments(ArrayList<Bill> billArray) throws OHServiceException {
-		try {
-			return ioOperations.getPayments(billArray);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getPayments(billArray);
 	}
 }

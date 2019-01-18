@@ -17,7 +17,6 @@ public class TestMalnutrition
 	private GregorianCalendar dateConf = new GregorianCalendar(now.get(Calendar.YEAR), 10, 11);;
 	private float height = (float)185.47;
 	private float weight = (float)70.70;
-	private int lock = 1;
 	
 	public Malnutrition setup(Admission admission,
 			boolean usingSet) throws OHException 
@@ -32,7 +31,7 @@ public class TestMalnutrition
 		else
 		{
 			// Create Malnutrition with all parameters 
-			malnutrition = new Malnutrition(code, dateSupp, dateConf, admission, height, weight, lock);
+			malnutrition = new Malnutrition(code, dateSupp, dateConf, admission, height, weight);
 		}
 				    	
 		return malnutrition;
@@ -46,7 +45,6 @@ public class TestMalnutrition
 		malnutrition.setDateSupp(dateSupp);
 		malnutrition.setHeight(height);
 		malnutrition.setWeight(weight);
-		malnutrition.setLock(lock);
 		
 		return;
 	}
@@ -58,7 +56,6 @@ public class TestMalnutrition
     	assertEquals(dateSupp, malnutrition.getDateSupp());
     	assertEquals(height, malnutrition.getHeight(), 0.1);
     	assertEquals(weight, malnutrition.getWeight(), 0.1);
-    	assertEquals(lock, malnutrition.getLock());
 		
 		return;
 	}

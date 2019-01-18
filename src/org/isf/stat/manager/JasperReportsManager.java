@@ -567,4 +567,12 @@ public class JasperReportsManager {
         sbFilename.append(".jasper");
         return  sbFilename.toString();
     }
+    
+    public String compileDefaultFilename(String defaultFileName) {
+    	StringBuilder sbFilename = new StringBuilder();
+		sbFilename.append("PDF");
+		sbFilename.append(File.separator);
+		sbFilename.append(defaultFileName);
+        return  sbFilename.toString();
+    }
 }

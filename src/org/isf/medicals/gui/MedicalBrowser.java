@@ -4,6 +4,7 @@
  */
 package org.isf.medicals.gui;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -14,7 +15,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -30,12 +30,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.medicals.gui.MedicalEdit.MedicalListener;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
@@ -50,6 +50,7 @@ import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.JMonthYearChooser;
 import org.isf.utils.jobjects.ModalJFrame;
+import org.isf.utils.time.TimeTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,8 +68,7 @@ import com.toedter.calendar.JDateChooser;
  * 			- pieces per packet
  * 
  */
-
-public class MedicalBrowser extends ModalJFrame { // implements RowSorterListener{
+public class MedicalBrowser extends ModalJFrame implements MedicalListener { // implements RowSorterListener{
 
 	/**
 	 * 
@@ -77,7 +77,7 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 	
 	private static Logger logger = LoggerFactory.getLogger(MedicalBrowser.class);
 
-	public void medicalInserted() {
+	public void medicalInserted(Medical medical) {
 		pMedicals.add(0,medical);
 		((MedicalBrowsingModel)table.getModel()).fireTableDataChanged();
 		table.updateUI();
@@ -85,7 +85,8 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 			table.setRowSelectionInterval(0, 0);
 		repaint();
 	}
-	public void medicalUpdated() {
+	
+	public void medicalUpdated(AWTEvent e) {
 		pMedicals.set(selectedrow,medical);
 		((MedicalBrowsingModel)table.getModel()).fireTableDataChanged();
 		table.updateUI();
@@ -288,18 +289,15 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		buttonExport.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
 				
-				JFileChooser fcExcel = new JFileChooser();
-				FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
-				fcExcel.setFileFilter(excelFilter);
-				fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);  
-				fcExcel.setSelectedFile(new File(MessageBundle.getMessage("angal.medicals.stock")));
+				String fileName = compileFileName();
+				File defaultFileName = new File(fileName);
+				JFileChooser fcExcel = ExcelExporter.getJFileChooserExcel(defaultFileName);
 				
 				int iRetVal = fcExcel.showSaveDialog(MedicalBrowser.this);
 				if(iRetVal == JFileChooser.APPROVE_OPTION)
 				{
 					File exportFile = fcExcel.getSelectedFile();
 					if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
-					
 					ExcelExporter xlsExport = new ExcelExporter();
 					try
 					{
@@ -310,7 +308,7 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 								exc.getMessage(),
 		                        MessageBundle.getMessage("angal.hospital"),
 		                        JOptionPane.PLAIN_MESSAGE);	
-						logger.error("Export to excel error : "+exc.getMessage());
+						logger.error("Export to excel error : "+ exc.getMessage());
 					}
 				}
 			}
@@ -318,6 +316,17 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		return buttonExport;
 	}
 
+	private String compileFileName() {
+		StringBuilder filename = new StringBuilder("Stock");
+		if (pbox.isEnabled() 
+				&& !pbox.getSelectedItem().equals(
+						MessageBundle.getMessage("angal.medicals.allm"))) {
+			
+			filename.append("_").append(pbox.getSelectedItem());
+		}
+		return filename.toString();
+	}
+	
 	private JButton getJButtonDelete() {
 		JButton buttonDelete = new JButton(MessageBundle.getMessage("angal.common.delete"));
 		buttonDelete.setMnemonic(KeyEvent.VK_D);
@@ -330,26 +339,30 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 	                        MessageBundle.getMessage("angal.hospital"),
 	                        JOptionPane.PLAIN_MESSAGE);				
 					return;									
-				}else {
-				MedicalBrowsingManager manager = new MedicalBrowsingManager();
-				Medical m = (Medical)(((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
-				int n = JOptionPane.showConfirmDialog(
-                        null,
-                        MessageBundle.getMessage("angal.medicals.deletemedical") + " \""+m.getDescription()+"\" ?",
-                        MessageBundle.getMessage("angal.hospital"),
-                        JOptionPane.YES_NO_OPTION);
-
-				boolean deleted;
-				try {
-					deleted = (manager.deleteMedical(m));
-				} catch (OHServiceException e) {
-					deleted = false;
-					OHServiceExceptionUtil.showMessages(e);
-				}
-				if ((n == JOptionPane.YES_OPTION) && deleted){
-					pMedicals.remove(table.getSelectedRow());
-					model.fireTableDataChanged();
-					table.updateUI();
+				} else {
+					MedicalBrowsingManager manager = new MedicalBrowsingManager();
+					Medical med = (Medical) (((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
+					StringBuilder deleteMessage = new StringBuilder()
+							.append(MessageBundle.getMessage("angal.medicals.deletemedical"))
+							.append(" \"")
+							.append(med.getDescription())
+							.append("\" ?");
+					int n = JOptionPane.showConfirmDialog(
+									MedicalBrowser.this,
+									deleteMessage.toString(),
+									MessageBundle.getMessage("angal.hospital"), 
+									JOptionPane.YES_NO_OPTION);
+					boolean deleted;
+					try {
+						deleted = manager.deleteMedical(med);
+					} catch (OHServiceException e) {
+						deleted = false;
+						OHServiceExceptionUtil.showMessages(e);
+					}
+					if ((n == JOptionPane.YES_OPTION) && deleted) {
+						pMedicals.remove(table.getSelectedRow());
+						model.fireTableDataChanged();
+						table.updateUI();
 					}
 				}
 			}
@@ -374,8 +387,8 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 					selectedrow = table.getSelectedRow();
 					medical = (Medical)(((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
 					MedicalEdit editrecord = new MedicalEdit(medical,false,me);
+					editrecord.addMedicalListener(MedicalBrowser.this);
 					editrecord.setVisible(true);
-					medicalUpdated();
 				}	 				
 			}
 		});
@@ -387,11 +400,13 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		buttonNew.setMnemonic(KeyEvent.VK_N);
 		buttonNew.addActionListener(new ActionListener() {
 
-			public void actionPerformed(ActionEvent event) {
-				medical=new Medical(null,new MedicalType("",""),"","",0,0,0,0,0,0);;	//medical will reference the new record
-				MedicalEdit newrecord = new MedicalEdit(medical,true,me);
+			public void actionPerformed(ActionEvent event) 
+			{
+				// medical will reference the new record
+				medical = new Medical(null, new MedicalType("", ""), "", "", 0, 0, 0, 0, 0);
+				MedicalEdit newrecord = new MedicalEdit(medical, true, me);
+				newrecord.addMedicalListener(MedicalBrowser.this);
 				newrecord.setVisible(true);
-				if(medical.getCode()!=null)medicalInserted();
 			}
 		});
 		return buttonNew;
@@ -412,9 +427,6 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		} catch (OHServiceException e1) {
 			type = null;
 			OHServiceExceptionUtil.showMessages(e1);
-		}
-		for (MedicalType elem : type) {
-			pbox.addItem(elem);
 		}
 		pbox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -459,43 +471,43 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 		if (options.indexOf(option) == i) {
 			GregorianCalendar gc = new GregorianCalendar();
 			
-			from = formatDateTimeReport(gc);
+			from = TimeTools.formatDateTimeReport(gc);
 			to = from;
 		}
 		if (options.indexOf(option) == ++i) {
 			GregorianCalendar gc = new GregorianCalendar();
 			gc.set(GregorianCalendar.DAY_OF_MONTH, 1);
-			from = formatDateTimeReport(gc);
+			from = TimeTools.formatDateTimeReport(gc);
 			
 			gc.set(GregorianCalendar.DAY_OF_MONTH, gc.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
-			to = formatDateTimeReport(gc);
+			to = TimeTools.formatDateTimeReport(gc);
 		}
 		if (options.indexOf(option) == ++i) {
 			GregorianCalendar gc = new GregorianCalendar();
 			gc.set(GregorianCalendar.DAY_OF_MONTH, 1);
-			from = formatDateTimeReport(gc);
+			from = TimeTools.formatDateTimeReport(gc);
 			
 			gc.add(GregorianCalendar.MONTH, 1);
 			gc.set(GregorianCalendar.DAY_OF_MONTH, gc.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
-			to = formatDateTimeReport(gc);
+			to = TimeTools.formatDateTimeReport(gc);
 		}
 		if (options.indexOf(option) == ++i) {
 			GregorianCalendar gc = new GregorianCalendar();
 			gc.set(GregorianCalendar.DAY_OF_MONTH, 1);
-			from = formatDateTimeReport(gc);
+			from = TimeTools.formatDateTimeReport(gc);
 			
 			gc.add(GregorianCalendar.MONTH, 2);
 			gc.set(GregorianCalendar.DAY_OF_MONTH, gc.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
-			to = formatDateTimeReport(gc);
+			to = TimeTools.formatDateTimeReport(gc);
 		}
 		if (options.indexOf(option) == ++i) {
 			GregorianCalendar gc = new GregorianCalendar();
 			gc.set(GregorianCalendar.DAY_OF_MONTH, 1);
-			from = formatDateTimeReport(gc);
+			from = TimeTools.formatDateTimeReport(gc);
 			
 			gc.add(GregorianCalendar.MONTH, 3);
 			gc.set(GregorianCalendar.DAY_OF_MONTH, gc.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
-			to = formatDateTimeReport(gc);
+			to = TimeTools.formatDateTimeReport(gc);
 		}
 		if (options.indexOf(option) == ++i) {
 			GregorianCalendar monthYear;
@@ -516,21 +528,21 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 	        
 	        GregorianCalendar gc = new GregorianCalendar();
 			gc.set(GregorianCalendar.DAY_OF_MONTH, 1);
-			from = formatDateTimeReport(gc);
+			from = TimeTools.formatDateTimeReport(gc);
 			
 			gc.set(GregorianCalendar.MONTH, monthYear.get(GregorianCalendar.MONTH));
 			gc.set(GregorianCalendar.YEAR, monthYear.get(GregorianCalendar.YEAR));
 			gc.set(GregorianCalendar.DAY_OF_MONTH, gc.getActualMaximum(GregorianCalendar.DAY_OF_MONTH));
-			to = formatDateTimeReport(gc);
+			to = TimeTools.formatDateTimeReport(gc);
 		}
-		new GenericReportFromDateToDate(from, to, "PharmaceuticalExpiration", MessageBundle.getMessage("angal.medicals.expiringreport"), false);
+		new GenericReportFromDateToDate(
+				from, 
+				to, 
+				"PharmaceuticalExpiration", 
+				MessageBundle.getMessage("angal.medicals.expiringreport"), 
+				false);
 	}
 	
-	private String formatDateTimeReport(GregorianCalendar date) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");  //$NON-NLS-1$
-		return sdf.format(date.getTime());
-	}
-
 	class MedicalBrowsingModel extends DefaultTableModel {
 		
 		/**
@@ -556,7 +568,6 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
- 
 		
 		public Class<?> getColumnClass(int c) { 
 			if (c == 0) {
@@ -643,4 +654,5 @@ public class MedicalBrowser extends ModalJFrame { // implements RowSorterListene
 	      return cell;
 	   }
 	}
+
 }

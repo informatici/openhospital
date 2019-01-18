@@ -139,7 +139,7 @@ public class DiseaseBrowser extends ModalJFrame implements DiseaseEdit.DiseaseLi
 		buttonNew.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent event) {
-				disease=new Disease(null,"",new DiseaseType("",""),0);;	//disease will reference the new record
+				disease=new Disease(null,"",new DiseaseType("",""));	//disease will reference the new record
 				DiseaseEdit newrecord = new DiseaseEdit(myFrame,disease,true);
 				newrecord.addDiseaseListener(DiseaseBrowser.this);
 				newrecord.setVisible(true);

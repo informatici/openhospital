@@ -45,7 +45,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -55,7 +54,6 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
-import org.isf.medicalstock.manager.DateTextField;
 import org.isf.medicalstock.manager.MovBrowserManager;
 import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
@@ -67,7 +65,9 @@ import org.isf.menu.gui.MainMenu;
 import org.isf.utils.excel.ExcelExporter;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.DateTextField;
 import org.isf.utils.jobjects.ModalJFrame;
+import org.isf.utils.time.TimeTools;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -771,7 +771,7 @@ public class MovStockBrowser extends ModalJFrame {
 						query.setData(s, true);
 					} catch (IOException err) {
 						JOptionPane.showMessageDialog(null,
-								MessageBundle.getMessage("angal.medicalstock.problemsoccurredwithserverconnection"));
+								MessageBundle.getMessage("angal.sql.problemsoccurredwithserverconnection"));
 						err.printStackTrace();
 					} catch (SQLException err) {
 						JOptionPane.showMessageDialog(null,
@@ -887,30 +887,64 @@ public class MovStockBrowser extends ModalJFrame {
 		exportToExcel.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) {
-				
-				JFileChooser fcExcel = new JFileChooser();
-				FileNameExtensionFilter excelFilter = new FileNameExtensionFilter("Excel (*.xls)","xls");
-				fcExcel.setFileFilter(excelFilter);
-				fcExcel.setFileSelectionMode(JFileChooser.FILES_ONLY);  
+
+				String fileName = compileFileName();
+				File defaultFileName = new File(fileName);
+				JFileChooser fcExcel = ExcelExporter.getJFileChooserExcel(defaultFileName);
 				
 				int iRetVal = fcExcel.showSaveDialog(MovStockBrowser.this);
 				if(iRetVal == JFileChooser.APPROVE_OPTION)
 				{
 					File exportFile = fcExcel.getSelectedFile();
 					if (!exportFile.getName().endsWith("xls")) exportFile = new File(exportFile.getAbsoluteFile() + ".xls");
-					
 					ExcelExporter xlsExport = new ExcelExporter();
 					try
 					{
 						xlsExport.exportTableToExcel(movTable, exportFile);
 					} catch(IOException exc)
 					{
-						logger.info("Export to excel error : "+exc.getMessage());
+						JOptionPane.showMessageDialog(MovStockBrowser.this,
+								exc.getMessage(),
+		                        MessageBundle.getMessage("angal.hospital"),
+		                        JOptionPane.PLAIN_MESSAGE);	
+						logger.info("Export to excel error : "+ exc.getMessage());
 					}
 				}
 			}
 		});
 		return exportToExcel;
+	}
+
+
+	private String compileFileName() {
+		StringBuilder filename = new StringBuilder("Stock Ledger");
+		if (medicalBox.isEnabled() 
+				&& !medicalBox.getSelectedItem().equals(
+						MessageBundle.getMessage("angal.medicalstock.all"))) {
+			
+			filename.append("_").append(medicalBox.getSelectedItem());
+		}
+		if (medicalTypeBox.isEnabled()
+				&& !medicalTypeBox.getSelectedItem().equals(
+						MessageBundle.getMessage("angal.medicalstock.all"))) {
+			
+			filename.append("_").append(medicalTypeBox.getSelectedItem());
+		}
+		if (typeBox.isEnabled() &&
+				!typeBox.getSelectedItem().equals(
+						MessageBundle.getMessage("angal.medicalstock.all"))) {
+			
+			filename.append("_").append(typeBox.getSelectedItem());
+		}
+		if (wardBox.isEnabled() &&
+				!wardBox.getSelectedItem().equals(
+						MessageBundle.getMessage("angal.medicalstock.all"))) {
+			
+			filename.append("_").append(wardBox.getSelectedItem());
+		}
+		filename.append("_").append(TimeTools.formatDateTime(movDateFrom.getCompleteDate(), "yyyyMMdd"))
+				.append("_").append(TimeTools.formatDateTime(movDateTo.getCompleteDate(), "yyyyMMdd"));
+		return filename.toString();
 	}
 
 

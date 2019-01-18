@@ -64,9 +64,6 @@ public class VaccineTypeBrowser extends ModalJFrame implements VaccineTypeListen
 	
 	private final JFrame myFrame;
 	
-	
-	
-	
 	/**
 	 * This method initializes 
 	 * 
@@ -77,7 +74,6 @@ public class VaccineTypeBrowser extends ModalJFrame implements VaccineTypeListen
 		initialize();
 		setVisible(true);
 	}
-	
 	
 	private void initialize() {
 		Toolkit kit = Toolkit.getDefaultToolkit();
@@ -156,9 +152,9 @@ public class VaccineTypeBrowser extends ModalJFrame implements VaccineTypeListen
 						selectedrow = jTable.getSelectedRow();
 						vaccineType = (VaccineType) (((VaccineTypeBrowserModel) model)
 								.getValueAt(selectedrow, -1));
-						VaccineTypeEdit newrecord = new VaccineTypeEdit(myFrame,vaccineType, false);
-						newrecord.addVaccineTypeListener(VaccineTypeBrowser.this);
-						newrecord.setVisible(true);
+						VaccineTypeEdit editrecord = new VaccineTypeEdit(myFrame,vaccineType, false);
+						editrecord.addVaccineTypeListener(VaccineTypeBrowser.this);
+						editrecord.setVisible(true);
 					}
 				}
 			});
@@ -236,13 +232,12 @@ public class VaccineTypeBrowser extends ModalJFrame implements VaccineTypeListen
 		}return jTable;
 	}
 	
-class VaccineTypeBrowserModel extends DefaultTableModel {
-		
-		
+	class VaccineTypeBrowserModel extends DefaultTableModel {
+
 		/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+		* 
+		*/
+		private static final long serialVersionUID = 1L;
 
 		public VaccineTypeBrowserModel() {
 			VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
@@ -252,13 +247,13 @@ class VaccineTypeBrowserModel extends DefaultTableModel {
 				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
-		
+
 		public int getRowCount() {
 			if (pVaccineType == null)
 				return 0;
 			return pVaccineType.size();
 		}
-		
+
 		public String getColumnName(int c) {
 			return pColums[c];
 		}
@@ -268,19 +263,20 @@ class VaccineTypeBrowserModel extends DefaultTableModel {
 		}
 
 		public Object getValueAt(int r, int c) {
-			if (c == 0) {
-				return pVaccineType.get(r).getCode();
-			} else if (c == -1) {
-				return pVaccineType.get(r);
+			VaccineType vacType = pVaccineType.get(r);
+			if (c == -1) {
+				return vacType;
+			} else if (c == 0) {
+				return vacType.getCode();
 			} else if (c == 1) {
-				return pVaccineType.get(r).getDescription();
+				return vacType.getDescription();
 			}
 			return null;
 		}
-		
+
 		@Override
 		public boolean isCellEditable(int arg0, int arg1) {
-			//return super.isCellEditable(arg0, arg1);
+			// return super.isCellEditable(arg0, arg1);
 			return false;
 		}
 	}

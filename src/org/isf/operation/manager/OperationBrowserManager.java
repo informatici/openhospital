@@ -108,31 +108,6 @@ public class OperationBrowserManager {
 	 * @return <code>true</code> if the item has been updated. <code>false</code> other
 	 * @throws OHServiceException 
 	 */
-	public boolean hasOperationModified(Operation operation) throws OHServiceException {
-		try {
-			return ioOperations.hasOperationModified(operation);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
-	}
-
-	/** 
-	 * updates an {@link Operation} in the DB
-	 * 
-	 * @param operation - the {@link Operation} to update
-	 * @return <code>true</code> if the item has been updated. <code>false</code> other
-	 * @throws OHServiceException 
-	 */
 	public boolean updateOperation(Operation operation) throws OHServiceException {
 		try {
 			// the user has confirmed he wants to overwrite the record

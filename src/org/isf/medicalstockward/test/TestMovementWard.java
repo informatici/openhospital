@@ -19,7 +19,7 @@ public class TestMovementWard
 	private int age = 10;
 	private float weight = 78;
 	private String description = "TestDescriptionm";
-	private Double quantity = 56.56;
+	private Double quantity = 46.;
 	private String units = "TestUni";
     
 			

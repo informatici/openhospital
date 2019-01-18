@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstock.service.MovementIoOperationRepository;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
  * 			- column pieces per packet
  */
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class MedicalsIoOperations 
 {
 	@Autowired
@@ -40,10 +40,10 @@ public class MedicalsIoOperations
 	 * Retrieves the specified {@link Medical}.
 	 * @param code the medical code
 	 * @return the stored medical.
-	 * @throws OHException if an error occurs retrieving the stored medical.
+	 * @throws OHServiceException if an error occurs retrieving the stored medical.
 	 */
 	public Medical getMedical(
-			int code) throws OHException 
+			int code) throws OHServiceException 
 	{
 		return repository.findOne(code);
 	}
@@ -51,9 +51,9 @@ public class MedicalsIoOperations
 	/**
 	 * Gets all stored {@link Medical}s.
 	 * @return all the stored medicals.
-	 * @throws OHException if an error occurs retrieving the stored medicals.
+	 * @throws OHServiceException if an error occurs retrieving the stored medicals.
 	 */
-	public ArrayList<Medical> getMedicals() throws OHException 
+	public ArrayList<Medical> getMedicals() throws OHServiceException 
 	{
 		return getMedicals(null);
 	}
@@ -63,10 +63,10 @@ public class MedicalsIoOperations
 	 * If a description value is provides the medicals are filtered.
 	 * @param description the medical description.
 	 * @return the stored medicals.
-	 * @throws OHException if an error occurs retrieving the stored medicals.
+	 * @throws OHServiceException if an error occurs retrieving the stored medicals.
 	 */
 	public ArrayList<Medical> getMedicals(
-			String description) throws OHException 
+			String description) throws OHServiceException 
 	{
     	ArrayList<Medical> medicals;
     	
@@ -87,14 +87,14 @@ public class MedicalsIoOperations
 	 * Retrieves the stored {@link Medical}s based on the specified filter criteria.
 	 * @param description the medical description or <code>null</code>
 	 * @param type the medical type or <code>null</code>
-	 * @param expiring <code>true</code> if include only expiring medicals.
+	 * @param critical <code>true</code> if include only medicals under critical level.
 	 * @return the retrieved medicals.
-	 * @throws OHException if an error occurs retrieving the medicals.
+	 * @throws OHServiceException if an error occurs retrieving the medicals.
 	 */
 	public ArrayList<Medical> getMedicals(
 			String description, 
 			String type, 
-			boolean expiring) throws OHException 
+			boolean critical) throws OHServiceException 
 	{
 		ArrayList<Medical> medicals = null;
 		
@@ -103,9 +103,9 @@ public class MedicalsIoOperations
 		{
 			if(type!=null)
 			{
-				if(expiring)
+				if(critical)
 				{
-					medicals = (ArrayList<Medical>)repository.findAllWhereDescriptionAndTypeAndExpiringOrderByTypeAndDescritpion(description, type);					
+					medicals = (ArrayList<Medical>)repository.findAllWhereDescriptionAndTypeAndCriticalOrderByTypeAndDescritpion(description, type);					
 				}
 				else
 				{
@@ -114,9 +114,9 @@ public class MedicalsIoOperations
 			}
 			else
 			{
-				if(expiring)
+				if(critical)
 				{
-					medicals = (ArrayList<Medical>)repository.findAllWhereDescriptionAndExpiringOrderByTypeAndDescritpion(description);					
+					medicals = (ArrayList<Medical>)repository.findAllWhereDescriptionAndCriticalOrderByTypeAndDescritpion(description);					
 				}
 				else
 				{
@@ -128,9 +128,9 @@ public class MedicalsIoOperations
 		{
 			if(type!=null)
 			{
-				if(expiring)
+				if(critical)
 				{
-					medicals = (ArrayList<Medical>)repository.findAllWhereTypeAndExpiringOrderByTypeAndDescritpion(type);					
+					medicals = (ArrayList<Medical>)repository.findAllWhereTypeAndCriticalOrderByTypeAndDescritpion(type);					
 				}
 				else
 				{
@@ -139,9 +139,9 @@ public class MedicalsIoOperations
 			}
 			else
 			{
-				if(expiring)
+				if(critical)
 				{
-					medicals = (ArrayList<Medical>)repository.findAllWhereExpiringOrderByTypeAndDescritpion();					
+					medicals = (ArrayList<Medical>)repository.findAllWhereCriticalOrderByTypeAndDescritpion();					
 				}
 				else
 				{
@@ -158,10 +158,9 @@ public class MedicalsIoOperations
 	 * @param medical - the medical to check.
 	 * @param update - if <code>true</code> excludes the actual {@link Medical}
 	 * @return all {@link Medical} with similar description
-	 * @throws OHException if an SQL error occurs during the check.
+	 * @throws OHServiceException if an SQL error occurs during the check.
 	 */
-	@SuppressWarnings("unchecked")
-	public ArrayList<Medical> medicalCheck(Medical medical, boolean update) throws OHException
+	public ArrayList<Medical> medicalCheck(Medical medical, boolean update) throws OHServiceException
 	{
 		ArrayList<Medical> medicals = null;
 		
@@ -179,9 +178,9 @@ public class MedicalsIoOperations
 	 * @param medical - the medical to check.
 	 * @param update - if <code>true</code> excludes the actual {@link Medical}
 	 * @return <code>true</code> if exists, <code>false</code> otherwise.
-	 * @throws OHException if an SQL error occurs during the check.
+	 * @throws OHServiceException if an SQL error occurs during the check.
 	 */
-	public boolean productCodeExists(Medical medical, boolean update) throws OHException
+	public boolean productCodeExists(Medical medical, boolean update) throws OHServiceException
 	{
 		boolean result = false;
 
@@ -207,9 +206,9 @@ public class MedicalsIoOperations
 	 * @param medical the medical to check.
 	 * @param update - if <code>true</code> exclude the current medical itself from search
 	 * @return <code>true</code> if exists <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @throws OHServiceException if an error occurs during the check.
 	 */
-	public boolean medicalExists(Medical medical, boolean update) throws OHException 
+	public boolean medicalExists(Medical medical, boolean update) throws OHServiceException 
 	{
 		boolean result = false;
 
@@ -233,9 +232,9 @@ public class MedicalsIoOperations
 	 * Stores the specified {@link Medical}.
 	 * @param medical the medical to store.
 	 * @return <code>true</code> if the medical has been stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs storing the medical.
+	 * @throws OHServiceException if an error occurs storing the medical.
 	 */
-	public boolean newMedical(Medical medical) throws OHException 
+	public boolean newMedical(Medical medical) throws OHServiceException 
 	{
 		boolean result = true;
 		
@@ -247,33 +246,12 @@ public class MedicalsIoOperations
 	}
 
 	/**
-	 * Returns the stored medical lock value.
-	 * @param code the medical code.
-	 * @return the stored lock value.
-	 * @throws OHException if an error occurs retrieving the lock value.
-	 */
-	public int getMedicalLock(
-			int code) throws OHException 
-	{		
-		int lock = -1;
-				
-		
-		Medical foundMedical = repository.findOne(code);
-		if (foundMedical != null)
-		{
-			lock = foundMedical.getLock();
-		}
-		
-		return lock;
-	}
-
-	/**
 	 * Updates the specified {@link Medical}.
 	 * @param medical the medical to update.
 	 * @return <code>true</code> if the medical has been updated <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the update.
+	 * @throws OHServiceException if an error occurs during the update.
 	 */
-	public boolean updateMedical(Medical medical) throws OHException 
+	public boolean updateMedical(Medical medical) throws OHServiceException 
 	{
 		boolean result = true;
 		
@@ -288,16 +266,16 @@ public class MedicalsIoOperations
 	 * Checks if the specified {@link Medical} is referenced in stock movement.
 	 * @param code the medical code.
 	 * @return <code>true</code> if the medical is referenced, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @throws OHServiceException if an error occurs during the check.
 	 */
 	public boolean isMedicalReferencedInStockMovement(
-			int code) throws OHException 
+			int code) throws OHServiceException 
 	{
 		boolean result = false;
 
 		
 		Movement foundMovement = moveRepository.findAllByMedicalCode(code);
-		if (foundMovement.getMedical().getCode() == code) 
+		if (foundMovement != null) 
 		{
 			result = true;
 		}
@@ -309,10 +287,10 @@ public class MedicalsIoOperations
 	 * Deletes the specified {@link Medical}.
 	 * @param medical the medical to delete.
 	 * @return <code>true</code> if the medical has been deleted, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the medical deletion.
+	 * @throws OHServiceException if an error occurs during the medical deletion.
 	 */
 	public boolean deleteMedical(
-			Medical medical) throws OHException
+			Medical medical) throws OHServiceException
 	{
 		boolean result = true;
 		

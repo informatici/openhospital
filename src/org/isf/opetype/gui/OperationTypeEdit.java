@@ -15,14 +15,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
-import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.jobjects.*;
-
-
+import org.isf.generaldata.MessageBundle;
 import org.isf.opetype.manager.OperationTypeBrowserManager;
 import org.isf.opetype.model.OperationType;
-import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.jobjects.VoLimitedTextField;
 
 public class OperationTypeEdit extends JDialog{
 
@@ -194,52 +192,7 @@ public class OperationTypeEdit extends JDialog{
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					String key = codeTextField.getText();
 					OperationTypeBrowserManager manager = new OperationTypeBrowserManager();
-					if (key.equals("")){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.opetype.pleaseinsertacode"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}	
-					//System.out.print(key.length());
-					if (key.length()>2){
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.opetype.codetoolongmaxchars"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						
-						return;	
-					}
-					if(insert){
-						boolean inserted;
-						
-						try {
-							inserted = manager.codeControl(key);
-						} catch (OHServiceException e1) {
-							inserted = false;
-							OHServiceExceptionUtil.showMessages(e1);
-						}
-						
-						if (true == inserted){
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.common.codealreadyinuse"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							codeTextField.setText("");
-							return;	
-						}
-					}
-					if (descriptionTextField.getText().equals("")){
-						JOptionPane.showMessageDialog(				
-		                        null,
-		                        MessageBundle.getMessage("angal.opetype.pleaseinsertavaliddescription"),
-		                        MessageBundle.getMessage("angal.hospital"),
-		                        JOptionPane.PLAIN_MESSAGE);
-						return;	
-					}
+
 					if (descriptionTextField.getText().equals(lastdescription)){
 						dispose();	
 					}
@@ -256,7 +209,7 @@ public class OperationTypeEdit extends JDialog{
 						if (result) {
                            fireOperationInserted();
                         }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opetype.thedatacouldnotbesaved"));
+						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 	                    else  dispose();
                     }
                     else {                          // updating
@@ -272,7 +225,7 @@ public class OperationTypeEdit extends JDialog{
 						if (result) {
 							fireOperationUpdated();
                         }
-						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.opetype.thedatacouldnotbesaved"));
+						if (!result) JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
                         else  dispose();
     					}
                     	

@@ -461,7 +461,8 @@ public class Tests
 		try 
 		{		
 			id = _setupTestAdmission(false);
-			Admission foundAdmission = (Admission)jpa.find(Admission.class, id); 
+			Admission foundAdmission = (Admission)jpa.find(Admission.class, id);
+			jpa.flush();
 			foundAdmission.setNote("Update");
 			result = admissionIoOperation.updateAdmission(foundAdmission);
 			Admission updateAdmission = (Admission)jpa.find(Admission.class, id); 
@@ -558,7 +559,8 @@ public class Tests
 		try 
 		{		
 			id = _setupTestAdmission(false);
-			Admission foundAdmission = (Admission)jpa.find(Admission.class, id);  
+			Admission foundAdmission = (Admission)jpa.find(Admission.class, id);
+			jpa.flush();
 			result = admissionIoOperation.setDeleted(foundAdmission.getId());
 			
 			assertEquals(true, result);

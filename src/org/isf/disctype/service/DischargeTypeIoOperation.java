@@ -3,15 +3,15 @@ package org.isf.disctype.service;
 import java.util.ArrayList;
 
 import org.isf.disctype.model.DischargeType;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class DischargeTypeIoOperation {
 
 	@Autowired
@@ -21,9 +21,9 @@ public class DischargeTypeIoOperation {
 	 * method that returns all DischargeTypes in a list
 	 * 
 	 * @return the list of all DischargeTypes
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
-	public ArrayList<DischargeType> getDischargeType() throws OHException 
+	public ArrayList<DischargeType> getDischargeType() throws OHServiceException 
 	{
 		return new ArrayList<DischargeType>(repository.findAllByOrderByDescriptionAsc());
 	}
@@ -33,10 +33,10 @@ public class DischargeTypeIoOperation {
 	 * 
 	 * @param dischargeType
 	 * @return true - if the existing DischargeType has been updated
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean UpdateDischargeType(
-			DischargeType dischargeType) throws OHException 
+			DischargeType dischargeType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -52,10 +52,10 @@ public class DischargeTypeIoOperation {
 	 * 
 	 * @param dischargeType
 	 * @return true - if the new DischargeType has been inserted
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean newDischargeType(
-			DischargeType dischargeType) throws OHException 
+			DischargeType dischargeType) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -71,10 +71,10 @@ public class DischargeTypeIoOperation {
 	 * 
 	 * @param dischargeType
 	 * @return true - if the DischargeType has been deleted
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean deleteDischargeType(
-			DischargeType dischargeType) throws OHException
+			DischargeType dischargeType) throws OHServiceException
 	{
 		boolean result = true;
 	
@@ -89,10 +89,10 @@ public class DischargeTypeIoOperation {
 	 * 
 	 * @param code
 	 * @return true - if the DischargeType already exists
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean isCodePresent(
-			String code) throws OHException 
+			String code) throws OHServiceException 
 	{
 		boolean result = true;
 	

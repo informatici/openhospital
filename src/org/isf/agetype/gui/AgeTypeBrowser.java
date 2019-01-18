@@ -19,7 +19,7 @@ import org.isf.agetype.manager.AgeTypeBrowserManager;
 import org.isf.agetype.model.AgeType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 
 /**
@@ -108,31 +108,14 @@ public class AgeTypeBrowser extends ModalJFrame {
 						jTable.updateUI();
 
 					} else {
+					    if(jTable.isEditing()){
+                            jTable.getCellEditor().stopCellEditing();
+                        }
 						AgeTypeBrowserManager manager = new AgeTypeBrowserManager();
-						for (int i = 1; i < pAgeType.size(); i++) {
-							if (pAgeType.get(i).getFrom() <= pAgeType.get(i-1).getTo()) {
-									JOptionPane.showMessageDialog(null,
-											MessageBundle.getMessage("angal.agetype.rangesoverlappleasecheck"), MessageBundle.getMessage("angal.hospital"),
-											JOptionPane.PLAIN_MESSAGE);
-								
-								return;
-							} 
-							if (pAgeType.get(i).getFrom() - pAgeType.get(i-1).getTo() > 1) {
-									JOptionPane.showMessageDialog(null,
-											MessageBundle.getMessage("angal.agetype.rangesnotdefinedpleasecheck"), MessageBundle.getMessage("angal.hospital"),
-											JOptionPane.PLAIN_MESSAGE);
-								
-								return;
-							} 
-						}
 						try {
 							manager.updateAgeType(pAgeType);
 						}catch(OHServiceException e){
-							if(e.getMessages() != null){
-								for(OHExceptionMessage msg : e.getMessages()){
-									JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-								}
-							}
+                            OHServiceExceptionUtil.showMessages(e);
 						}
 						edit = false;
 						jTable.updateUI();
@@ -189,11 +172,7 @@ public class AgeTypeBrowser extends ModalJFrame {
 				pAgeType = manager.getAgeType();
 			}catch(OHServiceException e){
 				pAgeType = new ArrayList<AgeType>();
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+				OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 

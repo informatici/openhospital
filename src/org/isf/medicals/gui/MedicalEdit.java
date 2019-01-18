@@ -1,8 +1,11 @@
 package org.isf.medicals.gui;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.EventListener;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -13,16 +16,17 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.gui.OHExceptionUtil;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.utils.jobjects.VoDoubleTextField;
 import org.isf.utils.jobjects.VoIntegerTextField;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -33,8 +37,6 @@ import org.isf.utils.jobjects.VoLimitedTextField;
  * 	- product code
  *  - pieces per packet
  */
-
-
 public class MedicalEdit extends JDialog {
 
 
@@ -42,41 +44,67 @@ public class MedicalEdit extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private EventListenerList medicalListeners = new EventListenerList();
+	
+	public interface MedicalListener extends EventListener {
+        public void medicalUpdated(AWTEvent e);
+        public void medicalInserted(Medical medical);
+    }
+
+    public void addMedicalListener(MedicalListener l) {
+    	medicalListeners.add(MedicalListener.class, l);
+    }
+
+    public void removeMedicalListener(MedicalListener listener) {
+    	medicalListeners.remove(MedicalListener.class, listener);
+    }
+
+	private void fireMedicalInserted(Medical medical) {
+		new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+		};
+
+		EventListener[] listeners = medicalListeners.getListeners(MedicalListener.class);
+		for (int i = 0; i < listeners.length; i++)
+			((MedicalListener) listeners[i]).medicalInserted(medical);
+	}
+
+	private void fireMedicalUpdated() {
+		AWTEvent event = new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+		};
+
+		EventListener[] listeners = medicalListeners.getListeners(MedicalListener.class);
+		for (int i = 0; i < listeners.length; i++)
+			((MedicalListener) listeners[i]).medicalUpdated(event);
+	}
 
 	private JPanel jContentPane = null;
-
 	private JPanel dataPanel = null;
-
 	private JPanel buttonPanel = null;
-
 	private JButton cancelButton = null;
-
 	private JButton okButton = null;
-
 	private JLabel descLabel = null;
-	
 	private JLabel codeLabel = null;
-	
 	private JLabel pcsperpckLabel = null;
-	
 	private JLabel criticLabel = null;
-	
 	private VoIntegerTextField pcsperpckField = null;
-
 	private VoLimitedTextField descriptionTextField = null;
-	
 	private VoLimitedTextField codeTextField = null;
-
 	private VoDoubleTextField minQtiField = null;
-
 	private JLabel typeLabel = null;
-
 	private JComboBox typeComboBox = null;
-
 	private Medical oldMedical = null;
-	
 	private Medical medical = null;
-
 	private boolean insert = false;
 
 	/**
@@ -229,109 +257,81 @@ public class MedicalEdit extends JDialog {
 					}
 					boolean result = false;
 					if (insert) { // inserting
-						if (true == isValidForInsert(newMedical)) {
-							try {
-								result = manager.newMedical(newMedical, false);
-							} catch (OHServiceException e1) {
-								OHServiceExceptionUtil.showMessages(e1);
-							}					
-							if (result) {
-								dispose();
-							}
-						} else return;							
-					} else { // updating
 						try {
-							if (true == isValidForUpdate(oldMedical, newMedical)) {
-								
-								result = manager.updateMedical(oldMedical, newMedical, true);
-								
-								if (false == result) {
-									// update failed due to lock -- record was updated by someone else
-									String msg = MessageBundle.getMessage("angal.medicals.thedatahasbeenupdatedbysomeoneelse") +
-											MessageBundle.getMessage("angal.medicals.doyouwanttooverwritethedata");
-									int response = JOptionPane.showConfirmDialog(null, msg, MessageBundle.getMessage("angal.medicals.select"), JOptionPane.YES_NO_OPTION);
-									if (response== JOptionPane.OK_OPTION) {
-										result = manager.updateMedical(oldMedical, newMedical, false);
+							result = manager.newMedical(newMedical);
+						} catch (OHServiceException e1) {
+							OHServiceExceptionUtil.showMessages(e1, MedicalEdit.this);
+							List<OHExceptionMessage> errors = e1.getMessages();
+
+							for (OHExceptionMessage error : errors) {
+								if (error.getLevel() == OHSeverityLevel.WARNING) {
+									if (error.getTitle().equals("similarsFoundWarning")) {
+										int ok = manageSimilarFoundWarning(error);
+
+										if (ok == JOptionPane.OK_OPTION) {
+											try {
+												result = manager.newMedical(newMedical, true);
+											} catch (OHServiceException e2) {
+												OHServiceExceptionUtil.showMessages(e2);
+											}
+										}
 									}
 								}
-								
-								if (result) {
-									medical.setType((MedicalType) typeComboBox.getSelectedItem());
-									medical.setDescription(descriptionTextField.getText());
-									medical.setProd_code(codeTextField.getText());
-									medical.setPcsperpck(pcsperpckField.getValue());
-									medical.setMinqty(minQtiField.getValue());
-									dispose();
-								}	
-							} else return;
+							}
+						}
+						if (result) {
+							fireMedicalInserted(newMedical);
+							dispose();
+						}
+					} else { // updating
+						try {
+							result = manager.updateMedical(newMedical);
 						} catch (OHServiceException e1) {
-							OHServiceExceptionUtil.showMessages(e1);
+							List<OHExceptionMessage> errors = e1.getMessages();
+
+							for (OHExceptionMessage error : errors) {
+								OHServiceExceptionUtil.showMessages(e1, MedicalEdit.this);
+								if (error.getLevel() == OHSeverityLevel.WARNING) {
+									if (error.getTitle().equals("similarsFoundWarning")) {
+										int ok = manageSimilarFoundWarning(error);
+
+										if (ok == JOptionPane.OK_OPTION) {
+											try {
+												result = manager.updateMedical(newMedical, true);
+											} catch (OHServiceException e2) {
+												OHServiceExceptionUtil.showMessages(e2);
+											}
+										}
+									}
+								}
+							}
+						}
+						if (result) {
+							medical.setType((MedicalType) typeComboBox.getSelectedItem());
+							medical.setDescription(descriptionTextField.getText());
+							medical.setProd_code(codeTextField.getText());
+							medical.setPcsperpck(pcsperpckField.getValue());
+							medical.setMinqty(minQtiField.getValue());
+							fireMedicalUpdated();
+							dispose();
 						}
 					}
 					if (!result)
-						JOptionPane.showMessageDialog(
-								null,
-								MessageBundle.getMessage("angal.medicals.thedatacouldnotbesaved"));
+						JOptionPane.showMessageDialog(MedicalEdit.this,
+								MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
 				}
 
-				
-				/**
-				 * Check for update validity and show appropriate error on false
-				 * @param medical
-				 * @return
-				 */
-				private boolean isValidForUpdate(Medical oldMedical, Medical newMedical) {
-					MedicalBrowsingManager manager = new MedicalBrowsingManager();
-					boolean result = false;
-					try {
-						result = manager.checkMedicalForUpdate(oldMedical, newMedical);
-						return result;
-					} catch (OHException e) {
-						OHExceptionUtil.showMessage(e, MedicalEdit.this);
-						e.printStackTrace();
-						
-						if (e.getCause() != null && e.getCause().getMessage().equals("similarsFound")) {
-							int ok = JOptionPane.showConfirmDialog(MedicalEdit.this, 
-							MessageBundle.getMessage("angal.common.doyouwanttoproceedanyway"),
-							MessageBundle.getMessage("angal.common.doyouwanttoproceedanyway"),
-							JOptionPane.OK_CANCEL_OPTION,
-							JOptionPane.WARNING_MESSAGE);
-							if (ok == JOptionPane.OK_OPTION) {
-								return true;
-							} else return false;
-						}
-					}
-					return result;
-				}
+				private int manageSimilarFoundWarning(OHExceptionMessage error) {
+					/* Already shown by OHServiceExceptionUtil
+					int messageType = error.getLevel().getSwingSeverity();
+					JOptionPane.showMessageDialog(MedicalEdit.this, error.getMessage(),
+							error.getTitle(), messageType);*/
 
-
-				/**
-				 * Check insert validity and show appropriate error on false
-				 * @param medical
-				 * @return
-				 */
-				private boolean isValidForInsert(Medical medical) {
-					MedicalBrowsingManager manager = new MedicalBrowsingManager();
-					boolean result = false;
-					try {
-						result = manager.checkMedicalForInsert(medical);
-						return result;
-					} catch (OHException e) {
-						OHExceptionUtil.showMessage(e, MedicalEdit.this);
-						e.printStackTrace();
-						
-						if (e.getCause() != null && e.getCause().getMessage().equals("similarsFound")) {
-							int ok = JOptionPane.showConfirmDialog(MedicalEdit.this, 
-							MessageBundle.getMessage("angal.common.doyouwanttoproceedanyway"),
-							MessageBundle.getMessage("angal.common.doyouwanttoproceedanyway"),
-							JOptionPane.OK_CANCEL_OPTION,
-							JOptionPane.WARNING_MESSAGE);
-							if (ok == JOptionPane.OK_OPTION) {
-								return true;
-							} else return false;
-						}
-					}
-					return result;
+					int ok = JOptionPane.showConfirmDialog(MedicalEdit.this,
+							MessageBundle.getMessage("angal.common.doyouwanttoproceed"),
+							MessageBundle.getMessage("angal.common.doyouwanttoproceed"),
+							JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+					return ok;
 				}
 			});
 		}

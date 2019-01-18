@@ -7,15 +7,15 @@ import java.util.List;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class MenuIoOperations 
 {
 	@Autowired
@@ -31,9 +31,9 @@ public class MenuIoOperations
 	 * returns the list of {@link User}s
 	 * 
 	 * @return the list of {@link User}s
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
-	public ArrayList<User> getUser() throws OHException 
+	public ArrayList<User> getUser() throws OHServiceException 
 	{
 		ArrayList<User> users = (ArrayList<User>) repository.findAllByOrderByUserNameAsc();
 				
@@ -46,10 +46,10 @@ public class MenuIoOperations
 	 * 
 	 * @param groupID - the group ID
 	 * @return the list of {@link User}s
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public ArrayList<User> getUser(
-			String groupID) throws OHException 
+			String groupID) throws OHServiceException 
 	{
 		ArrayList<User> users = (ArrayList<User>) repository.findAllWhereUserGroupNameByOrderUserNameAsc(groupID);
 				
@@ -61,10 +61,10 @@ public class MenuIoOperations
 	 * returns {@link User} description from its username
 	 * @param userName - the {@link User}'s username
 	 * @return the {@link User}'s description
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public String getUsrInfo(
-			String userName) throws OHException 
+			String userName) throws OHServiceException 
 	{ 
 		User user = (User)repository.findOne(userName); 
 		
@@ -76,9 +76,9 @@ public class MenuIoOperations
 	 * returns the list of {@link UserGroup}s
 	 * 
 	 * @return the list of {@link UserGroup}s
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
-	public ArrayList<UserGroup> getUserGroup() throws OHException 
+	public ArrayList<UserGroup> getUserGroup() throws OHServiceException 
 	{
 		ArrayList<UserGroup> users = (ArrayList<UserGroup>) groupRepository.findAllByOrderByCodeAsc();
 				
@@ -91,10 +91,10 @@ public class MenuIoOperations
 	 * 
 	 * @param userName - the {@link User} code to check.
 	 * @return <code>true</code> if the medical code is already stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @throws OHServiceException if an error occurs during the check.
 	 */
 	public boolean isUserNamePresent(
-			String userName) throws OHException 
+			String userName) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -109,10 +109,10 @@ public class MenuIoOperations
 	 * 
 	 * @param groupName - the {@link UserGroup} code to check.
 	 * @return <code>true</code> if the medical code is already stored, <code>false</code> otherwise.
-	 * @throws OHException if an error occurs during the check.
+	 * @throws OHServiceException if an error occurs during the check.
 	 */
 	public boolean isGroupNamePresent(
-			String groupName) throws OHException 
+			String groupName) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -127,10 +127,10 @@ public class MenuIoOperations
 	 * 
 	 * @param user - the {@link User} to insert
 	 * @return <code>true</code> if the user has been inserted, <code>false</code> otherwise.
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean newUser(
-			User user) throws OHException 
+			User user) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -146,10 +146,10 @@ public class MenuIoOperations
 	 * 
 	 * @param user - the {@link User} to update
 	 * @return <code>true</code> if the user has been updated, <code>false</code> otherwise.
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean updateUser(
-			User user) throws OHException 
+			User user) throws OHServiceException 
 	{
 		boolean result = false;
 		
@@ -167,10 +167,10 @@ public class MenuIoOperations
 	 * 
 	 * @param user - the {@link User} to update
 	 * @return <code>true</code> if the user has been updated, <code>false</code> otherwise.
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean updatePassword(
-			User user) throws OHException 
+			User user) throws OHServiceException 
 	{
 		boolean result = false;
 		
@@ -188,10 +188,10 @@ public class MenuIoOperations
 	 * 
 	 * @param user - the {@link User} to delete
 	 * @return <code>true</code> if the user has been deleted, <code>false</code> otherwise.
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean deleteUser(
-			User user) throws OHException 
+			User user) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -206,10 +206,10 @@ public class MenuIoOperations
 	 * 
 	 * @param aUser - the {@link User}
 	 * @return the list of {@link UserMenuItem}s 
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public ArrayList<UserMenuItem> getMenu(
-			User aUser) throws OHException 
+			User aUser) throws OHServiceException 
 	{
 		ArrayList<UserMenuItem> menu = null;		
 		List<Object[]> menuList = (List<Object[]>)menuRepository.findAllWhereId(aUser.getUserName());
@@ -244,10 +244,10 @@ public class MenuIoOperations
 	 * 
 	 * @param aGroup - the {@link UserGroup}
 	 * @return the list of {@link UserMenuItem}s 
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public ArrayList<UserMenuItem> getGroupMenu(
-			UserGroup aGroup) throws OHException 
+			UserGroup aGroup) throws OHServiceException 
 	{
 		ArrayList<UserMenuItem> menu = (ArrayList<UserMenuItem>) menuRepository.findAllWhereGroupId(aGroup.getCode());
 				
@@ -262,12 +262,12 @@ public class MenuIoOperations
 	 * @param menu - the list of {@link UserMenuItem}s
 	 * @param insert - specify if is an insert or an update
 	 * @return <code>true</code> if the menu has been replaced, <code>false</code> otherwise.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean setGroupMenu(
 			UserGroup aGroup, 
 			ArrayList<UserMenuItem> menu, 
-			boolean insert) throws OHException 
+			boolean insert) throws OHServiceException 
 	{
 		boolean result = true;
 
@@ -282,7 +282,7 @@ public class MenuIoOperations
 	}
 	
 	public boolean _deleteGroupMenu(
-			UserGroup aGroup) throws OHException 
+			UserGroup aGroup) throws OHServiceException 
 	{
 		boolean result = true;
 				
@@ -295,7 +295,7 @@ public class MenuIoOperations
 	public boolean _insertGroupMenu(
 			UserGroup aGroup,
 			UserMenuItem item, 
-			boolean insert) throws OHException 
+			boolean insert) throws OHServiceException 
 	{
 		boolean result = true;
 				
@@ -310,10 +310,10 @@ public class MenuIoOperations
 	 * 
 	 * @param aGroup - the {@link UserGroup} to delete
 	 * @return <code>true</code> if the group has been deleted, <code>false</code> otherwise.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean deleteGroup(
-			UserGroup aGroup) throws OHException 
+			UserGroup aGroup) throws OHServiceException 
 	{
 		boolean result = true;
 		
@@ -330,10 +330,10 @@ public class MenuIoOperations
 	 * 
 	 * @param aGroup - the {@link UserGroup} to insert
 	 * @return <code>true</code> if the group has been inserted, <code>false</code> otherwise.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean newUserGroup(
-			UserGroup aGroup) throws OHException 
+			UserGroup aGroup) throws OHServiceException 
 	{
 		boolean result = true;
 	
@@ -349,10 +349,10 @@ public class MenuIoOperations
 	 * 
 	 * @param aGroup - the {@link UserGroup} to update
 	 * @return <code>true</code> if the group has been updated, <code>false</code> otherwise.
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean updateUserGroup(
-			UserGroup aGroup) throws OHException 
+			UserGroup aGroup) throws OHServiceException 
 	{
 		boolean result = false;
 		

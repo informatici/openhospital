@@ -32,7 +32,6 @@ public class TestPatient
 	private static String taxCode = "TestTaxCode";
 	private static float height = 184;
 	private static float weight = 60;
-	private static int lock = 0;
 	//private static Blob photo;	
 	//private static Image photoImage;
 				
@@ -53,7 +52,7 @@ public class TestPatient
 			// Create Patient with all parameters 
 			patient = new Patient(firstName, secondName, birthDate, age, agetype, sex,
 					address, city, nextKin, telephone, mother_name, mother, father_name, father,
-					bloodType, hasInsurance, parentTogether, lock, taxCode);
+					bloodType, hasInsurance, parentTogether, taxCode);
 			patient.setAge(patient.getAge()); //IT WILL CHANGE WITH TIME
 		}
 				    	
@@ -83,7 +82,6 @@ public class TestPatient
 		patient.setTaxCode(taxCode);
 		patient.setHeight(height);
 		patient.setWeight(weight);
-		patient.setLock(lock);	
 		
 		return;
 	}
@@ -111,7 +109,6 @@ public class TestPatient
 		assertEquals(taxCode, patient.getTaxCode());
 		//assertEquals(height, patient.getHeight());
 		//assertEquals(weight, patient.getWeight());
-		assertEquals(lock, patient.getLock());
 		
 		return;
 	}

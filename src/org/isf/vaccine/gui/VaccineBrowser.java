@@ -153,34 +153,35 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 		if (jSelectionCombo == null) {
 			jSelectionCombo = new JComboBox();
 			jSelectionCombo.setPreferredSize(new Dimension(200, 30));
-				VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
-				ArrayList<VaccineType> allVacType = null;
-				try {
-					allVacType = manager.getVaccineType();
-				} catch (OHServiceException e1) {
-					OHServiceExceptionUtil.showMessages(e1);
-				}
-				jSelectionCombo.addItem(new Vaccine("", MessageBundle.getMessage("angal.vaccine.all"),new VaccineType("",""),0));
-				if(allVacType != null){
-					for (VaccineType elem : allVacType) {
-						jSelectionCombo.addItem(elem);
-					}
-				}				
-				jSelectionCombo.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						String pSelectionVaccineType=jSelectionCombo.getSelectedItem().toString();
-						if (pSelectionVaccineType.equals(MessageBundle.getMessage("angal.vaccine.all")) )
-							model = new VaccineBrowserModel();
-						else
-							model = new VaccineBrowserModel(((VaccineType)jSelectionCombo.getSelectedItem()).getCode());
-						model.fireTableDataChanged();
-						table.updateUI();
-					}
-				});
+			VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
+			ArrayList<VaccineType> allVacType = null;
+			try {
+				allVacType = manager.getVaccineType();
+			} catch (OHServiceException e1) {
+				OHServiceExceptionUtil.showMessages(e1);
 			}
-		
-	return jSelectionCombo;
-}
+			jSelectionCombo
+					.addItem(new Vaccine("", MessageBundle.getMessage("angal.vaccine.all"), new VaccineType("", "")));
+			if (allVacType != null) {
+				for (VaccineType elem : allVacType) {
+					jSelectionCombo.addItem(elem);
+				}
+			}
+			jSelectionCombo.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					String pSelectionVaccineType = jSelectionCombo.getSelectedItem().toString();
+					if (pSelectionVaccineType.equals(MessageBundle.getMessage("angal.vaccine.all")))
+						model = new VaccineBrowserModel();
+					else
+						model = new VaccineBrowserModel(((VaccineType) jSelectionCombo.getSelectedItem()).getCode());
+					model.fireTableDataChanged();
+					table.updateUI();
+				}
+			});
+		}
+
+		return jSelectionCombo;
+	}
 	
 	
 	
@@ -231,7 +232,7 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 			jNewButton.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent event) {
-					vaccine=new Vaccine(null,"",new VaccineType("",""),0);	//operation will reference the new record
+					vaccine=new Vaccine(null,"",new VaccineType("",""));	//operation will reference the new record
 					VaccineEdit newrecord = new VaccineEdit(VaccineBrowser.this, vaccine, true);
 					newrecord.addVaccineListener(VaccineBrowser.this);
 					newrecord.setVisible(true);
@@ -373,14 +374,15 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 		}
 
 		public Object getValueAt(int r, int c) {
-			if (c == 0) {
-				return pVaccine.get(r).getCode();
-			} else if (c == -1) {
-				return pVaccine.get(r);
+			Vaccine vac = pVaccine.get(r);
+			if (c == -1) {
+				return vac;
+			} else if (c == 0) {
+				return vac.getCode();
 			}else if (c == 1) {
-				return pVaccine.get(r).getVaccineType();
+				return vac.getVaccineType();
 			} else if (c == 2) {
-				return pVaccine.get(r).getDescription();
+				return vac.getDescription();
 			}
 			return null;
 		}

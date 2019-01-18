@@ -245,14 +245,13 @@ public class Tests
 		try 
 		{		
 			ExamType examType = testExamType.setup(false);
-			Exam exam = testExam.setup(examType, false);
-			
+			Exam exam = testExam.setup(examType, 2, false);
+			ExamRow examRow = testExamRow.setup(exam, true);
 			
 			jpa.beginTransaction();	
 			jpa.persist(examType);
 			jpa.persist(exam);
 			jpa.commitTransaction();
-			ExamRow examRow = testExamRow.setup(exam, true);
 			result = examIoOperation.newExamRow(examRow);
 			
 			assertEquals(true, result);
@@ -281,7 +280,7 @@ public class Tests
 			jpa.beginTransaction();	
 			jpa.persist(examType);
 			jpa.commitTransaction();
-			Exam exam = testExam.setup(examType, false);
+			Exam exam = testExam.setup(examType, 1, false);
 			result = examIoOperation.newExam(exam);
 			
 			assertEquals(true, result);
@@ -307,8 +306,9 @@ public class Tests
 		{		
 			code = _setupTestExam(false);
 			Exam foundExam = (Exam)jpa.find(Exam.class, code); 
+			jpa.flush();
 			foundExam.setDescription("Update");
-			result = examIoOperation.updateExam(foundExam, true);
+			result = examIoOperation.updateExam(foundExam);
 			Exam updateExam = (Exam)jpa.find(Exam.class, code); 
 			
 			assertEquals(true, result);
@@ -384,7 +384,7 @@ public class Tests
 		try 
 		{		
 			ExamType examType = testExamType.setup(false);
-			Exam exam = testExam.setup(examType, false);
+			Exam exam = testExam.setup(examType, 1, false);
 			
 			jpa.beginTransaction();	
 			jpa.persist(examType);
@@ -426,11 +426,10 @@ public class Tests
 			boolean usingSet) throws OHException 
 	{
 		ExamType examType = testExamType.setup(false);	
-		Exam exam;
+		Exam exam = testExam.setup(examType, 1, usingSet);
 		
 	
 		jpa.beginTransaction();	
-		exam = testExam.setup(examType, usingSet);
 		jpa.persist(examType);
 		jpa.persist(exam);
 		jpa.commitTransaction();
@@ -453,13 +452,12 @@ public class Tests
 	private int _setupTestExamRow(
 			boolean usingSet) throws OHException 
 	{		
-		ExamType examType = testExamType.setup(false);		
-		Exam exam = testExam.setup(examType, false);
-		ExamRow examRow;
 		
-
-    	jpa.beginTransaction();	
-    	examRow = testExamRow.setup(exam, usingSet);
+		ExamType examType = testExamType.setup(usingSet);
+		Exam exam = testExam.setup(examType, 2, usingSet);
+		ExamRow examRow = testExamRow.setup(exam, usingSet);
+		
+		jpa.beginTransaction();	
 		jpa.persist(examType);
 		jpa.persist(exam);
 		jpa.persist(examRow);

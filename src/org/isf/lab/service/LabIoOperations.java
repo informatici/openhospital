@@ -19,19 +19,20 @@ package org.isf.lab.service;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryForPrint;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.patient.model.Patient;
-import org.isf.utils.db.TranslateOHException;
-import org.isf.utils.exception.OHException;
+import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(rollbackFor=OHException.class)
-@TranslateOHException
+@Transactional(rollbackFor=OHServiceException.class)
+@TranslateOHServiceException
 public class LabIoOperations {
 
 	@Autowired
@@ -43,16 +44,12 @@ public class LabIoOperations {
 	 * Return a list of results ({@link LaboratoryRow}s) for passed lab entry.
 	 * @param code - the {@link Laboratory} record ID.
 	 * @return the list of {@link LaboratoryRow}s. It could be <code>empty</code>
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public ArrayList<LaboratoryRow> getLabRow(
-			Integer code) throws OHException 
+			Integer code) throws OHServiceException 
 	{
-		ArrayList<LaboratoryRow> laboratoryRows = new ArrayList<LaboratoryRow>();
-		LaboratoryRow laboratoryRow = rowRepository.findOne(code);
-		
-		
-		laboratoryRows.add(laboratoryRow);
+		ArrayList<LaboratoryRow> laboratoryRows = rowRepository.findAllByLaboratoryCode(code);
 		
 		return laboratoryRows;
 	}
@@ -74,9 +71,9 @@ public class LabIoOperations {
 	/**
 	 * Return the whole list of exams ({@link Laboratory}s) within last year.
 	 * @return the list of {@link Laboratory}s 
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
-	public ArrayList<Laboratory> getLaboratory() throws OHException 
+	public ArrayList<Laboratory> getLaboratory() throws OHServiceException 
 	{
 		GregorianCalendar time1 = new GregorianCalendar();
 		GregorianCalendar time2 = new GregorianCalendar();
@@ -94,23 +91,23 @@ public class LabIoOperations {
 	 * @param dateFrom - the lower date for the range
 	 * @param dateTo - the highest date for the range
 	 * @return the list of {@link Laboratory}s 
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public ArrayList<Laboratory> getLaboratory(
 			String exam,	
 			GregorianCalendar dateFrom, 
-			GregorianCalendar dateTo) throws OHException 
+			GregorianCalendar dateTo) throws OHServiceException 
 	{	
     	ArrayList<Laboratory> laboritories = null;
 	
 	
     	if (exam != null) 
     	{
-    		laboritories = (ArrayList<Laboratory>) repository.findAllWhereDatesAndExamByOrderExamDate(dateFrom, dateTo, exam);
+    		laboritories = (ArrayList<Laboratory>) repository.findAllWhereDatesAndExamByOrderExamDateDesc(dateFrom, dateTo, exam);
     	}
     	else
     	{
-    		laboritories = (ArrayList<Laboratory>) repository.findAllWhereDatesByOrderExamDate(dateFrom, dateTo);
+    		laboritories = (ArrayList<Laboratory>) repository.findAllWhereDatesByOrderExamDateDesc(dateFrom, dateTo);
     	}
 
 		return laboritories;
@@ -120,10 +117,10 @@ public class LabIoOperations {
 	 * Return a list of exams ({@link Laboratory}s) related to a {@link Patient}.
 	 * @param aPatient - the {@link Patient}.
 	 * @return the list of {@link Laboratory}s related to the {@link Patient}.
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public ArrayList<Laboratory> getLaboratory(
-			Patient aPatient) throws OHException 
+			Patient aPatient) throws OHServiceException 
 	{
 		ArrayList<Laboratory> laboritories = null;
 	
@@ -140,9 +137,9 @@ public class LabIoOperations {
 	 * @param dateFrom - the lower date for the range
 	 * @param dateTo - the highest date for the range
 	 * @return the list of {@link LaboratoryForPrint}s 
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
-	public ArrayList<LaboratoryForPrint> getLaboratoryForPrint() throws OHException 
+	public ArrayList<LaboratoryForPrint> getLaboratoryForPrint() throws OHServiceException 
 	{
 		GregorianCalendar time1 = new GregorianCalendar();
 		GregorianCalendar time2 = new GregorianCalendar();
@@ -173,12 +170,12 @@ public class LabIoOperations {
 	 * @param dateFrom - the lower date for the range
 	 * @param dateTo - the highest date for the range
 	 * @return the list of {@link LaboratoryForPrint}s 
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public ArrayList<LaboratoryForPrint> getLaboratoryForPrint(
 			String exam, 
 			GregorianCalendar dateFrom, 
-			GregorianCalendar dateTo) throws OHException 
+			GregorianCalendar dateTo) throws OHServiceException 
 	{
 		ArrayList<LaboratoryForPrint> pLaboratory = new ArrayList<LaboratoryForPrint>();
     	ArrayList<Laboratory> laboritories = null;
@@ -212,10 +209,10 @@ public class LabIoOperations {
 	 * @param laboratory - the {@link Laboratory} to insert
 	 * @param dbQuery - the connection manager
 	 * @return the generated key
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	private Integer newLaboratory(
-			Laboratory laboratory) throws OHException 
+			Laboratory laboratory) throws OHServiceException 
 	{
 		Laboratory savedLaboratory = repository.save(laboratory);
 		
@@ -228,10 +225,10 @@ public class LabIoOperations {
 	 * @param laboratory - the {@link Laboratory} to insert
 	 * @param dbQuery - the connection manager
 	 * @return <code>true</code> if the exam has been inserted, <code>false</code> otherwise
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean newLabFirstProcedure(
-			Laboratory laboratory) throws OHException 
+			Laboratory laboratory) throws OHServiceException 
 	{
 		boolean result = false;
 		
@@ -250,40 +247,40 @@ public class LabIoOperations {
 	 * @param laboratory - the {@link Laboratory} to insert
 	 * @param labRow - the list of results ({@link String}s)
 	 * @return <code>true</code> if the exam has been inserted with all its results, <code>false</code> otherwise
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean newLabSecondProcedure(
 			Laboratory laboratory, 
-			ArrayList<String> labRow) throws OHException 
+			ArrayList<String> labRow) throws OHServiceException 
 	{
-		boolean result = false;
+		boolean result = true;
 		
 		
 		int newCode = newLaboratory(laboratory);
 		if (newCode > 0) 
 		{
-			LaboratoryRow laboratoryRow = new LaboratoryRow();
-			laboratoryRow.setLabId(laboratory);
-			laboratoryRow.setDescription(labRow.get(0));	
+			for (String aLabRow : labRow) {
+				LaboratoryRow laboratoryRow = new LaboratoryRow();
+				laboratoryRow.setLabId(laboratory);
+				laboratoryRow.setDescription(aLabRow);	
 
-			LaboratoryRow savedLaboratoryRow = rowRepository.save(laboratoryRow);
-			result = (savedLaboratoryRow != null);
-
-			result = true;
+				LaboratoryRow savedLaboratoryRow = rowRepository.save(laboratoryRow);
+				result = result && (savedLaboratoryRow != null);
+			}
 		}
 		
 		return result;
 	}
-
+	
 	/**
 	 * Update an already existing Laboratory exam {@link Laboratory}. No commit is performed.
 	 * @param laboratory - the {@link Laboratory} to update
 	 * @param dbQuery - the connection manager
 	 * @return <code>true</code> if the exam has been updated with all its results, <code>false</code> otherwise
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	private boolean updateLaboratory(
-			Laboratory laboratory) throws OHException 
+			Laboratory laboratory) throws OHServiceException 
 	{
 		boolean result = true;
 
@@ -299,10 +296,10 @@ public class LabIoOperations {
 	 * If old exam was Procedure Two all its releated result are deleted.
 	 * @param laboratory - the {@link Laboratory} to update
 	 * @return <code>true</code> if the exam has been updated, <code>false</code> otherwise
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean updateLabFirstProcedure(
-			Laboratory laboratory) throws OHException 
+			Laboratory laboratory) throws OHServiceException 
 	{
 		boolean result = updateLaboratory(laboratory);
 				
@@ -317,21 +314,23 @@ public class LabIoOperations {
 	 * Previous results are deleted and replaced with new ones.
 	 * @param laboratory - the {@link Laboratory} to update
 	 * @return <code>true</code> if the exam has been updated with all its results, <code>false</code> otherwise
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
-	public boolean editLabSecondProcedure(
+	public boolean updateLabSecondProcedure(
 			Laboratory laboratory, 
-			ArrayList<String> labRow) throws OHException 
+			ArrayList<String> labRow) throws OHServiceException 
 	{
 		boolean result = updateLabFirstProcedure(laboratory);
 		
 		
 		if (result == true)
 		{		
-			LaboratoryRow laboratoryRow = new LaboratoryRow();
-			laboratoryRow.setLabId(laboratory);
-			laboratoryRow.setDescription(labRow.get(0));	
-			rowRepository.save(laboratoryRow);
+			for (String aLabRow : labRow) {
+				LaboratoryRow laboratoryRow = new LaboratoryRow();
+				laboratoryRow.setLabId(laboratory);
+				laboratoryRow.setDescription(aLabRow);	
+				rowRepository.save(laboratoryRow);
+			}
 		}
 		
 		return result;
@@ -342,10 +341,10 @@ public class LabIoOperations {
 	 * Previous results, if any, are deleted as well.
 	 * @param laboratory - the {@link Laboratory} to delete
 	 * @return <code>true</code> if the exam has been deleted with all its results, if any. <code>false</code> otherwise
-	 * @throws OHException
+	 * @throws OHServiceException
 	 */
 	public boolean deleteLaboratory(
-			Laboratory aLaboratory) throws OHException 
+			Laboratory aLaboratory) throws OHServiceException 
 	{
 		boolean result = true;
 		Laboratory objToRemove = repository.findOne(aLaboratory.getCode());
@@ -356,6 +355,8 @@ public class LabIoOperations {
 			rowRepository.deleteWhereLab(objToRemove.getCode());
 		}
 		
+		repository.delete(objToRemove.getCode());
+		
 		return result;
 	}
 
@@ -364,17 +365,17 @@ public class LabIoOperations {
 	 *
 	 * @param code - the laboratory code
 	 * @return <code>true</code> if the code is already in use, <code>false</code> otherwise
-	 * @throws OHException 
+	 * @throws OHServiceException 
 	 */
 	public boolean isCodePresent(
-			Integer code) throws OHException
+			Integer code) throws OHServiceException
 	{
 		boolean result = true;
 		Laboratory objToCheck = repository.findOne(code);
 	
 		
-		result = rowRepository.exists(objToCheck.getCode());
+		result = objToCheck != null;
 		
-		return result;	
+		return result;
 	}
 }

@@ -22,7 +22,7 @@ public class OhExceptionTranslator {
 		try {
 			return pjp.proceed();
 		} catch (DataIntegrityViolationException e) {
-			throw new OHException(MessageBundle.getMessage("angal.sql.theselecteditemisstillusedsomewhere"), e);
+			throw new OHException(MessageBundle.getMessage("angal.sql.constraintviolation"), e);
 		} catch (InvalidDataAccessResourceUsageException e) {
 			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
 		} catch (CannotCreateTransactionException e) {

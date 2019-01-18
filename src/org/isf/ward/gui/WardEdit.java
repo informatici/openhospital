@@ -167,7 +167,7 @@ public class WardEdit extends JDialog {
 			gbl_dataPanel.columnWeights = new double[]{0.0, 1.0};
 			dataPanel.setLayout(gbl_dataPanel);
 			codeLabel = new JLabel();
-			codeLabel.setText(MessageBundle.getMessage("angal.ward.codeedit"));
+			codeLabel.setText(MessageBundle.getMessage("angal.common.codestar"));
 			GridBagConstraints gbc_codeLabel = new GridBagConstraints();
 			gbc_codeLabel.anchor = GridBagConstraints.WEST;
 			gbc_codeLabel.insets = new Insets(0, 0, 5, 5);
@@ -357,90 +357,30 @@ public class WardEdit extends JDialog {
 			
 			okButton.addActionListener(new ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					if (insert) {
-						String key = codeTextField.getText().trim();
-						if (key.equals("")) {
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.ward.pleaseinsertacode"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							return;
-						}	
-						if (key.length()>1) {
-							JOptionPane.showMessageDialog(				
-									null,
-									MessageBundle.getMessage("angal.ward.codetoolong"),
-									MessageBundle.getMessage("angal.hospital"),
-									JOptionPane.PLAIN_MESSAGE);
-							
-							return;
-						}
-						WardBrowserManager manager = new WardBrowserManager();
-						try{
-							if (manager.codeControl(key)) {
-								JOptionPane.showMessageDialog(				
-										null,
-										MessageBundle.getMessage("angal.common.codealreadyinuse"),
-										MessageBundle.getMessage("angal.hospital"),
-										JOptionPane.PLAIN_MESSAGE);
+					WardBrowserManager manager = new WardBrowserManager();
 
-								return;
-							}
-						}catch(OHServiceException ex){
-							OHServiceExceptionUtil.showMessages(ex);
-						}
-					}
-					if (descriptionTextField.getText().trim().equals("")) {
-						JOptionPane.showMessageDialog(				
-								null,
-								MessageBundle.getMessage("angal.ward.pleaseinsertaname"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}
 					try {
 						beds = Integer.parseInt(bedsTextField.getText());
 					} catch (NumberFormatException f) {
-						JOptionPane.showMessageDialog(WardEdit.this, MessageBundle.getMessage("angal.ward.insertavalidbedsnumber"));
+						JOptionPane.showMessageDialog(WardEdit.this,
+								MessageBundle.getMessage("angal.ward.insertavalidbedsnumber"));
 						return;
 					}
 					try {
 						nurs = Integer.parseInt(nursTextField.getText());
 					} catch (NumberFormatException f) {
-						JOptionPane.showMessageDialog(WardEdit.this, MessageBundle.getMessage("angal.ward.insertavalidnursesnumber"));
+						JOptionPane.showMessageDialog(WardEdit.this,
+								MessageBundle.getMessage("angal.ward.insertavalidnursesnumber"));
 						return;
 					}
 					try {
 						docs = Integer.parseInt(docsTextField.getText());
 					} catch (NumberFormatException f) {
-						JOptionPane.showMessageDialog(WardEdit.this, MessageBundle.getMessage("angal.ward.insertavaliddoctorsnumber"));
-						return;
-					}
-					if (beds<0) {
 						JOptionPane.showMessageDialog(WardEdit.this,
-								MessageBundle.getMessage("angal.ward.bedsnumbermustbepositive"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
+								MessageBundle.getMessage("angal.ward.insertavaliddoctorsnumber"));
 						return;
 					}
-					if (nurs<0) {
-						JOptionPane.showMessageDialog(WardEdit.this,
-								MessageBundle.getMessage("angal.ward.nursesnumbermustbepositive"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}
-					if (docs<0) {
-						JOptionPane.showMessageDialog(WardEdit.this,
-								MessageBundle.getMessage("angal.ward.doctorsnumbermustbepositive"),
-								MessageBundle.getMessage("angal.hospital"),
-								JOptionPane.PLAIN_MESSAGE);
-						return;
-					}
-					
-					WardBrowserManager manager = new WardBrowserManager();
-					
+
 					ward.setDescription(descriptionTextField.getText());
 					ward.setCode(codeTextField.getText().toUpperCase().trim());
 					ward.setTelephone(telTextField.getText());
@@ -452,40 +392,32 @@ public class WardEdit extends JDialog {
 					ward.setPharmacy(isPharmacyCheck.isSelected());
 					ward.setMale(isMaleCheck.isSelected());
 					ward.setFemale(isFemaleCheck.isSelected());
-					
+
 					boolean result = false;
-					if (insert) {      // inserting
+					if (insert) { // inserting
 						try {
 							result = manager.newWard(ward);
-						}catch(OHServiceException ex){
+						} catch (OHServiceException ex) {
 							OHServiceExceptionUtil.showMessages(ex);
 						}
 						if (result) {
 							fireWardInserted();
 						}
-					}
-					else {   
-						try{// updating
-							boolean isLocked = manager.isLockWard(ward);
-							boolean isConfirmedOverwriteRecord = false;
-							if (isLocked) {
-								isConfirmedOverwriteRecord = (JOptionPane.showConfirmDialog(null, 
-										MessageBundle.getMessage("angal.ward.thedatahasbeenupdatedbysomeoneelse") + ". " +
-												MessageBundle.getMessage("angal.ward.doyouwanttooverwritethedata") + "?", 
-												MessageBundle.getMessage("angal.ward.select"), JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION);
-							}
-							if(!isLocked || isConfirmedOverwriteRecord){
-								result = manager.updateWard(ward);
-							}
-						}catch(OHServiceException ex){
+					} else {
+						try { // updating
+							result = manager.updateWard(ward);
+						} catch (OHServiceException ex) {
 							OHServiceExceptionUtil.showMessages(ex);
 						}
 						if (result) {
 							fireWardUpdated();
 						}
 					}
-					if (!result) JOptionPane.showMessageDialog(WardEdit.this, MessageBundle.getMessage("angal.ward.thedatacouldnotbesaved"));
-					else  dispose();
+					if (!result)
+						JOptionPane.showMessageDialog(WardEdit.this,
+								MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+					else
+						dispose();
 				}
 			});
 		}
@@ -502,7 +434,6 @@ public class WardEdit extends JDialog {
 			descriptionTextField = new VoLimitedTextField(50);
 			if (!insert) {				
 				descriptionTextField.setText(ward.getDescription());
-//				lastdescription=ward.getDescription();
 			}
 		}
 		return descriptionTextField;

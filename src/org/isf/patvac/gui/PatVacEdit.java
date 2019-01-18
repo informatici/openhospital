@@ -38,7 +38,6 @@ import org.isf.patvac.manager.PatVacManager;
 import org.isf.patvac.model.PatientVaccine;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
 import org.isf.vaccine.manager.VaccineBrowserManager;
@@ -405,7 +404,7 @@ public class PatVacEdit extends JDialog {
 		VaccineBrowserManager manager = new VaccineBrowserManager();
 
 		ArrayList<Vaccine> allVac = null;
-		vaccineComboBox.addItem(new Vaccine("", MessageBundle.getMessage("angal.patvac.allvaccine"), new VaccineType("", ""), (Integer) null));
+		vaccineComboBox.addItem(new Vaccine("", MessageBundle.getMessage("angal.patvac.allvaccine"), new VaccineType("", "")));
         try{
             if (((VaccineType) vaccineTypeComboBox.getSelectedItem()).getDescription().equals(MessageBundle.getMessage("angal.patvac.allvaccinetype"))) {
                 allVac = manager.getVaccine();
@@ -514,22 +513,14 @@ public class PatVacEdit extends JDialog {
 			try {
 				pat = patBrowser.getPatientWithHeightAndWeight(regExp);
 			}catch(OHServiceException ex){
-				if(ex.getMessages() != null){
-					for(OHExceptionMessage msg : ex.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+				OHServiceExceptionUtil.showMessages(ex);
 				pat = new ArrayList<Patient>();
 			}
 		}else{
 			try {
 				pat = patBrowser.getPatient();
 			} catch (OHServiceException e) {
-				if(e.getMessages() != null){
-					for(OHExceptionMessage msg : e.getMessages()){
-						JOptionPane.showMessageDialog(null, msg.getMessage(), msg.getTitle() == null ? "" : msg.getTitle(), msg.getLevel().getSwingSeverity());
-					}
-				}
+                OHServiceExceptionUtil.showMessages(e);
 			}
 		}
 		if(pat != null){
@@ -686,32 +677,10 @@ public class PatVacEdit extends JDialog {
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					// vaccine date
-					if (null == vaccineDateFieldCal.getDate()) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patvac.pleaseinsertvaccinedate"));
-						return;
-					}
 
 					GregorianCalendar gregDate = new GregorianCalendar();
 					gregDate.setTime(vaccineDateFieldCal.getDate());
-					// check on progressive
-					try {
-						int prg = Integer.parseInt(progrTextField.getText());
-						if (prg < 0) {
-							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patvac.pleaseinsertavalidprogressive"));
-							return;
-						}
-						patVac.setProgr(prg);
-
-					} catch (NumberFormatException xx) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patvac.pleaseinsertavalidprogressive"));
-						return;
-					}
-					// check on vaccine
-					if (vaccineComboBox.getSelectedIndex() == 0) {
-						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patvac.pleaseselectavaccine"));
-						return;
-					}
+                    patVac.setProgr(Integer.parseInt(progrTextField.getText()));
 
 					// check on patient
 					if (selectedPatient == null) {
@@ -749,7 +718,7 @@ public class PatVacEdit extends JDialog {
 					if (!result)
 						JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.patvac.thedatacouldnobesaved"));
 					else {
-						patVac = new PatientVaccine(0, 0, new GregorianCalendar(), new Patient(), new Vaccine("", "", new VaccineType("", ""), 0), 0);
+						patVac = new PatientVaccine(0, 0, new GregorianCalendar(), new Patient(), new Vaccine("", "", new VaccineType("", "")), 0);
 						dispose();
 					}
 				}

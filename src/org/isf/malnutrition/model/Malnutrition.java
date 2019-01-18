@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.isf.admission.model.Admission;
@@ -35,10 +36,16 @@ public class Malnutrition
 	@Column(name="MLN_ID")
 	private int code;
 
+	/*
+	 * Date of this control
+	 */
 	@NotNull
 	@Column(name="MLN_DATE_SUPP")
 	private GregorianCalendar dateSupp;
 
+	/*
+	 * Date of next control
+	 */
 	@Column(name="MNL_DATE_CONF")
 	private GregorianCalendar dateConf;
 
@@ -54,7 +61,7 @@ public class Malnutrition
 	@Column(name="MLN_WEIGHT")
 	private float weight;
 
-	@NotNull
+	@Version
 	@Column(name="MLN_LOCK")
 	private int lock;
 
@@ -66,26 +73,24 @@ public class Malnutrition
 	
 	public Malnutrition(int aCode, GregorianCalendar aDateSupp,
 			GregorianCalendar aDateConf, Admission anAdmission, float aHeight,
-			float aWeight, int aLock) {
+			float aWeight) {
 		code = aCode;
 		dateSupp = aDateSupp;
 		dateConf = aDateConf;
 		admission = anAdmission;
 		height = aHeight;
 		weight = aWeight;
-		lock = aLock;
 	}
 	
 	public Malnutrition(int aCode, GregorianCalendar aDateSupp,
 			GregorianCalendar aDateConf, Admission anAdmission, Patient aPatient, float aHeight,
-			float aWeight, int aLock) {
+			float aWeight) {
 		code = aCode;
 		dateSupp = aDateSupp;
 		dateConf = aDateConf;
 		admission = anAdmission;
 		height = aHeight;
 		weight = aWeight;
-		lock = aLock;
 	}
 
 	public void setCode(int aCode) {

@@ -11,25 +11,21 @@ package org.isf.disease.manager;
  *------------------------------------------*/
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.disease.model.Disease;
 import org.isf.disease.service.DiseaseIoOperations;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The manage class for the disease module.
  */
 public class DiseaseBrowserManager {
 
-	private final Logger logger = LoggerFactory.getLogger(DiseaseBrowserManager.class);
-	
 	private DiseaseIoOperations ioOperations = Menu.getApplicationContext().getBean(DiseaseIoOperations.class);
 
 	/**
@@ -39,21 +35,7 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Disease> getDiseaseOpd() throws OHServiceException {
-		try {
-			return ioOperations.getDiseases(null,true,false,false);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getDiseases(null,true,false,false);
 	}
 
 	/**
@@ -63,21 +45,7 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Disease> getDiseaseAll() throws OHServiceException {
-		try {
-			return ioOperations.getDiseases(null,false,false,false);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getDiseases(null,false,false,false);
 	}
 
 	/**
@@ -88,21 +56,7 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Disease> getDiseaseOpd(String typecode) throws OHServiceException {
-		try {
-			return ioOperations.getDiseases(typecode,true,false,false);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getDiseases(typecode,true,false,false);
 	}
 
 	/**
@@ -112,21 +66,7 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Disease> getDiseaseIpdOut() throws OHServiceException {
-		try {
-			return ioOperations.getDiseases(null,false,false,true);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getDiseases(null,false,false,true);
 	}
 
 	/**
@@ -137,21 +77,7 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Disease> getDiseaseIpdOut(String typecode) throws OHServiceException {
-		try {
-			return ioOperations.getDiseases(typecode,false,false,true);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getDiseases(typecode,false,false,true);
 	}
 	
 	/**
@@ -161,21 +87,7 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Disease> getDiseaseIpdIn() throws OHServiceException {
-		try {
-			return ioOperations.getDiseases(null,false,true,false);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getDiseases(null,false,true,false);
 	}
 
 	/**
@@ -186,21 +98,7 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Disease> getDiseaseIpdIn(String typecode) throws OHServiceException {
-		try {
-			return ioOperations.getDiseases(typecode,false,true,false);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getDiseases(typecode,false,true,false);
 	}
 	
 	/**
@@ -210,21 +108,7 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Disease> getDisease() throws OHServiceException {
-		try {
-			return ioOperations.getDiseases(null,true,true,true);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getDiseases(null,true,true,true);
 	}
 
 	/**
@@ -235,21 +119,7 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Disease> getDisease(String typecode) throws OHServiceException {
-		try {
-			return ioOperations.getDiseases(typecode,false,false,false);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}
+        return ioOperations.getDiseases(typecode,false,false,false);
 	}
 
 	/**
@@ -260,21 +130,7 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public Disease getDiseaseByCode(int code) throws OHServiceException {
-		try {
-			return ioOperations.getDiseaseByCode(code);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}		
+        return ioOperations.getDiseaseByCode(code);
 	}
 
 	/**
@@ -285,47 +141,13 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newDisease(Disease disease) throws OHServiceException {
-		try {
-			return ioOperations.newDisease(disease);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}		
+        List<OHExceptionMessage> errors = validateDisease(disease, true);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        return ioOperations.newDisease(disease);
 	}
 	
-	/**
-	 * Checks if the specified {@link Disease} has been modified.
-	 * @param disease the disease to check.
-	 * @return <code>true</code> if has been modified, <code>false</code> otherwise.
-	 * @throws OHServiceException if an error occurred during the check.
-	 */
-	public boolean hasDiseaseModified(Disease disease) throws OHServiceException {
-		try {
-			return ioOperations.hasDiseaseModified(disease);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}	
-	}
-
 	/**
 	 * Updates the specified {@link Disease}.
 	 * If the disease has been updated concurrently a overwrite confirmation message is shown.
@@ -335,21 +157,11 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateDisease(Disease disease) throws OHServiceException {
-		try {
-			return ioOperations.updateDisease(disease);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}	
+        List<OHExceptionMessage> errors = validateDisease(disease, true);
+        if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+        return ioOperations.updateDisease(disease);
 	}
 
 	/**
@@ -360,22 +172,7 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean deleteDisease(Disease disease) throws OHServiceException {
-
-		try {
-			return ioOperations.deleteDisease(disease);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}	
+        return ioOperations.deleteDisease(disease);
 	}
 
 	/**
@@ -386,21 +183,7 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean codeControl(String code) throws OHServiceException {
-		try {
-			return ioOperations.isCodePresent(code);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}	
+        return ioOperations.isCodePresent(code);
 	}
 
 	/**
@@ -412,21 +195,48 @@ public class DiseaseBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean descriptionControl(String description,String typeCode) throws OHServiceException {
-		try {
-			return ioOperations.isDescriptionPresent(description,typeCode);
-		}  catch(OHException e){
-			/*Already cached exception with OH specific error message - 
-			 * create ready to return OHServiceException and keep existing error message
-			 */
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					e.getMessage(), OHSeverityLevel.ERROR));
-		}catch(Exception e){
-			//Any exception
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"), OHSeverityLevel.ERROR));
-		}	
+        return ioOperations.isDescriptionPresent(description,typeCode);
 	}
 
+    private List<OHExceptionMessage> validateDisease(Disease disease, boolean insert) throws OHServiceException {
+        List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
+
+        if (insert){
+            String key = disease.getCode();
+            if (key.equals("")){
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.disease.pleaseinsertacode"),
+                        OHSeverityLevel.ERROR));
+            }
+            if (key.length()>10){
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.disease.codetoolongmaxchars"),
+                        OHSeverityLevel.ERROR));
+            }
+            if (codeControl(key)){
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.common.codealreadyinuse"),
+                        OHSeverityLevel.ERROR));
+            }
+        }
+
+        if (disease.getDescription().equals("")){
+            errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.disease.pleaseinsertavaliddescription"),
+                    OHSeverityLevel.ERROR));
+        }
+
+        Disease oldDisease = null;
+        if(!insert){
+            oldDisease = getDiseaseByCode(Integer.valueOf(disease.getCode()));
+        }
+        String lastDescription = oldDisease == null ? null : oldDisease.getDescription();
+        //if inserting or description has changed on updating
+        //avoid two disease with the same description for the same type
+        if (lastDescription == null || !lastDescription.equals(disease.getDescription())) {
+            if (descriptionControl(disease.getDescription(),
+                    disease.getType().getCode())){
+                errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), MessageBundle.getMessage("angal.disease.diseasealreadypresent"),
+                        OHSeverityLevel.ERROR));
+            }
+        }
+
+	    return errors;
+    }
 }

@@ -2,15 +2,11 @@ package org.isf.lab.manager;
 
 import java.util.ArrayList;
 
-import org.isf.generaldata.MessageBundle;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.lab.service.LabIoOperations;
 import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,15 +23,6 @@ public class LabRowManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<LaboratoryRow> getLabRowByLabId(Integer code) throws OHServiceException{
-		try {
-			return ioOperations.getLabRow(code);
-		} catch (OHException e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
-		} catch (Exception e) {
-			logger.error("", e);
-			throw new OHServiceException(e, new OHExceptionMessage(null,
-					MessageBundle.getMessage("angal.lab.problemsoccuredwiththesqlistruction"), OHSeverityLevel.ERROR));
-		}
+		return ioOperations.getLabRow(code);
 	}
 }
