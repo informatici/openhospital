@@ -1,1 +1,7 @@
 language: java
+before_install:
+- sudo service mysql stop
+- docker-compose up -d
+- docker ps
+after_success:
+- docker-compose down
