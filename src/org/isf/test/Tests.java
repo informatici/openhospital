@@ -44,6 +44,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	org.isf.visits.test.Tests.class,
 	org.isf.ward.test.Tests.class
 	})
-public class AllTests {
+public class Tests {
 
 }
