@@ -46,7 +46,6 @@ public class TestExamRow
 	public void check(
 			ExamRow examRow) 
 	{		
-    	assertEquals(code, examRow.getCode());
     	assertEquals(description, examRow.getDescription());
 		
 		return;

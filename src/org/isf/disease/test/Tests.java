@@ -5,13 +5,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
-import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.exception.OHException;
 import org.isf.disease.model.Disease;
 import org.isf.disease.service.DiseaseIoOperations;
 import org.isf.distype.model.DiseaseType;
 import org.isf.distype.test.TestDiseaseType;
 import org.isf.distype.test.TestDiseaseTypeContext;
+import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.exception.OHException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -205,17 +205,16 @@ public class Tests
 		
 		try 
 		{		
-			code = _setupTestDisease(false);
-			Disease foundDisease = (Disease)jpa.find(Disease.class, code); 
+ 			code = _setupTestDisease(false);
+ 			Disease foundDisease = (Disease)jpa.find(Disease.class, code); 
 			jpa.flush();
-			foundDisease.setDescription("Update");
-			result = diseaseIoOperation.updateDisease(foundDisease);
+ 			foundDisease.setDescription("Update");
+ 			result = diseaseIoOperation.updateDisease(foundDisease);
 			jpa.open();
-			Disease updateDisease = (Disease)jpa.find(Disease.class, code); 
+ 			Disease updateDisease = (Disease)jpa.find(Disease.class, code); 
 			
 			assertEquals(true, result);
 			assertEquals("Update", updateDisease.getDescription());
-			assertEquals(lock + 1, updateDisease.getLock().intValue());
 		} 
 		catch (Exception e) 
 		{
@@ -237,9 +236,12 @@ public class Tests
 		{		
 			code = _setupTestDisease(false);
 			Disease foundDisease = (Disease)jpa.find(Disease.class, code);
-			result = diseaseIoOperation.hasDiseaseModified(foundDisease);
-			
-			assertEquals(false, result);
+			jpa.flush();
+			result = diseaseIoOperation.deleteDisease(foundDisease);
+			jpa.open();
+ 			assertEquals(true, result);
+ 			assertEquals(false, foundDisease.getIpdInInclude());
+ 			assertEquals(false, foundDisease.getIpdOutInclude());
 		} 
 		catch (Exception e) 
 		{

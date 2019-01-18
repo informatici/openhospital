@@ -252,26 +252,6 @@ public class Tests
 	}
 		
 	@Test
-	public void testUpdatePatientFalse() 
-	{		
-		try 
-		{		
-			Integer code = _setupTestPatient(false);
-			Patient patient = (Patient)jpa.find(Patient.class, code); 
-			boolean result = patientIoOperation.updatePatient(patient, false);
-			
-			assertEquals(true, result);
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}
-		
-	@Test
 	public void testUpdatePatientTrue() 
 	{
 		

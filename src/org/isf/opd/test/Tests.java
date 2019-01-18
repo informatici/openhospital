@@ -205,29 +205,6 @@ public class Tests
 	}
 	
 	@Test
-	public void testOpdIoHasOpdModified() 
-	{
-		int code = 0;
-		boolean result = false;
-			
-
-		try 
-		{		
-			code = _setupTestOpd(true);
-			Opd foundOpd = (Opd)jpa.find(Opd.class, code); 
-			result = opdIoOperation.hasOpdModified(foundOpd);			
-			assertEquals(false, result);
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();		
-			assertEquals(true, false);
-		}
-		
-		return;
-	}
-	
-	@Test
 	public void testIoUpdateOpd() 
 	{
 		int code = 0;
