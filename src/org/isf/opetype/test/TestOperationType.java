@@ -44,7 +44,6 @@ public class TestOperationType
 	public void check(
 			OperationType operationType) 
 	{		
-    	System.out.println("Check OperationType: " + operationType.getCode());
     	assertEquals(code, operationType.getCode());
     	assertEquals(description, operationType.getDescription());
 		

@@ -236,7 +236,6 @@ public class MenuIoOperations
 			menu.add(umi);
 		}
 		
-		System.out.println(menu);
 		return menu;
 	}
 

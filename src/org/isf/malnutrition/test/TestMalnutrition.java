@@ -52,7 +52,6 @@ public class TestMalnutrition
 	public void check(
 			Malnutrition malnutrition) 
 	{		
-    	System.out.println("Check Malnutrition: " + malnutrition.getCode());	
     	assertEquals(dateConf, malnutrition.getDateConf());
     	assertEquals(dateSupp, malnutrition.getDateSupp());
     	assertEquals(height, malnutrition.getHeight(), 0.1);

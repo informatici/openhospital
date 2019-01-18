@@ -89,7 +89,6 @@ public class TestPatient
 	public void check(
 			Patient patient) 
 	{		
-    	System.out.println("Check patient: " + patient.getName());
 		assertEquals(firstName, patient.getFirstName());
 		assertEquals(secondName, patient.getSecondName());
 		assertEquals(birthDate, patient.getBirthDate());

@@ -55,7 +55,6 @@ public class TestPricesOthers
 	public void check(
 			PricesOthers pricesOthers) 
 	{		
-    	System.out.println("Check PricesOthers: " + pricesOthers.getCode());
     	assertEquals(Code, pricesOthers.getCode());
     	assertEquals(Description, pricesOthers.getDescription());
     	assertEquals(daily, pricesOthers.isDaily());

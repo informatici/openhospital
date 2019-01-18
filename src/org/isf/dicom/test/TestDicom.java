@@ -97,7 +97,6 @@ public class TestDicom
 	public void check(
 			FileDicom dicom) 
 	{		
-    	System.out.println("Check FileDicom: " + dicom.getPatId());
     	assertEquals(dicomAccessionNumber, dicom.getDicomAccessionNumber());
     	assertEquals(dicomInstanceUID, dicom.getDicomInstanceUID());
     	assertEquals(dicomInstitutionName, dicom.getDicomInstitutionName());

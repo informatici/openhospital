@@ -192,7 +192,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -212,7 +212,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -235,12 +235,35 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
 		return;
 	}
+
+	@Test
+	public void testIoGetMalnutritionLock() 
+	{
+		int code = 0;
+		
+		
+		try 
+		{		
+			code = _setupTestMalnutrition(false);
+			Malnutrition foundMalnutrition = (Malnutrition)jpa.find(Malnutrition.class, code); 
+			int lock = malnutritionIoOperation.getMalnutritionLock(code);
+			
+			assertEquals(foundMalnutrition.getLock(), lock);
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();		
+			assertEquals(true, false);
+		}
+		
+		return;
+	}	
 
 	@Test
 	public void testIoGetLastMalnutrition() 
@@ -258,7 +281,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -287,7 +310,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -349,7 +372,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -377,7 +400,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -407,7 +430,6 @@ public class Tests
 	
     private void _restoreContext() throws OHException 
     {
-		System.out.println(testMalnutritionContext.getAllSaved());
 		testMalnutritionContext.deleteNews(jpa);
 		testAdmissionContext.deleteNews(jpa);
     	testWardContext.deleteNews(jpa);

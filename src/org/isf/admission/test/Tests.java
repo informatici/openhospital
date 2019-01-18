@@ -184,7 +184,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -204,7 +204,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -227,7 +227,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -254,7 +254,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 	
@@ -276,7 +276,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 	
@@ -299,7 +299,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 	
@@ -360,7 +360,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -420,10 +420,34 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
+		return;
+	}
+
+	@Test
+	public void testIoHasAdmissionModified()
+	{
+		int id = 0;
+		boolean result = true;
+		
+		
+		try 
+		{		
+			id = _setupTestAdmission(false);
+			Admission foundAdmission = (Admission)jpa.find(Admission.class, id); 
+			result = admissionIoOperation.hasAdmissionModified(foundAdmission);
+			
+			assertEquals(false, result);
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();		
+			assertEquals(true, false);
+		}
+	
 		return;
 	}
 
@@ -448,7 +472,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -471,7 +495,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -494,7 +518,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -518,7 +542,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 	
@@ -543,7 +567,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 
@@ -567,7 +591,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 
@@ -592,7 +616,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 
@@ -621,7 +645,6 @@ public class Tests
 	
     private void _restoreContext() throws OHException 
     {
-		System.out.println(testAdmissionContext.getAllSaved());
 		testAdmissionContext.deleteNews(jpa);
     	testWardContext.deleteNews(jpa);
     	testPatientContext.deleteNews(jpa);

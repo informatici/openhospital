@@ -56,7 +56,6 @@ public class TestUser
 	public void check(
 			User user) 
 	{		
-    	System.out.println("Check User: " + user.getUserName());
     	assertEquals(name, user.getUserName());
     	assertEquals(desc, user.getDesc());
     	assertEquals(passwd, user.getPasswd());

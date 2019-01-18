@@ -44,7 +44,6 @@ public class TestExamType
 	public void check(
 			ExamType examType) 
 	{		
-    	System.out.println("Check ExamType: " + examType.getCode());
     	assertEquals(code, examType.getCode());
     	assertEquals(description, examType.getDescription());
 		

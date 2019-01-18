@@ -44,7 +44,6 @@ public class TestDeliveryType
 	public void check(
 			DeliveryType deliveryType) 
 	{		
-    	System.out.println("Check DeliveryType: " + deliveryType.getCode());
     	assertEquals(code, deliveryType.getCode());
     	assertEquals(description, deliveryType.getDescription());
 		

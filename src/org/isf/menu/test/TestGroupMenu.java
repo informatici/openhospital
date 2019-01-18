@@ -48,7 +48,6 @@ public class TestGroupMenu
 	public void check(
 			GroupMenu groupMenu) 
 	{		
-    	System.out.println("Check GroupMenu: " + groupMenu.getCode());
     	assertEquals(code, groupMenu.getCode());
     	assertEquals(userGroup, groupMenu.getUserGroup());
     	assertEquals(menuItem, groupMenu.getMenuItem());

@@ -52,7 +52,6 @@ public class TestBillPayments
 	public void check(
 			BillPayments billPayment) 
 	{		
-    	System.out.println("Check bill payment item: " + billPayment.getId());
 		assertEquals(paymentAmount, billPayment.getAmount(), 0.1);
 		assertEquals(paymentDate, billPayment.getDate());
 		assertEquals(paymentUser, billPayment.getUser());

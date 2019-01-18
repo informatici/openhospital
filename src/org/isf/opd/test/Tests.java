@@ -113,7 +113,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -133,7 +133,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -164,7 +164,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -197,7 +197,30 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
+			assertEquals(true, false);
+		}
+		
+		return;
+	}
+	
+	@Test
+	public void testOpdIoHasOpdModified() 
+	{
+		int code = 0;
+		boolean result = false;
+			
+
+		try 
+		{		
+			code = _setupTestOpd(true);
+			Opd foundOpd = (Opd)jpa.find(Opd.class, code); 
+			result = opdIoOperation.hasOpdModified(foundOpd);			
+			assertEquals(false, result);
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -226,7 +249,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -252,7 +275,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -276,7 +299,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -299,7 +322,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -320,9 +343,6 @@ public class Tests
 	
     private void _restoreContext() throws OHException 
     {
-		System.out.println(testOpdContext.getAllSaved());
-		System.out.println(testPatientContext.getAllSaved());
-		System.out.println(testDiseaseContext.getAllSaved());
 		testOpdContext.deleteNews(jpa);
 		testPatientContext.deleteNews(jpa);
 		testDiseaseContext.deleteNews(jpa);

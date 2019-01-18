@@ -50,7 +50,6 @@ public class TestOperation
 	public void check(
 			Operation operation) 
 	{		
-    	System.out.println("Check Operation: " + operation.getCode());
     	assertEquals(code, operation.getCode());
     	assertEquals(description, operation.getDescription());
 		

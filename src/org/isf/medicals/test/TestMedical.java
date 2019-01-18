@@ -58,7 +58,6 @@ public class TestMedical
 	public void check(
 			Medical medical) 
 	{		
-    	System.out.println("Check Medical: " + medical.getCode());	
     	assertEquals(description, medical.getDescription());
     	assertEquals(initialqty, medical.getInitialqty(), 0.1);
     	assertEquals(inqty, medical.getInqty(), 0.1);

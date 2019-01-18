@@ -69,7 +69,6 @@ public class TestMovementWard
 	public void check(
 			MovementWard movementWard) 
 	{		
-    	System.out.println("Check MovementWard: " + movementWard.getCode());	
     	assertEquals(age, movementWard.getAge());
     	assertEquals(date, movementWard.getDate());
     	assertEquals(description, movementWard.getDescription());

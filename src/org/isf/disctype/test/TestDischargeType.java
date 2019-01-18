@@ -44,7 +44,6 @@ public class TestDischargeType
 	public void check(
 			DischargeType dischargeType) 
 	{		
-    	System.out.println("Check DischargeType: " + dischargeType.getCode());
     	assertEquals(code, dischargeType.getCode());
     	assertEquals(description, dischargeType.getDescription());
 		

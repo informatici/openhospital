@@ -95,7 +95,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -115,7 +115,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -137,7 +137,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -160,7 +160,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -189,7 +189,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -215,10 +215,35 @@ public class Tests
 			
 			assertEquals(true, result);
 			assertEquals("Update", updateDisease.getDescription());
+			assertEquals(lock + 1, updateDisease.getLock().intValue());
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
+			assertEquals(true, false);
+		}
+		
+		return;
+	}
+	
+	@Test
+	public void testIoHasDiseaseModified() 
+	{
+		String code = "";
+		boolean result = false;
+		
+		
+		try 
+		{		
+			code = _setupTestDisease(false);
+			Disease foundDisease = (Disease)jpa.find(Disease.class, code);
+			result = diseaseIoOperation.hasDiseaseModified(foundDisease);
+			
+			assertEquals(false, result);
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -246,7 +271,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -269,7 +294,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -293,7 +318,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -312,8 +337,6 @@ public class Tests
 	
     private void _restoreContext() throws OHException 
     {
-		System.out.println(testDiseaseContext.getAllSaved());
-		System.out.println(testDiseaseTypeContext.getAllSaved());
 		testDiseaseContext.deleteNews(jpa);
 		testDiseaseTypeContext.deleteNews(jpa);
         

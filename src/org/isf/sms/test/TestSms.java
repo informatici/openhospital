@@ -61,7 +61,6 @@ public class TestSms
 	public void check(
 			Sms sms) 
 	{		
-    	System.out.println("Check Sms: " + sms.getSmsId());
     	assertEquals(module, sms.getModule());
     	assertEquals(moduleID, sms.getModuleID());
     	assertEquals(smsDate, sms.getSmsDate());

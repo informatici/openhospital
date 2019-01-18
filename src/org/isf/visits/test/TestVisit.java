@@ -53,7 +53,6 @@ public class TestVisit
 	public void check(
 			Visit visit) 
 	{		
-    	System.out.println("Check Visit: " + visit.getVisitID());
     	assertEquals(date,visit.getDate());
     	assertEquals(note,visit.getNote());
     	assertEquals(sms,visit.isSms());

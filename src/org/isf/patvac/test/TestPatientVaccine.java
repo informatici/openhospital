@@ -59,7 +59,6 @@ public class TestPatientVaccine
 	public void check(
 			PatientVaccine patientVaccine) 
 	{		
-    	System.out.println("Check PatientVaccine: " + patientVaccine.getCode());
     	assertEquals(lock, patientVaccine.getLock());
     	assertEquals(progr, patientVaccine.getProgr());
     	assertEquals(vaccineDate, patientVaccine.getVaccineDate());

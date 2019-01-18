@@ -7,7 +7,7 @@
 	<version>2.0</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.framework.version>4.3.10.RELEASE</spring.framework.version>
+		<spring.framework.version>4.3.18.RELEASE</spring.framework.version>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -26,6 +26,25 @@
 			</resource>
 		</resources>
 		<plugins>
+			<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>build-helper-maven-plugin</artifactId>
+			<version>1.9.1</version>
+			<executions>
+				<execution>
+					<id>add-test-source</id>
+					<phase>process-resources</phase>
+					<goals>
+						<goal>add-test-source</goal>
+					</goals>
+					<configuration>
+						<sources>
+							<source>src/org/isf/test</source>
+						</sources>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
@@ -549,8 +568,7 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.framework.version}</version>
-			<scope>test</scope>
-		</dependency>  
+		</dependency>
 		<dependency>
  			<groupId>org.springframework</groupId>
  		<artifactId>spring-tx</artifactId>

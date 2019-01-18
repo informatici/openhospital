@@ -80,7 +80,6 @@ public class TestOpd
 	public void check(
 			Opd opd) 
 	{		
-    	System.out.println("Check Opd: " + opd.getCode());
     	assertEquals(visitDate, opd.getVisitDate());
     	assertEquals(age, opd.getAge());
     	assertEquals(sex, opd.getSex());

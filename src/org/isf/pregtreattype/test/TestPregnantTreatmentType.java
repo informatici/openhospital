@@ -44,7 +44,6 @@ public class TestPregnantTreatmentType
 	public void check(
 			PregnantTreatmentType pregnantTreatmentType) 
 	{		
-    	System.out.println("Check PregnantTreatmentType: " + pregnantTreatmentType.getCode());
     	assertEquals(code, pregnantTreatmentType.getCode());
     	assertEquals(description, pregnantTreatmentType.getDescription());
 		

@@ -54,7 +54,6 @@ public class TestBillItems
 	public void check(
 			BillItems billItem) 
 	{		
-    	System.out.println("Check bill item: " + billItem.getId());
 		assertEquals(itemAmount, billItem.getItemAmount(), 0.1);
 		assertEquals(itemDescription, billItem.getItemDescription());
 		assertEquals(itemQuantity, billItem.getItemQuantity());

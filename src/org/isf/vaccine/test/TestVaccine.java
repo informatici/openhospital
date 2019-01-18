@@ -48,7 +48,6 @@ public class TestVaccine
 	public void check(
 			Vaccine vaccine) 
 	{		
-    	System.out.println("Check Vaccine: " + vaccine.getCode());
     	assertEquals(code, vaccine.getCode());
     	assertEquals(description, vaccine.getDescription());
 		

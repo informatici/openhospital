@@ -55,7 +55,6 @@ public class TestSupplier
 	public void check(
 			Supplier supplier) 
 	{		
-    	System.out.println("Check Supplier: " + supplier.getSupId());
     	assertEquals(supAddress, supplier.getSupAddress());
     	assertEquals(supDeleted, supplier.getSupDeleted());
     	assertEquals(supEmail, supplier.getSupEmail());

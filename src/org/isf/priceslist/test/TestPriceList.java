@@ -48,7 +48,6 @@ public class TestPriceList
 	public void check(
 			PriceList priceList) 
 	{		
-    	System.out.println("Check prices list: " + priceList.getCode());
 		assertEquals(listCode, priceList.getCode());
 		assertEquals(listCurrency, priceList.getCurrency());
 		assertEquals(listDescription, priceList.getDescription());

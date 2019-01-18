@@ -44,7 +44,6 @@ public class TestUserGroup
 	public void check(
 			UserGroup userGroup) 
 	{		
-    	System.out.println("Check UserGroup: " + userGroup.getCode());
     	assertEquals(code, userGroup.getCode());
     	assertEquals(description, userGroup.getDesc());
 		
