@@ -132,7 +132,6 @@ public class TestAdmission
 	public void check(
 			Admission admission) 
 	{		
-    	System.out.println("Check Admission: " + admission.getId());
     	assertEquals(abortDate, admission.getAbortDate());
     	assertEquals(admDate, admission.getAdmDate());
     	assertEquals(admitted, admission.getAdmitted());

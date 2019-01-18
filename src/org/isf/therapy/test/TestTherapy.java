@@ -70,7 +70,6 @@ public class TestTherapy
 	public void check(
 			TherapyRow therapyRow) 
 	{		
-    	System.out.println("Check TherapyRow: " + therapyRow.getTherapyID());
     	assertEquals(endDate,therapyRow.getEndDate());
     	assertEquals(freqInDay,therapyRow.getFreqInDay());
     	assertEquals(freqInPeriod,therapyRow.getFreqInPeriod());

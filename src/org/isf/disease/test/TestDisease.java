@@ -50,7 +50,6 @@ public class TestDisease
 	public void check(
 			Disease disease) 
 	{		
-    	System.out.println("Check Disease: " + disease.getCode());
     	assertEquals(code, disease.getCode());
     	assertEquals(description, disease.getDescription());
 		

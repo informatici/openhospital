@@ -54,7 +54,6 @@ public class TestPrice
 	public void check(
 			Price price) 
 	{		
-    	System.out.println("Check price: " + price.getId());
 		assertEquals(desc, price.getDesc());
 		assertEquals(group, price.getGroup());
 		assertEquals(item, price.getItem());		

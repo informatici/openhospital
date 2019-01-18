@@ -117,7 +117,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);	
+			e.printStackTrace();	
 			assertEquals(true, false);
 		}
 				
@@ -137,7 +137,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -157,7 +157,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -177,7 +177,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -197,7 +197,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -217,7 +217,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -240,7 +240,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}	
 				
@@ -263,7 +263,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -286,7 +286,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -309,7 +309,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -333,7 +333,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -354,7 +354,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -377,7 +377,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -402,7 +402,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -425,7 +425,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -455,7 +455,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 						
@@ -487,7 +487,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -519,7 +519,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}	
 		
@@ -544,7 +544,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 						
@@ -568,7 +568,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 						
@@ -593,7 +593,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -619,7 +619,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -646,7 +646,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -667,11 +667,6 @@ public class Tests
 	
     private void _restoreContext() throws OHException 
     {
-		System.out.println(testBillContext.getAllSaved());
-		System.out.println(testBillItemsContext.getAllSaved());
-		System.out.println(testBillPaymentsContext.getAllSaved());
-		System.out.println(testPatientContext.getAllSaved());
-		System.out.println(testPriceListContext.getAllSaved());
 		testBillPaymentsContext.deleteNews(jpa);
 		testBillItemsContext.deleteNews(jpa);
 		testBillContext.deleteNews(jpa);

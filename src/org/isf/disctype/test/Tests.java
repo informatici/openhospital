@@ -83,7 +83,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 				
@@ -103,7 +103,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -126,7 +126,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -149,7 +149,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -172,7 +172,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -198,7 +198,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -225,7 +225,7 @@ public class Tests
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			e.printStackTrace();		
 			assertEquals(true, false);
 		}
 		
@@ -242,7 +242,6 @@ public class Tests
 	
     private void _restoreContext() throws OHException 
     {
-		System.out.println(testDischargeTypeContext.getAllSaved());
 		testDischargeTypeContext.deleteNews(jpa);
         
         return;

@@ -57,7 +57,6 @@ public class TestHospital
 	public void check(
 			Hospital hospital) 
 	{		
-    	System.out.println("Check Hospital: " + hospital.getCode());
     	assertEquals(code, hospital.getCode());
     	assertEquals(description, hospital.getDescription());
     	assertEquals(address, hospital.getAddress());

@@ -70,7 +70,6 @@ public class TestBill
 	public void check(
 			Bill bill) 
 	{		
-    	System.out.println("Check bill: " + bill.getId());
     	assertEquals(date, bill.getDate());
     	assertEquals(update, bill.getUpdate());
     	assertEquals(isList, bill.isList());

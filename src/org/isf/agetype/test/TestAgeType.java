@@ -48,7 +48,6 @@ public class TestAgeType
 	public void check(
 			AgeType ageType) 
 	{		
-    	System.out.println("Check AgeType: " + ageType.getCode());
     	assertEquals(code, ageType.getCode());
     	assertEquals(from, ageType.getFrom());
     	assertEquals(to, ageType.getTo());

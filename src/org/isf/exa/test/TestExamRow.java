@@ -48,7 +48,6 @@ public class TestExamRow
 	public void check(
 			ExamRow examRow) 
 	{		
-    	System.out.println("Check ExamRow: " + examRow.getCode());
     	assertEquals(code, examRow.getCode());
     	assertEquals(description, examRow.getDescription());
 		

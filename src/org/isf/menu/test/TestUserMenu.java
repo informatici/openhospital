@@ -59,7 +59,6 @@ public class TestUserMenu
 	public void check(
 			UserMenuItem userMenuItem) 
 	{		
-    	System.out.println("Check UserMenuItem: " + userMenuItem.getCode());
     	assertEquals(code, userMenuItem.getCode());
     	assertEquals(altLabel, userMenuItem.getAltLabel());
     	assertEquals(buttonLabel, userMenuItem.getButtonLabel());

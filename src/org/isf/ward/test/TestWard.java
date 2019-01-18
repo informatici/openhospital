@@ -65,7 +65,6 @@ public class TestWard
 	public void check(
 			Ward ward) 
 	{		
-    	System.out.println("Check Ward: " + ward.getCode());
     	assertEquals(code, ward.getCode());
     	assertEquals(beds, ward.getBeds());
     	assertEquals(description, ward.getDescription());

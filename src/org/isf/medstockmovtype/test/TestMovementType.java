@@ -46,7 +46,6 @@ public class TestMovementType
 	public void check(
 			MovementType movementType) 
 	{		
-    	System.out.println("Check MovementType: " + movementType.getCode());
     	assertEquals(code, movementType.getCode());
     	assertEquals(description, movementType.getDescription());
     	assertEquals(type, movementType.getType());

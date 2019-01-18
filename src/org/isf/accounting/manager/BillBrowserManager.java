@@ -3,8 +3,6 @@ package org.isf.accounting.manager;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
-import javax.swing.JOptionPane;
-
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
@@ -15,11 +13,6 @@ import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.isf.menu.gui.Menu;
-import org.isf.utils.exception.OHException;
 
 public class BillBrowserManager {
 

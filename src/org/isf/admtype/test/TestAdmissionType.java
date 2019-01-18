@@ -44,7 +44,6 @@ public class TestAdmissionType
 	public void check(
 			AdmissionType admissionType) 
 	{		
-    	System.out.println("Check AdmissionType: " + admissionType.getCode());
     	assertEquals(code, admissionType.getCode());
     	assertEquals(description, admissionType.getDescription());
 		

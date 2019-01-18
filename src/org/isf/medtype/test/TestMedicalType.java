@@ -44,7 +44,6 @@ public class TestMedicalType
 	public void check(
 			MedicalType medicalType) 
 	{		
-    	System.out.println("Check MedicalType: " + medicalType.getCode());
     	assertEquals(code, medicalType.getCode());
     	assertEquals(description, medicalType.getDescription());
 		

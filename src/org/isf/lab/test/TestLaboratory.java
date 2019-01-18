@@ -78,7 +78,6 @@ public class TestLaboratory
 	public void check(
 			Laboratory laboratory) 
 	{		
-    	System.out.println("Check Laboratory: " + laboratory.getCode());
     	assertEquals(age, laboratory.getAge());		
     	assertEquals(registrationDate, laboratory.getDate());	
     	assertEquals(examDate, laboratory.getExamDate());

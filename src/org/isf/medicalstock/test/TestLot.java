@@ -51,7 +51,6 @@ public class TestLot
 	public void check(
 			Lot lot) 
 	{		
-    	System.out.println("Check Lot: " + lot.getCode());	
     	assertEquals(cost, lot.getCost(), 0.0);
     	assertEquals(dueDate, lot.getDueDate());
     	assertEquals(preparationDate, lot.getPreparationDate());

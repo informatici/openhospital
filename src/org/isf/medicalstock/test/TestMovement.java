@@ -69,7 +69,6 @@ public class TestMovement
 	public void check(
 			Movement movement) 
 	{		
-    	System.out.println("Check Movement: " + movement.getCode());	
     	assertEquals(date, movement.getDate());
     	assertEquals(quantity, movement.getQuantity());
     	assertEquals(refNo, movement.getRefNo());

@@ -53,7 +53,6 @@ public class TestExam
 	public void check(
 			Exam exam) 
 	{		
-    	System.out.println("Check Exam: " + exam.getCode());
     	assertEquals(code, exam.getCode());
     	assertEquals(description, exam.getDescription());
     	assertEquals(procedure, exam.getProcedure());

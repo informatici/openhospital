@@ -47,7 +47,6 @@ public class TestLaboratoryRow
 	public void check(
 			LaboratoryRow laboratoryRow) 
 	{		
-    	System.out.println("Check LaboratoryRow: " + laboratoryRow.getCode());
     	assertEquals(description, laboratoryRow.getDescription());
 		
 		return;
