@@ -1,10 +1,14 @@
 package org.isf.patient.model;
 
 import java.awt.Image;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import javax.imageio.ImageIO;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -461,6 +465,17 @@ public class Patient {
 	}
 
 	public Image getPhoto() {
+		try {
+			if (photo != null && photo.length() > 0) {
+				BufferedInputStream is = new BufferedInputStream(photo.getBinaryStream());
+				Image image = ImageIO.read(is);
+				setPhoto(image);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
 		return photoImage;
 	}
 	

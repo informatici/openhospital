@@ -216,7 +216,7 @@ public class PatientIoOperations
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 			ImageIO.write(bu, "jpg", outStream);
-			System.out.println("dimensione output stream: " + outStream.size());
+			System.out.println("output stream dimension: " + outStream.size());
 			
 			if (outStream != null) byteArray = outStream.toByteArray();
 			

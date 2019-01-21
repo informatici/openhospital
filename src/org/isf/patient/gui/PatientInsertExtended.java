@@ -483,13 +483,13 @@ public class PatientInsertExtended extends JDialog {
 
 							patient.setNote(jNoteTextArea.getText().trim());
 
-							try {
-								Image photo = ImageIO.read(new File(photoPanel.getPhotoFilePath()));
-								patient.setPhoto(photo);
-							} catch (IOException ioe) {
-								// the photo didn't change
-								//logger.debug("Patient photo not changed");
-							}
+//							try {
+//								Image photo = ImageIO.read(new File(photoPanel.getPhotoFilePath()));
+//								patient.setPhoto(photo);
+//							} catch (IOException ioe) {
+//								// the photo didn't change
+//								//logger.debug("Patient photo not changed");
+//							}
 
 							BusyState.setBusyState(PatientInsertExtended.this, true);
 							try{
@@ -575,13 +575,13 @@ public class PatientInsertExtended extends JDialog {
 						}
 						patient.setNote(jNoteTextArea.getText().trim());
 
-						try {
-							Image photo = ImageIO.read(new File(photoPanel.getPhotoFilePath()));
-							patient.setPhoto(photo);
-						} catch (IOException ioe) {
-							// the photo didn't change
-							//logger.debug("Patient photo not changed");
-						}
+//						try {
+//							Image photo = ImageIO.read(new File(photoPanel.getPhotoFilePath()));
+//							patient.setPhoto(photo);
+//						} catch (IOException ioe) {
+//							// the photo didn't change
+//							//logger.debug("Patient photo not changed");
+//						}
 
 						BusyState.setBusyState(PatientInsertExtended.this, true);
 						try{
@@ -2249,5 +2249,6 @@ public class PatientInsertExtended extends JDialog {
 	
 	public void setPatientPhoto(Image photo) {
 		patient.setPhoto(photo);
+		patient.setBlobPhoto(null);
 	}
 }
