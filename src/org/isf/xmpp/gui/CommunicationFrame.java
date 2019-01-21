@@ -3,6 +3,7 @@ package org.isf.xmpp.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -10,10 +11,15 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -24,6 +30,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
@@ -34,15 +41,26 @@ import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.xmpp.gui.ChatTab.TabButton;
+import org.isf.xmpp.manager.AbstractCommunicationFrame;
+import org.isf.xmpp.manager.ComplexCellRender;
 import org.isf.xmpp.manager.Interaction;
+import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.ChatManager;
+import org.jivesoftware.smack.ChatManagerListener;
+import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.filetransfer.FileTransferNegotiator;
+import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
+import org.jivesoftware.smackx.filetransfer.IncomingFileTransfer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CommunicationFrame extends JFrame{
+public class CommunicationFrame extends AbstractCommunicationFrame {
 
 	/**
 	 * 
@@ -90,7 +108,7 @@ public class CommunicationFrame extends JFrame{
 
 	private void createFrame()
 	{
-		interaction = new Interaction(this);
+		interaction = new Interaction();
 		activateListeners();
 		getContentPane().add(createLeftPanel(),BorderLayout.WEST);
 		getContentPane().add(separator,BorderLayout.CENTER);
@@ -137,44 +155,38 @@ public class CommunicationFrame extends JFrame{
 		
 	}
 	public void activateListeners(){
+		senseRoster();
+		incomingChat();
+		receiveFile();
+	}
 
-		Roster roster= interaction.getRoster();
+	/**
+	 * 
+	 */
+	public void senseRoster() {
+		roster = interaction.getRoster();
 
 		roster.addRosterListener(new RosterListener() {
 
 			public void presenceChanged(Presence presence) {
 				logger.debug("State changed -> "+presence.getFrom()+" - "+presence); //$NON-NLS-1$ //$NON-NLS-2$
+				String user_name=interaction.userFromAddress(presence.getFrom());
+				StringBuilder sb = new StringBuilder();
 				if(!presence.isAvailable())
 				{
-					String user_name=interaction.userFromAddress(presence.getFrom());
-					int index=tabs.indexOfTab(user_name);
-					if(index!=-1){
-						area=getArea(user_name, true);
-						try {
-							StringBuilder sb = new StringBuilder();
-							sb.append(user_name).append(" ").append(MessageBundle.getMessage("angal.xmpp.isnowoffline"));
-							
-							area.printNotification(sb.toString()); //$NON-NLS-1$
-						} catch (BadLocationException e) {
-							e.printStackTrace();
-						}
-					}
-
+					sb.append(user_name).append(" ").append(MessageBundle.getMessage("angal.xmpp.isnowoffline"));
 				}
-				else if(presence.isAvailable()){
-					String user_name=interaction.userFromAddress(presence.getFrom());
-					int index=tabs.indexOfTab(user_name);
-					if(index!=-1){
-						area=getArea(user_name, true);
-						try {
-							StringBuilder sb = new StringBuilder();
-							sb.append(user_name).append(" ").append(MessageBundle.getMessage("angal.xmpp.isnowonline"));
-							
-							area.printNotification(sb.toString()); //$NON-NLS-1$
-
-						} catch (BadLocationException e) {
-							e.printStackTrace();
-						}
+				else if(presence.isAvailable())
+				{
+					sb.append(user_name).append(" ").append(MessageBundle.getMessage("angal.xmpp.isnowonline"));
+				}
+				int index=tabs.indexOfTab(user_name);
+				if(index!=-1){
+					area=getArea(user_name, true);
+					try {
+						area.printNotification(sb.toString()); //$NON-NLS-1$
+					} catch (BadLocationException e) {
+						e.printStackTrace();
 					}
 				}
 				refreshBuddyList();
@@ -183,9 +195,6 @@ public class CommunicationFrame extends JFrame{
 			public void entriesDeleted(Collection<String> arg0) {}
 			public void entriesAdded(Collection<String> arg0) {}
 		});
-
-		interaction.incomingChat();
-		interaction.receiveFile();
 	}
 	public void refreshBuddyList()
 	{
@@ -195,9 +204,43 @@ public class CommunicationFrame extends JFrame{
 		validate();
 		repaint();
 	}
+	private void incomingChat(){
+		ChatManager chatmanager = interaction.getServer().getChatManager();
+		chatmanager.addChatListener(new ChatManagerListener() {
+			@Override
+			public void chatCreated(Chat chat, boolean createLocally) {
+				chat.addMessageListener(new MessageListener() {
+
+					@Override
+					public void processMessage(Chat chat, Message message) {
+						if(message.getType() == Message.Type.chat){
+							logger.debug("Incoming message from: " + chat.getThreadID());
+							logger.debug("GUI: " + CommunicationFrame.this);
+							String user = chat.getParticipant().substring(0,chat.getParticipant().indexOf("@"));
+							printMessage(getArea(user,true), interaction.userFromAddress(message.getFrom()), message.getBody(), false);
+							if(!isVisible()) {
+								setVisible(true);
+								setState(java.awt.Frame.NORMAL);
+								toFront();
+							} else {
+								toFront();
+							}
+						}
+					}
+				});
+				if(!createLocally) {
+					
+				}
+			}
+		});
+	}
+	public void receiveFile(){
+		FileTransferNegotiator.setServiceEnabled(interaction.getConnection(), true);
+	}
+	
 	private JScrollPane createBuddyList(){
 
-		buddyList=interaction.getBuddyList();
+		buddyList = getBuddyList();
 		final JPopupMenu popUpMenu= new JPopupMenu();
 		popUpMenu.add(sendFile= new JMenuItem(MessageBundle.getMessage("angal.xmpp.sendfile"))); //$NON-NLS-1$
 		popUpMenu.add(new JPopupMenu.Separator());
@@ -401,10 +444,43 @@ public class CommunicationFrame extends JFrame{
 			e.printStackTrace();
 		}
 	}
+	
+	public JList getBuddyList(){
+
+		logger.debug("==> roster : " + roster);
+		List<RosterEntry> entries= new ArrayList<RosterEntry>( roster.getEntries());
+		Collections.sort(entries,new Comparator<RosterEntry>(){
+			public int compare(RosterEntry r1, RosterEntry r2){
+				Presence presence1 = roster.getPresence(r1.getUser());
+				Presence presence2 = roster.getPresence(r2.getUser());
+				String r1_name = r1.getName();
+				String r2_name = r2.getName();
+				if(presence1.isAvailable() == presence2.isAvailable())
+					return r1_name.toLowerCase().compareTo(r2_name.toLowerCase());
+
+				if(presence1.isAvailable() && (presence2.isAvailable() == false))
+					return -1;
+
+				else
+					return 1;
+
+			}
+		});
+		JList buddy = new JList(entries.toArray());
+
+		ListCellRenderer render = new ComplexCellRender(interaction.getServer());
+
+		buddy.setCellRenderer(render);
+
+		return buddy;
+	}
 
 	public void sendMessage(String text_message, String to, boolean visualize){
 
-		interaction.sendMessage(text_message, to, visualize);
+		interaction.sendMessage(CommunicationFrame.this, text_message, to, visualize);
+		if (visualize) {
+			printMessage(getArea(getSelectedUser(),false),"me", text_message, visualize);
+		}
 	}
 
 
@@ -412,5 +488,119 @@ public class CommunicationFrame extends JFrame{
 		return frame;
 	}
 
+	@Override
+	public void processMessage(Chat arg0, Message arg1) {
+		if(arg1.getType() == Message.Type.normal){
+			logger.debug("Send message from: " + arg0.getThreadID() );
+			String user = arg0.getParticipant().substring(0,arg0.getParticipant().indexOf("@"));
+			printMessage((getArea(user,false)), user, arg1.getBody(), false);
+			if(!this.isVisible()) {
+				this.setVisible(true);
+				this.setState(java.awt.Frame.ICONIFIED);
+				this.toFront();
+			} else {
+				this.toFront();
+			}
+		}
+	}
 
+	@Override
+	public void fileTransferRequest(final FileTransferRequest request) {
+
+		if(!this.isVisible())
+			this.setVisible(true);
+		
+		ImageIcon acceptIcon;
+		ImageIcon rejectIcon;
+		
+		String file_transfer=((interaction.userFromAddress(request.getRequestor())+" would like to send: \n"+request.getFileName()));
+		acceptIcon= new ImageIcon("rsc/icons/ok_button.png");
+		rejectIcon= new ImageIcon("rsc/icons/delete_button.png");
+		final JButton accept = new JButton(acceptIcon);
+		accept.setMargin(new Insets(1,1,1,1));
+		accept.setOpaque(false);
+		accept.setBorderPainted( false );
+		accept.setContentAreaFilled(false);
+		final JButton reject= new JButton(rejectIcon);
+		reject.setMargin(new Insets(1,1,1,1));
+		reject.setOpaque(false);
+		reject.setBorderPainted( false );
+		reject.setContentAreaFilled(false);
+		final String user=interaction.userFromAddress(request.getRequestor());
+		this.printNotification((this.getArea(user,false)),user, file_transfer, accept, reject);
+
+
+		accept.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				accept.setEnabled(false);
+				reject.setEnabled(false);
+				JFileChooser chooser = new JFileChooser(); 
+				chooser.setCurrentDirectory(new java.io.File("."));
+				chooser.setDialogTitle("Select the directoty");
+				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+				chooser.setAcceptAllFileFilterUsed(false);
+
+				if (chooser.showOpenDialog(CommunicationFrame.this) == JFileChooser.APPROVE_OPTION) { 
+					logger.debug("getCurrentDirectory(): " +  chooser.getCurrentDirectory());
+					logger.debug("getSelectedFile() : " +  chooser.getSelectedFile());
+				}
+				else {
+					logger.debug("No Selection.");
+				}
+				IncomingFileTransfer transfer = request.accept();
+				String path= chooser.getSelectedFile()+"/"+request.getFileName();
+				File file = new File(path);
+				try {
+					transfer.recieveFile(file);
+				} catch (XMPPException k) {
+					k.printStackTrace();
+				}
+
+				printNotification((getArea(user,true)),"the file transfer of: "+request.getFileName()+" between you and "+ user+" ended successfully");
+				sendMessage("0101010001000001 $File transfer of: "+request.getFileName()+ " has been accepted",request.getRequestor(),false);
+			}
+		});
+		reject.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				accept.setEnabled(false);
+				reject.setEnabled(false);
+				request.reject();
+
+				printNotification((getArea(user,false))," you have rejected the file transfer");
+				sendMessage("0101010001010010 $File transfer of: "+request.getFileName()+" has been rejected",request.getRequestor(), false);
+			}
+		});
+	}
+
+	@Override
+	public void chatCreated(Chat chat, boolean createdLocally) {
+		if(!createdLocally) {
+
+			chat.addMessageListener(new MessageListener() {
+
+				@Override
+				public void processMessage(Chat chat, Message message) {
+					if(message.getType() == Message.Type.chat){
+						logger.debug("Incoming message from: " + chat.getThreadID());
+						logger.debug("GUI: " + CommunicationFrame.this);
+						String user = chat.getParticipant().substring(0,chat.getParticipant().indexOf("@"));
+						printMessage((getArea(user,false)),interaction.userFromAddress(message.getFrom()), message.getBody(), false);
+						if(!isVisible()) {
+							setVisible(true);
+							setState(java.awt.Frame.NORMAL);
+							toFront();
+						} else {
+							toFront();
+						}
+					}
+				}
+			});
+
+		}
+	}
 }

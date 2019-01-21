@@ -13,7 +13,6 @@ import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class Server {
 	private static Server server;
 	private XMPPConnection connection;
@@ -21,79 +20,73 @@ public class Server {
 	private int port;
 	private Roster roster;
 	private String user;
-	
+
 	private final Logger logger = LoggerFactory.getLogger(Server.class);
 
-	private Server(){
-
+	private Server() {
 	}
 
-	public void login(String userName, String password) throws XMPPException
-	{
+	public void login(String userName, String password) throws XMPPException {
 		XmppData.getXmppData();
-		domain= XmppData.DOMAIN;
+		domain = XmppData.DOMAIN;
 		port = XmppData.PORT;
-		user=userName;
-		ConnectionConfiguration config = new ConnectionConfiguration(domain,port);
+		user = userName;
+		ConnectionConfiguration config = new ConnectionConfiguration(domain, port);
 		connection = new XMPPConnection(config);
 		connection.connect();
 
-		try{
-			AccountManager user= new AccountManager(connection);
+		try {
+			AccountManager user = new AccountManager(connection);
 			user.createAccount(userName, password);
 			logger.debug("XMPP user created");
 			connection.login(userName, password);
-		}catch (XMPPException e) {
+		} catch (XMPPException e) {
 			logger.debug("XMPP user existing");
 			connection.login(userName, password);
 		}
 	}
 
-	public Roster getRoster()
-	{
-		roster=connection.getRoster();
+	public Roster getRoster() {
+		roster = connection.getRoster();
 		return roster;
 	}
 
-	public Chat getChat(String to, String id, MessageListener listner)
-	{
-		Chat chat=null;
+	public Chat getChat(String to, String id, MessageListener listner) {
+		Chat chat = null;
 		id = id + "@" + user;
-		if(connection.getChatManager().getThreadChat(id)==null){
+		if (connection.getChatManager().getThreadChat(id) == null) {
 			logger.debug("Creation chat: " + to + ", id = " + id);
 			chat = connection.getChatManager().createChat(to, id, listner);
-		}
-		else{
+		} else {
 			logger.debug("Existing chat: " + to + ", id = " + id);
 			chat = connection.getChatManager().getThreadChat(id);
 		}
 		return chat;
 	}
 
-	public ChatManager getChatManager(){
+	public ChatManager getChatManager() {
 		return connection.getChatManager();
 	}
 
-	public String getUserAddress(){
+	public String getUserAddress() {
 
-		return "@"+connection.getHost();
+		return "@" + connection.getHost();
 	}
 
-	public FileTransferManager getTransferManager(){
-		FileTransferManager manager= new FileTransferManager(connection);
+	public FileTransferManager getTransferManager() {
+		FileTransferManager manager = new FileTransferManager(connection);
 		return manager;
 	}
-	public Connection getConnection()
-	{
+
+	public Connection getConnection() {
 		return connection;
 	}
 
-	public static Server getInstance()
-	{
-		if(server==null){
-			server=new Server();
+	public static Server getInstance() {
+		if (server == null) {
+			server = new Server();
 		}
-			
+
 		return server;
 	}
 }
