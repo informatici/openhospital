@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.isf.video.gui.MiddlePanel;
+import org.isf.video.manager.VideoDeviceStreamAppletManager;
 import org.isf.video.manager.VideoManager;
 
 public class FullScreenStreamFrame extends JFrame {
@@ -89,7 +90,7 @@ public class FullScreenStreamFrame extends JFrame {
 		
 		if (n == JOptionPane.YES_OPTION)	{
 			VideoDeviceStreamAppletManager.currentStreamApplet.activate();
-			VideoManager.frame.restoreNormalSizeFrame();
+			((VideoFrame) VideoManager.getFrame()).restoreNormalSizeFrame();
 		}
 		else if (n == JOptionPane.NO_OPTION)	{
 			VideoDeviceStreamAppletManager.currentStreamApplet.activate();

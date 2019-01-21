@@ -22,6 +22,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import org.isf.video.manager.VideoManager;
+import org.isf.video.manager.VideoDeviceStreamAppletManager;
 import org.isf.video.manager.VideoDevicesManager;
 
 public class BottomPanel extends JPanel {
@@ -126,8 +127,8 @@ public class BottomPanel extends JPanel {
 		importPhotoButton = new JButton("Add to OpenHospital", new ImageIcon("rsc/icons/plus_button.png"));
 		importPhotoButton.addActionListener(new ActionListener () {
 			public void actionPerformed(ActionEvent e) {
-				VideoManager.frame.selectedPhotoFileName = selectedPreview.path;
-				VideoManager.frame.closeFrame();
+				((VideoFrame) VideoManager.getFrame()).selectedPhotoFileName = selectedPreview.path;
+				((VideoFrame) VideoManager.getFrame()).closeFrame();
 			}
 		});
 		

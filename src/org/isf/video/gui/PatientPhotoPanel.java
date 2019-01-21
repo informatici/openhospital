@@ -35,6 +35,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.patient.gui.PatientInsertExtended;
 import org.isf.utils.jobjects.Cropping;
 import org.isf.utils.jobjects.IconButton;
+import org.isf.video.manager.VideoDeviceStreamAppletManager;
 import org.isf.video.manager.VideoDevicesManager;
 import org.isf.video.manager.VideoManager;
 import org.isf.video.model.Resolution;

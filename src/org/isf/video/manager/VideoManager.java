@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.isf.video.gui.VideoDeviceStreamApplet;
-import org.isf.video.gui.VideoDeviceStreamAppletManager;
-import org.isf.video.gui.VideoFrame;
 import org.isf.video.model.VideoDevice;
 import org.isf.video.service.XMLDocumentManager;
 import org.isf.video.service.XMLDocumentManagerFactory;
@@ -17,13 +14,13 @@ public class VideoManager {
 	
 	private static XMLDocumentManager xmlDocManager = XMLDocumentManagerFactory.getXMLDocumentManagerFactory().createXMLDocumentManager();
 	
-	public static VideoFrame frame = null;
+	public static AbstractVideoFrame frame;
 	
 	public static String shotPhotosTempDir = "";
 	public static String shotPhotosExtension = ".jpg";
 	
-	public static void init (VideoFrame vf)	{
-		frame = vf;
+	public static void init(AbstractVideoFrame frame) {
+		setFrame(frame);
 		init();
 	}
 	
@@ -148,4 +145,16 @@ public class VideoManager {
 		
 		return generatedFileName;
 	}
+
+	public static AbstractVideoFrame getFrame() {
+		return frame;
+	}
+
+	/**
+	 * @param frame the frame to set
+	 */
+	private static void setFrame(AbstractVideoFrame frame) {
+		VideoManager.frame = frame;
+	}
+	
 }

@@ -5,9 +5,9 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JDialog;
 
-import org.isf.video.gui.VideoDeviceStreamApplet;
-import org.isf.video.gui.VideoDeviceStreamAppletManager;
 import org.isf.video.gui.VideoFrame;
+import org.isf.video.manager.VideoDeviceStreamApplet;
+import org.isf.video.manager.VideoDeviceStreamAppletManager;
 
 public class Main {
 	

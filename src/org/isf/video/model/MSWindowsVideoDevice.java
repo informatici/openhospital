@@ -3,7 +3,7 @@ package org.isf.video.model;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import org.isf.video.gui.VideoDeviceStreamAppletManager;
+import org.isf.video.manager.VideoDeviceStreamAppletManager;
 import org.isf.video.manager.VideoManager;
 
 public class MSWindowsVideoDevice extends VideoDevice {	

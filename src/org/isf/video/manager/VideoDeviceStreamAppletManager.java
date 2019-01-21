@@ -1,4 +1,4 @@
-package org.isf.video.gui;
+package org.isf.video.manager;
 
 import java.util.ArrayList;
 
@@ -11,7 +11,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.isf.video.manager.VideoDevicesManager;
 import org.isf.video.model.VideoDevice;
 
 public class VideoDeviceStreamAppletManager {
@@ -31,7 +30,6 @@ public class VideoDeviceStreamAppletManager {
 		
 		return newVideoDeviceApplet;
 	}
-	
 	
 	public static boolean saveCurrentFrame(VideoDeviceStreamApplet videoDeviceStreamApplet, String path)
 	{

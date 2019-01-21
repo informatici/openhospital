@@ -21,6 +21,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.video.manager.VideoDeviceStreamApplet;
+import org.isf.video.manager.VideoDeviceStreamAppletManager;
 import org.isf.video.manager.VideoDevicesManager;
 import org.isf.video.manager.VideoManager;
 
@@ -155,12 +157,12 @@ public class MiddlePanel extends JPanel {
 				
 				String generatedFileName = "";
 				if (! filename.equals(""))
-					generatedFileName = VideoManager.frame.savePhoto(filename);
+					generatedFileName = ((VideoFrame) VideoManager.getFrame()).savePhoto(filename);
 				
-				if ((! generatedFileName.equals(""))	&&	VideoManager.frame.fullScreenMode)	{
+				if ((! generatedFileName.equals(""))	&&	((VideoFrame) VideoManager.getFrame()).fullScreenMode)	{
 					// The creation of a popup window is done by the FullScreanStreamFrame object
 					// because have to be shown on top
-					VideoManager.frame.fullScreenStreamFrame.showPhotoPreview(generatedFileName);
+					((VideoFrame) VideoManager.getFrame()).fullScreenStreamFrame.showPhotoPreview(generatedFileName);
 				}
 			}
 		});
@@ -174,7 +176,7 @@ public class MiddlePanel extends JPanel {
 		fullScreenButton.setMargin(new Insets(0, 0, 0, 0));
 		fullScreenButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				VideoManager.frame.setStreamPanelFullScreen();
+				((VideoFrame) VideoManager.getFrame()).setStreamPanelFullScreen();
 			}
 		});
 		
@@ -195,7 +197,7 @@ public class MiddlePanel extends JPanel {
 		
 		normalSizeScreenButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				VideoManager.frame.restoreNormalSizeFrame();
+				((VideoFrame) VideoManager.getFrame()).restoreNormalSizeFrame();
 			}
 		});
 	}
@@ -319,7 +321,7 @@ public class MiddlePanel extends JPanel {
 		int appletHeight = (int)ssize.getHeight() - 200;
 		int appletWidth = appletHeight * resWidth / resHeight;
 		
-		VideoManager.frame.showVideoDeviceStream(VideoDevicesManager.currentVideoDevice.id, resWidth, resHeight, appletWidth, appletHeight);
+		((VideoFrame) VideoManager.getFrame()).showVideoDeviceStream(VideoDevicesManager.currentVideoDevice.id, resWidth, resHeight, appletWidth, appletHeight);
 		
 		commandsPanel.remove(fullScreenButton);
 		commandsPanel.add(normalSizeScreenButton);
@@ -334,10 +336,10 @@ public class MiddlePanel extends JPanel {
 		int resWidth = applet.resolutionWidth;
 		int resHeight = applet.resolutionHeight;
 		
-		int appletHeight = VideoManager.frame.calculateHeightForApplet();
+		int appletHeight = ((VideoFrame) VideoManager.getFrame()).calculateHeightForApplet();
 		int appletWidth = appletHeight * resWidth / resHeight;
 		
-		VideoManager.frame.showVideoDeviceStream(VideoDevicesManager.currentVideoDevice.id, resWidth, resHeight, appletWidth, appletHeight);
+		((VideoFrame) VideoManager.getFrame()).showVideoDeviceStream(VideoDevicesManager.currentVideoDevice.id, resWidth, resHeight, appletWidth, appletHeight);
 		
 		commandsPanel.remove(normalSizeScreenButton);
 		commandsPanel.add(fullScreenButton);

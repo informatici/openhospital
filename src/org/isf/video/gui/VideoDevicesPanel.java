@@ -108,8 +108,8 @@ public class VideoDevicesPanel extends JPanel {
 		resolutionsComboBox.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent ie) {
 				
-				if ((VideoManager.frame.ignoreNonUserEvents == false)	&&	(idSelectedRadio >= 0))	{
-					VideoManager.frame.ignoreNonUserEvents = true;
+				if ((((VideoFrame) VideoManager.getFrame()).ignoreNonUserEvents == false)	&&	(idSelectedRadio >= 0))	{
+					((VideoFrame) VideoManager.getFrame()).ignoreNonUserEvents = true;
 					
 					selectedResolution = (String)((JComboBox)ie.getSource()).getSelectedItem();
 					
@@ -122,18 +122,18 @@ public class VideoDevicesPanel extends JPanel {
 						int resHeight = Integer.parseInt(dimensions[1]);
 						
 						if (resWidth > 0	&&	resHeight > 0)	{
-							int appletHeight = VideoManager.frame.calculateHeightForApplet();
+							int appletHeight = ((VideoFrame) VideoManager.getFrame()).calculateHeightForApplet();
 							int appletWidth = appletHeight * resWidth / resHeight;
 							
 							VideoManager.setCurrentResolutionAsDefault(resWidth, resHeight, 
 									VideoManager.getVideoDevice(idSelectedRadio).deviceIdentificationString);
 							
-							VideoManager.frame.showVideoDeviceStream(idSelectedRadio, resWidth, resHeight,
+							((VideoFrame) VideoManager.getFrame()).showVideoDeviceStream(idSelectedRadio, resWidth, resHeight,
 																		appletWidth, appletHeight);
 						}
 					}
 					
-					VideoManager.frame.ignoreNonUserEvents = false;
+					((VideoFrame) VideoManager.getFrame()).ignoreNonUserEvents = false;
 				}
 			}
 		});
@@ -148,7 +148,7 @@ public class VideoDevicesPanel extends JPanel {
 	        public void actionPerformed(ActionEvent ie) {
 	        	boolean ignoreFile = true;
 	        	
-	        	VideoManager.frame.checkResolutions(VideoManager.getVideoDevice(idSelectedRadio), ignoreFile);
+	        	((VideoFrame) VideoManager.getFrame()).checkResolutions(VideoManager.getVideoDevice(idSelectedRadio), ignoreFile);
 	        }
 		});
 		
@@ -213,8 +213,8 @@ public class VideoDevicesPanel extends JPanel {
 		deviceRadio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae)	{  
 				
-				if (VideoManager.frame.ignoreNonUserEvents == false)	{
-					VideoManager.frame.ignoreNonUserEvents = true;
+				if (((VideoFrame) VideoManager.getFrame()).ignoreNonUserEvents == false)	{
+					((VideoFrame) VideoManager.getFrame()).ignoreNonUserEvents = true;
 					
 					System.out.println("[deviceRadio] Debug: Clicked radio button, id: " + id);
 					
@@ -230,13 +230,13 @@ public class VideoDevicesPanel extends JPanel {
 						int resWidth = Integer.parseInt(dimensions[0]);
 						int resHeight = Integer.parseInt(dimensions[1]);
 						
-						int appletHeight = VideoManager.frame.calculateHeightForApplet();
+						int appletHeight = ((VideoFrame) VideoManager.getFrame()).calculateHeightForApplet();
 						int appletWidth = appletHeight * resWidth / resHeight;
 						
-						VideoManager.frame.showVideoDeviceStream(id, resWidth, resHeight, appletWidth, appletHeight);
+						((VideoFrame) VideoManager.getFrame()).showVideoDeviceStream(id, resWidth, resHeight, appletWidth, appletHeight);
 					}
 					
-					VideoManager.frame.ignoreNonUserEvents = false;
+					((VideoFrame) VideoManager.getFrame()).ignoreNonUserEvents = false;
 				}
 			}
 		});
@@ -331,11 +331,11 @@ public class VideoDevicesPanel extends JPanel {
 		
 		if (resolutionsComboBox.getItemCount() > 0)
 		{
-			VideoManager.frame.ignoreNonUserEvents = true;
+			((VideoFrame) VideoManager.getFrame()).ignoreNonUserEvents = true;
 			resolutionsComboBox.setSelectedIndex(0);
 		}
 		
-		VideoManager.frame.ignoreNonUserEvents = false;
+		((VideoFrame) VideoManager.getFrame()).ignoreNonUserEvents = false;
 	}
 	
 	
@@ -435,7 +435,7 @@ public class VideoDevicesPanel extends JPanel {
 		int index = videoDevice.id;
 		
 		if (index == idSelectedRadio){
-			VideoManager.frame.removeApplet();
+			((VideoFrame) VideoManager.getFrame()).removeApplet();
 			idSelectedRadio = -1;
 		}
 		

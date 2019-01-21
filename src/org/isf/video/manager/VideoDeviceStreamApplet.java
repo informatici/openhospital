@@ -1,4 +1,4 @@
-package org.isf.video.gui;
+package org.isf.video.manager;
 
 import org.isf.video.model.VideoDevice;
 
