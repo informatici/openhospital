@@ -1,11 +1,11 @@
 package org.isf.exatype.test;
 
 
+import java.util.List;
+
 import org.isf.exatype.model.ExamType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestExamTypeContext 
 {		

@@ -5,10 +5,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
+import org.isf.disctype.model.DischargeType;
+import org.isf.disctype.service.DischargeTypeIoOperation;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-import org.isf.disctype.service.DischargeTypeIoOperation;
-import org.isf.disctype.model.DischargeType;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -12,7 +12,7 @@ import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
 import org.isf.medicalstockward.service.MedicalStockWardIoOperations;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.serviceprinting.print.MedicalWardForPrint;
 import org.isf.serviceprinting.print.MovementForPrint;
 import org.isf.serviceprinting.print.MovementWardForPrint;
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 public class MovWardBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(MovWardBrowserManager.class);
-	private MedicalStockWardIoOperations ioOperations=Menu.getApplicationContext().getBean(MedicalStockWardIoOperations.class);
+	private MedicalStockWardIoOperations ioOperations=Context.getApplicationContext().getBean(MedicalStockWardIoOperations.class);
 
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

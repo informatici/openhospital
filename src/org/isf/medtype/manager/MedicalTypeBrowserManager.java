@@ -6,7 +6,7 @@ import java.util.List;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medtype.model.MedicalType;
 import org.isf.medtype.service.MedicalTypeIoOperation;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -21,7 +21,7 @@ public class MedicalTypeBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(MedicalTypeBrowserManager.class);
 	
-	private MedicalTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(MedicalTypeIoOperation.class);
+	private MedicalTypeIoOperation ioOperations = Context.getApplicationContext().getBean(MedicalTypeIoOperation.class);
 	
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

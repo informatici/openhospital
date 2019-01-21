@@ -1,14 +1,14 @@
 package org.isf.video.manager;
 
-import java.util.Hashtable;
 import java.io.File;
 import java.io.FilenameFilter;
-
-import jcu.sal.config.HwProbeService;
+import java.util.Hashtable;
 
 import org.isf.video.model.LinuxVideoDevice;
 import org.isf.video.model.VideoDevice;
 import org.isf.video.service.LinuxShellInterface;
+
+import jcu.sal.config.HwProbeService;
 
 public class LinuxVideoDevicesManager extends VideoDevicesManager {
 	HwProbeService hp = HwProbeService.getService();

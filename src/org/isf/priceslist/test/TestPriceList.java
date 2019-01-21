@@ -1,10 +1,10 @@
 package org.isf.priceslist.test;
 
 
+import static org.junit.Assert.assertEquals;
+
 import org.isf.priceslist.model.PriceList;
 import org.isf.utils.exception.OHException;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestPriceList 
 {	

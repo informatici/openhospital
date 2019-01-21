@@ -1,12 +1,11 @@
 package org.isf.video.manager;
 
-import java.awt.image.ImageFilter;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.CropImageFilter;
-import java.awt.image.ImageProducer;
-
-import java.awt.Toolkit;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.CropImageFilter;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
 
 public class PatientPhotoCreator {
 	

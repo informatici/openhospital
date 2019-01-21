@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -24,7 +24,7 @@ public class VaccineTypeBrowserManager {
 	
     private final Logger logger = LoggerFactory.getLogger(VaccineTypeBrowserManager.class);
 	
-	private VacTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(VacTypeIoOperation.class);
+	private VacTypeIoOperation ioOperations = Context.getApplicationContext().getBean(VacTypeIoOperation.class);
 	
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

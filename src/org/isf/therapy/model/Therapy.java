@@ -1,6 +1,7 @@
 package org.isf.therapy.model;
 
 import java.util.GregorianCalendar;
+
 import org.isf.medicals.model.Medical;
 
 /**

@@ -1,11 +1,11 @@
 package org.isf.accounting.test;
 
 
+import static org.junit.Assert.assertEquals;
+
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.utils.exception.OHException;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestBillItems 
 {	

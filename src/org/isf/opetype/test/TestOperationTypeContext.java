@@ -1,11 +1,11 @@
 package org.isf.opetype.test;
 
 
+import java.util.List;
+
 import org.isf.opetype.model.OperationType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestOperationTypeContext 
 {		

@@ -6,14 +6,14 @@ import java.util.List;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.admtype.service.AdmissionTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 
 public class AdmissionTypeBrowserManager {
 
-	private AdmissionTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(AdmissionTypeIoOperation.class);
+	private AdmissionTypeIoOperation ioOperations = Context.getApplicationContext().getBean(AdmissionTypeIoOperation.class);
 
 	/**
 	 * Returns all the available {@link AdmissionType}s.

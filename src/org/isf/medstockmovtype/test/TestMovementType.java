@@ -1,10 +1,10 @@
 package org.isf.medstockmovtype.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.medstockmovtype.model.MovementType;
-
 import static org.junit.Assert.assertEquals;
+
+import org.isf.medstockmovtype.model.MovementType;
+import org.isf.utils.exception.OHException;
 
 public class TestMovementType 
 {	

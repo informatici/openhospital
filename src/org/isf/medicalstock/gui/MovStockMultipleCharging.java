@@ -50,7 +50,7 @@ import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.supplier.manager.SupplierBrowserManager;
 import org.isf.supplier.model.Supplier;
 import org.isf.utils.db.NormalizeString;
@@ -112,7 +112,7 @@ public class MovStockMultipleCharging extends JDialog {
 	private final int PACKETS = 1;
 	private int optionSelected = UNITS;
 	
-	MovStockInsertingManager movManager = Menu.getApplicationContext().getBean(MovStockInsertingManager.class);
+	MovStockInsertingManager movManager = Context.getApplicationContext().getBean(MovStockInsertingManager.class);
 
 	/**
 	 * Launch the application.

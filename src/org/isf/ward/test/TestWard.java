@@ -1,10 +1,10 @@
 package org.isf.ward.test;
 
 
+import static org.junit.Assert.assertEquals;
+
 import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestWard 
 {	

@@ -1,6 +1,8 @@
 package org.isf.dicom.gui;
 
 import java.io.File;
+
+import javax.swing.filechooser.FileView;
   
 /**
  * Filter for file DICOM

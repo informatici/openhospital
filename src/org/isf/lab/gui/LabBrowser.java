@@ -46,7 +46,7 @@ import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryForPrint;
 import org.isf.lab.service.LabIoOperations;
 import org.isf.menu.gui.MainMenu;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
@@ -116,7 +116,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 	public LabBrowser() {
 		super();
 		myFrame = this;
-		manager = new LabManager(Menu.getApplicationContext().getBean(LabIoOperations.class));
+		manager = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
 		initialize();
 		setResizable(false);
 		setVisible(true);
@@ -527,7 +527,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private LabManager manager = new LabManager(Menu.getApplicationContext().getBean(LabIoOperations.class));
+		private LabManager manager = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
 
 		public LabBrowsingModel(String exam, GregorianCalendar dateFrom, GregorianCalendar dateTo) {
 			try {

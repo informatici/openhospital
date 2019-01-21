@@ -8,8 +8,6 @@ package org.isf.stat.gui.report;
 
 import javax.swing.JOptionPane;
 
-import net.sf.jasperreports.view.JasperViewer;
-
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.generaldata.TxtPrinter;
@@ -18,6 +16,8 @@ import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sf.jasperreports.view.JasperViewer;
 
 public class GenericReportBill {
 

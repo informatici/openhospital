@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.priceslist.model.List;
 import org.isf.priceslist.model.Price;
 import org.isf.priceslist.model.PriceList;
@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils;
 
 public class PriceListManager {
 
-	private PricesListIoOperations ioOperations = Menu.getApplicationContext().getBean(PricesListIoOperations.class);
+	private PricesListIoOperations ioOperations = Context.getApplicationContext().getBean(PricesListIoOperations.class);
 	
 	/**
 	 * return the list of {@link List}s in the DB

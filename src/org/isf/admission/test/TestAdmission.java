@@ -1,22 +1,22 @@
 package org.isf.admission.test;
 
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.isf.operation.model.Operation;
-import org.isf.patient.model.Patient;
-import org.isf.pregtreattype.model.PregnantTreatmentType;
-import org.isf.utils.exception.OHException;
-import org.isf.ward.model.Ward;
 import org.isf.admission.model.Admission;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disease.model.Disease;
 import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.dlvrtype.model.DeliveryType;
-
-import static org.junit.Assert.assertEquals;
+import org.isf.operation.model.Operation;
+import org.isf.patient.model.Patient;
+import org.isf.pregtreattype.model.PregnantTreatmentType;
+import org.isf.utils.exception.OHException;
+import org.isf.ward.model.Ward;
 
 public class TestAdmission 
 {	

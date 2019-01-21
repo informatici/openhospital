@@ -1,10 +1,10 @@
 package org.isf.pricesothers.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.pricesothers.model.PricesOthers;
-
 import static org.junit.Assert.assertEquals;
+
+import org.isf.pricesothers.model.PricesOthers;
+import org.isf.utils.exception.OHException;
 
 
 public class TestPricesOthers 

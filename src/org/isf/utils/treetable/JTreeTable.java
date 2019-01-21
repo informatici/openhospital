@@ -42,6 +42,7 @@ package org.isf.utils.treetable;
 
 import java.awt.Component;
 import java.awt.Dimension;
+
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;

@@ -14,7 +14,7 @@ import org.isf.admtype.model.AdmissionType;
 import org.isf.disctype.model.DischargeType;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -22,7 +22,7 @@ import org.isf.utils.exception.model.OHSeverityLevel;
 
 public class AdmissionBrowserManager {
 
-	private AdmissionIoOperations ioOperations = Menu.getApplicationContext().getBean(AdmissionIoOperations.class);
+	private AdmissionIoOperations ioOperations = Context.getApplicationContext().getBean(AdmissionIoOperations.class);
 
 	/**
 	 * Returns all patients with ward in which they are admitted.

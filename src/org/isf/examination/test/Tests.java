@@ -1,6 +1,10 @@
 package org.isf.examination.test;
 
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+
 import org.isf.examination.model.PatientExamination;
 import org.isf.examination.service.ExaminationOperations;
 import org.isf.patient.model.Patient;
@@ -17,10 +21,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext.xml" })

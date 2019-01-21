@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.pricesothers.service.PriceOthersIoOperations;
 import org.isf.utils.exception.OHServiceException;
@@ -18,7 +18,7 @@ public class PricesOthersManager {
 
 	private final Logger logger = LoggerFactory.getLogger(PricesOthersManager.class);
 	
-	private PriceOthersIoOperations ioOperations = Menu.getApplicationContext().getBean(PriceOthersIoOperations.class);
+	private PriceOthersIoOperations ioOperations = Context.getApplicationContext().getBean(PriceOthersIoOperations.class);
 
 	/**
 	 * return the list of {@link PriceOthers}s in the DB

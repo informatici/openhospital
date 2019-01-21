@@ -1,12 +1,12 @@
 package org.isf.medicalstock.test;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.isf.utils.exception.OHException;
 import org.isf.medicalstock.model.Lot;
-
-import static org.junit.Assert.assertEquals;
+import org.isf.utils.exception.OHException;
 
 public class TestLot 
 {	 

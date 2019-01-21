@@ -1,13 +1,13 @@
 package org.isf.examination.test;
 
 
-import org.isf.examination.model.PatientExamination;
-import org.isf.patient.model.Patient;
-import org.isf.utils.exception.OHException;
+import static org.junit.Assert.assertEquals;
 
 import java.sql.Timestamp;
 
-import static org.junit.Assert.assertEquals;
+import org.isf.examination.model.PatientExamination;
+import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHException;
 
 public class TestPatientExamination 
 {	

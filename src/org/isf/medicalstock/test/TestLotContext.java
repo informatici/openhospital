@@ -1,11 +1,11 @@
 package org.isf.medicalstock.test;
 
 
+import java.util.List;
+
 import org.isf.medicalstock.model.Lot;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestLotContext 
 {		

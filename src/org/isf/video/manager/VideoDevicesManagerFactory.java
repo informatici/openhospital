@@ -1,7 +1,5 @@
 package org.isf.video.manager;
 
-import org.isf.video.manager.VideoDevicesManager;
-
 public abstract class VideoDevicesManagerFactory {
 
 	public static VideoDevicesManagerFactory getVideoDevicesManagerFactory()

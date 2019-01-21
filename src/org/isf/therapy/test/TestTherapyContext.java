@@ -1,11 +1,11 @@
 package org.isf.therapy.test;
 
 
+import java.util.List;
+
 import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestTherapyContext 
 {		

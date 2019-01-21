@@ -1,16 +1,31 @@
 
 package org.isf.menu.gui;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EventListener;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.event.EventListenerList;
 
-import org.isf.menu.manager.*;
-import org.isf.menu.model.*;
-import org.isf.utils.db.BCrypt;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.UserBrowsingManager;
+import org.isf.menu.model.User;
+import org.isf.menu.model.UserGroup;
+import org.isf.utils.db.BCrypt;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 

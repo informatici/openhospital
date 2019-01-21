@@ -1,10 +1,10 @@
 package org.isf.medtype.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.medtype.model.MedicalType;
-
 import static org.junit.Assert.assertEquals;
+
+import org.isf.medtype.model.MedicalType;
+import org.isf.utils.exception.OHException;
 
 public class TestMedicalType 
 {	

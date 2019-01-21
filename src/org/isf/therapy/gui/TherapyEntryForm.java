@@ -43,7 +43,7 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.therapy.manager.TherapyManager;
 import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
@@ -763,7 +763,7 @@ public class TherapyEntryForm extends JDialog {
 					boolean notify = false;
 					boolean sms = false;
 
-					TherapyManager thManager = Menu.getApplicationContext().getBean(TherapyManager.class);
+					TherapyManager thManager = Context.getApplicationContext().getBean(TherapyManager.class);
 					try {
 						thRow = thManager.newTherapy(therapyID, patID, startDate, endDate, medical, qty, unitID, freqInDay, freqInPeriod, note, notify, sms);
 						therapyID = thRow.getTherapyID();

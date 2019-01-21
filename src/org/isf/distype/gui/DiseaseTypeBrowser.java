@@ -17,9 +17,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import org.isf.distype.gui.DiseaseTypeBrowserEdit.DiseaseTypeListener;
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
 import org.isf.distype.model.DiseaseType;
-import org.isf.distype.gui.DiseaseTypeBrowserEdit.DiseaseTypeListener;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;

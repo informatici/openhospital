@@ -1,11 +1,11 @@
 package org.isf.lab.test;
 
 
+import java.util.List;
+
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestLaboratoryRowContext 
 {		

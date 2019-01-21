@@ -1,11 +1,11 @@
 package org.isf.medstockmovtype.test;
 
 
+import java.util.List;
+
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestMovementTypeContext 
 {		

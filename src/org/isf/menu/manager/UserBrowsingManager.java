@@ -3,7 +3,6 @@ package org.isf.menu.manager;
 import java.util.ArrayList;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
@@ -14,7 +13,7 @@ import org.isf.utils.exception.model.OHSeverityLevel;
 
 public class UserBrowsingManager {
 
-	private MenuIoOperations ioOperations = Menu.getApplicationContext().getBean(MenuIoOperations.class);
+	private MenuIoOperations ioOperations = Context.getApplicationContext().getBean(MenuIoOperations.class);
 	
 	/**
 	 * returns the list of {@link User}s

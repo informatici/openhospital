@@ -6,7 +6,7 @@ import java.util.GregorianCalendar;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstock.service.MedicalStockIoOperations;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -22,7 +22,7 @@ public class MovBrowserManager {
 	private MedicalStockIoOperations ioOperations;
 	
 	public MovBrowserManager(){
-		ioOperations = Menu.getApplicationContext().getBean(MedicalStockIoOperations.class);
+		ioOperations = Context.getApplicationContext().getBean(MedicalStockIoOperations.class);
 	}
 	
 	/**

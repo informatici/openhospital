@@ -8,12 +8,8 @@ import org.apache.log4j.PropertyConfigurator;
 import org.isf.generaldata.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Menu {
-
-	private static ApplicationContext applicationContext;
 
 	private static Logger logger = LoggerFactory.getLogger(Menu.class);
 
@@ -38,13 +34,6 @@ public class Menu {
 		
 	}
 	
-	/**
-	 * Returns the main {@link ApplicationContext}. 
-	 */
-	public static ApplicationContext getApplicationContext() {
-		return applicationContext;
-	}
-
 	public static void checkJavaVersion() {
 		String version = System.getProperty("java.version");
 		logger.info("Java version " + version);
@@ -57,7 +46,6 @@ public class Menu {
 	}
 
 	public static void main(String[] args) {
-		applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
 		PropertyConfigurator.configure(new File("./rsc/log4j.properties").getAbsolutePath());
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

@@ -1,9 +1,9 @@
 package org.isf.hospital.test;
 
-import org.isf.utils.exception.OHException;
-import org.isf.hospital.model.Hospital;
-
 import static org.junit.Assert.assertEquals;
+
+import org.isf.hospital.model.Hospital;
+import org.isf.utils.exception.OHException;
 
 public class TestHospital 
 {	

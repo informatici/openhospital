@@ -49,7 +49,7 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.lab.manager.LabManager;
 import org.isf.lab.model.Laboratory;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
@@ -269,7 +269,7 @@ public class LabNew extends JDialog implements SelectionListener {
 					
 					boolean result = false;
 					
-					LabManager labManager = Menu.getApplicationContext().getBean(LabManager.class);
+					LabManager labManager = Context.getApplicationContext().getBean(LabManager.class);
 					try {
 						result = labManager.newLaboratory(labLists, examResults);
 					} catch (OHServiceException e1) {

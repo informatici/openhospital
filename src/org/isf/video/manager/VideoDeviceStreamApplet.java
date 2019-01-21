@@ -2,9 +2,8 @@ package org.isf.video.manager;
 
 import org.isf.video.model.VideoDevice;
 
-import processing.core.PApplet;
-
 import codeanticode.gsvideo.GSCapture;
+import processing.core.PApplet;
 
 public class VideoDeviceStreamApplet extends PApplet	{
 	private static final long serialVersionUID = 1L;

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.pregtreattype.service.PregnantTreatmentTypeIoOperation;
 import org.isf.utils.exception.OHServiceException;
@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 
 public class PregnantTreatmentTypeBrowserManager {
 
-	private PregnantTreatmentTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(PregnantTreatmentTypeIoOperation.class);
+	private PregnantTreatmentTypeIoOperation ioOperations = Context.getApplicationContext().getBean(PregnantTreatmentTypeIoOperation.class);
 	
 	/**
 	 * return the list of {@link PregnantTreatmentType}s

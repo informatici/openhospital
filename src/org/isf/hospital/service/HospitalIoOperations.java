@@ -1,6 +1,7 @@
 package org.isf.hospital.service;
 
 import java.util.ArrayList;
+
 import org.isf.hospital.model.Hospital;
 import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;

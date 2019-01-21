@@ -1,10 +1,10 @@
 package org.isf.distype.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.distype.model.DiseaseType;
-
 import static org.junit.Assert.assertEquals;
+
+import org.isf.distype.model.DiseaseType;
+import org.isf.utils.exception.OHException;
 
 public class TestDiseaseType 
 {	

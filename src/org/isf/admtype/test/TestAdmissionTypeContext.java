@@ -1,11 +1,11 @@
 package org.isf.admtype.test;
 
 
+import java.util.List;
+
 import org.isf.admtype.model.AdmissionType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestAdmissionTypeContext 
 {		

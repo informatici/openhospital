@@ -1,11 +1,11 @@
 package org.isf.vaccine.test;
 
 
-import org.isf.vaccine.model.Vaccine;
+import java.util.List;
+
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
+import org.isf.vaccine.model.Vaccine;
 
 public class TestVaccineContext 
 {		

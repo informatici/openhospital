@@ -1,9 +1,6 @@
 package org.isf.dicom.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.dicom.model.FileDicom;
-
 import static org.junit.Assert.assertEquals;
 
 import java.sql.Blob;
@@ -12,6 +9,9 @@ import java.util.Random;
 
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
+
+import org.isf.dicom.model.FileDicom;
+import org.isf.utils.exception.OHException;
 
 public class TestDicom 
 {	    

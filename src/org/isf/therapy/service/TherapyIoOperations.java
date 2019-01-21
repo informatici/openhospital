@@ -1,6 +1,7 @@
 package org.isf.therapy.service;
 
 import java.util.ArrayList;
+
 import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.db.TranslateOHServiceException;
 import org.isf.utils.exception.OHServiceException;

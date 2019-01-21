@@ -1,11 +1,11 @@
 package org.isf.exa.test;
 
 
-import org.isf.utils.exception.OHException;
+import static org.junit.Assert.assertEquals;
+
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
-
-import static org.junit.Assert.assertEquals;
+import org.isf.utils.exception.OHException;
 
 public class TestExamRow 
 {	

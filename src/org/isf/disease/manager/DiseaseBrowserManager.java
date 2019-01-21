@@ -16,7 +16,7 @@ import java.util.List;
 import org.isf.disease.model.Disease;
 import org.isf.disease.service.DiseaseIoOperations;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -26,7 +26,7 @@ import org.isf.utils.exception.model.OHSeverityLevel;
  */
 public class DiseaseBrowserManager {
 
-	private DiseaseIoOperations ioOperations = Menu.getApplicationContext().getBean(DiseaseIoOperations.class);
+	private DiseaseIoOperations ioOperations = Context.getApplicationContext().getBean(DiseaseIoOperations.class);
 
 	/**
 	 * Returns all the stored {@link Disease} with ODP flag <code>true</code>.

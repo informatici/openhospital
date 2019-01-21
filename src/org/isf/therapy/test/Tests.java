@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
-import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.exception.OHException;
 import org.isf.medicals.model.Medical;
 import org.isf.medicals.test.TestMedical;
 import org.isf.medicals.test.TestMedicalContext;
@@ -18,6 +16,8 @@ import org.isf.patient.test.TestPatient;
 import org.isf.patient.test.TestPatientContext;
 import org.isf.therapy.model.TherapyRow;
 import org.isf.therapy.service.TherapyIoOperations;
+import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.exception.OHException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -1,11 +1,11 @@
 package org.isf.disease.test;
 
 
-import org.isf.utils.exception.OHException;
+import static org.junit.Assert.assertEquals;
+
 import org.isf.disease.model.Disease;
 import org.isf.distype.model.DiseaseType;
-
-import static org.junit.Assert.assertEquals;
+import org.isf.utils.exception.OHException;
 
 public class TestDisease 
 {	

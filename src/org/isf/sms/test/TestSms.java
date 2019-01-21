@@ -1,12 +1,12 @@
 package org.isf.sms.test;
 
-import org.isf.utils.exception.OHException;
-import org.isf.sms.model.Sms;
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import org.isf.sms.model.Sms;
+import org.isf.utils.exception.OHException;
 
 
 public class TestSms 

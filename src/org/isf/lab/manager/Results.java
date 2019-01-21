@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
+
 import org.isf.generaldata.MessageBundle;
 
 public class Results {

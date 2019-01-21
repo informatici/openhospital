@@ -1,10 +1,10 @@
 package org.isf.disctype.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.disctype.model.DischargeType;
-
 import static org.junit.Assert.assertEquals;
+
+import org.isf.disctype.model.DischargeType;
+import org.isf.utils.exception.OHException;
 
 public class TestDischargeType 
 {	

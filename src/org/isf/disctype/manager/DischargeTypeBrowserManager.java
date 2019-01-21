@@ -6,14 +6,14 @@ import java.util.List;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disctype.service.DischargeTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 
 public class DischargeTypeBrowserManager {
 
-	private DischargeTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(DischargeTypeIoOperation.class);
+	private DischargeTypeIoOperation ioOperations = Context.getApplicationContext().getBean(DischargeTypeIoOperation.class);
 
 	/**
 	 * method that returns all DischargeTypes in a list

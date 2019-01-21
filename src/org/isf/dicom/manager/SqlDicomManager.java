@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import org.isf.dicom.model.FileDicom;
 import org.isf.dicom.service.DicomIoOperations;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 
 /**
@@ -14,7 +14,7 @@ import org.isf.utils.exception.OHServiceException;
  */
 public class SqlDicomManager implements DicomManagerInterface{   
 	
-	private DicomIoOperations ioOperations = Menu.getApplicationContext().getBean(DicomIoOperations.class);
+	private DicomIoOperations ioOperations = Context.getApplicationContext().getBean(DicomIoOperations.class);
 	/**
 	 * Constructor
 	 */

@@ -1,17 +1,17 @@
 package org.isf.medicalstock.test;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.isf.supplier.model.Supplier;
-import org.isf.utils.exception.OHException;
-import org.isf.ward.model.Ward;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medstockmovtype.model.MovementType;
-
-import static org.junit.Assert.assertEquals;
+import org.isf.supplier.model.Supplier;
+import org.isf.utils.exception.OHException;
+import org.isf.ward.model.Ward;
 
 public class TestMovement 
 {	

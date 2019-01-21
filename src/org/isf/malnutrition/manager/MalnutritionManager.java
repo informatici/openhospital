@@ -6,7 +6,7 @@ import java.util.List;
 import org.isf.generaldata.MessageBundle;
 import org.isf.malnutrition.model.Malnutrition;
 import org.isf.malnutrition.service.MalnutritionIoOperation;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -21,7 +21,7 @@ public class MalnutritionManager {
 
 	private final Logger logger = LoggerFactory.getLogger(MalnutritionManager.class);
 	
-	private MalnutritionIoOperation ioOperation = Menu.getApplicationContext().getBean(MalnutritionIoOperation.class);
+	private MalnutritionIoOperation ioOperation = Context.getApplicationContext().getBean(MalnutritionIoOperation.class);
 	
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

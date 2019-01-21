@@ -1,15 +1,15 @@
 package org.isf.patvac.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.vaccine.model.Vaccine;
-import org.isf.patient.model.Patient;
-import org.isf.patvac.model.PatientVaccine;
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import org.isf.patient.model.Patient;
+import org.isf.patvac.model.PatientVaccine;
+import org.isf.utils.exception.OHException;
+import org.isf.vaccine.model.Vaccine;
 
 public class TestPatientVaccine 
 {	

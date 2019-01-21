@@ -2,7 +2,6 @@ package org.isf.utils;
 
 import javax.persistence.EntityManagerFactory;
 
-import org.isf.menu.gui.Menu;
 import org.isf.utils.db.DbJpaUtil;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
