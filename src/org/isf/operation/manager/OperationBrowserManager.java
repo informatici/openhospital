@@ -3,7 +3,7 @@ package org.isf.operation.manager;
 import java.util.ArrayList;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.operation.model.Operation;
 import org.isf.operation.service.OperationIoOperations;
 import org.isf.opetype.model.OperationType;
@@ -25,7 +25,7 @@ public class OperationBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(OperationBrowserManager.class);
 	
-	private OperationIoOperations ioOperations = Menu.getApplicationContext().getBean(OperationIoOperations.class);
+	private OperationIoOperations ioOperations = Context.getApplicationContext().getBean(OperationIoOperations.class);
 
 	/**
 	 * return the list of {@link Operation}s

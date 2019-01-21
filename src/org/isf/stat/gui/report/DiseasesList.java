@@ -1,6 +1,7 @@
 package org.isf.stat.gui.report;
 
-import net.sf.jasperreports.view.JasperViewer;
+import javax.swing.JOptionPane;
+
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.stat.dto.JasperReportResultDto;
@@ -8,7 +9,7 @@ import org.isf.stat.manager.JasperReportsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
+import net.sf.jasperreports.view.JasperViewer;
 
 public class DiseasesList {
     private final Logger logger = LoggerFactory.getLogger(DiseasesList.class);

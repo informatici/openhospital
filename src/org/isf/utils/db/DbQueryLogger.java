@@ -1,10 +1,5 @@
 package org.isf.utils.db;
 
-import org.isf.generaldata.MessageBundle;
-import org.isf.utils.exception.OHException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +9,11 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that executes a query using the connection DbSingleJpaConn

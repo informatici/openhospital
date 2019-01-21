@@ -1,13 +1,13 @@
 package org.isf.disease.test;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.isf.disease.model.Disease;
 import org.isf.distype.model.DiseaseType;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TestDiseaseContext 
 {		

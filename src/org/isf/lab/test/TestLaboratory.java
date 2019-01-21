@@ -1,14 +1,14 @@
 package org.isf.lab.test;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.isf.utils.exception.OHException;
 import org.isf.exa.model.Exam;
 import org.isf.lab.model.Laboratory;
 import org.isf.patient.model.Patient;
-
-import static org.junit.Assert.assertEquals;
+import org.isf.utils.exception.OHException;
 
 public class TestLaboratory 
 {	 

@@ -1,15 +1,15 @@
 package org.isf.medicalstockward.test;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.isf.utils.exception.OHException;
-import org.isf.ward.model.Ward;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstockward.model.MovementWard;
 import org.isf.patient.model.Patient;
-
-import static org.junit.Assert.assertEquals;
+import org.isf.utils.exception.OHException;
+import org.isf.ward.model.Ward;
 
 public class TestMovementWard 
 {	 

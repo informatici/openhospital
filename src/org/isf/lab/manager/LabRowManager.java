@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.lab.service.LabIoOperations;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ public class LabRowManager {
 
 	private final Logger logger = LoggerFactory.getLogger(LabRowManager.class);
 	
-	private LabIoOperations ioOperations = Menu.getApplicationContext().getBean(LabIoOperations.class);
+	private LabIoOperations ioOperations = Context.getApplicationContext().getBean(LabIoOperations.class);
 	
 	/**
 	 * Return a list of results ({@link LaboratoryRow}s) for passed lab entry.

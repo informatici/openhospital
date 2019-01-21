@@ -10,7 +10,7 @@ import org.isf.disease.model.Disease;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.opd.model.Opd;
 import org.isf.opd.service.OpdIoOperations;
 import org.isf.utils.exception.OHServiceException;
@@ -28,7 +28,7 @@ public class OpdBrowserManager {
 	
 	private final Logger logger = LoggerFactory.getLogger(OpdBrowserManager.class);
 	
-	private OpdIoOperations ioOperations = Menu.getApplicationContext().getBean(OpdIoOperations.class);
+	private OpdIoOperations ioOperations = Context.getApplicationContext().getBean(OpdIoOperations.class);
 	
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

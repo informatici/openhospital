@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.isf.medicalstockward.model.MovementWard;
-import org.isf.utils.exception.OHException;
 
 /**
  * 		   @author mwithi

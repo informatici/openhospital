@@ -40,8 +40,8 @@ import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
-import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.ward.model.Ward;
 
 public class WardPharmacyNew extends JDialog implements SelectionListener {

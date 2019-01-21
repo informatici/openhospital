@@ -6,7 +6,7 @@ import java.util.List;
 import org.isf.exa.model.ExamRow;
 import org.isf.exa.service.ExamIoOperations;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExamRowBrowsingManager {
-	private ExamIoOperations ioOperations = Menu.getApplicationContext().getBean(ExamIoOperations.class);
+	private ExamIoOperations ioOperations = Context.getApplicationContext().getBean(ExamIoOperations.class);
 		
 	private final Logger logger = LoggerFactory.getLogger(ExamRowBrowsingManager.class);
 	

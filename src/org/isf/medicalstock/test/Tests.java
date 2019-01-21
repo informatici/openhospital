@@ -2,7 +2,6 @@ package org.isf.medicalstock.test;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -10,6 +9,19 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.isf.medicals.model.Medical;
+import org.isf.medicals.test.TestMedical;
+import org.isf.medicals.test.TestMedicalContext;
+import org.isf.medicalstock.model.Lot;
+import org.isf.medicalstock.model.Movement;
+import org.isf.medicalstock.service.MedicalStockIoOperations;
+import org.isf.medicalstock.service.MedicalStockIoOperations.MovementOrder;
+import org.isf.medstockmovtype.model.MovementType;
+import org.isf.medstockmovtype.test.TestMovementType;
+import org.isf.medstockmovtype.test.TestMovementTypeContext;
+import org.isf.medtype.model.MedicalType;
+import org.isf.medtype.test.TestMedicalType;
+import org.isf.medtype.test.TestMedicalTypeContext;
 import org.isf.supplier.model.Supplier;
 import org.isf.supplier.test.TestSupplier;
 import org.isf.supplier.test.TestSupplierContext;
@@ -18,20 +30,6 @@ import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
 import org.isf.ward.test.TestWard;
 import org.isf.ward.test.TestWardContext;
-import org.isf.accounting.model.Bill;
-import org.isf.medicals.model.Medical;
-import org.isf.medicals.test.TestMedical;
-import org.isf.medicals.test.TestMedicalContext;
-import org.isf.medicalstock.model.Lot;
-import org.isf.medicalstock.model.Movement;
-import org.isf.medicalstock.service.MedicalStockIoOperations;
-import org.isf.medstockmovtype.model.MovementType;
-import org.isf.medicalstock.service.MedicalStockIoOperations.MovementOrder;
-import org.isf.medstockmovtype.test.TestMovementType;
-import org.isf.medstockmovtype.test.TestMovementTypeContext;
-import org.isf.medtype.model.MedicalType;
-import org.isf.medtype.test.TestMedicalType;
-import org.isf.medtype.test.TestMedicalTypeContext;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

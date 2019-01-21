@@ -1,6 +1,10 @@
 package org.isf.stat.gui.report;
 
-import net.sf.jasperreports.view.JasperViewer;
+import java.io.File;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.stat.dto.JasperReportResultDto;
@@ -9,8 +13,7 @@ import org.isf.utils.excel.ExcelExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-import java.io.File;
+import net.sf.jasperreports.view.JasperViewer;
 
 /*--------------------------------------------------------
  * GenericReportLauncer2Dates

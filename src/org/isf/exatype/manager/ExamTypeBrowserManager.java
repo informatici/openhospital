@@ -6,7 +6,7 @@ import java.util.List;
 import org.isf.exatype.model.ExamType;
 import org.isf.exatype.service.ExamTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -18,7 +18,7 @@ public class ExamTypeBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(ExamTypeBrowserManager.class);
 	
-	private ExamTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(ExamTypeIoOperation.class);
+	private ExamTypeIoOperation ioOperations = Context.getApplicationContext().getBean(ExamTypeIoOperation.class);
 
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

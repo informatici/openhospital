@@ -1,10 +1,10 @@
 package org.isf.admtype.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.admtype.model.AdmissionType;
-
 import static org.junit.Assert.assertEquals;
+
+import org.isf.admtype.model.AdmissionType;
+import org.isf.utils.exception.OHException;
 
 public class TestAdmissionType 
 {	

@@ -1,14 +1,14 @@
 package org.isf.accounting.test;
 
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.GregorianCalendar;
 
 import org.isf.accounting.model.Bill;
 import org.isf.patient.model.Patient;
 import org.isf.priceslist.model.PriceList;
 import org.isf.utils.exception.OHException;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestBill 
 {	

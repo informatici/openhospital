@@ -7,13 +7,14 @@ import java.util.Date;
 import org.isf.examination.model.PatientExamination;
 import org.isf.examination.service.ExaminationOperations;
 import org.isf.generaldata.ExaminationParameters;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 
 public class ExaminationBrowserManager {
 
-	private ExaminationOperations ioOperations = Menu.getApplicationContext().getBean(ExaminationOperations.class);
+	private ExaminationOperations ioOperations = Context.getApplicationContext().getBean(ExaminationOperations.class);
 
 	/**
 	 * Default PatientExamination

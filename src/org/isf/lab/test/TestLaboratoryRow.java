@@ -1,11 +1,11 @@
 package org.isf.lab.test;
 
 
-import org.isf.utils.exception.OHException;
+import static org.junit.Assert.assertEquals;
+
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
-
-import static org.junit.Assert.assertEquals;
+import org.isf.utils.exception.OHException;
 
 public class TestLaboratoryRow 
 {	

@@ -1,11 +1,11 @@
 package org.isf.menu.test;
 
 
+import java.util.List;
+
 import org.isf.menu.model.UserGroup;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestUserGroupContext 
 {		

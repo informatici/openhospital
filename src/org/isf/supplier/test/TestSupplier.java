@@ -1,9 +1,9 @@
 package org.isf.supplier.test;
 
-import org.isf.utils.exception.OHException;
-import org.isf.supplier.model.Supplier;
-
 import static org.junit.Assert.assertEquals;
+
+import org.isf.supplier.model.Supplier;
+import org.isf.utils.exception.OHException;
 
 public class TestSupplier 
 {	 

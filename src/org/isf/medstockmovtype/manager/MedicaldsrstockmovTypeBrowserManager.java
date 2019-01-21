@@ -6,7 +6,7 @@ import java.util.List;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.medstockmovtype.service.MedicalStockMovementTypeIoOperation;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -21,7 +21,7 @@ public class MedicaldsrstockmovTypeBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(MedicaldsrstockmovTypeBrowserManager.class);
 	
-	private MedicalStockMovementTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(MedicalStockMovementTypeIoOperation.class);
+	private MedicalStockMovementTypeIoOperation ioOperations = Context.getApplicationContext().getBean(MedicalStockMovementTypeIoOperation.class);
 
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

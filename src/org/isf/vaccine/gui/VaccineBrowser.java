@@ -9,15 +9,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
@@ -25,8 +24,8 @@ import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.vaccine.manager.VaccineBrowserManager;
 import org.isf.vaccine.model.Vaccine;
-import org.isf.vactype.model.*;
 import org.isf.vactype.manager.VaccineTypeBrowserManager;
+import org.isf.vactype.model.VaccineType;
 
 /**
  * This class shows a list of vaccine.

@@ -1,9 +1,7 @@
 package org.isf.generaldata;
 
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 

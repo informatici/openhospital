@@ -1,5 +1,23 @@
 package org.isf.supplier.gui;
 
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.util.EventListener;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.EventListenerList;
+
 import org.isf.generaldata.MessageBundle;
 import org.isf.supplier.manager.SupplierBrowserManager;
 import org.isf.supplier.model.Supplier;
@@ -7,12 +25,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.JLabelRequired;
 import org.isf.utils.jobjects.VoLimitedTextField;
-
-import javax.swing.*;
-import javax.swing.event.EventListenerList;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.util.EventListener;
 
 /**
  * This class allows suppliers edits and inserts

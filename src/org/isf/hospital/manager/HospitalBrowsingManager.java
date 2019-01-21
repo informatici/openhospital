@@ -3,7 +3,7 @@ package org.isf.hospital.manager;
 import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.model.Hospital;
 import org.isf.hospital.service.HospitalIoOperations;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -22,7 +22,7 @@ public class HospitalBrowsingManager {
 	
 	private final Logger logger = LoggerFactory.getLogger(HospitalBrowsingManager.class);
 	
-	private HospitalIoOperations ioOperations = Menu.getApplicationContext().getBean(HospitalIoOperations.class);
+	private HospitalIoOperations ioOperations = Context.getApplicationContext().getBean(HospitalIoOperations.class);
 
 	/**
 	 * Reads from database hospital informations

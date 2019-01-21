@@ -1,10 +1,10 @@
 package org.isf.vactype.test;
 
 
+import static org.junit.Assert.assertEquals;
+
 import org.isf.utils.exception.OHException;
 import org.isf.vactype.model.VaccineType;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestVaccineType 
 {	

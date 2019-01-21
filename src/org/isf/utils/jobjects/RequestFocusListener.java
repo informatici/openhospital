@@ -1,6 +1,7 @@
 package org.isf.utils.jobjects;
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JComponent;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 /**
  *  Convenience class to request focus on a component.

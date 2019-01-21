@@ -3,10 +3,10 @@ package org.isf.dicom.test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.exception.OHException;
 import org.isf.dicom.model.FileDicom;
 import org.isf.dicom.service.DicomIoOperations;
+import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.exception.OHException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

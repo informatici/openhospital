@@ -14,7 +14,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.patvac.model.PatientVaccine;
 import org.isf.patvac.service.PatVacIoOperations;
 import org.isf.utils.exception.OHServiceException;
@@ -25,7 +25,7 @@ import org.springframework.util.StringUtils;
 
 public class PatVacManager {
 
-	private PatVacIoOperations ioOperations = Menu.getApplicationContext().getBean(PatVacIoOperations.class);
+	private PatVacIoOperations ioOperations = Context.getApplicationContext().getBean(PatVacIoOperations.class);
 	
 	/**
 	 * returns all {@link PatientVaccine}s of today or one week ago

@@ -6,7 +6,7 @@ import java.util.List;
 import org.isf.distype.model.DiseaseType;
 import org.isf.distype.service.DiseaseTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -16,7 +16,7 @@ import org.isf.utils.exception.model.OHSeverityLevel;
  */
 public class DiseaseTypeBrowserManager {
 
-	private DiseaseTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(DiseaseTypeIoOperation.class);
+	private DiseaseTypeIoOperation ioOperations = Context.getApplicationContext().getBean(DiseaseTypeIoOperation.class);
 
 	/**
 	 * Returns all the stored {@link DiseaseType}s.

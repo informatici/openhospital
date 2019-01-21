@@ -1,10 +1,10 @@
 package org.isf.menu.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.menu.model.UserGroup;
-
 import static org.junit.Assert.assertEquals;
+
+import org.isf.menu.model.UserGroup;
+import org.isf.utils.exception.OHException;
 
 public class TestUserGroup 
 {	

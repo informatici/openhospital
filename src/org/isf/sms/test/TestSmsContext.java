@@ -1,11 +1,11 @@
 package org.isf.sms.test;
 
 
+import java.util.List;
+
 import org.isf.sms.model.Sms;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestSmsContext 
 {		

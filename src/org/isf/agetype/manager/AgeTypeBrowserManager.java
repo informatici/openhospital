@@ -6,14 +6,14 @@ import java.util.List;
 import org.isf.agetype.model.AgeType;
 import org.isf.agetype.service.AgeTypeIoOperations;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 
 public class AgeTypeBrowserManager {
 
-	private AgeTypeIoOperations ioOperations = Menu.getApplicationContext().getBean(AgeTypeIoOperations.class);
+	private AgeTypeIoOperations ioOperations = Context.getApplicationContext().getBean(AgeTypeIoOperations.class);
 
 	/**
 	 * Returns all available age types.

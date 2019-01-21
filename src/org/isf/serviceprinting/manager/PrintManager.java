@@ -6,6 +6,12 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.isf.generaldata.GeneralData;
+import org.isf.generaldata.MessageBundle;
+import org.isf.hospital.manager.HospitalBrowsingManager;
+import org.isf.hospital.model.Hospital;
+import org.isf.utils.exception.OHServiceException;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -15,12 +21,6 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
-
-import org.isf.generaldata.GeneralData;
-import org.isf.generaldata.MessageBundle;
-import org.isf.hospital.manager.HospitalBrowsingManager;
-import org.isf.hospital.model.Hospital;
-import org.isf.utils.exception.OHServiceException;
 
 public class PrintManager {
 	public static final int toDisplay = 0;

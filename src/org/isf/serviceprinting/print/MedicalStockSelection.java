@@ -33,9 +33,8 @@ import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.serviceprinting.manager.PrintManager;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -429,7 +428,7 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 						lot = lotField.getText();
 					}
 					
-					MedicalStockIoOperations ioOperations = Menu.getApplicationContext().getBean(MedicalStockIoOperations.class);
+					MedicalStockIoOperations ioOperations = Context.getApplicationContext().getBean(MedicalStockIoOperations.class);
 					int format=0;String path=null;
 					if(formatSelected.equalsIgnoreCase("Java")){
 						format=PrintManager.toDisplay;

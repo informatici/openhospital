@@ -50,7 +50,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.generaldata.TxtPrinter;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.menu.gui.MainMenu;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.manager.PatientBrowserManager;
@@ -225,7 +225,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	private ArrayList<PricesOthers> othPrices;
 
 	//Items and Payments (ALL)
-	private BillBrowserManager billManager = new BillBrowserManager(Menu.getApplicationContext().getBean(AccountingIoOperations.class));
+	private BillBrowserManager billManager = new BillBrowserManager(Context.getApplicationContext().getBean(AccountingIoOperations.class));
 	private PatientBrowserManager patManager = new PatientBrowserManager();
 	
 	//Prices, Items and Payments for the tables
@@ -948,7 +948,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 						
 						try {
 							
-							BillBrowserManager billManager = Menu.getApplicationContext().getBean(BillBrowserManager.class);
+							BillBrowserManager billManager = Context.getApplicationContext().getBean(BillBrowserManager.class);
 							billManager.newBill(newBill, billItems, payItems);
 							
 						} catch(OHServiceException ex) {
@@ -979,7 +979,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 						
 						try{
 							
-							BillBrowserManager billManager = Menu.getApplicationContext().getBean(BillBrowserManager.class);
+							BillBrowserManager billManager = Context.getApplicationContext().getBean(BillBrowserManager.class);
 							billManager.updateBill(updateBill, billItems, payItems);
 							
 						} catch (OHServiceException ex){

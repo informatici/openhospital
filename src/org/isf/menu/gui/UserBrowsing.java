@@ -5,7 +5,9 @@ import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -20,13 +22,14 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.table.DefaultTableModel;
 
-import org.isf.menu.manager.*;
-import org.isf.menu.model.*;
+import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.UserBrowsingManager;
+import org.isf.menu.model.User;
+import org.isf.menu.model.UserGroup;
 import org.isf.utils.db.BCrypt;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
-import org.isf.generaldata.MessageBundle;
 
 
 

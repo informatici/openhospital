@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.opetype.model.OperationType;
 import org.isf.opetype.service.OperationTypeIoOperation;
 import org.isf.utils.exception.OHServiceException;
@@ -13,7 +13,7 @@ import org.isf.utils.exception.model.OHSeverityLevel;
 
 public class OperationTypeBrowserManager {
 
-	private OperationTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(OperationTypeIoOperation.class);
+	private OperationTypeIoOperation ioOperations = Context.getApplicationContext().getBean(OperationTypeIoOperation.class);
 	
 	/**
 	 * return the list of {@link OperationType}s

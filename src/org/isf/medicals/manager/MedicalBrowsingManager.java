@@ -11,7 +11,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
 import org.isf.medicals.service.MedicalsIoOperations;
 import org.isf.medtype.model.MedicalType;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -29,7 +29,7 @@ public class MedicalBrowsingManager {
 
 	private final Logger logger = LoggerFactory.getLogger(MedicalBrowsingManager.class);
 	
-	private MedicalsIoOperations ioOperations = Menu.getApplicationContext().getBean(MedicalsIoOperations.class);
+	private MedicalsIoOperations ioOperations = Context.getApplicationContext().getBean(MedicalsIoOperations.class);
 	
 	/**
 	 * Returns the requested medical.

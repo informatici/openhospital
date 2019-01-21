@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.sms.model.Sms;
 import org.isf.sms.service.SmsOperations;
 import org.isf.utils.exception.OHServiceException;
@@ -18,7 +18,7 @@ public class SmsManager {
 	public final static int MAX_LENGHT = 160;
 	private final String NUMBER_REGEX = "^\\+?\\d+$"; //$NON-NLS-1$
 	
-	private SmsOperations smsOperations = Menu.getApplicationContext().getBean(SmsOperations.class);
+	private SmsOperations smsOperations = Context.getApplicationContext().getBean(SmsOperations.class);
 	
 	public SmsManager(){}
 	

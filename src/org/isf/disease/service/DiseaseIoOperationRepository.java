@@ -1,6 +1,5 @@
 package org.isf.disease.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.disease.model.Disease;

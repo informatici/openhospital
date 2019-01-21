@@ -1,8 +1,8 @@
 package org.isf.stat.dto;
 
-import net.sf.jasperreports.engine.JasperPrint;
-
 import java.io.Serializable;
+
+import net.sf.jasperreports.engine.JasperPrint;
 
 public class JasperReportResultDto implements Serializable {
 

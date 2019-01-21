@@ -5,14 +5,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
-import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.exception.OHException;
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.exa.service.ExamIoOperations;
 import org.isf.exatype.model.ExamType;
 import org.isf.exatype.test.TestExamType;
 import org.isf.exatype.test.TestExamTypeContext;
+import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.exception.OHException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

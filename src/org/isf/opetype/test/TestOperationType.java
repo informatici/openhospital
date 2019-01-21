@@ -1,10 +1,10 @@
 package org.isf.opetype.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.opetype.model.OperationType;
-
 import static org.junit.Assert.assertEquals;
+
+import org.isf.opetype.model.OperationType;
+import org.isf.utils.exception.OHException;
 
 public class TestOperationType 
 {	

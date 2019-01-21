@@ -6,7 +6,7 @@ import java.util.List;
 import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.dlvrrestype.service.DeliveryResultTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -21,7 +21,7 @@ public class DeliveryResultTypeBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(DeliveryResultTypeBrowserManager.class);
 	
-	private DeliveryResultTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(DeliveryResultTypeIoOperation.class);
+	private DeliveryResultTypeIoOperation ioOperations = Context.getApplicationContext().getBean(DeliveryResultTypeIoOperation.class);
 	
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

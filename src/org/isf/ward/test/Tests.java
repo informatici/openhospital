@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-import org.isf.ward.service.WardIoOperations;
 import org.isf.ward.model.Ward;
+import org.isf.ward.service.WardIoOperations;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -1,14 +1,14 @@
 package org.isf.therapy.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.medicals.model.Medical;
-import org.isf.patient.model.Patient;
-import org.isf.therapy.model.TherapyRow;
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.GregorianCalendar;
+
+import org.isf.medicals.model.Medical;
+import org.isf.patient.model.Patient;
+import org.isf.therapy.model.TherapyRow;
+import org.isf.utils.exception.OHException;
 
 
 public class TestTherapy 

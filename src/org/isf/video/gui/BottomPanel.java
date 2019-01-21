@@ -1,29 +1,27 @@
 package org.isf.video.gui;
 
-import java.util.ArrayList;
-
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Toolkit;
-
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
 import javax.swing.BoxLayout;
-import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import org.isf.video.manager.VideoManager;
 import org.isf.video.manager.VideoDeviceStreamAppletManager;
 import org.isf.video.manager.VideoDevicesManager;
+import org.isf.video.manager.VideoManager;
 
 public class BottomPanel extends JPanel {
 

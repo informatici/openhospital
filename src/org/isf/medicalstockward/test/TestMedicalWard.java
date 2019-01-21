@@ -1,11 +1,11 @@
 package org.isf.medicalstockward.test;
 
-import org.isf.utils.exception.OHException;
-import org.isf.ward.model.Ward;
+import static org.junit.Assert.assertEquals;
+
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstockward.model.MedicalWard;
-
-import static org.junit.Assert.assertEquals;
+import org.isf.utils.exception.OHException;
+import org.isf.ward.model.Ward;
 
 public class TestMedicalWard 
 {	 

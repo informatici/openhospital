@@ -1,7 +1,7 @@
 package org.isf.menu.model;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.ColumnResult;
+import javax.persistence.Entity;
 import javax.persistence.EntityResult;
 import javax.persistence.FieldResult;
 import javax.persistence.Id;

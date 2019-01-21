@@ -1,11 +1,11 @@
 package org.isf.patvac.test;
 
 
+import java.util.List;
+
 import org.isf.patvac.model.PatientVaccine;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestPatientVaccineContext 
 {		

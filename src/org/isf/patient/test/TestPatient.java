@@ -1,14 +1,14 @@
 package org.isf.patient.test;
 
 
-import org.isf.patient.model.Patient;
-import org.isf.utils.exception.OHException;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import static org.junit.Assert.assertEquals;
+import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHException;
 
 public class TestPatient 
 {			

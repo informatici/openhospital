@@ -1,11 +1,11 @@
 package org.isf.supplier.test;
 
 
+import java.util.List;
+
 import org.isf.supplier.model.Supplier;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestSupplierContext 
 {		

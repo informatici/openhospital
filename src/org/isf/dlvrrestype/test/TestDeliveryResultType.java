@@ -1,10 +1,10 @@
 package org.isf.dlvrrestype.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.dlvrrestype.model.DeliveryResultType;
-
 import static org.junit.Assert.assertEquals;
+
+import org.isf.dlvrrestype.model.DeliveryResultType;
+import org.isf.utils.exception.OHException;
 
 public class TestDeliveryResultType 
 {	

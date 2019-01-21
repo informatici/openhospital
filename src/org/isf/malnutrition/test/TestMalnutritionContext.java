@@ -1,11 +1,11 @@
 package org.isf.malnutrition.test;
 
 
+import java.util.List;
+
 import org.isf.malnutrition.model.Malnutrition;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestMalnutritionContext 
 {		

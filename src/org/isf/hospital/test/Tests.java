@@ -3,11 +3,10 @@ package org.isf.hospital.test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.exception.OHException;
 import org.isf.hospital.model.Hospital;
 import org.isf.hospital.service.HospitalIoOperations;
-import org.isf.hospital.test.TestHospital;
+import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.exception.OHException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

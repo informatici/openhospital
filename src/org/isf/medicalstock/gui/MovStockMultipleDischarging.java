@@ -50,7 +50,7 @@ import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.db.NormalizeString;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
@@ -114,7 +114,7 @@ public class MovStockMultipleDischarging extends JDialog {
 	private Interaction share;
 	private ArrayList<Medical> pool = new ArrayList<Medical>();
 	
-	MovStockInsertingManager movManager = Menu.getApplicationContext().getBean(MovStockInsertingManager.class);
+	MovStockInsertingManager movManager = Context.getApplicationContext().getBean(MovStockInsertingManager.class);
 
 	/**
 	 * Launch the application.

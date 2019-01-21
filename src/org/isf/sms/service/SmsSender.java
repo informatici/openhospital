@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.SmsParameters;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.sms.model.Sms;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class SmsSender implements Runnable {
 	public void run() {
 		while (running) {
 			logger.info("SMS Sender running...");
-			SmsOperations smsOp = Menu.getApplicationContext().getBean(SmsOperations.class);
+			SmsOperations smsOp = Context.getApplicationContext().getBean(SmsOperations.class);
 			List<Sms> smsList = null;
 			try {
 				smsList = smsOp.getList();

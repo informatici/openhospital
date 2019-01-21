@@ -11,7 +11,7 @@ import org.isf.exa.model.Exam;
 import org.isf.exa.service.ExamIoOperations;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ExamBrowsingManager {
 
-	private ExamIoOperations ioOperations = Menu.getApplicationContext().getBean(ExamIoOperations.class);
+	private ExamIoOperations ioOperations = Context.getApplicationContext().getBean(ExamIoOperations.class);
 
 	private final Logger logger = LoggerFactory.getLogger(ExamBrowsingManager.class);
 	

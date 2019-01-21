@@ -9,9 +9,10 @@ import org.isf.accounting.model.Bill;
 import org.isf.accounting.service.AccountingIoOperations;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.patient.model.Patient;
 import org.isf.patient.service.PatientIoOperations;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -20,7 +21,7 @@ import org.springframework.util.StringUtils;
 
 public class PatientBrowserManager {
 	
-	private PatientIoOperations ioOperations = Menu.getApplicationContext().getBean(PatientIoOperations.class);
+	private PatientIoOperations ioOperations = Context.getApplicationContext().getBean(PatientIoOperations.class);
 	
 	/**
 	 * methot that insert a new Patient in the db
@@ -121,7 +122,7 @@ public class PatientBrowserManager {
         }
 
         boolean billPending = false;
-        BillBrowserManager billMan = new BillBrowserManager(Menu.getApplicationContext().getBean(AccountingIoOperations.class));
+        BillBrowserManager billMan = new BillBrowserManager(Context.getApplicationContext().getBean(AccountingIoOperations.class));
         ArrayList<Bill> bills = billMan.getPendingBills(mergedPatient.getCode());
         bills = billMan.getPendingBills(mergedPatient.getCode());
         if (bills != null && !bills.isEmpty()) billPending = true;

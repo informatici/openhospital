@@ -1,16 +1,11 @@
 package org.isf.menu.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.menu.model.User;
-import org.isf.menu.model.UserGroup;
-
 import static org.junit.Assert.assertEquals;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import org.isf.menu.model.User;
+import org.isf.menu.model.UserGroup;
+import org.isf.utils.exception.OHException;
 
 public class TestUser 
 {	

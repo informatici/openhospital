@@ -52,7 +52,7 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.menu.gui.MainMenu;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.stat.gui.report.GenericReportBill;
 import org.isf.stat.gui.report.GenericReportFromDateToDate;
 import org.isf.stat.gui.report.GenericReportUserInDate;
@@ -147,7 +147,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private int year;
 	
 	//Bills & Payments
-	private BillBrowserManager billManager = new BillBrowserManager(Menu.getApplicationContext().getBean(AccountingIoOperations.class));
+	private BillBrowserManager billManager = new BillBrowserManager(Context.getApplicationContext().getBean(AccountingIoOperations.class));
 	private ArrayList<Bill> billPeriod;
 	private HashMap<Integer, Bill> mapBill = new HashMap<Integer, Bill>();
 	private ArrayList<BillPayments> paymentsPeriod;

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.isf.video.model.VideoDevice;
-import org.isf.video.manager.VideoDeviceFactory;
 
 public abstract class VideoDevicesManager {
 	

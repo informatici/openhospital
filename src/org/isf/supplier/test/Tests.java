@@ -5,10 +5,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.isf.utils.db.DbJpaUtil;
-import org.isf.utils.exception.OHException;
 import org.isf.supplier.model.Supplier;
 import org.isf.supplier.service.SupplierOperations;
+import org.isf.utils.db.DbJpaUtil;
+import org.isf.utils.exception.OHException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

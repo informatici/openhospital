@@ -47,7 +47,7 @@ import org.isf.examination.model.PatientExamination;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.opd.gui.OpdEditExtended;
 import org.isf.opd.model.Opd;
 import org.isf.patient.gui.PatientInsert;
@@ -735,7 +735,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				
 				if (patient  != null) {
 					Patient pat = patient.getPatient();
-					BillBrowserManager billManager = new BillBrowserManager(Menu.getApplicationContext().getBean(AccountingIoOperations.class));
+					BillBrowserManager billManager = new BillBrowserManager(Context.getApplicationContext().getBean(AccountingIoOperations.class));
 					ArrayList<Bill> patientPendingBills;
 					try {
 						patientPendingBills = billManager.getPendingBills(pat.getCode());

@@ -1,11 +1,11 @@
 package org.isf.examination.test;
 
 
+import java.util.List;
+
 import org.isf.examination.model.PatientExamination;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 public class TestPatientExaminationContext 
 {

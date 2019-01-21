@@ -1,13 +1,13 @@
 package org.isf.visits.test;
 
 
-import org.isf.utils.exception.OHException;
-import org.isf.patient.model.Patient;
-import org.isf.visits.model.Visit;
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.GregorianCalendar;
+
+import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHException;
+import org.isf.visits.model.Visit;
 
 
 public class TestVisit 

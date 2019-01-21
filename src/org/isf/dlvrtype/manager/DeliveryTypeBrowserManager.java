@@ -6,7 +6,7 @@ import java.util.List;
 import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.dlvrtype.service.DeliveryTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -16,7 +16,7 @@ import org.isf.utils.exception.model.OHSeverityLevel;
  */
 public class DeliveryTypeBrowserManager {
 
-    private DeliveryTypeIoOperation ioOperations = Menu.getApplicationContext().getBean(DeliveryTypeIoOperation.class);
+    private DeliveryTypeIoOperation ioOperations = Context.getApplicationContext().getBean(DeliveryTypeIoOperation.class);
 
     /**
      * Returns all stored {@link DeliveryType}s.

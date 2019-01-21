@@ -48,7 +48,7 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
-import org.isf.menu.gui.Menu;
+import org.isf.menu.manager.Context;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.therapy.manager.TherapyManager;
@@ -131,8 +131,8 @@ public class TherapyEdit extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	private MedicalBrowsingManager medBrowser = new MedicalBrowsingManager();
-	private TherapyManager thManager = Menu.getApplicationContext().getBean(TherapyManager.class);
-	private VisitManager vstManager = Menu.getApplicationContext().getBean(VisitManager.class);
+	private TherapyManager thManager = Context.getApplicationContext().getBean(TherapyManager.class);
+	private VisitManager vstManager = Context.getApplicationContext().getBean(VisitManager.class);
 	private ArrayList<Medical> medArray;
 	private ArrayList<Double> qtyArray = new ArrayList<Double>();
 	private ArrayList<Therapy> therapies = new ArrayList<Therapy>();

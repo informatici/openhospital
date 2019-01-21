@@ -1,11 +1,11 @@
 package org.isf.video.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.BorderLayout;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -14,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.isf.video.gui.MiddlePanel;
 import org.isf.video.manager.VideoDeviceStreamAppletManager;
 import org.isf.video.manager.VideoManager;
 

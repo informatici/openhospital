@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
-import org.isf.utils.jobjects.JDateAndTimeChooser;
 
 /**
  * @author Mwithi

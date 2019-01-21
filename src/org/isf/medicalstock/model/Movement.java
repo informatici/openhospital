@@ -13,11 +13,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.supplier.model.Supplier;
 import org.isf.ward.model.Ward;
-import org.isf.generaldata.MessageBundle;
 
 /*------------------------------------------
  * Medical Stock Movement- model for the medical entity
