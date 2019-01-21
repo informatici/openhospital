@@ -1,4 +1,4 @@
-package org.isf.video.gui;
+package org.isf.video.manager;
 
 import java.awt.image.ImageFilter;
 import java.awt.image.FilteredImageSource;
@@ -10,8 +10,12 @@ import java.awt.Image;
 
 public class PatientPhotoCreator {
 	
-	/*
-	 *  scala l'immagine alle dimensioni stabilite
+	/**
+	 * Resizes the image to the specified dimesions
+	 * @param img
+	 * @param photoW
+	 * @param photoH
+	 * @return
 	 */
 	public static Image createPatientPhoto(Image img, int photoW, int photoH)
 	{	
@@ -20,10 +24,14 @@ public class PatientPhotoCreator {
 		return patientPhoto;
 	}
 	
-	
-	/* 
-	 * scala l'immagine alle dimensioni stabilite
-	 * e la centra rispetto alla dimensione fissata
+	/**
+	 * Resizes the image to the specified dimesions starting from position
+	 * @param img
+	 * @param photoW
+	 * @param photoH
+	 * @param photoFinalW
+	 * @param photoFinalH
+	 * @return
 	 */
 	public static Image createPatientPhoto(Image img, int photoW, int photoH, int photoFinalW, int photoFinalH)
 	{	

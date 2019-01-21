@@ -22,11 +22,14 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
+import org.isf.video.manager.AbstractVideoFrame;
+import org.isf.video.manager.VideoDeviceStreamApplet;
+import org.isf.video.manager.VideoDeviceStreamAppletManager;
 import org.isf.video.manager.VideoDevicesManager;
 import org.isf.video.manager.VideoManager;
 import org.isf.video.model.VideoDevice;
 
-public class VideoFrame extends JDialog {
+public class VideoFrame extends AbstractVideoFrame {
 	/**
 	 * 
 	 */
