@@ -264,12 +264,12 @@ public class DicomGui extends JFrame implements WindowListener {
 
 					if (selectedFile.isDirectory()) {
 						
-						int numfiles = SourceFiles.numeroFiles(selectedFile, patient);
+						int numfiles = SourceFiles.countFiles(selectedFile, patient);
 						thumbnail.disableLoadButton();
-						new SourceFiles(selectedFile, patient, numfiles, thumbnail, myJFrame);
+						new SourceFiles(selectedFile, patient, numfiles, thumbnail, new DicomLoader(numfiles, myJFrame));
 
 					} else {
-						// file singolo
+						// single file
 						SourceFiles.loadDicom(selectedFile, patient);
 						thumbnail.initialize();
 					}

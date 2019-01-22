@@ -24,6 +24,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.isf.dicom.manager.AbstractThumbnailViewGui;
 import org.isf.dicom.manager.DicomManagerFactory;
 import org.isf.dicom.model.FileDicom;
 import org.isf.generaldata.MessageBundle;
@@ -37,7 +38,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
  * @version 1.0.0
  * 
  */
-public class ThumbnailViewGui extends JList {
+public class ThumbnailViewGui extends AbstractThumbnailViewGui {
 
 	/**
 	 * 
