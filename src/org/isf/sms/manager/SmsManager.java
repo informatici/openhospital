@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.MainMenu;
 import org.isf.menu.manager.Context;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.sms.model.Sms;
 import org.isf.sms.service.SmsOperations;
 import org.isf.utils.exception.OHServiceException;
@@ -89,7 +89,7 @@ public class SmsManager {
 				Sms sms = new Sms();
 				sms.setSmsNumber(number);
 				sms.setSmsDateSched(schedDate);
-				sms.setSmsUser(MainMenu.getUser());
+				sms.setSmsUser(UserBrowsingManager.getCurrentUser());
 				sms.setSmsText(part);
 				sms.setModule("smsmanager");
 				sms.setModuleID(null);

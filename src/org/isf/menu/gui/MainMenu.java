@@ -71,10 +71,6 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 		return false;
 	}
 
-	public static String getUser() {
-		return myUser.getUserName();
-	}
-
 	private int minButtonSize = 0;
 
 	public void setMinButtonSize(int value) {

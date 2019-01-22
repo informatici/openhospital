@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.sms.manager.SmsManager;
@@ -94,7 +94,7 @@ public class VisitManager {
 						sms.setSmsDateSched(date.getTime());
 						sms.setSmsNumber(pat.getTelephone());
 						sms.setSmsText(prepareSmsFromVisit(visit));
-						sms.setSmsUser(MainMenu.getUser());
+						sms.setSmsUser(UserBrowsingManager.getCurrentUser());
 						sms.setModule("visit");
 						sms.setModuleID(String.valueOf(patID));
 						smsOp.saveOrUpdate(sms);

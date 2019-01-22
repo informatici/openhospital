@@ -8,7 +8,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstockward.manager.MovWardBrowserManager;
-import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.sms.manager.SmsManager;
@@ -189,7 +189,7 @@ public class TherapyManager {
 							sms.setSmsDateSched(date.getTime());
 							sms.setSmsNumber(pat.getTelephone());
 							sms.setSmsText(prepareSmsFromTherapy(th));
-							sms.setSmsUser(MainMenu.getUser());
+							sms.setSmsUser(UserBrowsingManager.getCurrentUser());
 							sms.setModule("therapy");
 							sms.setModuleID(String.valueOf(patID));
 							smsOp.saveOrUpdate(sms);

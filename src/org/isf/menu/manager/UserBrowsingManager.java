@@ -15,6 +15,11 @@ public class UserBrowsingManager {
 
 	private MenuIoOperations ioOperations = Context.getApplicationContext().getBean(MenuIoOperations.class);
 	
+	
+	public static String getCurrentUser() {
+		return UserBrowsingManager.getCurrentUser();
+	}
+	
 	/**
 	 * returns the list of {@link User}s
 	 * @return the list of {@link User}s

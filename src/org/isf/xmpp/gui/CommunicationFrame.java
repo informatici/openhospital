@@ -36,7 +36,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.MainMenu;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
@@ -147,7 +146,7 @@ public class CommunicationFrame extends AbstractCommunicationFrame {
 		setSize(600,450);
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append(MessageBundle.getMessage("angal.xmpp.communication")).append(" - ").append(MainMenu.getUser());
+		sb.append(MessageBundle.getMessage("angal.xmpp.communication")).append(" - ").append(UserBrowsingManager.getCurrentUser());
 		
 		setTitle(sb.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		setResizable(false);
