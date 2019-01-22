@@ -10,6 +10,7 @@ import org.isf.menu.service.MenuIoOperations;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.MDC;
 
 public class UserBrowsingManager {
 
@@ -17,7 +18,7 @@ public class UserBrowsingManager {
 	
 	
 	public static String getCurrentUser() {
-		return UserBrowsingManager.getCurrentUser();
+		return MDC.get("OHUser");
 	}
 	
 	/**
