@@ -9,8 +9,8 @@ import java.util.List;
 import org.isf.disease.model.Disease;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.MainMenu;
 import org.isf.menu.manager.Context;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.opd.model.Opd;
 import org.isf.opd.service.OpdIoOperations;
 import org.isf.utils.exception.OHServiceException;
@@ -41,7 +41,7 @@ public class OpdBrowserManager {
 		Disease disease2=opd.getDisease2();
 		Disease disease3=opd.getDisease3();
 		if (opd.getDate() == null) opd.setDate(new Date());
-		if (opd.getUserID() == null) opd.setUserID(MainMenu.getUser());
+		if (opd.getUserID() == null) opd.setUserID(UserBrowsingManager.getCurrentUser());
 		
 		List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
 		//Check Visit Date

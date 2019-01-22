@@ -8,7 +8,6 @@ import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.dcm4che2.data.DicomObject;
@@ -17,8 +16,6 @@ import org.dcm4che2.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che2.imageio.plugins.dcm.DicomStreamMetaData;
 import org.dcm4che2.io.DicomCodingException;
 import org.imgscalr.Scalr;
-import org.isf.dicom.gui.DicomLoader;
-import org.isf.dicom.gui.ThumbnailViewGui;
 import org.isf.dicom.model.FileDicom;
 import org.isf.generaldata.MessageBundle;
 import org.isf.utils.exception.OHServiceException;
@@ -37,15 +34,15 @@ public class SourceFiles extends Thread {
 	private int patient = 0;
 	private int filesCount = 0;
 	private int filesLoaded = 0;
-	private DicomLoader dicomLoader = null;
-	private ThumbnailViewGui thumbnail = null;
+	private AbstractDicomLoader dicomLoader = null;
+	private AbstractThumbnailViewGui thumbnail = null;
 
-	public SourceFiles(File sourceFile, int patient, int filesCount, ThumbnailViewGui thumbnail, JFrame frame) {
+	public SourceFiles(File sourceFile, int patient, int filesCount, AbstractThumbnailViewGui thumbnail, AbstractDicomLoader frame) {
 		this.patient = patient;
 		this.file = sourceFile;
 		this.filesCount = filesCount;
 		this.thumbnail = thumbnail;
-		this.dicomLoader = new DicomLoader(filesCount, frame);
+		this.dicomLoader = frame;
 		start();
 	}
 
@@ -78,7 +75,7 @@ public class SourceFiles extends Thread {
 		}
 	}
 
-	public static int numeroFiles(File sourceFile, int patient) {
+	public static int countFiles(File sourceFile, int patient) {
 		int num = 0;
 
 		File[] files = sourceFile.listFiles();
@@ -87,7 +84,7 @@ public class SourceFiles extends Thread {
 			if (!files[i].isDirectory())
 				num++;
 			else if (!".".equals(files[i].getName()) && !"..".equals(files[i].getName()))
-				num = num + numeroFiles(files[i], patient);
+				num = num + countFiles(files[i], patient);
 		}
 		return num;
 	}

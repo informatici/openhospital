@@ -49,8 +49,8 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.generaldata.TxtPrinter;
 import org.isf.hospital.manager.HospitalBrowsingManager;
-import org.isf.menu.gui.MainMenu;
 import org.isf.menu.manager.Context;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.manager.PatientBrowserManager;
@@ -236,7 +236,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	private int payItemsSaved;
 	
 	//User
-	private String user = MainMenu.getUser();
+	private String user = UserBrowsingManager.getCurrentUser();
 	
 	public PatientBillEdit() {
 		initCurrencyCod();

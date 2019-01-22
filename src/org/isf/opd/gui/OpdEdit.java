@@ -53,7 +53,7 @@ import org.isf.disease.model.Disease;
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
 import org.isf.distype.model.DiseaseType;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.utils.exception.OHServiceException;
@@ -510,7 +510,7 @@ public class OpdEdit extends JDialog {
 					opd.setDisease3(disease3);
 					opd.setVisitDate(gregDate);
 					opd.setNote("");
-					opd.setUserID(MainMenu.getUser());
+					opd.setUserID(UserBrowsingManager.getCurrentUser());
 					
 					try {
 						if (insert){    //Insert

@@ -53,6 +53,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.menu.gui.MainMenu;
 import org.isf.menu.manager.Context;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.stat.gui.report.GenericReportBill;
 import org.isf.stat.gui.report.GenericReportFromDateToDate;
 import org.isf.stat.gui.report.GenericReportUserInDate;
@@ -156,7 +157,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private String currencyCod = null;
 	
 	//Users
-	private String user = MainMenu.getUser();
+	private String user = UserBrowsingManager.getCurrentUser();
 	private ArrayList<String> users;
 	
 	public BillBrowser() {
@@ -330,7 +331,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 							if (GeneralData.SINGLEUSER) {
 								user = "admin";
 							} else {
-								user = MainMenu.getUser();
+								user = UserBrowsingManager.getCurrentUser();
 							}
 							try {
 								BusyState.setBusyState(BillBrowser.this, true);
@@ -982,7 +983,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private void updateTotals() {
 		ArrayList<Bill> billToday = null;
 		ArrayList<BillPayments> paymentsToday = null;
-		if (MainMenu.getUser().equals("admin")) {
+		if (UserBrowsingManager.getCurrentUser().equals("admin")) {
 			try {
 				billToday = billManager.getBills(dateToday0, dateToday24);
 				paymentsToday = billManager.getPayments(dateToday0, dateToday24);

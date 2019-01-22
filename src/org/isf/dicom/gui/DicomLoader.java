@@ -2,13 +2,13 @@ package org.isf.dicom.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Window;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+import org.isf.dicom.manager.AbstractDicomLoader;
 import org.isf.generaldata.MessageBundle;
 
 /**
@@ -17,7 +17,7 @@ import org.isf.generaldata.MessageBundle;
  * @author Pietro Castellucci
  * @version 1.0.0
  */
-public class DicomLoader extends Window {
+public class DicomLoader extends AbstractDicomLoader {
 
 	/**
 	 * 

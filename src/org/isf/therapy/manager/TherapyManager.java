@@ -8,7 +8,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstockward.manager.MovWardBrowserManager;
-import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.sms.manager.SmsManager;
@@ -18,7 +18,6 @@ import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
 import org.isf.therapy.service.TherapyIoOperations;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +68,7 @@ public class TherapyManager {
 	 */
 	private Therapy createTherapy(int therapyID, int patID, Integer medId, Double qty,
 			GregorianCalendar startDate, GregorianCalendar endDate, int freqInPeriod,
-			int freqInDay, String note, boolean notify, boolean sms) {
+			int freqInDay, String note, boolean notify, boolean sms) throws OHServiceException {
 		
 		ArrayList<GregorianCalendar> datesArray = new ArrayList<GregorianCalendar>();
 		
@@ -99,12 +98,7 @@ public class TherapyManager {
 		}
 		
 		MedicalBrowsingManager medManager = new MedicalBrowsingManager();
-		Medical med = null;
-		try {
-			med = medManager.getMedical(medId);
-		} catch (OHServiceException e) {
-			OHServiceExceptionUtil.showMessages(e);
-		}
+		Medical med = medManager.getMedical(medId);
 		Therapy th = new Therapy(therapyID,	patID, dates, med, qty, "", freqInDay, note, notify, sms);
 		datesArray.clear();
 		dates = null;
@@ -189,7 +183,7 @@ public class TherapyManager {
 							sms.setSmsDateSched(date.getTime());
 							sms.setSmsNumber(pat.getTelephone());
 							sms.setSmsText(prepareSmsFromTherapy(th));
-							sms.setSmsUser(MainMenu.getUser());
+							sms.setSmsUser(UserBrowsingManager.getCurrentUser());
 							sms.setModule("therapy");
 							sms.setModuleID(String.valueOf(patID));
 							smsOp.saveOrUpdate(sms);

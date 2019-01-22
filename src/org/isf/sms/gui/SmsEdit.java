@@ -31,7 +31,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
@@ -281,7 +281,7 @@ public class SmsEdit extends JDialog implements SelectionListener {
 					Sms smsToSend = new Sms();
 					smsToSend.setSmsNumber(number);
 					smsToSend.setSmsDateSched(schedDate);
-					smsToSend.setSmsUser(MainMenu.getUser());
+					smsToSend.setSmsUser(UserBrowsingManager.getCurrentUser());
 					smsToSend.setSmsText(text);
 					smsToSend.setModule("smsmanager");
 					

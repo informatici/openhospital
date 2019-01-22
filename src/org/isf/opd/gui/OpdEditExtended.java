@@ -91,6 +91,7 @@ import org.isf.examination.model.PatientExamination;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.patient.gui.PatientInsert;
@@ -1462,7 +1463,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 					opd.setDisease(disease);					
 					opd.setDisease2(disease2);
 					opd.setDisease3(disease3);
-					opd.setUserID(MainMenu.getUser());
+					opd.setUserID(UserBrowsingManager.getCurrentUser());
 					
 					try {
 						if (insert){    //Insert

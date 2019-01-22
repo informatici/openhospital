@@ -69,6 +69,7 @@ import org.isf.examination.model.PatientExamination;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.operation.manager.OperationBrowserManager;
 import org.isf.operation.model.Operation;
 import org.isf.patient.gui.PatientSummary;
@@ -1987,7 +1988,7 @@ public class AdmissionBrowser extends JDialog {
 						}// isPregnancy
 
 						// set not editable fields
-						String user = MainMenu.getUser();
+						String user = UserBrowsingManager.getCurrentUser();
 	//					String admUser = admission.getUserID();
 	//					if (admUser != null && !admUser.equals(user)) {
 	//						int yes = JOptionPane.showConfirmDialog(AdmissionBrowser.this, MessageBundle.getMessage("angal.admission.youaresigningnewdatawithyournameconfirm"));
