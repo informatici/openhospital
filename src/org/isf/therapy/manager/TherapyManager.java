@@ -69,7 +69,7 @@ public class TherapyManager {
 	 */
 	private Therapy createTherapy(int therapyID, int patID, Integer medId, Double qty,
 			GregorianCalendar startDate, GregorianCalendar endDate, int freqInPeriod,
-			int freqInDay, String note, boolean notify, boolean sms) {
+			int freqInDay, String note, boolean notify, boolean sms) throws OHServiceException {
 		
 		ArrayList<GregorianCalendar> datesArray = new ArrayList<GregorianCalendar>();
 		
@@ -99,12 +99,7 @@ public class TherapyManager {
 		}
 		
 		MedicalBrowsingManager medManager = new MedicalBrowsingManager();
-		Medical med = null;
-		try {
-			med = medManager.getMedical(medId);
-		} catch (OHServiceException e) {
-			OHServiceExceptionUtil.showMessages(e);
-		}
+		Medical med = medManager.getMedical(medId);
 		Therapy th = new Therapy(therapyID,	patID, dates, med, qty, "", freqInDay, note, notify, sms);
 		datesArray.clear();
 		dates = null;
