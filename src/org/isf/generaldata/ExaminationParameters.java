@@ -133,7 +133,7 @@ public class ExaminationParameters {
 			HR_UNIT = propertyReader.readProperty("HR_UNIT", DEFAULT_HR_UNIT);
 			TEMP_UNIT = propertyReader.readProperty("TEMP_UNIT", DEFAULT_TEMP_UNIT);
 		} catch (Exception e) { //no file
-			System.out.println("examination.properties file not found.");
+			logger.warn("examination.properties file not found.");
 		}
 		//MessageBundle.initialize();
 	}
@@ -150,7 +150,7 @@ public class ExaminationParameters {
 		try {
 			value = Integer.parseInt(p.getProperty(property));
 		} catch (Exception e) {
-			System.out.println(property + " property not found: default is " + defaultValue);
+			logger.warn(property + " property not found: default is " + defaultValue);
 			return defaultValue;
 		}
 		return value;
@@ -168,7 +168,7 @@ public class ExaminationParameters {
 		try {
 			value = Double.parseDouble(p.getProperty(property));
 		} catch (Exception e) {
-			System.out.println(property + " property not found: default is " + defaultValue);
+			logger.warn(property + " property not found: default is " + defaultValue);
 			return defaultValue;
 		}
 		return value;

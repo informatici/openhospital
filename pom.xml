@@ -1,14 +1,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+		
+	<name>OpenHospital-core</name>
+	<url>www.open-hospital.org</url>
+	<organization>
+		<name>Informatici Senza Frontiere</name>
+		<url>www.informaticisenzafrontiere.org</url>
+	</organization>
+	
 	<groupId>org.isf</groupId>
-	<artifactId>OH</artifactId>
+	<artifactId>OH-core</artifactId>
 	<packaging>jar</packaging>
 	<version>2.0</version>
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.framework.version>4.3.18.RELEASE</spring.framework.version>
 	</properties>
+	
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
@@ -55,141 +65,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.7</version>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/OpenHospital20/rsc</outputDirectory>
-							<resources>
-								<resource>
-									<directory>rsc</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-lib</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/OpenHospital20/lib</outputDirectory>
-							<resources>
-								<resource>
-									<directory>lib</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-native-lib</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/OpenHospital20/lib/native</outputDirectory>
-							<resources>
-								<resource>
-									<directory>lib/native</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-bundle</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/OpenHospital20/bundle</outputDirectory>
-							<resources>
-								<resource>
-									<directory>bundle</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-doc</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/OpenHospital20/doc</outputDirectory>
-							<resources>
-								<resource>
-									<directory>doc</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-report</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/OpenHospital20/rpt</outputDirectory>
-							<resources>
-								<resource>
-									<directory>rpt</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-script</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/OpenHospital20</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${basedir}</directory>
-									<include>oh.ico</include>
-									<include>README.md</include>
-									<include>*.cmd</include>
-									<include>*.sh</include>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/OpenHospital20/lib</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>false</overWriteSnapshots>
-							<overWriteIfNewer>true</overWriteIfNewer>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
@@ -197,67 +72,24 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>org.isf.menu.gui.Menu</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Class-Path>.</Class-Path>
 						</manifestEntries>
 					</archive>
-					<finalName>OpenHospital20/bin/OH</finalName>
+					<finalName>OpenHospital20/bin/OH-core</finalName>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	<name>OpenHospital</name>
-	<url>www.open-hospital.org</url>
-	<organization>
-		<name>Informatici Senza Frontiere</name>
-		<url>www.informaticisenzafrontiere.org</url>
-	</organization>
+	
 	<dependencies>
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.7.0</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.1</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-digester</groupId>
-			<artifactId>commons-digester</artifactId>
-			<version>2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.googlecode.gstreamer-java</groupId>
-			<artifactId>gstreamer-java</artifactId>
-			<version>1.4</version>
-		</dependency>
 		<dependency>
 			<groupId>codeanticode.gsvideo</groupId>
 			<artifactId>gsvideo_isf</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/gsvideo_isf.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>Hal</groupId>
-			<artifactId>Hal</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/Hal.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>org.abstractj.libmatthew</groupId>
-			<artifactId>hexdump</artifactId>
-			<version>0.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -268,41 +100,6 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
 			<version>4.4.4</version>
-		</dependency>
-		<dependency>
-			<groupId>cx.ath.matthew.io</groupId>
-			<artifactId>Io</artifactId>
-			<version>0.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/io-0.1.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>cx.ath.matthew.io</groupId>
-			<artifactId>debug-disable</artifactId>
-			<version>1.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/debug-disable-1.1.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>cx.ath.matthew.unix</groupId>
-			<artifactId>unix-0.3</artifactId>
-			<version>0.3</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/unix-0.3.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>au.edu.jcu.v4l4j</groupId>
-			<artifactId>v4l4j</artifactId>
-			<version>0.3</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/v4l4j.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>com.lowagie</groupId>
-			<artifactId>itext</artifactId>
-			<version>1.02b</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/itext-1.02b.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>jasperreports</groupId>
@@ -316,16 +113,6 @@
 			<version>3.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>com.toedter</groupId>
-			<artifactId>jcalendar</artifactId>
-			<version>1.3.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jna</groupId>
-			<artifactId>jna</artifactId>
-			<version>3.0.9</version>
-		</dependency>
-		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.2</version>
@@ -334,23 +121,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
-		</dependency>
-		<dependency>
-			<groupId>libdbus-java</groupId>
-			<artifactId>libdbus-java</artifactId>
-			<version>2.4</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/libdbus-java-2.4.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>2.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<version>2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
@@ -363,13 +133,6 @@
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/processing_core.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>snmp6_0</groupId>
-			<artifactId>snmp6_0</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/snmp6_0.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>gnu.io</groupId>
@@ -386,34 +149,6 @@
 			<systemPath>${project.basedir}/lib/sal_isf.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>jai</groupId>
-			<artifactId>clibwrapper</artifactId>
-			<version>0.1</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/dicom/jai/clibwrapper_jiio.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>jai</groupId>
-			<artifactId>jai_core</artifactId>
-			<version>1.1.4</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/dicom/jai/jai_core-1.1.4-b03.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>jai</groupId>
-			<artifactId>jai_imageio</artifactId>
-			<version>1.2</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/dicom/jai/jai_imageio-1.2-b04.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>jai</groupId>
-			<artifactId>jai_codec</artifactId>
-			<version>1.1.4</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/dicom/jai/jai_codec-1.1.4-b03.jar</systemPath>
-		</dependency>
-		<dependency>
 			<groupId>org.dcm4che2</groupId>
 			<artifactId>dcm4che-core</artifactId>
 			<version>2.0.26</version>
@@ -427,13 +162,6 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/dicom/dcm4che/dcm4che-imageio-2.0.26.jar</systemPath>
 		</dependency>
-		<dependency>
-			<groupId>org.dcm4che2</groupId>
-			<artifactId>dcm4che-image</artifactId>
-			<version>2.0.26</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/dicom/dcm4che/dcm4che-image-2.0.26.jar</systemPath>
-		</dependency>
 	  	<dependency>
 	  		<groupId>org.apache.poi</groupId>
 	  		<artifactId>poi</artifactId>
@@ -443,16 +171,6 @@
 		    <groupId>org.apache.poi</groupId>
 		    <artifactId>poi-ooxml</artifactId>
 		    <version>3.7</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml-schemas</artifactId>
-		    <version>3.7</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.xmlbeans</groupId>
-		    <artifactId>xmlbeans</artifactId>
-		    <version>2.3.0</version>
 		</dependency>
 	  	<dependency>
 	  		<groupId>org.slf4j</groupId>
@@ -475,21 +193,6 @@
 			<version>3.2.1</version>
 		</dependency>
 	  	<dependency>
-	  		<groupId>antlr</groupId>
-	  		<artifactId>antlr</artifactId>
-	  		<version>2.7.7</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>dom4j</groupId>
-	  		<artifactId>dom4j</artifactId>
-	  		<version>1.6.1</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>org.hibernate.common</groupId>
-	  		<artifactId>hibernate-commons-annotations</artifactId>
-	  		<version>4.0.1.Final</version>
-	  	</dependency>
-	  	<dependency>
 	  		<groupId>org.hibernate</groupId>
 	  		<artifactId>hibernate-core</artifactId>
 	  		<version>4.2.13.Final</version>
@@ -510,16 +213,6 @@
 		    <version>4.2.13.Final</version>
 		</dependency>
 	  	<dependency>
-	  		<groupId>org.jboss.logging</groupId>
-	  		<artifactId>jboss-logging</artifactId>
-	  		<version>3.1.0.GA</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>org.jboss.spec.javax.transaction</groupId>
-	  		<artifactId>jboss-transaction-api_1.1_spec</artifactId>
-	  		<version>1.0.0.Final</version>
-	  	</dependency>
-	  	<dependency>
 	  		<groupId>javax.validation</groupId>
 	  		<artifactId>validation-api</artifactId>
 	  		<version>1.0.0.GA</version>
@@ -530,20 +223,10 @@
 	  		<version>4.2</version>
 	  	</dependency>
 	  	<dependency>
-	  		<groupId>commons-cli</groupId>
-	  		<artifactId>commons-cli</artifactId>
-	  		<version>1.2</version>
-	  	</dependency>
-	  	<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 			<version>${spring.framework.version}</version>
 		</dependency>
-	  	<dependency>
-	  		<groupId>org.springframework</groupId>
-	  		<artifactId>spring-aop</artifactId>
-	  		<version>${spring.framework.version}</version>
-	  	</dependency>
 	  	<dependency>
 	  		<groupId>org.springframework</groupId>
 	  		<artifactId>spring-beans</artifactId>
@@ -557,11 +240,6 @@
 	  	<dependency>
 	  		<groupId>org.springframework</groupId>
 	  		<artifactId>spring-core</artifactId>
-	  		<version>${spring.framework.version}</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>org.springframework</groupId>
-	  		<artifactId>spring-expression</artifactId>
 	  		<version>${spring.framework.version}</version>
 	  	</dependency>
     	<dependency>
@@ -586,21 +264,10 @@
 		    <scope>test</scope>
 		</dependency>	
 		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-autoconfigure</artifactId>
-		    <version>1.3.0.RELEASE</version>
-		</dependency>	
-		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-test-autoconfigure</artifactId>
-		    <version>1.4.0.RELEASE</version>
-		</dependency>
-		<dependency>
 		    <groupId>org.aspectj</groupId>
 		    <artifactId>aspectjweaver</artifactId>
 		    <version>1.8.13</version>
 		</dependency>
-		
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-test</artifactId>
@@ -617,5 +284,16 @@
             	<enabled>false</enabled>
         	</snapshots>
     	</repository>
+    	<repository>
+                <id>jaspersoft</id>
+                <name>Jasper Soft</name>
+                <url>http://jasperforge.org/maven2/</url>
+                <releases>
+                    <enabled>false</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>false</enabled>
+                </snapshots>
+        </repository>
 	</repositories>
 </project>

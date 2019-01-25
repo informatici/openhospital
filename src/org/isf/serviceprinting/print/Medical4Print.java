@@ -10,7 +10,7 @@ public class Medical4Print {
 	private double curQty;
 	private String expiring;
 	
-	Medical4Print(Medical medical){
+	public Medical4Print(Medical medical){
 		medicalDescription=medical.getDescription();
 		medicalType=medical.getType().getDescription();
 		minQty=medical.getMinqty();

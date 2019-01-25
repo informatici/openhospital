@@ -142,7 +142,7 @@ public class PrintReceipt {
 			header+=labelLenght;
 			String label = header+zpl;
 			
-			System.out.println(label);
+			//System.out.println(label);
 			byte[] by = label.getBytes();
 			Doc doc = new SimpleDoc(by, flavor, das);
 			job.print(doc, pras);
@@ -186,7 +186,7 @@ public class PrintReceipt {
 				logger.debug(flavor.toString());
 			}
 		}
-		System.out.println("Attributes:");
+		//System.out.println("Attributes:");
 		Attribute[] attributes = printService.getAttributes().toArray();
 		if (attributes != null) {
 			for (Attribute attr : attributes) {

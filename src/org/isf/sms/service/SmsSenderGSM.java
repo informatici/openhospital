@@ -183,7 +183,7 @@ public class SmsSenderGSM implements SmsSenderInterface, SerialPortEventListener
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Found " + smsList.size() + " SMS to send");
+		logger.debug("Found " + smsList.size() + " SMS to send");
 		
 		//Send
 		SmsSenderGSM sender = new SmsSenderGSM();
@@ -191,6 +191,6 @@ public class SmsSenderGSM implements SmsSenderInterface, SerialPortEventListener
 		if (sender.initialize()) {
 			result = sender.sendSMS(smsList.get(0), true);
 		}
-		System.out.println(result);
+		logger.debug(""+result);
 	}
 }

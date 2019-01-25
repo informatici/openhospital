@@ -75,7 +75,7 @@ public class SkebbyGateway implements SmsSenderInterface {
 		// For eventual errors see http:#www.skebby.com/business/index/send-docs/#errorCodesSection
 		// WARNING: in case of error DON'T retry the sending, since they are blocking errors
 		// ------------------------------------------------------------------	
-        System.out.println("result: "+result);
+        logger.debug("result: "+result);
     }
     
     /**

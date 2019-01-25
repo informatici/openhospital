@@ -1,4 +1,4 @@
-# OpenHospital
+# OpenHospital-core
 OpenHospital 2.0 (ISF OpenHospital web version) - WIP
 
 **How to build with Maven:**
@@ -6,29 +6,16 @@ _(requires Maven 3.2.5 or lesser installed and configured)_
 
     mvn clean install
     
-**How to create the DataBase**:
+You need a local (or remote) MySQL server where to run the JUnit tests. Simply run:
 
-You need a local (or remote) MySQL server where to run the script in mysql/db/ folder
-
-	create_all_en.sql
-	
-For remote MySQL server you need to change:
-- rsc/database.properties
-- rsc/log4j.properties
-
-***With docker compose***
-
-Simply run:
-
-docker-compose up 
+	docker-compose up 
 
 **How to launch the software**:
 
-Use scripts OpenHospital.sh (Linux) or OpenHospital.cmd (Windows)
+You need a GUI (Graphic User Interface) in order to use the core:
 
-**Other info**
+* clone [OpenHospital-gui](https://github.com/informatici/openhospital-gui) for a Java Swing interface, follow the instructions in the related README.md
 
-Please read Admin and User manuals in doc/ folder
 
 # How to contribute
 

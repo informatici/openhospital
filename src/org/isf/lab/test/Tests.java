@@ -29,6 +29,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -37,6 +39,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class Tests  
 {
+	private final static Logger logger = LoggerFactory.getLogger(Tests.class);
+	
 	private static DbJpaUtil jpa;
 	private static TestLaboratory testLaboratory;
 	private static TestLaboratoryRow testLaboratoryRow;
@@ -374,20 +378,20 @@ public class Tests
 		}
 		catch (OHServiceException e) 
 		{
-			System.out.println("==> Voluntary Exception: " + e);
+			logger.debug("==> Voluntary Exception: " + e);
 			try {
 				Laboratory foundlaboratory = (Laboratory)jpa.find(Laboratory.class, laboratory.getCode());
 				assertEquals(null, foundlaboratory);
 			}
 			catch (Exception e1)
 			{
-				System.out.println("==> Test Exception: " + e);		
+				logger.debug("==> Test Exception: " + e);		
 				assertEquals(true, false);
 			}
 		}
 		catch (Exception e)
 		{
-			System.out.println("==> Test Exception: " + e);		
+			logger.debug("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		}
 
@@ -437,12 +441,12 @@ public class Tests
 		}
 		catch (OHServiceException e) 
 		{
-			System.out.println("==> Voluntary Exception: ");
-			for (OHExceptionMessage error : e.getMessages()) System.out.println("    " + error.getMessage());
+			logger.debug("==> Voluntary Exception: ");
+			for (OHExceptionMessage error : e.getMessages()) logger.debug("    " + error.getMessage());
 		}
 		catch (Exception e)
 		{
-			System.out.println("==> Test Exception: " + e);		
+			logger.debug("==> Test Exception: " + e);		
 			assertEquals(true, false);
 		} 
 		return;
@@ -524,7 +528,7 @@ public class Tests
 		} 
 		catch (OHServiceException e) 
 		{
-			System.out.println("==> Test Exception: " + e);		
+			logger.debug("==> Test Exception: " + e);		
 			e.printStackTrace();
 			assertEquals(true, false);
 		}

@@ -72,7 +72,6 @@ public class MedicalWard implements Comparable<Object>
 	public Medical getMedical() throws OHException {
 		jpa = getDbJpaUtil();
 		jpa.beginTransaction();
-		System.out.println(id.getMedicalId());
 		Medical medical = (Medical)jpa.find(Medical.class, id.getMedicalId()); 
 		jpa.commitTransaction();
 		return medical;
