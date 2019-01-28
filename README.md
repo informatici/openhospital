@@ -1,5 +1,14 @@
-# OpenHospital
+# OpenHospital-gui
 OpenHospital 2.0 (ISF OpenHospital web version) - WIP
+
+**OpenHospital-core + library gsvideo_isf**
+You need the openhospital-core in order to run and a custom library.
+
+* clone [gsvideo_isf](https://github.com/informatici/gsvideo_isf)
+* follow the instructions in the related README.md
+* clone [openhospital-core](https://github.com/informatici/openhospital-core)
+* follow the instructions in the related README.md
+
 
 **How to build with Maven:**
 _(requires Maven 3.2.5 or lesser installed and configured)_
@@ -12,19 +21,19 @@ You need a local (or remote) MySQL server where to run the script in mysql/db/ f
 
 	create_all_en.sql
 	
-For remote MySQL server you need to change:
-- rsc/database.properties
-- rsc/log4j.properties
+For remote MySQL server you need to change IP (localost) and PORT (3306) in rsc/applicationContext.properties:
 
-***With docker compose***
+	<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/oh" />
 
-Simply run:
+**With docker compose**
 
-docker-compose up 
+Simply run (it will run on localhost:3306):
+
+	docker-compose up 
 
 **How to launch the software**:
 
-Use scripts OpenHospital.sh (Linux) or OpenHospital.cmd (Windows)
+Use scripts startup.sh (Linux) or startup.cmd (Windows)
 
 **Other info**
 

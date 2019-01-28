@@ -3,7 +3,7 @@ set OH_HOME=%~dps0
 REM if java is not in the system path set JAVA_HOME variable
 REM set JAVA_HOME=%OH_HOME%jvm\bin
 
-for %%i in (java.exe) do set JAVA=%%~$PATH:i
+for %%i in (java.exe) do set JAVA=%%~s$PATH:i
 
 IF NOT DEFINED JAVA (
 	@echo Java not found
@@ -19,10 +19,6 @@ set CLASSPATH=%OH_BIN%
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 FOR %%A IN (%OH_LIB%\*.jar) DO (
-	set CLASSPATH=!CLASSPATH!;%%A
-)
-
-FOR %%A IN (%OH_LIB%\h8\*.jar) DO (
 	set CLASSPATH=!CLASSPATH!;%%A
 )
 

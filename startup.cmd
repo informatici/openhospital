@@ -24,10 +24,6 @@ FOR %%A IN (%OH_LIB%\*.jar) DO (
 	set CLASSPATH=!CLASSPATH!;%%A
 )
 
-FOR %%A IN (%OH_LIB%\h8\*.jar) DO (
-	set CLASSPATH=!CLASSPATH!;%%A
-)
-
 FOR %%A IN (%OH_LIB%\dicom\*.jar) DO (
 	set CLASSPATH=!CLASSPATH!;%%A
 )
@@ -41,7 +37,7 @@ FOR %%A IN (%OH_LIB%\dicom\jai\*.jar) DO (
 )
 
 set CLASSPATH=%CLASSPATH%;%OH_BUNDLE%
-set CLASSPATH=%CLASSPATH%;%OH_BIN%;%OH_BIN%\OH.jar
+set CLASSPATH=%CLASSPATH%;%OH_BIN%;%OH_BIN%\OH-gui.jar
 
 IF (%PROCESSOR_ARCHITECTURE%)==(AMD64) (set NATIVE_PATH=%OH_LIB%\native\Win64) ELSE (set NATIVE_PATH=%OH_LIB%\native\Windows)
 
