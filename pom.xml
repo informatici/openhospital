@@ -12,7 +12,7 @@
 	<groupId>org.isf</groupId>
 	<artifactId>OH-core</artifactId>
 	<packaging>jar</packaging>
-	<version>2.0</version>
+	<version>1.9</version>
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -65,6 +65,77 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/OpenHospital20/rsc</outputDirectory>
+							<resources>
+								<resource>
+									<directory>rsc</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-lib</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/OpenHospital20/lib</outputDirectory>
+							<resources>
+								<resource>
+									<directory>lib</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-native-lib</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/OpenHospital20/lib/native</outputDirectory>
+							<resources>
+								<resource>
+									<directory>lib/native</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					</executions>
+				</plugin>
+			<!-- <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/OpenHospital20/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
@@ -80,16 +151,20 @@
 					<finalName>OpenHospital20/bin/OH-core</finalName>
 				</configuration>
 			</plugin>
+			
 		</plugins>
 	</build>
 	
 	<dependencies>
 		<dependency>
+			<groupId>com.googlecode.gstreamer-java</groupId>
+			<artifactId>gstreamer-java</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
 			<groupId>codeanticode.gsvideo</groupId>
 			<artifactId>gsvideo_isf</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/gsvideo_isf.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -128,18 +203,14 @@
 			<version>5.1.14</version>
 		</dependency>
 		<dependency>
-			<groupId>processing_core</groupId>
-			<artifactId>processing_core</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/processing_core.jar</systemPath>
+		    <groupId>org.processing</groupId>
+		    <artifactId>core</artifactId>
+		    <version>1.2.1</version>
 		</dependency>
 		<dependency>
-			<groupId>gnu.io</groupId>
-			<artifactId>RXTXcomm</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/RXTXcomm.jar</systemPath>
+		    <groupId>org.rxtx</groupId>
+		    <artifactId>rxtx</artifactId>
+		    <version>2.1.7</version>
 		</dependency>
 		<dependency>
 			<groupId>jcu.sal</groupId>
@@ -149,18 +220,14 @@
 			<systemPath>${project.basedir}/lib/sal_isf.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>org.dcm4che2</groupId>
+			<groupId>dcm4che</groupId>
 			<artifactId>dcm4che-core</artifactId>
 			<version>2.0.26</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/dicom/dcm4che/dcm4che-core-2.0.26.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>org.dcm4che2</groupId>
-			<artifactId>dcm4che-imageio</artifactId>
-			<version>2.0.26</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/dicom/dcm4che/dcm4che-imageio-2.0.26.jar</systemPath>
+		    <groupId>dcm4che</groupId>
+		    <artifactId>dcm4che-imageio</artifactId>
+		    <version>2.0.26</version>
 		</dependency>
 	  	<dependency>
 	  		<groupId>org.apache.poi</groupId>
@@ -291,6 +358,22 @@
                 <releases>
                     <enabled>false</enabled>
                 </releases>
+                <snapshots>
+                    <enabled>false</enabled>
+                </snapshots>
+        </repository>
+        <repository>
+                <id>dcm4che</id>
+                <name>Dcm4Che Repository</name>
+                <url>http://www.dcm4che.org/maven2/</url>
+                <snapshots>
+                    <enabled>false</enabled>
+                </snapshots>
+        </repository>
+        <repository>
+                <id>cytoscape</id>
+                <name>Cytoscape Repository</name>
+                <url>http://code.cytoscape.org/nexus/content/repositories/releases/</url>
                 <snapshots>
                     <enabled>false</enabled>
                 </snapshots>
