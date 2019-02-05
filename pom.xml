@@ -1,24 +1,24 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-		
+
 	<name>OpenHospital-core</name>
 	<url>www.open-hospital.org</url>
 	<organization>
 		<name>Informatici Senza Frontiere</name>
 		<url>www.informaticisenzafrontiere.org</url>
 	</organization>
-	
+
 	<groupId>org.isf</groupId>
 	<artifactId>OH-core</artifactId>
 	<packaging>jar</packaging>
 	<version>1.9</version>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.framework.version>4.3.18.RELEASE</spring.framework.version>
 	</properties>
-	
+
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
@@ -37,24 +37,24 @@
 		</resources>
 		<plugins>
 			<plugin>
-			<groupId>org.codehaus.mojo</groupId>
-			<artifactId>build-helper-maven-plugin</artifactId>
-			<version>1.9.1</version>
-			<executions>
-				<execution>
-					<id>add-test-source</id>
-					<phase>process-resources</phase>
-					<goals>
-						<goal>add-test-source</goal>
-					</goals>
-					<configuration>
-						<sources>
-							<source>src/org/isf/test</source>
-						</sources>
-					</configuration>
-				</execution>
-			</executions>
-		</plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>add-test-source</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/org/isf/test</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
@@ -113,8 +113,8 @@
 							</resources>
 						</configuration>
 					</execution>
-					</executions>
-				</plugin>
+				</executions>
+			</plugin>
 			<!-- <plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-dependency-plugin</artifactId>
@@ -151,10 +151,10 @@
 					<finalName>OpenHospital20/bin/OH-core</finalName>
 				</configuration>
 			</plugin>
-			
+
 		</plugins>
 	</build>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.googlecode.gstreamer-java</groupId>
@@ -165,6 +165,7 @@
 			<groupId>codeanticode.gsvideo</groupId>
 			<artifactId>gsvideo_isf</artifactId>
 			<version>1.0</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -180,11 +181,11 @@
 			<groupId>jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 			<exclusions>
-	          <exclusion>
-	          	<groupId>com.lowagie</groupId>
-				<artifactId>itext</artifactId>
-	          </exclusion>
-	        </exclusions>
+				<exclusion>
+					<groupId>com.lowagie</groupId>
+					<artifactId>itext</artifactId>
+				</exclusion>
+			</exclusions>
 			<version>3.0.0</version>
 		</dependency>
 		<dependency>
@@ -203,21 +204,20 @@
 			<version>5.1.14</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.processing</groupId>
-		    <artifactId>core</artifactId>
-		    <version>1.2.1</version>
+			<groupId>org.processing</groupId>
+			<artifactId>core</artifactId>
+			<version>1.2.1</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.rxtx</groupId>
-		    <artifactId>rxtx</artifactId>
-		    <version>2.1.7</version>
+			<groupId>org.rxtx</groupId>
+			<artifactId>rxtx</artifactId>
+			<version>2.1.7</version>
 		</dependency>
 		<dependency>
 			<groupId>jcu.sal</groupId>
 			<artifactId>sal_isf</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/sal_isf.jar</systemPath>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>dcm4che</groupId>
@@ -225,31 +225,31 @@
 			<version>2.0.26</version>
 		</dependency>
 		<dependency>
-		    <groupId>dcm4che</groupId>
-		    <artifactId>dcm4che-imageio</artifactId>
-		    <version>2.0.26</version>
+			<groupId>dcm4che</groupId>
+			<artifactId>dcm4che-imageio</artifactId>
+			<version>2.0.26</version>
 		</dependency>
-	  	<dependency>
-	  		<groupId>org.apache.poi</groupId>
-	  		<artifactId>poi</artifactId>
-	  		<version>3.7</version>
-	  	</dependency>
-	  	<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml</artifactId>
-		    <version>3.7</version>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.7</version>
 		</dependency>
-	  	<dependency>
-	  		<groupId>org.slf4j</groupId>
-	  		<artifactId>slf4j-api</artifactId>
-	  		<version>1.6.4</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>org.slf4j</groupId>
-	  		<artifactId>slf4j-log4j12</artifactId>
-	  		<version>1.6.4</version>
-	  	</dependency>
-	  	<dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
 			<groupId>org.igniterealtime.smack</groupId>
 			<artifactId>smack</artifactId>
 			<version>3.2.1</version>
@@ -259,124 +259,129 @@
 			<artifactId>smackx</artifactId>
 			<version>3.2.1</version>
 		</dependency>
-	  	<dependency>
-	  		<groupId>org.hibernate</groupId>
-	  		<artifactId>hibernate-core</artifactId>
-	  		<version>4.2.13.Final</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>org.hibernate.javax.persistence</groupId>
-	  		<artifactId>hibernate-jpa-2.0-api</artifactId>
-	  		<version>1.0.1.Final</version>
-	  	</dependency>
-	  	<dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>4.2.13.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<version>1.0.1.Final</version>
+		</dependency>
+		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>4.2.5.Final</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate-c3p0</artifactId>
-		    <version>4.2.13.Final</version>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+			<version>4.2.13.Final</version>
 		</dependency>
-	  	<dependency>
-	  		<groupId>javax.validation</groupId>
-	  		<artifactId>validation-api</artifactId>
-	  		<version>1.0.0.GA</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>org.imgscalr</groupId>
-	  		<artifactId>imgscalr-lib</artifactId>
-	  		<version>4.2</version>
-	  	</dependency>
-	  	<dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.0.0.GA</version>
+		</dependency>
+		<dependency>
+			<groupId>org.imgscalr</groupId>
+			<artifactId>imgscalr-lib</artifactId>
+			<version>4.2</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 			<version>${spring.framework.version}</version>
 		</dependency>
-	  	<dependency>
-	  		<groupId>org.springframework</groupId>
-	  		<artifactId>spring-beans</artifactId>
-	  		<version>${spring.framework.version}</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>org.springframework</groupId>
-	  		<artifactId>spring-context</artifactId>
-	  		<version>${spring.framework.version}</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>org.springframework</groupId>
-	  		<artifactId>spring-core</artifactId>
-	  		<version>${spring.framework.version}</version>
-	  	</dependency>
-    	<dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.framework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.framework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.framework.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.framework.version}</version>
 		</dependency>
 		<dependency>
- 			<groupId>org.springframework</groupId>
- 		<artifactId>spring-tx</artifactId>
- 			<version>${spring.framework.version}</version>
- 		</dependency>
-    	<dependency>
-		    <groupId>org.springframework.data</groupId>
-		    <artifactId>spring-data-jpa</artifactId>
-		    <version>1.10.11.RELEASE</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.framework.version}</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-test</artifactId>
-		    <version>1.4.0.RELEASE</version>
-		    <scope>test</scope>
-		</dependency>	
-		<dependency>
-		    <groupId>org.aspectj</groupId>
-		    <artifactId>aspectjweaver</artifactId>
-		    <version>1.8.13</version>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>1.10.11.RELEASE</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-test</artifactId>
-		    <version>1.4.0.RELEASE</version>
-		    <scope>test</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-test</artifactId>
+			<version>1.4.0.RELEASE</version>
+			<scope>test</scope>
 		</dependency>
-  </dependencies>
-  <repositories>
-    	<repository>
-        	<id>spring-libs-release</id>
-        	<name>Spring Releases</name>
-        	<url>https://repo.spring.io/libs-release</url>
-        	<snapshots>
-            	<enabled>false</enabled>
-        	</snapshots>
-    	</repository>
-    	<repository>
-                <id>jaspersoft</id>
-                <name>Jasper Soft</name>
-                <url>http://jasperforge.org/maven2/</url>
-                <releases>
-                    <enabled>false</enabled>
-                </releases>
-                <snapshots>
-                    <enabled>false</enabled>
-                </snapshots>
-        </repository>
-        <repository>
-                <id>dcm4che</id>
-                <name>Dcm4Che Repository</name>
-                <url>http://www.dcm4che.org/maven2/</url>
-                <snapshots>
-                    <enabled>false</enabled>
-                </snapshots>
-        </repository>
-        <repository>
-                <id>cytoscape</id>
-                <name>Cytoscape Repository</name>
-                <url>http://code.cytoscape.org/nexus/content/repositories/releases/</url>
-                <snapshots>
-                    <enabled>false</enabled>
-                </snapshots>
-        </repository>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.8.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<version>1.4.0.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<repositories>
+		<repository>
+			<id>lib</id>
+			<name>Legacy dependencies Repository</name>
+			<url>file:${project.basedir}/repo</url>
+		</repository>
+		<repository>
+			<id>spring-libs-release</id>
+			<name>Spring Releases</name>
+			<url>https://repo.spring.io/libs-release</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jaspersoft</id>
+			<name>Jasper Soft</name>
+			<url>http://jasperforge.org/maven2/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>dcm4che</id>
+			<name>Dcm4Che Repository</name>
+			<url>http://www.dcm4che.org/maven2/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>cytoscape</id>
+			<name>Cytoscape Repository</name>
+			<url>http://code.cytoscape.org/nexus/content/repositories/releases/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 </project>
