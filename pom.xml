@@ -163,6 +163,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.1</version>
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
@@ -206,13 +207,13 @@
   			<artifactId>OH-core</artifactId>
   			<version>1.9</version>
   		</dependency>
-  		<dependency>
+  		<!-- dependency>
 			<groupId>jcu.sal</groupId>
 			<artifactId>sal_isf</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/sal_isf.jar</systemPath>
-		</dependency>
+		</dependency -->
 		<dependency>
 			<groupId>jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
@@ -273,7 +274,7 @@
 			<groupId>org.igniterealtime.smack</groupId>
 			<artifactId>smackx</artifactId>
 			<version>3.2.1</version>
-		</dependency>
+		</dependency >
 	  	<dependency>
 	  		<groupId>org.imgscalr</groupId>
 	  		<artifactId>imgscalr-lib</artifactId>
