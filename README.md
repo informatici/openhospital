@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/informatici/OpenHospital.svg?branch=master)](https://travis-ci.org/informatici/OpenHospital)
+[![Build Status](https://travis-ci.org/informatici/OpenHospital.svg?branch=master)](https://travis-ci.org/informatici/openhospital-core)
 # OpenHospital-core
 OpenHospital 2.0 (ISF OpenHospital web version) - WIP
 
