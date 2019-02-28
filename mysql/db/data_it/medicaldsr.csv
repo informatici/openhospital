@@ -1,0 +1,397 @@
+1;K;Glucose Test Strip ( Sure Step);0;0;0;0;0;0
+2;L;Acetic Acid Glacial 1 ltr;0;0;0;0;0;0
+3;L;Aceton 99% 1ltr;0;0;0;0;0;0
+4;L;Copper 11 Sulphate 500g;0;0;0;0;0;0
+5;L;EDTA Di- sodium salt 100g;0;0;0;0;0;0
+6;L;Ethanol Absolute 1ltr;0;0;0;0;0;0
+7;L;Formaldelyde solution 35-38% 1ltr;0;0;0;0;0;0
+8;L;Hydrochloric Acid 30-33% 1ltr;0;0;0;0;0;0
+9;L;Iodin Crystal 100g;0;0;0;0;0;0
+10;L;Methanol 99% 1ltr;0;0;0;0;0;0
+11;L;Phenol crystals 1kg;0;0;0;0;0;0
+12;L;Potassium iodide 100g;0;0;0;0;0;0
+13;L;Sodium Carbonate Anhydrous 500g;0;0;0;0;0;0
+14;L;Sodium Citrate 100g;0;0;0;0;0;0
+15;L;Sodium Sulphate 500g;0;0;0;0;0;0
+16;L;Sodium Nitrate 25g;0;0;0;0;0;0
+17;L;Sulphosalicylic Acid 500g;0;0;0;0;0;0
+18;L;Sulphuric Acid Conc 1ltr;0;0;0;0;0;0
+19;L;Xylene 2.5 ltrs;0;0;0;0;0;0
+20;L;Sodium Flouride;0;0;0;0;0;0
+21;L;Potassium Oxalate;0;0;0;0;0;0
+22;L;Brillians crystal blue;0;0;0;0;0;0
+23;L;Amonium Oxalate;0;0;0;0;0;0
+24;L;4 Dimethyl Aminobenzaldelyde;0;0;0;0;0;0
+25;L;Trichloro acetic Acid;0;0;0;0;0;0
+26;L;Non 111 Chloride (Ferric chloride);0;0;0;0;0;0
+27;L;Sodium Carbonate Anhydrous;0;0;0;0;0;0
+28;L;Trisodium Citrate;0;0;0;0;0;0
+29;L;Crystal Violet;0;0;0;0;0;0
+30;K;GPT (ALT) 200ml ( Does not have NAOH);0;0;0;0;0;0
+31;K;GOT ( AST) 200ml has no NAOH) AS 101;0;0;0;0;0;0
+32;K;GOT ( AST) 200ml (Calorimetric) AS 147;0;0;0;0;0;0
+33;K;HIV 1/2 Capillus Kit 100Tests;0;0;0;0;0;0
+34;K;HIV Buffer for determine Kit;0;0;0;0;0;0
+35;K;HIV Determine 1/11 (Abbott) 100Tests;0;0;0;0;0;0
+36;K;HIV UNIGOLD 1/11 Test Kits 20 Tests;0;0;0;0;0;0
+37;K;Pregnacy ( HGG Latex) 50 tests;0;0;0;0;0;0
+38;K;RPR 125mm x 75mm;0;0;0;0;0;0
+39;K;RPR ( VDRL Carbon ) Antigen 5ml;0;0;0;0;0;0
+40;D;Adrenaline 1mg/ml 1ml Amp;0;0;0;0;0;0
+41;D;Aminophyline 25mg/ml,10ml Amp;0;0;0;0;0;0
+42;D;Amphotericin B 50mg Vial;0;0;0;0;0;0
+43;D;Ampicillin 500mg Vial;0;0;0;0;0;0
+44;D;Atropine 1mg/ml 1ml Amp;0;0;0;0;0;0
+45;D;Benzathine Penicillin 2.4 MIU Vial;0;0;0;0;0;0
+46;D;Benzyl Penicillin 1 MIU Vial;0;0;0;0;0;0
+47;D;Benzyl Penicillin 5 MIU Vial;0;0;0;0;0;0
+48;D;Chloramphenicol 1g Vial;0;0;0;0;0;0
+49;D;Chloroquine 40mg Base/ml 5ml Amp;0;0;0;0;0;0
+50;D;Chlorpromazine 25mg/ml/2ml Amp;0;0;0;0;0;0
+51;D;Cloxacillin 500mg Vial;0;0;0;0;0;0
+52;D;Cyclophosphamide 200mg Vial;0;0;0;0;0;0
+53;D;Cyclophosphamide 500mg Vial;0;0;0;0;0;0
+54;D;Diazepam 5mg / ml 2ml Amp;0;0;0;0;0;0
+55;D;Diclofenac 25mg/ml 3ml Amp;0;0;0;0;0;0
+56;D;Digoxin 0.25 mg/ml 2ml Amp;0;0;0;0;0;0
+57;D;Frusemide 10mg/ml 2ml Amp;0;0;0;0;0;0
+58;D;Gentamicin 40mg/ml 2ml;0;0;0;0;0;0
+59;D;Haloperidol 5mg/ml 1ml Amp;0;0;0;0;0;0
+60;D;Haloperidol Decanoate 50mg/ml 1ml Amp;0;0;0;0;0;0
+61;D;Hydralazine 20mg Vial;0;0;0;0;0;0
+62;D;Hydrocortisone 100mg Vial;0;0;0;0;0;0
+63;D;Hyoscine Butyl Bromide 20mg/ml/ Amp;0;0;0;0;0;0
+64;D;Insulin Soluble 100IU/ml 10ml Vial;0;0;0;0;0;0
+65;D;Insulin Isophane 100IU/ml 10ml Vial;0;0;0;0;0;0
+66;D;Insulin Mixtard 30/70 100IU/ml 10ml Vial;0;0;0;0;0;0
+67;D;Insulin Mixtard 30/70 100IU/ml 5x3ml catridges;0;0;0;0;0;0
+68;D;Insulin Isophane 40IU/ml 10ml;0;0;0;0;0;0
+69;D;Iron Dextran 10mg/ml 2ml Vial;0;0;0;0;0;0
+70;D;Ketamine 10mg/ml 20ml Vial;0;0;0;0;0;0
+71;D;Ketamine 10mg/ml 10ml Vial;0;0;0;0;0;0
+72;D;Lignocaine 2% 20ml Vial;0;0;0;0;0;0
+73;D;Lignocaine 2% Adrenaline Dent.cartridges;0;0;0;0;0;0
+74;D;Lignocaine spinal 50mg/ml 2ml Amp;0;0;0;0;0;0
+75;D;Methylergomatrine 0.2mg/ml 1ml Amp;0;0;0;0;0;0
+76;D;Methylergomatrine 0.5mg/ml 1ml Amp;0;0;0;0;0;0
+77;D;Metoclopramide 5mg/ml 100ml Amp;0;0;0;0;0;0
+78;D;Metronidazole 5mg/ml 2ml IV;0;0;0;0;0;0
+79;D;Morphine 15mg/ml 1ml Amp;0;0;0;0;0;0
+80;D;Oxytocin 10 IU/ml 1ml Amp;0;0;0;0;0;0
+81;D;Pethidine 100mg/ml 2ml Amp;0;0;0;0;0;0
+82;D;Pethidine 50mg/ml 1ml Amp;0;0;0;0;0;0
+83;D;Phenobarbital 100mg/ml 2ml Amp;0;0;0;0;0;0
+84;D;Phytomenadione 10mg/ml 1ml Amp;0;0;0;0;0;0
+85;D;Phytomenadione 1mg/ml 1ml Amp;0;0;0;0;0;0
+86;D;Procaine Penicillin Fortified 4 MIU Vial;0;0;0;0;0;0
+87;D;Promethazine 25mg/ml 2ml Amp;0;0;0;0;0;0
+88;D;Quinine Di-HCI 300mg/ml 2ml Amp;0;0;0;0;0;0
+89;D;Ranitidine 25mg/ml 2ml Amp;0;0;0;0;0;0
+90;D;Streptomycin 1g Vial;0;0;0;0;0;0
+91;D;Suxamethonium 500mg Vial;0;0;0;0;0;0
+92;D;Suxamethonium 500mg/ml 2ml Amp;0;0;0;0;0;0
+93;D;tetanus Antitoxin 1500 IU 1ml Amp;0;0;0;0;0;0
+94;D;Thiopental Sodium 500mg Vial;0;0;0;0;0;0
+95;D;Water for Injection 10ml Vial;0;0;0;0;0;0
+96;D;Sodium Chloride 0.9% IV 500ml;0;0;0;0;0;0
+97;D;Sodium Lactate Compound IV 500ml;0;0;0;0;0;0
+98;D;Acetazolamide 250mg Tab;0;0;0;0;0;0
+99;D;Acyclovir 200mg Tab;0;0;0;0;0;0
+100;D;Aciclovir;0;0;0;0;0;0
+101;D;Aminophylline 100mg Tab;0;0;0;0;0;0
+102;D;Albendazole 400mg Tab;0;0;0;0;0;0
+103;D;Albendazole 200mg Tab;0;0;0;0;0;0
+104;D;Amitriptyline 25mg Tab;0;0;0;0;0;0
+105;D;Amoxycillin 250mg Caps;0;0;0;0;0;0
+106;D;Amoxycillin /Clavulanate 375mg Tab;0;0;0;0;0;0
+107;D;Ascorbic Acid 100mg tab;0;0;0;0;0;0
+108;D;Aspirin 300mg Tab;0;0;0;0;0;0
+109;D;Atenolol 50mg Tab;0;0;0;0;0;0
+110;D;Atenolol 100mg Tab;0;0;0;0;0;0
+111;D;Bendrofluazide 5mg Tab;0;0;0;0;0;0
+112;D;Benzhexol 2mg Tab;0;0;0;0;0;0
+113;D;Benzhexol 5mg Tab;0;0;0;0;0;0
+114;D;Bisacodyl 5mg Tab;0;0;0;0;0;0
+115;D;Calcium Lactate 300mg Tab;0;0;0;0;0;0
+116;D;Carbamazepine 200mg Tab;0;0;0;0;0;0
+117;D;Carbimazole 5mg Tab;0;0;0;0;0;0
+118;D;Charcoal 250mg Tab;0;0;0;0;0;0
+119;D;Chloramphenicol 250mg Caps;0;0;0;0;0;0
+120;D;Chloroquine Uncoated 150mg Tab;0;0;0;0;0;0
+121;D;Chloroquine Coated 150mg Tab;0;0;0;0;0;0
+122;K;UREA Calorimetric 300 Tests;0;0;0;0;0;0
+123;D;Chlorphenimine 4mg Tab;0;0;0;0;0;0
+124;D;Chlorpromazine 100mg Tab;0;0;0;0;0;0
+125;D;Chlorpromazine 25mg Tab;0;0;0;0;0;0
+126;D;Cimetidine 200mg Tab;0;0;0;0;0;0
+127;D;Cimetidine 400mg Tab;0;0;0;0;0;0
+128;D;Ciprofloxacine 500mg Tab;0;0;0;0;0;0
+129;D;Ciprofloxacine 250mg Tab;0;0;0;0;0;0
+130;D;Cloxacillin 250mg Tab;0;0;0;0;0;0
+131;D;Codein Phosphate 30mg Tab;0;0;0;0;0;0
+132;D;Cotrimoxazole 100/20mg Paed Tab;0;0;0;0;0;0
+133;D;Cotrimoxazole 400/80mg Tab;0;0;0;0;0;0
+134;D;Darrows Half Strength 500ml;0;0;0;0;0;0
+135;D;Dexamethasone 4mg/ml 2ml Amp;0;0;0;0;0;0
+136;D;Dexamethasone 4mg/ml 1ml Amp;0;0;0;0;0;0
+137;D;Dextrose 5% IV 500ml;0;0;0;0;0;0
+138;D;Dextrose 30% IV 100ml;0;0;0;0;0;0
+139;D;Dextrose 50% IV 100ml;0;0;0;0;0;0
+140;D;Dexamethasone 0.5mg Tab;0;0;0;0;0;0
+141;D;Diazepam 5mg Tab;0;0;0;0;0;0
+142;D;Diclofenac 50mg Tab;0;0;0;0;0;0
+143;D;Diethylcarbamazine 50mg Tab;0;0;0;0;0;0
+144;D;Digoxin 0.25 mg Tab;0;0;0;0;0;0
+145;D;Doxycycline 100mg Tab;0;0;0;0;0;0
+146;D;Ephedrine 30mg Tab;0;0;0;0;0;0
+147;D;Erythromycin 250mg Tab;0;0;0;0;0;0
+148;D;Fansider 500/25mg Tab (50dosesx3);0;0;0;0;0;0
+149;D;Fansider 500/25mg Tab;0;0;0;0;0;0
+150;D;Ferrous Sulphate 200mg Tab;0;0;0;0;0;0
+151;D;Fluconazole 100mg Tab;0;0;0;0;0;0
+152;D;Fluconazole 100mg 24 Caps;0;0;0;0;0;0
+153;D;Folic Acid 1mg Tab;0;0;0;0;0;0
+154;D;Folic Acid 5mg Tab;0;0;0;0;0;0
+155;D;Folic Acid/Ferrous Sulp 0.5/200mg Tab;0;0;0;0;0;0
+156;D;Folic Acid 15mg Tab;0;0;0;0;0;0
+157;D;Frusemide 40mg Tab;0;0;0;0;0;0
+158;D;Glibeclamide 5mg Tab;0;0;0;0;0;0
+159;D;Griseofulvin 500mg Tab;0;0;0;0;0;0
+160;D;Haloperidol 5mg Tab;0;0;0;0;0;0
+161;D;Haloperdol 5mg;0;0;0;0;0;0
+162;D;Hydralazine 25mg Tab;0;0;0;0;0;0
+163;D;Hyoscine 10mg Tab;0;0;0;0;0;0
+164;D;Ibuprofen 200mg Tab;0;0;0;0;0;0
+165;D;Impramine 25mg Tab;0;0;0;0;0;0
+166;D;Indomethacin 25mg Tab;0;0;0;0;0;0
+167;D;Isoniazid 300mg Tab;0;0;0;0;0;0
+168;D;Ketocanazole 200mg Tab;0;0;0;0;0;0
+169;D;Salbutamol 4mg Tab;0;0;0;0;0;0
+170;D;Spironolactone 25mg Tab;0;0;0;0;0;0
+171;D;Tolbutamide 500mg tab;0;0;0;0;0;0
+172;D;Vitamin A 200.000 IU Caps;0;0;0;0;0;0
+173;D;Vitamin B Complex Tab;0;0;0;0;0;0
+174;D;Oral Rehydration Salt (ORS);0;0;0;0;0;0
+175;D;Paracetamol 120mg/5ml Syrup;0;0;0;0;0;0
+176;D;Paracetamol 120mg/5ml 100ml;0;0;0;0;0;0
+177;D;Quinine 100mg/5ml Syrup 100ml;0;0;0;0;0;0
+178;D;Alcohol 95% not denatured 20Ltrs;0;0;0;0;0;0
+179;D;Chlorhexidine/Centrimide 1.5/15% 1Ltr;0;0;0;0;0;0
+180;D;Chlorhexidine/Centrimide 1.5/15% 5Ltr;0;0;0;0;0;0
+181;D;Getian Violet 25g Tin;0;0;0;0;0;0
+182;D;Hydrogen Peroxide 6% 250ml;0;0;0;0;0;0
+183;D;Iodine Solution 2% 500ml;0;0;0;0;0;0
+184;D;Sodium Hypochloride solution 0.75 Ltr;0;0;0;0;0;0
+185;D;liquid detergent 5Ltr Perfumed;0;0;0;0;0;0
+186;D;Soap Blue Bar 550g;0;0;0;0;0;0
+187;D;Liquid detergent 20Ltr;0;0;0;0;0;0
+188;D;Soap Powder Hand wash 5kg;0;0;0;0;0;0
+189;D;Sodium Hypochlorite solution 5Ltr;0;0;0;0;0;0
+190;D;Betamethasone 0.1% eye/ear/nose drops;0;0;0;0;0;0
+191;D;Betamethasone 0.1% Neomycin 0.35 %eye drops 7.5ml;0;0;0;0;0;0
+192;D;Chloramphenicol 0.5% Eye Drops 10ml;0;0;0;0;0;0
+193;D;Cloramphenicol 1% Eye Ointment 3.5g;0;0;0;0;0;0
+194;D;Gentamicin 0.3% eye/ear drops 10ml;0;0;0;0;0;0
+195;D;Hydrocortisone 1% eye drops 5ml;0;0;0;0;0;0
+196;D;Tetracycline eye ointment 1% 3.5g;0;0;0;0;0;0
+197;D;Beclamethasone 50mcg Innhaler;0;0;0;0;0;0
+198;K;Urine Test Strips 3 Parameters 100 tests;0;0;0;0;0;0
+199;D;Salbutamol solution for inhalation 5ml;0;0;0;0;0;0
+200;D;Salbutamol Inhaler 10ml;0;0;0;0;0;0
+201;D;Clotrimazole 500mg Pessaries;0;0;0;0;0;0
+202;D;Clotrimazole 100mg Pessaries;0;0;0;0;0;0
+203;D;Diazepam 2mg/ml 2.5ml Rectal Tube;0;0;0;0;0;0
+204;D;Antihaemorrhoid suppositories;0;0;0;0;0;0
+205;D;Nystatin 100.000 IU Pessaries;0;0;0;0;0;0
+206;D;Dextrose Monohydrate Apyrogen 25Kg;0;0;0;0;0;0
+207;D;Amoxycillin 125mg/5ml Powd. Susp 100ml;0;0;0;0;0;0
+208;D;Chloramphenicol 125mg/5ml Susp 3Ltr;0;0;0;0;0;0
+209;D;Chloramphenicol 125mg/5ml Susp 100ml;0;0;0;0;0;0
+210;D;Cotrimoxazole 200+40mg/5ml Susp 3Ltr;0;0;0;0;0;0
+211;D;Cotrimoxazole 200+40mg/5ml Susp 100ml;0;0;0;0;0;0
+212;D;Nystatin 500.000IU/ Susp/ Drops;0;0;0;0;0;0
+213;D;Pyridoxine 50mg Tab;0;0;0;0;0;0
+214;D;Quinine 300mg Tab;0;0;0;0;0;0
+215;D;Ranitidine 150mg Tab;0;0;0;0;0;0
+216;D;Rifampicin/Isoniazid 150/100 Tab;0;0;0;0;0;0
+217;D;Sodium Chloride Apyrogen 50kg;0;0;0;0;0;0
+218;K;Field stain A and B;0;0;0;0;0;0
+219;K;Genitian Violet;0;0;0;0;0;0
+220;K;Neutral Red;0;0;0;0;0;0
+221;K;Eosin Yelowish;0;0;0;0;0;0
+222;K;Giemsa Stain;0;0;0;0;0;0
+223;K;Anti Serum A 10ml;0;0;0;0;0;0
+224;S;Blood giving set Disposable;0;0;0;0;0;0
+225;S;Blood Transfer Bag 300ml;0;0;0;0;0;0
+226;S;Insulin Syringe 100IU with Needle G26/29;0;0;0;0;0;0
+227;S;IV Canula G16 with Port;0;0;0;0;0;0
+228;S;IV Canula G18 with Port;0;0;0;0;0;0
+229;S;IV Canula G20 with Port;0;0;0;0;0;0
+230;S;IV Canula G22 with Port;0;0;0;0;0;0
+231;S;IV Canula G24 without Port;0;0;0;0;0;0
+232;S;IV Canula G24 with Port;0;0;0;0;0;0
+233;S;IV Giving set Disposable;0;0;0;0;0;0
+234;S;Needle container disposable of contaminated;0;0;0;0;0;0
+235;S;Needles Luer G20 Disposable;0;0;0;0;0;0
+236;S;Needles Luer G21 Disposable;0;0;0;0;0;0
+237;S;Needles Luer G22 Disposable;0;0;0;0;0;0
+238;S;Needles Luer G23 Disposable;0;0;0;0;0;0
+239;S;Needles Spinal G20x75-120mm;0;0;0;0;0;0
+240;S;Needles Spinal G22x75-120mm;0;0;0;0;0;0
+241;S;Needles Spinal G25x75-120mm;0;0;0;0;0;0
+242;S;Needles Spinal G22x40mm;0;0;0;0;0;0
+243;S;Scalp Vein G19 Infusion set;0;0;0;0;0;0
+244;S;Scalp Vein G21 Infusion set;0;0;0;0;0;0
+245;S;Scalp Vein G23 Infusion set;0;0;0;0;0;0
+246;S;Scalp Vein G25 Infusion set;0;0;0;0;0;0
+247;S;Syringe Feeding/Irrigation 50/60ml;0;0;0;0;0;0
+248;S;Syringe Luer 2ml With Needle Disposable;0;0;0;0;0;0
+249;S;Syringe Luer 10ml With Needle Disposable;0;0;0;0;0;0
+250;S;Syringe Luer 20ml With Needle Disposable;0;0;0;0;0;0
+251;S;Syringe Luer 5ml With Needle Disposable;0;0;0;0;0;0
+252;S;Airway Guedel Size 00;0;0;0;0;0;0
+253;S;Airway Guedel Size 0;0;0;0;0;0;0
+254;S;Airway Guedel Size 1;0;0;0;0;0;0
+255;S;Airway Guedel Size 2;0;0;0;0;0;0
+256;S;Airway Guedel Size 3;0;0;0;0;0;0
+257;S;Eye Pad Sterile;0;0;0;0;0;0
+258;S;Adhesive Tape 2.5cm x 5m;0;0;0;0;0;0
+259;S;Adhesive Tape 7.5cm x 5m;0;0;0;0;0;0
+260;S;cotton Wool 500G;0;0;0;0;0;0
+261;S;Cotton Wool 200G;0;0;0;0;0;0
+262;S;Elastic Bandage 10cm x 4.5m;0;0;0;0;0;0
+263;S;Elastic Bandage 7.5cm x 4.5m;0;0;0;0;0;0
+264;S;Gauze Bandage 7.5cm x 3.65-4m;0;0;0;0;0;0
+265;S;Gauze Bandage 10cm x 4m;0;0;0;0;0;0
+266;S;Gauze Pads Non Sterile 10cm x 10cm;0;0;0;0;0;0
+267;S;Gauze Pads  Sterile 10cm x 10cm;0;0;0;0;0;0
+268;S;Gauze Hydrophylic 90cm x 91cm;0;0;0;0;0;0
+269;S;Plaster of Paris 10cm;0;0;0;0;0;0
+270;S;Plaster of Paris 15cm;0;0;0;0;0;0
+271;S;Cathether Foley CH20 3 Way Ballon;0;0;0;0;0;0
+272;S;Cathether Foley CH8 3 Way Ballon;0;0;0;0;0;0
+273;S;Cathether Foley CH10 3 Way Ballon;0;0;0;0;0;0
+274;S;Cathether Foley CH12 3 Way Ballon;0;0;0;0;0;0
+275;S;Cathether Foley CH14 3 Way Ballon;0;0;0;0;0;0
+276;S;Cathether Foley CH16 3 Way Ballon;0;0;0;0;0;0
+277;S;Cathether Foley CH18 3 Way Ballon;0;0;0;0;0;0
+278;S;Cathether Stopper for All sizes;0;0;0;0;0;0
+279;S;Nasogastric Tube G5 (Children);0;0;0;0;0;0
+280;S;Nasogastric Tube G8 (Children);0;0;0;0;0;0
+281;S;Nasogastric Tube G6 (Children);0;0;0;0;0;0
+282;S;Nasogastric Tube G10 (Children);0;0;0;0;0;0
+283;S;Nasogastric Tube G14 (Children);0;0;0;0;0;0
+284;S;Nasogastric Tube G16 (Children);0;0;0;0;0;0
+285;S;Rectal Tube CH24;0;0;0;0;0;0
+286;S;Rectal Tube CH26;0;0;0;0;0;0
+287;S;Suction Cathether Size 6 Disposable;0;0;0;0;0;0
+288;S;Suction Cathether Size 8 Disposable;0;0;0;0;0;0
+289;S;Suction Cathether Size 16 Disposable;0;0;0;0;0;0
+290;S;Suction Cathether Size 12 Disposable;0;0;0;0;0;0
+291;S;Suction Cathether Size 14 Disposable;0;0;0;0;0;0
+292;S;Suction Cathether Size 10 Disposable;0;0;0;0;0;0
+293;S;Gloves Domestic;0;0;0;0;0;0
+294;S;Gloves High risk non sterile Medium;0;0;0;0;0;0
+295;S;Gloves Gynaecological 7.5-8;0;0;0;0;0;0
+296;S;Gloves Non Sterile Medium Disposable;0;0;0;0;0;0
+297;S;Gloves Non Sterile Large Disposable;0;0;0;0;0;0
+298;S;Gloves Surgical Sterile 6;0;0;0;0;0;0
+299;S;Gloves Surgical Sterile 6.5;0;0;0;0;0;0
+300;S;Gloves Surgical Sterile 7;0;0;0;0;0;0
+301;S;Gloves Surgical Sterile 7.5;0;0;0;0;0;0
+302;S;Gloves Surgical Sterile 8;0;0;0;0;0;0
+303;S;Gloves Surgical Sterile 8.5;0;0;0;0;0;0
+304;S;Tongue depressor Disposable;0;0;0;0;0;0
+305;S;Bedpan Plastic Autoclavable;0;0;0;0;0;0
+306;S;Bedpan Stainless Steel;0;0;0;0;0;0
+307;S;Body Bag 70 x 215cm  (Adult);0;0;0;0;0;0
+308;S;Bowl Without Lid 7 x 12cm stainless steel;0;0;0;0;0;0
+309;S;Bowl Without Lid 8 x 16cm stainless steel;0;0;0;0;0;0
+310;S;Bowl Without Lid 10 x 24cm stainless steel;0;0;0;0;0;0
+311;S;Air ring set 43x15cm, rubber with pump;0;0;0;0;0;0
+312;S;Colostomy Bag closed 30mm size 2;0;0;0;0;0;0
+313;S;Colostomy Bag closed 30mm size 3;0;0;0;0;0;0
+314;S;Colostomy Bag open re-usable 35mm;0;0;0;0;0;0
+315;S;Ear syringe rubber 60ml;0;0;0;0;0;0
+316;S;First Aid kit;0;0;0;0;0;0
+317;S;Gallipot stainless steel 300ml/15cm;0;0;0;0;0;0
+318;S;Gallipot stainless steel 200ml/10cm;0;0;0;0;0;0
+319;S;Hot water Bottle 2Ltr;0;0;0;0;0;0
+320;S;Instrument Box With Lid 20x10x5cm;0;0;0;0;0;0
+321;S;Instrument Tray 30 x 20 x 2cm;0;0;0;0;0;0
+322;S;Irrigation can with acsessories;0;0;0;0;0;0
+323;S;Kidney Dish stainless Steel 24cm;0;0;0;0;0;0
+324;S;Kidney Dish stainless Steel 20cm;0;0;0;0;0;0
+325;S;Kidney Dish Polypropylene 24cm;0;0;0;0;0;0
+326;S;Mackintosh Plastic (Apron) per 1m;0;0;0;0;0;0
+327;S;Mackintosh Rubber Brown (sheeting) per 1m;0;0;0;0;0;0
+328;S;Measuring Cup Graduated 25ml;0;0;0;0;0;0
+329;S;Nesk Support Small;0;0;0;0;0;0
+330;S;Neck Support Medium;0;0;0;0;0;0
+331;S;Neck Support Large;0;0;0;0;0;0
+332;S;Spoon Medicine 5ml;0;0;0;0;0;0
+333;S;Apron Plastic Re-usable;0;0;0;0;0;0
+334;S;Apron Plastic Re-usable local;0;0;0;0;0;0
+335;S;Apron Polythene Disp Non Sterile;0;0;0;0;0;0
+336;S;Razor Blades Disposable 5pc;0;0;0;0;0;0
+337;S;Stethoscope Foetal Metal;0;0;0;0;0;0
+338;S;Stethoscope Foetal Wood;0;0;0;0;0;0
+339;S;Surgical Brush (Scrubbing);0;0;0;0;0;0
+340;S;Surgical Mop 12 x 15;0;0;0;0;0;0
+341;S;Tablet Counting Tray;0;0;0;0;0;0
+342;S;Toilet Paper Rolls;0;0;0;0;0;0
+343;S;Traction Kit Children;0;0;0;0;0;0
+344;S;Traction Kit Adult;0;0;0;0;0;0
+345;S;Thermometer Clinical Flat Type;0;0;0;0;0;0
+346;S;Thermometer Clinical Prismatic Type;0;0;0;0;0;0
+347;S;Umbilical Cord Tie non sterile 100m;0;0;0;0;0;0
+348;S;Umbilical Cord Tie sterile 22m;0;0;0;0;0;0
+349;S;Urinal 1Ltr / 2Ltr;0;0;0;0;0;0
+350;S;Urine Collecting Bag sterile 2Ltr;0;0;0;0;0;0
+351;S;Insectcide Spray 400g;0;0;0;0;0;0
+352;S;Mosquito Net Impregnated Medium;0;0;0;0;0;0
+353;S;Mosquito Net Impregnated Large;0;0;0;0;0;0
+354;S;Mosquito Net Non Impregnated Medium;0;0;0;0;0;0
+355;S;Mosquito Net Non Impregnated Large;0;0;0;0;0;0
+356;S;Mosquito Net Impregnation Tablet;0;0;0;0;0;0
+357;S;Mosquito Net Impregnation Liquid 500ml;0;0;0;0;0;0
+358;S;Mosquito Wal spray Powder 80g;0;0;0;0;0;0
+359;S;Handle for surgical blade No 3;0;0;0;0;0;0
+360;S;Handle for surgical blade No 4;0;0;0;0;0;0
+361;S;Surgical Blades No 20;0;0;0;0;0;0
+362;S;Surgical Blades No 21;0;0;0;0;0;0
+363;S;Surgical Blades No 22;0;0;0;0;0;0
+364;S;Surgical Blades No 23;0;0;0;0;0;0
+365;S;Needle suture No 5 round;0;0;0;0;0;0
+366;S;Needle suture No 5 cutting;0;0;0;0;0;0
+367;S;Needle suture No 6 Round;0;0;0;0;0;0
+368;S;Suture Cutgut Chromic (0);0;0;0;0;0;0
+369;S;Suture Cutgut Chromic (2) RN22240TH;0;0;0;0;0;0
+370;S;Suture Cutgut Chromic (2/0) RN22230TH;0;0;0;0;0;0
+371;S;Suture Cutgut Chromic (3/0) RN2325TF;0;0;0;0;0;0
+372;S;Suture Cutgut Plain (2/0) RN1230TF;0;0;0;0;0;0
+373;S;Suture Silk (1) S595;0;0;0;0;0;0
+374;S;Suture Silk (2/0) RN5230TF;0;0;0;0;0;0
+375;S;Suture PGA (3/0) RN3330TF;0;0;0;0;0;0
+376;S;Lead Apron 100cmx60cm;0;0;0;0;0;0
+377;S;X-Ray Developer 2.6kg for 22.5Ltr;0;0;0;0;0;0
+378;S;X-Ray Film 18x24cm;0;0;0;0;0;0
+379;S;X-Ray Film 20x40cm;0;0;0;0;0;0
+380;S;X-Ray Film 24x30cm;0;0;0;0;0;0
+381;S;X-Ray Film 30x40cm;0;0;0;0;0;0
+382;S;X-Ray Film 35x35cm;0;0;0;0;0;0
+383;S;X-Ray Film 43x35cm;0;0;0;0;0;0
+384;S;X-Ray Film Cassette  18x24cm with screen;0;0;0;0;0;0
+385;S;X-Ray Film Cassette  24x30cm with screen;0;0;0;0;0;0
+386;S;X-Ray Film Cassette  30x40cm with screen;0;0;0;0;0;0
+387;S;X-Ray Film Cassette  35x35cm with screen;0;0;0;0;0;0
+388;S;X-Ray Film Cassette  35x43cm with screen;0;0;0;0;0;0
+389;S;X-Ray Fixer 3.3kg for 22.5 Ltr;0;0;0;0;0;0
+390;S;Barium Sulphate for X-Ray 1kg;0;0;0;0;0;0
+391;S;Diatrizoate Meglumin Sod 76% 20ml Amp;0;0;0;0;0;0
+392;K;Anti Serum B 10ml;0;0;0;0;0;0
+393;K;Anti Serum AB 10ml;0;0;0;0;0;0
+394;K;Anti Serum D 10ml;0;0;0;0;0;0
+395;K;Creatinine 200ml (Calorimetric);0;0;0;0;0;0
+396;K;Glucose GOD PAD  6 x 100ml (Colorimetric);0;0;0;0;0;0
+397;K;Glucose Test Strips (Hyloguard);0;0;0;0;0;0
