@@ -1,7 +1,15 @@
+###############################
+# For testing remove comments #
+# and set -DskipTests=false   #
+###############################
 language: java
 before_install:
-- sudo service mysql stop
-- docker-compose up -d
-- docker ps
+# - sudo service mysql stop
+# - docker-compose up -d
+- git clone --depth=50 --branch=master https://github.com/informatici/openhospital-core.git informatici/openhospital-core
+- cd informatici/openhospital-core
+- mvn clean package -DskipTests=true
+install: true
+script: mvn clean package -DskipTests=true
 after_success:
-- docker-compose down
+# - docker-compose down
