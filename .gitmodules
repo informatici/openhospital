@@ -1,0 +1,6 @@
+[submodule "core"]
+	path = core
+	url = https://github.com/informatici/openhospital-core
+[submodule "gui"]
+	path = gui
+	url = https://github.com/informatici/openhospital-gui
