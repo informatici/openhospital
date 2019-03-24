@@ -2,7 +2,7 @@
 
 This is the root project of the [Open Hospital][openhospital] code base.  
 
-# Getting started
+## Getting started
 
 After git-cloning this project, to initialize the submodules, issue:
 
