@@ -28,12 +28,6 @@
 					<include>**/*.xml</include>
 				</includes>
 			</resource>
-			<resource>
-				<directory>rsc</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-				</excludes>
-			</resource>
 		</resources>
 		<plugins>
 			<plugin>
