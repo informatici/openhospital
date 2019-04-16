@@ -45,6 +45,7 @@ import org.isf.agetype.model.AgeType;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.generaldata.SmsParameters;
+import org.isf.menu.manager.Context;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
@@ -122,8 +123,9 @@ public class PatientInsertExtended extends JDialog {
 	private boolean insert;
 	private boolean justSave;
 	final private Patient patient;
-	private PatientBrowserManager manager = new PatientBrowserManager();
-
+	//private PatientBrowserManager manager = new PatientBrowserManager();
+	private PatientBrowserManager manager = Context.getApplicationContext().getBean(PatientBrowserManager.class);
+	
 	// COMPONENTS: Data
 	private JPanel jDataPanel = null;
 
