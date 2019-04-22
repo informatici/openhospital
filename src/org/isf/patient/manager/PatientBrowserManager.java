@@ -18,6 +18,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -68,7 +69,17 @@ public class PatientBrowserManager {
 	public ArrayList<Patient> getPatient() throws OHServiceException {
         return ioOperations.getPatients();
 	}
-	
+
+	/**
+	 * method that returns the full list of Patients not logically deleted by pages
+	 * 
+	 * @return the list of patients (could be empty)
+	 * @throws OHServiceException 
+	 */
+	public ArrayList<Patient> getPatient(int page, int size) throws OHServiceException {
+        return ioOperations.getPatients(new PageRequest(page, size));
+	}
+
 	/**
 	 * method that get a Patient by his/her name
 	 * 
