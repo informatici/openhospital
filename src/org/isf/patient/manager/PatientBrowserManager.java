@@ -19,10 +19,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-<<<<<<< HEAD
 import org.springframework.data.domain.PageRequest;
-=======
->>>>>>> PatientBrowserManager to spring Component
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
