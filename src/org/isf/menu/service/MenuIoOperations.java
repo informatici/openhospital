@@ -58,6 +58,17 @@ public class MenuIoOperations
 	}
 	
 	/**
+	 * returns {@link User} from its username
+	 * @param userName - the {@link User}'s username
+	 * @return {@link User}
+	 * @throws OHServiceException
+	 */
+	public User getUserByName(String userName) throws OHServiceException 
+	{ 
+		return repository.findByUserName(userName);
+	}
+	
+	/**
 	 * returns {@link User} description from its username
 	 * @param userName - the {@link User}'s username
 	 * @return the {@link User}'s description
