@@ -21,47 +21,8 @@
   		">
 		
 	<context:component-scan base-package="org.isf" />
-	<jpa:repositories base-package="org.isf" />
- 
- 	<!-- <bean class ="org.isf.utils.EntityManagerFactoryBean" id = "entityManagerFactory"> -->
- 	<!-- </bean> -->
- 
- 	<bean id="springDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
- 		destroy-method="close">
- 		<property name="driverClass" value="com.mysql.jdbc.Driver" />
- 		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/oh" />
- 		<property name="user" value="isf" />
- 		<property name="password" value="isf123" />
- 
- 		<!-- these are C3P0 properties -->
- 		<property name="acquireIncrement" value="1" />
- 		<property name="minPoolSize" value="0" />
- 		<property name="maxPoolSize" value="10" />
- 		<property name="maxIdleTime" value="300" />
- 		<property name="maxStatements" value="0" />
- 
- 	</bean>
- 
- 	<bean id="entityManagerFactory"
- 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
- 		<property name="dataSource" ref="springDataSource" />
- 		<property name="packagesToScan" value="org.isf"/>
- 		<property name="jpaVendorAdapter">
- 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
- 		</property>
- 		<property name="jpaProperties">
- 			<props>
- 				<prop key="hibernate.show_sql">false</prop>
- 				<prop key="hibernate.format_sql">true</prop>
- 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
- 			</props>
- 		</property>
- 	</bean>
- 
- 	<tx:annotation-driven />
- 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
- 		<property name="entityManagerFactory" ref="entityManagerFactory" />
- 	</bean>
+
+	<import resource="classpath*:applicationContext.xml" />
  	
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 
