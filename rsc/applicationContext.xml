@@ -25,13 +25,19 @@
  
  	<!-- <bean class ="org.isf.utils.EntityManagerFactoryBean" id = "entityManagerFactory"> -->
  	<!-- </bean> -->
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>database.properties</value>
+		</property>
+	</bean>
  
  	<bean id="springDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
  		destroy-method="close">
- 		<property name="driverClass" value="com.mysql.jdbc.Driver" />
- 		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/oh" />
- 		<property name="user" value="isf" />
- 		<property name="password" value="isf123" />
+ 		<property name="driverClass" value="${jdbc.class:com.mysql.jdbc.Driver}" />
+ 		<property name="jdbcUrl" value="${jdbc.url}" />
+ 		<property name="user" value="${jdbc.username}" />
+ 		<property name="password" value="${jdbc.password}" />
  
  		<!-- these are C3P0 properties -->
  		<property name="acquireIncrement" value="1" />
@@ -51,9 +57,9 @@
  		</property>
  		<property name="jpaProperties">
  			<props>
- 				<prop key="hibernate.show_sql">false</prop>
- 				<prop key="hibernate.format_sql">true</prop>
- 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+ 				<prop key="hibernate.show_sql">${hibernate.show_sql:false}</prop>
+ 				<prop key="hibernate.format_sql">${hibernate.format_sql:true}</prop>
+ 				<prop key="hibernate.dialect">${hibernate.dialect:org.hibernate.dialect.MySQLDialect}</prop>
  			</props>
  		</property>
  	</bean>
