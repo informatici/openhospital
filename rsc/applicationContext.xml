@@ -35,9 +35,9 @@
  	<bean id="springDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
  		destroy-method="close">
  		<property name="driverClass" value="${jdbc.class:com.mysql.jdbc.Driver}" />
- 		<property name="jdbcUrl" value="${jdbc.url}" />
- 		<property name="user" value="${jdbc.username}" />
- 		<property name="password" value="${jdbc.password}" />
+ 		<property name="jdbcUrl" value="${jdbc.url:jdbc:mysql://localhost:3306/oh}" />
+ 		<property name="user" value="${jdbc.username:isf}" />
+ 		<property name="password" value="${jdbc.password:isf123}" />
  
  		<!-- these are C3P0 properties -->
  		<property name="acquireIncrement" value="1" />
