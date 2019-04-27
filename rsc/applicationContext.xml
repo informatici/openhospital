@@ -28,8 +28,9 @@
 
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location">
-			<value>database.properties</value>
+			<value>file:rsc/database.properties</value>
 		</property>
+		<property name="ignoreResourceNotFound" value="true"/>
 	</bean>
  
  	<bean id="springDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
