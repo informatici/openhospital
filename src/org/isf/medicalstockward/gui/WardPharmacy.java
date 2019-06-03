@@ -152,7 +152,8 @@ public class WardPharmacy extends ModalJFrame implements
 	private int[] columWidthIncomes = { 150, 320, 200 };
 	private String[] columsOutcomes = { 
 			MessageBundle.getMessage("angal.common.date"), 
-			MessageBundle.getMessage("angal.medicalstockward.patient"),
+			//MessageBundle.getMessage("angal.medicalstockward.patient"),
+                        MessageBundle.getMessage("angal.medicalstockward.outcome.destination"),
 			MessageBundle.getMessage("angal.medicalstockward.age"), 
 			MessageBundle.getMessage("angal.medicalstockward.sex"), 
 			MessageBundle.getMessage("angal.medicalstockward.weight"),
@@ -1206,8 +1207,10 @@ public class WardPharmacy extends ModalJFrame implements
 
 		public DrugsModel() {
 			try {
+                            System.out.println("WardPharmacy: Looking for drugs ");
 				wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
-				System.out.println("Ciao");
+				System.out.println("Ciao Ciao Ciao! " + wardDrugs.size() + " drugs in "
+                                        + wardSelected.getCode().charAt(0));
 			} catch (OHServiceException e) {
 				OHServiceExceptionUtil.showMessages(e);
 				wardDrugs = new ArrayList<MedicalWard>();

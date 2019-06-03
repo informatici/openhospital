@@ -1128,7 +1128,11 @@ public class MovStockBrowser extends ModalJFrame {
 			} else if (c == ++col) {
 				return formatDate(lot.getDueDate());
 			} else if (c == ++col){
-				return movement.getOrigin();
+				if(movement.getOrigin() == null) {
+                                    return movement.getWardTo();
+                                } else {
+                                    movement.getOrigin();
+                                }
 			} else if (c == ++col){
 				return cost;
 			} else if (c == ++col){
