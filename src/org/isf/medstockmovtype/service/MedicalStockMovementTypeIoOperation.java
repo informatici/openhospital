@@ -1,9 +1,12 @@
 package org.isf.medstockmovtype.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -99,5 +102,18 @@ public class MedicalStockMovementTypeIoOperation {
 		result = repository.exists(code);
 		
 		return result;
+	}
+        
+        /**
+	 * Get an existing movementType.
+	 * @param code the code to check.
+	 * @return MovementType object whose code is provided as parameter.
+	 */
+	public MovementType getMovementType(String code) {
+            List<MovementType> results = repository.findAllByCode(code);
+            if(!results.isEmpty()) {
+                return results.get(0);
+            }
+            return null;
 	}
 }
