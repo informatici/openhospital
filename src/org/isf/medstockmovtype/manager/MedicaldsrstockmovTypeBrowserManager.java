@@ -2,11 +2,13 @@ package org.isf.medstockmovtype.manager;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.medstockmovtype.service.MedicalStockMovementTypeIoOperation;
 import org.isf.menu.manager.Context;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -117,5 +119,14 @@ public class MedicaldsrstockmovTypeBrowserManager {
 	public boolean deleteMedicaldsrstockmovType(MovementType medicaldsrstockmovType) throws OHServiceException {
 		return ioOperations.deleteMedicaldsrstockmovType(medicaldsrstockmovType);
 	}
-
+        
+        /**
+	 * Get the  {@link MovementType} code.
+	 * In case of error a message error is shown and a <code>false</code> value is returned.
+	 * @param code the code to check.
+	 * @return <code>true</code> if the code is used, <code>false</code> otherwise.
+	 */
+	public MovementType getMovementType(String code) {
+		return ioOperations.getMovementType(code);
+	}
 }

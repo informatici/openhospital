@@ -174,15 +174,31 @@ public class MedicalStockWardIoOperations
 	{
 		Double qty = movement.getQuantity();
 		String ward = movement.getWard().getCode();
+                String wardTo = null;
+                if (movement.getWardTo() != null) { 
+                // in case of a mvnt from the ward movement.getWard() to the ward movement.getWardTO()
+                    wardTo = movement.getWardTo().getCode();
+                }
 		Integer medical = movement.getMedical().getCode();		
 		boolean result = true;
 		
 		
+                if(wardTo != null) {
+                    MedicalWard medicalWardTo = repository.findOneWhereCodeAndMedical(wardTo, medical);
+                    if(medicalWardTo != null) {
+                        repository.updateInQuantity(Math.abs(qty), wardTo, medical);
+                    } else {
+                        repository.insertMedicalWard(wardTo, medical, Math.abs(qty));
+                    }
+                    repository.updateOutQuantity(Math.abs(qty), ward, medical);
+                    return result;
+                }
+                
 		MedicalWard medicalWard = repository.findOneWhereCodeAndMedical(ward, medical);
-		if (medicalWard == null)
+                if (medicalWard == null)
 		{
-			repository.insertMedicalWard(ward, medical, -qty);
-		}
+                            repository.insertMedicalWard(ward, medical, -qty);
+                        }
 		else
 		{
 			if (qty.doubleValue() < 0)
@@ -191,9 +207,9 @@ public class MedicalStockWardIoOperations
 			}
 			else
 			{
-				repository.updateOutQuantity(qty, ward, medical);				
+                                repository.updateOutQuantity(qty, ward, medical);
+                            }				
 			}
-		}
 		
 		return result;
 	}
@@ -207,8 +223,9 @@ public class MedicalStockWardIoOperations
 	public ArrayList<MedicalWard> getMedicalsWard(
 			char wardId) throws OHServiceException
 	{
+            System.out.println("MedicalStockWardIoOperations: Looking for drugs ");
 		ArrayList<MedicalWard> medicalWards = new ArrayList<MedicalWard>(repository.findAllWhereWard(wardId));
-		
+		System.out.println("MedicalStockWardIoOperations " + medicalWards.size() + " drugs in "+wardId);
 		for (int i=0; i<medicalWards.size(); i++)
 		{
 			double qty = Double.valueOf(medicalWards.get(i).getInQuantity() - medicalWards.get(i).getOutQuantity());
