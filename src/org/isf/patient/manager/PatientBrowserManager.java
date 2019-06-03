@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.isf.accounting.manager.BillBrowserManager;
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.service.AccountingIoOperations;
@@ -285,4 +287,16 @@ public class PatientBrowserManager {
         }
         return true;
     }
+    /**
+     * 
+     * @return patients list
+     */
+    public ArrayList<Patient> getPatientHeadWithHeightAndWeight(){
+		try {
+			return ioOperations.getPatientsHeadWithHeightAndWeight();
+		} catch (OHException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			return new ArrayList<Patient>();
+		}
+	}
 }
