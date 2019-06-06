@@ -7,10 +7,10 @@ package org.isf.operation.service;
 
 import java.util.ArrayList;
 import org.isf.admission.model.Admission;
+import org.isf.opd.model.Opd;
 import org.isf.operation.model.OperationRow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 /**
  *
@@ -20,7 +20,9 @@ public interface OperationRowIoOperationRepository extends JpaRepository<Operati
     	@Query(value = "SELECT * FROM OPERATIONROW ORDER BY OPER_OPDATE DESC", nativeQuery= true)
         public ArrayList<OperationRow> getOperationRow();
         
-        public ArrayList<OperationRow> getOperationRowByAdmission(Admission adm);
+        public ArrayList<OperationRow> findByAdmission(Admission adm);
         
         public OperationRow findById(int id);
+        
+        public ArrayList<OperationRow> findByOpd(Opd opd);
 }
