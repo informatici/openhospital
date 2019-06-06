@@ -15,4 +15,6 @@ public interface OperationIoOperationRepository extends JpaRepository<Operation,
     public ArrayList<Operation> findAllByDescription(@Param("type") String type);    
     @Query(value = "SELECT * FROM OPERATION WHERE OPE_DESC = :description AND OPE_OCL_ID_A = :type", nativeQuery= true)
     public Operation findOneByDescriptionAndType(@Param("description") String description, @Param("type") String type);
+    
+    public Operation findByCode(String code);
 }
