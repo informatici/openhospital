@@ -56,6 +56,10 @@ public class OperationIoOperations {
 
 		return operations;
 	}
+        
+        public Operation findByCode(String code) throws OHException{
+            return repository.findByCode(code);
+        }
 	
 	/**
 	 * insert an {@link Operation} in the DBs
