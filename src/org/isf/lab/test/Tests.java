@@ -269,18 +269,16 @@ public class Tests
 		
 		try 
 		{		
-			id = _setupTestLaboratory(false);
-			Laboratory foundLaboratory = (Laboratory)jpa.find(Laboratory.class, id); 
-			ArrayList<LaboratoryForPrint> laboratories = labIoOperation.getLaboratoryForPrint(foundLaboratory.getExam().getDescription(), foundLaboratory.getExamDate(), foundLaboratory.getExamDate());
-			
-			assertEquals(foundLaboratory.getCode(), laboratories.get(0).getCode());
+                    id = _setupTestLaboratory(false);
+                    Laboratory foundLaboratory = (Laboratory)jpa.find(Laboratory.class, id); 
+                    ArrayList<LaboratoryForPrint> laboratories = labIoOperation.getLaboratoryForPrint(foundLaboratory.getExam().getDescription(), foundLaboratory.getExamDate(), foundLaboratory.getExamDate());
+                    assertEquals(foundLaboratory.getCode(), laboratories.get(0).getCode());
 		} 
 		catch (Exception e) 
 		{
-			e.printStackTrace();		
-			assertEquals(true, false);
+                    e.printStackTrace();		
+                    assertEquals(true, false);
 		}
-		
 		return;
 	}
 	
