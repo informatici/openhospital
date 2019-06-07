@@ -10,8 +10,9 @@ package org.isf.exa.service;
  *------------------------------------------*/
 
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
-import org.isf.exa.model.Exam;
+//import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.exatype.model.ExamType;
 import org.isf.exatype.service.ExamTypeIoOperationRepository;
@@ -24,10 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @Transactional(rollbackFor=OHException.class)
 @TranslateOHException
-public class ExamIoOperations {
+public class ExamRowIoOperations {
 
-	@Autowired
-	private ExamIoOperationRepository repository;
+	//@Autowired
+	//private ExamIoOperationRepository repository;
 	
 	@Autowired
 	private ExamRowIoOperationRepository rowRepository;
@@ -42,74 +43,62 @@ public class ExamIoOperations {
 	 * @return the list of {@link ExamRow}s
 	 * @throws OHException
 	 */
-	/*public ArrayList<ExamRow> getExamRow(
-			String aExamCode, 
+	public ArrayList<ExamRow> getExamRow(
+			int aExamCode, 
 			String aDescription) throws OHException 
 	{
-    	ArrayList<ExamRow> examrows = null;
-    	
-    	
-		if (aExamCode != null) 
-		{
-			if (aDescription != null) 
-			{
-				examrows = (ArrayList<ExamRow>) rowRepository.findAllWhereIdAndDescriptionByOrderIdAndDescriptionAsc(aExamCode, aDescription); 	
-			}
-			else
-			{
-				examrows = (ArrayList<ExamRow>) rowRepository.findAllWhereIdByOrderIdAndDescriptionAsc(aExamCode); 	
-			}
-		}
-		else
-		{
-			examrows = (ArrayList<ExamRow>) rowRepository.findAllByOrderIdAndDescriptionAsc(); 	
-		}
-
-		return examrows;
-	}*/
+            ArrayList<ExamRow> examrows;
+            
+            if (aExamCode != 0) 
+            {   
+                if (aDescription != null) 
+                {
+                    examrows = (ArrayList<ExamRow>) rowRepository.findAllWhereIdAndDescriptionByOrderIdAndDescriptionAsc(aExamCode, aDescription); 	
+                }
+                else
+                {
+                    examrows = (ArrayList<ExamRow>) rowRepository.findAllWhereIdByOrderIdAndDescriptionAsc(aExamCode); 	
+                }
+            }
+            else
+            {   
+                examrows = (ArrayList<ExamRow>) rowRepository.findAllExamRow();
+            }
+            return examrows;
+	}
 
 	/**
-	 * Returns the list of {@link Exam}s
-	 * @return the list of {@link Exam}s
+	 * Returns the list of {@link ExamRow}s
+	 * @return the list of {@link ExamRow}s
 	 * @throws OHException
 	 */
-	public ArrayList<Exam> getExams() throws OHException 
+	public ArrayList<ExamRow> getExamrows() throws OHException 
 	{
-		return getExamsByDesc(null);
+		return getExamsRowByDesc(null);
 	}
 	
 	/**
-	 * Returns the list of {@link Exam}s that matches passed description
-	 * @param description - the exam description
-	 * @return the list of {@link Exam}s
+	 * Returns the list of {@link ExamRow}s that matches passed description
+	 * @param description - the examRow description
+	 * @return the list of {@link ExamRow}s
 	 * @throws OHException
 	 */
-	public ArrayList<Exam> getExamsByDesc(
+	public ArrayList<ExamRow> getExamsRowByDesc(
 			String description) throws OHException 
 	{ 
-		ArrayList<String> examIds = null;
-		ArrayList<Exam> exams = new ArrayList<Exam>();
+		ArrayList<String> examrowIds = null;
+		ArrayList<ExamRow> examrows = new ArrayList<ExamRow>();
 				
 		
 		if (description != null) 
 		{
-			examIds = (ArrayList<String>) repository.findAllWhereDescriptionByOrderDescriptionAsc(description);	
+			examrows = (ArrayList<ExamRow>) rowRepository.findAllWhereDescriptionByOrderDescriptionAsc(description);	
 		}
 		else
 		{
-			examIds = (ArrayList<String>) repository.findAllByOrderDescriptionAsc();			
-		}		
-		
-		for (int i=0; i<examIds.size(); i++)
-		{
-			String code = examIds.get(i);
-			Exam exam = repository.findOne(code);
-			
-			
-			exams.add(i, exam);
+			examrows = (ArrayList<ExamRow>) rowRepository.findAllExamRow();			
 		}
-	
-		return exams;
+		return examrows;
 	}
 
 	/**
@@ -126,30 +115,11 @@ public class ExamIoOperations {
 	}
 
 	/**
-	 * Insert a new {@link Exam} in the DB.
-	 * 
-	 * @param exam - the {@link Exam} to insert
-	 * @return <code>true</code> if the {@link Exam} has been inserted, <code>false</code> otherwise
-	 * @throws OHException 
-	 */
-	public boolean newExam(
-			Exam exam) throws OHException 
-	{
-		boolean result = true;
-	
-
-		Exam savedExam = repository.save(exam);
-		result = (savedExam != null);
-		
-		return result;
-	}
-
-	/**
 	 * Insert a new {@link ExamRow} in the DB.
 	 * 
 	 * @param examRow - the {@link ExamRow} to insert
 	 * @return <code>true</code> if the {@link ExamRow} has been inserted, <code>false</code> otherwise
-	 * @throws OHException
+	 * @throws OHException 
 	 */
 	public boolean newExamRow(
 			ExamRow examRow) throws OHException 
@@ -157,63 +127,43 @@ public class ExamIoOperations {
 		boolean result = true;
 	
 
-		ExamRow savedExamRow = rowRepository.save(examRow);
-		result = (savedExamRow != null);
+		ExamRow savedExam = rowRepository.save(examRow);
+		result = (savedExam != null);
 		
 		return result;
 	}
 
 	/**
-	 * Update an already existing {@link Exam}.
-	 * @param exam - the {@link Exam} to update
-	 * @return <code>true</code> if the {@link Exam} has been updated, <code>false</code> otherwise
+	 * Update an already existing {@link ExamRow}.
+	 * @param examRow - the {@link ExamRow} to update
+	 * @return <code>true</code> if the {@link ExamRow} has been updated, <code>false</code> otherwise
 	 * @throws OHException
 	 */
-	public boolean updateExam(
-			Exam exam) throws OHException 
+	public boolean updateExamRow(
+			ExamRow examRow) throws OHException 
 	{
 		boolean result = true;
 		
-		repository.save(exam);
+		rowRepository.save(examRow);
     	
 		return result;	
 	}
 
 	/**
-	 * Delete an {@link Exam}
-	 * @param exam - the {@link Exam} to delete
-	 * @return <code>true</code> if the {@link Exam} has been deleted, <code>false</code> otherwise
-	 * @throws OHException
-	 */
-	public boolean deleteExam(
-			Exam exam) throws OHException 
-	{
-		boolean result = true;		
-	
-		
-		rowRepository.deleteExamRowWhereExamCode(exam.getCode());
-		repository.delete(exam);
-		
-		return result;	
-	}
-
-	/**
-	 * Delete an {@link ExamRow}.
+	 * Delete an {@link ExamRow}
 	 * @param examRow - the {@link ExamRow} to delete
 	 * @return <code>true</code> if the {@link ExamRow} has been deleted, <code>false</code> otherwise
 	 * @throws OHException
 	 */
 	public boolean deleteExamRow(
-			ExamRow examRow) throws OHException 
-	{
-		boolean result = true;
-	
-		
-		rowRepository.delete(examRow);
-		
-		return result;	
+                    ExamRow examRow) throws OHException 
+        {
+            boolean result = true;
+            rowRepository.delete(examRow.getCode());
+            return result;	
 	}
 
+	
 	/**
 	 * This function controls the presence of a record with the same key as in
 	 * the parameter; Returns false if the query finds no record, else returns
@@ -224,10 +174,11 @@ public class ExamIoOperations {
 	 * @throws OHException 
 	 */
 	public boolean isKeyPresent(
-			Exam exam) throws OHException 
+			ExamRow examrow) throws OHException 
 	{
 		boolean result = false;
-		Exam foundExam = repository.findOne(exam.getCode());
+		ExamRow foundExam = rowRepository.findOne(examrow.getCode());
+		
 		
 		if (foundExam != null)
 		{
@@ -265,14 +216,9 @@ public class ExamIoOperations {
 	 * @throws OHException 
 	 */
 	public boolean isCodePresent(
-			String code) throws OHException
+			int code) throws OHException
 	{
-		boolean result = true;
-	
-		
-		result = repository.exists(code);
-		
-		return result;	
+            return rowRepository.exists(code);	
 	}
 
 	/**
@@ -292,4 +238,10 @@ public class ExamIoOperations {
 		
 		return result;	
 	}
+
+    public ArrayList<ExamRow> getExamRowByExamCode(String aExamCode)  throws OHException {
+       ArrayList<ExamRow> examrows = (ArrayList<ExamRow>) rowRepository.getExamRowByExamCode(aExamCode);
+       return examrows;
+    }
+
 }

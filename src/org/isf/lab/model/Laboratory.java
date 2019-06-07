@@ -34,7 +34,7 @@ public class Laboratory
 	@Id 
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="LAB_ID")
-	private int code;
+	private Integer code;
 	
 	@Column(name="LAB_MATERIAL")
 	private String material;
@@ -83,7 +83,7 @@ public class Laboratory
 	
 	public Laboratory() { }
 	
-	public Laboratory(int aCode,Exam aExam,GregorianCalendar aDate,String aResult,
+	public Laboratory(Integer aCode,Exam aExam,GregorianCalendar aDate,String aResult,
 			String aNote, Patient aPatId, String aPatName){
 		code=aCode;
 		exam=aExam;
@@ -102,13 +102,13 @@ public class Laboratory
 	public String getResult(){
 		return result;
 	}
-	public int getCode(){
+	public Integer getCode(){
 		return code;
 	}
 	public int getLock(){
 		return lock;
 	}
-	public void setCode(int aCode){
+	public void setCode(Integer aCode){
 		code=aCode;
 	}
 	public void setExam(Exam aExam){
@@ -200,5 +200,12 @@ public class Laboratory
 	  
 	    return this.hashCode;
 	}
+
+    @Override
+    public String toString() {
+        return "-------------------------------------------\nLaboratory{" + "code=" + code + ", material=" + material + ", exam=" + exam + ", registrationDate=" + registrationDate + ", examDate=" + examDate + ", result=" + result + ", lock=" + lock + ", note=" + note + ", patient=" + patient + ", patName=" + patName + ", InOutPatient=" + InOutPatient + ", age=" + age + ", sex=" + sex + ", hashCode=" + hashCode + "}\n---------------------------------------------";
+    }
+        
+        
 }
 
