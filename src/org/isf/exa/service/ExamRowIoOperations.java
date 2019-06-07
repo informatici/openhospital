@@ -10,9 +10,6 @@ package org.isf.exa.service;
  *------------------------------------------*/
 
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
-
-//import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.exatype.model.ExamType;
 import org.isf.exatype.service.ExamTypeIoOperationRepository;
