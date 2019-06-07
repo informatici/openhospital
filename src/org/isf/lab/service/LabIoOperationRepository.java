@@ -43,5 +43,8 @@ public interface LabIoOperationRepository extends JpaRepository<Laboratory, Inte
     		@Param("dateFrom") GregorianCalendar dateFrom,
     		@Param("dateTo") GregorianCalendar dateTo,
     		@Param("exam") String exam);
+    
+   // @Query(value="SELECT MAX(LAB_MPROG) FROM LABORATORY WHERE YEAR(LAB_DATE) = :year AND MONTH(LAB_DATE ) = :month ", nativeQuery= true)
+   // public int getProgMonth(@Param("month")int month, @Param("year")int year);
    
 }

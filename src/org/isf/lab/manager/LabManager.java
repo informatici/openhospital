@@ -32,6 +32,7 @@ public class LabManager {
 	private LabIoOperations ioOperations;
 	
 	public LabManager() {
+            ioOperations = new LabIoOperations();
 	}
 	
 	/**
@@ -204,7 +205,33 @@ public class LabManager {
 	        		MessageBundle.getMessage("angal.lab.unknownprocedure"), 
 	        		OHSeverityLevel.ERROR));
 	}
-	
+	/**
+	 * Inserts one Laboratory exam {@link Laboratory} (All Procedures)
+	 * @param laboratory - the laboratory with its result (Procedure 1)
+	 * @param labRow - the list of results (Procedure 2) - it can be <code>null</code>
+	 * @return <code>true</code> if the exam has been inserted, <code>false</code> otherwise
+	 * @throws OHServiceException
+	 */
+	public boolean newLaboratory2(Laboratory laboratory, ArrayList<LaboratoryRow> labRow) throws OHServiceException {
+		List<OHExceptionMessage> errors = validateLaboratory(laboratory);
+		if(!errors.isEmpty()){
+            throw new OHServiceException(errors);
+        }
+		if (laboratory.getExam().getProcedure() == 1) {
+			return ioOperations.newLabFirstProcedure(laboratory);
+		}
+		else if (laboratory.getExam().getProcedure() == 2) {
+			if (labRow == null || labRow.isEmpty())
+				throw new OHServiceException(new OHExceptionMessage("labRowNullOrEmptyError", 
+		        		MessageBundle.getMessage("angal.labnew.someexamswithoutresultpleasecheck"), 
+		        		OHSeverityLevel.ERROR));
+			return ioOperations.newLabSecondProcedure2(laboratory, labRow);
+		}
+		else 
+			throw new OHServiceException(new OHExceptionMessage("unknownProcedureError", 
+	        		MessageBundle.getMessage("angal.lab.unknownprocedure"), 
+	        		OHSeverityLevel.ERROR));
+	}
 	/**
 	 * Inserts one Laboratory exam {@link Laboratory} (All Procedures)
 	 * @param laboratory - the laboratory with its result (Procedure 1)
@@ -252,7 +279,31 @@ public class LabManager {
 		    		OHSeverityLevel.ERROR));
 		boolean result = true;
 		for (int i = 0; i < labList.size(); i++) {
-			result = result && newLaboratory(labList.get(i), labRowList.get(i));
+                    result = result && newLaboratory(labList.get(i), labRowList.get(i));
+		}
+		return result;
+	}
+        
+        /**
+	 * Inserts list of Laboratory exams {@link Laboratory} (All Procedures)
+	 * @param labList - the laboratory list with results
+	 * @param labRowList - the list of results, it can be <code>null</code>
+	 * @return <code>true</code> if the exam has been inserted, <code>false</code> otherwise
+	 * @throws OHServiceException
+	 */
+	@Transactional(rollbackFor=OHServiceException.class)
+	public boolean newLaboratory2(List<Laboratory> labList, ArrayList<ArrayList<LaboratoryRow>> labRowList) throws OHServiceException {
+		if (labList.size() == 0)
+			throw new OHServiceException(new OHExceptionMessage("emptyListError", 
+		    		MessageBundle.getMessage("angal.labnew.noexamsinserted"), 
+		    		OHSeverityLevel.ERROR));
+		if (labList.size() != labRowList.size())
+			throw new OHServiceException(new OHExceptionMessage("labRowNullOrEmptyError", 
+		    		MessageBundle.getMessage("angal.labnew.someexamswithoutresultpleasecheck"), 
+		    		OHSeverityLevel.ERROR));
+		boolean result = true;
+		for (int i = 0; i < labList.size(); i++) {
+                    result = result && newLaboratory2(labList.get(i), labRowList.get(i));
 		}
 		return result;
 	}
@@ -334,4 +385,23 @@ public class LabManager {
 			}
 		}
 	}
+
+    /**
+    * Returns the max progressive number within specified month of specified year.
+    * 
+    * @param lab
+    * @return <code>int</code> - the progressive number in the month
+     * @throws org.isf.utils.exception.OHServiceException
+    */
+   /*public int getProgMonth(int month, int year)  throws OHServiceException {
+        return ioOperations.getProgMonth(month, year);
+   }*/
+
+  /*  public Integer newLabFirstProcedure2(Laboratory lab)  throws OHServiceException {
+       return ioOperations.newLabFirstProcedure2(lab); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public Laboratory newLabSecondProcedure2(Laboratory lab, ArrayList<LaboratoryRow> laboratoryRows)  throws OHServiceException {
+        return ioOperations.newLabSecondProcedure2(lab, laboratoryRows); //To change body of generated methods, choose Tools | Templates.
+    }*/
 }

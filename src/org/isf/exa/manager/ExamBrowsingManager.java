@@ -67,6 +67,7 @@ public class ExamBrowsingManager {
 					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), 
 					OHSeverityLevel.ERROR));
 		}
+               
 	}
 	
 	/**
@@ -225,4 +226,5 @@ public class ExamBrowsingManager {
 					OHSeverityLevel.ERROR));
 		}
 	}
+      
 }

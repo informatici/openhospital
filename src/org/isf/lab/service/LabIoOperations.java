@@ -37,6 +37,7 @@ public class LabIoOperations {
 
 	@Autowired
 	private LabIoOperationRepository repository;
+        
 	@Autowired
 	private LabRowIoOperationRepository rowRepository;
 	
@@ -271,6 +272,36 @@ public class LabIoOperations {
 		
 		return result;
 	}
+        
+        /**
+	 * Inserts one Laboratory exam {@link Laboratory} with multiple results (Procedure Two) 
+	 * @param laboratory - the {@link Laboratory} to insert
+	 * @param labRow - the list of results ({@link String}s)
+	 * @return <code>true</code> if the exam has been inserted with all its results, <code>false</code> otherwise
+	 * @throws OHServiceException
+	 */
+	public boolean newLabSecondProcedure2(
+			Laboratory laboratory, 
+			ArrayList<LaboratoryRow> labRow) throws OHServiceException 
+	{
+		boolean result = true;
+		
+		
+		int newCode = newLaboratory(laboratory);
+		if (newCode > 0) 
+		{
+			for (LaboratoryRow aLabRow : labRow) {
+				LaboratoryRow laboratoryRow = new LaboratoryRow();
+				laboratoryRow.setLabId(laboratory);
+				//laboratoryRow.setDescription(aLabRow);	
+
+				LaboratoryRow savedLaboratoryRow = rowRepository.save(laboratoryRow);
+				result = result && (savedLaboratoryRow != null);
+			}
+		}
+		
+		return result;
+	}
 	
 	/**
 	 * Update an already existing Laboratory exam {@link Laboratory}. No commit is performed.
@@ -378,4 +409,21 @@ public class LabIoOperations {
 		
 		return result;
 	}
+
+
+  /*  public Integer newLabFirstProcedure2(Laboratory lab)throws OHServiceException {
+        System.out.println("ioOperations  nullllllllllllllllllllllllllllllll?");
+        System.out.println(repository == null);
+        return this.newLaboratory(lab);
+    }
+
+    public Laboratory newLabSecondProcedure2(Laboratory lab, ArrayList<LaboratoryRow> laboratoryRows) throws OHServiceException{
+        Laboratory labo = repository.save(lab);
+        laboratoryRows.get(0).setLabId(labo);
+        for (LaboratoryRow laboratoryRow : laboratoryRows) {
+            laboratoryRow.setLabId(labo);
+            rowRepository.save(laboratoryRow);
+        }
+        return labo;
+    }*/
 }

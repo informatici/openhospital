@@ -264,23 +264,21 @@ public class Tests
 	@Test
 	public void testIoGetLaboratoryForPrint() 
 	{
-		int id = 0;
+		Integer id = 0;
 		
 		
 		try 
 		{		
-			id = _setupTestLaboratory(false);
-			Laboratory foundLaboratory = (Laboratory)jpa.find(Laboratory.class, id); 
-			ArrayList<LaboratoryForPrint> laboratories = labIoOperation.getLaboratoryForPrint(foundLaboratory.getExam().getDescription(), foundLaboratory.getExamDate(), foundLaboratory.getExamDate());
-			
-			assertEquals(foundLaboratory.getCode(), laboratories.get(0).getCode());
+                    id = _setupTestLaboratory(false);
+                    Laboratory foundLaboratory = (Laboratory)jpa.find(Laboratory.class, id); 
+                    ArrayList<LaboratoryForPrint> laboratories = labIoOperation.getLaboratoryForPrint(foundLaboratory.getExam().getDescription(), foundLaboratory.getExamDate(), foundLaboratory.getExamDate());
+                    assertEquals(foundLaboratory.getCode(), laboratories.get(0).getCode());
 		} 
 		catch (Exception e) 
 		{
-			e.printStackTrace();		
-			assertEquals(true, false);
+                    e.printStackTrace();		
+                    assertEquals(true, false);
 		}
-		
 		return;
 	}
 	
@@ -455,7 +453,7 @@ public class Tests
 	@Test
 	public void testIoUpdateLaboratory() 
 	{
-		int code = 0;
+		Integer code = 0;
 		boolean result = false;
 		
 		
@@ -484,7 +482,7 @@ public class Tests
 	@Test
 	public void testIoEditLabSecondProcedure() 
 	{
-		int code = 0;
+		Integer code = 0;
 		ArrayList<String> labRow = new ArrayList<String>();
 		boolean result = false;
 		
@@ -512,7 +510,7 @@ public class Tests
 	@Test
 	public void testIoDeleteLaboratory() 
 	{
-		int code = 0;
+		Integer code = 0;
 		boolean result = false;
 		
 
@@ -564,7 +562,7 @@ public class Tests
         return;
     }
     
-	private int _setupTestLaboratory(
+	private Integer _setupTestLaboratory(
 			boolean usingSet) throws OHException 
 	{
 		Laboratory laboratory;
@@ -585,7 +583,7 @@ public class Tests
 	}
 		
 	private void  _checkLaboratoryIntoDb(
-			int code) throws OHException 
+			Integer code) throws OHException 
 	{
 		Laboratory foundLaboratory;
 		
@@ -596,7 +594,7 @@ public class Tests
 		return;
 	}	
 	
-	private int _setupTestLaboratoryRow(
+	private Integer _setupTestLaboratoryRow(
 			boolean usingSet) throws OHException 
 	{			
 		LaboratoryRow laboratoryRow;
@@ -619,7 +617,7 @@ public class Tests
 	}
 		
 	private void  _checkLaboratoryRowIntoDb(
-			int code) throws OHException 
+			Integer code) throws OHException 
 	{
 		LaboratoryRow foundLaboratoryRow;
 		

@@ -18,7 +18,7 @@ public class LaboratoryRow
 	@Id 
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="LABR_ID")
-	private int code;
+	private Integer code;
 
 	@NotNull
 	@ManyToOne
