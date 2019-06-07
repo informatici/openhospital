@@ -1589,7 +1589,7 @@ public class AdmissionBrowser extends JDialog {
 		try {
 			Date admission = dateInFieldCal.getDate();
 			Date discharge = dateOutFieldCal.getDate();
-			int bedDays = TimeTools.getDaysBetweenDates(admission, discharge, false);
+			int bedDays = TimeTools.getDaysBetweenDates(admission, discharge);
 			if (bedDays == 0) bedDays++;
 			bedDaysTextField.setText(String.valueOf(bedDays));
 		} catch (Exception e) {
