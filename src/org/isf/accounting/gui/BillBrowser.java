@@ -108,9 +108,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	private JScrollPane jScrollPaneClosed;
 	private JTable jTableToday;
 	private JTable jTablePeriod;
-	private Patient patientParent;
 	private JTable jTableUser;
-	private JTextField jAffiliatePersonJTextField  = null;
 	private JPanel jPanelRange;
 	private JPanel panelSupRange;
 	private JPanel jPanelButtons;
@@ -529,7 +527,8 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 							int rowSelected = jTableBills.getSelectedRow();
 							Bill editBill = (Bill)jTableBills.getValueAt(rowSelected, -1);
 							if (editBill.getStatus().equals("C")) { //$NON-NLS-1$
-								new GenericReportBill(editBill.getId(), GeneralData.PATIENTBILL, false, true);
+								//new GenericReportBill(editBill.getId(), GeneralData.PATIENTBILL, false, true);
+								new GenericReportBill(editBill.getId(), GeneralData.PATIENTBILL, true, true);
 							} else {
 								if (editBill.getStatus().equals("D")) {
 									JOptionPane.showMessageDialog(BillBrowser.this,
@@ -700,7 +699,6 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 			
 			chooseMedicalJButtonAdd  = new JButton();
 			chooseMedicalJButtonAdd.addActionListener(new ActionListener() {
-				@SuppressWarnings("deprecation")
 				public void actionPerformed(ActionEvent arg0) {
 					
 					PriceListManager pManager = new PriceListManager();
@@ -747,12 +745,16 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 							//System.out.println("Item choisi***************************"+ chooseItem.getItemDescription());
 							medicalJTextField.setText(chooseItem!=null?chooseItem.getItemDescription():"");
 						if(chooseItem!=null){
-							try {
-								updateDataSet(dateFrom, dateTo, chooseItem);
+								try {
+								
+							
+								 updateDataSet(dateFrom, dateTo, chooseItem);
+								
+								
 							} catch (OHServiceException e) {
 								// TODO Auto-generated catch block
 								//System.out.println("error "+e.getMessage());
-							}							
+							}  							
 							updateTables();
 							updateTotals();
 						}
@@ -1271,7 +1273,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 					billAll.add(bill);
 			}
 			
-			if (status.equals("O")) {
+			/*if (status.equals("O")) {
 				try {
 					tableArray = billManager.getPendingBills(0);
 				}catch(OHServiceException e){
@@ -1283,7 +1285,15 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 					}
 				}
 				
-			} else if (status.equals("ALL")) {
+			}*/
+			if (status.equals("O")) {
+					for (Bill bill : billPeriod) {
+					
+					if (bill.getStatus().equals(status)) 
+						tableArray.add(bill);
+				}
+			}
+			else if (status.equals("ALL")) {
 				
 				Collections.sort(billAll);
 				tableArray = billAll;
