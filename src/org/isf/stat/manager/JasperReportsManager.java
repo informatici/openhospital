@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +13,10 @@ import java.util.Map;
 import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.hospital.model.Hospital;
+import org.isf.patient.model.Patient;
 import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.utils.db.DbQueryLogger;
+import org.isf.utils.db.DbSingleConn;
 import org.isf.utils.db.DbSingleJpaConn;
 import org.isf.utils.excel.ExcelExporter;
 import org.isf.utils.exception.OHException;
@@ -213,6 +216,9 @@ public class JasperReportsManager {
                     MessageBundle.getMessage("angal.stat.reporterror"), OHSeverityLevel.ERROR));
         }
     }
+    
+    
+    
 
     public JasperReportResultDto getGenericReportOpdPdf(int opdID, int patID, String jasperFileName) throws OHServiceException {
 

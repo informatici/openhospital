@@ -22,13 +22,17 @@ import org.slf4j.LoggerFactory;
 
 public class GeneralData {
 	
+	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final String FILE_PROPERTIES = "generalData.properties";
 
+	public static String PATIENTBILLGROUPED;
+	public static String OPENEDBILLSREPORT;
 	public static String LANGUAGE;
 	public static boolean SINGLEUSER;
 	public static boolean AUTOMATICLOT;
 	public static boolean LOTWITHCOST;
+	public static boolean ALLOWPRINTOPENEDBILL;
 	public static String PATIENTSHEET;
 	public static String OPDCHART;
 	public static String ADMCHART;
@@ -57,7 +61,11 @@ public class GeneralData {
 	public static boolean XMPPMODULEENABLED;
 	public static boolean DICOMMODULEENABLED;
 	
+	public static boolean ALLOWMULTIPLEOPENEDBILL;
+	
+	public static String DEFAULT_OPENEDBILLSREPORT = "OH023_BillsReportMonth";
 	private static String DEFAULT_LANGUAGE = "en";
+	private static boolean DEFAULT_ALLOWPRINTOPENEDBILL = false;
 	private static boolean DEFAULT_SINGLEUSER = false;
 	private static boolean DEFAULT_AUTOMATICLOT = true;
 	private static boolean DEFAULT_LOTWITHCOST = false;
@@ -67,6 +75,7 @@ public class GeneralData {
 	private static String DEFAULT_DISCHART = "patient_dis_chart";
 	private static String DEFAULT_PATIENTBILL = "PatientBill";
 	private static String DEFAULT_BILLSREPORT = "BillsReport";
+	private static String DEFAULT_PATIENTBILLGROUPED = "PatientBillGrouped";
 	private static String DEFAULT_BILLSREPORTMONTH = "BillsReportMonth";
 	private static String DEFAULT_PHARMACEUTICALORDER = "PharmaceuticalOrder";
 	private static String DEFAULT_PHARMACEUTICALSTOCK = "PharmaceuticalStock";
@@ -87,6 +96,7 @@ public class GeneralData {
 	private static boolean DEFAULT_ENHANCEDSEARCH = false;
 	private static boolean DEFAULT_XMPPMODULEENABLED=false;
     private static boolean DEFAULT_DICOMMODULEENABLED=false;
+    private static boolean DEFAULT_ALLOWMULTIPLEOPENEDBILL=false;
 
 	private static GeneralData mySingleData;
 	private Properties p;
@@ -127,6 +137,10 @@ public class GeneralData {
 			ENHANCEDSEARCH = myGetProperty("ENHANCEDSEARCH", DEFAULT_ENHANCEDSEARCH);
 			XMPPMODULEENABLED = myGetProperty("XMPPMODULEENABLED", DEFAULT_XMPPMODULEENABLED);
 			DICOMMODULEENABLED = myGetProperty("DICOMMODULEENABLED", DEFAULT_DICOMMODULEENABLED);
+			PATIENTBILLGROUPED = myGetProperty("PATIENTBILLGROUPED", DEFAULT_PATIENTBILLGROUPED);
+			ALLOWPRINTOPENEDBILL = myGetProperty("ALLOWPRINTOPENEDBILL", DEFAULT_ALLOWPRINTOPENEDBILL);
+			ALLOWMULTIPLEOPENEDBILL = myGetProperty("ALLOWMULTIPLEOPENEDBILL", DEFAULT_ALLOWMULTIPLEOPENEDBILL);
+			OPENEDBILLSREPORT = myGetProperty("OPENEDBILLSREPORT", DEFAULT_OPENEDBILLSREPORT);
 			
 		} catch (Exception e) { //no file
 			logger.error(">> " + FILE_PROPERTIES + " file not found.");

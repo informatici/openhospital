@@ -99,4 +99,7 @@ public class MessageBundle {
 		return message;
 	}
 	
+	public static ResourceBundle getBundle(){
+		return resourceBundle;
+	}
 }
