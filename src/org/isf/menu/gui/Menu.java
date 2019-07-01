@@ -1,11 +1,13 @@
 package org.isf.menu.gui;
 
+import java.awt.Toolkit;
 import java.io.File;
 
 import javax.swing.JFrame;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.isf.generaldata.Version;
+import org.isf.utils.jobjects.WaitCursorEventQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +27,9 @@ public class Menu {
 		checkOHVersion();
 		checkJavaVersion();
 		JFrame.setDefaultLookAndFeelDecorated(false);
-		new SplashWindow3("rsc"+File.separator+"images"+File.separator+"Splash.jpg",null,3000);	
+		new SplashWindow3("rsc"+File.separator+"images"+File.separator+"Splash.jpg",null,3000);
+		WaitCursorEventQueue waitQueue = new WaitCursorEventQueue(10);
+		Toolkit.getDefaultToolkit().getSystemEventQueue().push(waitQueue);
 	}
 	
 	private static void checkOHVersion() {

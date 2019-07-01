@@ -240,16 +240,11 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 				
 				int i = 0;
 				if (options.indexOf(option) == i) {
-						
-						try {
-							BusyState.setBusyState(MedicalBrowser.this, true);
-							new GenericReportPharmaceuticalStock(null, GeneralData.PHARMACEUTICALSTOCK);
-							return;
-						} finally {
-							BusyState.setBusyState(MedicalBrowser.this, false);
-						}
-						
-					}
+
+					new GenericReportPharmaceuticalStock(null, GeneralData.PHARMACEUTICALSTOCK);
+					return;
+
+				}
 				if (options.indexOf(option) == ++i) {
 					
 					icon = new ImageIcon("rsc/icons/calendar_dialog.png"); //$NON-NLS-1$
@@ -265,15 +260,8 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 			        		icon);
 
 			        if (r == JOptionPane.OK_OPTION) {
-			        	
-						try {
-							BusyState.setBusyState(MedicalBrowser.this, true);
-							new GenericReportPharmaceuticalStock(dateChooser.getDate(), GeneralData.PHARMACEUTICALSTOCK);
-							return;
-						} finally {
-							BusyState.setBusyState(MedicalBrowser.this, false);
-						}
-						
+						new GenericReportPharmaceuticalStock(dateChooser.getDate(), GeneralData.PHARMACEUTICALSTOCK);
+						return;
 			        } else {
 			            return;
 			        }

@@ -320,13 +320,11 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 
 		if (!GeneralData.ENHANCEDSEARCH) {
 			//Load the whole list of patients
-		    BusyState.setBusyState(this, true);
 			try {
 				pPatient = manager.getAdmittedPatients(null);
 			}catch(OHServiceException e){
                 OHServiceExceptionUtil.showMessages(e);
 			}
-		    BusyState.setBusyState(this, false);
 		}
 		
 		initComponents();
@@ -639,14 +637,12 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				
 				if (n == JOptionPane.YES_OPTION){
 					PatientBrowserManager manager = new PatientBrowserManager();
-					BusyState.setBusyState(AdmittedPatientBrowser.this, true);
 					boolean result = false;
 					try {
 						result = manager.deletePatient(pat);
 					}catch(OHServiceException e){
 						OHServiceExceptionUtil.showMessages(e);
 					}
-					BusyState.setBusyState(AdmittedPatientBrowser.this, false);
 					if (result){
 						AdmissionBrowserManager abm = new AdmissionBrowserManager();
 						ArrayList<Admission> patientAdmissions;
@@ -946,13 +942,11 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 					JOptionPane.OK_CANCEL_OPTION);
 			if (ok != JOptionPane.OK_OPTION) return;
 		}
-		BusyState.setBusyState(this, true);
 		try {
 			pPatient = manager.getAdmittedPatients(key);
 		}catch(OHServiceException e){
 			OHServiceExceptionUtil.showMessages(e);
 		}
-		BusyState.setBusyState(this, false);
 		filterPatient(null);
 	}
 	

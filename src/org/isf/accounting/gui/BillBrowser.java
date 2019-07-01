@@ -333,14 +333,8 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 							} else {
 								user = UserBrowsingManager.getCurrentUser();
 							}
-							try {
-								BusyState.setBusyState(BillBrowser.this, true);
-								new GenericReportUserInDate(from, to, user, "BillsReportUserInDate");
-								return;
-							} finally {
-								BusyState.setBusyState(BillBrowser.this, false);
-							}
-							
+							new GenericReportUserInDate(from, to, user, "BillsReportUserInDate");
+							return;
 						}
 					if (options.indexOf(option) == ++i) {
 						
@@ -411,20 +405,10 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 					if (option == null) return;
 					
 					if (options.indexOf(option) == 0) {
-						try {
-							BusyState.setBusyState(BillBrowser.this, true);
-							new GenericReportFromDateToDate(from, to, GeneralData.BILLSREPORTMONTH, MessageBundle.getMessage("angal.billbrowser.shortreportonlybaddebts"), false);
-						} finally {
-							BusyState.setBusyState(BillBrowser.this, false);
-						}
+						new GenericReportFromDateToDate(from, to, GeneralData.BILLSREPORTMONTH, MessageBundle.getMessage("angal.billbrowser.shortreportonlybaddebts"), false);
 					}
 					if (options.indexOf(option) == 1) {
-						try {
-							BusyState.setBusyState(BillBrowser.this, true);
-							new GenericReportFromDateToDate(from, to, GeneralData.BILLSREPORT, MessageBundle.getMessage("angal.billbrowser.fullreportallbills"), false);
-						} finally {
-							BusyState.setBusyState(BillBrowser.this, false);
-						}
+						new GenericReportFromDateToDate(from, to, GeneralData.BILLSREPORT, MessageBundle.getMessage("angal.billbrowser.fullreportallbills"), false);
 					}
 				}
 			});

@@ -191,13 +191,10 @@ public class MovStockMultipleDischarging extends JDialog {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					BusyState.setBusyState(MovStockMultipleDischarging.this, true);
 					if (!checkAndPrepareMovements()) {
-						BusyState.setBusyState(MovStockMultipleDischarging.this, false);
 						return;
 					}
 					if (!save()) {
-						BusyState.setBusyState(MovStockMultipleDischarging.this, false);
 						return;
 					}
 					dispose();

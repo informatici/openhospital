@@ -491,13 +491,11 @@ public class PatientInsertExtended extends JDialog {
 //								//logger.debug("Patient photo not changed");
 //							}
 
-							BusyState.setBusyState(PatientInsertExtended.this, true);
 							try{
 								result = manager.newPatient(patient);
 							}catch(OHServiceException ex){
 								OHServiceExceptionUtil.showMessages(ex);
 							}
-							BusyState.setBusyState(PatientInsertExtended.this, false);
 							if (result)
 								firePatientInserted(patient);
 
@@ -583,13 +581,11 @@ public class PatientInsertExtended extends JDialog {
 //							//logger.debug("Patient photo not changed");
 //						}
 
-						BusyState.setBusyState(PatientInsertExtended.this, true);
 						try{
 							result = manager.updatePatient(patient);
 						}catch(OHServiceException ex){
                             OHServiceExceptionUtil.showMessages(ex);
 						}
-						BusyState.setBusyState(PatientInsertExtended.this, false);
 						if (result) {
 							firePatientUpdated(patient);
 						}
