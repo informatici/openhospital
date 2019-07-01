@@ -216,24 +216,32 @@ public class MovStockBrowser extends ModalJFrame {
 	public void updateTotals() {
 		if (jTableTotal == null) return;
 		totalQti = 0;
-		if (!medicalBox.getSelectedItem().equals(MessageBundle.getMessage("angal.medicalstock.all")) &&
-				!typeBox.getSelectedItem().equals(MessageBundle.getMessage("angal.medicalstock.all"))) {
+		totalAmount = new BigDecimal(0);
+		
+		// quantity
+		if (!medicalBox.getSelectedItem().equals(MessageBundle.getMessage("angal.medicalstock.all"))) {
 			for (Movement mov : moves) {
-				totalQti += mov.getQuantity();
+				if (mov.getType().getType().contains("+")) {
+					totalQti += mov.getQuantity();
+				} else {
+					totalQti -= mov.getQuantity();
+				}
 			}
 			jTableTotal.getModel().setValueAt(totalQti, 0, 4);
 		} else {
 			jTableTotal.getModel().setValueAt(MessageBundle.getMessage("angal.common.notapplicable"), 0, 4);
 		}
-		totalAmount = new BigDecimal(0);
+		
+		// amount
 		for (Movement mov : moves) {
 			BigDecimal itemAmount = new BigDecimal(Double.toString(mov.getQuantity()));
-			if (mov.getType().getType().contains("+")) 
-			totalAmount = totalAmount.add(itemAmount.multiply(new BigDecimal(mov.getLot().getCost())));
-			else 
+			if (mov.getType().getType().contains("+")) {
+				totalAmount = totalAmount.add(itemAmount.multiply(new BigDecimal(mov.getLot().getCost())));
+			} else {
+				totalQti -= mov.getQuantity();
 				totalAmount = totalAmount.subtract(itemAmount.multiply(new BigDecimal(mov.getLot().getCost())));
+			}
 		}
-		jTableTotal.getModel().setValueAt(currencyCod, 0, 11);
 		jTableTotal.getModel().setValueAt(totalAmount, 0, 12);
 	}
 
