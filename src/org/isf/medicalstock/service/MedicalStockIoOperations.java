@@ -14,7 +14,6 @@ import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.service.MedicalStockWardIoOperationRepository;
 import org.isf.medstockmovtype.service.MedicalStockMovementTypeIoOperationRepository;
-import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.db.TranslateOHServiceException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.ward.model.Ward;
@@ -236,7 +235,6 @@ public class MedicalStockIoOperations {
 
 	/**
 	 * Stores the specified {@link Movement}.
-	 * @param dbQuery the {@link DbQueryLogger} to use.
 	 * @param movement the movement to store.
 	 * @param lotCode the {@link Lot} code to use.
 	 * @return <code>true</code> if the movement has stored, <code>false</code> otherwise.
@@ -259,7 +257,6 @@ public class MedicalStockIoOperations {
 
 	/**
 	 * Creates a new unique lot code.
-	 * @param dbQuery the {@link DbQueryLogger} to use.
 	 * @return the new unique code.
 	 * @throws OHServiceException if an error occurs during the code generation.
 	 */
@@ -281,7 +278,6 @@ public class MedicalStockIoOperations {
 
 	/**
 	 * Checks if the specified {@link Lot} exists.
-	 * @param dbQuery the {@link DbQueryLogger} to use for the check.
 	 * @param lotCode the lot code.
 	 * @return <code>true</code> if exists, <code>false</code> otherwise.
 	 * @throws OHServiceException if an error occurs during the check.
@@ -304,7 +300,6 @@ public class MedicalStockIoOperations {
 
 	/**
 	 * Stores the specified {@link Lot}.
-	 * @param dbQuery the {@link DbQueryLogger} to use.
 	 * @param lotCode the {@link Lot} code.
 	 * @param lot the lot to store.
 	 * @return <code>true</code> if the lot has been stored, <code>false</code> otherwise.
@@ -326,7 +321,6 @@ public class MedicalStockIoOperations {
 
 	/**
 	 * Updated {@link Medical} stock quantity for the specified {@link Movement}.
-	 * @param dbQuery the {@link DbQueryLogger} to use.
 	 * @param movement the movement.
 	 * @return <code>true</code> if the quantity has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException if an error occurs during the update.
@@ -370,7 +364,6 @@ public class MedicalStockIoOperations {
 
 	/**
 	 * Updates the incoming quantity for the specified medical.
-	 * @param dbQuery the {@link DbQueryLogger} to use.
 	 * @param medicalCode the medical code.
 	 * @param incrementQuantity the quantity to add.
 	 * @return <code>true</code> if the quantity has been updated, <code>false</code> otherwise.
@@ -392,7 +385,6 @@ public class MedicalStockIoOperations {
 
 	/**
 	 * Updates the outcoming quantity for the specified medicinal.
-	 * @param dbQuery the {@link DbQueryLogger} to use.
 	 * @param medicalCode the medical code.
 	 * @param incrementQuantity the quantity to add to the current outcoming quantity.
 	 * @return <code>true</code> if the outcoming quantity has been updated <code>false</code> otherwise.
@@ -414,7 +406,6 @@ public class MedicalStockIoOperations {
 
 	/**
 	 * Updates medical quantity for the specified ward.
-	 * @param dbQuery the {@link DbQueryLogger} to use.
 	 * @param wardCode the ward code.
 	 * @param medicalCode the medical code.
 	 * @param quantity the quantity to add to the current medical quantity.
