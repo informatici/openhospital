@@ -49,6 +49,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -256,6 +258,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 	private ArrayList<Patient> pat = new ArrayList<Patient>();
 
 	private Disease lastOPDDisease1;
+	private JLabel JlabelOpd;
 	
 	/**
 	 * This method initializes 
@@ -592,6 +595,11 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			gbc_jOpdNumberPanel.gridx = 3;
 			
 			jPanelData.add(getJOpdNumberPanel(), gbc_jOpdNumberPanel);
+			GridBagConstraints gbc_JlabelOpd = new GridBagConstraints();
+			gbc_JlabelOpd.insets = new Insets(0, 0, 5, 0);
+			gbc_JlabelOpd.gridx = 4;
+			gbc_JlabelOpd.gridy = 0;
+			jPanelData.add(getJlabelOpd(), gbc_JlabelOpd);
 			jSearchLabel = new JLabel(MessageBundle.getMessage("angal.opd.search"));
 			GridBagConstraints gbc_jSearchLabel = new GridBagConstraints();
 			gbc_jSearchLabel.fill = GridBagConstraints.VERTICAL;
@@ -620,7 +628,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			gbc_jSearchBox.gridx = 3;
 			jPanelData.add(getSearchBox(), gbc_jSearchBox);
 			GridBagConstraints gbc_jPatientEditButton = new GridBagConstraints();
-			gbc_jPatientEditButton.insets = new Insets(5, 5, 5, 5);
+			gbc_jPatientEditButton.insets = new Insets(5, 5, 5, 0);
 			gbc_jPatientEditButton.gridy = 1;
 			gbc_jPatientEditButton.gridx = 4;
 			jPanelData.add(getJPatientEditButton(), gbc_jPatientEditButton);
@@ -634,7 +642,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			gbc_jLabelDiseaseType1.gridx = 0;
 			jPanelData.add(jLabelDiseaseType1, gbc_jLabelDiseaseType1);
 			GridBagConstraints gbc_jLabelDiseaseTypeBox = new GridBagConstraints();
-			gbc_jLabelDiseaseTypeBox.insets = new Insets(5, 5, 5, 5);
+			gbc_jLabelDiseaseTypeBox.insets = new Insets(5, 5, 5, 0);
 			gbc_jLabelDiseaseTypeBox.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jLabelDiseaseTypeBox.gridwidth = 4;
 			gbc_jLabelDiseaseTypeBox.gridy = 2;
@@ -702,7 +710,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			jFieldLastOpdVisit = new JLabel(" ");
 			jFieldLastOpdVisit.setFocusable(false);
 			GridBagConstraints gbc_jFieldLastOpdVisit = new GridBagConstraints();
-			gbc_jFieldLastOpdVisit.insets = new Insets(5, 5, 5, 5);
+			gbc_jFieldLastOpdVisit.insets = new Insets(5, 5, 5, 0);
 			gbc_jFieldLastOpdVisit.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jFieldLastOpdVisit.gridwidth = 4;
 			gbc_jFieldLastOpdVisit.gridy = 6;
@@ -714,7 +722,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			jLabelLastOpdNote.setForeground(Color.RED);
 			GridBagConstraints gbc_jLabelLastOpdNote = new GridBagConstraints();
 			gbc_jLabelLastOpdNote.fill = GridBagConstraints.HORIZONTAL;
-			gbc_jLabelLastOpdNote.insets = new Insets(5, 5, 5, 5);
+			gbc_jLabelLastOpdNote.insets = new Insets(5, 5, 0, 5);
 			gbc_jLabelLastOpdNote.anchor = GridBagConstraints.EAST;
 			gbc_jLabelLastOpdNote.gridy = 7;
 			gbc_jLabelLastOpdNote.gridx = 0;
@@ -724,7 +732,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			jFieldLastOpdNote.setFocusable(false);
 			GridBagConstraints gbc_jFieldLastOpdNote = new GridBagConstraints();
 			gbc_jFieldLastOpdNote.anchor = GridBagConstraints.WEST;
-			gbc_jFieldLastOpdNote.insets = new Insets(5, 5, 5, 5);
+			gbc_jFieldLastOpdNote.insets = new Insets(5, 5, 0, 0);
 			gbc_jFieldLastOpdNote.gridwidth = 4;
 			gbc_jFieldLastOpdNote.gridy = 7;
 			gbc_jFieldLastOpdNote.gridx = 1;
@@ -764,6 +772,13 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 				OpdDateFieldCal = new JDateChooser(currentDateFormat.parse(d), "dd/MM/yy");
 				OpdDateFieldCal.setLocale(new Locale(GeneralData.LANGUAGE));
 				OpdDateFieldCal.setDateFormatString("dd/MM/yy");
+				OpdDateFieldCal.addPropertyChangeListener("date", new PropertyChangeListener() {
+					
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						jOpdNumField.setText(getOpdNum());
+					}
+				});
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -780,10 +795,13 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			jOpdNumLabel.setText(MessageBundle.getMessage("angal.opd.opdnumber"));
 			
 			jOpdNumField = new JTextField(10);
-			jOpdNumField.setEditable(false);
-			jOpdNumField.setFocusable(false);
+
+			jOpdNumField.setEditable(true);
+			jOpdNumField.setFocusable(true);
 			jOpdNumField.setText(getOpdNum());
 			
+			jOpdNumField.setColumns(11);
+
 			jOpdNumberPanel.add(jOpdNumLabel);
 			jOpdNumberPanel.add(jOpdNumField);
 		}
@@ -794,6 +812,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 		int OpdNum;
 		if (!insert) return ""+opd.getProgYear();
 		GregorianCalendar date = new GregorianCalendar();
+		date.setTime(OpdDateFieldCal.getDate());
 		try {
 			opd.setProgYear(opdManager.getProgYear(date.get(Calendar.YEAR))+1);
 		}catch(OHServiceException e){
@@ -844,8 +863,8 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 			diseaseTypeBox.setMaximumSize(new Dimension(400,50));
 			diseaseTypeBox.addItem(allType);
 			for (DiseaseType elem : types) {
-				if(!insert  && opd.getDisease().getType() != null){
-					if(opd.getDisease().getType().equals(elem.getCode())){
+				if(!insert && opd.getDisease().getType() != null) {
+					if(opd.getDisease().getType().equals(elem.getCode())) {
 						elem2=elem;}
 				}
 				diseaseTypeBox.addItem(elem);
@@ -1411,6 +1430,50 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
             okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					boolean opdNumExist = false;
+					if(!jOpdNumField.getText().equals("")||!jOpdNumField.getText().contains(" ")) {
+						OpdBrowserManager opm = new OpdBrowserManager();
+						GregorianCalendar gregDate = new GregorianCalendar();
+						gregDate.setTime(OpdDateFieldCal.getDate());
+						int opdNum;
+						try {
+							opdNum = Integer.parseInt(jOpdNumField.getText());
+						} catch (NumberFormatException e1) {
+							JOptionPane.showMessageDialog(null,
+									MessageBundle.getMessage("angal.opd.opdnumbermustbeanumber"));
+							return;
+						}
+						int opdEdit = 0;
+						if (insert) {
+							try {
+								opdNumExist = opm.isExistOpdNum(opdNum, gregDate.get(Calendar.YEAR));
+							} catch(OHServiceException e1){
+								OHServiceExceptionUtil.showMessages(e1);
+							}
+						} else {
+							opdEdit = opd.getProgYear();
+						}
+
+						if (opdNum != opdEdit) {
+							try {
+								opdNumExist = opm.isExistOpdNum(opdNum, gregDate.get(Calendar.YEAR));
+							} catch(OHServiceException e1){
+								OHServiceExceptionUtil.showMessages(e1);
+							}
+						} else {
+							opdNumExist = false;
+						}
+					} else {
+						JOptionPane.showMessageDialog(OpdEditExtended.this,
+								MessageBundle.getMessage("angal.opd.opdnumbermustbeanumber"));
+						return;
+					}
+					
+					if (opdNumExist) {
+						JOptionPane.showMessageDialog(OpdEditExtended.this,
+								MessageBundle.getMessage("angal.opd.opdnumberalreadyexist"));
+						return;
+					}
 					
 					char newPatient=' ';
 					String referralTo=null;
@@ -1468,7 +1531,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 					try {
 						if (insert){    //Insert
 							GregorianCalendar date = new GregorianCalendar();
-							opd.setProgYear(opdManager.getProgYear(date.get(Calendar.YEAR))+1);
+							opd.setProgYear(Integer.parseInt(jOpdNumField.getText()));
 							//remember for later use
 							RememberDates.setLastOpdVisitDate(visitDateOpd);
 							boolean result = opdManager.newOpd(opd);
@@ -1491,6 +1554,7 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 					}catch(OHServiceException ex){
 						OHServiceExceptionUtil.showMessages(ex);
 					}
+					
 				};
 			}
 			);	
@@ -1544,5 +1608,12 @@ public class OpdEditExtended extends JDialog implements PatientInsertExtended.Pa
 	private JPanel setMyMatteBorder(JPanel c, String title) {
 		c.setBorder(new TitledBorder(new MatteBorder(1, 20, 1, 1, (Color) new Color(153, 180, 209)), title, TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		return c;
+	}
+
+	private JLabel getJlabelOpd() {
+		if (JlabelOpd == null) {
+			JlabelOpd = new JLabel("");
+		}
+		return JlabelOpd;
 	}
 }
