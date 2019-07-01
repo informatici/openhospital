@@ -207,4 +207,14 @@ public class OpdBrowserManager {
 	public Opd getLastOpd(int patientcode) throws OHServiceException {
 		return ioOperations.getLastOpd(patientcode);
 	}
+	
+	/**
+	 * Check if the given <param>opdNum<param> does already exist for the give <param>year<param>
+	 * @param opdNum - the OPD progressive in year
+	 * @param year - the year
+	 * @return <code>true<code> if the given number exists in year, <code>false</code> otherwise
+	 */
+	public Boolean isExistOpdNum(int opdNum, int year)  throws OHServiceException {
+		return ioOperations.isExistOpdNum(opdNum, year);
+	}
 }
