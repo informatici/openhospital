@@ -17,7 +17,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -80,7 +79,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ShadowBorder;
-import org.isf.utils.jobjects.VoDateTextField;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.RememberDates;
 import org.isf.utils.time.TimeTools;
@@ -200,8 +198,6 @@ public class AdmissionBrowser extends JDialog {
 
 	private float weight = 0.0f;
 
-	private VoDateTextField visitDateField = null;
-
 	private VoLimitedTextField weightField = null;
 
 	private JDateChooser visitDateFieldCal = null; // Calendar
@@ -219,8 +215,6 @@ public class AdmissionBrowser extends JDialog {
 	private final int preferredHeightLine = 24;
 	
 	private GregorianCalendar deliveryDate = null;
-
-	private VoDateTextField deliveryDateField = null;
 
 	private JDateChooser deliveryDateFieldCal = null;
 
@@ -289,8 +283,6 @@ public class AdmissionBrowser extends JDialog {
 
 	private ArrayList<AdmissionType> admTypeList = null;
 
-	private DateFormat currentDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, new Locale(GeneralData.LANGUAGE));
-
 	private JPanel admissionDatePanel;
 
 	private JPanel admissionTypePanel;
@@ -322,8 +314,6 @@ public class AdmissionBrowser extends JDialog {
 	private GregorianCalendar operationDate = null;
 
 	private JDateChooser operationDateFieldCal = null;
-
-	private VoDateTextField operationDateField = null;
 
 	private float trsfUnit = 0.0f;
 
@@ -382,6 +372,8 @@ public class AdmissionBrowser extends JDialog {
 	private VoLimitedTextField bedDaysTextField;
 	
 	private AdmissionBrowserManager admMan = new AdmissionBrowserManager();
+	
+	final String DATE_TIME_FORMAT = "dd/MM/yy HH:mm:ss";
 
 	/*
 	 * from AdmittedPatientBrowser
@@ -1177,9 +1169,9 @@ public class AdmissionBrowser extends JDialog {
 			} else {
 				dateIn = RememberDates.getLastAdmInDateGregorian();
 			}
-			dateInFieldCal = new JDateChooser(dateIn.getTime(), "dd/MM/yy"); // Calendar
+			dateInFieldCal = new JDateChooser(dateIn.getTime());
 			dateInFieldCal.setLocale(new Locale(GeneralData.LANGUAGE));
-			dateInFieldCal.setDateFormatString("dd/MM/yy");
+			dateInFieldCal.setDateFormatString(DATE_TIME_FORMAT);
 			dateInFieldCal.addPropertyChangeListener("date", new PropertyChangeListener() {
 				
 				public void propertyChange(PropertyChangeEvent evt) {
@@ -1611,7 +1603,7 @@ public class AdmissionBrowser extends JDialog {
 			}
 			dateOutFieldCal = new JDateChooser(myDate, "dd/MM/yy");
 			dateOutFieldCal.setLocale(new Locale(GeneralData.LANGUAGE));
-			dateOutFieldCal.setDateFormatString("dd/MM/yy");
+			dateOutFieldCal.setDateFormatString(DATE_TIME_FORMAT);
 			dateOutFieldCal.addPropertyChangeListener("date", new PropertyChangeListener() {
 				
 				public void propertyChange(PropertyChangeEvent evt) {
@@ -1726,24 +1718,7 @@ public class AdmissionBrowser extends JDialog {
 						 * instead of enabling them before every single <code>return</code>.
 						 */
 						BusyState.setBusyState(AdmissionBrowser.this, true);
-//y
-						/*
-						 * Initizalize AdmissionBrowserManager
-						 */
-						AdmissionBrowserManager abm = new AdmissionBrowserManager();
-						ArrayList<Admission> admList;
-						try {
-							admList = abm.getAdmissions(patient);
-						}catch(OHServiceException ex){
-                            OHServiceExceptionUtil.showMessages(ex);
-							admList = new ArrayList<Admission>();
-						}
 
-						/*
-						 * Today Gregorian Calendar
-						 */
-						GregorianCalendar today = new GregorianCalendar();
-//Y
 						/*
 						 * is it an admission update or a discharge? if we have a
 						 * valid discharge date isDischarge will be true
