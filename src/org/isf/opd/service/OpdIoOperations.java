@@ -236,4 +236,25 @@ public class OpdIoOperations {
 		
 		return result;	
 	}
+	
+	/**
+	 * Check if the given <param>opdNum<param> does already exist for the give <param>year<param>
+	 * 
+	 * @param opdNum - the OPD progressive in year
+	 * @param year - the year
+	 * @return <code>true<code> if the given number exists in year, <code>false</code> otherwise
+	 * @throws OHException
+	 */
+	public Boolean isExistOpdNum(int opdNum, int year) throws OHServiceException {
+		
+		boolean result = true;
+		
+		if (year == 0) {
+			result = !repository.findAllByProgYear(opdNum).isEmpty();
+		} else {
+			result = !repository.findAllByProgYearWithinYear(opdNum, year).isEmpty();
+		}
+		
+		return result;
+	}
 }
