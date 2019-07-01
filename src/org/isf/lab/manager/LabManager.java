@@ -334,4 +334,21 @@ public class LabManager {
 			}
 		}
 	}
+	
+	/**
+	 * The list of Materials
+	 * @return
+	 */
+	public ArrayList<String> getMaterialList() {
+		ArrayList<String> materialList = new ArrayList<String>();
+		materialList.add(MessageBundle.getMessage("angal.lab.blood"));
+		materialList.add(MessageBundle.getMessage("angal.lab.urine"));
+		materialList.add(MessageBundle.getMessage("angal.lab.stool"));
+		materialList.add(MessageBundle.getMessage("angal.lab.sputum"));
+		materialList.add(MessageBundle.getMessage("angal.lab.cfs"));
+		materialList.add(MessageBundle.getMessage("angal.lab.swabs"));
+		materialList.add(MessageBundle.getMessage("angal.lab.tissues"));
+		materialList.add(MessageBundle.getMessage("angal.lab.film"));
+		return materialList;
+	}
 }
