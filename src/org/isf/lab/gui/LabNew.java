@@ -147,31 +147,26 @@ public class LabNew extends JDialog implements SelectionListener {
 	private String[] examColumnNames = {MessageBundle.getMessage("angal.labnew.exam"), MessageBundle.getMessage("angal.labnew.result")}; //$NON-NLS-1$ //$NON-NLS-2$
 	private int[] examColumnWidth = {200, 150};
 	private boolean[] examResizable = {true, false};
-	private String[] matList = {
-			MessageBundle.getMessage("angal.lab.blood"), 
-			MessageBundle.getMessage("angal.lab.urine"),
-			MessageBundle.getMessage("angal.lab.stool"),
-			MessageBundle.getMessage("angal.lab.sputum"),
-			MessageBundle.getMessage("angal.lab.cfs"),
-			MessageBundle.getMessage("angal.lab.swabs"),
-			MessageBundle.getMessage("angal.lab.tissues")
-	};
-
+	
 	//TODO private boolean modified;
 	private Patient patientSelected = null;
 	private Laboratory selectedLab = null;
 	
+	//Materials
+	private LabManager labManager = Context.getApplicationContext().getBean(LabManager.class);
+	private ArrayList<String> matList = labManager.getMaterialList();
+	
 	//Exams (ALL)
-	ExamBrowsingManager exaManager = new ExamBrowsingManager();
-	ArrayList<Exam> exaArray;
+	private ExamBrowsingManager exaManager = new ExamBrowsingManager();
+	private ArrayList<Exam> exaArray;
 	
 	//Results (ALL)
-	ExamRowBrowsingManager examRowManager = new ExamRowBrowsingManager();
-	ArrayList<ExamRow> exaRowArray;
+	private ExamRowBrowsingManager examRowManager = new ExamRowBrowsingManager();
+	private ArrayList<ExamRow> exaRowArray;
 	
 	//Arrays for this Patient
-	ArrayList<ArrayList<String>> examResults = new ArrayList<ArrayList<String>>();
-	ArrayList<Laboratory> labLists = new ArrayList<Laboratory>();
+	private ArrayList<ArrayList<String>> examResults = new ArrayList<ArrayList<String>>();
+	private ArrayList<Laboratory> labLists = new ArrayList<Laboratory>();
 	
 	public LabNew(JFrame owner) {
 		super(owner, true);
@@ -269,7 +264,6 @@ public class LabNew extends JDialog implements SelectionListener {
 					
 					boolean result = false;
 					
-					LabManager labManager = Context.getApplicationContext().getBean(LabManager.class);
 					try {
 						result = labManager.newLaboratory(labLists, examResults);
 					} catch (OHServiceException e1) {
@@ -405,7 +399,10 @@ public class LabNew extends JDialog implements SelectionListener {
 
 	private JComboBox getJComboBoxMaterial() {
 		if (jComboBoxMaterial == null) {
-			jComboBoxMaterial = new JComboBox(matList);
+			jComboBoxMaterial = new JComboBox();
+			for (String elem : matList) {
+				jComboBoxMaterial.addItem(elem);
+			}
 			jComboBoxMaterial.setPreferredSize(new Dimension(EastWidth, ComponentHeight));
 			jComboBoxMaterial.setMaximumSize(new Dimension(EastWidth, ComponentHeight));
 			jComboBoxMaterial.setEnabled(false);
@@ -653,7 +650,7 @@ public class LabNew extends JDialog implements SelectionListener {
 					                    MessageBundle.getMessage("angal.labnew.material"), //$NON-NLS-1$
 					                    JOptionPane.PLAIN_MESSAGE,
 					                    icon,
-					                    matList,
+					                    matList.toArray(new String[0]),
 					                    ""); //$NON-NLS-1$
 					
 					if (mat == null) return;

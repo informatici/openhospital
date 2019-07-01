@@ -149,6 +149,11 @@ public class LabEditExtended extends JDialog {
 
 	
 	private ArrayList<ExamRow> eRows = null;
+	
+	private LabManager labManager = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
+	
+	
+	
 
 	public LabEditExtended(JFrame owner, Laboratory laboratory, boolean inserting) {
 		super(owner, true);
@@ -548,18 +553,14 @@ public class LabEditExtended extends JDialog {
 		if (matComboBox == null) {
 			matComboBox = new JComboBox();
 			matComboBox.addItem("");
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.blood"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.urine"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.stool"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.sputum"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.cfs"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.swabs"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.tissues"));
-			if (!insert) {
-				try {	
-					matComboBox.setSelectedItem(lab.getMaterial());
-					}
-				catch (Exception e) {}
+			for (String elem : labManager.getMaterialList()) {
+				matComboBox.addItem(elem);
+				if (!insert) {
+					try {	
+						matComboBox.setSelectedItem(lab.getMaterial());
+						}
+					catch (Exception e) {}
+				}
 			}
 		}
 		return matComboBox;
@@ -661,7 +662,6 @@ public class LabEditExtended extends JDialog {
 					}
 					
 					ArrayList<String> labRow = new ArrayList<String>();
-					LabManager manager = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
 					lab.setDate(new GregorianCalendar());
 					lab.setExamDate(gregDate);
 					RememberDates.setLastLabExamDate(gregDate);
@@ -689,7 +689,7 @@ public class LabEditExtended extends JDialog {
 					if (insert) {
 						lab.setAge(labPat.getAge());
 						try {
-							result = manager.newLaboratory(lab,	labRow);
+							result = labManager.newLaboratory(lab,	labRow);
 						} catch (OHServiceException e1) {
 							result = false;
 							OHServiceExceptionUtil.showMessages(e1);
@@ -698,7 +698,7 @@ public class LabEditExtended extends JDialog {
 					}
 					else {
 						try {
-							result = manager.updateLaboratory(lab, labRow);
+							result = labManager.updateLaboratory(lab, labRow);
 						} catch (OHServiceException e1) {
 							result = false;
 							OHServiceExceptionUtil.showMessages(e1);

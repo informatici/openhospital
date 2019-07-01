@@ -423,18 +423,15 @@ public class LabEdit extends JDialog {
 		if (matComboBox == null) {
 			matComboBox = new JComboBox();
 			matComboBox.addItem("");
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.blood"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.urine"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.stool"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.sputum"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.cfs"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.swabs"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.tissues"));
-			if (!insert) {
-				try {	
-					matComboBox.setSelectedItem(lab.getMaterial());
-					}
-				catch (Exception e) {}
+			LabManager labMan = new LabManager();
+			for (String elem : labMan.getMaterialList()) {
+				matComboBox.addItem(elem);
+				if (!insert) {
+					try {	
+						matComboBox.setSelectedItem(lab.getMaterial());
+						}
+					catch (Exception e) {}
+				}
 			}
 		}
 		return matComboBox;
