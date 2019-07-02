@@ -1,6 +1,6 @@
-# Open Hospital
+# Open Hospital [![Build Status](https://travis-ci.org/pviotti/openhospital.svg?branch=master)](https://travis-ci.org/pviotti/openhospital)
 
-This is the root project of the [Open Hospital][openhospital] code base.  
+This is the root project of the [Open Hospital][openhospital] code base.
 
 ## Getting started
 
