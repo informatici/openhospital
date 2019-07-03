@@ -49,7 +49,25 @@ public class MedicalBrowsingManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Medical> getMedicals() throws OHServiceException {
-		return ioOperations.getMedicals();
+		return ioOperations.getMedicals(null, false);
+	}
+	
+	/**
+	 * Returns all the medicals sorted by Name.
+	 * In case of error a message error is shown and a <code>null</code> value is returned.
+	 * @return all the medicals.
+	 */
+	public ArrayList<Medical> getMedicalsSortedByName() throws OHServiceException  {
+		return ioOperations.getMedicals(null, true);
+	}
+	
+	/**
+	 * Returns all the medicals sorted by code.
+	 * In case of error a message error is shown and a <code>null</code> value is returned.
+	 * @return all the medicals.
+	 */
+	public ArrayList<Medical> getMedicalsSortedByCode() throws OHServiceException  {
+		return ioOperations.getMedicals(null, false);
 	}
 
 	/**
@@ -59,7 +77,18 @@ public class MedicalBrowsingManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<Medical> getMedicals(String description) throws OHServiceException {
-		return ioOperations.getMedicals(description);
+		return ioOperations.getMedicals(description, false);
+	}
+	
+	/**
+	 * Returns all the medicals with the specified description.
+	 * In case of error a message error is shown and a <code>null</code> value is returned.
+	 * @param type the medical type description.
+	 * @nameSorted if <code>true</code> return the list in alphatecial order, by code otherwise
+	 * @return all the medicals with the specified description.
+	 */
+	public ArrayList<Medical> getMedicals(String type, boolean nameSorted) throws OHServiceException {
+		return ioOperations.getMedicals(type, nameSorted);
 	}
 
 	/**

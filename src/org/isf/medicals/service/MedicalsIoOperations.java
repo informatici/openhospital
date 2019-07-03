@@ -5,12 +5,18 @@
  */
 package org.isf.medicals.service;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstock.service.MovementIoOperationRepository;
+import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -55,7 +61,7 @@ public class MedicalsIoOperations
 	 */
 	public ArrayList<Medical> getMedicals() throws OHServiceException 
 	{
-		return getMedicals(null);
+		return getMedicals(null, false);
 	}
 
 	/**
@@ -80,6 +86,43 @@ public class MedicalsIoOperations
 			medicals = (ArrayList<Medical>)repository.findAllByOrderByDescription();
 		}
 		
+		return medicals;
+	}
+	
+	/**
+	 * Retrieves all stored {@link Medical}s.
+	 * If a description value is provides the medicals are filtered.
+	 * @param type the medical type description.
+	 * @nameSorted if <code>true</code> return the list in alphatecial order, by code otherwise
+	 * @return the stored medicals.
+	 * @throws OHException if an error occurs retrieving the stored medicals.
+	 */
+	public ArrayList<Medical> getMedicals(String type, boolean nameSorted) throws OHServiceException {
+		ArrayList<Medical> medicals = null;
+
+		List<Object> parameters = new ArrayList<Object>();
+
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ");
+		
+		if (type != null) {
+			
+			if (nameSorted) {
+				medicals = (ArrayList<Medical>)repository.findAllWhereTypeOrderByDescription(type);
+			} else {
+				medicals = (ArrayList<Medical>)repository.findAllWhereTypeOrderBySmartCodeAndDescription(type);
+			}
+			
+		} else {
+
+			if (nameSorted) {
+				medicals = getMedicals(null);
+			} else {
+				medicals = (ArrayList<Medical>)repository.findAllOrderBySmartCodeAndDescription();
+			}
+
+		}
+
 		return medicals;
 	}
 
