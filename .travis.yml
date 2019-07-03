@@ -1,5 +1,4 @@
 language: java
 jdk:
  - openjdk8
-install:
- - mvn package -DskipTests
+script: mvn package -DskipTests
