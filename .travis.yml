@@ -9,6 +9,7 @@ deploy:
   api_key:
     secure: fLH93r5JuRdYysWhXPW7i9+5ybIi4YlKG3kAQxFR3rNCAbyO19clHPq0u7Fzh71zzVWzoI9d/kpawXc6NpYcD0h62GoFe5MQC/psgovJ53mf/rISK04CfqYTW9Rr8LRoD2SZ4Qjzsr/WliHiKCLbcxBcg/ktIHQO64KYqj+uxL72DXhtPwJ7EIeKKRDN/KwKKQ5E3LN+rsTwTZ3vf7F+b8f2FuEWvgc1rDTVWbpOFzJ/GrLDs0IqjADxaVNJvGp5QrrzAeh8O1KxfYUZqhwutNBOEBB6LJjUQrLEO0eU8iHk6eCW0Ij34mITEWAJFKxLcccWmCqj1+35n9U4RZs9pujvFy8g137Ki9SdKGtXsD7mMY1Tq3LEOirkc4sz6PBJDNNQtV0aX1Z/72ScKvXsHidZjISUa9ATdUuDH7Uzqn2JU9kWnRrPSCZv/0oMeQ2YjIZTIqWc9Ki8QPPm/Lm872tCu89fjTqlArKM0Y83KoJPiL+7ZT+VzOL67JjZNulYXG8zvgRu0vJG4Hys8QnHJp7D8ZwUhVYpP7cSUAHRv38bpv/K0GJi6YzXjJ3EVkbJs6HDscrqdEZm+CAI6PIyVeSrVnoFqanEg9j5Wt4ixblzhhyPvtAzFgTyU8Bn6MqImCMgELj2KSqdQP5RIDw7qG7jrScULlNgYhxGSyQDqcc=
   file: "./poh-bundle-win/poh-win32-0.0.5-1.8.3.zip"
+  skip_cleanup: true
   on:
     repo: pviotti/openhospital
 branches:
