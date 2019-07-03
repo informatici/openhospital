@@ -20,6 +20,7 @@ import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -362,6 +363,42 @@ public class JasperReportsManager {
 				xlsExport.exportResultsetToExcel(resultSet, exportFile);
 
         } catch(Exception e){
+            //Any exception
+            logger.error("", e);
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
+                    MessageBundle.getMessage("angal.stat.reporterror"), OHSeverityLevel.ERROR));
+        }
+    }
+    
+    public JasperReportResultDto getGenericReportPharmaceuticalStockWardPdf(Date date, String jasperFileName, Ward ward) throws OHServiceException {
+    	
+    	try{
+    		if (date == null)
+				date = new Date();
+			Format formatter;
+			formatter = new SimpleDateFormat("E d, MMMM yyyy");
+		    String dateReport = formatter.format(date);
+		    formatter = new SimpleDateFormat("yyyy-MM-dd");
+		    String dateQuery = formatter.format(date);
+		    formatter = new SimpleDateFormat("yyyyMMdd");
+		    String dateFile = formatter.format(date);
+            HashMap<String, Object> parameters = getHospitalParameters();
+            parameters.put("Date", dateQuery);
+			parameters.put("DateReport", dateReport);
+			parameters.put("Ward", ward.getDescription());
+			parameters.put("WardCode", ward.getCode());
+
+            String pdfFilename = "rpt/PDF/"+jasperFileName + "_" + dateFile.toString()+".pdf";
+
+            JasperReportResultDto result = generateJasperReport(compileJasperFilename(jasperFileName), pdfFilename, parameters);
+            JasperExportManager.exportReportToPdfFile(result.getJasperPrint(), pdfFilename);
+            return result;
+        } catch(OHServiceException e){
+            //Already managed, ready to return OHServiceException
+            throw e;
+        } catch (OHException e) {
+            throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), e.getMessage(), OHSeverityLevel.ERROR));
+        }catch(Exception e){
             //Any exception
             logger.error("", e);
             throw new OHServiceException(e, new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),
