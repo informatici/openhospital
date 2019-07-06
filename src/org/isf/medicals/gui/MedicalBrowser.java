@@ -129,6 +129,7 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 	private JTextField searchString = null;
 	protected boolean altKeyReleased = true;
 	private String lastKey = "";
+	private JButton buttonAMC;
 	private void filterMedical(String key) {
 		model = new MedicalBrowsingModel(key, false);
 		table.setModel(model);
@@ -196,8 +197,23 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 		buttonPanel.add(getJButtonStock());
 		buttonPanel.add(getJButtonOrderList());
 		buttonPanel.add(getJButtonExpiring());
+		buttonPanel.add(getJButtonAMC());
 		buttonPanel.add(getJButtonClose());
 		return buttonPanel;
+	}
+
+	private JButton getJButtonAMC() {
+		if (buttonAMC == null) {
+			buttonAMC = new JButton(MessageBundle.getMessage("angal.medicals.averagemonthlyconsumption.abbr"));
+			buttonAMC.setMnemonic(KeyEvent.VK_M);
+			buttonAMC.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent event){
+					new GenericReportPharmaceuticalOrder(GeneralData.PHARMACEUTICALAMC);
+					
+				}
+			});
+		}
+		return buttonAMC;
 	}
 	private JTextField getSearchBox() {
 		if (searchString == null) {
