@@ -58,7 +58,6 @@ import org.isf.therapy.gui.TherapyEdit;
 import org.isf.utils.db.NormalizeString;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.time.TimeTools;
 import org.isf.ward.manager.WardBrowserManager;

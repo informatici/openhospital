@@ -34,7 +34,6 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.stat.gui.report.GenericReportFromDateToDate;
 import org.isf.stat.gui.report.GenericReportMY;
-import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoDateTextField;
 import org.isf.xmpp.gui.CommunicationFrame;
