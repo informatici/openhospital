@@ -252,7 +252,7 @@ public class MovStockMultipleDischarging extends JDialog {
 			jTextFieldSearch.setHorizontalAlignment(SwingConstants.LEFT);
 			jTextFieldSearch.setColumns(10);
 			TextPrompt suggestion = new TextPrompt(
-					MessageBundle.getMessage("angal.medicalstock.multipledischarging.typeacodeoradescriptionandpressenter"), //$NON-NLS-1$ 
+					MessageBundle.getMessage("angal.medicalstock.typeacodeoradescriptionandpressenter"), //$NON-NLS-1$ 
 					jTextFieldSearch, 
 					Show.FOCUS_LOST); 
 			{

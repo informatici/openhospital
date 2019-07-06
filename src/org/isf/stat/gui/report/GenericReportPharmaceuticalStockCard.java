@@ -7,6 +7,8 @@
 package org.isf.stat.gui.report;
 
 import java.io.File;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JFileChooser;
@@ -15,22 +17,26 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.medicals.model.Medical;
 import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
 import org.isf.utils.excel.ExcelExporter;
+import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.jasperreports.view.JasperViewer;
 
-public class GenericReportPharmaceuticalStock {
+public class GenericReportPharmaceuticalStockCard {
 	
-	private final Logger logger = LoggerFactory.getLogger(GenericReportPharmaceuticalStock.class);
+	private final static Logger logger = LoggerFactory.getLogger(GenericReportPharmaceuticalStockCard.class);
 
-	public GenericReportPharmaceuticalStock(Date date, String jasperFileName, String filter, String groupBy, String sortBy, boolean toExcel) {
+	public GenericReportPharmaceuticalStockCard(String jasperFileName, Date dateFrom, Date dateTo, Medical medical, Ward ward, boolean toExcel) {
+		if (dateFrom == null || dateTo == null)
+			return;
 		try{
             JasperReportsManager jasperReportsManager = new JasperReportsManager();
-            File defaultFilename = new File(jasperReportsManager.compileDefaultFilename(jasperFileName));
+            File defaultFilename = new File(compileStockCardFilename(jasperFileName, dateFrom, dateTo, medical, ward));
             
             if (toExcel) {
 				JFileChooser fcExcel = ExcelExporter.getJFileChooserExcel(defaultFilename);
@@ -42,10 +48,10 @@ public class GenericReportPharmaceuticalStock {
                     FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fcExcel.getFileFilter();
 					String extension = selectedFilter.getExtensions()[0];
 					if (!exportFile.getName().endsWith(extension)) exportFile = new File(exportFile.getAbsoluteFile() + "." + extension);
-                    jasperReportsManager.getGenericReportPharmaceuticalStockExcel(date, jasperFileName, exportFile.getAbsolutePath(), filter, groupBy, sortBy);
+                    jasperReportsManager.getGenericReportPharmaceuticalStockCardExcel(jasperFileName, exportFile.getAbsolutePath(), dateFrom, dateTo, medical, ward);
                 }
             } else {
-                JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportPharmaceuticalStockPdf(date, jasperFileName, filter, groupBy, sortBy);
+                JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportPharmaceuticalStockCardPdf(jasperFileName, defaultFilename.getName(), dateFrom, dateTo, medical, ward);
                 if (GeneralData.INTERNALVIEWER)
                     JasperViewer.viewReport(jasperReportResultDto.getJasperPrint(),false);
                 else {
@@ -59,4 +65,17 @@ public class GenericReportPharmaceuticalStock {
         }
 	}
 	
+	private String compileStockCardFilename(String jasperFileName, Date dateFrom, Date dateTo, Medical medical, Ward ward) {
+		Format formatter = new SimpleDateFormat("yyyyMMdd");
+	    StringBuilder fileName = new StringBuilder(jasperFileName);
+	    if (ward != null) {
+	    	fileName.append("_").append(ward.getDescription());
+	    }
+	    fileName.append("_").append(medical.getCode())
+	    		.append("_").append(MessageBundle.getMessage("angal.common.from"))
+	    		.append("_").append(formatter.format(dateFrom))
+	    		.append("_").append(MessageBundle.getMessage("angal.common.to"))
+	    		.append("_").append(formatter.format(dateTo));
+        return  fileName.toString();
+    }
 }

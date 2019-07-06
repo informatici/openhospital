@@ -17,6 +17,7 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +26,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -49,7 +51,9 @@ import org.isf.menu.gui.MainMenu;
 import org.isf.stat.gui.report.GenericReportFromDateToDate;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalOrder;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalStock;
+import org.isf.stat.gui.report.GenericReportPharmaceuticalStockCard;
 import org.isf.utils.excel.ExcelExporter;
+import org.isf.utils.jobjects.JFromDateToDateChooserDialog;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.JMonthYearChooser;
@@ -195,6 +199,7 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 		if (MainMenu.checkUserGrants("btnpharmaceuticaldel")) buttonPanel.add(getJButtonDelete());
 		buttonPanel.add(getJButtonReport());
 		buttonPanel.add(getJButtonStock());
+		buttonPanel.add(getJButtonStockCard());
 		buttonPanel.add(getJButtonOrderList());
 		buttonPanel.add(getJButtonExpiring());
 		buttonPanel.add(getJButtonAMC());
@@ -359,6 +364,41 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 			}
 		});
 		return buttonStock;
+	}
+	
+	private JButton getJButtonStockCard() {
+		JButton buttonStockCard = new JButton(MessageBundle.getMessage("angal.medicals.stockcard"));
+		buttonStockCard.setMnemonic(KeyEvent.VK_K);
+		buttonStockCard.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event){
+				if (table.getSelectedRow() < 0) {
+					JOptionPane.showMessageDialog(				
+							MedicalBrowser.this,
+	                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
+	                        MessageBundle.getMessage("angal.hospital"),
+	                        JOptionPane.PLAIN_MESSAGE);				
+					return;									
+				}else {
+					selectedrow = table.convertRowIndexToModel(table.getSelectedRow());
+					Medical medical = (Medical)(((MedicalBrowsingModel) model).getValueAt(selectedrow, -1));
+					
+					// Select Dates
+					JFromDateToDateChooserDialog dataRange = new JFromDateToDateChooserDialog(MedicalBrowser.this);
+					dataRange.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dataRange.setVisible(true);
+					
+					Date dateFrom = dataRange.getDateFrom();
+					Date dateTo = dataRange.getDateTo();
+					boolean toExcel = dataRange.isExcel();
+					
+					if (!dataRange.isCancel()) {
+						new GenericReportPharmaceuticalStockCard("ProductLedger", dateFrom, dateTo, medical, null, toExcel);
+						return;
+					}
+				}
+			}
+		});
+		return buttonStockCard;
 	}
 
 	private JButton getJButtonReport() {

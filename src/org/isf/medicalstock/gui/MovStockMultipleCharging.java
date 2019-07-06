@@ -378,7 +378,7 @@ public class MovStockMultipleCharging extends JDialog {
 			
 			jTextFieldSearch.setColumns(10);
 			TextPrompt suggestion = new TextPrompt(
-					MessageBundle.getMessage("angal.medicalstock.multiplecharging.typeacodeoradescriptionandpressenter"), //$NON-NLS-1$ 
+					MessageBundle.getMessage("angal.medicalstock.typeacodeoradescriptionandpressenter"), //$NON-NLS-1$ 
 					jTextFieldSearch, 
 					Show.FOCUS_LOST); 
 			{
