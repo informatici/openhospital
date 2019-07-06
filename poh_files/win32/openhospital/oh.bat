@@ -19,6 +19,7 @@ set OH_HOME=%OH_PATH%oh
 set OH_BIN=%OH_HOME%\bin
 set OH_LIB=%OH_HOME%\lib
 set OH_BUNDLE=%OH_HOME%\bundle
+set OH_REPORT=%OH_HOME%\rpt
 
 set CLASSPATH=%OH_BIN%
 
@@ -27,20 +28,9 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 FOR %%A IN (%OH_LIB%\*.jar) DO (
 	set CLASSPATH=!CLASSPATH!;%%A
 )
-FOR %%A IN (%OH_LIB%\dicom\*.jar) DO (
-	set CLASSPATH=!CLASSPATH!;%%A
-)
-FOR %%A IN (%OH_LIB%\dicom\dcm4che\*.jar) DO (
-	set CLASSPATH=!CLASSPATH!;%%A
-)
-FOR %%A IN (%OH_LIB%\dicom\jai\*.jar) DO (
-	set CLASSPATH=!CLASSPATH!;%%A
-)
-FOR %%A IN (%OH_LIB%\h8\*.jar) DO (
-	set CLASSPATH=!CLASSPATH!;%%A
-)
 set CLASSPATH=%CLASSPATH%;%OH_BIN%\OH.jar
 set CLASSPATH=%CLASSPATH%;%OH_BUNDLE%
+set CLASSPATH=%CLASSPATH%;%OH_REPORT%
 
 cd /d %OH_PATH%oh\
 %OH_PATH%jre6\bin\java.exe -showversion -Dsun.java2d.dpiaware=false -Djava.library.path=%OH_PATH%oh\lib\native\Windows -cp %CLASSPATH% org.isf.menu.gui.Menu

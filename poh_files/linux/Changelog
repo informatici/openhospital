@@ -1,3 +1,9 @@
+0.0.3 (08/05/2017)
+------------------
+- Added support for high dpi monitor in launchers (works only with Java6)
+- Enhanced Ant build in order to build portable versions too (only OpenHospital part)
+- Updated scripts for POH (windows version use always port 3307 for MySQL).
+
 0.0.2 (13/04/2008)
 ------------------
 - the shell script oh.sh looks for a free port to run MySQL server starting from port 3306
