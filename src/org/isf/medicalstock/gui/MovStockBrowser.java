@@ -1116,13 +1116,9 @@ public class MovStockBrowser extends ModalJFrame {
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			setHorizontalAlignment(columnAlignment[column]);
-			if (column == 4) {
-				if (value instanceof Number) value = formatter1.format((Number) value);
-			}
-			if (column == 11) value = formatter100.format((Number) value);
-			if (column == 12) {
-				if (value instanceof Number) value = formatter10.format((Number) value);
-			}
+			if (column == 4 && value instanceof Number) value = formatter1.format((Number) value);
+			if (column == 11 && value instanceof Number) value = formatter100.format((Number) value);
+			if (column == 12 && value instanceof Number) value = formatter10.format((Number) value);
 			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		}
 	}
