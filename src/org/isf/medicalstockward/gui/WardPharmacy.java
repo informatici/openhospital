@@ -60,12 +60,14 @@ import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
 import org.isf.patient.model.Patient;
 import org.isf.serviceprinting.manager.PrintManager;
+import org.isf.stat.gui.report.GenericReportPharmaceuticalStockCard;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalStockWard;
 import org.isf.utils.excel.ExcelExporter;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
+import org.isf.utils.jobjects.StockCardDialog;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.TimeTools;
 import org.isf.ward.manager.WardBrowserManager;
@@ -182,6 +184,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private JButton jPrintTableButton = null;
 	private JButton jExportToExcelButton = null;
 	private JButton jRectifyButton = null;
+	private JButton jButtonStockCard;
 
 	/*
 	 * Managers and datas
@@ -241,9 +244,60 @@ public class WardPharmacy extends ModalJFrame implements
 				jPanelButtons.add(getPrintTableButton());
 			if (MainMenu.checkUserGrants("btnmedicalswardexcel")) //$NON-NLS-1$
 				jPanelButtons.add(getExportToExcelButton());
+			jPanelButtons.add(getJButtonStockCard());
 			jPanelButtons.add(getJButtonClose());
 		}
 		return jPanelButtons;
+	}
+	
+	private JButton getJButtonStockCard() {
+		if (jButtonStockCard == null) {
+			jButtonStockCard = new JButton(MessageBundle.getMessage("angal.medicalstockward.stockcard"));
+			jButtonStockCard.setMnemonic(KeyEvent.VK_K);
+			jButtonStockCard.setVisible(false);
+			jButtonStockCard.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent event){
+
+					Medical medical = null;
+					if (jTabbedPaneWard.getSelectedIndex() == 0) 
+					{
+						if (jTableOutcomes.getSelectedRow() >= 0) {
+							MovementWard movWard = (MovementWard) ((jTableOutcomes.getModel()).getValueAt(jTableOutcomes.getSelectedRow(), -1));
+							medical = movWard.getMedical();
+						}
+					} 
+					else if (jTabbedPaneWard.getSelectedIndex() == 1) 
+					{
+						if (jTableIncomes.getSelectedRow() >= 0) {
+							Movement mov = (Movement) ((jTableIncomes.getModel()).getValueAt(jTableIncomes.getSelectedRow(), -1));
+							medical = mov.getMedical();
+						}
+					} 
+					else if (jTabbedPaneWard.getSelectedIndex() == 2) {
+						if (jTableDrugs.getSelectedRow() >= 0) {
+							MedicalWard medicalWard = (MedicalWard) ((jTableDrugs.getModel()).getValueAt(jTableDrugs.getSelectedRow(), -1));
+							try {
+								medical = medicalWard.getMedical();
+							} catch (OHException e) {
+								JOptionPane.showMessageDialog(WardPharmacy.this, e.getMessage(), getTitle(), JOptionPane.ERROR_MESSAGE);
+							}
+						}
+					}
+					
+					StockCardDialog stockCardDialog = new StockCardDialog(WardPharmacy.this, medical, dateFrom.getTime(), dateTo.getTime());
+					medical = stockCardDialog.getMedical();
+					Date dateFrom = stockCardDialog.getDateFrom();
+					Date dateTo = stockCardDialog.getDateTo();
+					boolean toExcel = stockCardDialog.isExcel();
+					
+					if (!stockCardDialog.isCancel()) {
+						new GenericReportPharmaceuticalStockCard("ProductLedgerWard", dateFrom, dateTo, medical, wardSelected, toExcel);
+						return;
+					}
+				}
+			});
+		}
+		return jButtonStockCard;
 	}
 
 	private JButton getJButtonNew() {
@@ -883,6 +937,7 @@ public class WardPharmacy extends ModalJFrame implements
 								jRectifyButton.setVisible(true);
 							if (editAllowed)
 								jButtonEdit.setVisible(true);
+							jButtonStockCard.setVisible(true);
 							validate();
 							setLocationRelativeTo(null);
 							// jButtonDelete.setVisible(true);
@@ -1039,8 +1094,7 @@ public class WardPharmacy extends ModalJFrame implements
 			for (MovementWard mov : listMovementWardFromTo) {
 				boolean ok = true;
 				Patient patient = mov.getPatient();
-				Medical medical = null;
-				medical = mov.getMedical();
+				Medical medical = mov.getMedical();
 				int age = mov.getAge();
 				float weight = mov.getWeight();
 
