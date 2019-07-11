@@ -73,6 +73,7 @@ import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.DateTextField;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.StockCardDialog;
+import org.isf.utils.jobjects.StockLedgerDialog;
 import org.isf.utils.time.TimeTools;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
@@ -98,6 +99,7 @@ public class MovStockBrowser extends ModalJFrame {
 	private JButton exportToExcel;
 //	private JButton importFromExcel;
 	private JButton stockCardButton;
+	private JButton stockLedgerButton;
 	private JPanel filterPanel;
 	private JCheckBox jCheckBoxKeepFilter;
 	private JComboBox medicalBox;
@@ -139,8 +141,6 @@ public class MovStockBrowser extends ModalJFrame {
 	private int[] pColumwidth = {50, 80, 45, 130, 50, 150, 70, 70, 80, 65, 50, 50, 70};
 	private static final String DATE_FORMAT_DD_MM_YY = "dd/MM/yy";
 	private static final String DATE_FORMAT_DD_MM_YY_HH_MM = "dd/MM/yy HH:mm";
-	
-	private String currencyCod;
 	
 	private SupplierBrowserManager supMan = new SupplierBrowserManager();
 	private HashMap<Integer, String> supMap = new HashMap<Integer, String>();
@@ -196,6 +196,7 @@ public class MovStockBrowser extends ModalJFrame {
 		if (MainMenu.checkUserGrants("btnpharmstockdischarge")) buttonPanel.add(getDishargeButton());
 		buttonPanel.add(getExportToExcelButton());
 		buttonPanel.add(getStockCardButton());
+		buttonPanel.add(getStockLedgerButton());
 		buttonPanel.add(getCloseButton());
 		return buttonPanel;
 	}
@@ -233,6 +234,26 @@ public class MovStockBrowser extends ModalJFrame {
 			}
 		});
 		return stockCardButton;
+	}
+	
+	private JButton getStockLedgerButton() {
+		stockLedgerButton = new JButton(MessageBundle.getMessage("StockLedger"));
+		stockLedgerButton.setMnemonic(KeyEvent.VK_L);
+		stockLedgerButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				
+				StockLedgerDialog stockCardDialog = new StockLedgerDialog(MovStockBrowser.this, movDateFrom.getCompleteDate().getTime(), movDateTo.getCompleteDate().getTime());
+				Date dateFrom = stockCardDialog.getDateFrom();
+				Date dateTo = stockCardDialog.getDateTo();
+				
+				if (!stockCardDialog.isCancel()) {
+					new GenericReportPharmaceuticalStockCard("ProductLedger_multi", dateFrom, dateTo, null, null, false);
+					return;
+				}
+			}
+		});
+		return stockLedgerButton;
 	}
 
 	private JPanel getTablesPanel() {

@@ -71,8 +71,10 @@ public class GenericReportPharmaceuticalStockCard {
 	    if (ward != null) {
 	    	fileName.append("_").append(ward.getDescription());
 	    }
-	    fileName.append("_").append(medical.getCode())
-	    		.append("_").append(MessageBundle.getMessage("angal.common.from"))
+	    if (medical != null) {
+	    	fileName.append("_").append(medical.getCode());
+	    }
+	    fileName.append("_").append(MessageBundle.getMessage("angal.common.from"))
 	    		.append("_").append(formatter.format(dateFrom))
 	    		.append("_").append(MessageBundle.getMessage("angal.common.to"))
 	    		.append("_").append(formatter.format(dateTo));

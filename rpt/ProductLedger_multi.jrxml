@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="ProductLedger_multi"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="842"
+		 pageHeight="595"
+		 columnWidth="782"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="true"
+		 resourceBundle="ProductLedger"
+		 whenResourceMissingType="Key">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<style 
+		name="Opening"
+		isDefault="false"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean( $F{ORDERING_FIELD}.equals( "1" ) || $F{ORDERING_FIELD}.equals( "3" ))]]></conditionExpression>
+			<style 
+				name="Opening"
+				isDefault="false"
+				border="1Point"
+				borderColor="#000000"
+				isStyledText="false"
+				isBold="true"
+				isItalic="true"
+				isUnderline="true"
+				isStrikeThrough="false"
+			>
+					<box>					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+			</style>
+		</conditionalStyle>
+	</style>
+
+	<parameter name="Hospital" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="Address" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="City" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="Email" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="Telephone" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="fromdate" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="todate" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="Currency" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT DISTINCT(MDSR_ID), MDSR_CODE, MDSR_DESC, MDSRT_DESC 
+FROM MEDICALDSRSTOCKMOV
+LEFT JOIN MEDICALDSR ON MDSR_ID = MMV_MDSR_ID
+LEFT JOIN MEDICALDSRTYPE ON MDSRT_ID_A = MDSR_MDSRT_ID_A
+WHERE DATE(MMV_DATE) BETWEEN DATE($P{fromdate}) AND DATE($P{todate})
+ORDER BY LENGTH(MDSR_CODE) ASC, MDSR_CODE ASC, MDSR_DESC ASC]]></queryString>
+
+	<field name="MDSR_ID" class="java.lang.Integer"/>
+	<field name="MDSR_CODE" class="java.lang.String"/>
+	<field name="MDSR_DESC" class="java.lang.String"/>
+	<field name="MDSRT_DESC" class="java.lang.String"/>
+
+
+		<group  name="PRODUCT" isStartNewPage="true" isReprintHeaderOnEachPage="true" >
+			<groupExpression><![CDATA[$F{MDSR_ID}]]></groupExpression>
+			<groupHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="66"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-30"
+						y="0"
+						width="842"
+						height="66"
+						key="subreport-1"/>
+					<subreportParameter  name="Hospital">
+						<subreportParameterExpression><![CDATA[$P{Hospital}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="Address">
+						<subreportParameterExpression><![CDATA[$P{Address}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="City">
+						<subreportParameterExpression><![CDATA[$P{City}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="Email">
+						<subreportParameterExpression><![CDATA[$P{Email}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="Telephone">
+						<subreportParameterExpression><![CDATA[$P{Telephone}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="fromdate">
+						<subreportParameterExpression><![CDATA[$P{fromdate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="todate">
+						<subreportParameterExpression><![CDATA[$P{todate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="productID">
+						<subreportParameterExpression><![CDATA[String.valueOf($F{MDSR_ID})]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="Currency">
+						<subreportParameterExpression><![CDATA[$P{Currency}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "ProductLedger_multi_subreport.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="100"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="-30"
+						y="0"
+						width="842"
+						height="100"
+						key="subreport-2"/>
+					<subreportParameter  name="Hospital">
+						<subreportParameterExpression><![CDATA[$P{Hospital}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="Address">
+						<subreportParameterExpression><![CDATA[$P{Address}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="City">
+						<subreportParameterExpression><![CDATA[$P{City}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="Email">
+						<subreportParameterExpression><![CDATA[$P{Email}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="Telephone">
+						<subreportParameterExpression><![CDATA[$P{Telephone}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="fromdate">
+						<subreportParameterExpression><![CDATA[$P{fromdate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="todate">
+						<subreportParameterExpression><![CDATA[$P{todate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="Currency">
+						<subreportParameterExpression><![CDATA[$P{Currency}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="Date">
+						<subreportParameterExpression><![CDATA[$P{todate}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} +  "ProductLedger_multi_subreport2.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</summary>
+</jasperReport>
