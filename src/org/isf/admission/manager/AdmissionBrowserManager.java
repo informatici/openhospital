@@ -42,7 +42,21 @@ public class AdmissionBrowserManager {
 	public ArrayList<AdmittedPatient> getAdmittedPatients(String searchTerms) throws OHServiceException{
         return ioOperations.getAdmittedPatients(searchTerms);
 	}
+	
+	/**
+	 * Returns all patients based on the applied filters.
+	 * @param admissionRange the patient admission range
+	 * @param dischargeRange the patient discharge range
+	 * @param searchTerms the search terms to use for filter the patient list, <code>null</code> if no filter have to be applied.
+	 * @return the filtered patient list.
+	 * @throws OHServiceException if an error occurs during database request.
+	 */
+	public ArrayList<AdmittedPatient> getAdmittedPatients(GregorianCalendar[] admissionRange, //
+			GregorianCalendar[] dischargeRange, String searchTerms) throws OHServiceException{
+		return ioOperations.getAdmittedPatients(searchTerms, admissionRange, dischargeRange);
+	}
 
+	
 	/**
 	 * Returns the admission with the selected id.
 	 * @param id the admission id.
