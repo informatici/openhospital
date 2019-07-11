@@ -257,18 +257,16 @@ public class OpdEditExtended extends JDialog implements
 	private ArrayList<Patient> pat = new ArrayList<Patient>();
 
 	private Disease lastOPDDisease1;
-	
         
-        /*
-         * Adds: Textfields and buttoms to enable search in diognoses 
-         */
-        private JTextField searchDiseaseTextField;
-        private JTextField searchDiseaseTextField2;
-        private JTextField searchDiseaseTextField3;
-        private JButton searchDiseaseButton;
-        private JButton searchDiseaseButton2;
-        private JButton searchDiseaseButton3;
-        
+    /*
+     * Adds: Textfields and buttoms to enable search in diognoses 
+     */
+    private JTextField searchDiseaseTextField;
+    private JTextField searchDiseaseTextField2;
+    private JTextField searchDiseaseTextField3;
+    private JButton searchDiseaseButton;
+    private JButton searchDiseaseButton2;
+    private JButton searchDiseaseButton3;
         
 	/**
 	 * This method initializes 
@@ -661,37 +659,37 @@ public class OpdEditExtended extends JDialog implements
 			gbc_jLabelDisease1.anchor = GridBagConstraints.WEST;
 			gbc_jLabelDisease1.gridy = 3;
 			gbc_jLabelDisease1.gridx = 0;
-                        jPanelData.add(jLabelDisease1, gbc_jLabelDisease1);
-                        /////////////Seach text field/////////////
-                        GridBagConstraints gbc_searchDiseaseTextField = new GridBagConstraints();
+            jPanelData.add(jLabelDisease1, gbc_jLabelDisease1);
+            /////////////Seach text field/////////////
+            GridBagConstraints gbc_searchDiseaseTextField = new GridBagConstraints();
 			gbc_searchDiseaseTextField.weightx = 0.5;
 			gbc_searchDiseaseTextField.fill = GridBagConstraints.HORIZONTAL;
 			gbc_searchDiseaseTextField.insets = new Insets(5, 5, 5, 5);
 			gbc_searchDiseaseTextField.gridy = 3;
 			gbc_searchDiseaseTextField.gridx = 1;
-                        searchDiseaseTextField = new JTextField(10);
-                        searchDiseaseTextField.addKeyListener(new KeyListener() {
-                            public void keyPressed(KeyEvent e) {
-                                int key = e.getKeyCode();
-                                if (key == KeyEvent.VK_ENTER) {
-                                    searchDiseaseButton.doClick();
-                                }
-                            }
-                            public void keyReleased(KeyEvent e) {}
-                            public void keyTyped(KeyEvent e) {}
-                        });
+            searchDiseaseTextField = new JTextField(10);
+            searchDiseaseTextField.addKeyListener(new KeyListener() {
+                public void keyPressed(KeyEvent e) {
+                    int key = e.getKeyCode();
+                    if (key == KeyEvent.VK_ENTER) {
+                        searchDiseaseButton.doClick();
+                    }
+                }
+                public void keyReleased(KeyEvent e) {}
+                public void keyTyped(KeyEvent e) {}
+            });
 			jPanelData.add(searchDiseaseTextField, gbc_searchDiseaseTextField);
-                        /////////////Seach text button/////////////
-                        GridBagConstraints gbc_searchDiseaseButton = new GridBagConstraints();
+            /////////////Seach text button/////////////
+            GridBagConstraints gbc_searchDiseaseButton = new GridBagConstraints();
 			gbc_searchDiseaseButton.insets = new Insets(5, 5, 5, 5);
 			gbc_searchDiseaseButton.gridy = 3;
 			gbc_searchDiseaseButton.gridx = 2;
-                        searchDiseaseButton = new JButton();
-                        searchDiseaseButton.setPreferredSize(new Dimension(20, 20));
-                        searchDiseaseButton.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
-                        searchDiseaseButton.addActionListener(this);
+            searchDiseaseButton = new JButton();
+            searchDiseaseButton.setPreferredSize(new Dimension(20, 20));
+            searchDiseaseButton.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
+            searchDiseaseButton.addActionListener(this);
 			jPanelData.add(searchDiseaseButton, gbc_searchDiseaseButton);
-                        /////////////Disesases combo/////////////
+            /////////////Disesases combo/////////////
 			GridBagConstraints gbc_jLabelDiseaseBox = new GridBagConstraints();
 			gbc_jLabelDiseaseBox.insets = new Insets(5, 5, 5, 5);
 			gbc_jLabelDiseaseBox.fill = GridBagConstraints.HORIZONTAL;
@@ -708,36 +706,36 @@ public class OpdEditExtended extends JDialog implements
 			gbc_jLabelDis2.gridy = 4;
 			gbc_jLabelDis2.gridx = 0;
 			jPanelData.add(jLabelDis2, gbc_jLabelDis2);
-                        /////////////Seach text field/////////////
-                        GridBagConstraints gbc_searchDiseaseTextField2 = new GridBagConstraints();
+            /////////////Seach text field/////////////
+            GridBagConstraints gbc_searchDiseaseTextField2 = new GridBagConstraints();
 			gbc_searchDiseaseTextField2.weightx = 0.5;
 			gbc_searchDiseaseTextField2.fill = GridBagConstraints.HORIZONTAL;
 			gbc_searchDiseaseTextField2.insets = new Insets(5, 5, 5, 5);
 			gbc_searchDiseaseTextField2.gridy = 4;
 			gbc_searchDiseaseTextField2.gridx = 1;
-                        searchDiseaseTextField2 = new JTextField(10);
-                        searchDiseaseTextField2.addKeyListener(new KeyListener() {
-                            public void keyPressed(KeyEvent e) {
-                                int key = e.getKeyCode();
-                                if (key == KeyEvent.VK_ENTER) {
-                                    searchDiseaseButton2.doClick();
-                                }
-                            }
-                            public void keyReleased(KeyEvent e) {}
-                            public void keyTyped(KeyEvent e) {}
-                        });
+            searchDiseaseTextField2 = new JTextField(10);
+            searchDiseaseTextField2.addKeyListener(new KeyListener() {
+                public void keyPressed(KeyEvent e) {
+                    int key = e.getKeyCode();
+                    if (key == KeyEvent.VK_ENTER) {
+                        searchDiseaseButton2.doClick();
+                    }
+                }
+                public void keyReleased(KeyEvent e) {}
+                public void keyTyped(KeyEvent e) {}
+            });
 			jPanelData.add(searchDiseaseTextField2, gbc_searchDiseaseTextField2);
-                        /////////////Seach text button/////////////
-                        GridBagConstraints gbc_searchDiseaseButton2 = new GridBagConstraints();
+            /////////////Seach text button/////////////
+            GridBagConstraints gbc_searchDiseaseButton2 = new GridBagConstraints();
 			gbc_searchDiseaseButton2.insets = new Insets(5, 5, 5, 5);
 			gbc_searchDiseaseButton2.gridy = 4;
 			gbc_searchDiseaseButton2.gridx = 2;
-                        searchDiseaseButton2 = new JButton();
-                        searchDiseaseButton2.setPreferredSize(new Dimension(20, 20));
-                        searchDiseaseButton2.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
-                        searchDiseaseButton2.addActionListener(this);
+            searchDiseaseButton2 = new JButton();
+            searchDiseaseButton2.setPreferredSize(new Dimension(20, 20));
+            searchDiseaseButton2.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
+            searchDiseaseButton2.addActionListener(this);
 			jPanelData.add(searchDiseaseButton2, gbc_searchDiseaseButton2);
-                        /////////////Disesases combo/////////////
+            /////////////Disesases combo/////////////
 			GridBagConstraints gbc_jLabelDisBox2 = new GridBagConstraints();
 			gbc_jLabelDisBox2.insets = new Insets(5, 5, 5, 5);
 			gbc_jLabelDisBox2.fill = GridBagConstraints.HORIZONTAL;
@@ -755,36 +753,36 @@ public class OpdEditExtended extends JDialog implements
 			gbc_jLabelDis3.gridx = 0;
 			jPanelData.add(jLabelDis3, gbc_jLabelDis3);
 			GridBagConstraints gbc_jLabelDisBox3 = new GridBagConstraints();
-                        /////////////Seach text field/////////////
-                        GridBagConstraints gbc_searchDiseaseTextField3 = new GridBagConstraints();
+            /////////////Seach text field/////////////
+            GridBagConstraints gbc_searchDiseaseTextField3 = new GridBagConstraints();
 			gbc_searchDiseaseTextField3.weightx = 0.5;
 			gbc_searchDiseaseTextField3.fill = GridBagConstraints.HORIZONTAL;
 			gbc_searchDiseaseTextField3.insets = new Insets(5, 5, 5, 5);
 			gbc_searchDiseaseTextField3.gridy = 5;
 			gbc_searchDiseaseTextField3.gridx = 1;
-                        searchDiseaseTextField3 = new JTextField(10);
-                        searchDiseaseTextField3.addKeyListener(new KeyListener() {
-                            public void keyPressed(KeyEvent e) {
-                                int key = e.getKeyCode();
-                                if (key == KeyEvent.VK_ENTER) {
-                                    searchDiseaseButton3.doClick();
-                                }
-                            }
-                            public void keyReleased(KeyEvent e) {}
-                            public void keyTyped(KeyEvent e) {}
-                        });
+            searchDiseaseTextField3 = new JTextField(10);
+            searchDiseaseTextField3.addKeyListener(new KeyListener() {
+                public void keyPressed(KeyEvent e) {
+                    int key = e.getKeyCode();
+                    if (key == KeyEvent.VK_ENTER) {
+                        searchDiseaseButton3.doClick();
+                    }
+                }
+                public void keyReleased(KeyEvent e) {}
+                public void keyTyped(KeyEvent e) {}
+            });
 			jPanelData.add(searchDiseaseTextField3, gbc_searchDiseaseTextField3);
-                        /////////////Seach text button/////////////
-                        GridBagConstraints gbc_searchDiseaseButton3 = new GridBagConstraints();
+            /////////////Seach text button/////////////
+            GridBagConstraints gbc_searchDiseaseButton3 = new GridBagConstraints();
 			gbc_searchDiseaseButton3.insets = new Insets(5, 5, 5, 5);
 			gbc_searchDiseaseButton3.gridy = 5;
 			gbc_searchDiseaseButton3.gridx = 2;
-                        searchDiseaseButton3 = new JButton();
-                        searchDiseaseButton3.setPreferredSize(new Dimension(20, 20));
-                        searchDiseaseButton3.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
+            searchDiseaseButton3 = new JButton();
+            searchDiseaseButton3.setPreferredSize(new Dimension(20, 20));
+            searchDiseaseButton3.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
 			jPanelData.add(searchDiseaseButton3, gbc_searchDiseaseButton3);
-                        searchDiseaseButton3.addActionListener(this);
-                        /////////////Disesases combo/////////////
+            searchDiseaseButton3.addActionListener(this);
+            /////////////Disesases combo/////////////
 			gbc_jLabelDisBox3.insets = new Insets(5, 5, 5, 5);
 			gbc_jLabelDisBox3.fill = GridBagConstraints.HORIZONTAL;
 			gbc_jLabelDisBox3.weightx = 0.5;
@@ -1699,7 +1697,8 @@ public class OpdEditExtended extends JDialog implements
             }
         }
     }        
-        private ArrayList<Disease> getSearchDiagnosisResults(String s, ArrayList<Disease> diseaseList) {
+        
+    private ArrayList<Disease> getSearchDiagnosisResults(String s, ArrayList<Disease> diseaseList) {
         String query = s.trim();
         ArrayList<Disease> results = new ArrayList<Disease>();
         for (Disease disease : diseaseList) {
@@ -1721,6 +1720,6 @@ public class OpdEditExtended extends JDialog implements
                 results.add(disease);
             }
         }		
-	return results;
+        return results;
     }
 }
