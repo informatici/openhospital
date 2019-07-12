@@ -11,7 +11,8 @@ deploy:
   file: "./poh-bundle-win/poh-win32-0.0.5-1.8.3.zip"
   skip_cleanup: true
   on:
-    repo: pviotti/openhospital
+    tags: true
+    repo: informatici/openhospital
 branches:
   only:
   - master
