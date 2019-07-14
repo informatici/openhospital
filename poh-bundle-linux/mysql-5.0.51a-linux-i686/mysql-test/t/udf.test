@@ -1,0 +1,315 @@
+--source include/have_udf.inc
+#
+# To run this tests the "sql/udf_example.c" need to be compiled into
+# udf_example.so and LD_LIBRARY_PATH should be setup to point out where
+# the library are.
+#
+
+
+--disable_warnings
+drop table if exists t1;
+--enable_warnings
+
+#
+# Create the example functions from udf_example
+#
+
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE FUNCTION metaphon RETURNS STRING SONAME "$UDF_EXAMPLE_LIB";
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE FUNCTION myfunc_double RETURNS REAL SONAME "$UDF_EXAMPLE_LIB";
+
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+--error ER_CANT_FIND_DL_ENTRY
+eval CREATE FUNCTION myfunc_nonexist RETURNS INTEGER SONAME "$UDF_EXAMPLE_LIB";
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE FUNCTION myfunc_int RETURNS INTEGER SONAME "$UDF_EXAMPLE_LIB";
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE FUNCTION sequence RETURNS INTEGER SONAME "$UDF_EXAMPLE_LIB";
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE FUNCTION lookup RETURNS STRING SONAME "$UDF_EXAMPLE_LIB";
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE FUNCTION reverse_lookup
+        RETURNS STRING SONAME "$UDF_EXAMPLE_LIB";
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE AGGREGATE FUNCTION avgcost
+        RETURNS REAL SONAME "$UDF_EXAMPLE_LIB";
+
+--error 0
+select myfunc_double();
+select myfunc_double(1);
+select myfunc_double(78654);
+--error 1305
+select myfunc_nonexist();
+select myfunc_int();
+--error 0
+select lookup();
+select lookup("127.0.0.1");
+--error 0
+select lookup(127,0,0,1);
+select lookup("localhost");
+--error 0
+select reverse_lookup();
+
+# These two functions should return "localhost", but it's
+# depending on configuration, so just call them and don't log the result
+--disable_result_log
+select reverse_lookup("127.0.0.1");
+select reverse_lookup(127,0,0,1);
+--enable_result_log
+
+select reverse_lookup("localhost");
+--error 0
+select avgcost();
+--error 0
+select avgcost(100,23.76);
+create table t1(sum int, price float(24));
+insert into t1 values(100, 50.00), (100, 100.00);
+select avgcost(sum, price) from t1;
+delete from t1;
+insert into t1 values(100, 54.33), (200, 199.99);
+select avgcost(sum, price) from t1;
+drop table t1;
+
+#------------------------------------------------------------------------
+# BUG#17261 Passing a variable from a stored procedure to UDF crashes mysqld
+#------------------------------------------------------------------------
+
+select metaphon('hello');
+
+delimiter //;
+CREATE PROCEDURE `XXX1`(in testval varchar(10))
+begin
+select metaphon(testval);
+end//
+delimiter ;//
+
+call XXX1('hello');
+drop procedure xxx1;
+
+delimiter //;
+CREATE PROCEDURE `XXX2`()
+begin
+declare testval varchar(10);
+set testval = 'hello';
+select metaphon(testval);
+end//
+delimiter ;//
+
+call XXX2();
+drop procedure xxx2;
+
+#
+# Bug#19904: UDF: not initialized *is_null per row
+#
+
+CREATE TABLE bug19904(n INT, v varchar(10));
+INSERT INTO bug19904 VALUES (1,'one'),(2,'two'),(NULL,NULL),(3,'three'),(4,'four');
+SELECT myfunc_double(n) AS f FROM bug19904;
+SELECT metaphon(v) AS f FROM bug19904;
+DROP TABLE bug19904;
+
+#
+# Bug#21269: DEFINER-clause is allowed for UDF-functions
+#
+
+--error ER_WRONG_USAGE
+CREATE DEFINER=CURRENT_USER() FUNCTION should_not_parse
+RETURNS STRING SONAME "should_not_parse.so";
+
+--error ER_WRONG_USAGE
+CREATE DEFINER=someone@somewhere FUNCTION should_not_parse
+RETURNS STRING SONAME "should_not_parse.so";
+#
+# Bug#19862: Sort with filesort by function evaluates function twice
+#
+create table t1(f1 int);
+insert into t1 values(1),(2);
+explain select myfunc_int(f1) from t1 order by 1;
+drop table t1;
+
+# 
+# Bug #21809: Error 1356 while selecting from view with grouping though 
+#              underlying select OK.
+#
+CREATE TABLE t1(a INT, b INT); INSERT INTO t1 values (1,1),(2,2);
+
+DELIMITER ||;
+CREATE FUNCTION fn(a int) RETURNS int DETERMINISTIC
+BEGIN
+    RETURN a;
+END
+||
+DELIMITER ;||
+
+CREATE VIEW v1 AS SELECT a, fn(MIN(b)) as c FROM t1 GROUP BY a;
+
+SELECT myfunc_int(a AS attr_name) FROM t1;
+EXPLAIN EXTENDED SELECT myfunc_int(a AS attr_name) FROM t1;
+EXPLAIN EXTENDED SELECT myfunc_int(a) FROM t1;
+SELECT a,c FROM v1;
+
+--error ER_PARSE_ERROR
+SELECT a, fn(MIN(b) xx) as c FROM t1 GROUP BY a;
+--error ER_PARSE_ERROR
+SELECT myfunc_int(fn(MIN(b) xx)) as c FROM t1 GROUP BY a;
+--error ER_PARSE_ERROR
+SELECT myfunc_int(test.fn(MIN(b) xx)) as c FROM t1 GROUP BY a;
+
+SELECT myfunc_int(fn(MIN(b)) xx) as c FROM t1 GROUP BY a;
+SELECT myfunc_int(test.fn(MIN(b)) xx) as c FROM t1 GROUP BY a;
+
+EXPLAIN EXTENDED SELECT myfunc_int(MIN(b) xx) as c FROM t1 GROUP BY a;
+EXPLAIN EXTENDED SELECT test.fn(MIN(b)) as c FROM t1 GROUP BY a;
+EXPLAIN EXTENDED SELECT myfunc_int(fn(MIN(b))) as c FROM t1 GROUP BY a;
+EXPLAIN EXTENDED SELECT myfunc_int(test.fn(MIN(b))) as c FROM t1 GROUP BY a;
+SELECT myfunc_int(MIN(b) xx) as c FROM t1 GROUP BY a;
+SELECT test.fn(MIN(b)) as c FROM t1 GROUP BY a;
+SELECT myfunc_int(fn(MIN(b))) as c FROM t1 GROUP BY a;
+SELECT myfunc_int(test.fn(MIN(b))) as c FROM t1 GROUP BY a;
+DROP VIEW v1;
+DROP TABLE t1;
+DROP FUNCTION fn;
+
+--echo End of 5.0 tests.
+
+#
+# Drop the example functions from udf_example
+#
+
+DROP FUNCTION metaphon;
+DROP FUNCTION myfunc_double;
+--error ER_SP_DOES_NOT_EXIST
+DROP FUNCTION myfunc_nonexist;
+DROP FUNCTION myfunc_int;
+DROP FUNCTION sequence;
+DROP FUNCTION lookup;
+DROP FUNCTION reverse_lookup;
+DROP FUNCTION avgcost;
+
+#
+# Bug #15439: UDF name case handling forces DELETE FROM mysql.func to remove 
+#             the UDF
+# 
+select * from mysql.func;
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE FUNCTION is_const RETURNS STRING SONAME "$UDF_EXAMPLE_LIB";
+
+select IS_const(3);
+
+drop function IS_const;
+
+select * from mysql.func;
+
+--error 1305
+select is_const(3);
+
+#
+# Bug#18761: constant expression as UDF parameters not passed in as constant
+#
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE FUNCTION is_const RETURNS STRING SONAME "$UDF_EXAMPLE_LIB";
+
+select
+  is_const(3) as const,
+  is_const(3.14) as const,
+  is_const('fnord') as const,
+  is_const(2+3) as const,
+  is_const(rand()) as 'nc rand()',
+  is_const(sin(3.14)) as const,
+  is_const(upper('test')) as const;
+
+create table bug18761 (n int);
+insert into bug18761 values (null),(2);
+select
+  is_const(3) as const,
+  is_const(3.14) as const,
+  is_const('fnord') as const,
+  is_const(2+3) as const,
+  is_const(2+n) as 'nc  2+n  ',
+  is_const(sin(n)) as 'nc sin(n)',
+  is_const(sin(3.14)) as const,
+  is_const(upper('test')) as const,
+  is_const(rand()) as 'nc rand()',
+  is_const(n) as 'nc   n   ',
+  is_const(is_const(n)) as 'nc ic?(n)',
+  is_const(is_const('c')) as const
+from
+  bug18761;
+drop table bug18761;
+
+--error 1241
+select is_const((1,2,3));
+
+drop function if exists is_const;
+
+#
+# Bug #25382: Passing NULL to an UDF called from stored procedures 
+# crashes server
+#
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE FUNCTION metaphon RETURNS STRING SONAME "$UDF_EXAMPLE_LIB";
+
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE FUNCTION myfunc_double RETURNS REAL SONAME "$UDF_EXAMPLE_LIB";
+
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE FUNCTION myfunc_int RETURNS INTEGER SONAME "$UDF_EXAMPLE_LIB";
+
+delimiter //;
+create function f1(p1 varchar(255))
+returns varchar(255)
+begin
+  return metaphon(p1);
+end//
+
+create function f2(p1 varchar(255))
+returns double
+begin
+  return myfunc_double(p1);
+end//
+
+create function f3(p1 varchar(255))
+returns double
+begin
+  return myfunc_int(p1);
+end//
+
+delimiter ;//
+
+select f3(NULL);
+select f2(NULL);
+select f1(NULL);
+
+drop function f1;
+drop function f2;
+drop function f3;
+drop function metaphon;
+drop function myfunc_double;
+drop function myfunc_int;
+
+#
+# Bug #28921: Queries containing UDF functions are cached
+#
+
+--replace_result $UDF_EXAMPLE_LIB UDF_EXAMPLE_LIB
+eval CREATE FUNCTION metaphon RETURNS STRING SONAME "$UDF_EXAMPLE_LIB";
+create table t1 (a char);
+
+set GLOBAL query_cache_size=1355776;
+reset query cache;
+
+select metaphon('MySQL') from t1;
+show status like "Qcache_hits";
+show status like "Qcache_queries_in_cache";
+
+select metaphon('MySQL') from t1;
+show status like "Qcache_hits";
+show status like "Qcache_queries_in_cache";
+
+drop table t1;
+drop function metaphon;
+set GLOBAL query_cache_size=default;
+
+
+--echo End of 5.0 tests.

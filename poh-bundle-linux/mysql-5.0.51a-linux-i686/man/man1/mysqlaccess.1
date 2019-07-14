@@ -1,0 +1,516 @@
+.\"     Title: \fBmysqlaccess\fR
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.70.1 <http://docbook.sf.net/>
+.\"      Date: 01/11/2008
+.\"    Manual: MySQL Database System
+.\"    Source: MySQL 5.0
+.\"
+.TH "\fBMYSQLACCESS\fR" "1" "01/11/2008" "MySQL 5.0" "MySQL Database System"
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+mysqlaccess \- client for checking access privileges
+.SH "SYNOPSIS"
+.HP 56
+\fBmysqlaccess [\fR\fB\fIhost_name\fR\fR\fB [\fR\fB\fIuser_name\fR\fR\fB [\fR\fB\fIdb_name\fR\fR\fB]]] [\fR\fB\fIoptions\fR\fR\fB]\fR
+.SH "DESCRIPTION"
+.PP
+\fBmysqlaccess\fR
+is a diagnostic tool that Yves Carlier has provided for the MySQL distribution. It checks the access privileges for a hostname, username, and database combination. Note that
+\fBmysqlaccess\fR
+checks access using only the
+user,
+db, and
+host
+tables. It does not check table, column, or routine privileges specified in the
+tables_priv,
+columns_priv, or
+procs_priv
+tables.
+.PP
+Invoke
+\fBmysqlaccess\fR
+like this:
+.sp
+.RS 3n
+.nf
+shell> \fBmysqlaccess [\fR\fB\fIhost_name\fR\fR\fB [\fR\fB\fIuser_name\fR\fR\fB [\fR\fB\fIdb_name\fR\fR\fB]]] [\fR\fB\fIoptions\fR\fR\fB]\fR
+.fi
+.RE
+.PP
+\fBmysqlaccess\fR
+understands the following options:
+.PP
+.B Table\ 4.9.\ \fBmysqlaccess\fR Option Reference
+.sp -1n
+.TS
+allbox tab(:);
+lB lB lB lB.
+T{
+\fBFormat\fR
+T}:T{
+\fBConfig File\fR
+T}:T{
+\fBDescription\fR
+T}:T{
+\fBIntroduced\fR
+T}
+.T&
+l l l l
+l l l l
+l l ^ l
+l l l l
+l l l l
+l l l l
+l l ^ l
+l l l l
+l l l l
+l l l l
+l l l l
+l l ^ l
+l l ^ l
+l l l l
+l l l l
+l l ^ l
+l l l l
+l l l l
+l l ^ l
+l l l l
+l l ^ l
+l l l l
+l l l l
+l l ^ l
+l l l l
+l l l l
+l l ^ l
+l l l l
+l l l l
+l l ^ l.
+T{
+\-\-brief
+T}:T{
+brief
+T}:T{
+Generate reports in single\-line tabular format
+T}:T{
+\ 
+T}
+T{
+\-\-host=host_name
+T}:T{
+host
+T}:T{
+Connect to the MySQL server on the given host
+T}:T{
+\ 
+T}
+T{
+\-h host_name
+T}:T{
+\ 
+T}::T{
+\ 
+T}
+T{
+\-\-howto
+T}:T{
+howto
+T}:T{
+Display some examples that show how to use mysqlaccess
+T}:T{
+\ 
+T}
+T{
+\-\-old_server
+T}:T{
+old_server
+T}:T{
+Assume that the server is an old MySQL server (prior to MySQL  3.21)
+T}:T{
+\ 
+T}
+T{
+\-\-password[=password]
+T}:T{
+password
+T}:T{
+The password to use when connecting to the server
+T}:T{
+\ 
+T}
+T{
+\-p[password]
+T}:T{
+\ 
+T}::T{
+\ 
+T}
+T{
+\-\-plan
+T}:T{
+plan
+T}:T{
+Display suggestions and ideas for future releases
+T}:T{
+\ 
+T}
+T{
+\-\-preview
+T}:T{
+preview
+T}:T{
+Show the privilege differences after making changes to the  temporary grant tables
+T}:T{
+\ 
+T}
+T{
+\-\-relnotes
+T}:T{
+relnotes
+T}:T{
+Display the release notes
+T}:T{
+\ 
+T}
+T{
+\-\-rhost=host_name
+T}:T{
+rhost
+T}:T{
+Connect to the MySQL server on the given host
+T}:T{
+\ 
+T}
+T{
+\-b
+T}:T{
+\ 
+T}::T{
+\ 
+T}
+T{
+\-H host_name
+T}:T{
+\ 
+T}::T{
+\ 
+T}
+T{
+\-\-rollback
+T}:T{
+rollback
+T}:T{
+Undo the most recent changes to the temporary grant tables.
+T}:T{
+\ 
+T}
+T{
+\-\-spassword[=password]
+T}:T{
+spassword
+T}:T{
+The password to use when connecting to the server as the superuser
+T}:T{
+\ 
+T}
+T{
+\-P[password]
+T}:T{
+\ 
+T}::T{
+\ 
+T}
+T{
+\-\-superuser=user_name
+T}:T{
+superuser
+T}:T{
+Specify the username for connecting as the superuser
+T}:T{
+\ 
+T}
+T{
+\-\-table
+T}:T{
+table
+T}:T{
+Generate reports in table format
+T}:T{
+\ 
+T}
+T{
+\-t
+T}:T{
+\ 
+T}::T{
+\ 
+T}
+T{
+\-\-user=user_name,
+T}:T{
+user
+T}:T{
+The MySQL username to use when connecting
+T}:T{
+\ 
+T}
+T{
+\-u user_name
+T}:T{
+\ 
+T}::T{
+\ 
+T}
+T{
+\-\-version
+T}:T{
+\ 
+T}:T{
+Display version information and exit
+T}:T{
+\ 
+T}
+T{
+\-\-commit
+T}:T{
+commit
+T}:T{
+Copy the new access privileges from the temporary tables to the  original grant tables
+T}:T{
+\ 
+T}
+T{
+\-V
+T}:T{
+\ 
+T}::T{
+\ 
+T}
+T{
+\-\-copy
+T}:T{
+copy
+T}:T{
+Reload the temporary grant tables from original ones
+T}:T{
+\ 
+T}
+T{
+\-\-db=db_name
+T}:T{
+db
+T}:T{
+Specify the database name
+T}:T{
+\ 
+T}
+T{
+\-d db_name
+T}:T{
+\ 
+T}::T{
+\ 
+T}
+T{
+\-\-debug=N
+T}:T{
+debug
+T}:T{
+Specify the debug level
+T}:T{
+\ 
+T}
+T{
+\-\-help
+T}:T{
+\ 
+T}:T{
+Display help message and exit
+T}:T{
+\ 
+T}
+T{
+\-?
+T}:T{
+\ 
+T}::T{
+\ 
+T}
+.TE
+.sp
+.TP 3n
+\(bu
+\fB\-\-help\fR,
+\fB\-?\fR
+.sp
+Display a help message and exit.
+.TP 3n
+\(bu
+\fB\-\-brief\fR,
+\fB\-b\fR
+.sp
+Generate reports in single\-line tabular format.
+.TP 3n
+\(bu
+\fB\-\-commit\fR
+.sp
+Copy the new access privileges from the temporary tables to the original grant tables. The grant tables must be flushed for the new privileges to take effect. (For example, execute a
+\fBmysqladmin reload\fR
+command.)
+.TP 3n
+\(bu
+\fB\-\-copy\fR
+.sp
+Reload the temporary grant tables from original ones.
+.TP 3n
+\(bu
+\fB\-\-db=\fR\fB\fIdb_name\fR\fR,
+\fB\-d \fR\fB\fIdb_name\fR\fR
+.sp
+Specify the database name.
+.TP 3n
+\(bu
+\fB\-\-debug=\fR\fB\fIN\fR\fR
+.sp
+Specify the debug level.
+\fIN\fR
+can be an integer from 0 to 3.
+.TP 3n
+\(bu
+\fB\-\-host=\fR\fB\fIhost_name\fR\fR,
+\fB\-h \fR\fB\fIhost_name\fR\fR
+.sp
+The hostname to use in the access privileges.
+.TP 3n
+\(bu
+\fB\-\-howto\fR
+.sp
+Display some examples that show how to use
+\fBmysqlaccess\fR.
+.TP 3n
+\(bu
+\fB\-\-old_server\fR
+.sp
+Assume that the server is an old MySQL server (before MySQL 3.21) that does not yet know how to handle full
+WHERE
+clauses.
+.TP 3n
+\(bu
+\fB\-\-password[=\fR\fB\fIpassword\fR\fR\fB]\fR,
+\fB\-p[\fR\fB\fIpassword\fR\fR\fB]\fR
+.sp
+The password to use when connecting to the server. If you omit the
+\fIpassword\fR
+value following the
+\fB\-\-password\fR
+or
+\fB\-p\fR
+option on the command line, you are prompted for one.
+.sp
+Specifying a password on the command line should be considered insecure. See
+Section\ 5.6, \(lqKeeping Your Password Secure\(rq.
+.TP 3n
+\(bu
+\fB\-\-plan\fR
+.sp
+Display suggestions and ideas for future releases.
+.TP 3n
+\(bu
+\fB\-\-preview\fR
+.sp
+Show the privilege differences after making changes to the temporary grant tables.
+.TP 3n
+\(bu
+\fB\-\-relnotes\fR
+.sp
+Display the release notes.
+.TP 3n
+\(bu
+\fB\-\-rhost=\fR\fB\fIhost_name\fR\fR,
+\fB\-H \fR\fB\fIhost_name\fR\fR
+.sp
+Connect to the MySQL server on the given host.
+.TP 3n
+\(bu
+\fB\-\-rollback\fR
+.sp
+Undo the most recent changes to the temporary grant tables.
+.TP 3n
+\(bu
+\fB\-\-spassword[=\fR\fB\fIpassword\fR\fR\fB]\fR,
+\fB\-P[\fR\fB\fIpassword\fR\fR\fB]\fR
+.sp
+The password to use when connecting to the server as the superuser. If you omit the
+\fIpassword\fR
+value following the
+\fB\-\-password\fR
+or
+\fB\-p\fR
+option on the command line, you are prompted for one.
+.sp
+Specifying a password on the command line should be considered insecure. See
+Section\ 5.6, \(lqKeeping Your Password Secure\(rq.
+.TP 3n
+\(bu
+\fB\-\-superuser=\fR\fB\fIuser_name\fR\fR,
+\fB\-U \fR\fB\fIuser_name\fR\fR
+.sp
+Specify the username for connecting as the superuser.
+.TP 3n
+\(bu
+\fB\-\-table\fR,
+\fB\-t\fR
+.sp
+Generate reports in table format.
+.TP 3n
+\(bu
+\fB\-\-user=\fR\fB\fIuser_name\fR\fR,
+\fB\-u \fR\fB\fIuser_name\fR\fR
+.sp
+The username to use in the access privileges.
+.TP 3n
+\(bu
+\fB\-\-version\fR,
+\fB\-v\fR
+.sp
+Display version information and exit.
+.sp
+.RE
+.PP
+If your MySQL distribution is installed in some non\-standard location, you must change the location where
+\fBmysqlaccess\fR
+expects to find the
+\fBmysql\fR
+client. Edit the
+\fImysqlaccess\fR
+script at approximately line 18. Search for a line that looks like this:
+.sp
+.RS 3n
+.nf
+$MYSQL     = '/usr/local/bin/mysql';    # path to mysql executable
+.fi
+.RE
+.PP
+Change the path to reflect the location where
+\fBmysql\fR
+actually is stored on your system. If you do not do this, a
+Broken pipe
+error will occur when you run
+\fBmysqlaccess\fR.
+.SH "COPYRIGHT"
+.PP
+Copyright 2007\-2008 MySQL AB
+.PP
+This documentation is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; version 2 of the License.
+.PP
+This documentation is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License along with the program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110\-1301 USA or see http://www.gnu.org/licenses/.
+.SH "SEE ALSO"
+For more information, please refer to the MySQL Reference Manual,
+which may already be installed locally and which is also available
+online at http://dev.mysql.com/doc/.
+.SH AUTHOR
+MySQL AB (http://www.mysql.com/).

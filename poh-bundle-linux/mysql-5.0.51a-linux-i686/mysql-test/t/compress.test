@@ -1,0 +1,18 @@
+# Turn on compression between the client and server
+# and run a number of tests
+
+# Can't test with embedded server
+-- source include/not_embedded.inc
+
+-- source include/have_compress.inc
+
+connect (comp_con,localhost,root,,,,,COMPRESS);
+
+# Check compression turned on
+SHOW STATUS LIKE 'Compression';
+
+# Source select test case
+-- source include/common-tests.inc
+
+# Check compression turned on
+SHOW STATUS LIKE 'Compression';

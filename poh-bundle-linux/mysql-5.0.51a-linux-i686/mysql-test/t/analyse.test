@@ -1,0 +1,105 @@
+#
+# Test of procedure analyse
+#
+
+--disable_warnings
+drop table if exists t1,t2;
+--enable_warnings
+create table t1 (i int, j int, empty_string char(10), bool char(1), d date);
+insert into t1 values (1,2,"","Y","2002-03-03"), (3,4,"","N","2002-03-04"), (5,6,"","Y","2002-03-04"), (7,8,"","N","2002-03-05");
+select count(*) from t1 procedure analyse();
+select * from t1 procedure analyse();
+select * from t1 procedure analyse(2);
+create table t2 select * from t1 procedure analyse();
+select * from t2;
+drop table t1,t2;
+
+EXPLAIN SELECT 1 FROM (SELECT 1) a PROCEDURE ANALYSE();
+
+#
+# Test with impossible where
+#
+create table t1 (a int not null);
+create table t2 select * from t1 where 0=1 procedure analyse();
+show create table t2;
+select * from t1 where 0=1 procedure analyse();
+insert into t1 values(1);
+drop table t2;
+create table t2 select * from t1 where 0=1 procedure analyse();
+show create table t2;
+select * from t2;
+insert into t2 select * from t1 procedure analyse();
+select * from t2;
+insert into t1 values(2);
+drop table t2;
+create table t2 select * from t1 where 0=1 procedure analyse();
+show create table t2;
+select * from t2;
+insert into t2 select * from t1 procedure analyse();
+select * from t2;
+drop table t1,t2;
+
+#
+# Bug#2813 - analyse does not quote string values in enums from string
+#
+
+create table t1 (v varchar(128));
+insert into t1 values ('abc'),('abc\'def\\hij\"klm\0opq'),('\''),('\"'),('\\'),('a\0'),('b\''),('c\"'),('d\\'),('\'b'),('\"c'),('\\d'),('a\0\0\0b'),('a\'\'\'\'b'),('a\"\"\"\"b'),('a\\\\\\\\b'),('\'\0\\\"'),('\'\''),('\"\"'),('\\\\'),('The\ZEnd');
+select * from t1 procedure analyse();
+drop table t1;
+
+#decimal-related test
+
+create table t1 (df decimal(5,1));
+insert into t1 values(1.1);
+insert into t1 values(2.2);
+select * from t1 procedure analyse();
+drop table t1;
+
+#
+# Bug#10716 - Procedure Analyse results in wrong values for optimal field type
+#
+
+create table t1 (d double);
+insert into t1 values (100000);
+select * from t1 procedure analyse (1,1);
+drop table t1;
+
+#
+# Bug #14138 ROLLUP and PROCEDURE ANALYSE() hang server
+#
+create table t1 (product varchar(32), country_id int not null, year int,
+                 profit int);
+insert into t1  values ( 'Computer', 2,2000, 1200),
+    ( 'TV', 1, 1999, 150),
+    ( 'Calculator', 1, 1999,50),
+    ( 'Computer', 1, 1999,1500),
+    ( 'Computer', 1, 2000,1500),
+    ( 'TV', 1, 2000, 150),
+    ( 'TV', 2, 2000, 100),
+    ( 'TV', 2, 2000, 100),
+    ( 'Calculator', 1, 2000,75),
+    ( 'Calculator', 2, 2000,75),
+    ( 'TV', 1, 1999, 100),
+    ( 'Computer', 1, 1999,1200),
+    ( 'Computer', 2, 2000,1500),
+    ( 'Calculator', 2, 2000,75),
+    ( 'Phone', 3, 2003,10)
+    ;
+create table t2 (country_id int primary key, country char(20) not null); 
+insert into t2 values (1, 'USA'),(2,'India'), (3,'Finland');
+select product, sum(profit),avg(profit) from t1 group by product with rollup procedure analyse();
+drop table t1,t2;
+
+#
+# Bug #20305 PROCEDURE ANALYSE() returns wrong M for FLOAT(M, D) and DOUBLE(M, D)
+#
+
+create table t1 (f1 double(10,5), f2 char(10), f3 double(10,5));
+insert into t1 values (5.999, "5.9999", 5.99999), (9.555, "9.5555", 9.55555);
+select f1 from t1 procedure analyse(1, 1);
+select f2 from t1 procedure analyse(1, 1);
+select f3 from t1 procedure analyse(1, 1);
+drop table t1;
+
+--echo End of 4.1 tests

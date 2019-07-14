@@ -1,0 +1,61 @@
+.\"     Title: \fBndb_select_count\fR
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.70.1 <http://docbook.sf.net/>
+.\"      Date: 01/11/2008
+.\"    Manual: MySQL Database System
+.\"    Source: MySQL 5.0
+.\"
+.TH "\fBNDB_SELECT_COUNT\\" "1" "01/11/2008" "MySQL 5.0" "MySQL Database System"
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+ndb_select_count \- print row counts for NDB tables
+.SH "SYNOPSIS"
+.HP 76
+\fBndb_select_count [\-c \fR\fB\fIconnect_string\fR\fR\fB] \-d\fR\fB\fIdb_name\fR\fR\fB \fR\fB\fItbl_name\fR\fR\fB[, \fR\fB\fItbl_name2\fR\fR\fB[, ...]]\fR
+.SH "DESCRIPTION"
+.PP
+\fBndb_select_count\fR
+prints the number of rows in one or more
+NDB
+tables. With a single table, the result is equivalent to that obtained by using the MySQL statement
+SELECT COUNT(*) FROM \fItbl_name\fR.
+.PP
+\fBUsage\fR:
+.sp
+.RS 3n
+.nf
+ndb_select_count [\-c \fIconnect_string\fR] \-d\fIdb_name\fR \fItbl_name\fR[, \fItbl_name2\fR[, ...]]
+.fi
+.RE
+.PP
+\fBAdditional Options\fR: None that are specific to this application. However, you can obtain row counts from multiple tables in the same database by listing the table names separated by spaces when invoking this command, as shown under
+\fBSample Output\fR.
+.PP
+\fBSample Output\fR:
+.sp
+.RS 3n
+.nf
+shell> \fB./ndb_select_count \-c localhost \-d ctest1 fish dogs\fR
+6 records in table fish
+4 records in table dogs
+NDBT_ProgramExit: 0 \- OK
+.fi
+.RE
+.SH "COPYRIGHT"
+.PP
+Copyright 2007\-2008 MySQL AB
+.PP
+This documentation is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; version 2 of the License.
+.PP
+This documentation is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License along with the program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110\-1301 USA or see http://www.gnu.org/licenses/.
+.SH "SEE ALSO"
+For more information, please refer to the MySQL Reference Manual,
+which may already be installed locally and which is also available
+online at http://dev.mysql.com/doc/.
+.SH AUTHOR
+MySQL AB (http://www.mysql.com/).
