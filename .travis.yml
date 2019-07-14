@@ -1,6 +1,10 @@
 language: java
 jdk:
 - openjdk8
+branches:
+  only:
+  - master
+  - /^v.*$/
 script:
 - mvn package -DskipTests
 - ./build_poh.sh
@@ -14,6 +18,3 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-branches:
-  only:
-  - master
