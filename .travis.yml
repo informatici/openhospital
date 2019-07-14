@@ -3,7 +3,7 @@ jdk:
 - openjdk8
 script:
 - mvn package -DskipTests
-- "./build_poh.sh"
+- ./build_poh.sh
 deploy:
   provider: releases
   api_key:
@@ -14,7 +14,6 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    repo: informatici/openhospital
 branches:
   only:
   - master
