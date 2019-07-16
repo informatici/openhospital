@@ -12,7 +12,7 @@ import org.isf.utils.exception.OHException;
 
 public class TestLaboratory 
 {	 
-	private int code = 0;
+	private Integer code = new Integer(0);
 	private String material = "TestMaterial";
 	private GregorianCalendar now = new GregorianCalendar();
 	private GregorianCalendar registrationDate = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);
@@ -41,7 +41,7 @@ public class TestLaboratory
 		else
 		{
 			// Create Laboratory with all parameters 
-			laboratory = new Laboratory(code, exam, registrationDate, result, note, patient, patName);
+			laboratory = new Laboratory(exam, registrationDate, result, note, patient, patName);
 			laboratory.setAge(age);
 			laboratory.setExamDate(examDate);
 			laboratory.setInOutPatient(InOutPatient);

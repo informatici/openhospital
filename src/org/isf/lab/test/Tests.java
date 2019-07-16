@@ -196,7 +196,7 @@ public class Tests
 	@Test
 	public void testIoGetLabRowByLabId() 
 	{
-		int id = 0;
+		Integer id = 0;
 		
 		try 
 		{	
@@ -605,11 +605,11 @@ public class Tests
 		
 
     	jpa.beginTransaction();	
-    	laboratoryRow = testLaboratoryRow.setup(laboratory, usingSet);
 		jpa.persist(examType);
 		jpa.persist(exam);
 		jpa.persist(patient);
 		jpa.persist(laboratory);
+		laboratoryRow = testLaboratoryRow.setup(laboratory, usingSet);
 		jpa.persist(laboratoryRow);
     	jpa.commitTransaction();
     	

@@ -83,6 +83,15 @@ public class Laboratory
 	
 	public Laboratory() { }
 	
+	public Laboratory(Exam aExam,GregorianCalendar aDate,String aResult,
+			String aNote, Patient aPatId, String aPatName){
+		exam=aExam;
+		registrationDate=aDate;
+		result=aResult;
+		note=aNote;
+		patient=aPatId;
+		patName=aPatName;
+	}
 	public Laboratory(Integer aCode,Exam aExam,GregorianCalendar aDate,String aResult,
 			String aNote, Patient aPatId, String aPatName){
 		code=aCode;
@@ -193,7 +202,7 @@ public class Laboratory
 	        final int m = 23;
 	        int c = 133;
 	        
-	        c = m * c + code;
+	        c = m * c + (code == null ? 0 : code.intValue());
 	        
 	        this.hashCode = c;
 	    }
@@ -202,9 +211,13 @@ public class Laboratory
 	}
 
     @Override
-    public String toString() {
-        return "-------------------------------------------\nLaboratory{" + "code=" + code + ", material=" + material + ", exam=" + exam + ", registrationDate=" + registrationDate + ", examDate=" + examDate + ", result=" + result + ", lock=" + lock + ", note=" + note + ", patient=" + patient + ", patName=" + patName + ", InOutPatient=" + InOutPatient + ", age=" + age + ", sex=" + sex + ", hashCode=" + hashCode + "}\n---------------------------------------------";
-    }
+	public String toString() {
+		return "-------------------------------------------\nLaboratory{" + "code=" + code + ", material=" + material
+				+ ", exam=" + exam + ", registrationDate=" + registrationDate + ", examDate=" + examDate + ", result="
+				+ result + ", lock=" + lock + ", note=" + note + ", patient=" + patient + ", patName=" + patName
+				+ ", InOutPatient=" + InOutPatient + ", age=" + age + ", sex=" + sex + ", hashCode=" + hashCode
+				+ "}\n---------------------------------------------";
+	}
         
         
 }
