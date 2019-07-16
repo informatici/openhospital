@@ -93,6 +93,7 @@ public class ExamShow extends JDialog implements ExamRowListener {
 	private JPanel getDataPanel() {
 		if (dataPanel == null) {
 			dataPanel= new JPanel();
+                        
 			model = new ExamRowBrowsingModel(exam.getCode());
 			table = new JTable(model);
 			table.getColumnModel().getColumn(0).setMinWidth(pColumwidth[0]);
@@ -187,53 +188,50 @@ public class ExamShow extends JDialog implements ExamRowListener {
 	
 class ExamRowBrowsingModel extends DefaultTableModel {
 		
-		/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-		public ExamRowBrowsingModel(String aCode) {
-			ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
-			try {
-				pExamRow = manager.getExamRow(aCode);
-			} catch (OHServiceException e) {
-				pExamRow = null;
-				OHServiceExceptionUtil.showMessages(e);
-			}
-		}
-		
-		public int getRowCount() {
-			if (pExamRow == null)
-				return 0;
-			return pExamRow.size();
-		}
-		
-		public String getColumnName(int c) {
-			return pColums[c];
-		}
+            public ExamRowBrowsingModel(String aCode) {
+                ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
+                try {
+                    pExamRow = manager.getExamRowByExamCode(aCode);
+                } catch (OHServiceException e) {
+                    pExamRow = null;
+                    OHServiceExceptionUtil.showMessages(e);
+                }
+            }
 
-		public int getColumnCount() {
-			return pColums.length;
-		}
+            public int getRowCount() {
+                if (pExamRow == null)
+                    return 0;
+                return pExamRow.size();
+            }
 
-		public Object getValueAt(int r, int c) {
-			ExamRow examRow = pExamRow.get(r);
-			if(c==-1){
-				return examRow;
-			}
-			else if (c == 0) {
-				return examRow.getCode();
-			} else if (c == 1) {
-				return examRow.getDescription();
-			} 
-			return null;
-		}
-		
-		@Override
-		public boolean isCellEditable(int arg0, int arg1) {
-			//return super.isCellEditable(arg0, arg1);
-			return false;
-		}
+            public String getColumnName(int c) {
+                return pColums[c];
+            }
+
+            public int getColumnCount() {
+                return pColums.length;
+            }
+
+            public Object getValueAt(int r, int c) {
+                ExamRow examRow = pExamRow.get(r);
+                if(c==-1){
+                    return examRow;
+                }
+                else if (c == 0) {
+                    return examRow.getCode();
+                } else if (c == 1) {
+                    return examRow.getDescription();
+                } 
+                return null;
+            }
+
+            @Override
+            public boolean isCellEditable(int arg0, int arg1) {
+                //return super.isCellEditable(arg0, arg1);
+                return false;
+            }
 	}
 
 
