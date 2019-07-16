@@ -71,6 +71,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.toedter.calendar.JDateChooser;
+import java.awt.event.KeyListener;
+import javax.swing.ImageIcon;
+import javax.swing.JTextField;
 
 public class WardPharmacy extends ModalJFrame implements 
 	WardPharmacyEdit.MovementWardListeners, 
@@ -149,7 +152,8 @@ public class WardPharmacy extends ModalJFrame implements
 	private int[] columWidthIncomes = { 150, 320, 200 };
 	private String[] columsOutcomes = { 
 			MessageBundle.getMessage("angal.common.date"), 
-			MessageBundle.getMessage("angal.medicalstockward.patient"),
+			//MessageBundle.getMessage("angal.medicalstockward.patient"),
+                        MessageBundle.getMessage("angal.medicalstockward.outcome.destination"),
 			MessageBundle.getMessage("angal.medicalstockward.age"), 
 			MessageBundle.getMessage("angal.medicalstockward.sex"), 
 			MessageBundle.getMessage("angal.medicalstockward.weight"),
@@ -187,6 +191,13 @@ public class WardPharmacy extends ModalJFrame implements
 
 	//private static final String PREFERRED_LOOK_AND_FEEL = "javax.swing.plaf.metal.MetalLookAndFeel"; //$NON-NLS-1$
 
+        /*
+         *Adds to facilitate the selection of products 
+         */
+        private JPanel searchPanel;
+        private JTextField searchTextField;
+        private JButton searchButton;
+        
 	public WardPharmacy() {
 		if (MainMenu.checkUserGrants("btnmedicalswardedit"))
 			editAllowed = true;
@@ -471,6 +482,8 @@ public class WardPharmacy extends ModalJFrame implements
 			jPanelFilter.add(Box.createVerticalStrut(filterSpacing));
 			jPanelFilter.add(getJComboBoxTypes());
 			jPanelFilter.add(Box.createVerticalStrut(filterSpacing));
+                        jPanelFilter.add(getJPanelMedicalsSearch());
+			jPanelFilter.add(Box.createVerticalStrut(filterSpacing));
 			jPanelFilter.add(getJComboBoxMedicals());
 			jPanelFilter.add(Box.createVerticalStrut(filterSpacing));
 			jPanelFilter.add(getJPanelAge());
@@ -742,6 +755,70 @@ public class WardPharmacy extends ModalJFrame implements
 		return jComboBoxTypes;
 	}
 
+        private JPanel getJPanelMedicalsSearch() {
+            searchButton = new JButton();
+            searchButton.setPreferredSize(new Dimension(20, 20));
+            searchButton.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
+            searchButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                    jComboBoxMedicals.removeAllItems();
+                    MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
+                    ArrayList<Medical> medicals;
+                    try {
+                            medicals = medicalManager.getMedicals();
+                    } catch (OHServiceException e1) {
+                            medicals = null;
+                            OHServiceExceptionUtil.showMessages(e1);
+                    }
+                    MedicalType medicalType;
+                    if (jComboBoxTypes.getSelectedItem() instanceof String) {
+                            medicalType = null;
+                    } else {
+                            medicalType = (MedicalType) jComboBoxTypes.getSelectedItem();
+                    }
+                    if (null != medicals) {
+                        ArrayList<Medical> results = getSearchMedicalsResults(searchTextField.getText(), medicals);
+                        int originalSize = medicals.size();
+                        int resultsSize = results.size();
+                        if(originalSize == resultsSize) {
+                            jComboBoxMedicals.addItem(MessageBundle.getMessage("angal.medicalstockward.allmedicals"));
+                        }
+                        for (Medical aMedical : results) {
+				boolean ok = true;
+				if (medicalType != null)
+					ok = ok && aMedical.getType().equals(medicalType);
+				if (ok)
+					jComboBoxMedicals.addItem(aMedical);
+			}
+                    }
+                }
+            });
+            
+            searchTextField = new JTextField(15);
+            //searchTextField.setToolTipText(MessageBundle.getMessage("angal.medicalstock.pharmaceutical"));
+            searchTextField.addKeyListener(new KeyListener() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    int key = e.getKeyCode();
+                    if (key == KeyEvent.VK_ENTER) {
+                        searchButton.doClick();
+                    }
+                }
+                @Override
+                public void keyReleased(KeyEvent e) {}
+                @Override
+                public void keyTyped(KeyEvent e) {}
+            });
+            
+            searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            searchPanel.add(searchTextField);
+            searchPanel.add(searchButton);
+            searchPanel.setMaximumSize(new Dimension(filterWidth, 25));
+            searchPanel.setMinimumSize(new Dimension(filterWidth, 25));
+            searchPanel.setPreferredSize(new Dimension(filterWidth, 25));
+            return searchPanel;
+        }
 	private JComboBox getJComboBoxMedicals() {
 		if (jComboBoxMedicals == null) {
 			jComboBoxMedicals = new JComboBox();
@@ -1130,8 +1207,10 @@ public class WardPharmacy extends ModalJFrame implements
 
 		public DrugsModel() {
 			try {
+                            System.out.println("WardPharmacy: Looking for drugs ");
 				wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
-				System.out.println("Ciao");
+				System.out.println("Ciao Ciao Ciao! " + wardDrugs.size() + " drugs in "
+                                        + wardSelected.getCode().charAt(0));
 			} catch (OHServiceException e) {
 				OHServiceExceptionUtil.showMessages(e);
 				wardDrugs = new ArrayList<MedicalWard>();
@@ -1341,4 +1420,30 @@ public class WardPharmacy extends ModalJFrame implements
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		return format.format(time.getTime());
 	}
+        
+        private ArrayList<Medical> getSearchMedicalsResults(String s, ArrayList<Medical> medicalsList) {
+            String query = s.trim();
+            ArrayList<Medical> results = new ArrayList<Medical>();
+            for (Medical medoc : medicalsList) {
+                if(!query.equals("")) {
+                    String[] patterns = query.split(" ");
+                    String code = medoc.getProd_code().toLowerCase();
+                    String description = medoc.getDescription().toLowerCase();
+                    boolean patternFound = false;
+                    for (String pattern : patterns) {
+                        if (code.contains(pattern.toLowerCase()) || description.contains(pattern.toLowerCase())) {
+                            patternFound = true;
+                            //It is sufficient that only one pattern matches the query
+                            break;
+                        }
+                    }
+                    if (patternFound){
+                        results.add(medoc);
+                    }
+                } else {
+                    results.add(medoc);
+                }
+            }		
+            return results;
+        }
 }

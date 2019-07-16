@@ -22,6 +22,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -34,6 +35,7 @@ import java.util.GregorianCalendar;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -44,6 +46,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -134,6 +137,13 @@ public class MovStockBrowser extends ModalJFrame {
 	private static final String DATE_FORMAT_DD_MM_YY_HH_MM = "dd/MM/yy HH:mm";
 	
 	private String currencyCod;
+        
+        /*
+         *Adds to facilitate the selection of products 
+         */
+        private JPanel searchPanel;
+        private JTextField searchTextField;
+        private JButton searchButton;
 	
 	public MovStockBrowser() {
 		myFrame = this;
@@ -272,6 +282,7 @@ public class MovStockBrowser extends ModalJFrame {
 		JPanel label1Panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		label1Panel.add(new JLabel(MessageBundle.getMessage("angal.common.description")));
 		medicalPanel.add(label1Panel);
+                medicalPanel.add(getMedicalSearchPanel());
 		JPanel medicalDescPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		medicalDescPanel.add(getMedicalBox());
 		medicalPanel.add(medicalDescPanel);
@@ -380,6 +391,60 @@ public class MovStockBrowser extends ModalJFrame {
 		return wardBox;
 	}
 
+        private JPanel getMedicalSearchPanel() {
+            searchButton = new JButton();
+            searchButton.setPreferredSize(new Dimension(20, 20));
+            searchButton.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
+            searchButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                    medicalBox.removeAllItems();
+                    MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
+                    ArrayList<Medical> medicals;
+                    try {
+                            medicals = medicalManager.getMedicals();
+                    } catch (OHServiceException e1) {
+                            medicals = null;
+                            OHServiceExceptionUtil.showMessages(e1);
+                    }
+                    if (null != medicals) {
+                        ArrayList<Medical> results = getSearchMedicalsResults(searchTextField.getText(), medicals);
+                        int originalSize = medicals.size();
+                        int resultsSize = results.size();
+                        if(originalSize == resultsSize) {
+                            medicalBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));
+                        }
+                        for (Medical aMedical: results) {
+                            medicalBox.addItem(aMedical);
+                        }
+                    }
+                }
+            });
+            
+            searchTextField = new JTextField(10);
+            searchTextField.setToolTipText(MessageBundle.getMessage("angal.medicalstock.pharmaceutical"));
+            searchTextField.addKeyListener(new KeyListener() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    int key = e.getKeyCode();
+                    if (key == KeyEvent.VK_ENTER) {
+                        searchButton.doClick();
+                    }
+                }
+                @Override
+                public void keyReleased(KeyEvent e) {}
+                @Override
+                public void keyTyped(KeyEvent e) {}
+            });
+            
+            searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            searchPanel.add(searchTextField);
+            searchPanel.add(searchButton);
+            searchPanel.setMaximumSize(new Dimension(150, 25));
+            searchPanel.setMinimumSize(new Dimension(150, 25));
+            searchPanel.setPreferredSize(new Dimension(150, 25));
+            return searchPanel;
+        }
 	private JComboBox getMedicalBox() {
 		medicalBox = new JComboBox();
 		medicalBox.setMaximumSize(new Dimension(150, 25));
@@ -947,6 +1012,31 @@ public class MovStockBrowser extends ModalJFrame {
 		return filename.toString();
 	}
 
+        private ArrayList<Medical> getSearchMedicalsResults(String s, ArrayList<Medical> medicalsList) {
+            String query = s.trim();
+            ArrayList<Medical> results = new ArrayList<Medical>();
+            for (Medical medoc : medicalsList) {
+                if(!query.equals("")) {
+                    String[] patterns = query.split(" ");
+                    String code = medoc.getProd_code().toLowerCase();
+                    String description = medoc.getDescription().toLowerCase();
+                    boolean patternFound = false;
+                    for (String pattern : patterns) {
+                        if (code.contains(pattern.toLowerCase()) || description.contains(pattern.toLowerCase())) {
+                            patternFound = true;
+                            //It is sufficient that only one pattern matches the query
+                            break;
+                        }
+                    }
+                    if (patternFound){
+                        results.add(medoc);
+                    }
+                } else {
+                    results.add(medoc);
+                }
+            }		
+            return results;
+        }    
 
 	/**
 	 * This is the table model
@@ -1038,7 +1128,11 @@ public class MovStockBrowser extends ModalJFrame {
 			} else if (c == ++col) {
 				return formatDate(lot.getDueDate());
 			} else if (c == ++col){
-				return movement.getOrigin();
+				if(movement.getOrigin() == null) {
+                                    return movement.getWardTo();
+                                } else {
+                                    movement.getOrigin();
+                                }
 			} else if (c == ++col){
 				return cost;
 			} else if (c == ++col){
