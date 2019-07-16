@@ -597,7 +597,7 @@ public class LabEdit extends JDialog {
 		ExamRowBrowsingManager rowManager = new ExamRowBrowsingManager();
 		ArrayList<ExamRow> rows;
 		try {
-			rows = rowManager.getExamRow(examSelected.getCode());
+			rows = rowManager.getExamRowByExamCode(examSelected.getCode());
 		} catch (OHServiceException e) {
 			rows = null;
 			OHServiceExceptionUtil.showMessages(e);
@@ -620,7 +620,7 @@ public class LabEdit extends JDialog {
 		ExamRowBrowsingManager eRowManager = new ExamRowBrowsingManager();
 		eRows = null;
 		try {
-			eRows = eRowManager.getExamRow(examId);
+			eRows = eRowManager.getExamRowByExamCode(examId);
 		} catch (OHServiceException e1) {
 			OHServiceExceptionUtil.showMessages(e1);
 		}

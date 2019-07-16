@@ -27,6 +27,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.exa.gui.ExamEdit.ExamListener;
@@ -70,6 +73,8 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 	private JButton jButtonDelete;
 	private JPanel jContentPanel;
 	private JPanel buttonPanel;
+	private JTextField searchTextField;
+	ArrayList<Exam> searchExam = new ArrayList<Exam>();
 	
 	public ExamBrowser() {
 		myFrame=this;
@@ -82,6 +87,7 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
         this.setBounds((screensize.width - screensize.width * pfrmWidth / pfrmBase ) / 2, (screensize.height - screensize.height * pfrmHeight / pfrmBase)/2, 
                 screensize.width * pfrmWidth / pfrmBase, screensize.height * pfrmHeight / pfrmBase);
 		
+        
         this.setContentPane(getJContentPanel());
 		setVisible(true);
 	}
@@ -92,11 +98,39 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 			jContentPanel.setLayout(new BorderLayout());
 			jContentPanel.add(getJButtonPanel(), java.awt.BorderLayout.SOUTH);
 			jContentPanel.add(new JScrollPane(getJTable()),BorderLayout.CENTER);
+			
+			JPanel panelSearch = new JPanel();
+			jContentPanel.add(panelSearch, BorderLayout.NORTH);
+			
+			JLabel searchLabel = new JLabel(MessageBundle.getMessage("angal.exams.find"));
+			panelSearch.add(searchLabel);
+			
+			searchTextField = new JTextField();
+			searchTextField.setColumns(20);
+			searchTextField.getDocument().addDocumentListener(new DocumentListener() {
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					filterExam();
+				}
+
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					filterExam();
+				}
+
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					filterExam();
+				}
+			});
+			panelSearch.add(searchTextField);
+                        //jContentPanel.add(panelSearch);
 			validate();
 		}
 		return jContentPanel;
 	}
 
+	
 	private JPanel getJButtonPanel() {
 		if (buttonPanel == null) {
 			buttonPanel = new JPanel();
@@ -209,11 +243,11 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 	}
 
 	private JButton getJButtonNew() {
+            
 		if (jButtonNew == null) {
 			jButtonNew = new JButton(MessageBundle.getMessage("angal.common.new"));
 			jButtonNew.setMnemonic(KeyEvent.VK_N);
 			jButtonNew.addActionListener(new ActionListener() {
-
 				public void actionPerformed(ActionEvent event) {
 					exam = new Exam("", "", new ExamType("", ""), 0, "");
 					ExamEdit newrecord = new ExamEdit(myFrame, exam, true);
@@ -301,10 +335,12 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 			ExamBrowsingManager manager = new ExamBrowsingManager();
 			try {
 				pExam = manager.getExams(s);
+                                
 			} catch (OHServiceException e) {
 				pExam = null;
 				OHServiceExceptionUtil.showMessages(e);
 			}
+                        searchExam = pExam;
 		}
 		public ExamBrowsingModel() {
 			ExamBrowsingManager manager = new ExamBrowsingManager();
@@ -314,11 +350,12 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 				pExam = null;
 				OHServiceExceptionUtil.showMessages(e);
 			}
+                        searchExam = pExam;
 		}
 		public int getRowCount() {
 			if (pExam == null)
 				return 0;
-			return pExam.size();
+			return searchExam.size();
 		}
 		
 		public String getColumnName(int c) {
@@ -330,7 +367,7 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 		}
 
 		public Object getValueAt(int r, int c) {
-			Exam exam = pExam.get(r);
+			Exam exam = searchExam.get(r);
 			if(c==-1){
 				return exam;
 			}
@@ -357,7 +394,7 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 	
 	@Override
 	public void examUpdated(AWTEvent e) {
-		pExam.set(selectedrow, exam);
+		searchExam.set(selectedrow, exam);
 		((ExamBrowsingModel) table.getModel()).fireTableDataChanged();
 		table.updateUI();
 		if ((table.getRowCount() > 0) && selectedrow > -1)
@@ -368,10 +405,34 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 
 	@Override
 	public void examInserted(AWTEvent e) {
-		pExam.add(0, exam);
+		searchExam.add(0, exam);
 		((ExamBrowsingModel) table.getModel()).fireTableDataChanged();
 		if (table.getRowCount() > 0)
 			table.setRowSelectionInterval(0, 0);
+	}
+	
+	private void filterExam() {
+		String s = searchTextField.getText().trim();
+		searchExam = new ArrayList<Exam>();
+                
+		for (Exam exa : pExam) {
+			if (!s.equals("")) {
+				String name = exa.getSearchString();
+				if (name.contains(s.toLowerCase()))
+					searchExam.add(exa);
+			} else {
+				searchExam.add(exa);
+			}
+		}
+		if (table.getRowCount() == 0) {
+			exam = null;
+		}
+		if (table.getRowCount() == 1) {
+			exam = (Exam) table.getValueAt(0, -1);
+		}
+                model.fireTableDataChanged();
+		table.updateUI();
+		searchTextField.requestFocus();
 	}
 
 }
