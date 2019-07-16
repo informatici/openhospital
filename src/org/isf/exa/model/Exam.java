@@ -143,12 +143,16 @@ public class Exam
 	    if (this.hashCode == 0) {
 	        final int m = 23;
 	        int c = 133;
-	        
-	        c = m * c + code.hashCode();
-	        
+	        c = m * c + code.hashCode();   
 	        this.hashCode = c;
-	    }
-	  
+	    }	  
 	    return this.hashCode;
+	}
+	
+	public String getSearchString() {
+		StringBuffer sbNameCode = new StringBuffer();
+		sbNameCode.append(getCode().toLowerCase());
+		sbNameCode.append(getDescription().toLowerCase());
+		return sbNameCode.toString();
 	}
 }

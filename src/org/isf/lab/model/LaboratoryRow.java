@@ -18,7 +18,7 @@ public class LaboratoryRow
 	@Id 
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="LABR_ID")
-	private int code;
+	private Integer code;
 
 	@NotNull
 	@ManyToOne
@@ -71,7 +71,9 @@ public class LaboratoryRow
 		}
 		
 		LaboratoryRow laboratoryRow = (LaboratoryRow)obj;
-		return (this.getCode().equals(laboratoryRow.getCode()) );
+		if (this.getCode() != null && laboratoryRow.getCode() != null)
+			return (this.getCode().equals(laboratoryRow.getCode()) );
+		return (this.getDescription().equals(laboratoryRow.getDescription()));
 	}
 	
 	@Override
