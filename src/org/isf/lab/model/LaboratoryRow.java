@@ -35,6 +35,11 @@ public class LaboratoryRow
 
 	public LaboratoryRow() { }
 	
+	public LaboratoryRow(Laboratory aLabId, String aDescription){
+		laboratory = aLabId;
+		description = aDescription;
+	}
+	
 	public LaboratoryRow(Integer aCode, Laboratory aLabId, String aDescription){
 		code=aCode;
 		laboratory = aLabId;
@@ -82,7 +87,7 @@ public class LaboratoryRow
 	        final int m = 23;
 	        int c = 133;
 	        
-	        c = m * c + code;
+	        c = m * c + (code == null ? 0 : code.intValue());
 	        
 	        this.hashCode = c;
 	    }
