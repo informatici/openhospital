@@ -9,17 +9,17 @@ public class LaboratoryForPrint {
 	private String exam;
 	private String date;
 	private String result;
-	private int code;
+	private Integer code;
 
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 
-	public void setCode(int code) {
+	public void setCode(Integer code) {
 		this.code = code;
 	}
 
-	public LaboratoryForPrint(int aCode, Exam aExam,GregorianCalendar aDate,String aResult){
+	public LaboratoryForPrint(Integer aCode, Exam aExam,GregorianCalendar aDate,String aResult){
 		code = aCode;
 		exam=aExam.getDescription();
 		date=getConvertedString(aDate);
