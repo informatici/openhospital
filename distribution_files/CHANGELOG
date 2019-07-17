@@ -1,5 +1,23 @@
 RELEASES:
 
+<---1.8.4---> 20/12/2018
+* Updated User and Admin manuals
+* Added search, sorter and filter for medicals
+* Added search patient filter by age and sex (thanks to Marco Magliano)
+* Added search patient filter by admission and discharge date (ENHANCEDSEARCH mode)
+* Added new material "film" in Laboratory
+* Customizable progressive number relative in OPD (thanks to Nicola Punzi)
+* (New!) ProductLedger report (aka BinCard or StockCard)
+* (New!) ProductLedger report for Wards (aka BinCard or StockCard)
+* (New!) AMC report - Average Monthly Consumption
+* (New!) New report for stock at date in PDF and Excel formats, reflecting the actual filtering, sorting and grouping
+* Some graphics improvements
+* Patched Apache "poi" library 3.7 for compliance with jasperreport-3.0.0.jar
+* Fixed JAVA retrieved path in startup script (for long paths in Windows) 
+* OH-BUG23: fixed Admission and Discharge Date&Time
+* OH-BUG22 - Fix Ward's update query
+* i18n: Fixed all unicode characters
+
 <---1.8.3---> 08/05/2017
 * Fixed the Rectify function in Pharmaceutical Stock Ward
 * Fixed CRUD and descending sorter for PatientVaccines list

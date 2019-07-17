@@ -15,7 +15,6 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @author u2g
  *
  */
-
 public class OhDefaultCellRenderer extends DefaultTableCellRenderer{
 	
 	

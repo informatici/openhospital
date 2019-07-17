@@ -6,17 +6,23 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -28,7 +34,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -58,11 +66,13 @@ import org.isf.therapy.gui.TherapyEdit;
 import org.isf.utils.db.NormalizeString;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ModalJFrame;
+import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.TimeTools;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
+
+import com.toedter.calendar.JDateChooser;
 
 /**
  * This class shows a list of all known patients and for each if (and where) they are actually admitted, 
@@ -110,12 +120,23 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static final int PANEL_WITDH = 240;
+
 	private String[] patientClassItems = {
 			MessageBundle.getMessage("angal.admission.all"),
 			MessageBundle.getMessage("angal.admission.admitted"),
 			MessageBundle.getMessage("angal.admission.notadmitted")
 	};
 	private JComboBox patientClassBox = new JComboBox(patientClassItems);
+	private JDateChooser[] dateChoosers = new JDateChooser[4];
+	private VoLimitedTextField patientAgeFromTextField = null;
+	private VoLimitedTextField patientAgeToTextField = null;
+	private String[] patientSexItems = { 
+			MessageBundle.getMessage("angal.admission.all"), 
+			MessageBundle.getMessage("angal.medicalstockward.male"), 
+			MessageBundle.getMessage("angal.medicalstockward.female") 
+	};
+	private JComboBox patientSexBox = new JComboBox(patientSexItems);
 	private JCheckBox wardCheck[] = null;
 	private JTextField searchString = null;
 	private JButton jSearchButton = null;
@@ -148,6 +169,13 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 	private AdmittedPatientBrowser myFrame;
 	private AdmissionBrowserManager manager = new AdmissionBrowserManager();
 	protected boolean altKeyReleased = true;
+	protected Timer ageTimer = new Timer(1000, new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			filterPatient(null);
+		}
+	});
 	
 	public void fireMyDeletedPatient(Patient p){
 				
@@ -320,13 +348,11 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 
 		if (!GeneralData.ENHANCEDSEARCH) {
 			//Load the whole list of patients
-		    BusyState.setBusyState(this, true);
 			try {
 				pPatient = manager.getAdmittedPatients(null);
 			}catch(OHServiceException e){
                 OHServiceExceptionUtil.showMessages(e);
 			}
-		    BusyState.setBusyState(this, false);
 		}
 		
 		initComponents();
@@ -355,36 +381,42 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 
 	private JPanel getDataAndControlPanel() {
 		JPanel dataAndControlPanel = new JPanel(new BorderLayout());
-		dataAndControlPanel.add(getControlPanel(), BorderLayout.WEST);
+		dataAndControlPanel.add(new JScrollPane(getControlPanel()), BorderLayout.WEST);
 		dataAndControlPanel.add(getScrollPane(), BorderLayout.CENTER);
 		return dataAndControlPanel;
 	}
 	
 	/*
-	 * panel with filtering controls
+	 * Panel with filtering controls
 	 */
 	private JPanel getControlPanel() {
-
-		JPanel mainPanel = new JPanel(new BorderLayout());
-
+		ActionListener listener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SwingUtilities.invokeLater(new Runnable() {	
+					@Override
+					public void run() {
+						lastKey = "";
+						filterPatient(null);
+					}
+				});
+			}
+		};
+		
 		patientClassBox = new JComboBox(patientClassItems);
 		if (!GeneralData.ENHANCEDSEARCH) {
-			patientClassBox.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					lastKey = "";
-					filterPatient(null);
-				}
-			});
+			patientClassBox.addActionListener(listener);
 		}
-		JPanel northPanel = new JPanel(new FlowLayout());
-		northPanel.add(patientClassBox);
-		northPanel = setMyBorder(northPanel, MessageBundle.getMessage("angal.admission.admissionstatus"));
 
-		mainPanel.add(northPanel, BorderLayout.NORTH);
+		JPanel classPanel = new JPanel();
+		classPanel.setLayout(new BoxLayout(classPanel, BoxLayout.Y_AXIS));
+		classPanel.add(patientClassBox);
+		classPanel.setPreferredSize(new Dimension(PANEL_WITDH, 20));
+		classPanel = setMyBorder(classPanel, MessageBundle.getMessage("angal.admission.admissionstatus"));
 
-		JPanel centerPanel = new JPanel();
-		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-
+		JPanel wardPanel = new JPanel();
+		wardPanel.setLayout(new BoxLayout(wardPanel, BoxLayout.Y_AXIS));
+		wardPanel.setPreferredSize(new Dimension(PANEL_WITDH, 20));
 		if (wardList == null) {
 			WardBrowserManager wbm = new WardBrowserManager();
 			ArrayList<Ward> wardWithBeds;
@@ -411,51 +443,79 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 			wardCheck[i] = new JCheckBox();
 			wardCheck[i].setSelected(true);
 			if (!GeneralData.ENHANCEDSEARCH) {
-				wardCheck[i].addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						lastKey = "";
-						filterPatient(null);
-					}
-				});
+				wardCheck[i].addActionListener(listener);
 			}
 			checkPanel[i].add(wardCheck[i], BorderLayout.WEST);
-			checkPanel[i].add(new JLabel(wardList.get(i).getDescription()),
-					BorderLayout.CENTER);
-			checkPanel[i].setPreferredSize(new Dimension(200,20));
-			checkPanel[i].setMaximumSize(new Dimension(200,20));
-			checkPanel[i].setMinimumSize(new Dimension(200,20));
-			centerPanel.add(checkPanel[i], null);
+			checkPanel[i].add(new JLabel(wardList.get(i).getDescription()), BorderLayout.CENTER);
+			wardPanel.add(checkPanel[i], null);
 		}
 
-		centerPanel = setMyBorder(centerPanel, MessageBundle.getMessage("angal.admission.wards"));
+		wardPanel = setMyBorder(wardPanel, MessageBundle.getMessage("angal.admission.wards"));
 		
 		rowCounter = new JLabel(rowCounterText + ": ");
-		centerPanel.add(rowCounter);
+		rowCounter.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+		wardPanel.add(rowCounter);
 		
-		mainPanel.add(centerPanel, BorderLayout.CENTER);
+		JPanel calendarPanel = getAdmissionFilterPanel();
 
-		JPanel southPanel = new JPanel(new BorderLayout());
+		KeyListener ageKeyListener = new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				super.keyPressed(e);
+				ageTimer.setRepeats(false);
+				ageTimer.start();
+			}
+		};
 
+		JLabel ageFrom = new JLabel(MessageBundle.getMessage("angal.common.from") + ":");
+		patientAgeFromTextField = new VoLimitedTextField(3,3);
+		if (!GeneralData.ENHANCEDSEARCH) {
+			patientAgeFromTextField.addKeyListener(ageKeyListener);
+		}
+
+		JLabel ageTo = new JLabel(MessageBundle.getMessage("angal.common.to") + ":");
+		patientAgeToTextField = new VoLimitedTextField(3,3);
+		if (!GeneralData.ENHANCEDSEARCH) {
+			patientAgeToTextField.addKeyListener(ageKeyListener);
+		}
+
+		JPanel agePanel = new JPanel();
+		agePanel.setPreferredSize(new Dimension(PANEL_WITDH, 20));
+		agePanel.add(ageFrom);
+		agePanel.add(patientAgeFromTextField);
+		agePanel.add(ageTo);
+		agePanel.add(patientAgeToTextField);
+		agePanel = setMyBorder(agePanel, MessageBundle.getMessage("angal.admission.agem"));
+
+		patientSexBox = new JComboBox(patientSexItems);
+		patientSexBox.setPreferredSize(new Dimension(PANEL_WITDH, 20));
+		if (!GeneralData.ENHANCEDSEARCH) {
+			patientSexBox.addActionListener(listener);
+		}
+
+		JPanel sexPanel = new JPanel();
+		sexPanel.setPreferredSize(new Dimension(PANEL_WITDH, 20));
+		sexPanel.setLayout(new BorderLayout());
+		sexPanel.add(patientSexBox, BorderLayout.CENTER);
+		sexPanel = setMyBorder(sexPanel, MessageBundle.getMessage("angal.admission.sexm"));
+
+		JPanel searchPanel = new JPanel(new BorderLayout());
+		searchPanel.setPreferredSize(new Dimension(PANEL_WITDH, 20));
 		searchString = new JTextField();
 		searchString.setColumns(15);
 		if (GeneralData.ENHANCEDSEARCH) {
-			searchString.addKeyListener(new KeyListener() {
-
+			searchString.addKeyListener(new KeyAdapter() {
+				@Override
 				public void keyPressed(KeyEvent e) {
 					int key = e.getKeyCode();
 				     if (key == KeyEvent.VK_ENTER) {
 				    	 jSearchButton.doClick();
 				     }
 				}
-	
-				public void keyReleased(KeyEvent e) {
-				}
-	
-				public void keyTyped(KeyEvent e) {
-				}
 			});
 		} else {
 			searchString.addKeyListener(new KeyListener() {
+				@Override
 				public void keyTyped(KeyEvent e) {
 					if (altKeyReleased) {
 						lastKey = "";
@@ -467,23 +527,134 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 					}
 				}
 	
+				@Override
 				public void keyPressed(KeyEvent e) {
 					int key = e.getKeyCode();
 					if (key == KeyEvent.VK_ALT)
 						altKeyReleased = false;
 				}
 	
+				@Override
 				public void keyReleased(KeyEvent e) {
 					altKeyReleased = true;
 				}
 			});
 		}
-		southPanel.add(searchString, BorderLayout.CENTER);
-		if (GeneralData.ENHANCEDSEARCH) southPanel.add(getJSearchButton(), BorderLayout.EAST);
-		southPanel = setMyBorder(southPanel, MessageBundle.getMessage("angal.admission.searchkey"));
-		mainPanel.add(southPanel, BorderLayout.SOUTH);
+		searchPanel.add(searchString, BorderLayout.CENTER);
+		if (GeneralData.ENHANCEDSEARCH)
+			searchPanel.add(getJSearchButton(), BorderLayout.EAST);
+		searchPanel = setMyBorder(searchPanel, MessageBundle.getMessage("angal.admission.searchkey"));
 
+		JPanel mainPanel = new JPanel();
+		GroupLayout layout = new GroupLayout(mainPanel);
+		layout.setAutoCreateContainerGaps(true);
+		layout.setHorizontalGroup(layout.createSequentialGroup() //
+				.addGroup(layout.createParallelGroup() //
+						.addComponent(classPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE) //
+						.addComponent(wardPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE) //
+						.addComponent(calendarPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE) //
+						.addComponent(agePanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE) //
+						.addComponent(sexPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE) //
+						.addComponent(searchPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
+
+		layout.setVerticalGroup(layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(classPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)) //
+				.addPreferredGap(ComponentPlacement.RELATED).addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //
+						.addComponent(wardPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)) //
+				.addPreferredGap(ComponentPlacement.RELATED).addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //
+						.addComponent(calendarPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)) //
+				.addPreferredGap(ComponentPlacement.RELATED).addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //
+						.addComponent(agePanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)) //
+				.addPreferredGap(ComponentPlacement.RELATED).addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(sexPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)) //
+				.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE) //
+						.addComponent(searchPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
+
+		mainPanel.setLayout(layout);
 		return mainPanel;
+	}
+
+	private JPanel getAdmissionFilterPanel() {
+		JPanel calendarPanel = new JPanel();
+		calendarPanel.setLayout(new GridBagLayout());
+		calendarPanel.setPreferredSize(new Dimension(PANEL_WITDH, 20));
+		calendarPanel = setMyBorder(calendarPanel, MessageBundle.getMessage("angal.common.date"));
+		
+		JLabel admissionLabel = new JLabel(MessageBundle.getMessage("angal.admission.admissiondate"));
+		JLabel dischargeLabel = new JLabel(MessageBundle.getMessage("angal.admission.dischargedate"));
+		for(int i = 0; i <= dateChoosers.length - 1; i++) {
+			JDateChooser chooser = dateChoosers[i];
+			chooser = new JDateChooser();
+			chooser.setLocale(new Locale(GeneralData.LANGUAGE));
+			chooser.setDateFormatString("dd/MM/yy");
+			chooser.setMinimumSize(new Dimension(80,20));
+			dateChoosers[i] = chooser;	
+		}
+		
+		GridBagConstraints gbcAdmissionLabel = new GridBagConstraints();
+		gbcAdmissionLabel.gridx = 0;
+		gbcAdmissionLabel.gridwidth = 4;
+		gbcAdmissionLabel.gridy = 0;
+		gbcAdmissionLabel.insets = new Insets(0,0,5,0);
+		gbcAdmissionLabel.anchor = GridBagConstraints.CENTER;
+		calendarPanel.add(admissionLabel, gbcAdmissionLabel);
+		GridBagConstraints gbcDateLabel0 = new GridBagConstraints();
+		gbcDateLabel0.gridx = 0;
+		gbcDateLabel0.gridy = 1;
+		gbcDateLabel0.insets = new Insets(0,5,0,5);
+		gbcDateLabel0.weightx = 0.0;
+		calendarPanel.add(new JLabel(MessageBundle.getMessage("angal.common.from") + ":"), gbcDateLabel0);
+		GridBagConstraints gbcDateDateChooser0 = new GridBagConstraints();
+		gbcDateDateChooser0.gridx = 1;
+		gbcDateDateChooser0.gridy = 1;
+		gbcDateDateChooser0.weightx = 1.0;
+		calendarPanel.add(dateChoosers[0], gbcDateDateChooser0);
+		GridBagConstraints gbcDateLabel1 = new GridBagConstraints();
+		gbcDateLabel1.gridx = 2;
+		gbcDateLabel1.gridy = 1;
+		gbcDateLabel1.insets = new Insets(0,5,0,5);
+		gbcDateLabel1.weightx = 0.0;
+		calendarPanel.add(new JLabel(MessageBundle.getMessage("angal.common.to") + ":"), gbcDateLabel1);
+		GridBagConstraints gbcDateDateChooser1 = new GridBagConstraints();
+		gbcDateDateChooser1.gridx = 3;
+		gbcDateDateChooser1.gridy = 1;
+		gbcDateDateChooser1.weightx = 1.0;
+		calendarPanel.add(dateChoosers[1], gbcDateDateChooser1);
+		
+		GridBagConstraints gbcDischargeLabel = new GridBagConstraints();
+		gbcDischargeLabel.gridx = 0;
+		gbcDischargeLabel.gridwidth = 4;
+		gbcDischargeLabel.gridy = 2;
+		gbcDischargeLabel.insets = new Insets(10,0,5,0);
+		gbcDischargeLabel.anchor = GridBagConstraints.CENTER;
+		calendarPanel.add(dischargeLabel, gbcDischargeLabel);
+		GridBagConstraints gbcDateLabel2 = new GridBagConstraints();
+		gbcDateLabel2.gridx = 0;
+		gbcDateLabel2.gridy = 3;
+		gbcDateLabel2.insets = new Insets(0,5,0,5);
+		gbcDateLabel2.weightx = 0.0;
+		calendarPanel.add(new JLabel(MessageBundle.getMessage("angal.common.from") + ":"), gbcDateLabel2);
+		GridBagConstraints gbcDateDateChooser2 = new GridBagConstraints();
+		gbcDateDateChooser2.gridx = 1;
+		gbcDateDateChooser2.gridy = 3;
+		gbcDateDateChooser2.weightx = 1.0;
+		calendarPanel.add(dateChoosers[2], gbcDateDateChooser2);
+		GridBagConstraints gbcDateLabel3 = new GridBagConstraints();
+		gbcDateLabel3.gridx = 2;
+		gbcDateLabel3.gridy = 3;
+		gbcDateLabel3.insets = new Insets(0,5,0,5);
+		gbcDateLabel3.weightx = 0.0;
+		calendarPanel.add(new JLabel(MessageBundle.getMessage("angal.common.to") + ":"), gbcDateLabel3);
+		GridBagConstraints gbcDateDateChooser3 = new GridBagConstraints();
+		gbcDateDateChooser3.gridx = 3;
+		gbcDateDateChooser3.gridy = 3;
+		gbcDateDateChooser3.weightx = 1.0;
+		gbcDateDateChooser3.insets = new Insets(0,0,5,0);
+		calendarPanel.add(dateChoosers[3], gbcDateDateChooser3);
+		
+		calendarPanel.setVisible(GeneralData.ENHANCEDSEARCH);
+		return calendarPanel;
 	}
 
 	private JScrollPane getScrollPane() {
@@ -639,14 +810,12 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				
 				if (n == JOptionPane.YES_OPTION){
 					PatientBrowserManager manager = new PatientBrowserManager();
-					BusyState.setBusyState(AdmittedPatientBrowser.this, true);
 					boolean result = false;
 					try {
 						result = manager.deletePatient(pat);
 					}catch(OHServiceException e){
 						OHServiceExceptionUtil.showMessages(e);
 					}
-					BusyState.setBusyState(AdmittedPatientBrowser.this, false);
 					if (result){
 						AdmissionBrowserManager abm = new AdmissionBrowserManager();
 						ArrayList<Admission> patientAdmissions;
@@ -880,7 +1049,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 						.append(mergedPatient.getAddress())
 						.append("\n")
 						.append(MessageBundle.getMessage("angal.admission.continue"));
-				int ok = JOptionPane.showConfirmDialog(null,
+				int ok = JOptionPane.showConfirmDialog(AdmittedPatientBrowser.this,
 						confirmation.toString(),
 						MessageBundle.getMessage("angal.admission.merge"),
 						JOptionPane.YES_NO_OPTION);
@@ -938,21 +1107,48 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 	}
 	
 	private void searchPatient() {
-		String key = searchString.getText();
-		if (key.equals("")) {
+		Boolean isFilteredList = patientClassBox.getSelectedIndex() > 0 || //
+				(dateChoosers[0].getDate() != null && //
+				dateChoosers[1].getDate() != null) || //
+				(dateChoosers[2].getDate() != null && //
+				dateChoosers[3].getDate() != null) || //
+				!patientAgeFromTextField.getText().isEmpty() || //
+				!patientAgeToTextField.getText().isEmpty() || //
+				patientSexBox.getSelectedIndex() > 0 || //
+				!searchString.getText().isEmpty();	
+		if (!isFilteredList) {
 			int ok = JOptionPane.showConfirmDialog(AdmittedPatientBrowser.this, 
 					MessageBundle.getMessage("angal.admission.thiscouldretrievealargeamountofdataproceed"),
 					MessageBundle.getMessage("angal.hospital"),
 					JOptionPane.OK_CANCEL_OPTION);
 			if (ok != JOptionPane.OK_OPTION) return;
 		}
-		BusyState.setBusyState(this, true);
+		
+		GregorianCalendar[] admissionRange = new GregorianCalendar[2];
+		GregorianCalendar[] dischargeRange = new GregorianCalendar[2];	
+		for(int i = 0; i <= dateChoosers.length - 1; i++) {
+			GregorianCalendar date = (GregorianCalendar) dateChoosers[i].getCalendar();
+			switch (i) {
+			case 0:
+				admissionRange[0] = date;
+				break;
+			case 1:
+				admissionRange[1] = date;
+				break;
+			case 2:
+				dischargeRange[0] = date;
+				break;
+			case 3:
+				dischargeRange[1] = date;
+				break;
+			}
+		}
+		
 		try {
-			pPatient = manager.getAdmittedPatients(key);
+			pPatient = manager.getAdmittedPatients(admissionRange, dischargeRange, searchString.getText());
 		}catch(OHServiceException e){
 			OHServiceExceptionUtil.showMessages(e);
 		}
-		BusyState.setBusyState(this, false);
 		filterPatient(null);
 	}
 	
@@ -1030,8 +1226,38 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 					}
 				}
 
-				if (key != null) {
+				// lower age limit
+				String ageLimit = patientAgeFromTextField.getText();
+				if(ageLimit.matches("\\d+")) {
+					if(!(ap.getPatient().getAge() >= Integer.valueOf(ageLimit))) {
+						continue;
+					}
+				}
+				
+				// upper age limit
+				ageLimit = patientAgeToTextField.getText();
+				if(ageLimit.matches("\\d+")) {
+					if(!(ap.getPatient().getAge() <= Integer.valueOf(ageLimit))) {
+						continue;
+					}
+				}
 					
+				// sex patient type
+				Character sex = null;
+				switch (patientSexBox.getSelectedIndex()) {
+				case 1:
+					sex = 'M';
+					break;
+				case 2:
+					sex = 'F';
+					break;
+				}
+				
+				if(sex != null && !sex.equals(ap.getPatient().getSex())) {
+					continue;
+				}
+
+				if (key != null) {
 					String s = key + lastKey;
 					s.trim();
 					String[] tokens = s.split(" ");

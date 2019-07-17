@@ -2,7 +2,7 @@
 
 MYSQL_DIR="mysql-5.0.51a-linux-i686"
 JAVA_DIR="jre1.6.0_45"
-OH_DIR="oh-1.8.3"
+OH_DIR="oh-1.8.4"
 
 where_i_am=$(pwd)
 cd $(dirname $0)
@@ -30,6 +30,7 @@ echo "Starting Open Hospital... "
 
 CLASSPATH=$POH_PATH/$OH_DIR/bin/OH.jar
 CLASSPATH=$CLASSPATH:$POH_PATH/$OH_DIR/bundle
+CLASSPATH=$CLASSPATH:$POH_PATH/$OH_DIR/rpt
 
 DIRLIBS=$POH_PATH/$OH_DIR/lib/*.jar
 for i in ${DIRLIBS}

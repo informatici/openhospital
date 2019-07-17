@@ -30,7 +30,9 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -62,11 +64,16 @@ import org.isf.medstockmovtype.model.MovementType;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
+import org.isf.stat.gui.report.GenericReportPharmaceuticalStockCard;
+import org.isf.supplier.manager.SupplierBrowserManager;
+import org.isf.supplier.model.Supplier;
 import org.isf.utils.excel.ExcelExporter;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.DateTextField;
 import org.isf.utils.jobjects.ModalJFrame;
+import org.isf.utils.jobjects.StockCardDialog;
+import org.isf.utils.jobjects.StockLedgerDialog;
 import org.isf.utils.time.TimeTools;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
@@ -91,6 +98,8 @@ public class MovStockBrowser extends ModalJFrame {
 	private JButton filterButton;
 	private JButton exportToExcel;
 //	private JButton importFromExcel;
+	private JButton stockCardButton;
+	private JButton stockLedgerButton;
 	private JPanel filterPanel;
 	private JCheckBox jCheckBoxKeepFilter;
 	private JComboBox medicalBox;
@@ -133,11 +142,18 @@ public class MovStockBrowser extends ModalJFrame {
 	private static final String DATE_FORMAT_DD_MM_YY = "dd/MM/yy";
 	private static final String DATE_FORMAT_DD_MM_YY_HH_MM = "dd/MM/yy HH:mm";
 	
-	private String currencyCod;
-	
+	private SupplierBrowserManager supMan = new SupplierBrowserManager();
+	private HashMap<Integer, String> supMap = new HashMap<Integer, String>();
+
 	public MovStockBrowser() {
 		myFrame = this;
 		setTitle(MessageBundle.getMessage("angal.medicalstock.stockmovementbrowser"));
+		try {
+			supMap = supMan.getHashMap(true);
+		} catch (OHServiceException e) {
+			OHServiceExceptionUtil.showMessages(e);
+		}
+		
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		Dimension screensize = kit.getScreenSize();
 		final int pfrmBase = 30;
@@ -179,8 +195,65 @@ public class MovStockBrowser extends ModalJFrame {
 		if (MainMenu.checkUserGrants("btnpharmstockcharge")) buttonPanel.add(getChargeButton());
 		if (MainMenu.checkUserGrants("btnpharmstockdischarge")) buttonPanel.add(getDishargeButton());
 		buttonPanel.add(getExportToExcelButton());
+		buttonPanel.add(getStockCardButton());
+		buttonPanel.add(getStockLedgerButton());
 		buttonPanel.add(getCloseButton());
 		return buttonPanel;
+	}
+	
+	private JButton getStockCardButton() {
+		stockCardButton = new JButton(MessageBundle.getMessage("angal.medicalstock.stockcard"));
+		stockCardButton.setMnemonic(KeyEvent.VK_K);
+		stockCardButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				Medical medical = null;
+				if (movTable.getSelectedRow()>-1) { 
+					Movement movement = (Movement)(((MovBrowserModel) model).getValueAt(movTable.getSelectedRow(), -1));
+					medical = movement.getMedical();
+				}
+				
+				StockCardDialog stockCardDialog = new StockCardDialog(MovStockBrowser.this, 
+						medical, 
+						movDateFrom.getCompleteDate().getTime(), 
+						movDateTo.getCompleteDate().getTime());
+				medical = stockCardDialog.getMedical();
+				Date dateFrom = stockCardDialog.getDateFrom();
+				Date dateTo = stockCardDialog.getDateTo();
+				boolean toExcel = stockCardDialog.isExcel();
+				
+				if (!stockCardDialog.isCancel()) {
+					if (medical == null) {
+						JOptionPane.showMessageDialog(MovStockBrowser.this,
+								MessageBundle.getMessage("angal.medicalstock.chooseamedical"));
+						return;
+					}
+					new GenericReportPharmaceuticalStockCard("ProductLedger", dateFrom, dateTo, medical, null, toExcel);
+					return;
+				}
+			}
+		});
+		return stockCardButton;
+	}
+	
+	private JButton getStockLedgerButton() {
+		stockLedgerButton = new JButton(MessageBundle.getMessage("StockLedger"));
+		stockLedgerButton.setMnemonic(KeyEvent.VK_L);
+		stockLedgerButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				
+				StockLedgerDialog stockCardDialog = new StockLedgerDialog(MovStockBrowser.this, movDateFrom.getCompleteDate().getTime(), movDateTo.getCompleteDate().getTime());
+				Date dateFrom = stockCardDialog.getDateFrom();
+				Date dateTo = stockCardDialog.getDateTo();
+				
+				if (!stockCardDialog.isCancel()) {
+					new GenericReportPharmaceuticalStockCard("ProductLedger_multi", dateFrom, dateTo, null, null, false);
+					return;
+				}
+			}
+		});
+		return stockLedgerButton;
 	}
 
 	private JPanel getTablesPanel() {
@@ -216,24 +289,32 @@ public class MovStockBrowser extends ModalJFrame {
 	public void updateTotals() {
 		if (jTableTotal == null) return;
 		totalQti = 0;
-		if (!medicalBox.getSelectedItem().equals(MessageBundle.getMessage("angal.medicalstock.all")) &&
-				!typeBox.getSelectedItem().equals(MessageBundle.getMessage("angal.medicalstock.all"))) {
+		totalAmount = new BigDecimal(0);
+		
+		// quantity
+		if (!medicalBox.getSelectedItem().equals(MessageBundle.getMessage("angal.medicalstock.all"))) {
 			for (Movement mov : moves) {
-				totalQti += mov.getQuantity();
+				if (mov.getType().getType().contains("+")) {
+					totalQti += mov.getQuantity();
+				} else {
+					totalQti -= mov.getQuantity();
+				}
 			}
 			jTableTotal.getModel().setValueAt(totalQti, 0, 4);
 		} else {
 			jTableTotal.getModel().setValueAt(MessageBundle.getMessage("angal.common.notapplicable"), 0, 4);
 		}
-		totalAmount = new BigDecimal(0);
+		
+		// amount
 		for (Movement mov : moves) {
 			BigDecimal itemAmount = new BigDecimal(Double.toString(mov.getQuantity()));
-			if (mov.getType().getType().contains("+")) 
-			totalAmount = totalAmount.add(itemAmount.multiply(new BigDecimal(mov.getLot().getCost())));
-			else 
+			if (mov.getType().getType().contains("+")) {
+				totalAmount = totalAmount.add(itemAmount.multiply(new BigDecimal(mov.getLot().getCost())));
+			} else {
+				totalQti -= mov.getQuantity();
 				totalAmount = totalAmount.subtract(itemAmount.multiply(new BigDecimal(mov.getLot().getCost())));
+			}
 		}
-		jTableTotal.getModel().setValueAt(currencyCod, 0, 11);
 		jTableTotal.getModel().setValueAt(totalAmount, 0, 12);
 	}
 
@@ -1038,7 +1119,8 @@ public class MovStockBrowser extends ModalJFrame {
 			} else if (c == ++col) {
 				return formatDate(lot.getDueDate());
 			} else if (c == ++col){
-				return movement.getOrigin();
+				Supplier origin = movement.getOrigin();
+				return origin != null ? supMap.get(new Integer(origin.getSupId())) : "";
 			} else if (c == ++col){
 				return cost;
 			} else if (c == ++col){
@@ -1108,13 +1190,9 @@ public class MovStockBrowser extends ModalJFrame {
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			setHorizontalAlignment(columnAlignment[column]);
-			if (column == 4) {
-				if (value instanceof Number) value = formatter1.format((Number) value);
-			}
-			if (column == 11) value = formatter100.format((Number) value);
-			if (column == 12) {
-				if (value instanceof Number) value = formatter10.format((Number) value);
-			}
+			if (column == 4 && value instanceof Number) value = formatter1.format((Number) value);
+			if (column == 11 && value instanceof Number) value = formatter100.format((Number) value);
+			if (column == 12 && value instanceof Number) value = formatter10.format((Number) value);
 			return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		}
 	}

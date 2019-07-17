@@ -29,6 +29,8 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -58,11 +60,14 @@ import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
 import org.isf.patient.model.Patient;
 import org.isf.serviceprinting.manager.PrintManager;
+import org.isf.stat.gui.report.GenericReportPharmaceuticalStockCard;
+import org.isf.stat.gui.report.GenericReportPharmaceuticalStockWard;
 import org.isf.utils.excel.ExcelExporter;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
+import org.isf.utils.jobjects.StockCardDialog;
 import org.isf.utils.jobjects.VoLimitedTextField;
 import org.isf.utils.time.TimeTools;
 import org.isf.ward.manager.WardBrowserManager;
@@ -142,29 +147,35 @@ public class WardPharmacy extends ModalJFrame implements
 	private MovementWard movSelected;
 	private boolean added = false;
 	private String[] columsIncomes = { 
-			MessageBundle.getMessage("angal.common.date"), 
-			MessageBundle.getMessage("angal.medicalstockward.medical"),
-			MessageBundle.getMessage("angal.common.quantity") };
-	private boolean[] columsResizableIncomes = { false, true, false };
-	private int[] columWidthIncomes = { 150, 320, 200 };
+			MessageBundle.getMessage("angal.common.date"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstockward.medical"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.common.quantity"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstockward.units") //$NON-NLS-1$
+	};
+	private boolean[] columsResizableIncomes = { false, true, false, false };
+	private int[] columWidthIncomes = { 80, 320, 150, 50 };
 	private String[] columsOutcomes = { 
-			MessageBundle.getMessage("angal.common.date"), 
-			MessageBundle.getMessage("angal.medicalstockward.patient"),
-			MessageBundle.getMessage("angal.medicalstockward.age"), 
-			MessageBundle.getMessage("angal.medicalstockward.sex"), 
-			MessageBundle.getMessage("angal.medicalstockward.weight"),
-			MessageBundle.getMessage("angal.medicalstockward.medical"), 
-			MessageBundle.getMessage("angal.common.quantity") };
-	private boolean[] columsResizableOutcomes = { false, false, false, false, false, true, false };
-	private int[] columWidthOutcomes = { 150, 150, 50, 50, 50, 220, 100 };
+			MessageBundle.getMessage("angal.common.date"),  //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstockward.purpose"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstockward.age"),  //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstockward.sex"),  //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstockward.weight"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstockward.medical"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.common.quantity"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstockward.units") //$NON-NLS-1$
+	};
+	private boolean[] columsResizableOutcomes = { false, true, false, false, false, true, false, false };
+	private int[] columWidthOutcomes = { 150, 150, 50, 50, 50, 220, 50, 50 };
 	private String[] columsDrugs = { 
-			MessageBundle.getMessage("angal.medicalstockward.medical"), 
-			MessageBundle.getMessage("angal.common.quantity") };
-	private boolean[] columsResizableDrugs = { true, false };
-	private int[] columWidthDrugs = { 350, 100 };
+			MessageBundle.getMessage("angal.medicalstockward.medical"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.common.quantity"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.medicalstockward.units") //$NON-NLS-1$
+	};
+	private boolean[] columsResizableDrugs = { true, false, false };
+	private int[] columWidthDrugs = { 350, 50, 50 };
 	private final int filterWidth = 250;
 	private final int filterSpacing = 5;
-	private String rowCounterText = MessageBundle.getMessage("angal.medicalstockward.count") + ": ";
+	private String rowCounterText = MessageBundle.getMessage("angal.medicalstockward.count") + ": "; //$NON-NLS-1$ //$NON-NLS-2$
 	private int ageFrom;
 	private int ageTo;
 	private int weightFrom;
@@ -173,6 +184,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private JButton jPrintTableButton = null;
 	private JButton jExportToExcelButton = null;
 	private JButton jRectifyButton = null;
+	private JButton jButtonStockCard;
 
 	/*
 	 * Managers and datas
@@ -188,7 +200,7 @@ public class WardPharmacy extends ModalJFrame implements
 	//private static final String PREFERRED_LOOK_AND_FEEL = "javax.swing.plaf.metal.MetalLookAndFeel"; //$NON-NLS-1$
 
 	public WardPharmacy() {
-		if (MainMenu.checkUserGrants("btnmedicalswardedit"))
+		if (MainMenu.checkUserGrants("btnmedicalswardedit")) //$NON-NLS-1$
 			editAllowed = true;
 		initComponents();
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -225,16 +237,67 @@ public class WardPharmacy extends ModalJFrame implements
 			jPanelButtons.add(getJButtonNew());
 			if (editAllowed)
 				jPanelButtons.add(getJButtonEdit());
-			// jPanelButtons.add(getJButtonDelete());
-			if (MainMenu.checkUserGrants("btnmedicalswardreport"))
-				jPanelButtons.add(getPrintTableButton());
-			if (MainMenu.checkUserGrants("btnmedicalswardexcel"))
-				jPanelButtons.add(getExportToExcelButton());
-			if (MainMenu.checkUserGrants("btnmedicalswardrectify"))
+			if (MainMenu.checkUserGrants("btnmedicalswardrectify")) //$NON-NLS-1$
 				jPanelButtons.add(getJRectifyButton());
+			// jPanelButtons.add(getJButtonDelete());
+			if (MainMenu.checkUserGrants("btnmedicalswardreport")) //$NON-NLS-1$
+				jPanelButtons.add(getPrintTableButton());
+			if (MainMenu.checkUserGrants("btnmedicalswardexcel")) //$NON-NLS-1$
+				jPanelButtons.add(getExportToExcelButton());
+			jPanelButtons.add(getJButtonStockCard());
 			jPanelButtons.add(getJButtonClose());
 		}
 		return jPanelButtons;
+	}
+	
+	private JButton getJButtonStockCard() {
+		if (jButtonStockCard == null) {
+			jButtonStockCard = new JButton(MessageBundle.getMessage("angal.medicalstockward.stockcard"));
+			jButtonStockCard.setMnemonic(KeyEvent.VK_K);
+			jButtonStockCard.setVisible(false);
+			jButtonStockCard.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent event){
+
+					Medical medical = null;
+					if (jTabbedPaneWard.getSelectedIndex() == 0) 
+					{
+						if (jTableOutcomes.getSelectedRow() >= 0) {
+							MovementWard movWard = (MovementWard) ((jTableOutcomes.getModel()).getValueAt(jTableOutcomes.getSelectedRow(), -1));
+							medical = movWard.getMedical();
+						}
+					} 
+					else if (jTabbedPaneWard.getSelectedIndex() == 1) 
+					{
+						if (jTableIncomes.getSelectedRow() >= 0) {
+							Movement mov = (Movement) ((jTableIncomes.getModel()).getValueAt(jTableIncomes.getSelectedRow(), -1));
+							medical = mov.getMedical();
+						}
+					} 
+					else if (jTabbedPaneWard.getSelectedIndex() == 2) {
+						if (jTableDrugs.getSelectedRow() >= 0) {
+							MedicalWard medicalWard = (MedicalWard) ((jTableDrugs.getModel()).getValueAt(jTableDrugs.getSelectedRow(), -1));
+							try {
+								medical = medicalWard.getMedical();
+							} catch (OHException e) {
+								JOptionPane.showMessageDialog(WardPharmacy.this, e.getMessage(), getTitle(), JOptionPane.ERROR_MESSAGE);
+							}
+						}
+					}
+					
+					StockCardDialog stockCardDialog = new StockCardDialog(WardPharmacy.this, medical, dateFrom.getTime(), dateTo.getTime());
+					medical = stockCardDialog.getMedical();
+					Date dateFrom = stockCardDialog.getDateFrom();
+					Date dateTo = stockCardDialog.getDateTo();
+					boolean toExcel = stockCardDialog.isExcel();
+					
+					if (!stockCardDialog.isCancel()) {
+						new GenericReportPharmaceuticalStockCard("ProductLedgerWard", dateFrom, dateTo, medical, wardSelected, toExcel);
+						return;
+					}
+				}
+			});
+		}
+		return jButtonStockCard;
 	}
 
 	private JButton getJButtonNew() {
@@ -266,7 +329,9 @@ public class WardPharmacy extends ModalJFrame implements
 				public void actionPerformed(ActionEvent e) {
 
 					if (jTableOutcomes.getSelectedRow() < 0 || !jScrollPaneOutcomes.isShowing()) {
-						JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.pleaseselectanoutcomesmovementfirst"), MessageBundle.getMessage("angal.hospital"),
+						JOptionPane.showMessageDialog(WardPharmacy.this, 
+								MessageBundle.getMessage("angal.medicalstockward.pleaseselectanoutcomesmovementfirst"), //$NON-NLS-1$  
+								MessageBundle.getMessage("angal.hospital"), //$NON-NLS-1$
 								JOptionPane.PLAIN_MESSAGE);
 					} else {
 						movSelected = (MovementWard) ((jTableOutcomes.getModel()).getValueAt(jTableOutcomes.getSelectedRow(), -1));
@@ -446,7 +511,7 @@ public class WardPharmacy extends ModalJFrame implements
 				if (!columsResizableDrugs[i])
 					jTableDrugs.getColumnModel().getColumn(i).setMaxWidth(columWidthDrugs[i]);
 			}
-			jTableDrugs.setAutoCreateColumnsFromModel(false);
+			jTableDrugs.setAutoCreateColumnsFromModel(true);
 		}
 		return jTableDrugs;
 	}
@@ -465,7 +530,7 @@ public class WardPharmacy extends ModalJFrame implements
 			jPanelFilter = new JPanel();
 			jPanelFilter.setLayout(new BoxLayout(jPanelFilter, BoxLayout.Y_AXIS));
 			jPanelFilter.add(Box.createVerticalStrut(filterSpacing));
-			JLabel jLabelMedical = new JLabel(MessageBundle.getMessage("angal.medicalstockward.medical"));
+			JLabel jLabelMedical = new JLabel(MessageBundle.getMessage("angal.medicalstockward.medical")); //$NON-NLS-1$
 			jLabelMedical.setAlignmentX(Box.CENTER_ALIGNMENT);
 			jPanelFilter.add(jLabelMedical);
 			jPanelFilter.add(Box.createVerticalStrut(filterSpacing));
@@ -501,20 +566,20 @@ public class WardPharmacy extends ModalJFrame implements
 
 	private JButton getFilterButton() {
 		if (filterButton == null) {
-			filterButton = new JButton(MessageBundle.getMessage("angal.medicalstockward.filter"));
+			filterButton = new JButton(MessageBundle.getMessage("angal.medicalstockward.filter")); //$NON-NLS-1$
 			filterButton.setMnemonic(KeyEvent.VK_F);
 			filterButton.setAlignmentX(Box.CENTER_ALIGNMENT);
 			filterButton.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {
 					if (ageFrom > ageTo) {
-						JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.agefrommustbelowerthanageto"));
+						JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.agefrommustbelowerthanageto")); //$NON-NLS-1$
 						jAgeFromTextField.setText(String.valueOf(ageTo));
 						ageFrom = ageTo;
 						return;
 					}
 					if (weightFrom > weightTo) {
-						JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.weightfrommustbelowerthanweightto"));
+						JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.weightfrommustbelowerthanweightto")); //$NON-NLS-1$
 						jWeightFromTextField.setText(String.valueOf(weightTo));
 						weightFrom = weightTo;
 						return;
@@ -530,16 +595,16 @@ public class WardPharmacy extends ModalJFrame implements
 	
 	private JButton getResetButton() {
 		if (resetButton == null) {
-			resetButton = new JButton(MessageBundle.getMessage("angal.medicalstockward.reset"));
+			resetButton = new JButton(MessageBundle.getMessage("angal.medicalstockward.reset")); //$NON-NLS-1$
 			resetButton.setMnemonic(KeyEvent.VK_R);
 			resetButton.setAlignmentX(Box.CENTER_ALIGNMENT);
 			resetButton.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {
-					jAgeFromTextField.setText("0");
-					jAgeToTextField.setText("0");
-					jWeightFromTextField.setText("0");
-					jWeightToTextField.setText("0");
+					jAgeFromTextField.setText("0"); //$NON-NLS-1$
+					jAgeToTextField.setText("0"); //$NON-NLS-1$
+					jWeightFromTextField.setText("0"); //$NON-NLS-1$
+					jWeightToTextField.setText("0"); //$NON-NLS-1$
 					radioa.setSelected(true);
 					jComboBoxTypes.setSelectedIndex(0);
 					rowCounter.setText(rowCounterText + jTableOutcomes.getRowCount());
@@ -553,13 +618,13 @@ public class WardPharmacy extends ModalJFrame implements
 	private JPanel getJPanelWeight() {
 		if (jWeightPanel == null) {
 			jWeightPanel = new JPanel();
-			jWeightPanel.setBorder(BorderFactory.createTitledBorder(MessageBundle.getMessage("angal.medicalstockward.weight")));
+			jWeightPanel.setBorder(BorderFactory.createTitledBorder(MessageBundle.getMessage("angal.medicalstockward.weight"))); //$NON-NLS-1$
 
-			JLabel jLabelWeightFrom = new JLabel(MessageBundle.getMessage("angal.medicalstockward.weightfrom"));
+			JLabel jLabelWeightFrom = new JLabel(MessageBundle.getMessage("angal.medicalstockward.weightfrom")); //$NON-NLS-1$
 			jWeightPanel.add(jLabelWeightFrom, null);
 			jWeightPanel.add(getJWeightFromTextField(), null);
 
-			JLabel jLabelWeightTo = new JLabel(MessageBundle.getMessage("angal.medicalstockward.weightto"));
+			JLabel jLabelWeightTo = new JLabel(MessageBundle.getMessage("angal.medicalstockward.weightto")); //$NON-NLS-1$
 			jWeightPanel.add(jLabelWeightTo, null);
 			jWeightPanel.add(getJWeightToTextField(), null);
 		}
@@ -569,7 +634,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private VoLimitedTextField getJWeightToTextField() {
 		if (jWeightToTextField == null) {
 			jWeightToTextField = new VoLimitedTextField(5, 5);
-			jWeightToTextField.setText("0");
+			jWeightToTextField.setText("0"); //$NON-NLS-1$
 			jWeightToTextField.setMaximumSize(new Dimension(100, 50));
 			jWeightToTextField.addFocusListener(new FocusListener() {
 				public void focusLost(FocusEvent e) {
@@ -577,11 +642,11 @@ public class WardPharmacy extends ModalJFrame implements
 						weightTo = Integer.parseInt(jWeightToTextField.getText());
 						weightFrom = Integer.parseInt(jWeightFromTextField.getText());
 						if ((weightTo < 0) || (weightTo > 200)) {
-							jWeightToTextField.setText("");
-							JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.insertavalidweight"));
+							jWeightToTextField.setText(""); //$NON-NLS-1$
+							JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.insertavalidweight")); //$NON-NLS-1$
 						}
 					} catch (NumberFormatException ex) {
-						jWeightToTextField.setText("0");
+						jWeightToTextField.setText("0"); //$NON-NLS-1$
 					}
 				}
 
@@ -595,7 +660,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private VoLimitedTextField getJWeightFromTextField() {
 		if (jWeightFromTextField == null) {
 			jWeightFromTextField = new VoLimitedTextField(5, 5);
-			jWeightFromTextField.setText("0");
+			jWeightFromTextField.setText("0"); //$NON-NLS-1$
 			jWeightFromTextField.setMinimumSize(new Dimension(100, 50));
 			jWeightFromTextField.addFocusListener(new FocusListener() {
 				public void focusLost(FocusEvent e) {
@@ -603,11 +668,11 @@ public class WardPharmacy extends ModalJFrame implements
 						weightFrom = Integer.parseInt(jWeightFromTextField.getText());
 						weightTo = Integer.parseInt(jWeightToTextField.getText());
 						if ((weightFrom < 0)) {
-							jWeightFromTextField.setText("");
-							JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.insertvalidweight"));
+							jWeightFromTextField.setText(""); //$NON-NLS-1$
+							JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.insertvalidweight")); //$NON-NLS-1$
 						}
 					} catch (NumberFormatException ex) {
-						jWeightFromTextField.setText("0");
+						jWeightFromTextField.setText("0"); //$NON-NLS-1$
 					}
 				}
 
@@ -621,11 +686,11 @@ public class WardPharmacy extends ModalJFrame implements
 	public JPanel getSexPanel() {
 		if (sexPanel == null) {
 			sexPanel = new JPanel();
-			sexPanel.setBorder(BorderFactory.createTitledBorder(MessageBundle.getMessage("angal.medicalstockward.sex")));
+			sexPanel.setBorder(BorderFactory.createTitledBorder(MessageBundle.getMessage("angal.medicalstockward.sex"))); //$NON-NLS-1$
 			ButtonGroup group = new ButtonGroup();
-			radiom = new JRadioButton(MessageBundle.getMessage("angal.medicalstockward.male"));
-			radiof = new JRadioButton(MessageBundle.getMessage("angal.medicalstockward.female"));
-			radioa = new JRadioButton(MessageBundle.getMessage("angal.medicalstockward.all"));
+			radiom = new JRadioButton(MessageBundle.getMessage("angal.medicalstockward.male")); //$NON-NLS-1$
+			radiof = new JRadioButton(MessageBundle.getMessage("angal.medicalstockward.female")); //$NON-NLS-1$
+			radioa = new JRadioButton(MessageBundle.getMessage("angal.medicalstockward.all")); //$NON-NLS-1$
 			radioa.setSelected(true);
 			group.add(radiom);
 			group.add(radiof);
@@ -640,13 +705,13 @@ public class WardPharmacy extends ModalJFrame implements
 	private JPanel getJPanelAge() {
 		if (jAgePanel == null) {
 			jAgePanel = new JPanel();
-			jAgePanel.setBorder(BorderFactory.createTitledBorder(MessageBundle.getMessage("angal.medicalstockward.age")));
+			jAgePanel.setBorder(BorderFactory.createTitledBorder(MessageBundle.getMessage("angal.medicalstockward.age"))); //$NON-NLS-1$
 
-			JLabel jLabelAgeFrom = new JLabel(MessageBundle.getMessage("angal.medicalstockward.agefrom"));
+			JLabel jLabelAgeFrom = new JLabel(MessageBundle.getMessage("angal.medicalstockward.agefrom")); //$NON-NLS-1$
 			jAgePanel.add(jLabelAgeFrom);
 			jAgePanel.add(getJAgeFromTextField());
 
-			JLabel jLabelAgeTo = new JLabel(MessageBundle.getMessage("angal.medicalstockward.ageto"));
+			JLabel jLabelAgeTo = new JLabel(MessageBundle.getMessage("angal.medicalstockward.ageto")); //$NON-NLS-1$
 			jAgePanel.add(jLabelAgeTo);
 			jAgePanel.add(getJAgeToTextField());
 		}
@@ -656,7 +721,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private VoLimitedTextField getJAgeToTextField() {
 		if (jAgeToTextField == null) {
 			jAgeToTextField = new VoLimitedTextField(3, 3);
-			jAgeToTextField.setText("0");
+			jAgeToTextField.setText("0"); //$NON-NLS-1$
 			jAgeToTextField.setMaximumSize(new Dimension(100, 50));
 			jAgeToTextField.addFocusListener(new FocusListener() {
 				public void focusLost(FocusEvent e) {
@@ -664,11 +729,11 @@ public class WardPharmacy extends ModalJFrame implements
 						ageTo = Integer.parseInt(jAgeToTextField.getText());
 						ageFrom = Integer.parseInt(jAgeFromTextField.getText());
 						if ((ageTo < 0) || (ageTo > 200)) {
-							jAgeToTextField.setText("");
-							JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.insertvalidage"));
+							jAgeToTextField.setText(""); //$NON-NLS-1$
+							JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.insertvalidage")); //$NON-NLS-1$
 						}
 					} catch (NumberFormatException ex) {
-						jAgeToTextField.setText("0");
+						jAgeToTextField.setText("0"); //$NON-NLS-1$
 					}
 				}
 
@@ -687,7 +752,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private VoLimitedTextField getJAgeFromTextField() {
 		if (jAgeFromTextField == null) {
 			jAgeFromTextField = new VoLimitedTextField(3, 3);
-			jAgeFromTextField.setText("0");
+			jAgeFromTextField.setText("0"); //$NON-NLS-1$
 			jAgeFromTextField.setMinimumSize(new Dimension(100, 50));
 			jAgeFromTextField.addFocusListener(new FocusListener() {
 				public void focusLost(FocusEvent e) {
@@ -695,11 +760,11 @@ public class WardPharmacy extends ModalJFrame implements
 						ageFrom = Integer.parseInt(jAgeFromTextField.getText());
 						ageTo = Integer.parseInt(jAgeToTextField.getText());
 						if ((ageFrom < 0) || (ageFrom > 200)) {
-							jAgeFromTextField.setText("");
-							JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.insertvalidage"));
+							jAgeFromTextField.setText(""); //$NON-NLS-1$
+							JOptionPane.showMessageDialog(WardPharmacy.this, MessageBundle.getMessage("angal.medicalstockward.insertvalidage")); //$NON-NLS-1$
 						}
 					} catch (NumberFormatException ex) {
-						jAgeFromTextField.setText("0");
+						jAgeFromTextField.setText("0"); //$NON-NLS-1$
 					}
 				}
 
@@ -718,7 +783,7 @@ public class WardPharmacy extends ModalJFrame implements
 			MedicalTypeBrowserManager medicalManager = new MedicalTypeBrowserManager();
 			ArrayList<MedicalType> medicalTypes;
 			
-			jComboBoxTypes.addItem(MessageBundle.getMessage("angal.medicalstockward.alltypes"));
+			jComboBoxTypes.addItem(MessageBundle.getMessage("angal.medicalstockward.alltypes")); //$NON-NLS-1$
 			
 			try {
 				medicalTypes = medicalManager.getMedicalType();
@@ -756,7 +821,7 @@ public class WardPharmacy extends ModalJFrame implements
 			medicals = null;
 			OHServiceExceptionUtil.showMessages(e);
 		}
-		jComboBoxMedicals.addItem(MessageBundle.getMessage("angal.medicalstockward.allmedicals"));
+		jComboBoxMedicals.addItem(MessageBundle.getMessage("angal.medicalstockward.allmedicals")); //$NON-NLS-1$
 		MedicalType medicalType;
 		if (jComboBoxTypes.getSelectedItem() instanceof String) {
 			medicalType = null;
@@ -846,7 +911,7 @@ public class WardPharmacy extends ModalJFrame implements
 				wardList = new ArrayList<Ward>();
 				OHServiceExceptionUtil.showMessages(e);
 			}
-			jComboBoxWard.addItem(MessageBundle.getMessage("angal.medicalstockward.selectaward"));
+			jComboBoxWard.addItem(MessageBundle.getMessage("angal.medicalstockward.selectaward")); //$NON-NLS-1$
 			for (Ward ward : wardList) {
 				if (ward.isPharmacy())
 					jComboBoxWard.addItem(ward);
@@ -864,14 +929,15 @@ public class WardPharmacy extends ModalJFrame implements
 							jCalendarFrom.setEnabled(true);
 							jCalendarTo.setEnabled(true);
 							jButtonNew.setVisible(true);
-							if (MainMenu.checkUserGrants("btnmedicalswardreport"))
+							if (MainMenu.checkUserGrants("btnmedicalswardreport")) //$NON-NLS-1$
 								jPrintTableButton.setVisible(true);
-							if (MainMenu.checkUserGrants("btnmedicalswardexcel"))
+							if (MainMenu.checkUserGrants("btnmedicalswardexcel")) //$NON-NLS-1$
 								jExportToExcelButton.setVisible(true);
-							if (MainMenu.checkUserGrants("btnmedicalswardrectify"))
+							if (MainMenu.checkUserGrants("btnmedicalswardrectify")) //$NON-NLS-1$
 								jRectifyButton.setVisible(true);
 							if (editAllowed)
 								jButtonEdit.setVisible(true);
+							jButtonStockCard.setVisible(true);
 							validate();
 							setLocationRelativeTo(null);
 							// jButtonDelete.setVisible(true);
@@ -885,11 +951,11 @@ public class WardPharmacy extends ModalJFrame implements
 								remove(jTabbedPaneWard);
 								// jButtonEdit.setVisible(false);
 								jButtonNew.setVisible(false);
-								if (MainMenu.checkUserGrants("btnmedicalswardreport"))
+								if (MainMenu.checkUserGrants("btnmedicalswardreport")) //$NON-NLS-1$
 									jPrintTableButton.setVisible(false);
-								if (MainMenu.checkUserGrants("btnmedicalswardexcel"))
+								if (MainMenu.checkUserGrants("btnmedicalswardexcel")) //$NON-NLS-1$
 									jExportToExcelButton.setVisible(false);
-								if (MainMenu.checkUserGrants("btnmedicalswardrectify"))
+								if (MainMenu.checkUserGrants("btnmedicalswardrectify")) //$NON-NLS-1$
 									jRectifyButton.setVisible(false);
 								// jButtonDelete.setVisible(false);
 								added = false;
@@ -940,6 +1006,8 @@ public class WardPharmacy extends ModalJFrame implements
 
 		public Object getValueAt(int r, int c) {
 			Movement mov = wardIncomes.get(r);
+			int pieces = mov.getQuantity();
+			int pcsPerPck = mov.getMedical().getPcsperpck();
 			if (c == -1) {
 				return mov;
 			}
@@ -950,14 +1018,15 @@ public class WardPharmacy extends ModalJFrame implements
 				return mov.getMedical();
 			}
 			if (c == 2) {
-				int pieces = mov.getQuantity();
-				int pcsPerPck = mov.getMedical().getPcsperpck();
+				return pieces;
+			}
+			if (c == 3) {
 				int packets = 0;
 				if (pcsPerPck != 0) {
 					packets = pieces / pcsPerPck;
-					return pieces + " (" + packets + " " + MessageBundle.getMessage("angal.medicalstockward.packets") + ")"; //$NON-NLS-1$;
+					return "" + packets + " " + MessageBundle.getMessage("angal.medicalstockward.packets"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$;
 				} else {
-					return pieces;
+					return ""; //$NON-NLS-1$;
 				}
 			}
 			return null;
@@ -1025,8 +1094,7 @@ public class WardPharmacy extends ModalJFrame implements
 			for (MovementWard mov : listMovementWardFromTo) {
 				boolean ok = true;
 				Patient patient = mov.getPatient();
-				Medical medical = null;
-				medical = mov.getMedical();
+				Medical medical = mov.getMedical();
 				int age = mov.getAge();
 				float weight = mov.getWeight();
 
@@ -1077,26 +1145,28 @@ public class WardPharmacy extends ModalJFrame implements
 				if (mov.isPatient())
 					return mov.getAge();
 				else
-					return MessageBundle.getMessage("angal.common.notapplicable");
+					return MessageBundle.getMessage("angal.common.notapplicable"); //$NON-NLS-1$
 			}
 			if (c == 3) {
 				if (mov.isPatient())
 					return mov.getPatient().getSex();
-				return MessageBundle.getMessage("angal.common.notapplicable");
+				return MessageBundle.getMessage("angal.common.notapplicable"); //$NON-NLS-1$
 			}
 			if (c == 4) {
 				if (mov.isPatient()) {
 					float weight = mov.getWeight();
-					return weight == 0 ? MessageBundle.getMessage("angal.common.notdefined") : weight;
+					return weight == 0 ? MessageBundle.getMessage("angal.common.notdefined") : weight; //$NON-NLS-1$
 				} else
-					return MessageBundle.getMessage("angal.common.notapplicable");
+					return MessageBundle.getMessage("angal.common.notapplicable"); //$NON-NLS-1$
 			}
 			if (c == 5) {
 				return mov.getMedical().getDescription();
 			}
 			if (c == 6) {
-				return "" + mov.getQuantity() + " " + //$NON-NLS-1$ 
-						mov.getUnits();
+				return mov.getQuantity();
+			}
+			if (c == 7) {
+				return mov.getUnits();
 			}
 			return null;
 		}
@@ -1131,7 +1201,6 @@ public class WardPharmacy extends ModalJFrame implements
 		public DrugsModel() {
 			try {
 				wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
-				System.out.println("Ciao");
 			} catch (OHServiceException e) {
 				OHServiceExceptionUtil.showMessages(e);
 				wardDrugs = new ArrayList<MedicalWard>();
@@ -1158,7 +1227,10 @@ public class WardPharmacy extends ModalJFrame implements
 				}
 			}
 			if (c == 1) {
-				return wardDrug.getQty() + " " + MessageBundle.getMessage("angal.medicalstockward.pieces");
+				return wardDrug.getQty();
+			}
+			if (c == 2) {
+				return MessageBundle.getMessage("angal.medicalstockward.pieces"); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -1180,8 +1252,9 @@ public class WardPharmacy extends ModalJFrame implements
 	
 	private JButton getJRectifyButton() {
 		if (jRectifyButton == null) {
-			jRectifyButton = new JButton(MessageBundle.getMessage("angal.medicalstockward.rectify"));
+			jRectifyButton = new JButton(MessageBundle.getMessage("angal.medicalstockward.rectify")); //$NON-NLS-1$
 			jRectifyButton.setMnemonic(KeyEvent.VK_R);
+			jRectifyButton.setBackground(Color.PINK);
 			jRectifyButton.setVisible(false);
 			jRectifyButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
@@ -1196,24 +1269,77 @@ public class WardPharmacy extends ModalJFrame implements
 	
 	private JButton getPrintTableButton() {
 		if (jPrintTableButton == null) {
-			jPrintTableButton = new JButton(MessageBundle.getMessage("angal.medicalstockward.report"));
+			jPrintTableButton = new JButton(MessageBundle.getMessage("angal.medicalstockward.report")); //$NON-NLS-1$
 			jPrintTableButton.setMnemonic(KeyEvent.VK_P);
 			jPrintTableButton.setVisible(false);
 			jPrintTableButton.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent arg0) {
 					
-					try {
-					if (jTabbedPaneWard.getSelectedIndex() == 0) {
-						new PrintManager("WardPharmacyOutcomes", wardManager.convertMovementWardForPrint(wardOutcomes), 0);
-					} else if (jTabbedPaneWard.getSelectedIndex() == 1) {
-						new PrintManager("WardPharmacyIncomes", wardManager.convertMovementForPrint(wardIncomes), 0);
-					} else if (jTabbedPaneWard.getSelectedIndex() == 2) {
-						new PrintManager("WardPharmacyDrugs", wardManager.convertWardDrugs(wardSelected, wardDrugs), 0);
+					if (jTabbedPaneWard.getSelectedIndex() == 0) 
+					{
+						try {
+							new PrintManager("WardPharmacyOutcomes", wardManager.convertMovementWardForPrint(wardOutcomes), 0); //$NON-NLS-1$
+						} catch (OHServiceException e) {
+							OHServiceExceptionUtil.showMessages(e, WardPharmacy.this);
+							return;
+						} 
 					} 
-					} catch (OHServiceException e) {
-						OHServiceExceptionUtil.showMessages(e);
-					}
+					else if (jTabbedPaneWard.getSelectedIndex() == 1) 
+					{
+						try {
+							new PrintManager("WardPharmacyIncomes", wardManager.convertMovementForPrint(wardIncomes), 0); //$NON-NLS-1$
+						} catch (OHServiceException e) {
+							OHServiceExceptionUtil.showMessages(e, WardPharmacy.this);
+							return;
+						}
+					} 
+					else if (jTabbedPaneWard.getSelectedIndex() == 2) 
+					{
+						ArrayList<String> options = new ArrayList<String>();
+						options.add(MessageBundle.getMessage("angal.medicals.today")); //$NON-NLS-1$
+						options.add(MessageBundle.getMessage("angal.common.date")); //$NON-NLS-1$
+						
+						Icon icon = new ImageIcon("rsc/icons/calendar_dialog.png"); //$NON-NLS-1$
+						String option = (String) JOptionPane.showInputDialog(WardPharmacy.this, 
+								MessageBundle.getMessage("angal.medicals.pleaseselectareport"),  //$NON-NLS-1$
+								MessageBundle.getMessage("angal.medicals.report"),  //$NON-NLS-1$
+								JOptionPane.INFORMATION_MESSAGE, 
+								icon, 
+								options.toArray(), 
+								options.get(0));
+						
+						if (option == null)
+							return;
+						int i = 0;
+						if (options.indexOf(option) == i) {
+							new GenericReportPharmaceuticalStockWard(null, "PharmaceuticalStockWard", wardSelected); //$NON-NLS-1$
+							return;
+						}
+						if (options.indexOf(option) == ++i) {
+							
+							icon = new ImageIcon("rsc/icons/calendar_dialog.png"); //$NON-NLS-1$
+							
+							JDateChooser dateChooser = new JDateChooser();
+							dateChooser.setLocale(new Locale(GeneralData.LANGUAGE));
+							
+					        int r = JOptionPane.showConfirmDialog(WardPharmacy.this, 
+					        		dateChooser, 
+					        		MessageBundle.getMessage("angal.common.date"),  //$NON-NLS-1$
+					        		JOptionPane.OK_CANCEL_OPTION, 
+					        		JOptionPane.PLAIN_MESSAGE,
+					        		icon);
+
+					        if (r == JOptionPane.OK_OPTION) {
+					        	
+								new GenericReportPharmaceuticalStockWard(dateChooser.getDate(), "PharmaceuticalStockWard", wardSelected); //$NON-NLS-1$
+								return;
+								
+					        } else {
+					            return;
+					        }
+						}
+					} 
 				}
 			});
 		}
@@ -1222,7 +1348,7 @@ public class WardPharmacy extends ModalJFrame implements
 	
 	private JButton getExportToExcelButton() {
 		if (jExportToExcelButton == null) {
-			jExportToExcelButton = new JButton("Excel");
+			jExportToExcelButton = new JButton("Excel"); //$NON-NLS-1$
 			jExportToExcelButton.setMnemonic(KeyEvent.VK_E);
 			jExportToExcelButton.setVisible(false);
 			jExportToExcelButton.addActionListener(new ActionListener() {
@@ -1333,12 +1459,12 @@ public class WardPharmacy extends ModalJFrame implements
 	}
 
 	public String formatDate(GregorianCalendar time) {
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy"); //$NON-NLS-1$
 		return format.format(time.getTime());
 	}
 
 	public String formatDateTime(GregorianCalendar time) {
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"); //$NON-NLS-1$
 		return format.format(time.getTime());
 	}
 }

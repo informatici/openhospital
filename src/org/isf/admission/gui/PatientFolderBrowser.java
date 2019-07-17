@@ -2,16 +2,16 @@ package org.isf.admission.gui;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventListener;
 import java.util.GregorianCalendar;
-import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,6 +23,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.admission.manager.AdmissionBrowserManager;
@@ -53,9 +54,6 @@ import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.table.TableSorter;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
-
-
-
 
 /** 
 * This class shows patient data and the list of admissions and lab exams.
@@ -208,6 +206,8 @@ public class PatientFolderBrowser extends ModalJFrame implements
 	private JScrollPane scrollPaneLab;
 	
 	private JPanel tablesPanel=null;
+	
+	final String DATE_FORMAT = "dd/MM/yy";
 		
 	private JPanel getTablesPanel(){
 		tablesPanel = new JPanel(new BorderLayout());
@@ -225,6 +225,9 @@ public class PatientFolderBrowser extends ModalJFrame implements
 		
 		for (int i=0;i<pColums.length; i++){
 			admTable.getColumnModel().getColumn(i).setPreferredWidth(pColumwidth[i]);
+			if (i == 0 || i == 4) {
+				admTable.getColumnModel().getColumn(i).setCellRenderer(new DateCellRenderer());
+			}
 		}
 		
 		scrollPane = new JScrollPane(admTable);
@@ -559,13 +562,11 @@ public class PatientFolderBrowser extends ModalJFrame implements
 			} else if (c == 0) {
 				if (r < admList.size()) {
 					Date myDate = (admList.get(r)).getAdmDate().getTime();	
-					DateFormat currentDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.ITALIAN);
-					return currentDateFormat.format(myDate);
+					return myDate;
 				} else {
 					int z = r - admList.size();
 					Date myDate = (opdList.get(z)).getVisitDate().getTime();
-					DateFormat currentDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.ITALIAN);
-					return currentDateFormat.format(myDate);
+					return myDate;
 				}
 				
 			} else if (c == 1) {				
@@ -632,8 +633,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 						return MessageBundle.getMessage("angal.admission.present"); //$NON-NLS-1$
 					else {
 						Date myDate = admList.get(r).getDisDate().getTime();
-						DateFormat currentDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.ITALIAN);
-						return currentDateFormat.format(myDate);
+						return myDate;
 					}
 				} else {
 					int z = r - admList.size();
@@ -694,8 +694,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 				//System.out.println(labList.get(r).getExam().getExamtype().getDescription());
 				
 				Date examDate = labList.get(r).getExamDate().getTime();	
-				DateFormat currentDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.ITALIAN);
-				return currentDateFormat.format(examDate);
+				return examDate;
 			} else if (c == 1) {
 				return labList.get(r).getExam().getDescription();
 			}else if (c == 2) {
@@ -716,5 +715,26 @@ public class PatientFolderBrowser extends ModalJFrame implements
 			return false;
 		}
 	}
+	
+	public class DateCellRenderer extends DefaultTableCellRenderer {
+		/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
+				super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
+				
+				if ( value instanceof Date ){
+				// Use SimpleDateFormat class to get a formatted String from Date object.
+				String strDate = new SimpleDateFormat(DATE_FORMAT).format((Date)value);
+				
+				// Sorting algorithm will work with model value. So you dont need to worry
+				// about the renderer's display value. 
+				this.setText( strDate );
+				}
+				return this;
+			}
+		}
 	
 }// class
