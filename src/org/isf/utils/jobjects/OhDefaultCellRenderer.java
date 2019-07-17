@@ -2,9 +2,6 @@ package org.isf.utils.jobjects;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +10,11 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+/**
+ * 
+ * @author u2g
+ *
+ */
 public class OhDefaultCellRenderer extends DefaultTableCellRenderer{
 	
 	
