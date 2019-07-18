@@ -1,5 +1,7 @@
 package org.isf.supplier.manager;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.isf.generaldata.MessageBundle;
@@ -89,5 +91,20 @@ public class SupplierBrowserManager {
                     MessageBundle.getMessage("angal.sql.couldntfindthedataithasprobablybeendeleted"), OHSeverityLevel.ERROR));
         }
     }
+    
+    /**
+	 * returns the {@link HashMap} of all {@link Supplier}s 
+	 * @param all - if <code>true</code> it will returns deleted ones also
+	 * @return the {@link HashMap} of all {@link Supplier}s  
+     * @throws OHServiceException 
+	 */
+	public HashMap<Integer, String> getHashMap(boolean all) throws OHServiceException {
+		List<Supplier> supList = getAll();
+		HashMap<Integer, String> supMap = new HashMap<Integer, String>();
+		for (Supplier sup : supList) {
+			supMap.put(sup.getSupId(), sup.getSupName());
+		}
+		return supMap;
+	}
 }
 

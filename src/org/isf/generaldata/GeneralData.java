@@ -42,6 +42,7 @@ public class GeneralData {
 	public static String BILLSREPORTMONTH;
 	public static String PHARMACEUTICALORDER;
 	public static String PHARMACEUTICALSTOCK;
+	public static String PHARMACEUTICALAMC;
 	public static boolean PATIENTEXTENDED;
 	public static boolean OPDEXTENDED;
 	public static boolean MATERNITYRESTARTINJUNE;
@@ -79,6 +80,7 @@ public class GeneralData {
 	private static String DEFAULT_BILLSREPORTMONTH = "BillsReportMonth";
 	private static String DEFAULT_PHARMACEUTICALORDER = "PharmaceuticalOrder";
 	private static String DEFAULT_PHARMACEUTICALSTOCK = "PharmaceuticalStock";
+	private static String DEFAULT_PHARMACEUTICALAMC = "PharmaceuticalAMC";
 	private static boolean DEFAULT_PATIENTEXTENDED = false;
 	private static boolean DEFAULT_OPDEXTENDED = false;
 	private static boolean DEFAULT_MATERNITYRESTARTINJUNE = false;
@@ -119,6 +121,7 @@ public class GeneralData {
 			BILLSREPORTMONTH = myGetProperty("BILLSREPORTMONTH", DEFAULT_BILLSREPORTMONTH);
 			PHARMACEUTICALORDER = myGetProperty("PHARMACEUTICALORDER", DEFAULT_PHARMACEUTICALORDER);
 			PHARMACEUTICALSTOCK = myGetProperty("PHARMACEUTICALSTOCK", DEFAULT_PHARMACEUTICALSTOCK);
+			PHARMACEUTICALAMC = myGetProperty("PHARMACEUTICALAMC", DEFAULT_PHARMACEUTICALAMC);
 			PATIENTEXTENDED = myGetProperty("PATIENTEXTENDED", DEFAULT_PATIENTEXTENDED);
 			OPDEXTENDED = myGetProperty("OPDEXTENDED", DEFAULT_OPDEXTENDED);
 			MATERNITYRESTARTINJUNE = myGetProperty("MATERNITYRESTARTINJUNE", DEFAULT_MATERNITYRESTARTINJUNE);

@@ -164,7 +164,6 @@ public class MedicalStockWardIoOperations
 
 	/**
 	 * Updates the quantity for the specified movement ward.
-	 * @param dbQuery the {@link DbQueryLogger} to use.
 	 * @param movement the movement ward to update.
 	 * @return <code>true</code> if has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException if an error occurs during the update.

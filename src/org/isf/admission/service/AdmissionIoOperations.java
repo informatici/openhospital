@@ -1,5 +1,12 @@
 package org.isf.admission.service;
 
+import java.awt.Image;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /*----------------------------------------------------------
  * modification history
  * ====================
@@ -21,6 +28,8 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
 import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
 import org.isf.admtype.model.AdmissionType;
@@ -28,9 +37,12 @@ import org.isf.admtype.service.AdmissionTypeIoOperationRepository;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disctype.service.DischargeTypeIoOperationRepository;
 import org.isf.generaldata.GeneralData;
+import org.isf.generaldata.MessageBundle;
 import org.isf.patient.model.Patient;
 import org.isf.patient.service.PatientIoOperationRepository;
+import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -88,7 +100,39 @@ public class AdmissionIoOperations
 
 		return admittedPatients;
 	}
+	
+	/**
+	 * Returns all patients based on the applied filters.
+	 * @param admissionRange the patient admission range
+	 * @param dischargeRange the patient discharge range
+	 * @param searchTerms the search terms to use for filter the patient list, <code>null</code> if no filter have to be applied.
+	 * @return the filtered patient list.
+	 * @throws OHServiceException if an error occurs during database request.
+	 */
+	public ArrayList<AdmittedPatient> getAdmittedPatients(
+			String searchTerms, GregorianCalendar[] admissionRange, 
+			GregorianCalendar[] dischargeRange) throws OHServiceException 
+	{
+		ArrayList<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
+		List<Object[]> admittedPatientsList = (List<Object[]>)repository.findAllBySearchAndDateRanges(searchTerms, admissionRange, dischargeRange);
+		Iterator<Object[]> it = admittedPatientsList.iterator();
+		
+		
+		while (it.hasNext()) {
+			Object[] object = it.next();
+			Patient patient = patientRepository.findOne((Integer)object[0]);
+			Admission admission = null;
+			Integer admissionId = (Integer)object[26];
+			if (admissionId != null) admission = repository.findOne((Integer)object[26]);
+			
+					
+			AdmittedPatient admittedPatient = new AdmittedPatient(patient, admission);
+			admittedPatients.add(admittedPatient);
+		}
 
+		return admittedPatients;
+	}
+	
 	/**
 	 * Returns the current admission (or null if none) for the specified patient.
 	 * @param patient the patient target of the admission.
