@@ -20,7 +20,7 @@ COPY mysql/db/step_2* /docker-entrypoint-initdb.d/
 COPY mysql/db/step_3* /docker-entrypoint-initdb.d/
 COPY mysql/db/step_4* /docker-entrypoint-initdb.d/
 COPY mysql/db/step_5* /docker-entrypoint-initdb.d/
-#COPY mysql/db/data_en/* data_en/
+COPY mysql/db/data_en/* data_en/
 #COPY mysql/db/data_es/* data_es/
-COPY mysql/db/data_it/* data_it/
+#COPY mysql/db/data_it/* data_it/
 #COPY mysql/cnf/my.cnf /etc/mysql/conf.d
