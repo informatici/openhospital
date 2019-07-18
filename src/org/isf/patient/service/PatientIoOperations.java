@@ -5,6 +5,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /*------------------------------------------
  * IoOperations - dB operations for the patient entity
@@ -25,8 +27,11 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.patient.model.Patient;
+import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -341,5 +346,48 @@ public class PatientIoOperations
 		result = repository.exists(code);
 		
 		return result;	
+	}
+	/**
+	 * Get the patient list filter by head patient
+	 * @return patient list
+	 * @throws OHException
+	 */
+	
+	public ArrayList<Patient> getPatientsHeadWithHeightAndWeight() throws OHException {
+		
+		 ArrayList<Patient> pPatient = repository.getPatientsHeadWithHeightAndWeight();
+		
+		
+		// Recupera i pazienti arricchiti con Peso e Altezza
+		//StringBuilder queryBld = new StringBuilder(
+		//		"SELECT * FROM PATIENT LEFT JOIN (SELECT PEX_PAT_ID, PEX_HEIGHT AS PAT_HEIGHT, PEX_WEIGHT AS PAT_WEIGHT FROM PATIENTEXAMINATION GROUP BY PEX_PAT_ID ORDER BY PEX_DATE DESC) AS HW ON PAT_ID = HW.PEX_PAT_ID WHERE (PAT_DELETED='N' or PAT_DELETED is null) ");
+
+		/***** filter only head patient *****/
+		//queryBld.append(" AND (PAT_AFFILIATED_PERSON < 1 OR PAT_AFFILIATED_PERSON is null)");
+		//queryBld.append(" AND (PAT_IS_HEAD_AFFILIATION = 1)");
+		/*** *******/
+		/*queryBld.append(" ORDER BY PAT_ID DESC");
+		DbQueryLogger dbQuery = new DbQueryLogger();
+		try {
+			ResultSet resultSet = dbQuery.getDataWithParams(queryBld.toString(), params, true);
+			pPatient = new ArrayList<Patient>(resultSet.getFetchSize());
+			Patient patient;
+			while (resultSet.next()) {
+				patient = this.buildPatient(resultSet);
+				pPatient.add(patient);
+			}
+		} catch (SQLException e) {
+			throw new OHException(MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), e);
+		}
+		// catch (IOException e) {
+		// throw new OHException(
+		// MessageBundle
+		// .getMessage("angal.sql.problemsoccurredwithserverconnection"),
+		// e);
+		// }
+		finally {
+			//dbQuery.releaseConnection();
+		} */
+		return pPatient;
 	}
 }

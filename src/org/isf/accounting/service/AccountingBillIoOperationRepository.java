@@ -1,6 +1,8 @@
 package org.isf.accounting.service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.isf.accounting.model.Bill;
@@ -24,4 +26,13 @@ public interface AccountingBillIoOperationRepository
 
 	@Query(value = "SELECT * FROM BILLS WHERE DATE(BLL_DATE) BETWEEN :dateFrom AND :dateTo", nativeQuery = true)
 	List<Bill> findAllWhereDates(@Param("dateFrom") Timestamp dateFrom, @Param("dateTo") Timestamp dateTo);
+	
+	@Query(value = "SELECT * FROM BILLS  WHERE  (DATE(BLL_DATE) BETWEEN :dateFrom AND :dateTo ) "
+			+" AND ( BLL_ID_PAT= :patientCode)", nativeQuery = true)
+	ArrayList<Bill> findByDateAndPatient(@Param("dateFrom")GregorianCalendar dateFrom, @Param("dateTo") GregorianCalendar dateTo, @Param("patientCode")Integer patientCode);
+	
+	@Query(value = "SELECT * FROM BILLS "
+			+"WHERE BLL_STATUS='O' "
+			+"  AND BLL_ID_PAT=:patID ", nativeQuery = true)
+	ArrayList<Bill> findAllPendindBillsByPatient(@Param("patID")int patID);
 }
