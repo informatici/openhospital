@@ -7,81 +7,56 @@
 package org.isf.stat.gui.report;
 
 import java.io.File;
-import java.sql.Connection;
-import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.isf.generaldata.GeneralData;
-import org.isf.hospital.manager.HospitalBrowsingManager;
-import org.isf.hospital.model.Hospital;
-import org.isf.utils.db.DbSingleConn;
+import org.isf.generaldata.MessageBundle;
+import org.isf.stat.dto.JasperReportResultDto;
+import org.isf.stat.manager.JasperReportsManager;
+import org.isf.utils.excel.ExcelExporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
 
 public class GenericReportPharmaceuticalStock {
+	
+	private final Logger logger = LoggerFactory.getLogger(GenericReportPharmaceuticalStock.class);
 
-	public GenericReportPharmaceuticalStock(Date date, String jasperFileName) {
+	public GenericReportPharmaceuticalStock(Date date, String jasperFileName, String filter, String groupBy, String sortBy, boolean toExcel) {
 		try{
-	        HashMap<String, String> parameters = new HashMap<String, String>();
-			HospitalBrowsingManager hospManager = new HospitalBrowsingManager();
-			Hospital hosp = hospManager.getHospital();
-			
-			if (date == null)
-				date = new Date();
-			Format formatter;
-			formatter = new SimpleDateFormat("E d, MMMM yyyy");
-		    String dateReport = formatter.format(date);
-		    formatter = new SimpleDateFormat("yyyy-MM-dd");
-		    String dateQuery = formatter.format(date);
-		    formatter = new SimpleDateFormat("yyyyMMdd");
-		    String dateFile = formatter.format(date);
-		    
-		    parameters.put("Hospital", hosp.getDescription());
-			parameters.put("Address", hosp.getAddress());
-			parameters.put("City", hosp.getCity());
-			parameters.put("Email", hosp.getEmail());
-			parameters.put("Telephone", hosp.getTelephone());
-			parameters.put("Date", dateReport);
-			parameters.put("todate", dateQuery);
+            JasperReportsManager jasperReportsManager = new JasperReportsManager();
+            File defaultFilename = new File(jasperReportsManager.compileDefaultFilename(jasperFileName));
+            
+            if (toExcel) {
+				JFileChooser fcExcel = ExcelExporter.getJFileChooserExcel(defaultFilename);
 
-			StringBuilder sbFilename = new StringBuilder();
-			sbFilename.append("rpt");
-			sbFilename.append(File.separator);
-			sbFilename.append(jasperFileName);
-			sbFilename.append(".jasper");
-			//System.out.println("Jasper Report Name:"+sbFilename.toString());
-			
-			File jasperFile = new File(sbFilename.toString());
-
-			Connection conn = DbSingleConn.getConnection();
-			
-			JasperReport jasperReport = (JasperReport)JRLoader.loadObject(jasperFile);
-			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conn);
-
-			String PDFfile = "rpt/PDF/"+jasperFileName + "_" + dateFile.toString()+".pdf";
-			JasperExportManager.exportReportToPdfFile(jasperPrint, PDFfile);
-			
-			if (GeneralData.INTERNALVIEWER)
-				JasperViewer.viewReport(jasperPrint,false);
-			else { 
-				try{
-					Runtime rt = Runtime.getRuntime();
-					rt.exec(GeneralData.VIEWER +" "+ PDFfile);
-					
-				} catch(Exception e){
-					e.printStackTrace();
-				}
-			}		
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+                int iRetVal = fcExcel.showSaveDialog(null);
+                if(iRetVal == JFileChooser.APPROVE_OPTION)
+                {
+                    File exportFile = fcExcel.getSelectedFile();
+                    FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fcExcel.getFileFilter();
+					String extension = selectedFilter.getExtensions()[0];
+					if (!exportFile.getName().endsWith(extension)) exportFile = new File(exportFile.getAbsoluteFile() + "." + extension);
+                    jasperReportsManager.getGenericReportPharmaceuticalStockExcel(date, jasperFileName, exportFile.getAbsolutePath(), filter, groupBy, sortBy);
+                }
+            } else {
+                JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportPharmaceuticalStockPdf(date, jasperFileName, filter, groupBy, sortBy);
+                if (GeneralData.INTERNALVIEWER)
+                    JasperViewer.viewReport(jasperReportResultDto.getJasperPrint(),false);
+                else {
+                    Runtime rt = Runtime.getRuntime();
+                    rt.exec(GeneralData.VIEWER +" "+ jasperReportResultDto.getFilename());
+                }
+			}
+        } catch (Exception e) {
+            logger.error("", e);
+            JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.stat.reporterror"), MessageBundle.getMessage("angal.hospital"), JOptionPane.ERROR_MESSAGE);
+        }
 	}
 	
 }

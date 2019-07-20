@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -32,10 +33,13 @@ import java.util.Date;
 import java.util.EventListener;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -160,7 +164,16 @@ public class OpdEdit extends JDialog {
 	private ArrayList<DiseaseType> types;
 	private ArrayList<Disease> diseasesAll;
 	
-
+    /*
+     * Adds: Textfields and buttoms to enable search in diognoses 
+     */
+    private JTextField searchDiseaseTextField;
+    private JTextField searchDiseaseTextField2;
+    private JTextField searchDiseaseTextField3;
+    private JButton searchDiseaseButton;
+    private JButton searchDiseaseButton2;
+    private JButton searchDiseaseButton3;
+        
 	/**
 	 * This method initializes 
 	 * 
@@ -648,27 +661,166 @@ public class OpdEdit extends JDialog {
 	public JPanel getJDiseasePanel() {
 		if (jDiseasePanel == null){
 			jDiseasePanel = new JPanel();
+            jDiseasePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 			jLabel1 = new JLabel();
 			jLabel1.setText(MessageBundle.getMessage("angal.opd.diagnosis"));
 			jDiseasePanel.add(jLabel1);
+                        
+            searchDiseaseTextField = new JTextField();
+            jDiseasePanel.add(searchDiseaseTextField);
+            searchDiseaseTextField.setColumns(10);
+            searchDiseaseTextField.addKeyListener(new KeyListener() {
+                public void keyPressed(KeyEvent e) {
+                    int key = e.getKeyCode();
+                    if (key == KeyEvent.VK_ENTER) {
+                        searchDiseaseButton.doClick();
+                    }
+                }
+                public void keyReleased(KeyEvent e) {}
+                public void keyTyped(KeyEvent e) {}
+            });
+            //...
+            
+            searchDiseaseButton = new JButton("");
+            jDiseasePanel.add(searchDiseaseButton);
+            searchDiseaseButton.setPreferredSize(new Dimension(20, 20));
+            searchDiseaseButton.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
+            searchDiseaseButton.addActionListener(new ActionListener() {
+                ArrayList<Disease> diseasesOPD = null;
+                public void actionPerformed(ActionEvent arg0) {
+                    try {
+                        diseasesOPD = diseaseManager.getDiseaseOpd();
+                    } catch (OHServiceException ex) {
+                        OHServiceExceptionUtil.showMessages(ex);
+                    }
+                    diseaseBox.removeAllItems();
+                    diseaseBox.addItem("");
+                    for(Disease disease: 
+                            getSearchDiagnosisResults(searchDiseaseTextField.getText(), 
+                                    diseasesOPD == null? diseasesAll : diseasesOPD)) {
+                        diseaseBox.addItem(disease);
+                    }
+
+                    if(diseaseBox.getItemCount() >= 2){
+                        diseaseBox.setSelectedIndex(1);
+                    }
+                    diseaseBox.requestFocus();
+                    if(diseaseBox.getItemCount() > 2){
+                        diseaseBox.showPopup();
+                    }
+                }
+            });
+                        
 		}
 		return jDiseasePanel;
 	}
 	public JPanel getJDiseasePanel2() {
-		if (jDiseasePanel2 == null){
+        if (jDiseasePanel2 == null){
 			jDiseasePanel2 = new JPanel();
+	                jDiseasePanel2.setLayout(new FlowLayout(FlowLayout.LEFT));
 			jLabelDis2 = new JLabel();
 			jLabelDis2.setText(MessageBundle.getMessage("angal.opd.diagnosisnfulllist"));
 			jDiseasePanel2.add(jLabelDis2);
-		}
-		return jDiseasePanel2;
+	                
+	                searchDiseaseTextField2 = new JTextField();
+	                        jDiseasePanel2.add(searchDiseaseTextField2);
+	                        searchDiseaseTextField2.setColumns(10);
+	                        searchDiseaseTextField2.addKeyListener(new KeyListener() {
+	                            public void keyPressed(KeyEvent e) {
+	                                int key = e.getKeyCode();
+	                                if (key == KeyEvent.VK_ENTER) {
+	                                    searchDiseaseButton2.doClick();
+	                                }
+	                            }
+	                            public void keyReleased(KeyEvent e) {}
+	                            public void keyTyped(KeyEvent e) {}
+	                        });
+	                        //...
+	                        
+	                        searchDiseaseButton2 = new JButton("");
+	                        jDiseasePanel2.add(searchDiseaseButton2);
+	                        searchDiseaseButton2.setPreferredSize(new Dimension(20, 20));
+	                        searchDiseaseButton2.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
+	                        searchDiseaseButton2.addActionListener(new ActionListener() {
+	                            ArrayList<Disease> diseasesOPD = null;
+	                            public void actionPerformed(ActionEvent arg0) {
+	                                try {
+	                                    diseasesOPD = diseaseManager.getDiseaseOpd();
+	                                } catch (OHServiceException ex) {
+	                                    OHServiceExceptionUtil.showMessages(ex);
+	                                }
+	                                diseaseBox2.removeAllItems();
+	                                diseaseBox2.addItem("");
+	                                for(Disease disease: 
+	                                        getSearchDiagnosisResults(searchDiseaseTextField2.getText(), 
+	                                                diseasesOPD == null? diseasesAll : diseasesOPD)) {
+	                                    diseaseBox2.addItem(disease);
+	                                }
+	
+	                                if(diseaseBox2.getItemCount() >= 2){
+	                                    diseaseBox2.setSelectedIndex(1);
+	                                }
+	                                diseaseBox2.requestFocus();
+	                                if(diseaseBox2.getItemCount() > 2){
+	                                    diseaseBox2.showPopup();
+	                                }
+	                            }
+	                        });
+            }
+        return jDiseasePanel2;
 	}
 	public JPanel getJDiseasePanel3() {
 		if (jDiseasePanel3 == null){
 			jDiseasePanel3 = new JPanel();
+			jDiseasePanel3.setLayout(new FlowLayout(FlowLayout.LEFT));
 			jLabelDis3 = new JLabel();
 			jLabelDis3.setText(MessageBundle.getMessage("angal.opd.diagnosisnfulllist3"));
 			jDiseasePanel3.add(jLabelDis3);
+                        
+            searchDiseaseTextField3 = new JTextField();
+            jDiseasePanel3.add(searchDiseaseTextField3);
+            searchDiseaseTextField3.setColumns(10);
+            searchDiseaseTextField3.addKeyListener(new KeyListener() {
+                public void keyPressed(KeyEvent e) {
+                    int key = e.getKeyCode();
+                    if (key == KeyEvent.VK_ENTER) {
+                        searchDiseaseButton3.doClick();
+                    }
+                }
+                public void keyReleased(KeyEvent e) {}
+                public void keyTyped(KeyEvent e) {}
+            });
+            //...
+            
+            searchDiseaseButton3 = new JButton("");
+            jDiseasePanel3.add(searchDiseaseButton3);
+            searchDiseaseButton3.setPreferredSize(new Dimension(20, 20));
+            searchDiseaseButton3.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
+            searchDiseaseButton3.addActionListener(new ActionListener() {
+                ArrayList<Disease> diseasesOPD = null;
+                public void actionPerformed(ActionEvent arg0) {
+                    try {
+                        diseasesOPD = diseaseManager.getDiseaseOpd();
+                    } catch (OHServiceException ex) {
+                        OHServiceExceptionUtil.showMessages(ex);
+                    }
+                    diseaseBox3.removeAllItems();
+                    diseaseBox3.addItem("");
+                    for(Disease disease: 
+                            getSearchDiagnosisResults(searchDiseaseTextField3.getText(), 
+                                    diseasesOPD == null? diseasesAll : diseasesOPD)) {
+                        diseaseBox3.addItem(disease);
+                    }
+
+                    if(diseaseBox3.getItemCount() >= 2){
+                        diseaseBox3.setSelectedIndex(1);
+                    }
+                    diseaseBox3.requestFocus();
+                    if(diseaseBox3.getItemCount() > 2){
+                        diseaseBox3.showPopup();
+                    }
+                }
+            });
 		}
 		return jDiseasePanel3;
 	}
@@ -676,6 +828,7 @@ public class OpdEdit extends JDialog {
 	public JPanel getJDiseaseTypePanel() {
 		if (jDiseaseTypePanel == null){
 			jDiseaseTypePanel = new JPanel();
+			jDiseaseTypePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 			jLabel = new JLabel();
 			jLabel.setText(MessageBundle.getMessage("angal.opd.diseasetype"));
 			jDiseaseTypePanel.add(jLabel);
@@ -762,6 +915,29 @@ public class OpdEdit extends JDialog {
 	}
 
 	
-	
+    private ArrayList<Disease> getSearchDiagnosisResults(String s, ArrayList<Disease> diseaseList) {
+        String query = s.trim();
+        ArrayList<Disease> results = new ArrayList<Disease>();
+        for (Disease disease : diseaseList) {
+            if(!query.equals("")) {
+		String[] patterns = query.split(" ");
+		String name = disease.getDescription().toLowerCase();
+		boolean patternFound = false;
+                for (String pattern : patterns) {
+                    if (name.contains(pattern.toLowerCase())) {
+                        patternFound = true;
+                        //It is sufficient that only one pattern matches the query
+                        break;
+                    }
+                }
+		if (patternFound){
+                    results.add(disease);
+                }
+            } else {
+                results.add(disease);
+            }
+        }		
+        return results;
+    }    
 	
 }  //  @jve:decl-index=0:visual-constraint="10,10"  

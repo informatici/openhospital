@@ -145,13 +145,13 @@ public class ExamEdit extends JDialog {
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
-		if (jContentPane == null) {
-			jContentPane = new JPanel();
-			jContentPane.setLayout(new BorderLayout());
-			jContentPane.add(getDataPanel(), java.awt.BorderLayout.NORTH);  // Generated
-			jContentPane.add(getButtonPanel(), java.awt.BorderLayout.SOUTH);  // Generated
-		}
-		return jContentPane;
+            if (jContentPane == null) {
+                jContentPane = new JPanel();
+                jContentPane.setLayout(new BorderLayout());
+                jContentPane.add(getDataPanel(), java.awt.BorderLayout.NORTH);  // Generated
+                jContentPane.add(getButtonPanel(), java.awt.BorderLayout.SOUTH);  // Generated
+            }
+            return jContentPane;
 	}
 
 	/**
@@ -202,17 +202,17 @@ public class ExamEdit extends JDialog {
 	 * @return javax.swing.JButton	
 	 */
 	private JButton getCancelButton() {
-		if (cancelButton == null) {
-			cancelButton = new JButton();
-			cancelButton.setText(MessageBundle.getMessage("angal.common.cancel"));  // Generated
-            cancelButton.setMnemonic(KeyEvent.VK_C);
-			cancelButton.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-				dispose();
-				}
-			});
-		}
-		return cancelButton;
+            if (cancelButton == null) {
+                cancelButton = new JButton();
+                cancelButton.setText(MessageBundle.getMessage("angal.common.cancel"));  // Generated
+                cancelButton.setMnemonic(KeyEvent.VK_C);
+                cancelButton.addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        dispose();
+                    }
+                });
+            }
+            return cancelButton;
 	}
 
 	/**
@@ -222,43 +222,43 @@ public class ExamEdit extends JDialog {
 	 */
 	private JButton getOkButton() {
 		if (okButton == null) {
-			okButton = new JButton();
-			okButton.setText(MessageBundle.getMessage("angal.common.ok"));  // Generated
-            okButton.setMnemonic(KeyEvent.VK_O);
-			okButton.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent e) {
-							
-					exam.setExamtype((ExamType)typeComboBox.getSelectedItem());
-					exam.setCode(codeTextField.getText().trim().toUpperCase());
-					exam.setDescription(descriptionTextField.getText().trim());
-					exam.setProcedure(Integer.parseInt(procComboBox.getSelectedItem().toString()));
-					exam.setDefaultResult(defTextField.getText().trim().toUpperCase());
-					
-					ExamBrowsingManager manager = new ExamBrowsingManager();
-					boolean result = false;
-					try {
-						if (insert) {
-							result = manager.newExam(exam);
-							if (result) {
-								fireExamInserted();
-								dispose();
-							}
-						} else {
-							result = manager.updateExam(exam);
-							if (result) {
-								fireExamUpdated();
-								dispose();
-							}
-						}
-						if (!result) {
-                        	JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+                    okButton = new JButton();
+                    okButton.setText(MessageBundle.getMessage("angal.common.ok"));  // Generated
+                    okButton.setMnemonic(KeyEvent.VK_O);
+                    okButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent e) {
+
+                            exam.setExamtype((ExamType)typeComboBox.getSelectedItem());
+                            exam.setCode(codeTextField.getText().trim().toUpperCase());
+                            exam.setDescription(descriptionTextField.getText().trim());
+                            exam.setProcedure(Integer.parseInt(procComboBox.getSelectedItem().toString()));
+                            exam.setDefaultResult(defTextField.getText().trim().toUpperCase());
+
+                            ExamBrowsingManager manager = new ExamBrowsingManager();
+                            boolean result = false;
+                            try {
+                                    if (insert) {
+                                            result = manager.newExam(exam);
+                                            if (result) {
+                                                    fireExamInserted();
+                                                    dispose();
+                                            }
+                                    } else {
+                                            result = manager.updateExam(exam);
+                                            if (result) {
+                                                    fireExamUpdated();
+                                                    dispose();
+                                            }
+                                    }
+                                    if (!result) {
+                                        JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+                                    }
+                                    else  dispose();
+                            } catch (OHServiceException e1) {
+                                    OHServiceExceptionUtil.showMessages(e1);
+                            }
                         }
-                        else  dispose();
-					} catch (OHServiceException e1) {
-						OHServiceExceptionUtil.showMessages(e1);
-					}
-				}
-			});
+                    });
 		}
 		return okButton;
 	}
@@ -291,12 +291,11 @@ public class ExamEdit extends JDialog {
 	
 	private JTextField getCodeTextField() {
 		if (codeTextField == null) {
-			
-				codeTextField = new VoLimitedTextField(10);
-				if (!insert) {
-				codeTextField.setText(exam.getCode());
-				codeTextField.setEnabled(false);
-			}
+                        codeTextField = new VoLimitedTextField(10);
+                    if (!insert) {
+                        codeTextField.setText(exam.getCode());
+                        codeTextField.setEnabled(false);
+                    }
 		}
 		return codeTextField;
 	}

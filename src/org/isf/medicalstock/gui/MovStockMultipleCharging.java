@@ -56,7 +56,6 @@ import org.isf.supplier.model.Supplier;
 import org.isf.utils.db.NormalizeString;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.RequestFocusListener;
 import org.isf.utils.jobjects.TextPrompt;
 import org.isf.utils.jobjects.TextPrompt.Show;
@@ -69,9 +68,9 @@ public class MovStockMultipleCharging extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final String DATE_FORMAT_DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
-	private final String DATE_FORMAT_DD_MM_YYYY = "dd/MM/yyyy"; //$NON-NLS-1$
-	private final int CODE_COLUMN_WIDTH = 100;
+	private static final String DATE_FORMAT_DD_MM_YYYY_HH_MM_SS = "dd/MM/yyyy HH:mm:ss"; //$NON-NLS-1$
+	private static final String DATE_FORMAT_DD_MM_YYYY = "dd/MM/yyyy"; //$NON-NLS-1$
+	private static final int CODE_COLUMN_WIDTH = 100;
 	
 	private JPanel mainPanel;
 	private JTextField jTextFieldReference;
@@ -80,21 +79,20 @@ public class MovStockMultipleCharging extends JDialog {
 	private JDateChooser jDateChooser;
 	private JComboBox jComboBoxSupplier;
 	private JTable jTableMovements;
-	private final String[] columnNames = {
-			MessageBundle.getMessage("angal.common.code"), //$NON-NLS-1$
-			MessageBundle.getMessage("angal.common.description"), //$NON-NLS-1$
-			MessageBundle.getMessage("angal.medicalstock.multiplecharging.qtypacket"), //$NON-NLS-1$
-			MessageBundle.getMessage("angal.medicalstock.multiplecharging.qty"), //$NON-NLS-1$
-			MessageBundle.getMessage("angal.medicalstock.multiplecharging.unitpack"), //$NON-NLS-1$
-			MessageBundle.getMessage("angal.medicalstock.multiplecharging.total"), //$NON-NLS-1$
-			MessageBundle.getMessage("angal.medicalstock.multiplecharging.lotnumberabb"), //$NON-NLS-1$
-			MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdate"), //$NON-NLS-1$
-			MessageBundle.getMessage("angal.medicalstock.multiplecharging.cost"), //$NON-NLS-1$
-			MessageBundle.getMessage("angal.medicalstock.multiplecharging.total") //$NON-NLS-1$
-	};
+	private final String[] columnNames = { 
+		MessageBundle.getMessage("angal.common.codem"), //$NON-NLS-1$
+		MessageBundle.getMessage("angal.common.descriptionm"), //$NON-NLS-1$
+		MessageBundle.getMessage("angal.medicalstock.multiplecharging.qtypacket"), //$NON-NLS-1$
+		MessageBundle.getMessage("angal.medicalstock.multiplecharging.qty"), //$NON-NLS-1$
+		MessageBundle.getMessage("angal.medicalstock.multiplecharging.unitpack"), //$NON-NLS-1$
+		MessageBundle.getMessage("angal.medicalstock.multiplecharging.total"), //$NON-NLS-1$
+		MessageBundle.getMessage("angal.medicalstock.multiplecharging.lotnumberabb"), //$NON-NLS-1$
+		MessageBundle.getMessage("angal.medicalstock.multiplecharging.expiringdate"), //$NON-NLS-1$
+		MessageBundle.getMessage("angal.medicalstock.multiplecharging.cost"), //$NON-NLS-1$
+		MessageBundle.getMessage("angal.medicalstock.multiplecharging.total") }; //$NON-NLS-1$
 	private final Class[] columnClasses = { String.class, String.class, Integer.class, Integer.class, String.class, Integer.class, String.class, String.class, Double.class, Double.class };
-	private boolean[] columnEditable = { false, false, false, true, true, false, !GeneralData.AUTOMATICLOT, false, false, false };
-	private int[] columnWidth = { 50, 100, 70, 50, 70, 50, 50, 100, 50, 80 };
+	private boolean[] columnEditable = { true, false, false, true, true, false, !GeneralData.AUTOMATICLOT, true, true, false };
+	private int[] columnWidth = { 50, 100, 70, 50, 70, 50, 50, 80, 50, 80 };
 	private boolean[] columnResizable = { false, true, false, false, false, false, false, false, false, false };
 	private boolean[] columnVisible = { true, true, true, true, true, true, !GeneralData.AUTOMATICLOT, true, GeneralData.LOTWITHCOST, GeneralData.LOTWITHCOST };
 	private int[] columnAlignment = { SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.CENTER, SwingConstants.CENTER, SwingConstants.CENTER, SwingConstants.CENTER, SwingConstants.CENTER,
@@ -112,7 +110,7 @@ public class MovStockMultipleCharging extends JDialog {
 	private final int PACKETS = 1;
 	private int optionSelected = UNITS;
 	
-	MovStockInsertingManager movManager = Context.getApplicationContext().getBean(MovStockInsertingManager.class);
+	private MovStockInsertingManager movManager = Context.getApplicationContext().getBean(MovStockInsertingManager.class);
 
 	/**
 	 * Launch the application.
@@ -260,18 +258,27 @@ public class MovStockMultipleCharging extends JDialog {
 		JPanel buttonPane = new JPanel();
 		//buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		{
+			JButton deleteButton = new JButton(MessageBundle.getMessage("angal.common.delete"));
+			deleteButton.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					int row = jTableMovements.getSelectedRow();
+					if (row > -1) model.removeItem(row);
+				}
+			});
+			buttonPane.add(deleteButton);
+		}
+		{
 			JButton saveButton = new JButton(MessageBundle.getMessage("angal.common.save")); //$NON-NLS-1$
 			saveButton.addActionListener(new ActionListener() {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					BusyState.setBusyState(MovStockMultipleCharging.this, true);
 					if (!checkAndPrepareMovements()) {
-						BusyState.setBusyState(MovStockMultipleCharging.this, false);
 						return;
 					}
 					if (!save()) {
-						BusyState.setBusyState(MovStockMultipleCharging.this, false);
 						return;
 					}
 					dispose();
@@ -371,7 +378,7 @@ public class MovStockMultipleCharging extends JDialog {
 			
 			jTextFieldSearch.setColumns(10);
 			TextPrompt suggestion = new TextPrompt(
-					MessageBundle.getMessage("angal.medicalstock.multiplecharging.typeacodeoradescriptionandpressenter"), //$NON-NLS-1$ 
+					MessageBundle.getMessage("angal.medicalstock.typeacodeoradescriptionandpressenter"), //$NON-NLS-1$ 
 					jTextFieldSearch, 
 					Show.FOCUS_LOST); 
 			{

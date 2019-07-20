@@ -19,12 +19,13 @@ import java.awt.Cursor;
  * works on a component and its first level children.
  *
  * @author Giuseppe Sacco
+ * @deprecated
  */
 public class BusyState {
 	static public void setBusyState(Container panel, boolean busy) {
-		panel.setCursor(new Cursor( busy ? Cursor.WAIT_CURSOR : Cursor.DEFAULT_CURSOR));
+		/*panel.setCursor(new Cursor( busy ? Cursor.WAIT_CURSOR : Cursor.DEFAULT_CURSOR));
 		for (Component comp : panel.getComponents()) {
 			comp.setEnabled(!busy);
-		}
+		}*/
 	}
 }
