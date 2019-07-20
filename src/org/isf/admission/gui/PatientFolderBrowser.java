@@ -7,17 +7,24 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventListener;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.EventListenerList;
@@ -40,6 +47,8 @@ import org.isf.menu.gui.MainMenu;
 import org.isf.menu.manager.Context;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
+import org.isf.operation.gui.OperationList;
+import org.isf.operation.model.OperationRow;
 import org.isf.patient.gui.PatientInsert;
 import org.isf.patient.gui.PatientInsertExtended;
 import org.isf.patient.gui.PatientSummary;
@@ -51,6 +60,7 @@ import org.isf.stat.gui.report.GenericReportPatient;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
+import org.isf.utils.jobjects.OhDefaultCellRenderer;
 import org.isf.utils.table.TableSorter;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
@@ -173,6 +183,9 @@ public class PatientFolderBrowser extends ModalJFrame implements
 	private ArrayList<Ward> ward;
 	private ArrayList<Opd> opdList;
 	
+        private OperationList opeList;
+	private List<OperationRow> operationList;
+        
 	private String[] pColums = {
 			MessageBundle.getMessage("angal.common.datem"),
 			MessageBundle.getMessage("angal.admission.wards"),
@@ -194,7 +207,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 	private DefaultTableModel labModel;
 	TableSorter sorter;
 	TableSorter sorterLab;
-	
+	OhDefaultCellRenderer cellRenderer = new OhDefaultCellRenderer();
 	//Alex: added sorters, for Java6 only
 //	private TableRowSorter<AdmissionBrowserModel> adm_sorter;
 //	private TableRowSorter<LabBrowserModel> lab_sorter;
@@ -219,7 +232,38 @@ public class PatientFolderBrowser extends ModalJFrame implements
 		//Alex: Java5 compatible
 		admModel = new AdmissionBrowserModel();
 		sorter = new TableSorter(admModel);
-		admTable = new JTable(sorter);      
+		admTable = new JTable(sorter);   
+                
+                /*** apply default oh cellRender *****/
+		admTable.setDefaultRenderer(Object.class, cellRenderer);
+		admTable.setDefaultRenderer(Double.class, cellRenderer);
+		admTable.addMouseMotionListener(new MouseMotionListener() {			
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				// TODO Auto-generated method stub
+				JTable aTable =  (JTable)e.getSource();
+		        int itsRow = aTable.rowAtPoint(e.getPoint());
+		        if(itsRow>=0){
+		        	cellRenderer.setHoveredRow(itsRow);
+		        }
+		        else{
+		        	cellRenderer.setHoveredRow(-1);
+		        }
+		        aTable.repaint();
+			}
+			
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		admTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseExited(MouseEvent e) {
+				cellRenderer.setHoveredRow(-1);
+			}
+		});
 		//sorter.addMouseListenerToHeaderInTable(admTable); no needed
 		sorter.sortByColumn(0, false); //sort by first column, descending
 		
@@ -232,7 +276,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 		
 		scrollPane = new JScrollPane(admTable);
 		scrollPane.setPreferredSize(new Dimension(500,200));
-		tablesPanel.add(scrollPane, BorderLayout.CENTER);
+		tablesPanel.add(scrollPane, BorderLayout.NORTH);
 		
 		//Alex: added sorter, for Java6 only
 //		adm_sorter = new TableRowSorter<AdmissionBrowserModel>((AdmissionBrowserModel) admTable.getModel());
@@ -248,16 +292,53 @@ public class PatientFolderBrowser extends ModalJFrame implements
 		labModel = new LabBrowserModel();
 		sorterLab = new TableSorter(labModel);
 		labTable = new JTable(sorterLab);
+                /*** apply default oh cellRender *****/
+		labTable.setDefaultRenderer(Object.class, cellRenderer);
+		labTable.setDefaultRenderer(Double.class, cellRenderer);
+                labTable.addMouseMotionListener(new MouseMotionListener() {	
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				// TODO Auto-generated method stub
+				JTable aTable =  (JTable)e.getSource();
+		        int itsRow = aTable.rowAtPoint(e.getPoint());
+		        if(itsRow>=0){
+		        	cellRenderer.setHoveredRow(itsRow);
+		        }
+		        else{
+		        	cellRenderer.setHoveredRow(-1);
+		        }
+		        aTable.repaint();
+			}
+			
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+                labTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseExited(MouseEvent e) {
+				cellRenderer.setHoveredRow(-1);
+			}
+		});
 		sorterLab.sortByColumn(0, false);
 		
 		for (int i=0;i<plColums.length; i++){
 			labTable.getColumnModel().getColumn(i).setPreferredWidth(plColumwidth[i]);
 		}
-				
+			
+                JTabbedPane tabbedPaneLabOpe = new JTabbedPane(JTabbedPane.TOP);
+		tablesPanel.add(tabbedPaneLabOpe, BorderLayout.CENTER);
+                
 		scrollPaneLab = new JScrollPane(labTable);
 		scrollPaneLab.setPreferredSize(new Dimension(500,200));
-		tablesPanel.add(scrollPaneLab, BorderLayout.SOUTH);		
-		
+		tabbedPaneLabOpe.addTab(MessageBundle.getMessage("angal.patientfolder.tab.exams"), null, scrollPaneLab, null);
+		scrollPaneLab.setPreferredSize(new Dimension(500, 200));
+                	
+                opeList = new OperationList(patient);
+		tabbedPaneLabOpe.addTab(MessageBundle.getMessage("angal.patientfolder.tab.operations"), null, opeList, null);
+                
 		ListSelectionModel listSelectionModel = admTable.getSelectionModel();
 		listSelectionModel.addListSelectionListener(new ListSelectionListener() {
 //			private Object Object;
