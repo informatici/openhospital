@@ -1,4 +1,5 @@
 #!/bin/bash
+# This script assembles the portable distributions of Open Hospital.
 
 set -e
 
