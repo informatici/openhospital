@@ -5,21 +5,19 @@ This is the *root* project of the [Open Hospital][openhospital] code base.
 
 ## How to create Open Hospital portable
 
-After git-cloning this project, to initialize the submodules, issue:
+These are the steps to create the portable distributions of Open Hospital:
 
-    git submodule init
-    git submodule update
+ 1. Clone this repository and initialize the submodules:
 
-Alternatively, you can git-clone all modules recursively:
+        git clone --recurse-submodules https://github.com/informatici/openhospital
 
-    git clone --recurse-submodules https://github.com/informatici/openhospital
+ 2. Compile the projects *core* and *gui* by issuing:
 
-After that, you can compile the project by issuing:
+        mvn package -DskipTests
 
-    mvn package
+ 3. Assemble the portable distributions for Windows and for Linux:
 
-Finally, executing `build_poh.sh` should create the two zip files
-of the portable distribution for Linux and Windows.
+        ./build_poh.sh
 
 
  [openhospital]: https://www.open-hospital.org/
