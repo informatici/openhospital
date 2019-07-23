@@ -1,4 +1,5 @@
 #!/bin/bash
+# This script assembles the portable distributions of Open Hospital.
 
 set -e
 
@@ -15,11 +16,9 @@ version="$major.$minor.$release"
 
 mkdir -p ./poh-bundle-win/oh
 cp -rf ./gui/target/OpenHospital20/* ./poh-bundle-win/oh
-cp -rf ./gui/poh_files/win32/oh/* ./poh-bundle-win/oh
 
-mkdir -p ./poh-bundle-linux/oh-$version
-cp -rf ./gui/target/OpenHospital20/* ./poh-bundle-linux/oh-$version
-cp -rf ./gui/poh_files/linux/oh/* ./poh-bundle-linux/oh-$version
+mkdir -p ./poh-bundle-linux/oh
+cp -rf ./gui/target/OpenHospital20/* ./poh-bundle-linux/oh
 
 cd ./poh-bundle-win
 zip -r ../poh-win32-$poh_version-$version.zip *
