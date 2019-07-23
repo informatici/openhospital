@@ -4,14 +4,14 @@ jdk:
 branches:
   only:
   - master
-  - /^v.*$/
+  - "/^v.*$/"
 script:
 - mvn package -DskipTests
-- ./build_poh.sh
+- "./build_poh.sh"
 deploy:
   provider: releases
   api_key:
-    secure: fLH93r5JuRdYysWhXPW7i9+5ybIi4YlKG3kAQxFR3rNCAbyO19clHPq0u7Fzh71zzVWzoI9d/kpawXc6NpYcD0h62GoFe5MQC/psgovJ53mf/rISK04CfqYTW9Rr8LRoD2SZ4Qjzsr/WliHiKCLbcxBcg/ktIHQO64KYqj+uxL72DXhtPwJ7EIeKKRDN/KwKKQ5E3LN+rsTwTZ3vf7F+b8f2FuEWvgc1rDTVWbpOFzJ/GrLDs0IqjADxaVNJvGp5QrrzAeh8O1KxfYUZqhwutNBOEBB6LJjUQrLEO0eU8iHk6eCW0Ij34mITEWAJFKxLcccWmCqj1+35n9U4RZs9pujvFy8g137Ki9SdKGtXsD7mMY1Tq3LEOirkc4sz6PBJDNNQtV0aX1Z/72ScKvXsHidZjISUa9ATdUuDH7Uzqn2JU9kWnRrPSCZv/0oMeQ2YjIZTIqWc9Ki8QPPm/Lm872tCu89fjTqlArKM0Y83KoJPiL+7ZT+VzOL67JjZNulYXG8zvgRu0vJG4Hys8QnHJp7D8ZwUhVYpP7cSUAHRv38bpv/K0GJi6YzXjJ3EVkbJs6HDscrqdEZm+CAI6PIyVeSrVnoFqanEg9j5Wt4ixblzhhyPvtAzFgTyU8Bn6MqImCMgELj2KSqdQP5RIDw7qG7jrScULlNgYhxGSyQDqcc=
+    secure: fJ0R+AqJfH0qntvfdTMd6dQ0uqqKhHrC8pSl/exNmxv063u/r0rhZALpRDFqlkPfGVuTTmvVEiiKCbZsV/1ppPCvB8Bh+oDG7hWaZKO+QTRnrKZJgHGY7JCqZVTgh3XDKezW/wOjS1/9Jk3xHRUXqqLBTH3bM/d/GF/rywzZKIz86+QPIeKc1Y1Lf5jO5Wp3VOUHgQN5tPRECk/QUjxICMp0DlGxH+h2IZ0u7cl8dWYevbsQNchJyhnkhlMrpewnZnk7NxDlf0c572icAKTkjdNz4hEnXIxtXm8rRZQKIp4qq5k2fM446nO+D9AY+uXXeJF5xfcx11/cVccxtAWD3GditniXpOhFrNe+E8I+6cnqBDUt1e+czpQ7PKnUJH02dcF9TicFbQuVVgsVSZJ5UZn8seLhTdSS85mwCuGMR/utByaHKHK2XrxCz7+eqlvV0FMdaHLZ+I9/c/mKNFMRH5DxKyMPY4HT121rFHFUBi69I9k+9vNbyGoYoCDXLTZIUn1iE3/4ulCugQrTUY3BcM17D+jtZffafTcGAugcpfpQ/8H19lGnRyZKIR73bPKRVdZ0yNOrZdvF1YgOhAXEAw3iKVLsIAt+lNBrGaNyPrIN8pKyWE2nC0osYUxq9uTW3i7DNg9i+w/NAsVdb84ht2BTzDIdlyJxu4tfHBnL1lY=
   draft: true
   file_glob: true
   file: poh*.*
