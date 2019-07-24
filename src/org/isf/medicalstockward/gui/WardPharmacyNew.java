@@ -489,29 +489,29 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 //					}
 
                                         // innit of the datas needed to store the movement
-					ArrayList<Movement> movements = new ArrayList<Movement>();
-					Lot aLot = new Lot("", newDate, newDate);
-					String refNo = "";
+					//ArrayList<Movement> movements = new ArrayList<Movement>();
+					//Lot aLot = new Lot("", newDate, newDate);
+					//String refNo = "";
                                         
                                         ArrayList<MovementWard> manyMovementWard = new ArrayList<MovementWard>();
-                                        MovStockInsertingManager movManager = new MovStockInsertingManager();
+                                        //MovStockInsertingManager movManager = new MovStockInsertingManager();
 					MovWardBrowserManager wardManager = new MovWardBrowserManager();
                                         boolean result;
                                         try { 
-                                            MovementType typeCharge = new MedicaldsrstockmovTypeBrowserManager().getMovementType("charge");
+                                            //MovementType typeCharge = new MedicaldsrstockmovTypeBrowserManager().getMovementType("charge");
                                             for (int i = 0; i < medItems.size(); i++) {
                                                 manyMovementWard.add(new MovementWard(wardSelected, newDate, isPatient, patientSelected,
                                                                             age, weight, description, medItems.get(i).getMedical(), medItems.get(i).getQty(),
                                                                             MessageBundle.getMessage("angal.medicalstockwardedit.pieces"), wardTo));
-                                                movements.add(new Movement(medItems.get(i).getMedical(), typeCharge, wardTo, aLot,
-                                                                            newDate, medItems.get(i).getQty().intValue(), null, refNo, wardSelected));
+//                                                movements.add(new Movement(medItems.get(i).getMedical(), typeCharge, wardTo, aLot,
+//                                                                            newDate, medItems.get(i).getQty().intValue(), null, refNo, wardSelected));
                                             }
                                             
-                                            if (wardTo != null) {
-                                                result = wardManager.newMovementWard(manyMovementWard, movements);
-                                            } else {
+//                                            if (wardTo != null) {
+//                                                result = wardManager.newMovementWard(manyMovementWard, movements);
+//                                            } else {
                                                 result = wardManager.newMovementWard(manyMovementWard);
-                                            }
+                                            //}
                                         } catch (OHServiceException ex) {
                                             result = false;
                                         } catch (OHException ex) {

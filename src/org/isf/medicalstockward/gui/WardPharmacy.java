@@ -74,6 +74,8 @@ import com.toedter.calendar.JDateChooser;
 import java.awt.event.KeyListener;
 import javax.swing.ImageIcon;
 import javax.swing.JTextField;
+import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
+import org.isf.medstockmovtype.model.MovementType;
 
 public class WardPharmacy extends ModalJFrame implements 
 	WardPharmacyEdit.MovementWardListeners, 
@@ -1003,6 +1005,24 @@ public class WardPharmacy extends ModalJFrame implements
 						}
 					}
 				}
+                                
+                                //List mvnt from other wards 
+                                MovementType typeCharge = new MedicaldsrstockmovTypeBrowserManager().getMovementType("charge");
+                                for(MovementWard wMvnt: wardManager.getWardMovementsToWard(wardSelected.getCode(), dateFrom, dateTo)) {
+                                    if (wMvnt.getWardTo().getDescription() != null) {
+					if (wMvnt.getWardTo().equals(wardSelected)) {
+                                            wardIncomes.add(new Movement(
+                                                    wMvnt.getMedical(), 
+                                                    typeCharge, 
+                                                    wardSelected, 
+                                                    null, 
+                                                    dateTo, 
+                                                    wMvnt.getQuantity().intValue(), 
+                                                    null, 
+                                                    null));
+					}
+                                    }
+                                }
 			} catch (OHServiceException e) {
 				OHServiceExceptionUtil.showMessages(e);
 				e.printStackTrace();
