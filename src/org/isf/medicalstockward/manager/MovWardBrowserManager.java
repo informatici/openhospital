@@ -88,6 +88,18 @@ public class MovWardBrowserManager {
 	public ArrayList<MovementWard> getMovementWard(String wardId, GregorianCalendar dateFrom, GregorianCalendar dateTo) throws OHServiceException {
 		return ioOperations.getWardMovements(wardId, dateFrom, dateTo);
 	}
+        
+        /**
+	 * Gets all the movement ward with the specified criteria.
+	 * @param idwardTo the target ward id.
+	 * @param dateFrom the lower bound for the movement date range.
+	 * @param dateTo the upper bound for the movement date range.
+	 * @return all the retrieved movements.
+	 * @throws OHServiceException 
+	 */
+	public ArrayList<MovementWard> getWardMovementsToWard(String idwardTo, GregorianCalendar dateFrom, GregorianCalendar dateTo) throws OHServiceException {
+		return ioOperations.getWardMovementsToWard(idwardTo, dateFrom, dateTo);
+	}
 
 	/**
 	 * Persists the specified movement.
@@ -131,26 +143,26 @@ public class MovWardBrowserManager {
          * @return
          * @throws OHServiceException 
          */
-        @Transactional(rollbackFor=OHServiceException.class)
-        public boolean newMovementWard(ArrayList<MovementWard> movementWards, ArrayList<Movement> movements) throws OHServiceException {
-		if (movementWards.isEmpty()) {
-			throw new OHServiceException(new OHExceptionMessage(
-					"emptyMovementListError", 
-					MessageBundle.getMessage("angal.medicalstockwardedit.pleaseselectadrug"), 
-					OHSeverityLevel.ERROR));
-		}
-		for (MovementWard mov : movementWards) {
-			List<OHExceptionMessage> errors = validateMovementWard(mov);
-	        if(!errors.isEmpty()){
-	            throw new OHServiceException(errors);
-	        }
-		}
-		boolean result = ioOperations.newMovementWard(movementWards);
-                for(Movement mov: movements) {
-                    result = result && medicalStockIoOperations.prepareChargingMovement(mov);
-                } 
-                return result;
-	}
+//        @Transactional(rollbackFor=OHServiceException.class)
+//        public boolean newMovementWard(ArrayList<MovementWard> movementWards, ArrayList<Movement> movements) throws OHServiceException {
+//		if (movementWards.isEmpty()) {
+//			throw new OHServiceException(new OHExceptionMessage(
+//					"emptyMovementListError", 
+//					MessageBundle.getMessage("angal.medicalstockwardedit.pleaseselectadrug"), 
+//					OHSeverityLevel.ERROR));
+//		}
+//		for (MovementWard mov : movementWards) {
+//			List<OHExceptionMessage> errors = validateMovementWard(mov);
+//	        if(!errors.isEmpty()){
+//	            throw new OHServiceException(errors);
+//	        }
+//		}
+//		boolean result = ioOperations.newMovementWard(movementWards);
+//                for(Movement mov: movements) {
+//                    result = result && medicalStockIoOperations.prepareChargingMovement(mov);
+//                } 
+//                return result;
+//	}
 
         /**
 	 * Updates the specified {@link MovementWard}.
