@@ -1,14 +1,16 @@
 language: java
 jdk:
-- openjdk8
+  - openjdk8
+
+install: skip
 
 before_script:
-- sudo service mysql stop
-- docker-compose -f core/docker-compose.yml up -d
+  - sudo service mysql stop
+  - docker-compose -f core/docker-compose.yml up -d
 
 script:
-- mvn package
-- ./build_poh.sh
+  - mvn package
+  - ./build_poh.sh
 
 deploy:
   provider: releases
