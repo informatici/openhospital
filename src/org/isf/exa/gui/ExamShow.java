@@ -93,6 +93,7 @@ public class ExamShow extends JDialog implements ExamRowListener {
 	private JPanel getDataPanel() {
 		if (dataPanel == null) {
 			dataPanel= new JPanel();
+                        
 			model = new ExamRowBrowsingModel(exam.getCode());
 			table = new JTable(model);
 			table.getColumnModel().getColumn(0).setMinWidth(pColumwidth[0]);
@@ -187,15 +188,12 @@ public class ExamShow extends JDialog implements ExamRowListener {
 	
 class ExamRowBrowsingModel extends DefaultTableModel {
 		
-		/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 		public ExamRowBrowsingModel(String aCode) {
 			ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
 			try {
-				pExamRow = manager.getExamRow(aCode);
+                pExamRow = manager.getExamRowByExamCode(aCode);
 			} catch (OHServiceException e) {
 				pExamRow = null;
 				OHServiceExceptionUtil.showMessages(e);
