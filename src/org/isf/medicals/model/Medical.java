@@ -222,8 +222,7 @@ public class Medical implements Comparable<Medical>, Cloneable {
 	@Override
 	public boolean equals(Object anObject) {
 		if (anObject == null || !(anObject instanceof Medical)) return false;
-		if (getProd_code() == null && ((Medical) anObject).getProd_code() != null) return false;
-		if (getProd_code() != null && ((Medical) anObject).getProd_code() == null) return false;
+		if (getProd_code() == null || ((Medical) anObject).getProd_code() == null) return false;
 		if (getProd_code() != null && ((Medical) anObject).getProd_code() != null && !getProd_code().equals(((Medical) anObject).getProd_code())) return false;
 		return (getCode().equals(((Medical) anObject).getCode())
 						&& getDescription().equalsIgnoreCase(((Medical) anObject).getDescription())
