@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -37,20 +36,14 @@ import javax.swing.table.TableModel;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
-import org.isf.medicalstock.manager.MovStockInsertingManager;
-import org.isf.medicalstock.model.Lot;
-import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstockward.manager.MovWardBrowserManager;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
-import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
-import org.isf.medstockmovtype.model.MovementType;
 import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.ward.model.Ward;
 
 public class WardPharmacyNew extends JDialog implements SelectionListener {
@@ -259,9 +252,6 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 
 				public void actionPerformed(ActionEvent e) {
 					ArrayList<Medical> currentMeds = new ArrayList<Medical>();
-					currentMeds.addAll(medArray);
-					ArrayList<Double> currentQties = new ArrayList<Double>();
-					currentQties.addAll(qtyArray);
 
 					// remove already inserted items
 					for (MedicalWard medItem : medItems) {
@@ -269,12 +259,9 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 						try {
 							med = medItem.getMedical();
 						} catch (OHException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						int index = currentMeds.indexOf(med);
-						currentMeds.remove(index);
-						currentQties.remove(index);
+						currentMeds.add(med);
 					}
 					
 //					Icon icon = new ImageIcon("rsc/icons/medical_dialog.png"); //$NON-NLS-1$
@@ -286,14 +273,22 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 //					                    icon,
 //					                    currentMeds.toArray(),
 //					                    ""); //$NON-NLS-1$
-                                        Medical med = null;
-                                        if (jComboBoxMedicals.getSelectedItem() instanceof Medical) {
-                                                med = (Medical) jComboBoxMedicals.getSelectedItem();
-                                        }
+	                Medical med = null;
+	                if (jComboBoxMedicals.getSelectedItem() instanceof Medical) {
+	                        med = (Medical) jComboBoxMedicals.getSelectedItem();
+	                }
+	               	if(currentMeds.contains(med)) {
+	               		JOptionPane.showMessageDialog(WardPharmacyNew.this, 
+							MessageBundle.getMessage("angal.medicalstockwardedit.productalreadyinserted"), //$NON-NLS-1$
+							MessageBundle.getMessage("angal.medicalstockwardedit.invalidproduct"), //$NON-NLS-1$
+							JOptionPane.ERROR_MESSAGE);
+	               		return;
+	               	}
 					if (med != null) {
+						int index = medArray.indexOf(med);
 						Double startQty = 0.;
 						Double minQty = 0.;
-						Double maxQty = currentQties.get(currentMeds.indexOf(med));
+						Double maxQty = qtyArray.get(index);
 						Double stepQty = 0.5;
 						JSpinner jSpinnerQty = new JSpinner(new SpinnerNumberModel(startQty,minQty,null,stepQty));
 						
@@ -370,6 +365,8 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 			
 			MedicalWard item = new MedicalWard(med, qty);
 			medItems.add(item);
+			medArray.add(med);
+			qtyArray.add(qty);
 			jTableMedicals.updateUI();
 		}
 	}
@@ -377,6 +374,8 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 	private void removeItem(int row) {
 		if (row != -1) {
 			medItems.remove(row);
+			medArray.remove(row);
+			qtyArray.remove(row);
 			jTableMedicals.updateUI();
 		}
 		
