@@ -200,7 +200,13 @@
   			<groupId>org.isf</groupId>
   			<artifactId>OH-core</artifactId>
   			<version>1.9</version>
-  		</dependency>
+  			<exclusions>
+  				<exclusion>
+  					<groupId>org.apache.poi</groupId>
+  					<artifactId>poi</artifactId>
+  				</exclusion>
+  			</exclusions>
+		</dependency>
   		<!-- dependency>
 			<groupId>jcu.sal</groupId>
 			<artifactId>sal_isf</artifactId>
@@ -279,6 +285,12 @@
 	  		<artifactId>spring-context</artifactId>
 	  		<version>${spring.framework.version}</version>
 	  	</dependency>
+	  	<!-- <dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>poi-3.7</version>
+			<scope>provided</scope>
+		</dependency> -->
   </dependencies>
   <repositories>
     	<repository>
