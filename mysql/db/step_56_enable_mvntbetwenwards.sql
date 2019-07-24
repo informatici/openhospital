@@ -1,0 +1,2 @@
+ALTER TABLE medicaldsrstockmovward ADD MMVN_WRD_ID_A_TO varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL;
+-- ALTER TABLE medicaldsrstockmov ADD MMV_WRD_ID_A_TO varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL;
