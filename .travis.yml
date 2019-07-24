@@ -1,13 +1,15 @@
 language: java
 jdk:
 - openjdk8
-branches:
-  only:
-  - master
-  - "/^v.*$/"
+
+before_script:
+- sudo service mysql stop
+- docker-compose -f core/docker-compose.yml up -d
+
 script:
-- mvn package -DskipTests
-- "./build_poh.sh"
+- mvn package
+- ./build_poh.sh
+
 deploy:
   provider: releases
   api_key:
