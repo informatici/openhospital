@@ -70,10 +70,10 @@ public class Movement
 	@Column(name="MMV_REFNO")
 	private String refNo;
         
-        @NotNull
-	@ManyToOne
-	@JoinColumn(name="MMV_WRD_ID_A_TO")	
-	private Ward wardTo;
+//        @NotNull
+//	@ManyToOne
+//	@JoinColumn(name="MMV_WRD_ID_A_TO")	
+//	private Ward wardTo;
 	
 	@Transient
 	private volatile int hashCode = 0;
@@ -90,20 +90,20 @@ public class Movement
 		quantity = aQuantity;
 		supplier = aSupplier;
 		refNo=aRefNo;
-                this.wardTo = null;
+                //this.wardTo = null;
 	}
 
-    public Movement(Medical aMedical,MovementType aType,Ward aWard,Lot aLot,GregorianCalendar aDate,int aQuantity,Supplier aSupplier, String aRefNo, Ward wardTo){
-		medical = aMedical;
-		type = aType;
-		ward = aWard;
-		lot = aLot;
-		date = aDate;
-		quantity = aQuantity;
-		supplier = aSupplier;
-		refNo=aRefNo;
-		this.wardTo = wardTo;
-	}
+//        public Movement(Medical aMedical,MovementType aType,Ward aWard,Lot aLot,GregorianCalendar aDate,int aQuantity,Supplier aSupplier, String aRefNo, Ward wardTo){
+//		medical = aMedical;
+//		type = aType;
+//		ward = aWard;
+//		lot = aLot;
+//		date = aDate;
+//		quantity = aQuantity;
+//		supplier = aSupplier;
+//		refNo=aRefNo;
+//		this.wardTo = wardTo;
+//	}
 	
 	public int getCode(){
 		return code;
@@ -163,13 +163,13 @@ public class Movement
 		this.refNo = refNo;
 	}
 
-    public Ward getWardTo() {
-        return wardTo;
-    }
-
-    public void setWardTo(Ward wardTo) {
-        this.wardTo = wardTo;
-    }
+//    public Ward getWardTo() {
+//        return wardTo;
+//    }
+//
+//    public void setWardTo(Ward wardTo) {
+//        this.wardTo = wardTo;
+//    }
         
 	public String toString(){
 		return MessageBundle.getMessage("angal.medicalstock.medical")+
