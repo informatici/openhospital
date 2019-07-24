@@ -58,6 +58,22 @@ public class MedicalStockWardIoOperations
 		
 		return pMovementWard;
 	}
+        
+        /**
+	 * Get all {@link MovementWard}s with the specified criteria.
+	 * @param idwardTo the target ward id.
+	 * @param dateFrom the lower bound for the movement date range.
+	 * @param dateTo the upper bound for the movement date range.
+	 * @return the retrieved movements.
+	 * @throws OHServiceException if an error occurs retrieving the movements.
+	 */
+	public ArrayList<MovementWard> getWardMovementsToWard(
+			String idwardTo, 
+			GregorianCalendar dateFrom, 
+			GregorianCalendar dateTo) throws OHServiceException 
+	{
+            return movementRepository.findWardMovements(idwardTo, dateFrom, dateTo);
+	}
 
 	/**
 	 * Gets the current quantity for the specified {@link Medical} and specified {@link Ward}.
