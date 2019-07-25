@@ -3,6 +3,5 @@ before_install:
 - sudo service mysql stop
 - docker-compose up -d
 - docker ps
-- docker-compose run --rm --no-deps database mysql --protocol tcp -h localhost -u isf -pisf123 -e "use oh; SELECT * FROM HOSPITAL"
 after_success:
 - docker-compose down
