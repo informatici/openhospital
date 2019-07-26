@@ -133,9 +133,9 @@ public class OperationRowEdit extends JPanel {
 		gbl_panelHeader.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		panelHeader.setLayout(gbl_panelHeader);
 		
-		titleLabel = new JLabel(MessageBundle.getMessage("angal.operationrowlist.add") + "/" + 
-                        MessageBundle.getMessage("angal.operationrowlist.update"));
-		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		titleLabel = new JLabel(MessageBundle.getMessage("angal.operationrowlist.add") + "/" +  //$NON-NLS-1$ //$NON-NLS-2$
+                        MessageBundle.getMessage("angal.operationrowlist.update")); //$NON-NLS-1$
+		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 15)); //$NON-NLS-1$
 		GridBagConstraints gbc_titleLabel = new GridBagConstraints();
 		gbc_titleLabel.anchor = GridBagConstraints.NORTH;
 		gbc_titleLabel.fill = GridBagConstraints.HORIZONTAL;
@@ -164,14 +164,14 @@ public class OperationRowEdit extends JPanel {
 		gbc_separator.gridy = 0;
 		panelBody.add(separator, gbc_separator);
 		
-		lblNewLabel = new JLabel("    ");
+		lblNewLabel = new JLabel("    "); //$NON-NLS-1$
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel.gridx = 1;
 		gbc_lblNewLabel.gridy = 1;
 		panelBody.add(lblNewLabel, gbc_lblNewLabel);
 		
-		lblOperation = new JLabel(MessageBundle.getMessage("angal.operationrowedit.operation"));
+		lblOperation = new JLabel(MessageBundle.getMessage("angal.operationrowedit.operation")); //$NON-NLS-1$
 		lblOperation.setBorder(new EmptyBorder(0, 0, 0, 4));
 		lblOperation.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblOperation = new GridBagConstraints();
@@ -192,7 +192,7 @@ public class OperationRowEdit extends JPanel {
 		DateTextField = new JTextField();
 		
 		
-		lblDate = new JLabel(MessageBundle.getMessage("angal.operationrowlist.date"));
+		lblDate = new JLabel(MessageBundle.getMessage("angal.operationrowlist.date")); //$NON-NLS-1$
 		lblDate.setBorder(new EmptyBorder(0, 0, 0, 4));
 		lblDate.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblDate = new GridBagConstraints();
@@ -214,13 +214,13 @@ public class OperationRowEdit extends JPanel {
 			ResultatcomboBox.addItem(opeRow.getOpResult());
 		}
 		else{
-			ResultatcomboBox.addItem("");
+			ResultatcomboBox.addItem(""); //$NON-NLS-1$
 		}
 		for(int i = 0; i<Resultat.values().length;i++){
 			ResultatcomboBox.addItem(Resultat.values()[i]);
 		}
 		
-		lblResultat = new JLabel(MessageBundle.getMessage("angal.operationrowedit.result"));
+		lblResultat = new JLabel(MessageBundle.getMessage("angal.operationrowedit.result")); //$NON-NLS-1$
 		lblResultat.setBorder(new EmptyBorder(0, 0, 0, 4));
 		lblResultat.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblResultat = new GridBagConstraints();
@@ -236,7 +236,7 @@ public class OperationRowEdit extends JPanel {
 		gbc_ResultatcomboBox.gridy = 4;
 		panelBody.add(ResultatcomboBox, gbc_ResultatcomboBox);
 		
-		lblTransUnite = new JLabel(MessageBundle.getMessage("angal.operationrowedit.unitetrans"));
+		lblTransUnite = new JLabel(MessageBundle.getMessage("angal.operationrowedit.unitetrans")); //$NON-NLS-1$
 		lblTransUnite.setBorder(new EmptyBorder(0, 0, 0, 4));
 		lblTransUnite.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblTransUnite = new GridBagConstraints();
@@ -261,7 +261,7 @@ public class OperationRowEdit extends JPanel {
 			remarkstextArea.setText(opeRow.getRemarks());
 		}
 		
-		JLabel remarksLabel = new JLabel(MessageBundle.getMessage("angal.operationrowedit.remark"));
+		JLabel remarksLabel = new JLabel(MessageBundle.getMessage("angal.operationrowedit.remark")); //$NON-NLS-1$
 		remarksLabel.setVerticalAlignment(SwingConstants.TOP);
 		remarksLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_remarksLabel = new GridBagConstraints();
@@ -286,14 +286,14 @@ public class OperationRowEdit extends JPanel {
 		panelBody.add(separator_1, gbc_separator_1);
 		
 		if(this.opeRow != null){
-			TransTextField.setText(opeRow.getTransUnit()+"");
+			TransTextField.setText(opeRow.getTransUnit()+""); //$NON-NLS-1$
 		}
 		
 		panelButtons = new JPanel();
 		add(panelButtons, BorderLayout.SOUTH);
 		panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 		
-		JButton btnSaveButton = new JButton(MessageBundle.getMessage("angal.operationrowedit.save"));
+		JButton btnSaveButton = new JButton(MessageBundle.getMessage("angal.operationrowedit.save")); //$NON-NLS-1$
 		btnSaveButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
@@ -302,7 +302,7 @@ public class OperationRowEdit extends JPanel {
 		});
 		panelButtons.add(btnSaveButton);
 		
-		btnCancelButton = new JButton(MessageBundle.getMessage("angal.operationrowedit.cancel"));
+		btnCancelButton = new JButton(MessageBundle.getMessage("angal.operationrowedit.cancel")); //$NON-NLS-1$
 		btnCancelButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
@@ -382,13 +382,13 @@ public class OperationRowEdit extends JPanel {
 	private void saveButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableDataMouseClicked
 	      if((this.jCalendarDate.getDate()==null) || (this.OpecomboBox.getSelectedItem()==null)){ 
 	    	  JOptionPane.showMessageDialog(OperationRowEdit.this,
-	    			  MessageBundle.getMessage("angal.operationrowedit.warningdateope"), MessageBundle.getMessage("angal.hospital"),
+	    			  MessageBundle.getMessage("angal.operationrowedit.warningdateope"), MessageBundle.getMessage("angal.hospital"), //$NON-NLS-1$ //$NON-NLS-2$
 						JOptionPane.PLAIN_MESSAGE);
 	      }
 	      else{
 	    	  if(getMyOpd().getDate().after(this.jCalendarDate.getDate())){
 	    		  JOptionPane.showMessageDialog(OperationRowEdit.this,
-		    			  MessageBundle.getMessage("angal.operationrowedit.warningdateafter"), MessageBundle.getMessage("angal.hospital"),
+		    			  MessageBundle.getMessage("angal.operationrowedit.warningdateafter"), MessageBundle.getMessage("angal.hospital"), //$NON-NLS-1$ //$NON-NLS-2$
 							JOptionPane.PLAIN_MESSAGE);
 	    		  return;
 	    	  }
@@ -405,14 +405,14 @@ public class OperationRowEdit extends JPanel {
 	        	boolean result = opeManageRow.updateOperationRow(updateOpeRow);
 	        	if(result){
 	        		JOptionPane.showMessageDialog(OperationRowEdit.this,
-	        				MessageBundle.getMessage("angal.operationrowedit.updatesucces"), MessageBundle.getMessage("angal.hospital"),
+	        				MessageBundle.getMessage("angal.operationrowedit.updatesucces"), MessageBundle.getMessage("angal.hospital"), //$NON-NLS-1$ //$NON-NLS-2$
 							JOptionPane.PLAIN_MESSAGE);
 	        		fireOperationRowUpdated(updateOpeRow);
 	        		this.myParent.dispose();
 	        	}
 	        	else{
 	        		JOptionPane.showMessageDialog(OperationRowEdit.this,
-	        				MessageBundle.getMessage("angal.operationrowedit.updateerror"), MessageBundle.getMessage("angal.hospital"),
+	        				MessageBundle.getMessage("angal.operationrowedit.updateerror"), MessageBundle.getMessage("angal.hospital"), //$NON-NLS-1$ //$NON-NLS-2$
 							JOptionPane.PLAIN_MESSAGE);
 	        	}
 	        }
@@ -431,14 +431,14 @@ public class OperationRowEdit extends JPanel {
 	        	boolean result = opeManageRow.newOperationRow(operationRow);
 	        	if(result){
 	        		JOptionPane.showMessageDialog(OperationRowEdit.this,
-	        				MessageBundle.getMessage("angal.operationrowedit.savesucces"), MessageBundle.getMessage("angal.hospital"),
+	        				MessageBundle.getMessage("angal.operationrowedit.savesucces"), MessageBundle.getMessage("angal.hospital"), //$NON-NLS-1$ //$NON-NLS-2$
 							JOptionPane.PLAIN_MESSAGE);
 	        		fireOperationRowInserted(operationRow);
 	        		this.myParent.dispose();
 	        	}
 	        	else{
 	        		JOptionPane.showMessageDialog(OperationRowEdit.this,
-	        				MessageBundle.getMessage("angal.operationrowedit.saveerror"), MessageBundle.getMessage("angal.hospital"),
+	        				MessageBundle.getMessage("angal.operationrowedit.saveerror"), MessageBundle.getMessage("angal.hospital"), //$NON-NLS-1$ //$NON-NLS-2$
 							JOptionPane.PLAIN_MESSAGE);
 	        	}	
 	        }

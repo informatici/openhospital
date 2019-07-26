@@ -383,20 +383,21 @@ public class AdmissionBrowser extends JDialog {
         
 	private AdmissionBrowserManager admMan = new AdmissionBrowserManager();
         
-    private JTextField searchDiseasetextField;
-    private JTextField searchDiseaseOut1textField;
-    private JTextField searchDiseaseOut2textField;
-    private JTextField searchDiseaseOut3textField;
-    private JButton searchButton;
-    private JButton searchDiseaseOut1Button;
-    private JButton searchDiseaseOut2Button;
-    private JButton searchDiseaseOut3Button;
+	private JTextField searchDiseasetextField;
+	private JTextField searchDiseaseOut1textField;
+	private JTextField searchDiseaseOut2textField;
+	private JTextField searchDiseaseOut3textField;
+	private JButton searchButton;
+	private JButton searchDiseaseOut1Button;
+	private JButton searchDiseaseOut2Button;
+	private JButton searchDiseaseOut3Button;
 
 	/*
 	 * from AdmittedPatientBrowser
 	 */
 	public AdmissionBrowser(JFrame parentFrame, AdmittedPatient admPatient, boolean editing) {
-		super(parentFrame, (editing ? MessageBundle.getMessage("angal.admission.editadmissionrecord") : MessageBundle.getMessage("angal.admission.newadmission")), true);
+		super(parentFrame, (editing ? MessageBundle.getMessage("angal.admission.editadmissionrecord")
+				: MessageBundle.getMessage("angal.admission.newadmission")), true);
 		addAdmissionListener((AdmissionListener) parentFrame);
 		this.editing = editing;
 		patient = admPatient.getPatient();
@@ -404,27 +405,27 @@ public class AdmissionBrowser extends JDialog {
 			enablePregnancy = true;
 		}
 		ps = new PatientSummary(patient);
-                
-                AdmissionBrowserManager abm = new AdmissionBrowserManager();
-		
+
+		AdmissionBrowserManager abm = new AdmissionBrowserManager();
+
 		try {
 			diseaseOutList = dbm.getDiseaseIpdOut();
-                        Admission admiss = abm.getCurrentAdmission(patient);
-                        operationad = new OperationRowAdm(admiss);
-                        addAdmissionListener((AdmissionListener) operationad);
-		}catch(OHServiceException e){
-            OHServiceExceptionUtil.showMessages(e);
+			Admission admiss = abm.getCurrentAdmission(patient);
+			operationad = new OperationRowAdm(admiss);
+			addAdmissionListener((AdmissionListener) operationad);
+		} catch (OHServiceException e) {
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		try {
 			diseaseInList = dbm.getDiseaseIpdIn();
-		}catch(OHServiceException e){
-            OHServiceExceptionUtil.showMessages(e);
+		} catch (OHServiceException e) {
+			OHServiceExceptionUtil.showMessages(e);
 		}
 		if (editing) {
 			try {
 				admission = admMan.getCurrentAdmission(patient);
-			}catch(OHServiceException e){
-                OHServiceExceptionUtil.showMessages(e);
+			} catch (OHServiceException e) {
+				OHServiceExceptionUtil.showMessages(e);
 			}
 			if (admission.getWard().getCode().equalsIgnoreCase("M")) {
 				viewingPregnancy = true;
@@ -433,24 +434,27 @@ public class AdmissionBrowser extends JDialog {
 		} else {
 			admission = new Admission();
 		}
-		
+
 		if (editing) {
 			dateIn = admission.getAdmDate();
 		} else {
-			dateIn = new GregorianCalendar(); //RememberDates.getLastAdmInDateGregorian();
+			dateIn = new GregorianCalendar(); // RememberDates.getLastAdmInDateGregorian();
 		}
-		
+
 		initialize(parentFrame);
-		
-		this.addWindowListener(new WindowAdapter(){
-			
+
+		this.addWindowListener(new WindowAdapter() {
+
 			public void windowClosing(WindowEvent e) {
-				//to free memory
-				if (diseaseInList != null) diseaseInList.clear();
-				if (diseaseOutList != null) diseaseOutList.clear();
-				if (diseaseAllList != null) diseaseAllList.clear();
+				// to free memory
+				if (diseaseInList != null)
+					diseaseInList.clear();
+				if (diseaseOutList != null)
+					diseaseOutList.clear();
+				if (diseaseAllList != null)
+					diseaseAllList.clear();
 				dispose();
-			}			
+			}
 		});
 	}
 
