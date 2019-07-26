@@ -51,6 +51,16 @@ public class OperationBrowserManager {
 		}
 	}
 
+        public Operation getOperationByCode(String code) throws OHServiceException{
+            try {
+			return ioOperations.findByCode(code);
+		}  catch(OHException e){
+                    logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+					e.getMessage(), OHSeverityLevel.ERROR));
+                }
+        }
+        
 	/**
 	 * return the {@link Operation}s whose type matches specified string
 	 * 
