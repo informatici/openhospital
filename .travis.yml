@@ -11,7 +11,7 @@ before_script:
   - docker-compose -f core/docker-compose.yml up -d
 script:
 - mvn package
-- docker-compose run --rm --no-deps database mysqldump --protocol tcp -h localhost -u isf -pisf123 oh > database.sql
+- docker-compose -f core/docker-compose.yml run --rm --no-deps database mysqldump --protocol tcp -h localhost -u isf -pisf123 oh > database.sql
 - "./build_poh.sh"
 deploy:
   provider: releases
