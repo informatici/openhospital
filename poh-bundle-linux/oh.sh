@@ -26,6 +26,12 @@ echo "Starting MySQL... "
 cd $POH_PATH/$MYSQL_DIR/
 ./bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
 
+if [ -f /database.sql ]
+then
+    ./bin/mysql -u root -password=root < database.sql
+    rm database.sql
+fi
+
 echo "Starting Open Hospital... "
 
 CLASSPATH=$POH_PATH/$OH_DIR/bin/OH.jar

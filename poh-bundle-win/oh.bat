@@ -14,6 +14,12 @@ echo f | xcopy my.ori my.cnf /y
 
 start /b /min %OH_PATH%mysql\bin\mysqld --defaults-file=%OH_PATH%mysql\bin\my.cnf --standalone --console
 
+IF EXIST "database.sql" (
+  %OH_PATH%mysql\bin\mysql -u root -password=root oh < database.sql
+  echo "Database initialized"
+  DEL database.sql
+) 
+
 set OH_HOME=%OH_PATH%oh
 
 set OH_BIN=%OH_HOME%\bin

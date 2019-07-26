@@ -14,18 +14,25 @@ minor=$(grep VER_MINOR $version_file | cut -d"=" -f2)
 release=$(grep VER_RELEASE $version_file | cut -d"=" -f2)
 version="$major.$minor.$release"
 
+/usr/bin/mysqldump -u root --password=root oh > "database.sql"
+
 mkdir -p ./poh-bundle-win/oh
 cp -rf ./gui/target/OpenHospital20/* ./poh-bundle-win/oh
+cp *.sql ./poh-bundle-win/oh
 
 mkdir -p ./poh-bundle-linux/oh
 cp -rf ./gui/target/OpenHospital20/* ./poh-bundle-linux/oh
+cp *.sql ./poh-bundle-linux/oh
 
 cd ./poh-bundle-win
-zip -r ../poh-win32-$poh_version-$version.zip *
+zip -r ../poh-win32-$poh_version-core-$version.zip *
 cd ..
 
 cd ./poh-bundle-linux
-tar -cvzf ../poh-linux-$poh_version-$version.tar.gz *
+tar -cvzf ../poh-linux-$poh_version-core-$version.tar.gz *
 cd ..
+
+
+cp -rf ./gui/target/OpenHospital20/* ./poh-bundle-win/oh
 
 echo "Portable distributions of Open Hospital created successfully."
