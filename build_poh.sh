@@ -14,7 +14,7 @@ minor=$(grep VER_MINOR $version_file | cut -d"=" -f2)
 release=$(grep VER_RELEASE $version_file | cut -d"=" -f2)
 version="$major.$minor.$release"
 
-/usr/bin/mysqldump -u root --password=root --protocol tcp oh > "database.sql"
+/usr/bin/mysqldump -h localhost -u root --password=root --protocol tcp oh > "database.sql"
 
 mkdir -p ./poh-bundle-win/oh
 cp -rf ./gui/target/OpenHospital20/* ./poh-bundle-win/oh
