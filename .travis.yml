@@ -10,7 +10,8 @@ before_script:
   - sudo service mysql stop
   - docker-compose -f core/docker-compose.yml up -d
 script:
-- mvn package
+- mvn package -DskipTests
+- docker-compose logs --tail 300 database
 - docker-compose -f core/docker-compose.yml run --rm --no-deps database mysqldump --protocol tcp -h localhost -u isf -pisf123 oh > database.sql
 - "./build_poh.sh"
 deploy:
