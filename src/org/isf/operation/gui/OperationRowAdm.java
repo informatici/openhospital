@@ -329,7 +329,11 @@ public class OperationRowAdm extends JPanel implements AdmissionBrowser.Admissio
 			operationRow.setOpResult(this.comboResult.getSelectedItem().toString());
 		else
 			operationRow.setOpResult("");
-		operationRow.setTransUnit(Float.parseFloat(this.textFieldUnit.getText()));
+		try {
+			operationRow.setTransUnit(Float.parseFloat(this.textFieldUnit.getText()));
+		} catch (NumberFormatException e) {
+			operationRow.setTransUnit(new Float(0));
+		}
     	Operation op = (Operation)this.comboOperation.getSelectedItem();
     	operationRow.setOperation(op);
     	if(myAdmission!=null)
