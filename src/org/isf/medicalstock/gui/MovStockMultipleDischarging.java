@@ -579,7 +579,8 @@ public class MovStockMultipleDischarging extends JDialog {
 	
 				if (ok == JOptionPane.OK_OPTION) {
 					int row = lotTable.getSelectedRow();
-					lot = lots.get(row);
+					if (row != -1) lot = lots.get(row);
+					else return null;
 				}
 				
 				if (!checkQuantityInLot(lot, qty)) lot = null;
