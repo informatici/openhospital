@@ -6,8 +6,12 @@ branches:
   - master
   - "/^v.*$/"
   - "/^issue.*$/"
+before_script:
+  - sudo service mysql stop
+  - docker-compose -f core/docker-compose.yml up -d
 script:
-- mvn package -DskipTests
+- mvn package
+- docker-compose run --rm --no-deps database mysqldump --protocol tcp -h localhost -u isf -pisf123 oh > database.sql
 - "./build_poh.sh"
 deploy:
   provider: releases
