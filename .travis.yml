@@ -5,6 +5,7 @@ branches:
   only:
   - master
   - "/^v.*$/"
+  - "/^issue*$/"
 script:
 - mvn package -DskipTests
 - "./build_poh.sh"
