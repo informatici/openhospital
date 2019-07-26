@@ -9,7 +9,7 @@ import org.isf.utils.exception.OHException;
 
 public class TestLaboratoryRow 
 {	
-    private int code = 0;
+	private Integer code = new Integer(0);
     private String description = "TestDescription";
     
 			
@@ -28,7 +28,7 @@ public class TestLaboratoryRow
 		else
 		{
 			// Create LaboratoryRow with all parameters 
-			laboratoryRow = new LaboratoryRow(code, laboratory, description);
+			laboratoryRow = new LaboratoryRow(laboratory, description);
 		}
 				    	
 		return laboratoryRow;

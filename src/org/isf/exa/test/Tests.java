@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.exa.service.ExamIoOperations;
+import org.isf.exa.service.ExamRowIoOperations;
 import org.isf.exatype.model.ExamType;
 import org.isf.exatype.test.TestExamType;
 import org.isf.exatype.test.TestExamTypeContext;
@@ -37,6 +38,9 @@ public class Tests
 
     @Autowired
     ExamIoOperations examIoOperation;
+    
+    @Autowired
+    ExamRowIoOperations examRowIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -177,7 +181,7 @@ public class Tests
 		{		
 			code = _setupTestExamRow(false);
 			ExamRow foundExamRow = (ExamRow)jpa.find(ExamRow.class, code); 
-			ArrayList<ExamRow> examRows = examIoOperation.getExamRow(null, null);
+			ArrayList<ExamRow> examRows = examRowIoOperation.getExamRow(0, null);
 			
 			assertEquals(foundExamRow.getDescription(), examRows.get(examRows.size()-1).getDescription());
 		} 

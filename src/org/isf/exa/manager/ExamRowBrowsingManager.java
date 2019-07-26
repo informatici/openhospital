@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.exa.model.ExamRow;
-import org.isf.exa.service.ExamIoOperations;
+import org.isf.exa.service.ExamRowIoOperations;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHException;
@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExamRowBrowsingManager {
-	private ExamIoOperations ioOperations = Context.getApplicationContext().getBean(ExamIoOperations.class);
+	private ExamRowIoOperations ioOperations = Context.getApplicationContext().getBean(ExamRowIoOperations.class);
 		
 	private final Logger logger = LoggerFactory.getLogger(ExamRowBrowsingManager.class);
 	
@@ -24,7 +24,7 @@ public class ExamRowBrowsingManager {
 	 * @param examRow
 	 * @return list of {@link OHExceptionMessage}
 	 */
-	protected List<OHExceptionMessage> validateExam(ExamRow examRow) {
+	protected List<OHExceptionMessage> validateExamRow(ExamRow examRow) {
 		String description = examRow.getDescription();
         List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
         if(description.isEmpty()){
@@ -41,29 +41,29 @@ public class ExamRowBrowsingManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<ExamRow> getExamRow() throws OHServiceException {
-		return this.getExamRow(null, null);
+            
+            return this.getExamRow(0, null);
 	}
-	
 	/**
 	 * Returns a list of {@link ExamRow}s that matches passed exam code
 	 * @param aExamCode - the exam code
 	 * @return the list of {@link ExamRow}s. It could be <code>null</code>
 	 * @throws OHServiceException 
 	 */
-	public ArrayList<ExamRow> getExamRow(String aExamCode) throws OHServiceException {
+	public ArrayList<ExamRow> getExamRow(int aExamCode) throws OHServiceException {
 		return this.getExamRow(aExamCode, null);
 	}
 
 	/**
 	 * Returns a list of {@link ExamRow}s that matches passed exam code and description
-	 * @param aExamCode - the exam code
+	 * @param aExamRowCode - the exam code
 	 * @param aDescription - the exam description
 	 * @return the list of {@link ExamRow}s. It could be <code>null</code>
 	 * @throws OHServiceException 
 	 */
-	public ArrayList<ExamRow> getExamRow(String aExamCode, String aDescription) throws OHServiceException {
+	public ArrayList<ExamRow> getExamRow(int aExamRowCode, String aDescription) throws OHServiceException {
 		try {
-			return ioOperations.getExamRow(aExamCode,aDescription);
+			return ioOperations.getExamRow(aExamRowCode, aDescription);
 		} catch (OHException e) {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
@@ -71,7 +71,7 @@ public class ExamRowBrowsingManager {
 			//Any exception
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
-					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+                            MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -83,8 +83,8 @@ public class ExamRowBrowsingManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newExamRow(ExamRow examRow) throws OHServiceException {
-		try {
-			List<OHExceptionMessage> errors = validateExam(examRow);
+	    try {
+			List<OHExceptionMessage> errors = validateExamRow(examRow);
             if(!errors.isEmpty()){
                 throw new OHServiceException(errors);
             }
@@ -117,6 +117,25 @@ public class ExamRowBrowsingManager {
 			logger.error("", e);
 			throw new OHServiceException(e, new OHExceptionMessage(null, 
 					MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
+		}
+	}
+
+    /**
+	 * Returns a list of {@link ExamRow}s that matches passed exam code
+	 * @param aExamCode - the exam code
+	 * @return the list of {@link ExamRow}s. It could be <code>null</code>
+	 * @throws OHServiceException 
+	 */
+	public ArrayList<ExamRow> getExamRowByExamCode(String aExamCode) throws OHServiceException {
+		try {
+			return ioOperations.getExamRowByExamCode(aExamCode);
+		} catch (OHException e) {
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, e.getMessage(), OHSeverityLevel.ERROR));
+		} catch(Exception e){
+			logger.error("", e);
+			throw new OHServiceException(e, new OHExceptionMessage(null, 
+                            MessageBundle.getMessage("angal.sql.problemsoccurredwiththesqlistruction"), OHSeverityLevel.ERROR));
 		}
 	}
 }

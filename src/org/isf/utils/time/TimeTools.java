@@ -55,16 +55,8 @@ public class TimeTools {
 		
 		DateTime dateFrom = new DateTime(from);
 		DateTime dateTo = new DateTime(to);
-		
-		Period period;
-		if (dateTo.isAfter(dateFrom)) {
-			period = new Period(dateFrom, dateTo, PeriodType.days());
-			return period.getDays();
-		} else {
-			period = new Period(dateTo, dateFrom, PeriodType.days());
-			return -period.getDays();
-		}
-			
+		Period period = new Period(dateFrom, dateTo, PeriodType.days());
+		return period.getDays();
 	}
 	
 	/**
@@ -97,14 +89,8 @@ public class TimeTools {
 		
 		DateTime dateFrom = new DateTime(from);
 		DateTime dateTo = new DateTime(to);
-		Period period;
-		if (dateTo.isAfter(dateFrom)) {
-			period = new Period(dateFrom, dateTo, PeriodType.days());
-			return period.getDays();
-		} else {
-			period = new Period(dateTo, dateFrom, PeriodType.days());
-			return -period.getDays();
-		}
+		Period period = new Period(dateFrom, dateTo, PeriodType.days());
+		return period.getDays();
 	}
 	
 	/**

@@ -18,7 +18,7 @@ public class LaboratoryRow
 	@Id 
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name="LABR_ID")
-	private int code;
+	private Integer code;
 
 	@NotNull
 	@ManyToOne
@@ -34,6 +34,11 @@ public class LaboratoryRow
 		
 
 	public LaboratoryRow() { }
+	
+	public LaboratoryRow(Laboratory aLabId, String aDescription){
+		laboratory = aLabId;
+		description = aDescription;
+	}
 	
 	public LaboratoryRow(Integer aCode, Laboratory aLabId, String aDescription){
 		code=aCode;
@@ -71,7 +76,9 @@ public class LaboratoryRow
 		}
 		
 		LaboratoryRow laboratoryRow = (LaboratoryRow)obj;
-		return (this.getCode().equals(laboratoryRow.getCode()) );
+		if (this.getCode() != null && laboratoryRow.getCode() != null)
+			return (this.getCode().equals(laboratoryRow.getCode()) );
+		return (this.getDescription().equals(laboratoryRow.getDescription()));
 	}
 	
 	@Override
@@ -80,7 +87,7 @@ public class LaboratoryRow
 	        final int m = 23;
 	        int c = 133;
 	        
-	        c = m * c + code;
+	        c = m * c + (code == null ? 0 : code.intValue());
 	        
 	        this.hashCode = c;
 	    }
