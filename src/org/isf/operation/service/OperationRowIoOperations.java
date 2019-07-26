@@ -8,6 +8,7 @@ package org.isf.operation.service;
 import java.util.ArrayList;
 import java.util.List;
 import org.isf.admission.model.Admission;
+import org.isf.opd.model.Opd;
 import org.isf.operation.model.OperationRow;
 import org.isf.utils.db.TranslateOHException;
 import org.isf.utils.exception.OHException;
@@ -31,7 +32,11 @@ public class OperationRowIoOperations {
     }
 
     public List<OperationRow> getOperationRowByAdmission(Admission adm) throws OHException{
-        return repository.getOperationRowByAdmission(adm);
+        return repository.findByAdmission(adm);
+    }
+    
+    public ArrayList<OperationRow> getOperationRowByOpd(Opd opd) throws OHException {
+        return repository.findByOpd(opd);
     }
 
     public boolean deleteOperationRow(OperationRow operationRow) throws OHException{
@@ -43,7 +48,7 @@ public class OperationRowIoOperations {
         return false;
     }
 
-    public void updateOperationRow(OperationRow opRow) {
+    public void updateOperationRow(OperationRow opRow) throws OHException {
         OperationRow found = repository.findById(opRow.getId());
         if(found != null) {
             found.setAdmission(opRow.getAdmission());
@@ -59,7 +64,7 @@ public class OperationRowIoOperations {
         }
     }
 
-    public void newOperationRow(OperationRow opRow) {
+    public void newOperationRow(OperationRow opRow) throws OHException {
         repository.save(opRow);
     }
 }
