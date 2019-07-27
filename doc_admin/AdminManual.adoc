@@ -10,7 +10,7 @@
 
 image:extracted-media/media/image1.jpeg[image,width=390,height=298]
 
-# Open Hospital
+== Open Hospital
 
 == 1 .Abstract
 
@@ -180,23 +180,15 @@ image:extracted-media/media/image16.png[image,width=645,height=70]
 
 The server starts to process the scripts and after some instants it will be ready again for new prompt. The DB has been created and we can check it with command:
 
-*mysql> show databases;*
-
-*+--------------------+*
-
-*| Database |*
-
-*+--------------------+*
-
-*| information_schema |*
-
-*| mysql |*
-
-*| oh |*
-
-*| performance_schema |*
-
-*+--------------------+*
+`mysql> show databases;`
+`+--------------------+`
+`| Database           |`
+`+--------------------+`
+`| information_schema |`
+`| mysql              |`
+`| oh                 |`
+`| performance_schema |`
+`+--------------------+`
 
 The script has created the structure of the DB, populated with some default data and created the “isf” user with password “isf123”.
 
