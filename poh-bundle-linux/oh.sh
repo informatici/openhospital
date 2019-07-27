@@ -26,10 +26,12 @@ echo "Starting MySQL... "
 cd $POH_PATH/$MYSQL_DIR/
 ./bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
 
-if [ -f /database.sql ]
+if [ -f $POH_PATH/database.sql ]
 then
-    ./bin/mysql -u root -password=root < database.sql
-    rm database.sql
+	echo "Initializing database..."
+    ./bin/mysql -u root --port=$mysql_port < database.sql
+    echo "Database initialized."
+    rm $POH_PATH/database.sql
 fi
 
 echo "Starting Open Hospital... "
