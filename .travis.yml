@@ -1,17 +1,14 @@
 language: java
 jdk:
 - openjdk8
-branches:
-  only:
-  - master
-  - "/^v.*$/"
-  - "/^issue.*$/"
+
+install: skip
+
 before_script:
   - sudo service mysql stop
   - docker-compose -f core/docker-compose.yml up -d
 script:
 - mvn package -DskipTests
-#- docker-compose -f core/docker-compose.yml logs --tail 300 database
 - mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > database.sql
 - "./build_poh.sh"
 deploy:
@@ -19,6 +16,7 @@ deploy:
   api_key:
     secure: fJ0R+AqJfH0qntvfdTMd6dQ0uqqKhHrC8pSl/exNmxv063u/r0rhZALpRDFqlkPfGVuTTmvVEiiKCbZsV/1ppPCvB8Bh+oDG7hWaZKO+QTRnrKZJgHGY7JCqZVTgh3XDKezW/wOjS1/9Jk3xHRUXqqLBTH3bM/d/GF/rywzZKIz86+QPIeKc1Y1Lf5jO5Wp3VOUHgQN5tPRECk/QUjxICMp0DlGxH+h2IZ0u7cl8dWYevbsQNchJyhnkhlMrpewnZnk7NxDlf0c572icAKTkjdNz4hEnXIxtXm8rRZQKIp4qq5k2fM446nO+D9AY+uXXeJF5xfcx11/cVccxtAWD3GditniXpOhFrNe+E8I+6cnqBDUt1e+czpQ7PKnUJH02dcF9TicFbQuVVgsVSZJ5UZn8seLhTdSS85mwCuGMR/utByaHKHK2XrxCz7+eqlvV0FMdaHLZ+I9/c/mKNFMRH5DxKyMPY4HT121rFHFUBi69I9k+9vNbyGoYoCDXLTZIUn1iE3/4ulCugQrTUY3BcM17D+jtZffafTcGAugcpfpQ/8H19lGnRyZKIR73bPKRVdZ0yNOrZdvF1YgOhAXEAw3iKVLsIAt+lNBrGaNyPrIN8pKyWE2nC0osYUxq9uTW3i7DNg9i+w/NAsVdb84ht2BTzDIdlyJxu4tfHBnL1lY=
   draft: true
+  overwrite: true
   file_glob: true
   file: poh*.*
   skip_cleanup: true
