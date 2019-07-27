@@ -15,18 +15,23 @@ minor=$(grep VER_MINOR $version_file | cut -d"=" -f2)
 release=$(grep VER_RELEASE $version_file | cut -d"=" -f2)
 version="$major.$minor.$release"
 
+# compose windows portable
 mkdir -p ./poh-win32-$poh_win32_version-core-$version/oh
 cp -rf ./poh-bundle-win/* ./poh-win32-$poh_win32_version-core-$version
 cp -rf ./gui/target/OpenHospital20/* ./poh-win32-$poh_win32_version-core-$version/oh
 cp *.sql ./poh-win32-$poh_win32_version-core-$version
 
+# compose linux portable 
 mkdir -p ./poh-linux-$poh_linux_version-core-$version/oh
 cp -rf ./poh-bundle-linux/* ./poh-linux-$poh_linux_version-core-$version
 cp -rf ./gui/target/OpenHospital20/* ./poh-linux-$poh_linux_version-core-$version/oh
 cp *.sql ./poh-linux-$poh_linux_version-core-$version
 
+# packaging
 zip -r poh-win32-$poh_win32_version-core-$version.zip poh-win32-$poh_win32_version-core-$version
-
 tar -cvzf poh-linux-$poh_linux_version-core-$version.tar.gz poh-linux-$poh_linux_version-core-$version
+
+# check
+ls
 
 echo "Portable distributions of Open Hospital created successfully."
