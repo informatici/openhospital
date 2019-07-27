@@ -20,6 +20,7 @@ asciidoctor-pdf ./doc/doc_admin/AdminManual.adoc -o AdminManual.pdf
 
 # assembling windows portable
 mkdir -p ./poh-win32-$poh_win32_version-core-$version/oh
+mkdir -p ./poh-win32-$poh_win32_version-core-$version/doc
 cp -rf ./poh-bundle-win/* ./poh-win32-$poh_win32_version-core-$version
 cp -rf ./gui/target/OpenHospital20/* ./poh-win32-$poh_win32_version-core-$version/oh
 cp *.sql ./poh-win32-$poh_win32_version-core-$version
@@ -27,6 +28,7 @@ cp *.pdf ./poh-win32-$poh_win32_version-core-$version/oh/doc
 
 # assembling linux portable 
 mkdir -p ./poh-linux-$poh_linux_version-core-$version/oh
+mkdir -p ./poh-linux-$poh_linux_version-core-$version/doc
 cp -rf ./poh-bundle-linux/* ./poh-linux-$poh_linux_version-core-$version
 cp -rf ./gui/target/OpenHospital20/* ./poh-linux-$poh_linux_version-core-$version/oh
 cp *.sql ./poh-linux-$poh_linux_version-core-$version
