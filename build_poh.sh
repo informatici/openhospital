@@ -16,16 +16,21 @@ version="$major.$minor.$release"
 
 mkdir -p ./poh-bundle-win/oh
 cp -rf ./gui/target/OpenHospital20/* ./poh-bundle-win/oh
+cp *.sql ./poh-bundle-win
 
 mkdir -p ./poh-bundle-linux/oh
 cp -rf ./gui/target/OpenHospital20/* ./poh-bundle-linux/oh
+cp *.sql ./poh-bundle-linux
 
 cd ./poh-bundle-win
-zip -r ../poh-win32-$poh_version-$version.zip *
+zip -r ../poh-win32-$poh_version-core-$version.zip *
 cd ..
 
 cd ./poh-bundle-linux
-tar -cvzf ../poh-linux-$poh_version-$version.tar.gz *
+tar -cvzf ../poh-linux-$poh_version-core-$version.tar.gz *
 cd ..
+
+
+cp -rf ./gui/target/OpenHospital20/* ./poh-bundle-win/oh
 
 echo "Portable distributions of Open Hospital created successfully."

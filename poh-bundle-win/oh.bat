@@ -6,6 +6,10 @@ cd /d %OH_PATH%\oh\rsc
 echo f | xcopy dicom.properties.ori dicom.properties /y
 %XCHANGE32_PATH%\Xchang32.exe dicom.properties "OH_PATH_SUBSTITUTE" "%OH_PATH%"
 %XCHANGE32_PATH%\Xchang32.exe dicom.properties "^x5c" "^x2f"
+echo f | xcopy database.properties.sample database.properties /y
+%XCHANGE32_PATH%\Xchang32.exe database.properties "3306" "3307"
+%XCHANGE32_PATH%\Xchang32.exe database.properties "^x5c" "^x2f"
+
 
 cd /d %OH_PATH%\mysql\bin
 echo f | xcopy my.ori my.cnf /y
@@ -13,6 +17,15 @@ echo f | xcopy my.ori my.cnf /y
 %XCHANGE32_PATH%\Xchang32.exe my.cnf "^x5c" "^x2f"
 
 start /b /min %OH_PATH%mysql\bin\mysqld --defaults-file=%OH_PATH%mysql\bin\my.cnf --standalone --console
+
+IF EXIST "%OH_PATH%database.sql" (
+  echo Initializing database...
+  %OH_PATH%mysql\bin\mysql -u root --port=3307 oh < "%OH_PATH%database.sql"
+  echo Database initialized.
+  DEL %OH_PATH%database.sql
+) ELSE (
+  echo "missing database.sql or Database already initialized"
+)
 
 set OH_HOME=%OH_PATH%oh
 

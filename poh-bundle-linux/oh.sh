@@ -2,7 +2,7 @@
 
 MYSQL_DIR="mysql-5.0.51a-linux-i686"
 JAVA_DIR="jre1.6.0_45"
-OH_DIR="oh-1.8.4"
+OH_DIR="oh"
 
 where_i_am=$(pwd)
 cd $(dirname $0)
@@ -17,7 +17,7 @@ done
 
 POH_PATH_ESCAPED=$(echo $POH_PATH | sed -e 's/\//\\\//g')
 sed -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$mysql_port/" $POH_PATH/etc/mysql/my.ori > $POH_PATH/etc/mysql/my.cnf
-sed -e "s/MYSQL_PORT/$mysql_port/" $POH_PATH/$OH_DIR/rsc/database.properties.ori > $POH_PATH/$OH_DIR/rsc/database.properties
+sed -e "s/3306/$mysql_port/" $POH_PATH/$OH_DIR/rsc/database.properties.sample > $POH_PATH/$OH_DIR/rsc/database.properties
 sed -e "s/MYSQL_PORT/$mysql_port/" $POH_PATH/$OH_DIR/rsc/log4j.properties.ori > $POH_PATH/$OH_DIR/rsc/log4j.properties
 sed -e "s/MYSQL_PORT/$mysql_port/" $POH_PATH/$OH_DIR/rsc/h8.properties.ori > $POH_PATH/$OH_DIR/rsc/h8.properties
 sed -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" $POH_PATH/$OH_DIR/rsc/dicom.properties.ori > $POH_PATH/$OH_DIR/rsc/dicom.properties
@@ -25,34 +25,30 @@ sed -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" $POH_PATH/$OH_DIR/rsc/dicom.pr
 echo "Starting MySQL... "
 cd $POH_PATH/$MYSQL_DIR/
 ./bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
+if [ $? -ne 0 ]; then
+	echo "Error: Database not started!"
+	exit 1
+fi
+
+if [ -f $POH_PATH/database.sql ]
+then
+    echo "Initializing database... on port $mysql_port"
+    ./bin/mysql --socket=$POH_PATH/var/run/mysqld/mysql.sock -u root --port=$mysql_port oh < $POH_PATH/database.sql
+    if [ $? -ne 0 ]; then
+	echo "Error: Database not initialized!"
+	exit 2
+    fi
+    echo "Database initialized."
+    rm $POH_PATH/database.sql
+fi
 
 echo "Starting Open Hospital... "
 
-CLASSPATH=$POH_PATH/$OH_DIR/bin/OH.jar
+CLASSPATH=$POH_PATH/$OH_DIR/bin/OH-gui.jar
 CLASSPATH=$CLASSPATH:$POH_PATH/$OH_DIR/bundle
 CLASSPATH=$CLASSPATH:$POH_PATH/$OH_DIR/rpt
 
 DIRLIBS=$POH_PATH/$OH_DIR/lib/*.jar
-for i in ${DIRLIBS}
-do
-	CLASSPATH="$i":$CLASSPATH
-done
-DIRLIBS=$POH_PATH/$OH_DIR/lib/dicom/*.jar
-for i in ${DIRLIBS}
-do
-	CLASSPATH="$i":$CLASSPATH
-done
-DIRLIBS=$POH_PATH/$OH_DIR/lib/dicom/dcm4che/*.jar
-for i in ${DIRLIBS}
-do
-	CLASSPATH="$i":$CLASSPATH
-done
-DIRLIBS=$POH_PATH/$OH_DIR/lib/dicom/jai/*.jar
-for i in ${DIRLIBS}
-do
-	CLASSPATH="$i":$CLASSPATH
-done
-DIRLIBS=$POH_PATH/$OH_DIR/lib/h8/*.jar
 for i in ${DIRLIBS}
 do
 	CLASSPATH="$i":$CLASSPATH
