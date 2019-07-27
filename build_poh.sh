@@ -16,21 +16,21 @@ release=$(grep VER_RELEASE $version_file | cut -d"=" -f2)
 version="$major.$minor.$release"
 
 # converting documentation
-asciidoctor-pdf ./doc/doc_admin/AdminManual.adoc
+asciidoctor-pdf ./doc/doc_admin/AdminManual.adoc -o AdminManual.pdf
 
 # assembling windows portable
 mkdir -p ./poh-win32-$poh_win32_version-core-$version/oh
 cp -rf ./poh-bundle-win/* ./poh-win32-$poh_win32_version-core-$version
 cp -rf ./gui/target/OpenHospital20/* ./poh-win32-$poh_win32_version-core-$version/oh
 cp *.sql ./poh-win32-$poh_win32_version-core-$version
-cp ./doc/*.pdf ./poh-win32-$poh_win32_version-core-$version/oh/doc
+cp *.pdf ./poh-win32-$poh_win32_version-core-$version/oh/doc
 
 # assembling linux portable 
 mkdir -p ./poh-linux-$poh_linux_version-core-$version/oh
 cp -rf ./poh-bundle-linux/* ./poh-linux-$poh_linux_version-core-$version
 cp -rf ./gui/target/OpenHospital20/* ./poh-linux-$poh_linux_version-core-$version/oh
 cp *.sql ./poh-linux-$poh_linux_version-core-$version
-cp ./doc/*.pdf ./poh-linux-$poh_linux_version-core-$version/oh/doc
+cp *.pdf ./poh-linux-$poh_linux_version-core-$version/oh/doc
 
 # packaging
 zip -r poh-win32-$poh_win32_version-core-$version.zip poh-win32-$poh_win32_version-core-$version
