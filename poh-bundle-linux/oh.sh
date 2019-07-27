@@ -25,11 +25,19 @@ sed -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" $POH_PATH/$OH_DIR/rsc/dicom.pr
 echo "Starting MySQL... "
 cd $POH_PATH/$MYSQL_DIR/
 ./bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
+if [ $? -ne 0 ]; then
+	echo "Error: Database not started!"
+	exit 1
+fi
 
 if [ -f $POH_PATH/database.sql ]
 then
-	echo "Initializing database..."
-    ./bin/mysql -u root --port=$mysql_port < database.sql
+    echo "Initializing database... on port $mysql_port"
+    ./bin/mysql --socket=$POH_PATH/var/run/mysqld/mysql.sock -u root --port=$mysql_port oh < $POH_PATH/database.sql
+    if [ $? -ne 0 ]; then
+	echo "Error: Database not initialized!"
+	exit 2
+    fi
     echo "Database initialized."
     rm $POH_PATH/database.sql
 fi
