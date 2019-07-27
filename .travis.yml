@@ -12,7 +12,7 @@ before_script:
 script:
 - mvn package -DskipTests
 #- docker-compose -f core/docker-compose.yml logs --tail 300 database
-- mysqldump --protocol tcp -h localhost -u isf -pisf123 oh > database.sql
+- mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > database.sql
 - "./build_poh.sh"
 deploy:
   provider: releases
