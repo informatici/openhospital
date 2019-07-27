@@ -11,8 +11,8 @@ before_script:
   - docker-compose -f core/docker-compose.yml up -d
 script:
 - mvn package -DskipTests
-- docker-compose -f core/docker-compose.yml logs --tail 300 database
-- docker-compose -f core/docker-compose.yml run --rm --no-deps database mysqldump --protocol tcp -h localhost -u isf -pisf123 oh
+#- docker-compose -f core/docker-compose.yml logs --tail 300 database
+- mysqldump --protocol tcp -h localhost -u isf -pisf123 oh
 - "./build_poh.sh"
 deploy:
   provider: releases
