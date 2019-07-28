@@ -17,6 +17,7 @@ version="$major.$minor.$release"
 
 # converting documentation
 asciidoctor-pdf ./doc/doc_admin/AdminManual.adoc -o AdminManual.pdf
+asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o UserManual.pdf
 
 # assembling windows portable
 mkdir -p ./poh-win32-$poh_win32_version-core-$version/oh/doc
