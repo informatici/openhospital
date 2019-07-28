@@ -25,8 +25,8 @@ show_doc () {
 for arg in $requirements
 do
     if ! command_exists $arg; then 
-	show_req $arg
-fi
+        show_req $arg
+    fi
 done
 
 set -e
