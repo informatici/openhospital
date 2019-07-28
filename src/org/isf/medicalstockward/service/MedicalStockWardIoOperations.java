@@ -59,7 +59,7 @@ public class MedicalStockWardIoOperations
 		return pMovementWard;
 	}
         
-        /**
+    /**
 	 * Get all {@link MovementWard}s with the specified criteria.
 	 * @param idwardTo the target ward id.
 	 * @param dateFrom the lower bound for the movement date range.
@@ -114,6 +114,19 @@ public class MedicalStockWardIoOperations
 	
 
 		MovementWard savedMovement = movementRepository.save(movement);
+		if (savedMovement.getWardTo() != null) {
+			// We have to register also the income movement for the destination Ward
+			MovementWard destinationWardIncomeMovement = new MovementWard();
+			destinationWardIncomeMovement.setDate(savedMovement.getDate());
+			destinationWardIncomeMovement.setDescription(savedMovement.getWard().getDescription());
+			destinationWardIncomeMovement.setMedical(savedMovement.getMedical());
+			destinationWardIncomeMovement.setQuantity(-savedMovement.getQuantity());
+			destinationWardIncomeMovement.setUnits(savedMovement.getUnits());
+			destinationWardIncomeMovement.setWard(savedMovement.getWardTo());
+			destinationWardIncomeMovement.setWardFrom(savedMovement.getWard());
+			movementRepository.save(destinationWardIncomeMovement);
+		}
+		
 		if (savedMovement != null) {
 			updateStockWardQuantity(movement);
 		}
@@ -191,29 +204,29 @@ public class MedicalStockWardIoOperations
 		String ward = movement.getWard().getCode();
                 String wardTo = null;
                 if (movement.getWardTo() != null) { 
-                // in case of a mvnt from the ward movement.getWard() to the ward movement.getWardTO()
+                	// in case of a mvnt from the ward movement.getWard() to the ward movement.getWardTO()
                     wardTo = movement.getWardTo().getCode();
                 }
 		Integer medical = movement.getMedical().getCode();		
 		boolean result = true;
 		
 		
-                if(wardTo != null) {
-                    MedicalWard medicalWardTo = repository.findOneWhereCodeAndMedical(wardTo, medical);
-                    if(medicalWardTo != null) {
-                        repository.updateInQuantity(Math.abs(qty), wardTo, medical);
-                    } else {
-                        repository.insertMedicalWard(wardTo, medical, Math.abs(qty));
-                    }
-                    repository.updateOutQuantity(Math.abs(qty), ward, medical);
-                    return result;
-                }
+        if(wardTo != null) {
+            MedicalWard medicalWardTo = repository.findOneWhereCodeAndMedical(wardTo, medical);
+            if(medicalWardTo != null) {
+                repository.updateInQuantity(Math.abs(qty), wardTo, medical);
+            } else {
+                repository.insertMedicalWard(wardTo, medical, Math.abs(qty));
+            }
+            repository.updateOutQuantity(Math.abs(qty), ward, medical);
+            return result;
+        }
                 
 		MedicalWard medicalWard = repository.findOneWhereCodeAndMedical(ward, medical);
-                if (medicalWard == null)
+        if (medicalWard == null)
 		{
-                            repository.insertMedicalWard(ward, medical, -qty);
-                        }
+            repository.insertMedicalWard(ward, medical, -qty);
+        }
 		else
 		{
 			if (qty.doubleValue() < 0)
@@ -222,10 +235,9 @@ public class MedicalStockWardIoOperations
 			}
 			else
 			{
-                                repository.updateOutQuantity(qty, ward, medical);
-                            }				
-			}
-		
+                repository.updateOutQuantity(qty, ward, medical);
+            }				
+		}
 		return result;
 	}
 
