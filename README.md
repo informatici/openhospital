@@ -5,17 +5,16 @@ This is the *root* project of the [Open Hospital][openhospital] code base.
 
 ## How to create Open Hospital portable
 
-These are the steps to create the portable distributions of Open Hospital:
+To create the Open Hospital portable distributions,
+make sure to have installed the following dependencies on a Linux machine: 
+JDK 6+, Maven, asciidoctor-pdf, docker-compose, MySQL client.  
+Then follow these simple steps:
 
  1. Clone this repository and initialize the submodules:
 
         git clone --recurse-submodules https://github.com/informatici/openhospital
 
- 2. Compile the projects *core* and *gui* by issuing:
-
-        mvn package -DskipTests
-
- 3. Assemble the portable distributions for Windows and for Linux:
+ 2. Run the script that compiles the projects *core* and *gui*, and assembles the portable distributions:
 
         ./build_poh.sh
 
