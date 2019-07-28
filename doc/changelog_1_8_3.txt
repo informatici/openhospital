@@ -1,0 +1,176 @@
+commit f3c2f4e8306ac8859f8fe7d6ce5b7c153011884f
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-05
+
+    Workaround for bundles for JUnit scope
+    
+    Catching exception when bundles' keys are not in both resourceBundle and
+    defaultResourceBundle, like in JUnit tests
+
+commit e1b2011ffdb23f7a0216b8419ac7b737cc583b52
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-05
+
+    Upgrade to 1.8.3 - Commit 20.
+    
+    Fixed a bug on edit/update OPD records
+
+commit e2505dc297a4fbb1b170fba222878385ccadcac0
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-05
+
+    Upgrade to 1.8.3 - Commit 19.
+    
+    New version of some accounting reports
+
+commit 8835bdd185b989efb43ca037a31d2d5c741fcc22
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-05
+
+    Upgrade to 1.8.3 - Commit 17. and 18.
+    
+    - Enhanced Ant build in order to build portable versions too (only
+    OpenHospital part)
+    - Fixed Ant script and added missing poh-win32 files
+
+commit 1bd571e6b6a7ddb196923103cc967dcb835e46ac
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-05
+
+    Updated scripts and build from previous versions 1.8.2
+
+commit 2253a96b93579bfd46b14756436b3ae20dc6b0f7
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-05
+
+    Upgrade to 1.8.3 - Commit 16.
+    
+    Updated CHANGELOG for distribution package
+
+commit bb8df81e3e483afa08d800f418776d2943473304
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-05
+
+    Upgrade to 1.8.3 - Commit 15.
+    
+    Added support for high dpi monitor in launchers
+
+commit e0acebbe3ae3419194cac39548795285b90e1b98
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-04
+
+    Upgrade to 1.8.3 - Commit 14.
+    
+    Updated version to 1.8.3
+
+commit 9bcb05049afcced1dcf4f52b14dedb3dc8e38f40
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-04
+
+    Upgrade to 1.8.3 - Commit 13.
+    
+    Improved Clinical Sheet Report in order to show at least the first page
+    with the patient's details
+
+commit 0e1e30e89521a6ecdb6562ce282c0888b55ab18d
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-04
+
+    Fixed several problems in Menu building using Jpa entities
+
+commit 37ec0d84b47120d9ef19094a3b3e9edc4076a568
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-04
+
+    Updated Admin and User manuals
+
+commit 3611bdda32fd3b4a8c63afd601bcc9bc72343a10
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-04
+
+    Upgrade to 1.8.3 - Commit 12.
+    
+    Improved Text Printer with better handle of TXT and PDF multipage bills.
+
+commit 70919a5371bf614068f133cea2dfd67f363e0203
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-04
+
+    Upgrade to 1.8.3 - Commit 10.
+    
+    Fixed a bug that was allowing negative quantities
+
+commit 4ddfe50c36cb5aa37056f8d7e9904266f71444d4
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-04
+
+    Upgrade to 1.8.3 - Commit 9.
+    
+    Fixed a bug in updating user details
+    (thanks to Ziad Al-Zein <zalzein2010@hotmail.com>)
+
+commit 6b843f4583d3c1719bf39e37e8570cba32585ec4
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-04
+
+    Fixed OH001 report
+
+commit fd942a28ebad5f23ce0eb64636862f299658cf97
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-04
+
+    Upgrade to 1.8.3 - Commit 8. and 11.
+    
+    - Improved Excel filesize and styles
+    - Added new libraries in order to go beyond the limit of 65536 rows in
+    Excel 2010.
+    - Kept compatibility with Excel 97-2003 through the file chooser ("save
+    as" dialog)
+
+commit f9dc337730082c0abbb9c94839b62e27efcfcf27
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-03
+
+    Upgrade to 1.8.3 - Commit 7.
+    
+    Fixed patient duplicates check
+
+commit 9bbcbac45d1bca390d75fd7c02e7fa60780efd8b
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-03
+
+    Upgrade to 1.8.3 - Commit 6.
+    
+    Avoid updating age when editing and old Opd, PatientVaccine and
+    Laboratories
+
+commit f86be299af8d277a352549df0ff53ffc07a9ee84
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-03
+
+    Upgrade to 1.8.3 - Commit 4.
+    
+    Fixed patient duplicates check
+
+commit be7c6cacea7fb41bc38b83c21c9ce8906c28167a
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-03
+
+    Upgrade to 1.8.3 - Commit 2.
+    
+    Fixed CRUD and descending sorter for PatientVaccines list
+
+commit 00b76275c45a9c4d5812f465fa2a5c2f903e14cc
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-03
+
+    Upgrade to 1.8.3 - Commit 1.
+    
+    Fixed the Rectify function in Pharmaceutical Stock Ward and fixed some
+    bundles and variable names.
+
+commit f46fa454085499b2371aeef16a3ecbc6a5bac309
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-01
+
+    First Commit concerning new bundles (fixed UTF8)

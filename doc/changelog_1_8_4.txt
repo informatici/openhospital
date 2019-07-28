@@ -1,0 +1,805 @@
+commit e982d6c78fdb3fba1c5abde94ea1905988209644
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-11
+
+    OP-72 #comment Fixed many missing changes from previous commits
+
+commit 3f377957e4bfb65bc8ef0e92bd22eb9a5883b353
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-11
+
+    OP-72 #comment added missing SupplierBrowserManager method
+
+commit d649b3bffd2c98171932ec80d33521f0c1f0a58e
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-11
+
+    OP-72 #comment added missing GeneralData parameter
+
+commit 95c42f934c75b5f2037176f37267f243a43412b7
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-03
+
+    OP-72 #comment Medical Stock Ward: improvement from Wolisso
+    
+    - Added new report for stock at date in PDF and Excel formats
+    - Separated columns for packets/units
+
+commit 65a5ea7886aa979c7ffcb206f8374d309db39b41
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-03
+
+    OP-72 #comment Medical Browser: ported improvments from Wolisso
+    
+    - Added JTextField for search
+    - Added JTable autoRowSorted
+    - Added new Stock Report that reflect the actual filtering, sorting and
+    grouping
+
+commit 8ef0e4ef9b609caf6701c865e8fda110bf4d7d8e
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-01
+
+    Removed from comments the references to the old DbQueryLogger
+
+commit d143b7ac043cd10b6fdc2ab57cd1746b1eb674e8
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-01
+
+    OP-72 #comment Laboratory: added new material "film"
+    
+    and moved the list into manager
+
+commit 3de7f191c5664e71bd7a8a8ee3f47961c94924c8
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-01
+
+    OP-72 #comment SF-FR14: Enabled OPD custom numbering
+
+commit d471d33a4b0711722280eb3222f106dab2e27b20
+Author: niccolo <niccolo.pasquetto@intesys.it>
+Date:   2019-04-28
+
+    OP-65 To externalize the Application Context
+
+commit 935bb11c3fa21f18f28dec63ab0aa52008a46fa8
+Author: niccolo <niccolo.pasquetto@intesys.it>
+Date:   2019-04-24
+
+    OP-65 To externalize the Application Context - default connection values
+
+commit 15a3647de39000fbc971aa06bffe997fe7d17d8c
+Author: niccolo <niccolo.pasquetto@intesys.it>
+Date:   2019-04-24
+
+    OP-65 To externalize the Application Context
+
+commit 6da0034400035bbffdd9300f3835e9c1814ecc47
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-03-08
+
+    Update README.md
+    
+    Removed gsvideo_isf instructions because it will be provided by the "core"
+
+commit 227fd9250f2803ce2b13d0dd84df89fd7ff58812
+Author: Paolo <skypixel@gmail.com>
+Date:   2019-03-03
+
+    add license file
+
+commit 32e53d59b853f7a79abe0340b14fcd795109f27f
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-02-28
+
+    Added files for DB creation
+
+commit d2ed8052067e8d587a56921a6f091a8ecedf0ba7
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-02-28
+
+    Update README.md
+    
+    Fixed Travis badge
+
+commit ade2562bd792e3dfe4161d6453a5abebf949c638
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-02-28
+
+    Update README.md
+    
+    Fixed Travis badge
+
+commit 0265020b42743f61f13520024a2a8e5736e544d7
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-02-28
+
+    Update README.md
+    
+    Added Travis badge
+
+commit 2fcd391158b91ad4df20d5363d6afbfc7ede4d44
+Author: niccolo <niccolo.pasquetto@intesys.it>
+Date:   2019-02-05
+
+    add repo for legacy deps
+
+commit 7f69b603a67cf7f1d73dd64bf8a258ef79401b42
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-28
+
+    Updated README.md with gsvideo_isf library indications
+
+commit 060eff731a63d21567f3899fe50c61b2fe99eb07
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-28
+
+    OP-65 #comment further optimization of the "core" #time 12h 30m
+
+commit 086cbdbae4c7fcc8530fceaba9f12b833f108505
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-25
+
+    OP-65 #comment First versione of openhospital-core #time 18h
+
+commit 4e3912e4418f646ab3a3f3aa05eb686b0a5ab3b8
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-22
+
+    OP-1 #comment Fixed a bug introduced with 2cd2e1e
+
+commit 2791425640da98f868f538e76833ec4643b4fca6
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-22
+
+    OP-47 #comment moved BL from gui to manager
+
+commit 180364269621630d7e2f22d67cd7a9c5ecd54f82
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-22
+
+    OP-47 #comment moved BL from gui to manager #time 10m
+
+commit 2cd2e1e4eb79758ed94670644b9c5a4acaba71ce
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-22
+
+    OP-2 #comment Fixed current user retrieving #time 30m
+
+commit 8e62869ef730900f957bbd3e7435ff05d98e9e14
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-22
+
+    OP-19 #comment Moved BL from gui into manager #time 30m
+
+commit 6bef5f0e01f1eeb805f4b63345fd861bc7716fb4
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-21
+
+    OP-2 #comment Moved applicationContext into manager #time 1h
+
+commit efb93626138d22d751318cfd9e6038362f0148b0
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-21
+
+    OP-74 Fix patient photo read and deletion #time 1h 30m
+
+commit 8ad687dc65a76f83b7b64cbbcfb1f429e1005738
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-21
+
+    OP-50 #comment moved gui to manager 2h
+
+commit e9f6a0e96f2471244eef9518e0cc42e56ab4de40
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-21
+
+    OP-53 #comment moved gui to manager
+
+commit 4d7a4ff77fd5687ba87da818d7bc9f4c0678efd5
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-21
+
+    OP-53 #comment moved gui to manager #time 9h
+
+commit f822f54e1d1e7d4d5d60d930f80b1a5d312ce543
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-18
+
+    Merge pull request #34 from
+    informatici/OP-2-Move-business-logic-code-from-Gui-to-manager-layer
+    
+    Fixed wrong conflict resolution via web-editor
+
+commit 36e66526ccceeb94dbe3ac8baf8f09f16950705d
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-18
+
+    Fixed wrong conflict resolution via web-editor
+
+commit a141e8f39250f6418c2a96b5b9e269d73cf2d203
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-18
+
+    Made JUnit tests less verboses
+
+commit 41a70b0ec399a35d513cff6567bf0dd93a1b7652
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-18
+
+    ApplicationContext: hibernate.show_sql=false by default
+
+commit 0e465ee7d0b200eabe90631d806487f2e386f00a
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-18
+
+    JUnitTest: standard naming on JUnite Test Suite and used in pom.xml
+
+commit f0d8dc3ac58ed8fad8936507d7140755243644b4
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-18
+
+    Update .travis.yml
+    
+    Travis: replaced mysql instance with custom docker-compose
+
+commit 8dff4410371f05f70f5b0ac803d8fdf6ace31a94
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-18
+
+    Removed dead CVS folder
+
+commit 989e33fb0d36c73d7fc993002036742b37f83e23
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-17
+
+    Added Junit test using build-helper-maven-plugin
+
+commit 899a5483a133e4cdec16d8c55372aba0d27ec6d8
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-17
+
+    Upgraded org.springframework:spring-core to version 4.3.18
+
+commit ea57d6ce84b76ef61bdb0f1f1af9bd4ebde84c2e
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-01-17
+
+    Fixed startup script for long paths
+
+commit 201cef0d1cd6ffdf6ca7a5a9af831825aaf3ccc0
+Author: Brian Heumann <brian.heumann@thinkregion.com>
+Date:   2018-11-11
+
+    DpJpaUtils to use Spring configuration; remove persistence.xml
+
+commit 4b3c8ee6926d3009a7211738294597572e297b18
+Author: Brian Heumann <brian.heumann@thinkregion.com>
+Date:   2018-11-11
+
+    Removed scope constraints on spring-test module.
+
+commit 2b48ed80df703a6ed4d3fe36a3d024e5f9025bdc
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-30
+
+    OP-2 #comment moved BL from gui to manager #time 0.5h
+
+commit c12711168e08b7edca63678e5c1fe2372ee4d328
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-29
+
+    OP-43 #comment moved gui to manager #time 0.5h
+
+commit addfcb0959fb3c803dad099c263e7cc35c67e51d
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-29
+
+    OP-42 #comment moved gui to manager #time 0.5h
+
+commit 43a011efd1d6cb31cbb47a1f1e5b67806ea4abf0
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-29
+
+    OP-38 #comment moved gui to manager
+
+commit e87af0294250bb0604b06805df1a0465699f1a63
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-29
+
+    OP-41 #comment moved gui to manager #time 0.5h
+
+commit f4376c47b65e653ac13b93d51c4e0da4632593d9
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-29
+
+    OP-40 #comment moved gui to manager
+
+commit f5ae7e6d4534c580e03f5c12360558e617436fac
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-29
+
+    OP-38 #comment moved gui to manager
+
+commit 73bcd62c65658adba1a08b6138ac6b0fcfeffb16
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-29
+
+    OP-40 #comment moved gui to manager #time 0.5h
+
+commit 706d98a618082ea685ff62b8e0d95b00b352a2fc
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-29
+
+    OP-39 #comment moved gui to manager #time 1.5h
+
+commit 9c08a15b890eeb7c6791629e7c54c529bff6287d
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-38 #comment moved gui to manager #time 0.5h
+
+commit c4c378653f420c23b7b0975ee2216d4c3acf9f2e
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-42 #comment manage OHServiceException #time 0.2h
+
+commit 72316c65ed964364a34f41b152068ec790ebf32d
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-41 #comment manage OHServiceException #time 0.2h
+
+commit 53d21bd83ed0d0fe3a3b446ea700bdd1a8cdbca8
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-40 #comment manage OHServiceException #time 0.2h
+
+commit 55860275575c0bcbd1e97f548a2a14e1f911a2ae
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    manage OHServiceException
+
+commit db5982c59e17e9ae112df18c03f6866afd87c657
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-39 #comment manage OHServiceException #time 0.2h
+
+commit ac5ee0e3c426cd3c6e6b7e79bc21259d43d3d591
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-38 #comment manage OHServiceException #time 0.2h
+
+commit a41e15dd0e1388a6861e0c21e31672cc05b1dd4d
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-35 #comment manage OHServiceException #time 0.2h
+
+commit 24631f69ec5251e4a2717a2b9c362aef9cd14daf
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-19 #comment manage OHServiceException #time 0.2h
+
+commit bbbc9ccca30acbb25ede91a9441156f0837a6e7b
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-24 #comment manage OHServiceException #time 0.2h
+
+commit 5358810db6e7c1e3de98313ab4132a1f00cac715
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-22 #comment manage OHServiceException #time 0.2h
+
+commit 985833c56c860cbde5b7f9dfa020859daef98119
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-21 #comment manage OHServiceException #time 0.2h
+
+commit b5160117b422efc8e64dfc94128d1e9ba6bd1bab
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-20 #comment manage OHServiceException #time 0.2h
+
+commit 5d04e1cbf9631062b59c498867576ad41dd18780
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-18 #comment manage OHServiceException #time 0.2h
+
+commit eca27db804f880fdabfae24c39f68e83168ff249
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-17 #comment manage OHServiceException #time 0.2h
+
+commit 0a0070a5cb106c3cf364c6abfb51f8721e928340
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-16 #comment manage OHServiceException #time 0.5h
+
+commit 074a4dbc8a94ad9626b5f38b1915ee074ea0f256
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-10-26
+
+    OP-15 #comment manage OHServiceException #time 0.5h
+
+commit c85e07a813c3d9599c2df4ce683fa18604ce4831
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-17
+
+    Malnutrition module: fixed some javadoc
+
+commit 2dea25ce555a7febe1fbcf091c5bd4b8b077c1f8
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-17
+
+    OP-28 Move BL code from Gui to Manager layer #time 3h
+    
+    Moved business logic code from Gui to Manager layer in lab
+    module
+
+commit 7249ca4f3b49f2605f22408d5713f1521b0b2dc7
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-17
+
+    OP-36 Move BL code from Gui to Manager layer #time 2h
+    
+    Moved business logic code from Gui to Manager layer in opd
+    module
+
+commit 9a2deaa118968284005e7ed512269a712b1de86e
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-16
+
+    DeliveryType module: fixed one bundle
+
+commit fbe55051bbdf546ff9082724c8aecc9df92a56f0
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-16
+
+    OP-34 Move BL code from Gui to Manager layer #time 1h
+    
+    Moved business logic code from Gui to Manager layer in medtype
+    module
+
+commit 7a8df4a0beeced2e4af82f96fe9947a1bcd11b13
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-15
+
+    OP-2 Move BL code from Gui to Manager layer #time 2h
+    
+    Fixed JUnit test after versioning control transferred to Jpa @Version
+    (commit a76da63)
+
+commit c3aeae11cff1c13769dfa92311f7f96e49e35321
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-15
+
+    log4j config: improved comments
+
+commit be0e6c626de182853f3a43a5ac72ce0afbda7433
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-15
+
+    OP-29 Move BL code from Gui to Manager layer #time 1h
+    
+    Moved business logic code from Gui to Manager layer in malnutrition
+    module
+
+commit 77b26e376bc59cfbd41d466ef964bd5821d4dfc2
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-10
+
+    OP-48 Move BL code from Gui to Manager layer #time 1h
+    
+    Moved business logic code from Gui to Manager layer in vaccine
+    module
+
+commit 9bc481523b9d1900ffca8c45738045e2f3687d17
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-10
+
+    OHServiceException: added more meaningful message
+
+commit 56b20025b8679e50d2f92c72f1d2e5c09e4ec08a
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-10
+
+    OP-33 Move BL code from Gui to Manager layer: cosmetic changes
+
+commit 9a11764923f5ea4a04c9427fee0ef1f09a7e0aa9
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-10
+
+    OP-49 Move BL code from Gui to Manager layer: fixed a typo
+
+commit a230ded8c0b91364dd887dfdd90677ebd6d07f08
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-10
+
+    OP-49 Move BL code from Gui to Manager layer #time 1h
+    
+    Moved business logic code from Gui to Manager layer in vactype
+    module
+
+commit aafd7a9e6f2770d44a7100b51b2a956b3a18f130
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-09
+
+    OP-32 Move BL code from Gui to Manager layer #time 4h
+    
+    Moved business logic code from Gui to Manager layer in medicalstockward
+    module
+
+commit 6f3bacc649159f117501c56067962ea3462f3caf
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-04
+
+    Fixed two bundles
+
+commit 66538e84dd1a7cb558a33b27ab54f05c1c9aa049
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-04
+
+    OP-33 Move BL code from Gui to Manager layer #time 1h
+    
+    Moved business logic code from Gui to Manager layer in medstockmovtype
+    module
+
+commit a76da6396d88ebb4991481b4ab4fa500ff32c588
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-03
+
+    OP-2 Move BL code from Gui to Manager layer #time 2h
+    
+    Records versioning control transferred to Jpa @Version (ex _LOCK field)
+
+commit 30797fad9f4fe2f211257e6a37cfb6f1a1cd5ba1
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-03
+
+    OP-52 Move business logic code from Gui to Manager layer #time 2h
+    
+    Moved business logic code from Gui to Manager layer in ward
+    module
+
+commit 05bfd56aec568937ffd6e0b0726101e3a4b5d5a9
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-03
+
+    Fixed four OHExceptionMessage titles
+
+commit a57d08d505c84ce3f1465ae76af8a76c78cfb40f
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-03
+
+    generalData.properties - revert commit b2f3a90
+    
+    Default LANGUAGE=en
+
+commit 15114c7c7cd63e0067b9c3a7df7094d1e2e2e6da
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-03
+
+    OP-2 Move business logic code from Gui to Manager layer #time 1h
+    
+    - Optimized SQL class bundles
+
+commit f9e9f038d8dba10bd5a82f0de75581a5db7a83c2
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-03
+
+    OP-31 Move BL code from Gui to Manager layer #time 5h
+    
+    Moved business logic code from Gui to Manager layer in medicals
+    module
+
+commit ac65d6381903f9c08ee3ebcf79b6c6fe0f410f2f
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-10-02
+
+    OP-31 Move BL code from Gui to Manager layer #time 12h
+    
+    Moved business logic code from Gui to Manager layer in medicalstock
+    module
+
+commit 80afd2de075f7f9205cf0c4023c6f6cd22c5f1da
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-28
+
+    Fixed JAVA retrieved path in startup script
+
+commit b2f3a902325a2728989ab7750c8656382c44e56f
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-28
+
+    OP-2 Move business logic code from Gui to Manager layer #time 1h
+    
+    - Centralized JFileChooser in ExcelExporter
+    - Moved DateTextField to Utils
+
+commit 1a0c197ec147fe85a351de366204734921f1adab
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-28
+
+    Fixed one variable name
+
+commit a90ad9b55ddff6b0dd5d27a017d23923504cc126
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-27
+
+    OP-47 Move BL code from Gui to Manager layer #time 3h
+    
+    Moved business logic code from Gui to manager layer in therapy module
+
+commit 9a3261d996bba8557f48ebf7f78c66758b2f3ab3
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-27
+
+    Fixed JUnit tests after OP-25
+
+commit 950329b676113e11a35d430607492f8514d77456
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-27
+
+    OP-45 #comment moved gui from lab to manager #time 2h
+    
+    Moved business logic code from Gui to manager layer in sms module
+
+commit 0ce3b8bae6df7d7841a9ceff60df4048eb9702ae
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-27
+
+    OP-45 Moved BL from GUI to Manager #time 1h #done
+    
+    Moved business logic code from Gui to manager layer in stat module
+
+commit ec716c3c18404d4836f6237a0f5e4b96144bb7cb
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-27
+
+    OP-14 #comment moved BL code from gui to manager in accounting module
+    #time 9h #in-review
+
+commit 762fd2041dca1a85aff5962f278c6cb5c92bf11d
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-25
+
+    OP-28 #comment moved gui from lab to manager #time 1h
+    
+    - Fixed gui
+    - Fixed note field saving
+    - Added default result for exams without results (in csv)
+
+commit 7a8ae4018df0c19310a63647e1dc8454b8955fb1
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-25
+
+    Fixed OHServiceException message
+
+commit 84ed554badd947adb2ec24c4f9473294f940c73a
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-25
+
+    OP-28 #comment changed constructor #time 1h
+
+commit ca68205b3bb76891a99cd454af9ad6269e2599a2
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-25
+
+    OP-28 #comment moved gui from lab to manager #time 22h
+    
+    - Fixed JUnit tests
+    - Introduced transactional method in manager for multiple inserts with
+    related JUnit test
+    - Fixed many gui problems
+    - Introduced new Aspect Translator for OHServiceException (only in this
+    module, to evaluate)
+
+commit 2b10bf166f8ec3c7bb26fe7182a4da01496f1559
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-09-18
+
+    Removed TODO mark
+
+commit 2b9a7af4be1828c3493069905f1fc7fa13c3d07e
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-09-18
+
+    OP-15 #comment moved gui to manager #time 8h
+
+commit 1ca16d28e8aeefb1f6bd6e64780d67a669fcc705
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-17
+
+    Laboratory report - fixed labels alignment
+
+commit 3541b6be7fea4cb029c510cc38f88a4f2e90430b
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-17
+
+    Module 'lab': fixed date comparison in queries for gui and prints
+
+commit cf1e615fe7097989b1151fe411476c91c8412a70
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-17
+
+    Module 'admission' fixed and clarified some queries
+
+commit e8b51514708232fe82f8efba24aa354edab85dd2
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-09-14
+
+    OP-17 #comment moved gui to manager #time 1h
+
+commit a1573c57e06150317c23e0c36073c9efd8641858
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-09-14
+
+    OP-18 #comment moved gui to manager + fix changes not saved #time 1h
+
+commit d08978f3f714fcad3bf05c47839cd72180d137a7
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-09-14
+
+    OP-20 #comment moved gui to manager #time 1h
+
+commit 460c1669a3ba3627bdba9e4290fa55cf7c721bd3
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-09-14
+
+    OP-21 #comment moved gui to manager #time 2h
+
+commit 526ae212659d0c513df37d7e05e22dcd474d1d1d
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-09-13
+
+    OP-22 #comment moved gui to manager #time 1h
+
+commit 6f0e656fde29a1e469268ba5968c1374beeae3f8
+Author: alekseykashytsa <aleksey.kashytsa@intesys.it>
+Date:   2018-09-13
+
+    OP-24 #comment moved gui to manager #time 2h
+
+commit d28422976ce93b775ae3c2ced24dc98a599591d1
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-13
+
+    OP-26 #comment moved gui to manager #time 1h #in-review
+
+commit db8a72f86f1cfc1367cf77965b946b900a32d873
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-12
+
+    Fixed one typo in methods' name
+
+commit 45d4c72d839f161398692291a5291307c97ea524
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-12
+
+    Fixed one typo and strings on their own lines
+
+commit 57b24c27adbeaed419748a9d9e4cb80e2cc2fc44
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-12
+
+    OP-25 #comment moved gui to manager #time 3h #in-review
+
+commit a106902ababfa29053bd846844c2cca9771e722f
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2018-09-12
+
+    OP-23 #comment moved gui to manager #time 2h #in-review
