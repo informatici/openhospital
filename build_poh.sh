@@ -25,8 +25,8 @@ show_doc () {
 for arg in $requirements
 do
     if ! command_exists $arg; then 
-	show_req $arg
-fi
+		show_req $arg
+	fi
 done
 
 set -e
@@ -42,6 +42,13 @@ major=$(grep VER_MAJOR $version_file | cut -d"=" -f2)
 minor=$(grep VER_MINOR $version_file | cut -d"=" -f2)
 release=$(grep VER_RELEASE $version_file | cut -d"=" -f2)
 version="$major.$minor.$release"
+
+# compile core and gui projects
+docker-compose -f core/docker-compose.yml up -d
+mvn package
+
+# dump the database to a SQL script
+mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > database.sql
 
 # convert documentation
 if command_exists asciidoctor-pdf; then
