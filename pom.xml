@@ -103,7 +103,7 @@
 							</resources>
 						</configuration>
 					</execution>
-					<execution>
+					<!-- <execution>
 						<id>copy-doc</id>
 						<phase>validate</phase>
 						<goals>
@@ -117,7 +117,7 @@
 								</resource>
 							</resources>
 						</configuration>
-					</execution>
+					</execution> -->
 					<execution>
 						<id>copy-report</id>
 						<phase>validate</phase>
