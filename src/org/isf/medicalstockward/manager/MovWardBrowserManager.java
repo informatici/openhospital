@@ -89,7 +89,7 @@ public class MovWardBrowserManager {
 		return ioOperations.getWardMovements(wardId, dateFrom, dateTo);
 	}
         
-        /**
+     /**
 	 * Gets all the movement ward with the specified criteria.
 	 * @param idwardTo the target ward id.
 	 * @param dateFrom the lower bound for the movement date range.
@@ -100,7 +100,7 @@ public class MovWardBrowserManager {
 	public ArrayList<MovementWard> getWardMovementsToWard(String idwardTo, GregorianCalendar dateFrom, GregorianCalendar dateTo) throws OHServiceException {
 		return ioOperations.getWardMovementsToWard(idwardTo, dateFrom, dateTo);
 	}
-
+	
 	/**
 	 * Persists the specified movement.
 	 * @param newMovement the movement to persist.
