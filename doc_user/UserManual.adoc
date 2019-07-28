@@ -10,7 +10,7 @@ image:extracted-media/media/image1.jpeg[image,width=390,height=298]
 
 User’s Guide
 
-# OpenHospital
+== OpenHospital
 
 == 1 Abstract
 
