@@ -435,7 +435,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 							weight = patientSelected.getWeight();
 						}
 					} 
-                                        else if (jRadioWard.isSelected()) {
+                    else if (jRadioWard.isSelected()) {
 						Object selectedObj = wardBox.getSelectedItem();
 						if(selectedObj instanceof Ward){
 							wardTo = (Ward) selectedObj;
@@ -445,10 +445,10 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 									MessageBundle.getMessage("angal.medicalstock.multipledischarging.pleaseselectaward"));
 							return;
 						}
-                                                description = wardTo.getDescription();
+                        description = wardTo.getDescription();
 						isPatient = false;
 					} 
-                                        else {
+                    else {
 						isPatient = false;
 						description = jTextFieldUse.getText();
 					}
@@ -487,42 +487,37 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 //						OHServiceExceptionUtil.showMessages(e1);
 //					}
 
-                                        // innit of the datas needed to store the movement
+                    // innit of the datas needed to store the movement
 					//ArrayList<Movement> movements = new ArrayList<Movement>();
 					//Lot aLot = new Lot("", newDate, newDate);
 					//String refNo = "";
                                         
-                                        ArrayList<MovementWard> manyMovementWard = new ArrayList<MovementWard>();
-                                        //MovStockInsertingManager movManager = new MovStockInsertingManager();
+                    ArrayList<MovementWard> manyMovementWard = new ArrayList<MovementWard>();
+                    //MovStockInsertingManager movManager = new MovStockInsertingManager();
 					MovWardBrowserManager wardManager = new MovWardBrowserManager();
-                                        boolean result;
-                                        try { 
-                                            //MovementType typeCharge = new MedicaldsrstockmovTypeBrowserManager().getMovementType("charge");
-                                            for (int i = 0; i < medItems.size(); i++) {
-                                                manyMovementWard.add(new MovementWard(wardSelected, newDate, isPatient, patientSelected,
-                                                                            age, weight, description, medItems.get(i).getMedical(), medItems.get(i).getQty(),
-                                                                            MessageBundle.getMessage("angal.medicalstockwardedit.pieces"), wardTo));
-//                                                movements.add(new Movement(medItems.get(i).getMedical(), typeCharge, wardTo, aLot,
-//                                                                            newDate, medItems.get(i).getQty().intValue(), null, refNo, wardSelected));
-                                            }
-                                            
-//                                            if (wardTo != null) {
-//                                                result = wardManager.newMovementWard(manyMovementWard, movements);
-//                                            } else {
-                                                result = wardManager.newMovementWard(manyMovementWard);
-                                            //}
-                                        } catch (OHServiceException ex) {
-                                            result = false;
-                                        } catch (OHException ex) {
-                                            result = false;
-                                        }
+                    boolean result;
+					try {
+						// MovementType typeCharge = new
+						// MedicaldsrstockmovTypeBrowserManager().getMovementType("charge");
+						for (int i = 0; i < medItems.size(); i++) {
+							manyMovementWard.add(new MovementWard(wardSelected, newDate, isPatient, patientSelected,
+									age, weight, description, medItems.get(i).getMedical(), medItems.get(i).getQty(),
+									MessageBundle.getMessage("angal.medicalstockwardedit.pieces"), wardTo, null));
+						}
+
+						result = wardManager.newMovementWard(manyMovementWard);
+					} catch (OHServiceException ex) {
+                        result = false;
+                    } catch (OHException ex) {
+                        result = false;
+                    }
 					if (result) {
-                                            fireMovementWardInserted();
-                                            dispose();
+                        fireMovementWardInserted();
+                        dispose();
 					} else {
-                                            JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
-                                        
-                                        }	
+                        JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+                    
+                    }	
 				}
 			});
 		}

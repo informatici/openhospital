@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -42,6 +43,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -55,6 +57,7 @@ import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstockward.manager.MovWardBrowserManager;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
+import org.isf.medstockmovtype.model.MovementType;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
@@ -76,11 +79,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.toedter.calendar.JDateChooser;
-import java.awt.event.KeyListener;
-import javax.swing.ImageIcon;
-import javax.swing.JTextField;
-import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
-import org.isf.medstockmovtype.model.MovementType;
 
 public class WardPharmacy extends ModalJFrame implements 
 	WardPharmacyEdit.MovementWardListeners, 
@@ -153,12 +151,13 @@ public class WardPharmacy extends ModalJFrame implements
 	private boolean added = false;
 	private String[] columsIncomes = { 
 			MessageBundle.getMessage("angal.common.date"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.common.from"), //$NON-NLS-1$
 			MessageBundle.getMessage("angal.medicalstockward.medical"), //$NON-NLS-1$
 			MessageBundle.getMessage("angal.common.quantity"), //$NON-NLS-1$
 			MessageBundle.getMessage("angal.medicalstockward.units") //$NON-NLS-1$
 	};
-	private boolean[] columsResizableIncomes = { false, true, false, false };
-	private int[] columWidthIncomes = { 80, 320, 150, 50 };
+	private boolean[] columsResizableIncomes = { false, false, true, false, false };
+	private int[] columWidthIncomes = { 80, 100, 220, 150, 50 };
 	private String[] columsOutcomes = { 
 			MessageBundle.getMessage("angal.common.date"),  //$NON-NLS-1$
 			MessageBundle.getMessage("angal.medicalstockward.purpose"), //$NON-NLS-1$
@@ -1071,23 +1070,23 @@ public class WardPharmacy extends ModalJFrame implements
 					}
 				}
                                 
-                                //List mvnt from other wards 
-                                MovementType typeCharge = new MedicaldsrstockmovTypeBrowserManager().getMovementType("charge");
-                                for(MovementWard wMvnt: wardManager.getWardMovementsToWard(wardSelected.getCode(), dateFrom, dateTo)) {
-                                    if (wMvnt.getWardTo().getDescription() != null) {
-					if (wMvnt.getWardTo().equals(wardSelected)) {
-                                            wardIncomes.add(new Movement(
-                                                    wMvnt.getMedical(), 
-                                                    typeCharge, 
-                                                    wardSelected, 
-                                                    null, 
-                                                    dateTo, 
-                                                    wMvnt.getQuantity().intValue(), 
-                                                    null, 
-                                                    null));
-					}
-                                    }
-                                }
+                //List movements from other wards 
+                for(MovementWard wMvnt: wardManager.getWardMovementsToWard(wardSelected.getCode(), dateFrom, dateTo)) {
+                    if (wMvnt.getWardTo().getDescription() != null) {
+						if (wMvnt.getWardTo().equals(wardSelected)) {
+							MovementType typeCharge = new MovementType("fromward", wMvnt.getWard().getDescription(), "*");
+                            wardIncomes.add(new Movement(
+                                    wMvnt.getMedical(), 
+                                    typeCharge, 
+                                    wardSelected, 
+                                    null, 
+                                    wMvnt.getDate(), 
+                                    wMvnt.getQuantity().intValue(), 
+                                    null, 
+                                    null));
+						}
+                    }
+                }
 			} catch (OHServiceException e) {
 				OHServiceExceptionUtil.showMessages(e);
 				e.printStackTrace();
@@ -1111,12 +1110,17 @@ public class WardPharmacy extends ModalJFrame implements
 				return formatDate(mov.getDate());
 			}
 			if (c == 1) {
-				return mov.getMedical();
+				if (mov.getType().getCode().equals("fromward"))
+					return mov.getType().getDescription();
+				else return mov.getRefNo();
 			}
 			if (c == 2) {
-				return pieces;
+				return mov.getMedical();
 			}
 			if (c == 3) {
+				return pieces;
+			}
+			if (c == 4) {
 				int packets = 0;
 				if (pcsPerPck != 0) {
 					packets = pieces / pcsPerPck;
@@ -1296,7 +1300,7 @@ public class WardPharmacy extends ModalJFrame implements
 
 		public DrugsModel() {
 			try {
-                System.out.println("WardPharmacy: Looking for drugs ");
+                //System.out.println("WardPharmacy: Looking for drugs ");
 				wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
 			} catch (OHServiceException e) {
 				OHServiceExceptionUtil.showMessages(e);

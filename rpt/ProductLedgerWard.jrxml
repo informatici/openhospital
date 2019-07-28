@@ -74,8 +74,8 @@
         "Opening" AS MOV_TYPE,
 		"Opening Balance" AS REASON,
 		(SELECT SUM(MMV_QTY)
-			FROM medicaldsrstockmov
-			LEFT JOIN medicaldsrstockmovtype ON MMV_MMVT_ID_A = MMVT_ID_A
+			FROM MEDICALDSRSTOCKMOV
+			LEFT JOIN MEDICALDSRSTOCKMOVtype ON MMV_MMVT_ID_A = MMVT_ID_A
 			WHERE MMVT_TYPE = '-'
 			AND DATE(MMV_DATE) < $P{fromdate}
 			AND MMV_WRD_ID_A = $P{WardCode}
@@ -83,18 +83,18 @@
 			GROUP BY MMV_MDSR_ID) AS IN_QTY,
 		SUM(MMVN_MDSR_QTY) AS OUT_QTY,
 		(SELECT AVG(LT_COST)
-			FROM medicaldsrstockmov
-			LEFT JOIN medicaldsrstockmovtype ON MMV_MMVT_ID_A = MMVT_ID_A
-			LEFT JOIN medicaldsrlot ON MMV_LT_ID_A = LT_ID_A
+			FROM MEDICALDSRSTOCKMOV
+			LEFT JOIN MEDICALDSRSTOCKMOVtype ON MMV_MMVT_ID_A = MMVT_ID_A
+			LEFT JOIN MEDICALDSRlot ON MMV_LT_ID_A = LT_ID_A
 			WHERE MMVT_TYPE = '-'
 			AND DATE(MMV_DATE) < $P{fromdate}
 			AND MMV_WRD_ID_A = $P{WardCode}
 			AND MMV_MDSR_ID = $P{productID}
 			GROUP BY MMV_MDSR_ID) AS COST		
 		
-	FROM medicaldsrstockmovward
+	FROM MEDICALDSRSTOCKMOVWARD
 		LEFT JOIN MEDICALDSR ON MMVN_MDSR_ID = MDSR_ID
-		LEFT JOIN medicaldsrtype ON MDSR_MDSRT_ID_A = MDSRT_ID_A
+		LEFT JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A
 	WHERE DATE(MMVN_DATE) < $P{fromdate}
 		AND MMVN_WRD_ID_A = $P{WardCode}
 		AND MMVN_MDSR_ID = $P{productID}
@@ -128,20 +128,26 @@ SELECT "2" AS ORDERING_FIELD,
 				MMVN_IS_PATIENT AS IS_PATIENT,
 				IF (MMVN_IS_PATIENT = 1 AND MMVN_MDSR_QTY < 0, "Return", -- Return by Patients
 					IF(MMVN_IS_PATIENT = 1 AND MMVN_MDSR_QTY > 0, "Patient",  -- Discharge to Patient
-					"Rectify")) AS MOV_TYPE, -- Rectify / Inventory
+						IF(MMVN_WRD_ID_A_TO IS NOT NULL, "To Ward", -- Movement to another ward 
+							IF(MMVN_WRD_ID_A_FROM IS NOT NULL, "From Ward", -- Movement from another ward 
+								"Rectify")))) AS MOV_TYPE, -- Rectify / Inventory
 				IF (MMVN_IS_PATIENT = 1 AND MMVN_MDSR_QTY < 0, "Return by Patient", -- Return
 					IF(MMVN_IS_PATIENT = 1 AND MMVN_MDSR_QTY > 0, "Discharge to Patient",  -- Patient
-					"Rectify / Inventory")) AS REASON, -- Rectify
+						IF(MMVN_WRD_ID_A_TO IS NOT NULL, 
+						CONCAT("To WARD: ", (SELECT WRD_NAME FROM WARD WHERE WRD_ID_A = MMVN_WRD_ID_A_TO)), -- Movement to another ward 
+							IF(MMVN_WRD_ID_A_FROM IS NOT NULL, 
+							CONCAT("From WARD: ", (SELECT WRD_NAME FROM WARD WHERE WRD_ID_A = MMVN_WRD_ID_A_FROM)), -- Movement from another ward 
+								"Rectify / Inventory")))) AS REASON, -- Rectify
 				IF (MMVN_MDSR_QTY < 0, -MMVN_MDSR_QTY, 0) AS IN_QTY,
 				IF (MMVN_MDSR_QTY > 0, MMVN_MDSR_QTY, 0) AS OUT_QTY,
 				null AS COST
 				
 			FROM
-				medicaldsrstockmovward
+				MEDICALDSRSTOCKMOVWARD
 					LEFT JOIN
-				ward ON MMVN_WRD_ID_A = WRD_ID_A
+				WARD ON MMVN_WRD_ID_A = WRD_ID_A
 					LEFT JOIN
-				medicaldsr ON MMVN_MDSR_ID = MDSR_ID
+				MEDICALDSR ON MMVN_MDSR_ID = MDSR_ID
 			WHERE
 				DATE(MMVN_DATE) BETWEEN $P{fromdate} AND $P{todate}
 					AND MMVN_WRD_ID_A = $P{WardCode}
@@ -162,15 +168,15 @@ SELECT "2" AS ORDERING_FIELD,
 				LT_COST AS COST
 				
 			FROM
-				medicaldsrstockmov
+				MEDICALDSRSTOCKMOV
 					LEFT JOIN
-				ward ON MMV_WRD_ID_A = WRD_ID_A
+				WARD ON MMV_WRD_ID_A = WRD_ID_A
 					LEFT JOIN
-				medicaldsr ON MMV_MDSR_ID = MDSR_ID
+				MEDICALDSR ON MMV_MDSR_ID = MDSR_ID
 					LEFT JOIN
-				medicaldsrstockmovtype ON MMV_MMVT_ID_A = MMVT_ID_A
+				MEDICALDSRSTOCKMOVtype ON MMV_MMVT_ID_A = MMVT_ID_A
 					LEFT JOIN 
-				medicaldsrlot ON MMV_LT_ID_A = LT_ID_A
+				MEDICALDSRlot ON MMV_LT_ID_A = LT_ID_A
 				
 			WHERE
 				DATE(MMV_DATE) BETWEEN $P{fromdate} AND $P{todate}
@@ -195,8 +201,8 @@ SELECT 	"3" AS ORDERING_FIELD,
         "Closing" AS MOV_TYPE,
 		"Closing Balance" AS REASON,
 		(SELECT SUM(MMV_QTY)
-			FROM medicaldsrstockmov
-			LEFT JOIN medicaldsrstockmovtype ON MMV_MMVT_ID_A = MMVT_ID_A
+			FROM MEDICALDSRSTOCKMOV
+			LEFT JOIN MEDICALDSRSTOCKMOVtype ON MMV_MMVT_ID_A = MMVT_ID_A
 			WHERE MMVT_TYPE = '-'
 			AND DATE(MMV_DATE) <= $P{todate}
 			AND MMV_WRD_ID_A = $P{WardCode}
@@ -205,9 +211,9 @@ SELECT 	"3" AS ORDERING_FIELD,
 		SUM(MMVN_MDSR_QTY) AS OUT_QTY,
 		null AS COST
 		
-	FROM medicaldsrstockmovward
+	FROM MEDICALDSRSTOCKMOVWARD
 		LEFT JOIN MEDICALDSR ON MMVN_MDSR_ID = MDSR_ID
-		LEFT JOIN medicaldsrtype ON MDSR_MDSRT_ID_A = MDSRT_ID_A
+		LEFT JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A
 	WHERE DATE(MMVN_DATE) <= $P{todate}
 		AND MMVN_WRD_ID_A = $P{WardCode}
 		AND MMVN_MDSR_ID = $P{productID}
