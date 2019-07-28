@@ -7,10 +7,13 @@ install: skip
 before_script:
   - sudo service mysql stop
   - docker-compose -f core/docker-compose.yml up -d
+  - gem install asciidoctor-pdf --pre
+  
 script:
 - mvn package -DskipTests
 - mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > database.sql
 - "./build_poh.sh"
+
 deploy:
   provider: releases
   api_key:

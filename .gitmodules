@@ -4,3 +4,6 @@
 [submodule "gui"]
 	path = gui
 	url = https://github.com/informatici/openhospital-gui
+[submodule "doc"]
+	path = doc
+	url = https://github.com/informatici/openhospital-doc
