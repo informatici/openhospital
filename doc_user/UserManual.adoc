@@ -2258,6 +2258,7 @@ image:extracted-media/media/image168.png[image,width=633,height=190]
 
 The functions available from this window (but similarly to other windows in *_Types_* menu) are:
 
+* *Find*: you may filter the list by typing a keyword.
 * *Selected Type*: you may filter the list by selecting only one ExamType
 * *[.underline]##N##ew*: to enter a new exam (cannot be used an already used code)
 * *[.underline]##E##dit*: to edit an already existing exam (the code and type must be unchanged)
