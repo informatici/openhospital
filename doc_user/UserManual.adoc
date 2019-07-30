@@ -144,6 +144,7 @@ _
 _*[.underline]#NB#*: Disease Types can be defined by the Administrator._ _Ask to your Administrator how to do it or see link:#14-general-data-general-data[General Data] in this document. +
 _
 * *Diagnosis.* Maximum three diseases can be diagnosed per each attendance (“new attendance” or “re-attendance” it does not care in this context). Normally patient reports at least one visit reason but it may happen that during same visit the Doctor finds other concurrent pathologies thus here possibility is given to record till maximum three (the first being the only one mandatory). +
+It is possible to filter in order to find diseases more easily. To do so, you will need to enter a text fragment in the search field that is part of the disease name. The closer the search text comes to the name of the disease being searched, the more precise the search is. +
  +
 _*[.underline]#NB#*: in the *OPD Out Patient Department* window only first diagnosis and its type will be show, anyway all data are stored and processed in reports and searching._
 * *Patient age*. Validity range is 0-200.
@@ -1308,6 +1309,8 @@ To start an admission, you have to enter the following fields (on the right side
 * *Malnutrition* (not mandatory) in case of malnutrition you may check this box so you will manage the malnutrition control from the *_Patient data_* window (see Malnutrition control function).
 * *Diagnosis IN:* it is the diagnosis the patient has been admitted with
 
+TIP: It is possible to filter in order to find diseases more easily. To do this, you will need to enter a text fragment in the search fields that is part of the disease name. The closer the search text comes to the name of the disease being searched for, the more precise the search is.
+
 _*[.underline]#NB#*: Wards, AdmissionType and Diagnosis can be defined by the Administrator._ _Ask to your Administrator how to do it or see link:#14-general-data-general-data[General Data] in this document._
 
 _*[.underline]#NB#*: The "Progressive in year" field is automatically populated by the program; in case of maternity the counter can starts from first January or from first June as far as the current normative ask to the health facilities; to change this behaviour please ask to your Administrator to set the MATERNITYRESTARTINJUNE [.underline]# # flag in the configuration file or read the Administrator’s Guide._
@@ -1392,6 +1395,8 @@ You have to enter the following data:
 * *Discharge date:* the date of discharge
 * *Discharge type:* the type of discharge
 * *Diagnosis OUT:* it is the diagnosis the patient has been discharged with
+
+TIP: As in the case of *_Diagnosis IN_*, it is possible to filter to find diseases more easily.
 
 image:extracted-media/media/image97.png[Admission_discharge.PNG,width=642,height=337]
 
