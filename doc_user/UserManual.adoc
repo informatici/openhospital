@@ -512,7 +512,7 @@ These functionalities are available in the window
 * *[.underline]##E##xcel*: Export data to Excel
 * *Stoc[.underline]##k## Card* to show the movements history for a certain pharmaceutical (can be directly selected by the list otherwise will be requested)
 
-Differently by *Pharmaceuticals [.underline]##S##tock* functionality, the *Pharmaceutical Stock [.underline]##W##ard* allows an only discharging movement to patients since is an internal management of pharmaceuticals lying in the wards after they have been “charged” by the main pharmacy.
+Differently by *Pharmaceuticals [.underline]##S##tock* functionality, the *Pharmaceutical Stock [.underline]##W##ard* allows an only discharging movement to patients since is an internal management of pharmaceuticals lying in the wards after they have been “charged” by the main pharmacy. But since OpenHospital 1.9, discharging movement from ward to ward is also possible.
 
 The *_Ward Pharmacy_* window will show a *Filter Panel* on the left, a *Movements Panel* in the right-centre and a *Button Panel* at the bottom.
 
@@ -565,12 +565,12 @@ image:extracted-media/media/image39.png[WardPharmacy_new.PNG,width=456,height=42
 
 As told before, only discharging movements are allowed in this functionality. So, the solely information required are the follow:
 
-* *Patient* or *Internal Use*: you may select an already registered patient by clicking on *[.underline]##P##ick Patient* button so the movement will be associated to his/her ID or select *Internal Use* and type a description to specify that the movement is not related to a patient.
+* *Patient* or *Internal Use* or *Another ward*: you may select an already registered patient by clicking on *[.underline]##P##ick Patient* button so the movement will be associated to his/her ID or select *Internal Use* and type a description to specify that the movement is not related to a patient. You may also select *Another ward* and choose the destination ward from the list provided.
 * *Medicals*: by pressing *[.underline]##M##edical* button you will be asked for the drug to give to that patient; a first window will appear to let you select the drug (the only ones you may have in the ward as a result of a previous discharging movement in the *_Pharmaceutical Stock Browser_*) and a second one to let you specify the quantity; multiply of half-piece are allowed.
 
 image:extracted-media/media/image40.png[WardPharmacy_medical.PNG,width=273,height=129]image:extracted-media/media/image41.png[WardPharmacy_quantity.PNG,width=231,height=139]
 
-Before to press the *[.underline]##O##K* button, you may insert as many Medicals you need, it will show a correspondent number of movements in the *Outcomes* tab of the *Movement Panel* in the *_Ward Pharmacy_* window.
+Before to press the *[.underline]##O##K* button, you may insert as many Medicals you need, it will show a correspondent number of movements in the *Outcomes* tab of the *Movement Panel* in the *_Ward Pharmacy_* window. These movements will also be visible in the *Incomes* tab of the *Movement Panel* in the *_Ward Pharmacy_* window of the receiving ward, in case of discharging to another ward.
 
 == 7 Laboratory ([.underline]##L##aboratory)
 
