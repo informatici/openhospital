@@ -1510,10 +1510,12 @@ To access the Clinical sheet function, first of all you have to highlight the Pa
 
 image:extracted-media/media/image104.png[image,width=624,height=368]
 
-The window doesn't allow you to change data but, for the selected patient, it shows you all the out-patient (OPD) visits, the Admissions and his/her Laboratory exams; by clicking on a row in the *Data table* on the top of the window, the related laboratory exams will be showed as follow:
+The window doesn't allow you to change data but, for the selected patient, it shows you all the out-patient (OPD) visits, the Admissions, his/her Laboratory exams and the various surgeries he/she underwent; by clicking on a row in the *Data table* on the top of the window, the related laboratory exams will be showed as follow:
 
-* selected row is an Admission: all the exams done between the admission date and the discharge date will be showed in *Data table* on the bottom
-* selected row is an out-patient (OPD) visit: all the exams done after the selected OPD visit until next one (if any) or next admission date (if any) will be showed in the *Data table* on the bottom
+* selected row is an Admission: all the exams done between the admission date and the discharge date will be showed in *Data table*, in the *_Exams_* tab
+* selected row is an out-patient (OPD) visit: all the exams done after the selected OPD visit until next one (if any) or next admission date (if any) will be showed in the *Data table*, in the *_Exams_* tab
+
+The tab *_Operations_* shows the various operations recorded for the selected patient between the admission date and the discharge date. 
 
 In the *Buttons Panel* you have the following choices:
 
