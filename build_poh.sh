@@ -7,24 +7,24 @@ command_exists () {
 
 requirements="java mvn docker-compose mysql zip"
 show_req () {
-	echo `tput smul`$1' not found'`tput sgr0`
-	echo ''
-	echo 'Make sure to have installed the following dependencies on a Linux machine:'
-	echo 'JDK 6+, Maven, asciidoctor-pdf, docker-compose, MySQL client, zip'
-	exit 1
+    echo `tput smul`$1' not found'`tput sgr0`
+    echo ''
+    echo 'Make sure to have installed the following dependencies on a Linux machine:'
+    echo 'JDK 6+, Maven, asciidoctor-pdf, docker-compose, MySQL client, zip'
+    exit 1
 }
 
 show_doc () {
-	echo '*********************************'
-	echo 'asciidoctor-pdf is not installed.'
-	echo '*********************************'
-	echo '==> Admin Manual at https://github.com/informatici/openhospital-doc/blob/master/doc_admin/AdminManual.adoc'
-	echo '==> User Manual at https://github.com/informatici/openhospital-doc/blob/master/doc_user/UserManual.adoc'
+    echo '*********************************'
+    echo 'asciidoctor-pdf is not installed.'
+    echo '*********************************'
+    echo '==> Admin Manual at https://github.com/informatici/openhospital-doc/blob/master/doc_admin/AdminManual.adoc'
+    echo '==> User Manual at https://github.com/informatici/openhospital-doc/blob/master/doc_user/UserManual.adoc'
 }
 
 for arg in $requirements
 do
-    if ! command_exists $arg; then 
+    if ! command_exists $arg; then
         show_req $arg
     fi
 done
@@ -52,11 +52,19 @@ mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > 
 
 # convert documentation
 if command_exists asciidoctor-pdf; then
-	asciidoctor-pdf ./doc/doc_admin/AdminManual.adoc -o AdminManual.pdf
-	asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o UserManual.pdf
+    asciidoctor-pdf ./doc/doc_admin/AdminManual.adoc -o AdminManual.pdf
+    asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o UserManual.pdf
 fi
 
-# estracting changelogs
+# fetch updated translations from Transifex, if TRANSIFEX_API_TOKEN is defined
+if [ -n "${TRANSIFEX_API_TOKEN+1}" ]; then
+    resources=$(curl -L --user api:$TRANSIFEX_API_TOKEN -X GET https://www.transifex.com/api/2/project/openhospital/resources/ 2>/dev/null | grep slug | cut -d"\"" -f4)
+    # TODO: for each resource; for each language:
+    # curl -i -L --user api:$TRANSIFEX_API_TOKEN -X GET https://www.transifex.com/api/2/project/openhospital/resource/$resource/translation/$language/ > $resource_name
+    # cp $resource_name /path/to/bundle/folder (?)
+fi
+
+# extract changelogs
 cp core/doc/`ls core/doc/ -r | head -n 1` core_`ls core/doc/ -r | head -n 1`
 cp gui/doc/`ls gui/doc/ -r | head -n 1` gui_`ls gui/doc/ -r | head -n 1`
 
@@ -76,16 +84,19 @@ cp *.txt ./poh-linux-$poh_linux_version-core-$version/oh/doc
 
 # check documentation
 if command_exists asciidoctor-pdf; then
-	cp *.pdf ./poh-win32-$poh_win32_version-core-$version/oh/doc
-	cp *.pdf ./poh-linux-$poh_linux_version-core-$version/oh/doc
+    cp *.pdf ./poh-win32-$poh_win32_version-core-$version/oh/doc
+    cp *.pdf ./poh-linux-$poh_linux_version-core-$version/oh/doc
 else show_doc;
 fi
 
-# packaging
+# package
 zip -r poh-win32-$poh_win32_version-core-$version.zip poh-win32-$poh_win32_version-core-$version
 tar -cvzf poh-linux-$poh_linux_version-core-$version.tar.gz poh-linux-$poh_linux_version-core-$version
 
 # check
 ls
+
+# clean up
+docker-compose -f core/docker-compose.yml down
 
 echo "Portable distributions of Open Hospital created successfully."
