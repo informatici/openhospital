@@ -1362,8 +1362,17 @@ Operations data that you can manage are:
 * *Operation type:* the operation type
 * *Operation result:* the result of the operation
 * *Transfusion Units:* (not mandatory): how many units of blood have been used
+* *Remark:* (not mandatory): a comment about the operation
 
 image:extracted-media/media/image95.png[Admission_operation.PNG,width=642,height=345]
+
+Since OpenHospital version 1.9, it is possible to record several operations at once. The buttons *_New_*, *_Save_* and *_Delete_* at the top right of the table allow you to manipulate the items of the table.
+
+To add a new operation, click on the button *_New_* and enter the data as mentioned above and then click on *_Save_*.
+
+WARNING: Clicking on the button *_Save_* just adds the operation to the table; it is not yet permanently recorded. 
+
+To delete a line from the table, select the line to delete by clicking on it (it automatically highlights), then click on the button *_Delete_*. When you are finished, click on the button *Save* below the table to save your changes.
 
 _*[.underline]#NB#*: OperationType and Operations can be defined by the Administrator._ _Ask to your Administrator how to do it or see link:#14-general-data-general-data[General Data] in this document._
 
