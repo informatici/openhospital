@@ -1,0 +1,344 @@
+.\"     Title: \fBmysql_tableinfo\fR
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.70.1 <http://docbook.sf.net/>
+.\"      Date: 01/11/2008
+.\"    Manual: MySQL Database System
+.\"    Source: MySQL 5.0
+.\"
+.TH "\fBMYSQL_TABLEINFO\\F" "1" "01/11/2008" "MySQL 5.0" "MySQL Database System"
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+mysql_tableinfo \- generate database metadata
+.SH "SYNOPSIS"
+.HP 55
+\fBmysql_tableinfo [\fR\fB\fIoptions\fR\fR\fB] \fR\fB\fIdb_name\fR\fR\fB [\fR\fB\fIdb_like\fR\fR\fB [\fR\fB\fItbl_like\fR\fR\fB]]\fR
+.SH "DESCRIPTION"
+.PP
+\fBmysql_tableinfo\fR
+creates tables and populates them with database metadata. It uses
+SHOW DATABASES,
+SHOW TABLES,
+SHOW TABLE STATUS,
+SHOW COLUMNS, and
+SHOW INDEX
+to obtain the metadata.
+.PP
+In MySQL 5.0 and up, the
+INFORMATION_SCHEMA
+database contains the same kind of information in the
+SCHEMATA,
+TABLES,
+COLUMNS, and
+STATISTICS
+tables. See
+Chapter\ 20, INFORMATION_SCHEMA Tables.
+.PP
+Invoke
+\fBmysql_tableinfo\fR
+like this:
+.sp
+.RS 3n
+.nf
+shell> \fBmysql_tableinfo [\fR\fB\fIoptions\fR\fR\fB] \fR\fB\fIdb_name\fR\fR\fB [\fR\fB\fIdb_like\fR\fR\fB [\fR\fB\fItbl_like\fR\fR\fB]]\fR
+.fi
+.RE
+.PP
+The
+\fIdb_name\fR
+argument indicates which database
+\fBmysql_tableinfo\fR
+should use as the location for the metadata tables. The database will be created if it does not exist. The tables will be named
+db,
+tbl
+(or
+tbl_status),
+col, and
+idx.
+.PP
+If the
+\fIdb_like\fR
+or
+\fItbl_like\fR
+arguments are given, they are used as patterns and metadata is generated only for databases or tables that match the patterns. These arguments default to
+%
+if not given.
+.PP
+Examples:
+.sp
+.RS 3n
+.nf
+mysql_tableinfo info
+mysql_tableinfo info world
+mysql_tableinfo info mydb tmp%
+.fi
+.RE
+.PP
+Each of the commands stores information into tables in the
+info
+database. The first stores information for all databases and tables. The second stores information for all tables in the
+world
+database. The third stores information for tables in the
+mydb
+database that have names matching the pattern
+tmp%.
+.PP
+\fBmysql_tableinfo\fR
+supports the following options:
+.PP
+.B Table\ 4.12.\ \fBmysql_tableinfo\fR Option Reference
+.sp -1n
+.TS
+allbox tab(:);
+lB lB lB lB.
+T{
+\fBFormat\fR
+T}:T{
+\fBConfig File\fR
+T}:T{
+\fBDescription\fR
+T}:T{
+\fBIntroduced\fR
+T}
+.T&
+l l l l
+l l l l
+l l l l
+l l l l
+l l l l
+l l l l
+l l l l
+l l l l
+l l l l
+l l l l
+l l l l
+l l l l
+l l ^ l
+l l l l.
+T{
+\-\-clear
+T}:T{
+clear
+T}:T{
+Before populating each metadata table, drop it if it exists
+T}:T{
+\ 
+T}
+T{
+\-\-prefix=prefix_str
+T}:T{
+prefix
+T}:T{
+Add prefix_str at the beginning of each metadata table name
+T}:T{
+\ 
+T}
+T{
+\-\-quiet
+T}:T{
+quiet
+T}:T{
+Be silent except for errors
+T}:T{
+\ 
+T}
+T{
+\-\-socket=path
+T}:T{
+socket
+T}:T{
+Display version information and exit
+T}:T{
+\ 
+T}
+T{
+\-\-tbl\-status
+T}:T{
+tbl\-status
+T}:T{
+Use SHOW TABLE STATUS instead of SHOW TABLES
+T}:T{
+\ 
+T}
+T{
+\-\-user=user_name,
+T}:T{
+user
+T}:T{
+The mysql_tableinfo username to use when connecting to the server
+T}:T{
+\ 
+T}
+T{
+\-\-clear\-only
+T}:T{
+clear\-only
+T}:T{
+Similar to \-\-clear, but exits after dropping the metadata tables  to be populated.
+T}:T{
+\ 
+T}
+T{
+\-\-col
+T}:T{
+col
+T}:T{
+Generate column metadata into the col table
+T}:T{
+\ 
+T}
+T{
+\-\-help
+T}:T{
+\ 
+T}:T{
+Display help message and exit
+T}:T{
+\ 
+T}
+T{
+\-\-host=host_name
+T}:T{
+host
+T}:T{
+Connect to the MySQL server on the given host
+T}:T{
+\ 
+T}
+T{
+\-\-idx
+T}:T{
+idx
+T}:T{
+Generate index metadata into the idx table
+T}:T{
+\ 
+T}
+T{
+\-\-password=password
+T}:T{
+password
+T}:T{
+The password to use when connecting to the server \-\- not optional
+T}:T{
+\ 
+T}
+T{
+\-ppassword
+T}:T{
+\ 
+T}::T{
+\ 
+T}
+T{
+\-\-port=port_num
+T}:T{
+port
+T}:T{
+The TCP/IP port number to use for the connection
+T}:T{
+\ 
+T}
+.TE
+.sp
+.TP 3n
+\(bu
+\fB\-\-help\fR
+.sp
+Display a help message and exit.
+.TP 3n
+\(bu
+\fB\-\-clear\fR
+.sp
+Before populating each metadata table, drop it if it exists.
+.TP 3n
+\(bu
+\fB\-\-clear\-only\fR
+.sp
+Similar to
+\fB\-\-clear\fR, but exits after dropping the metadata tables to be populated.
+.TP 3n
+\(bu
+\fB\-\-col\fR
+.sp
+Generate column metadata into the
+col
+table.
+.TP 3n
+\(bu
+\fB\-\-host=\fR\fB\fIhost_name\fR\fR,
+\fB\-h \fR\fB\fIhost_name\fR\fR
+.sp
+Connect to the MySQL server on the given host.
+.TP 3n
+\(bu
+\fB\-\-idx\fR
+.sp
+Generate index metadata into the
+idx
+table.
+.TP 3n
+\(bu
+\fB\-\-password=\fR\fB\fIpassword\fR\fR,
+\fB\-p\fR\fB\fIpassword\fR\fR
+.sp
+The password to use when connecting to the server. Note that the password value is not optional for this option, unlike for other MySQL programs. You can use an option file to avoid giving the password on the command line.
+.sp
+Specifying a password on the command line should be considered insecure. See
+Section\ 5.6, \(lqKeeping Your Password Secure\(rq.
+.TP 3n
+\(bu
+\fB\-\-port=\fR\fB\fIport_num\fR\fR,
+\fB\-P \fR\fB\fIport_num\fR\fR
+.sp
+The TCP/IP port number to use for the connection.
+.TP 3n
+\(bu
+\fB\-\-prefix=\fR\fB\fIprefix_str\fR\fR
+.sp
+Add
+\fIprefix_str\fR
+at the beginning of each metadata table name.
+.TP 3n
+\(bu
+\fB\-\-quiet\fR,
+\fB\-q\fR
+.sp
+Be silent except for errors.
+.TP 3n
+\(bu
+\fB\-\-socket=\fR\fB\fIpath\fR\fR,
+\fB\-S \fR\fB\fIpath\fR\fR
+.sp
+The Unix socket file to use for the connection.
+.TP 3n
+\(bu
+\fB\-\-tbl\-status\fR
+.sp
+Use
+SHOW TABLE STATUS
+instead of
+SHOW TABLES. This provides more complete information, but is slower.
+.TP 3n
+\(bu
+\fB\-\-user=\fR\fB\fIuser_name\fR\fR,
+\fB\-u \fR\fB\fIuser_name\fR\fR
+.sp
+The MySQL username to use when connecting to the server.
+.SH "COPYRIGHT"
+.PP
+Copyright 2007\-2008 MySQL AB
+.PP
+This documentation is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; version 2 of the License.
+.PP
+This documentation is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License along with the program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110\-1301 USA or see http://www.gnu.org/licenses/.
+.SH "SEE ALSO"
+For more information, please refer to the MySQL Reference Manual,
+which may already be installed locally and which is also available
+online at http://dev.mysql.com/doc/.
+.SH AUTHOR
+MySQL AB (http://www.mysql.com/).

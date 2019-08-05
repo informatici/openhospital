@@ -1,0 +1,164 @@
+drop table if exists t1,t2,t7,t8,t9;
+drop database if exists mysqltest;
+create table t1 (a int not null auto_increment, b char(16) not null, primary key (a));
+create table t2 (a int not null auto_increment, b char(16) not null, primary key (a));
+insert into t1 (b) values ("test"),("test1"),("test2"),("test3");
+insert into t2 (b) select b from t1;
+insert into t1 (b) select b from t2;
+insert into t2 (b) select b from t1;
+insert into t1 (b) select b from t2;
+insert into t2 (b) select b from t1;
+insert into t1 (b) select b from t2;
+insert into t2 (b) select b from t1;
+insert into t1 (b) select b from t2;
+insert into t2 (b) select b from t1;
+insert into t1 (b) select b from t2;
+insert into t2 (b) select b from t1;
+insert into t1 (b) select b from t2;
+insert into t2 (b) select b from t1;
+insert into t1 (b) select b from t2;
+insert into t2 (b) select b from t1;
+insert into t1 (b) select b from t2;
+insert into t2 (b) select b from t1;
+insert into t1 (b) select b from t2;
+drop table t2;
+insert into t9 select * from t1;
+check table t9;
+Table	Op	Msg_type	Msg_text
+test.t9	check	status	OK
+optimize table t9;
+Table	Op	Msg_type	Msg_text
+test.t9	optimize	status	OK
+repair table t9;
+Table	Op	Msg_type	Msg_text
+test.t9	repair	status	OK
+alter table t9 add column c int not null;
+show create table t9;
+Table	Create Table
+t9	CREATE TABLE `t9` (
+  `a` int(11) NOT NULL auto_increment,
+  `b` char(16) NOT NULL,
+  `c` int(11) NOT NULL,
+  PRIMARY KEY  (`a`)
+) ENGINE=MyISAM AUTO_INCREMENT=16725 DEFAULT CHARSET=latin1 DATA DIRECTORY='MYSQLTEST_VARDIR/tmp/' INDEX DIRECTORY='MYSQLTEST_VARDIR/run/'
+alter table t9 rename t8, add column d int not null;
+alter table t8 rename t7;
+rename table t7 to t9;
+drop table t1;
+SHOW CREATE TABLE t9;
+Table	Create Table
+t9	CREATE TABLE `t9` (
+  `a` int(11) NOT NULL auto_increment,
+  `b` char(16) NOT NULL,
+  `c` int(11) NOT NULL,
+  `d` int(11) NOT NULL,
+  PRIMARY KEY  (`a`)
+) ENGINE=MyISAM AUTO_INCREMENT=16725 DEFAULT CHARSET=latin1 DATA DIRECTORY='MYSQLTEST_VARDIR/tmp/' INDEX DIRECTORY='MYSQLTEST_VARDIR/run/'
+Got one of the listed errors
+Got one of the listed errors
+Got one of the listed errors
+Got one of the listed errors
+Got one of the listed errors
+alter table t9 rename mysqltest.t9;
+select count(*) from mysqltest.t9;
+count(*)
+16724
+show create table mysqltest.t9;
+Table	Create Table
+t9	CREATE TABLE `t9` (
+  `a` int(11) NOT NULL auto_increment,
+  `b` char(16) NOT NULL,
+  `c` int(11) NOT NULL,
+  `d` int(11) NOT NULL,
+  PRIMARY KEY  (`a`)
+) ENGINE=MyISAM AUTO_INCREMENT=16725 DEFAULT CHARSET=latin1 DATA DIRECTORY='MYSQLTEST_VARDIR/tmp/' INDEX DIRECTORY='MYSQLTEST_VARDIR/run/'
+drop database mysqltest;
+create table t1 (a int not null) engine=myisam;
+Warnings:
+Warning	0	DATA DIRECTORY option ignored
+show create table t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `a` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+alter table t1 add b int;
+Warnings:
+Warning	0	DATA DIRECTORY option ignored
+show create table t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `a` int(11) NOT NULL,
+  `b` int(11) default NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+Warnings:
+Warning	0	INDEX DIRECTORY option ignored
+show create table t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `a` int(11) NOT NULL,
+  `b` int(11) default NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+drop table t1;
+CREATE TABLE t1(a INT)
+DATA DIRECTORY='TEST_DIR/master-data/mysql'
+INDEX DIRECTORY='TEST_DIR/master-data/mysql';
+RENAME TABLE t1 TO user;
+ERROR HY000: Can't create/write to file 'TEST_DIR/master-data/mysql/user.MYI' (Errcode: 17)
+DROP TABLE t1;
+show create table t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `i` int(11) default NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+drop table t1;
+show create table t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `i` int(11) default NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+drop table t1;
+show create table t1;
+Table	Create Table
+t1	CREATE TEMPORARY TABLE `t1` (
+  `a` int(11) default NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 DATA DIRECTORY='MYSQLTEST_VARDIR/log/'
+show create table t1;
+Table	Create Table
+t1	CREATE TEMPORARY TABLE `t1` (
+  `a` int(11) default NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 DATA DIRECTORY='MYSQLTEST_VARDIR/log/'
+create table t1 (a int) engine=myisam select 42 a;
+select * from t1;
+a
+9
+select * from t1;
+a
+99
+select * from t1;
+a
+42
+drop table t1;
+End of 4.1 tests
+CREATE DATABASE db1;
+CREATE DATABASE db2;
+USE db2;
+INSERT INTO db2.t1 VALUES (1);
+SELECT * FROM db2.t1;
+b
+1
+RESET QUERY CACHE;
+USE db1;
+SET SESSION keep_files_on_create = TRUE;
+CREATE TABLE t1 (a INT) ENGINE MYISAM;
+ERROR HY000: Can't create/write to file './db1/t1.MYD' (Errcode: 17)
+CREATE TABLE t3 (a INT) Engine=MyISAM;
+INSERT INTO t3 VALUES (1),(2),(3);
+TRUNCATE TABLE t3;
+SELECT * from t3;
+a
+SET SESSION keep_files_on_create = DEFAULT;
+DROP TABLE db2.t1, db1.t3;
+DROP DATABASE db1;
+DROP DATABASE db2;
+USE test;
+End of 5.0 tests

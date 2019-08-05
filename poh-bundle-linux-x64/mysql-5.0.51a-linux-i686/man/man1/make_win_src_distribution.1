@@ -1,0 +1,96 @@
+.\"     Title: \fBmake_win_src_distribution\fR
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.70.1 <http://docbook.sf.net/>
+.\"      Date: 01/11/2008
+.\"    Manual: MySQL Database System
+.\"    Source: MySQL 5.0
+.\"
+.TH "\fBMAKE_WIN_SRC_DIST" "1" "01/11/2008" "MySQL 5.0" "MySQL Database System"
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+make_win_src_distribution \- create source distribution for Windows
+.SH "SYNOPSIS"
+.HP 36
+\fBmake_win_src_distribution [\fR\fB\fIoptions\fR\fR\fB]\fR
+.SH "DESCRIPTION"
+.PP
+\fBmake_win_src_distribution\fR
+creates a Windows source package to be used on Windows systems. It is used after you configure and build the source distribution on a Unix or Unix\-like system so that you have a server binary to work with. (See the instructions at
+Section\ 4.15.6.5, \(lqCreating a Windows Source Package from the BitKeeper Repository\(rq.)
+.PP
+Invoke
+\fBmake_win_src_distribution\fR
+like this from the top\-level directory of a MySQL source distribution:
+.sp
+.RS 3n
+.nf
+shell> \fBmake_win_src_distribution [\fR\fB\fIoptions\fR\fR\fB]\fR
+.fi
+.RE
+.PP
+\fBmake_win_src_distribution\fR
+understands the following options:
+.TP 3n
+\(bu
+\fB\-\-help\fR
+.sp
+Display a help message and exit.
+.TP 3n
+\(bu
+\fB\-\-debug\fR
+.sp
+Print information about script operations; do not create a package.
+.TP 3n
+\(bu
+\fB\-\-tmp\fR
+.sp
+Specify the temporary location.
+.TP 3n
+\(bu
+\fB\-\-suffix\fR
+.sp
+The suffix name for the package.
+.TP 3n
+\(bu
+\fB\-\-dirname\fR
+.sp
+Directory name to copy files (intermediate).
+.TP 3n
+\(bu
+\fB\-\-silent\fR
+.sp
+Do not print verbose list of files processed.
+.TP 3n
+\(bu
+\fB\-\-tar\fR
+.sp
+Create a
+\fItar.gz\fR
+package instead of a
+\fI.zip\fR
+package.
+.sp
+By default,
+\fBmake_win_src_distribution\fR
+creates a Zip\-format archive with the name
+\fImysql\-\fR\fI\fIVERSION\fR\fR\fI\-win\-src.zip\fR, where
+\fIVERSION\fR
+represents the version of your MySQL source tree.
+.SH "COPYRIGHT"
+.PP
+Copyright 2007\-2008 MySQL AB
+.PP
+This documentation is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; version 2 of the License.
+.PP
+This documentation is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License along with the program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110\-1301 USA or see http://www.gnu.org/licenses/.
+.SH "SEE ALSO"
+For more information, please refer to the MySQL Reference Manual,
+which may already be installed locally and which is also available
+online at http://dev.mysql.com/doc/.
+.SH AUTHOR
+MySQL AB (http://www.mysql.com/).

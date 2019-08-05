@@ -1,0 +1,71 @@
+.\"     Title: \fBndb_delete_all\fR
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.70.1 <http://docbook.sf.net/>
+.\"      Date: 01/11/2008
+.\"    Manual: MySQL Database System
+.\"    Source: MySQL 5.0
+.\"
+.TH "\fBNDB_DELETE_ALL\fR" "1" "01/11/2008" "MySQL 5.0" "MySQL Database System"
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+ndb_delete_all \- delete all rows from NDB table
+.SH "SYNOPSIS"
+.HP 23
+\fBndb_delete_all \fR\fB\fIoptions\fR\fR
+.SH "DESCRIPTION"
+.PP
+\fBndb_delete_all\fR
+deletes all rows from the given
+NDB
+table. In some cases, this can be much faster than
+DELETE
+or even
+TRUNCATE.
+.PP
+\fBUsage\fR:
+.sp
+.RS 3n
+.nf
+ndb_delete_all \-c \fIconnect_string\fR \fItbl_name\fR \-d \fIdb_name\fR
+.fi
+.RE
+.PP
+This deletes all rows from the table named
+\fItbl_name\fR
+in the database named
+\fIdb_name\fR. It is exactly equivalent to executing
+TRUNCATE \fIdb_name\fR.\fItbl_name\fR
+in MySQL.
+.PP
+\fBAdditional Options\fR:
+.TP 3n
+\(bu
+\fB\-\-transactional\fR,
+\fB\-t\fR
+.sp
+Use of this option causes the delete operation to be performed as a single transaction.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+\fBWarning\fR
+With very large tables, using this option may cause the number of operations available to the cluster to be exceeded.
+.SH "COPYRIGHT"
+.PP
+Copyright 2007\-2008 MySQL AB
+.PP
+This documentation is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; version 2 of the License.
+.PP
+This documentation is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License along with the program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110\-1301 USA or see http://www.gnu.org/licenses/.
+.SH "SEE ALSO"
+For more information, please refer to the MySQL Reference Manual,
+which may already be installed locally and which is also available
+online at http://dev.mysql.com/doc/.
+.SH AUTHOR
+MySQL AB (http://www.mysql.com/).

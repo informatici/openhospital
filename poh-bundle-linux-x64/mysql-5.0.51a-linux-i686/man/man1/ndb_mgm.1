@@ -1,0 +1,64 @@
+.\"     Title: \fBndb_mgm\fR
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.70.1 <http://docbook.sf.net/>
+.\"      Date: 01/11/2008
+.\"    Manual: MySQL Database System
+.\"    Source: MySQL 5.0
+.\"
+.TH "\fBNDB_MGM\fR" "1" "01/11/2008" "MySQL 5.0" "MySQL Database System"
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+ndb_mgm \- the management client process
+.SH "SYNOPSIS"
+.HP 16
+\fBndb_mgm \fR\fB\fIoptions\fR\fR
+.SH "DESCRIPTION"
+.PP
+The
+\fBndb_mgm\fR
+management client process is actually not needed to run the cluster. Its value lies in providing a set of commands for checking the cluster's status, starting backups, and performing other administrative functions. The management client accesses the management server using a C API. Advanced users can also employ this API for programming dedicated management processes to perform tasks similar to those performed by
+\fBndb_mgm\fR.
+.PP
+To start the management client, it is necessary to supply the hostname and port number of the management server:
+.sp
+.RS 3n
+.nf
+shell> \fBndb_mgm [\fR\fB\fIhost_name\fR\fR\fB [\fR\fB\fIport_num\fR\fR\fB]]\fR
+.fi
+.RE
+.PP
+For example:
+.sp
+.RS 3n
+.nf
+shell> \fBndb_mgm ndb_mgmd.mysql.com 1186\fR
+.fi
+.RE
+.PP
+The default hostname and port number are
+localhost
+and 1186, respectively.
+.PP
+Additional information about using
+\fBndb_mgm\fR
+can be found in
+Section\ 5.2.4, \(lqCommand Options for \fBndb_mgm\fR\(rq, and
+Section\ 6.2, \(lqCommands in the MySQL Cluster Management Client\(rq.
+.SH "COPYRIGHT"
+.PP
+Copyright 2007\-2008 MySQL AB
+.PP
+This documentation is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; version 2 of the License.
+.PP
+This documentation is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License along with the program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110\-1301 USA or see http://www.gnu.org/licenses/.
+.SH "SEE ALSO"
+For more information, please refer to the MySQL Reference Manual,
+which may already be installed locally and which is also available
+online at http://dev.mysql.com/doc/.
+.SH AUTHOR
+MySQL AB (http://www.mysql.com/).
