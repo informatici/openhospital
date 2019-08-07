@@ -51,7 +51,7 @@ public interface MedicalsIoOperationRepository extends JpaRepository<Medical, In
     
     @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A WHERE MDSRT_DESC LIKE %:type% ORDER BY LENGTH(MDSR_CODE), MDSR_CODE, MDSR_DESC", nativeQuery = true)
     public ArrayList<Medical> findAllWhereTypeOrderBySmartCodeAndDescription(@Param("type") String type);
-    @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ORDER BY LENGTH(MDSR_CODE), MDSR_CODE, MDSR_DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A ORDER BY LENGTH(MDSR_CODE), MDSR_CODE, MDSR_DESC", nativeQuery = true)
 	public ArrayList<Medical> findAllOrderBySmartCodeAndDescription();
 	
 }
