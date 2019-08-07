@@ -355,9 +355,8 @@ The following functions are available from the *Buttons Panel* of the window *_S
 * *[.underline]##C##harge* you use it to record a new charge movement
 * *[.underline]##D##ischarge* you use it to record a new discharge movement
 * *[.underline]##E##xport to excel* to export pharmaceuticals stock movements
-
-* *Stoc[.underline]##k## Card* to show the movements history for a certain pharmaceutical (can be directly selected by the list otherwise will be requested)
-
+* *Stoc[.underline]##k##Card* to show the movements history for a certain pharmaceutical (can be directly selected by the list otherwise will be requested)
+* *Stock[.underline]##L##edger* to show the movements history for all pharmaceuticals (only dates range will be requested)
 * *[.underline]##C##lose* button, to exit from the *_Stock Movement Browser_* window
 
 As you can see, there’s no “Delete” button as you’re not allowed to delete a movement; but if a mistake occurs - for example you’ve inserted the wrong quantity of a pharmaceutical in charge – you must just insert the new movement to correct the mistake – a discharge movement in this example.
