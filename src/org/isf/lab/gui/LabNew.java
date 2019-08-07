@@ -294,7 +294,7 @@ public class LabNew extends JDialog implements SelectionListener {
 //                        lab.setSex(patientSelected.getSex()+"");
                         lab.setNote(jTextAreaNote.getText().trim());
                         lab.setMaterial((String) jComboBoxMaterial.getSelectedItem());
-                        lab.setResult((String) jComboBoxExamResults.getSelectedItem());
+                        if (lab.getExam().getProcedure() == 1) lab.setResult((String) jComboBoxExamResults.getSelectedItem());
 					}
 					
 					boolean result = false;
