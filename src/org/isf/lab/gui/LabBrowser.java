@@ -48,6 +48,7 @@ import org.isf.lab.service.LabIoOperations;
 import org.isf.menu.gui.MainMenu;
 import org.isf.menu.manager.Context;
 import org.isf.patient.model.Patient;
+import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -194,7 +195,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 						ArrayList<LaboratoryForPrint> labs;
 						labs = manager.getLaboratoryForPrint(typeSelected, dateFrom.getDate(), dateTo.getDate());
 						if (!labs.isEmpty()) {
-							new LabPrintFrame(myFrame, labs); 
+							new PrintManager("Laboratory",labs,0);
 						}
 					} catch (OHServiceException e) {
 						OHServiceExceptionUtil.showMessages(e);

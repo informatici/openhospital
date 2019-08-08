@@ -19,6 +19,7 @@ import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
+@Deprecated
 public class LabPrintFrame extends JDialog{
 
 	/**
@@ -87,7 +88,7 @@ public class LabPrintFrame extends JDialog{
 		if(printTypeComboBox==null){
 			printTypeComboBox = new JComboBox();
 			printTypeComboBox.addItem(MessageBundle.getMessage("angal.lab.openwithjasperReport"));
-			printTypeComboBox.addItem(MessageBundle.getMessage("angal.lab.exporttopdffile"));
+//			printTypeComboBox.addItem(MessageBundle.getMessage("angal.lab.exporttopdffile"));
 			printTypeComboBox.addItem(MessageBundle.getMessage("angal.lab.printreport"));
 			printTypeComboBox.addActionListener(new ActionListener() {
 			
