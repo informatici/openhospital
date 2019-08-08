@@ -3,7 +3,7 @@
 
 command_exists () { type "$1" &> /dev/null ; }
 
-requirements="java mvn docker-compose mysql zip tar"
+requirements="java mvn docker-compose mysql tar"
 show_req () {
     echo `tput smul`$1' not found'`tput sgr0`
     echo ''
@@ -68,11 +68,11 @@ if command_exists asciidoctor-pdf; then
 else show_doc;
 fi
 
-# extract changelogs
+echo 'Extract changelogs...'
 cp core/doc/`ls core/doc/ -r | head -n 1` core_`ls core/doc/ -r | head -n 1`
 cp gui/doc/`ls gui/doc/ -r | head -n 1` gui_`ls gui/doc/ -r | head -n 1`
 
-# assemble OH Windows portable
+echo 'Assemble OH Windows portable...'
 cp -rf ./poh-bundle-win/* $WIN_DIR
 cp -rf ./gui/target/OpenHospital20/* $WIN_DIR/oh
 cp *.sql $WIN_DIR
@@ -81,7 +81,7 @@ cp POH-README.md $WIN_DIR
 cp POH-win-changelog.md $WIN_DIR
 cp LICENSE $WIN_DIR
 
-# assemble OH Linux x32 portable
+echo 'Assemble OH Linux x32 portable...'
 cp -rf ./poh-bundle-linux-x32/* $LINUX32_DIR
 cp -rf ./gui/target/OpenHospital20/* $LINUX32_DIR/oh
 cp *.sql $LINUX32_DIR
@@ -90,7 +90,7 @@ cp POH-README.md $LINUX32_DIR
 cp POH-linux-changelog.md $LINUX32_DIR
 cp LICENSE $LINUX32_DIR
 
-# assemble OH Linux x64 portable
+echo 'Assemble OH Linux x64 portable...'
 cp -rf ./poh-bundle-linux-x64/* $LINUX64_DIR
 cp -rf ./gui/target/OpenHospital20/* $LINUX64_DIR/oh
 cp *.sql $LINUX64_DIR
@@ -99,8 +99,8 @@ cp POH-README.md $LINUX64_DIR
 cp POH-linux-changelog.md $LINUX64_DIR
 cp LICENSE $LINUX64_DIR
 
-# package
-zip -r $WIN_DIR.zip $WIN_DIR
+echo 'Package...'
+git archive -o $WIN_DIR.zip $WIN_DIR
 tar -cvzf $LINUX32_DIR.tar.gz $LINUX32_DIR
 tar -cvzf $LINUX64_DIR.tar.gz $LINUX64_DIR
 
