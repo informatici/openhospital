@@ -100,7 +100,7 @@ cp POH-linux-changelog.md $LINUX64_DIR
 cp LICENSE $LINUX64_DIR
 
 echo 'Package...'
-git archive -o $WIN_DIR.zip $WIN_DIR
+zip -r $WIN_DIR.zip $WIN_DIR
 tar -cvzf $LINUX32_DIR.tar.gz $LINUX32_DIR
 tar -cvzf $LINUX64_DIR.tar.gz $LINUX64_DIR
 
