@@ -59,7 +59,7 @@ class PatVacIoOperationRepositoryImpl implements PatVacIoOperationRepositoryCust
 				clause = " AND";
 			}
 			if (dateTo != null) {
-				query.append(clause).append(" DATE_FORMAT(PAV_DATE,'%Y-%m-%d') >= \"" + _convertToSQLDateLimited(dateTo) + "\"");
+				query.append(clause).append(" DATE_FORMAT(PAV_DATE,'%Y-%m-%d') <= \"" + _convertToSQLDateLimited(dateTo) + "\"");
 				clause = " AND";
 			}
 		}
@@ -71,7 +71,7 @@ class PatVacIoOperationRepositoryImpl implements PatVacIoOperationRepositoryCust
 			query.append(clause).append(" VAC_ID_A = \"" + vaccineCode + "\"");
 			clause = " AND";
 		}
-		if ('A' != sex) {
+		if (sex != 'A') {
 			query.append(clause).append(" PAT_SEX = \"" + sex + "\"");
 			clause = " AND";
 		}		
@@ -80,6 +80,7 @@ class PatVacIoOperationRepositoryImpl implements PatVacIoOperationRepositoryCust
 			clause = " AND";
 		}		
 		query.append(" ORDER BY PAV_DATE DESC, PAV_ID");
+		System.out.println(query.toString());
 
 		return query.toString();
 	}
