@@ -1,0 +1,136 @@
+.\"     Title: \fBmysql_install_db\fR
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.70.1 <http://docbook.sf.net/>
+.\"      Date: 01/11/2008
+.\"    Manual: MySQL Database System
+.\"    Source: MySQL 5.0
+.\"
+.TH "\fBMYSQL_INSTALL_DB\\" "1" "01/11/2008" "MySQL 5.0" "MySQL Database System"
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+mysql_install_db \- initialize MySQL data directory
+.SH "SYNOPSIS"
+.HP 27
+\fBmysql_install_db [\fR\fB\fIoptions\fR\fR\fB]\fR
+.SH "DESCRIPTION"
+.PP
+\fBmysql_install_db\fR
+initializes the MySQL data directory and creates the system tables that it contains, if they do not exist. Because the MySQL server,
+\fBmysqld\fR, needs to access the data directory when it runs later, you should either run
+\fBmysql_install_db\fR
+from the same account that will be used for running
+\fBmysqld\fR
+or run it as
+root
+and use the
+\fB\-\-user\fR
+option to indicate the username that
+\fBmysqld\fR
+will run as.
+.PP
+To invoke
+\fBmysql_install_db\fR, use the following syntax:
+.sp
+.RS 3n
+.nf
+shell> \fBmysql_install_db [\fR\fB\fIoptions\fR\fR\fB]\fR
+.fi
+.RE
+.PP
+\fBmysql_install_db\fR
+needs to invoke
+\fBmysqld\fR
+with the
+\fB\-\-bootstrap\fR
+and
+\fB\-\-skip\-grant\-tables\fR
+options (see
+Section\ 4.15.2, \(lqTypical \fBconfigure\fR Options\(rq). If MySQL was configured with the
+\fB\-\-disable\-grant\-options\fR
+option,
+\fB\-\-bootstrap\fR
+and
+\fB\-\-skip\-grant\-tables\fR
+will be disabled. To handle this, set the
+MYSQLD_BOOTSTRAP
+environment variable to the full pathname of a server that has all options enabled.
+\fBmysql_install_db\fR
+will use that server.
+.PP
+\fBmysql_install_db\fR
+supports the following options:
+.TP 3n
+\(bu
+\fB\-\-basedir=\fR\fB\fIpath\fR\fR
+.sp
+The path to the MySQL installation directory.
+.TP 3n
+\(bu
+\fB\-\-force\fR
+.sp
+Causes
+\fBmysql_install_db\fR
+to run even if DNS does not work. In that case, grant table entries that normally use hostnames will use IP addresses.
+.TP 3n
+\(bu
+\fB\-\-datadir=\fR\fB\fIpath\fR\fR,
+\fB\-\-ldata=\fR\fB\fIpath\fR\fR
+.sp
+The path to the MySQL data directory.
+.TP 3n
+\(bu
+\fB\-\-rpm\fR
+.sp
+For internal use. This option is used by RPM files during the MySQL installation process.
+.TP 3n
+\(bu
+\fB\-\-skip\-name\-resolve\fR
+.sp
+Use IP addresses rather than hostnames when creating grant table entries. This option can be useful if your DNS does not work.
+.TP 3n
+\(bu
+\fB\-\-srcdir=\fR\fB\fIpath\fR\fR
+.sp
+For internal use. The directory under which
+\fBmysql_install_db\fR
+looks for support files such as the error message file and the file for populating the help tables. This option was added in MySQL 5.0.32.
+.TP 3n
+\(bu
+\fB\-\-user=\fR\fB\fIuser_name\fR\fR
+.sp
+The login username to use for running
+\fBmysqld\fR. Files and directories created by
+\fBmysqld\fR
+will be owned by this user. You must be
+root
+to use this option. By default,
+\fBmysqld\fR
+runs using your current login name and files and directories that it creates will be owned by you.
+.TP 3n
+\(bu
+\fB\-\-verbose\fR
+.sp
+Verbose mode. Print more information about what the program does.
+.TP 3n
+\(bu
+\fB\-\-windows\fR
+.sp
+For internal use. This option is used for creating Windows distributions.
+.SH "COPYRIGHT"
+.PP
+Copyright 2007\-2008 MySQL AB
+.PP
+This documentation is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; version 2 of the License.
+.PP
+This documentation is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License along with the program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110\-1301 USA or see http://www.gnu.org/licenses/.
+.SH "SEE ALSO"
+For more information, please refer to the MySQL Reference Manual,
+which may already be installed locally and which is also available
+online at http://dev.mysql.com/doc/.
+.SH AUTHOR
+MySQL AB (http://www.mysql.com/).

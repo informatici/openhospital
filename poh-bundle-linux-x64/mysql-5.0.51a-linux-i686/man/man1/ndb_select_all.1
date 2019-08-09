@@ -1,0 +1,212 @@
+.\"     Title: \fBndb_select_all\fR
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.70.1 <http://docbook.sf.net/>
+.\"      Date: 01/11/2008
+.\"    Manual: MySQL Database System
+.\"    Source: MySQL 5.0
+.\"
+.TH "\fBNDB_SELECT_ALL\fR" "1" "01/11/2008" "MySQL 5.0" "MySQL Database System"
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+ndb_select_all \- print rows from NDB table
+.SH "SYNOPSIS"
+.HP 67
+\fBndb_select_all \-c \fR\fB\fIconnect_string\fR\fR\fB \fR\fB\fItbl_name\fR\fR\fB \-d \fR\fB\fIdb_name\fR\fR\fB [> \fR\fB\fIfile_name\fR\fR\fB]\fR
+.SH "DESCRIPTION"
+.PP
+\fBndb_select_all\fR
+prints all rows from an
+NDB
+table to
+stdout.
+.PP
+\fBUsage\fR:
+.sp
+.RS 3n
+.nf
+ndb_select_all \-c \fIconnect_string\fR \fItbl_name\fR \-d \fIdb_name\fR [> \fIfile_name\fR]
+.fi
+.RE
+.PP
+\fBAdditional Options\fR:
+.TP 3n
+\(bu
+\fB\-\-lock=\fR\fB\fIlock_type\fR\fR,
+\fB\-l \fR\fB\fIlock_type\fR\fR
+.sp
+Employs a lock when reading the table. Possible values for
+\fIlock_type\fR
+are:
+.RS 3n
+.TP 3n
+\(bu
+0: Read lock
+.TP 3n
+\(bu
+1: Read lock with hold
+.TP 3n
+\(bu
+2: Exclusive read lock
+.RE
+.IP "" 3n
+There is no default value for this option.
+.TP 3n
+\(bu
+\fB\-\-order=\fR\fB\fIindex_name\fR\fR,
+\fB\-o \fR\fB\fIindex_name\fR\fR
+.sp
+Orders the output according to the index named
+\fIindex_name\fR. Note that this is the name of an index, not of a column, and that the index must have been explicitly named when created.
+.TP 3n
+\(bu
+\fB\-\-descending\fR,
+\fB\-z\fR
+.sp
+Sorts the output in descending order. This option can be used only in conjunction with the
+\fB\-o\fR
+(\fB\-\-order\fR) option.
+.TP 3n
+\(bu
+\fB\-\-header=FALSE\fR
+.sp
+Excludes column headers from the output.
+.TP 3n
+\(bu
+\fB\-\-useHexFormat\fR
+\fB\-x\fR
+.sp
+Causes all numeric values to be displayed in hexadecimal format. This does not affect the output of numerals contained in strings or datetime values.
+.TP 3n
+\(bu
+\fB\-\-delimiter=\fR\fB\fIcharacter\fR\fR,
+\fB\-D \fR\fB\fIcharacter\fR\fR
+.sp
+Causes the
+\fIcharacter\fR
+to be used as a column delimiter. Only table data columns are separated by this delimiter.
+.sp
+The default delimiter is the tab character.
+.TP 3n
+\(bu
+\fB\-\-rowid\fR
+.sp
+Adds a
+ROWID
+column providing information about the fragments in which rows are stored.
+.TP 3n
+\(bu
+\fB\-\-gci\fR
+.sp
+Adds a column to the output showing the global checkpoint at which each row was last updated. See
+Section\ 12, \(lqMySQL Cluster Glossary\(rq, and
+Section\ 6.3.2, \(lqLog Events\(rq, for more information about checkpoints.
+.TP 3n
+\(bu
+\fB\-\-tupscan\fR,
+\fB\-t\fR
+.sp
+Scan the table in the order of the tuples.
+.TP 3n
+\(bu
+\fB\-\-nodata\fR
+.sp
+Causes any table data to be omitted.
+.sp
+.RE
+.PP
+\fBSample Output\fR:
+.PP
+Output from a MySQL
+SELECT
+statement:
+.sp
+.RS 3n
+.nf
+mysql> \fBSELECT * FROM ctest1.fish;\fR
++\-\-\-\-+\-\-\-\-\-\-\-\-\-\-\-+
+| id | name      |
++\-\-\-\-+\-\-\-\-\-\-\-\-\-\-\-+
+|  3 | shark     |
+|  6 | puffer    |
+|  2 | tuna      |
+|  4 | manta ray |
+|  5 | grouper   |
+|  1 | guppy     |
++\-\-\-\-+\-\-\-\-\-\-\-\-\-\-\-+
+6 rows in set (0.04 sec)
+.fi
+.RE
+.PP
+Output from the equivalent invocation of
+\fBndb_select_all\fR:
+.sp
+.RS 3n
+.nf
+shell> \fB./ndb_select_all \-c localhost fish \-d ctest1\fR
+id      name
+3       [shark]
+6       [puffer]
+2       [tuna]
+4       [manta ray]
+5       [grouper]
+1       [guppy]
+6 rows returned
+NDBT_ProgramExit: 0 \- OK
+.fi
+.RE
+.PP
+Note that all string values are enclosed by square brackets (\(lq[...]\(rq) in the output of
+\fBndb_select_all\fR. For a further example, consider the table created and populated as shown here:
+.sp
+.RS 3n
+.nf
+CREATE TABLE dogs (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    name VARCHAR(25) NOT NULL,
+    breed VARCHAR(50) NOT NULL,
+    PRIMARY KEY pk (id),
+    KEY ix (name)
+) 
+ENGINE=NDB;
+INSERT INTO dogs VALUES 
+    ('', 'Lassie', 'collie'),
+    ('', 'Scooby\-Doo', 'Great Dane'),
+    ('', 'Rin\-Tin\-Tin', 'German Shepherd'),
+    ('', 'Rosscoe', 'Mutt');
+.fi
+.RE
+.PP
+This demonstrates the use of several additional
+\fBndb_select_all\fR
+options:
+.sp
+.RS 3n
+.nf
+shell> \fB./ndb_select_all \-d ctest1 dogs \-o ix \-z \-\-gci\fR        
+GCI     id name           breed
+834461  2  [Scooby\-Doo]   [Great Dane]
+834878  4  [Rosscoe]      [Mutt]
+834463  3  [Rin\-Tin\-Tin]  [German Shepherd]
+835657  1  [Lassie]       [Collie]
+4 rows returned
+NDBT_ProgramExit: 0 \- OK
+.fi
+.RE
+.SH "COPYRIGHT"
+.PP
+Copyright 2007\-2008 MySQL AB
+.PP
+This documentation is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; version 2 of the License.
+.PP
+This documentation is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License along with the program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110\-1301 USA or see http://www.gnu.org/licenses/.
+.SH "SEE ALSO"
+For more information, please refer to the MySQL Reference Manual,
+which may already be installed locally and which is also available
+online at http://dev.mysql.com/doc/.
+.SH AUTHOR
+MySQL AB (http://www.mysql.com/).

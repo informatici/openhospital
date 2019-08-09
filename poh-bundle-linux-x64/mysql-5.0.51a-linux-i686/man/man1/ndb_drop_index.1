@@ -1,0 +1,102 @@
+.\"     Title: \fBndb_drop_index\fR
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.70.1 <http://docbook.sf.net/>
+.\"      Date: 01/11/2008
+.\"    Manual: MySQL Database System
+.\"    Source: MySQL 5.0
+.\"
+.TH "\fBNDB_DROP_INDEX\fR" "1" "01/11/2008" "MySQL 5.0" "MySQL Database System"
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+ndb_drop_index \- drop index from NDB table
+.SH "SYNOPSIS"
+.HP 23
+\fBndb_drop_index \fR\fB\fIoptions\fR\fR
+.SH "DESCRIPTION"
+.PP
+\fBndb_drop_index\fR
+drops the specified index from an
+NDB
+table.
+\fIIt is recommended that you use this utility only as an example for writing NDB API applications\fR
+\(em see the Warning later in this section for details.
+.PP
+\fBUsage\fR:
+.sp
+.RS 3n
+.nf
+ndb_drop_index \-c \fIconnect_string\fR \fItable_name\fR \fIindex\fR \-d \fIdb_name\fR
+.fi
+.RE
+.PP
+The statement shown above drops the index named
+\fIindex\fR
+from the
+\fItable\fR
+in the
+\fIdatabase\fR.
+.PP
+\fBAdditional Options\fR: None that are specific to this application.
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+\fBWarning\fR
+.PP
+\fIOperations performed on Cluster table indexes using the NDB API are not visible to MySQL and make the table unusable by a MySQL server\fR. If you use this program to drop an index, then try to access the table from an SQL node, an error results, as shown here:
+.sp
+.RS 3n
+.nf
+shell> \fB./ndb_drop_index \-c localhost dogs ix \-d ctest1\fR
+Dropping index dogs/idx...OK
+NDBT_ProgramExit: 0 \- OK
+shell> \fB./mysql \-u jon \-p ctest1\fR
+Enter password: *******
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with \-A
+Welcome to the MySQL monitor.  Commands end with ; or \\g.
+Your MySQL connection id is 7 to server version: 5.1.12\-beta\-20060817
+Type 'help;' or '\\h' for help. Type '\\c' to clear the buffer.
+mysql> SHOW TABLES;
++\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-+
+| Tables_in_ctest1 |
++\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-+
+| a                |
+| bt1              |
+| bt2              |
+| dogs             |
+| employees        |
+| fish             |
++\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-+
+6 rows in set (0.00 sec)
+mysql> SELECT * FROM dogs;
+ERROR 1296 (HY000): Got error 4243 'Index not found' from NDBCLUSTER
+.fi
+.RE
+.PP
+In such a case, your
+\fIonly\fR
+option for making the table available to MySQL again is to drop the table and re\-create it. You can use either the SQL statementDROP TABLE
+or the
+\fBndb_drop_table\fR
+utility (see
+\fBndb_drop_table\fR(1)) to drop the table.
+.SH "COPYRIGHT"
+.PP
+Copyright 2007\-2008 MySQL AB
+.PP
+This documentation is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; version 2 of the License.
+.PP
+This documentation is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License along with the program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110\-1301 USA or see http://www.gnu.org/licenses/.
+.SH "SEE ALSO"
+For more information, please refer to the MySQL Reference Manual,
+which may already be installed locally and which is also available
+online at http://dev.mysql.com/doc/.
+.SH AUTHOR
+MySQL AB (http://www.mysql.com/).

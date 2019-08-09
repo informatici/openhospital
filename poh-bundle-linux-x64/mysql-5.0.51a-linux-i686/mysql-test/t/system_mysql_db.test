@@ -1,0 +1,20 @@
+#
+# This test must examine integrity of system database "mysql"
+#
+
+# First delete some tables maybe left over from previous tests
+--disable_warnings
+drop table if exists t1,t1aa,t2aa;
+--enable_warnings
+
+-- disable_query_log
+use mysql;
+-- enable_query_log
+-- source include/system_db_struct.inc
+-- disable_query_log
+use test;
+-- enable_query_log
+# keep results same with system_mysql_db_fix
+show tables;
+
+# End of 4.1 tests

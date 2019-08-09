@@ -1,0 +1,841 @@
+080329 15:12:52  mysqld started
+080329 15:12:52 [Warning] Can't create test file /home/fabrizio/poh/var/lib/mysql/data/cartier-bresson.lower-test
+080329 15:12:52 [Warning] Can't create test file /home/fabrizio/poh/var/lib/mysql/data/cartier-bresson.lower-test
+/home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: Can't change dir to '/home/fabrizio/poh/var/lib/mysql/data/' (Errcode: 2)
+080329 15:12:52 [ERROR] Aborting
+
+080329 15:12:52 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080329 15:12:52  mysqld ended
+
+080329 15:14:35  mysqld started
+080329 15:14:35 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080329 15:16:03 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080329 15:16:03 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080329 15:16:03  mysqld ended
+
+080329 15:17:09  mysqld started
+080329 15:17:09 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080329 16:02:43 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080329 16:02:45 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080329 16:02:45  mysqld ended
+
+080329 16:03:24  mysqld started
+080329 16:03:24 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080329 17:50:16 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080329 17:50:16 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080329 17:50:16  mysqld ended
+
+080329 17:50:51  mysqld started
+080329 17:50:51 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080329 17:51:10 [Warning] Got signal 14 from thread 4098
+080329 17:51:10 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080329 17:51:10 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080329 17:51:10  mysqld ended
+
+080329 18:38:20  mysqld started
+080329 18:38:21 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080329 18:38:29 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080329 18:38:29 [Note] /home/fabrizio/poh/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080329 18:38:29  mysqld ended
+
+080329 18:46:25  mysqld started
+080329 18:46:25 [Note] /home/fabrizio/poh_linux/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh_linux/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080329 18:46:54 [Note] /home/fabrizio/poh_linux/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080329 18:46:54 [Note] /home/fabrizio/poh_linux/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080329 18:46:54  mysqld ended
+
+080330 14:22:34  mysqld started
+080330 14:22:35 [Note] /home/fabrizio/poh-linux-0.0.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.1/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080330 14:22:48 [Note] /home/fabrizio/poh-linux-0.0.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080330 14:22:48 [Note] /home/fabrizio/poh-linux-0.0.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080330 14:22:48  mysqld ended
+
+080413 11:24:14  mysqld started
+080413 11:24:14 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.1-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 11:24:33 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 11:24:33 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 11:24:33  mysqld ended
+
+080413 13:20:03  mysqld started
+080413 13:20:03 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.1-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 13:20:16 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 13:20:16 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 13:20:16  mysqld ended
+
+080413 13:20:36  mysqld started
+080413 13:20:36 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.1-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 13:20:41 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 13:20:41 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 13:20:41  mysqld ended
+
+080413 13:20:52  mysqld started
+080413 13:20:52 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.1-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 13:20:59 [Warning] Got signal 14 from thread 4098
+080413 13:20:59 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 13:20:59 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 13:20:59  mysqld ended
+
+080413 13:38:25  mysqld started
+080413 13:38:25 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.1-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 13:38:30 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 13:38:30 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 13:38:30  mysqld ended
+
+080413 13:38:51  mysqld started
+080413 13:38:51 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.1-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 13:38:56 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 13:38:56 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 13:38:56  mysqld ended
+
+080413 13:39:37  mysqld started
+080413 13:39:37 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.1-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 13:39:44 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 13:39:44 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 13:39:44  mysqld ended
+
+080413 13:39:52  mysqld started
+Could not open required defaults file: /home/fabrizio/poh-linux-0.0.1-core-1.2.0/etc/mysql/my.cnf
+Fatal error in defaults handling. Program aborted
+080413 13:39:52  mysqld ended
+
+080413 13:40:23  mysqld started
+080413 13:40:23 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.1-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 13:41:01 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 13:41:01 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 13:41:01  mysqld ended
+
+080413 13:41:16  mysqld started
+080413 13:41:16 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.1-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 13:41:21 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 13:41:21 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 13:41:21  mysqld ended
+
+080413 13:41:40  mysqld started
+080413 13:41:40 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.1-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 13:41:45 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 13:41:45 [Note] /home/fabrizio/poh-linux-0.0.1-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 13:41:45  mysqld ended
+
+080413 14:45:26  mysqld started
+080413 14:45:26 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 14:45:35 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 14:45:35 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 14:45:35  mysqld ended
+
+080413 15:06:43  mysqld started
+080413 15:06:43 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 15:06:54 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 15:06:54 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 15:06:54  mysqld ended
+
+080413 15:07:16  mysqld started
+080413 15:07:16 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3308  MySQL Community Server (GPL)
+080413 15:07:21 [Warning] Got signal 14 from thread 4098
+080413 15:07:21 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 15:07:21 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 15:07:21  mysqld ended
+
+080413 15:08:11  mysqld started
+080413 15:08:11 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 15:08:18 [Warning] Got signal 14 from thread 4098
+080413 15:08:18 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 15:08:18 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 15:08:18  mysqld ended
+
+080413 15:09:58  mysqld started
+080413 15:09:58 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 15:10:04 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 15:10:04 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 15:10:04  mysqld ended
+
+080413 15:11:33  mysqld started
+080413 15:11:33 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080413 15:11:39 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080413 15:11:39 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080413 15:11:39  mysqld ended
+
+080618 17:31:40  mysqld started
+080618 17:31:40 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080618 17:42:04 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080618 17:42:04 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 17:42:04  mysqld ended
+
+080618 17:50:37  mysqld started
+080618 17:50:37 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080618 17:50:37 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080618 17:50:38 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 17:50:38  mysqld ended
+
+080618 17:51:59  mysqld started
+080618 17:51:59 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080618 17:51:59 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080618 17:51:59 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 17:51:59  mysqld ended
+
+080618 17:54:33  mysqld started
+080618 17:54:33 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080618 17:54:55 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080618 17:54:55 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 17:54:55  mysqld ended
+
+080618 17:56:52  mysqld started
+080618 17:56:52 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080618 17:57:15 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080618 17:57:15 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 17:57:15  mysqld ended
+
+080618 17:57:50  mysqld started
+080618 17:57:50 [ERROR] Can't start server: Bind on TCP/IP port: Address already in use
+080618 17:57:50 [ERROR] Do you already have another mysqld server running on port: 3306 ?
+080618 17:57:50 [ERROR] Aborting
+
+080618 17:57:50 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 17:57:50  mysqld ended
+
+080618 17:58:13  mysqld started
+080618 17:58:13 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+080618 17:58:19 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080618 17:58:19 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 17:58:19  mysqld ended
+
+080618 17:59:05  mysqld started
+080618 17:59:05 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080618 17:59:10 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080618 17:59:10 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 17:59:10  mysqld ended
+
+080618 18:02:13  mysqld started
+080618 18:02:13 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+080618 18:02:46 [Warning] Got signal 14 from thread 4098
+080618 18:02:46 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080618 18:02:46 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 18:02:46  mysqld ended
+
+080618 18:03:42  mysqld started
+080618 18:03:42 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+080618 18:03:49 [Warning] Got signal 14 from thread 4098
+080618 18:03:49 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080618 18:03:49 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 18:03:49  mysqld ended
+
+080618 18:04:00  mysqld started
+080618 18:04:00 [ERROR] Can't start server: Bind on TCP/IP port: Address already in use
+080618 18:04:00 [ERROR] Do you already have another mysqld server running on port: 3306 ?
+080618 18:04:00 [ERROR] Aborting
+
+080618 18:04:00 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 18:04:00  mysqld ended
+
+080618 18:08:31  mysqld started
+080618 18:08:31 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+080618 18:09:08 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080618 18:09:08 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 18:09:08  mysqld ended
+
+080618 18:09:28  mysqld started
+080618 18:09:28 [ERROR] Can't start server: Bind on TCP/IP port: Address already in use
+080618 18:09:28 [ERROR] Do you already have another mysqld server running on port: 3306 ?
+080618 18:09:28 [ERROR] Aborting
+
+080618 18:09:28 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 18:09:28  mysqld ended
+
+080618 18:47:06  mysqld started
+080618 18:47:06 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+080618 18:47:59 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080618 18:47:59 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080618 18:47:59  mysqld ended
+
+080707 22:16:05  mysqld started
+080707 22:16:06 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+080707 22:24:22 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080707 22:24:22 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080707 22:24:22  mysqld ended
+
+080707 22:27:25  mysqld started
+080707 22:27:25 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.2.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+080707 22:27:43 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+080707 22:27:43 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.2.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+080707 22:27:43  mysqld ended
+
+081226 11:54:05  mysqld started
+081226 11:54:07 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.3.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/poh-linux-0.0.2-core-1.3.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+081226 11:58:10 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.3.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+081226 11:58:11 [Note] /home/fabrizio/poh-linux-0.0.2-core-1.3.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+081226 11:58:11  mysqld ended
+
+081226 15:53:01  mysqld started
+081226 15:53:01 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.0/var/run/mysqld/mysql.sock'  port: 3308  MySQL Community Server (GPL)
+081226 15:53:32 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+081226 15:53:32 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+081226 15:53:32  mysqld ended
+
+090420 18:54:17  mysqld started
+090420 18:54:17 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+090420 18:54:54 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+090420 18:54:54 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+090420 18:54:54  mysqld ended
+
+090420 18:57:10  mysqld started
+Could not open required defaults file: /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/etc/mysql/my.cnf
+Fatal error in defaults handling. Program aborted
+090420 18:57:10  mysqld ended
+
+090420 18:59:13  mysqld started
+090420 18:59:13 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+090420 19:02:46 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+090420 19:02:48 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+090420 19:02:48  mysqld ended
+
+100414 17:34:57  mysqld started
+100414 17:34:57 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+100414 17:41:41 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+100414 17:41:43 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.3.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+100414 17:41:43  mysqld ended
+
+100414 17:49:01  mysqld started
+100414 17:49:01 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.4.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.4.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+100414 17:49:28 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.4.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+100414 17:49:28 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.4.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+100414 17:49:28  mysqld ended
+
+100414 17:50:00  mysqld started
+100414 17:50:00 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.4.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.4.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+100414 17:50:07 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.4.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+100414 17:50:07 [Note] /home/fabrizio/oh_1_2_1/poh-linux-0.0.2-core-1.4.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+100414 17:50:07  mysqld ended
+
+101002 14:21:00  mysqld started
+101002 14:21:00 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.4.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/temp/poh-linux-0.0.2-core-1.4.1/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+101002 14:21:08 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.4.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+101002 14:21:08 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.4.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+101002 14:21:08  mysqld ended
+
+101002 14:21:40  mysqld started
+101002 14:21:40 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.4.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/temp/poh-linux-0.0.2-core-1.4.1/var/run/mysqld/mysql.sock'  port: 3308  MySQL Community Server (GPL)
+101002 14:22:52 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.4.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+101002 14:22:52 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.4.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+101002 14:22:52  mysqld ended
+
+101002 14:25:40  mysqld started
+101002 14:25:40 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.4.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/temp/poh-linux-0.0.2-core-1.4.1/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+101002 14:25:46 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.4.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+101002 14:25:46 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.4.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+101002 14:25:46  mysqld ended
+
+110810 19:11:48  mysqld started
+110810 19:11:48 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+110810 19:13:57 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+110810 19:13:57 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+110810 19:13:57  mysqld ended
+
+110810 19:14:25  mysqld started
+110810 19:14:25 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+110810 19:14:33 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+110810 19:14:33 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+110810 19:14:33  mysqld ended
+
+110810 19:14:52  mysqld started
+110810 19:14:52 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+110810 19:20:40 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+110810 19:20:40 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+110810 19:20:40  mysqld ended
+
+110810 19:20:42  mysqld started
+110810 19:20:42 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+110810 19:21:03 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+110810 19:21:03 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+110810 19:21:03  mysqld ended
+
+110810 19:47:03  mysqld started
+110810 19:47:03 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+110810 19:47:09 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+110810 19:47:09 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+110810 19:47:09  mysqld ended
+
+111203 18:35:43  mysqld started
+111203 18:35:43 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+111203 18:49:56 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+111203 18:49:56 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.5.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+111203 18:49:56  mysqld ended
+
+111203 18:54:59  mysqld started
+111203 18:54:59 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.6.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/temp/poh-linux-0.0.2-core-1.6.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+111203 18:55:34 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.6.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+111203 18:55:34 [Note] /home/fabrizio/temp/poh-linux-0.0.2-core-1.6.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+111203 18:55:34  mysqld ended
+
+130131 19:01:50  mysqld started
+130131 19:01:51 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+130131 19:04:13 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+130131 19:04:13 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+130131 19:04:13  mysqld ended
+
+130207 18:50:53  mysqld started
+130207 18:50:53 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+130207 18:52:55 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+130207 18:52:55 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+130207 18:52:55  mysqld ended
+
+130219 14:47:37  mysqld started
+130219 14:47:37 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+130219 14:49:30 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+130219 14:49:30 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+130219 14:49:30  mysqld ended
+
+130312 19:42:40  mysqld started
+130312 19:42:40 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+130312 19:42:47 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+130312 19:42:47 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+130312 19:42:47  mysqld ended
+
+130519 19:40:03  mysqld started
+130519 19:40:05 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.2/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.2/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+130519 19:40:14 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.2/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+130519 19:40:15 [Note] /home/fabrizio/tmp/poh-linux-0.0.2-core-1.7.2/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+130519 19:40:15  mysqld ended
+
+140803 11:39:33  mysqld started
+140803 11:39:33 [Note] /home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.2/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.2/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+140803 11:39:59 [Note] /home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.2/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+140803 11:39:59 [Note] /home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.2/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+140803 11:39:59  mysqld ended
+
+140803 13:46:17  mysqld started
+Could not open required defaults file: /home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.2/etc/mysql/my.cnf
+Fatal error in defaults handling. Program aborted
+140803 13:46:17  mysqld ended
+
+140803 13:47:10  mysqld started
+140803 13:47:10 [Note] /home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.2/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.2/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+140803 13:47:24 [Note] /home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.2/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+140803 13:47:24 [Note] /home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.2/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+140803 13:47:24  mysqld ended
+
+140909 14:55:25  mysqld started
+140909 14:55:26 [Note] /home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.3/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.3/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+140909 14:55:37 [Note] /home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.3/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+140909 14:55:37 [Note] /home/fabrizio/tmp/oh-1.7.3/poh-linux-0.0.2-core-1.7.3/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+140909 14:55:37  mysqld ended
+
+150125 13:26:40  mysqld started
+150125 13:26:40 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+150125 13:27:53 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+150125 13:27:53 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+150125 13:27:53  mysqld ended
+
+150125 14:29:49  mysqld started
+150125 14:29:49 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+150125 14:29:49 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+150125 14:29:49 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+150125 14:29:49  mysqld ended
+
+150125 14:35:20  mysqld started
+150125 14:35:20 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+150125 14:35:28 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+150125 14:35:28 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+150125 14:35:28  mysqld ended
+
+150125 14:40:16  mysqld started
+150125 14:40:16 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+150125 14:40:23 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+150125 14:40:23 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+150125 14:40:23  mysqld ended
+
+150125 14:40:49  mysqld started
+150125 14:40:49 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+150125 14:41:10 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+150125 14:41:10 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+150125 14:41:10  mysqld ended
+
+150125 14:41:51  mysqld started
+150125 14:41:51 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+150125 14:42:30 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+150125 14:42:30 [Note] /home/fabrizio/tmp/oh/poh-linux-0.0.2-core-1.8.0/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+150125 14:42:30  mysqld ended
+
+151001 18:35:37  mysqld started
+151001 18:35:37 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+151001 18:37:13 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+151001 18:37:13 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 18:37:13  mysqld ended
+
+151001 18:39:21  mysqld started
+151001 18:39:21 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+151001 18:41:49 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+151001 18:41:49 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 18:41:49  mysqld ended
+
+151001 18:41:53  mysqld started
+151001 18:41:53 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+151001 18:42:21 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+151001 18:42:21 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 18:42:21  mysqld ended
+
+151001 18:44:29  mysqld started
+151001 18:44:29 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+151001 18:44:35 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+151001 18:44:35 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 18:44:35  mysqld ended
+
+151001 18:44:54  mysqld started
+151001 18:44:54 [ERROR] Can't start server: Bind on TCP/IP port: Address already in use
+151001 18:44:54 [ERROR] Do you already have another mysqld server running on port: 3306 ?
+151001 18:44:54 [ERROR] Aborting
+
+151001 18:44:54 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 18:44:54  mysqld ended
+
+151001 18:45:38  mysqld started
+151001 18:45:38 [ERROR] Can't start server: Bind on TCP/IP port: Address already in use
+151001 18:45:38 [ERROR] Do you already have another mysqld server running on port: 3306 ?
+151001 18:45:38 [ERROR] Aborting
+
+151001 18:45:38 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 18:45:38  mysqld ended
+
+151001 18:47:25  mysqld started
+151001 18:47:25 [ERROR] Can't start server: Bind on TCP/IP port: Address already in use
+151001 18:47:25 [ERROR] Do you already have another mysqld server running on port: 3306 ?
+151001 18:47:25 [ERROR] Aborting
+
+151001 18:47:25 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 18:47:25  mysqld ended
+
+151001 18:48:26  mysqld started
+151001 18:48:26 [ERROR] Can't start server: Bind on TCP/IP port: Address already in use
+151001 18:48:26 [ERROR] Do you already have another mysqld server running on port: 3306 ?
+151001 18:48:26 [ERROR] Aborting
+
+151001 18:48:26 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 18:48:26  mysqld ended
+
+151001 18:48:59  mysqld started
+151001 18:48:59 [ERROR] Can't start server: Bind on TCP/IP port: Address already in use
+151001 18:48:59 [ERROR] Do you already have another mysqld server running on port: 3306 ?
+151001 18:48:59 [ERROR] Aborting
+
+151001 18:48:59 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 18:48:59  mysqld ended
+
+151001 18:49:35  mysqld started
+151001 18:49:35 [ERROR] Can't start server: Bind on TCP/IP port: Address already in use
+151001 18:49:35 [ERROR] Do you already have another mysqld server running on port: 3306 ?
+151001 18:49:35 [ERROR] Aborting
+
+151001 18:49:35 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 18:49:35  mysqld ended
+
+151001 18:55:49  mysqld started
+151001 18:55:49 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+151001 19:09:56 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+151001 19:09:56 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 19:09:56  mysqld ended
+
+151001 19:09:59  mysqld started
+151001 19:09:59 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+151001 19:10:09 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+151001 19:10:09 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 19:10:09  mysqld ended
+
+151001 19:10:30  mysqld started
+151001 19:10:30 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+151001 19:12:49 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+151001 19:12:49 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 19:12:49  mysqld ended
+
+151001 19:14:41  mysqld started
+151001 19:14:41 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+151001 19:15:07 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+151001 19:15:07 [Note] /home/alessandro/Desktop/poh-linux-0.0.2-core-1.8.1/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+151001 19:15:07  mysqld ended
+
+160806 11:52:41  mysqld started
+160806 11:52:42 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/poh-linux-0.0.2-core-1.8.2/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+160806 11:52:42 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+160806 11:52:42 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+160806 11:52:42  mysqld ended
+
+160806 11:52:50  mysqld started
+160806 11:52:50 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/poh-linux-0.0.2-core-1.8.2/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+160806 11:52:50 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+160806 11:52:50 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+160806 11:52:50  mysqld ended
+
+160806 11:53:09  mysqld started
+160806 11:53:09 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/poh-linux-0.0.2-core-1.8.2/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+160806 11:53:10 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+160806 11:53:10 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+160806 11:53:10  mysqld ended
+
+160806 11:53:38  mysqld started
+160806 11:53:38 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/poh-linux-0.0.2-core-1.8.2/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+160806 11:54:56 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+160806 11:54:56 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+160806 11:54:56  mysqld ended
+
+160806 11:57:44  mysqld started
+160806 11:57:44 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/poh-linux-0.0.2-core-1.8.2/var/run/mysqld/mysql.sock'  port: 3307  MySQL Community Server (GPL)
+160806 11:58:44 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+160806 11:58:44 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+160806 11:58:44  mysqld ended
+
+160806 12:01:57  mysqld started
+160806 12:01:57 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: ready for connections.
+Version: '5.0.51a-log'  socket: '/home/alessandro/poh-linux-0.0.2-core-1.8.2/var/run/mysqld/mysql.sock'  port: 3306  MySQL Community Server (GPL)
+160806 12:04:45 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: Normal shutdown
+
+160806 12:04:45 [Note] /home/alessandro/poh-linux-0.0.2-core-1.8.2/mysql-5.0.51a-linux-i686/bin/mysqld: Shutdown complete
+
+160806 12:04:45  mysqld ended
+

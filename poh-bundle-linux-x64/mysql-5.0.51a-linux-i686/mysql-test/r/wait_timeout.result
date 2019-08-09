@@ -1,0 +1,20 @@
+select 0;
+0
+0
+flush status;
+select 1;
+1
+1
+select 2;
+Got one of the listed errors
+select 3;
+3
+3
+select 1;
+1
+1
+select 2;
+Got one of the listed errors
+select 3;
+3
+3

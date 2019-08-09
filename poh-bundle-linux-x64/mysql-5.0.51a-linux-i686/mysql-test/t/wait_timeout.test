@@ -1,0 +1,99 @@
+# This tests not performed with embedded server
+-- source include/not_embedded.inc
+
+#
+# Bug #8731: wait_timeout does not work on Mac OS X
+#
+
+
+# Connect with another connection and reset counters
+--disable_query_log
+connect (wait_con,localhost,root,,test,,);
+connection wait_con;
+set session wait_timeout=100;
+let $retries=300;
+set @aborted_clients= 0;
+--enable_query_log
+
+# Disable reconnect and do the query
+connection default;
+# If slow host (Valgrind...), we may have already timed out here.
+# So force a reconnect if necessary, using a dummy query. And issue a
+# 'flush status' to reset the 'aborted_clients' counter.
+--enable_reconnect
+select 0;
+flush status;
+--disable_reconnect
+select 1;
+
+# Switch to wait_con and wait until server has aborted the connection
+--disable_query_log
+connection wait_con;
+while (!`select @aborted_clients`)
+{
+  sleep 0.1;
+  let $aborted_clients = `SHOW STATUS LIKE 'aborted_clients'`;
+  eval set @aborted_clients= SUBSTRING('$aborted_clients', 16)+0;
+
+  dec $retries;
+  if (!$retries)
+  {
+    Failed to detect that client has been aborted;
+  }
+}
+--enable_query_log
+
+connection default;
+# When the connection is closed in this way, the error code should
+# be consistent see bug#2845 for an explanation
+# depending on platform/client, either errno 2006 or 2013 can occur below
+--error 2006,2013
+select 2;
+--enable_reconnect
+select 3;
+# Disconnect so that we will not be confused by a future abort from this
+# connection.
+disconnect default;
+
+#
+# Do the same test as above on a TCP connection
+# (which we get by specifying a ip adress)
+
+# Connect with another connection and reset counters
+--disable_query_log
+connection wait_con;
+flush status; # Reset counters
+let $retries=300;
+set @aborted_clients= 0;
+--enable_query_log
+
+connect (con1,127.0.0.1,root,,test,$MASTER_MYPORT,);
+--disable_reconnect
+select 1;
+
+# Switch to wait_con and wait until server has aborted the connection
+--disable_query_log
+connection wait_con;
+while (!`select @aborted_clients`)
+{
+  sleep 0.1;
+  let $aborted_clients = `SHOW STATUS LIKE 'aborted_clients'`;
+  eval set @aborted_clients= SUBSTRING('$aborted_clients', 16)+0;
+
+  dec $retries;
+  if (!$retries)
+  {
+    Failed to detect that client has been aborted;
+  }
+}
+--enable_query_log
+
+connection con1;
+# When the connection is closed in this way, the error code should
+# be consistent see bug#2845 for an explanation
+# depending on platform/client, either errno 2006 or 2013 can occur below
+--error 2006,2013
+select 2;
+--enable_reconnect
+select 3;
+disconnect con1;
