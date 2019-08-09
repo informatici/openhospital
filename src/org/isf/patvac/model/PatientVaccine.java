@@ -189,12 +189,8 @@ public class PatientVaccine
 		if (code != other.code) {
 			return false;
 		}
-		if (patient == null) {
-			if (other.patient != null) {
+		if (patient == null && other.patient != null) {
 				return false;
-			}
-		} else if (!patient.equals(other.patient)) {
-			return false;
 		}
 		if (progr != other.progr) {
 			return false;
