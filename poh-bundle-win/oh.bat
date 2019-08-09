@@ -1,15 +1,31 @@
 @echo off
 set OH_PATH=%~dps0
 set XCHANGE32_PATH=%OH_PATH%\mysql\bin
+set freePort=
+set startPort=3306
+
+:SEARCHPORT
+netstat -o -n -a | find "LISTENING" | find ":%startPort% " > NUL
+if "%ERRORLEVEL%" equ "0" (
+  echo "port unavailable %startPort%"
+  set /a startPort +=1
+  GOTO :SEARCHPORT
+) ELSE (
+  echo "port available %startPort%"
+  set freePort=%startPort%
+  GOTO :FOUNDPORT
+)
+
+:FOUNDPORT
+echo "MySQL will listen on the free port %freePort%"
 
 cd /d %OH_PATH%\oh\rsc
 echo f | xcopy dicom.properties.ori dicom.properties /y
 %XCHANGE32_PATH%\Xchang32.exe dicom.properties "OH_PATH_SUBSTITUTE" "%OH_PATH%"
 %XCHANGE32_PATH%\Xchang32.exe dicom.properties "^x5c" "^x2f"
 echo f | xcopy database.properties.sample database.properties /y
-%XCHANGE32_PATH%\Xchang32.exe database.properties "3306" "3307"
+%XCHANGE32_PATH%\Xchang32.exe database.properties "3306" "%freePort%"
 %XCHANGE32_PATH%\Xchang32.exe database.properties "^x5c" "^x2f"
-
 
 cd /d %OH_PATH%\mysql\bin
 echo f | xcopy my.ori my.cnf /y
@@ -20,7 +36,7 @@ start /b /min %OH_PATH%mysql\bin\mysqld --defaults-file=%OH_PATH%mysql\bin\my.cn
 
 IF EXIST "%OH_PATH%database.sql" (
   echo Initializing database...
-  %OH_PATH%mysql\bin\mysql -u root --port=3307 oh < "%OH_PATH%database.sql"
+  %OH_PATH%mysql\bin\mysql -u root --port=%freePort% oh < "%OH_PATH%database.sql"
   echo Database initialized.
   DEL %OH_PATH%database.sql
 ) ELSE (
