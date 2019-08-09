@@ -3,7 +3,7 @@
 
 command_exists () { type "$1" &> /dev/null ; }
 
-requirements="java mvn docker-compose mysql tar"
+requirements="java mvn docker-compose mysql zip tar"
 show_req () {
     echo `tput smul`$1' not found'`tput sgr0`
     echo ''
