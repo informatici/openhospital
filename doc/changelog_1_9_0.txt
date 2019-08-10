@@ -1,3 +1,9 @@
+commit b95fd4ae534da835acee1f106d8cc1d4fd40fc00
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-30
+
+    Uploaded changelog version 1.9
+
 commit 095119baa300f27af6855dde8acf894da033476b
 Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
 Date:   2019-07-28
