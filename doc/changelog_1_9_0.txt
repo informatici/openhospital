@@ -1,8 +1,27 @@
+commit a8343628d92253fa1af717f93f39cfa441eb3785
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-30
+
+    Uploaded changelog for version 1.9.0
+
 commit 61c3f58c933a6d7bcbcc3480d72d5c8cee9feaf9
 Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
 Date:   2019-07-30
 
     Updated version to 1.9.0
+
+commit 0e16e329634a1004d72ec15d7cad235efc3385d8
+Author: transifex-integration[bot] <43880903+transifex-integration[bot]@users.noreply.github.com>
+Date:   2019-07-28
+
+    Translate '/bundle/language_en.properties' in 'it' (#24)
+    
+    * Translate /bundle/language_en.properties in it
+    
+    translation completed for the source file '/bundle/language_en.properties'
+    on the 'it' language
+    
+    * Updated italian language bundle
 
 commit 9a32cb964c3e224b7a286ef827f0d47145f43271
 Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
