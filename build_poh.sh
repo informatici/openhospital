@@ -107,7 +107,7 @@ tar -cvzf $LINUX64_DIR.tar.gz $LINUX64_DIR
 # check
 ls
 
-# print MD5 checksum
-md5sum *.zip *.gz
+# print sha256 checksum
+sha256sum *.zip *.gz
 
 echo "Portable distributions of Open Hospital created successfully."
