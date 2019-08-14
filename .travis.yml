@@ -7,6 +7,7 @@ install: skip
 before_script:
   - sudo service mysql stop
   - gem install asciidoctor-pdf --pre
+  - sudo apt-get install linuxbrew-wrapper
 
 script:
   - "./build_poh.sh"
