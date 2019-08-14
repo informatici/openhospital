@@ -7,14 +7,13 @@ install: skip
 before_script:
   - sudo service mysql stop
   - gem install asciidoctor-pdf --pre
-  - sudo apt-get install linuxbrew-wrapper
 
 script:
   - "./build_poh.sh"
   
 before_deploy:
   - brew install jshon
-  - export BODY=$(jshon -s "$(cat CHANGELOG.md)"))
+  - export BODY="$(cat CHANGELOG.md)"
 
 deploy:
   provider: releases
