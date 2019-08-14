@@ -114,4 +114,7 @@ echo $checksum
 sed -i "s/VERSION/$version/g" CHANGELOG.md
 sed -i "s/CHECKSUM/$checksum/g" CHANGELOG.md
 
+# clean up
+rm -rf $WIN_DIR $LINUX32_DIR $LINUX64_DIR *.sql *.txt
+
 echo "Portable distributions of Open Hospital created successfully."
