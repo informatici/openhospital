@@ -12,7 +12,6 @@ script:
   - "./build_poh.sh"
   
 before_deploy:
-  - brew install jshon
   - export BODY="$(cat CHANGELOG.md)"
 
 deploy:
