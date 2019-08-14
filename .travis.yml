@@ -1,21 +1,17 @@
 language: java
 jdk:
 - openjdk8
-
 install: skip
-
 before_script:
 - sudo service mysql stop
 - gem install asciidoctor-pdf --pre
-
 script:
 - "./build_poh.sh"
-
 before_deploy:
-- curl https://github.com/lindell/github-release-cli/releases/download/1.3.0/github-releaser-travis -L --output github-releaser && chmod +x github-releaser
+- curl https://github.com/lindell/github-release-cli/releases/download/1.3.0/github-releaser-travis
+  -L --output github-releaser && chmod +x github-releaser
 - export BODY=$(envsubst < ./CHANGELOG.md)
 - export FILES=poh*.*
-
 deploy:
   provider: script
   script: "./github-releaser -draft -verbose"
@@ -23,7 +19,8 @@ deploy:
   overwrite: true
   on:
     tags: true
-
 env:
   global:
-    secure: d5c570daf2cee8d6f158a4e7b95cbcc19a3e2063
+  - secure: d5c570daf2cee8d6f158a4e7b95cbcc19a3e2063
+  - secure: sHuNPbJjmzLwm7lFBVgWtHvM/Mz8iZ5qa4DdlDpZ0Acm78fhlRXCbXHiolVcodPsZgL5lrFrZDVEOKhVXsBSCkvWgeuQncuFwKDTiOXxhxkcXsabHokxpcxUDG5S/DcQPPEyxLQ0Z3QOld5sV8Y0SKR7xNdMYXfUZ8a59YBn9eqClOVqQsIm3Bwz6CedJGzYmZjBpKuyUwt9jTPzQnMLEbeTNu6KtcUx1u5TTlj3rfc1i1pzzAIRDShZ8iav2N9hwT4/OR2NErEB2CCq9pn3yf+XTeFWstP0kik4h0o0BJ/CZwrMtHDT8XTqxCuqMoO90st3s01PwHfawZ04kPJ5o6eDXwWv50o5/oPZN/yqtyK2C+vq9YjhMSWcnw9q/Zbm8nE9BB9NU7Mmju2Q0O0B/FNEsp7sFZ/D6cx/g2fV2edroYT8kH+qPlk62r9X3l9/OyWu7LT63zO5surPeojS6zukxHlQ73i3EDDdOLrGvM1RonXq+cMWH/XLS1ULYDE1loTfyhuB7e2qfYxHFUE61AKiikwfztec7pmi3piUNT2iA129OtQvKcErNuljK5mxAB1CkcIapDXsqtT/a3ljV9S5Sp237u4x/pbeCIcCwaQc3a4KGNMiVF/hTq5T/PeevMiVfTSMBYGiGCxIQNGS7tvNArIPoc2lbTe/XosCNGA=
+  - secure: kqHnALuzoeVPPDj+aaVUX/6K6oxxb/nfzoP2y1KIxM8UTK7BnLlsgxQmOQO+ocUcIVk8+EeyCzHgb6EKISbUDFATI8XlifQveyuQhOukbLLkxwTGJEcpllv4BGU7cwo4XEqbKuzyej6Vd/d51+vZNem6gA1Hyge9N0MTWlC8PMnLFtG3skok6hVkmtWDyLPDRt4WU3R9KBROhwcJ7FO7GxIc1VkFZ10fe0RxorLBP1MRo4wGirZML0THnJdWP1KbUW9hkyw6nrHplZhh5UZo12474f4vzVT+IEOluG4S5nbZtPzoGcHEsD0UTD6BUBmLVKQDHUeweKTWaPop/uLatLVt5Ge/4SDquRExOQ/8HXhzVEt5woGUrkIxKi7I60LPefXnORigN81N0BvZ/jbd7MLjGi5vtY6jqBrTkml+C+Sj/PzgTS5UX4DTDQdouLrAa3Yeu0L6WWnLF4IUY8lSdrcg6ZB5hJ6qzz+89yNCYVRrFcW4M22RQgG+dn4dJBiVnpUCZ7z6EO9H11W/b5JvNO/Z+Ir8/Cfm0GZGyw+1M6Y7m4JZXIoVOIHFfb4GqRRSCTCXiEChvXs068I4hD6l+OZO9nj70NAE2bvDK0hMFcu3/IT8/EuVTt1e5YkI3ynaoiRHwrhCA6zSXMsUXKnR4H/t+sGy7YNPyeMJKdlZUBw=
