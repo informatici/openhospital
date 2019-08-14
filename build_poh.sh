@@ -107,10 +107,11 @@ tar -cvzf $LINUX64_DIR.tar.gz $LINUX64_DIR
 # check
 ls
 
-echo 'Calculate sha256 checksum...'
-sha256sum *.zip *.gz
-sha256sum=$(sha256sum *.zip *.gz)
-contents=$(< CHANGELOG.md)
-echo "${contents/\$\{SHA256SUM\}/$sha256sum}" > changelog.tmp && mv changelog.tmp CHANGELOG.md
+echo 'Compute SHA256 checksum...'
+checksum=$(sha256sum *.zip *.gz)
+checksum=${checksum//$'\n'/\\n}
+echo $checksum
+sed -i "s/VERSION/$version/g" CHANGELOG.md
+sed -i "s/CHECKSUM/$checksum/g" CHANGELOG.md
 
 echo "Portable distributions of Open Hospital created successfully."
