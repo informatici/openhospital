@@ -1,3 +1,39 @@
+commit a02b25655a67c0f977c411f8f22791ceb4149e2b
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-10
+
+    made changelog.sh executable
+
+commit 7bf08f300692b255270685aa19d7b90591288240
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-10
+
+    Updated changelog and added a script to generate it
+
+commit d14a7814bbd3e50ec97acfe7628d217fec87b40d
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-09
+
+    Fixed object equals() method
+
+commit c958993660d959eeaed2ca2f0e139988eb782fc6
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-09
+
+    Fixing pre-release issue #27: fix dates range filtering
+
+commit 384239b8dee74a38400804fdff931dfbb8be2bc4
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-07
+
+    Pre-release issue #19: fixing duplicated drugs
+
+commit 1a6b371270f1161bc79fa10848f80e640c9b20a8
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-07
+
+    Pre-release issue #21: fixing StockLedger report
+
 commit b95fd4ae534da835acee1f106d8cc1d4fd40fc00
 Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
 Date:   2019-07-30
