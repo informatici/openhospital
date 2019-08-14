@@ -1,25 +1,29 @@
 language: java
 jdk:
-  - openjdk8
+- openjdk8
 
 install: skip
 
 before_script:
-  - sudo service mysql stop
-  - gem install asciidoctor-pdf --pre
+- sudo service mysql stop
+- gem install asciidoctor-pdf --pre
 
 script:
-  - "./build_poh.sh"
-  
+- "./build_poh.sh"
+
+before_deploy:
+- curl https://github.com/lindell/github-release-cli/releases/download/1.3.0/github-releaser-travis -L --output github-releaser && chmod +x github-releaser
+- export BODY=$(envsubst < ./CHANGELOG.md)
+- export FILES=poh*.*
+
 deploy:
-  provider: releases
-  api_key:
-    secure: fJ0R+AqJfH0qntvfdTMd6dQ0uqqKhHrC8pSl/exNmxv063u/r0rhZALpRDFqlkPfGVuTTmvVEiiKCbZsV/1ppPCvB8Bh+oDG7hWaZKO+QTRnrKZJgHGY7JCqZVTgh3XDKezW/wOjS1/9Jk3xHRUXqqLBTH3bM/d/GF/rywzZKIz86+QPIeKc1Y1Lf5jO5Wp3VOUHgQN5tPRECk/QUjxICMp0DlGxH+h2IZ0u7cl8dWYevbsQNchJyhnkhlMrpewnZnk7NxDlf0c572icAKTkjdNz4hEnXIxtXm8rRZQKIp4qq5k2fM446nO+D9AY+uXXeJF5xfcx11/cVccxtAWD3GditniXpOhFrNe+E8I+6cnqBDUt1e+czpQ7PKnUJH02dcF9TicFbQuVVgsVSZJ5UZn8seLhTdSS85mwCuGMR/utByaHKHK2XrxCz7+eqlvV0FMdaHLZ+I9/c/mKNFMRH5DxKyMPY4HT121rFHFUBi69I9k+9vNbyGoYoCDXLTZIUn1iE3/4ulCugQrTUY3BcM17D+jtZffafTcGAugcpfpQ/8H19lGnRyZKIR73bPKRVdZ0yNOrZdvF1YgOhAXEAw3iKVLsIAt+lNBrGaNyPrIN8pKyWE2nC0osYUxq9uTW3i7DNg9i+w/NAsVdb84ht2BTzDIdlyJxu4tfHBnL1lY=
-  body: "Changelog here"
-  draft: true
-  overwrite: true
-  file_glob: true
-  file: poh*.*
+  provider: script
+  script: "./github-releaser -draft -verbose"
   skip_cleanup: true
+  overwrite: true
   on:
     tags: true
+
+env:
+  global:
+    secure: n7As0JYIOBct8tZGU3dRGM0w9dboEKRrzmbgskINrN6+J4qIGZi1vE1lmUv0GEzZ3t8oai01V3SkCEuurNqWafPyn/5YB9L+ojU39MRbfCJn9ARYR9C9LRB/MUSnkRMzaccD73tInz6mzNB5Lf8kJ/kb3yrPNHMeAjglpIgl/Nx919chqMXH5Jb2SV1vtK7XE0zNcuyhW+TFo9//mru9bCns03qocEzeR0pVNv9t7+9UbHhUddor2XXOLKzJGxDkDGh3x/BzxhZ5rFfPfdawkb28gzEBm9/YNvB15ts+JuQnaVwqeyHgUFRINAiC341KSyhMehsJY504DPO0YmCVFmptvh01+K3AVwh+pTqZcfvYb2zlBY6uG7yhGgkW9lAiWYjWcb1YaRiroZSlpZkZAlei5TtMRhr2UA4Jh75xgJ6JQ/JihQZnONBdQ5Y/wbqJL4gWMzx5iOOamAa45jX71H0tUBbhCsiBVxC7ZcKZbxEwAAKTDV09VAAIQhJmUkYT0REO9WRFynCABHwx3/raFf7qexX7DNShP6AR1/y250lYKssdPBcwHwjkj04JQQeKsVioOqoEeGJcD9GolM3aH4RJOaoxvFI7abX6/tjToLxoV0L0xgBqVPvv4et40G5yQ/aMz1Ufu0hoBswsxO6wyxC1r/q4I+fuPOwiuEARjL0=
