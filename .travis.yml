@@ -11,6 +11,10 @@ before_script:
 script:
   - "./build_poh.sh"
   
+before_deploy:
+- curl https://github.com/lindell/github-release-cli/releases/download/LATEST_RELEASE/github-releaser-travis -L --output github-releaser && chmod +x github-releaser
+- export BODY=$(envsubst < ./CHANGELOG.md)
+  
 deploy:
   provider: releases
   api_key:
