@@ -1,3 +1,59 @@
+commit 345f10d5189797fa42b065064cfb9daa2d3717ec
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-10
+
+    made changelog.sh executable
+
+commit e3d89b4e0caabfbb43599c83c887daa9866eab20
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-10
+
+    Updated changelog and added a script to generate it
+
+commit 182bbc8c2fbcdbda1164bb342cd30b34e1d4206c
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-09
+
+    Fixing pre-release issue #26: fix gender filtering
+
+commit adee69aeb82d559af094c8d503d99fa075769624
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-08
+
+    Removed some unused imports
+
+commit 99398860c8e5bfc330f25e7764ef696f7e1504f2
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-08
+
+    Fixing pre-release issue #25: fixed report query
+
+commit a72cebad2afea1b7bacac8d3a688afa754e00e3c
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-08
+
+    Fixing pre-release issue #23: removed report type selection
+
+commit 2364a2c60c9fa230c83b0ab65377c7318768fc07
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-08
+
+    Fixed remove exam behavior in Laboratory
+
+commit 9dbecda8d827d2bafcb6f873de8da949186626c3
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-07
+
+    Pre-release issue #22: fixing multiple result insert
+
+commit c991115969aad2919bd864874f37a6a0da5275bf
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-07
+
+    Fixing StockLedger and StockProduct reports initial and ending balances
+    
+    and other reports
+
 commit a8343628d92253fa1af717f93f39cfa441eb3785
 Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
 Date:   2019-07-30
