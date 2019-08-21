@@ -1,3 +1,23 @@
+commit 1a0a8ad033fe659a778b3779e7b8758f5b48a701
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-15
+
+    Addressed security issue #2
+    
+    https://github.com/informatici/openhospital-core/network/alert/pom.xml/org.springframework.data:spring-data-jpa/closed
+
+commit cb579fe3c2e83421a21209275553739462df8898
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-15
+
+    Fixed insert query
+
+commit e0809acd5498666f10b3fd8ddabcf97454e67158
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-14
+
+    Updated changelog for v1.9.0
+
 commit a02b25655a67c0f977c411f8f22791ceb4149e2b
 Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
 Date:   2019-08-10
