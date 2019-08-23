@@ -41,7 +41,7 @@ test -f $version_file
 major=$(grep VER_MAJOR $version_file | cut -d"=" -f2)
 minor=$(grep VER_MINOR $version_file | cut -d"=" -f2)
 release=$(grep VER_RELEASE $version_file | cut -d"=" -f2)
-version="$major.$minor.$release-beta2"
+version="$major.$minor.$release"
 
 # compile core and gui projects
 docker-compose -f core/docker-compose.yml up -d
