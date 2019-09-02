@@ -10,6 +10,11 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+/**
+ * 
+ * @author u2g
+ *
+ */
 public class OhDefaultCellRenderer extends DefaultTableCellRenderer{
 	
 	
