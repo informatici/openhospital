@@ -27,15 +27,15 @@
 	<parameter name="month" isForPrompting="true" class="java.lang.String"/>
 	<queryString><![CDATA[select opType, opDesc, sum(resultOk) totOk, sum(resultKo) totKo, sum(resultNull) totNull, sum(opCount) totOp
 from (
-SELECT  ot.OCL_DESC opType, o.OPE_DESC opDesc, 1 as opCount,
+    SELECT  ot.OCL_DESC opType, o.OPE_DESC opDesc, 1 as opCount,
         case when ifnull(ADM_RESOP,'unknown')='P' then 1 else null end resultOk,
         case when ifnull(ADM_RESOP,'unknown')='N' then 1 else null end resultKo,
         case when ADM_RESOP is null then 1 else null end resultNull
-    FROM ADMISSION a, OPERATION o, OPERATIONTYPE ot
-where year(ADM_DATE_OP) = $P{year}
-and month(ADM_DATE_OP) = $P{month}
-and o.OPE_ID_A = a.ADM_OPE_ID_A
-and ot.OCL_ID_A = o.OPE_OCL_ID_A) alldata
+    FROM OPERATIONROW opr, ADMISSION a, OPERATION o, OPERATIONTYPE ot
+    where a.ADM_ID = opr.OPER_ADMISSION_ID
+    and opr.OPER_ID = o.OPE_ID_A
+    and o.OPE_OCL_ID_A = ot.OCL_ID_A
+) alldata
 group by opType, opDesc]]></queryString>
 
 	<field name="opType" class="java.lang.String"/>

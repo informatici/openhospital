@@ -39,7 +39,7 @@ import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
+import javax.swing.table.DefaultTableModel;
 
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.model.Admission;
@@ -176,10 +176,8 @@ public class LabNew extends JDialog implements SelectionListener {
 	
 	//Arrays for this Patient
 	private ArrayList<ArrayList<LaboratoryRow>> examResults = new ArrayList<ArrayList<LaboratoryRow>>();
-	private ArrayList<Laboratory> labLists = new ArrayList<Laboratory>();
-	
     private ArrayList<Laboratory> examItems = new ArrayList<Laboratory>();
-	private ArrayList<Laboratory> examList = null;
+	private ExamTableModel jTableModel;
                 
 	public LabNew(JFrame owner) {
 		super(owner, true);
@@ -294,7 +292,7 @@ public class LabNew extends JDialog implements SelectionListener {
 //                        lab.setSex(patientSelected.getSex()+"");
                         lab.setNote(jTextAreaNote.getText().trim());
                         lab.setMaterial((String) jComboBoxMaterial.getSelectedItem());
-                        lab.setResult((String) jComboBoxExamResults.getSelectedItem());
+                        if (lab.getExam().getProcedure() == 1) lab.setResult((String) jComboBoxExamResults.getSelectedItem());
 					}
 					
 					boolean result = false;
@@ -640,7 +638,8 @@ public class LabNew extends JDialog implements SelectionListener {
 	private JTable getJTableExams() {
 		if (jTableExams == null) {
 			jTableExams = new JTable();
-			jTableExams.setModel(new ExamTableModel());
+			jTableModel = new ExamTableModel();
+			jTableExams.setModel(jTableModel);
 			for (int i = 0; i < examColumnWidth.length; i++) {
 				
 				jTableExams.getColumnModel().getColumn(i).setMinWidth(examColumnWidth[i]);
@@ -653,7 +652,7 @@ public class LabNew extends JDialog implements SelectionListener {
 
 				public void valueChanged(ListSelectionEvent e) {
 					// Check that mouse has been released.
-					if (!e.getValueIsAdjusting()) {
+//					if (!e.getValueIsAdjusting()) {
 						
 						if (selectedLab != null) {
 							selectedLab.setNote(jTextAreaNote.getText().trim());
@@ -661,16 +660,19 @@ public class LabNew extends JDialog implements SelectionListener {
 						}
 						
 						int selectedRow = jTableExams.getSelectedRow();
-						selectedLab = (Laboratory)jTableExams.getValueAt(selectedRow, -1);
-						jComboBoxMaterial.setSelectedItem(selectedLab.getMaterial());
-						jTextAreaNote.setText(selectedLab.getNote());
-						jPanelResults = getJPanelResults();
-						jComboBoxMaterial.setEnabled(true);
 						
-						//modified = false;
-						validate();
-						repaint();
-					}
+						if (selectedRow > -1) {
+							selectedLab = (Laboratory)jTableExams.getValueAt(selectedRow, -1);
+							jComboBoxMaterial.setSelectedItem(selectedLab.getMaterial());
+							jTextAreaNote.setText(selectedLab.getNote());
+							jPanelResults = getJPanelResults();
+							jComboBoxMaterial.setEnabled(true);
+							
+							//modified = false;
+							validate();
+							repaint();
+						}
+//					}
 				}
 			});
 		}
@@ -687,7 +689,7 @@ public class LabNew extends JDialog implements SelectionListener {
 		return jPanelExamButtons;
 	}
 	
-	public JButton getJButtonAddExam() {
+	private JButton getJButtonAddExam() {
 
 		if (jButtonAddExam == null) {
 			jButtonAddExam = new JButton();
@@ -780,11 +782,6 @@ public class LabNew extends JDialog implements SelectionListener {
 		
 	}
 
-	private void removeItem(int selectedRow) {
-		examItems.remove(selectedRow);
-		jTableExams.updateUI();
-	}
-	
 	private JButton getJButtonRemoveItem() {
 		if (jButtonRemoveItem == null) {
 			jButtonRemoveItem = new JButton();
@@ -794,17 +791,22 @@ public class LabNew extends JDialog implements SelectionListener {
 
 				public void actionPerformed(ActionEvent e) {
 					
-					if (jTableExams.getSelectedRow() < 0) { 
+					int selectedRow = jTableExams.getSelectedRow();
+					if (selectedRow < 0) { 
 						JOptionPane.showMessageDialog(LabNew.this,
 								MessageBundle.getMessage("angal.labnew.pleaseselectanexam"), //$NON-NLS-1$
 								"Error", //$NON-NLS-1$
 								JOptionPane.WARNING_MESSAGE);
 					} else {
-						removeItem(jTableExams.getSelectedRow());
+						examItems.remove(selectedRow);
 						jPanelResults.removeAll();
+						jTableExams.clearSelection();
+						jTableModel.fireTableDataChanged();
+						jTableExams.updateUI();
+						jComboBoxMaterial.setEnabled(false);
 						//validate();
 						repaint();
-						jComboBoxMaterial.setEnabled(false);
+						
 					}
 				}
 			});
@@ -813,7 +815,7 @@ public class LabNew extends JDialog implements SelectionListener {
 		return jButtonRemoveItem;
 	}
 	
-	public class ExamTableModel implements TableModel {
+	public class ExamTableModel extends DefaultTableModel {
 		
 		public Class<?> getColumnClass(int columnIndex) {
 			return examClasses[columnIndex].getClass();

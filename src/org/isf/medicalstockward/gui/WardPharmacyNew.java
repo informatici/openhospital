@@ -7,15 +7,18 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,7 +44,6 @@ import org.isf.patient.gui.SelectPatient.SelectionListener;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.ward.model.Ward;
 
 public class WardPharmacyNew extends JDialog implements SelectionListener {
@@ -142,6 +144,18 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 	private JTextField jTextFieldUse;
 	private JLabel jLabelUse;
 
+        private JRadioButton jRadioWard;
+	private JComboBox wardBox;
+	private JPanel panelWard;
+        /*
+         *Adds to facilitate the selection of products 
+         */
+        private JPanel searchPanel;
+        private JTextField searchTextField;
+        private JButton searchButton;
+        private JComboBox jComboBoxMedicals;
+        //private JLabel jLabelSelectWard;
+        
 	public WardPharmacyNew(JFrame owner, Ward ward, ArrayList<MedicalWard> drugs) {
 		super(owner, true);
 		wardDrugs = drugs;
@@ -174,9 +188,11 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 			jPanelNorth.setLayout(new BoxLayout(jPanelNorth, BoxLayout.Y_AXIS));
 			jPanelNorth.add(getJPanelPatient());
 			jPanelNorth.add(getJPanelUse());
+                        jPanelNorth.add(getPanelWard());
 			ButtonGroup group = new ButtonGroup();
 			group.add(jRadioPatient);
 			group.add(jRadioUse);
+                        group.add(jRadioWard);
 		}
 		return jPanelNorth;
 	}
@@ -219,6 +235,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 					jButtonPickPatient.setEnabled(false);
 					jButtonTrashPatient.setEnabled(false);
 					jTextFieldUse.setEnabled(true);
+                                        wardBox.setEnabled(false);
 				}
 			});
 		}
@@ -235,9 +252,6 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 
 				public void actionPerformed(ActionEvent e) {
 					ArrayList<Medical> currentMeds = new ArrayList<Medical>();
-					currentMeds.addAll(medArray);
-					ArrayList<Double> currentQties = new ArrayList<Double>();
-					currentQties.addAll(qtyArray);
 
 					// remove already inserted items
 					for (MedicalWard medItem : medItems) {
@@ -245,27 +259,36 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 						try {
 							med = medItem.getMedical();
 						} catch (OHException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						int index = currentMeds.indexOf(med);
-						currentMeds.remove(index);
-						currentQties.remove(index);
+						currentMeds.add(med);
 					}
 					
-					Icon icon = new ImageIcon("rsc/icons/medical_dialog.png"); //$NON-NLS-1$
-					Medical med = (Medical)JOptionPane.showInputDialog(
-					                    WardPharmacyNew.this,
-					                    MessageBundle.getMessage("angal.medicalstockwardedit.selectamedical"), //$NON-NLS-1$
-					                    MessageBundle.getMessage("angal.medicalstockwardedit.medical"), //$NON-NLS-1$
-					                    JOptionPane.PLAIN_MESSAGE,
-					                    icon,
-					                    currentMeds.toArray(),
-					                    ""); //$NON-NLS-1$
+//					Icon icon = new ImageIcon("rsc/icons/medical_dialog.png"); //$NON-NLS-1$
+//					Medical med = (Medical)JOptionPane.showInputDialog(
+//					                    WardPharmacyNew.this,
+//					                    "TestTest Test", //$NON-NLS-1$
+//					                    MessageBundle.getMessage("angal.medicalstockwardedit.medical"), //$NON-NLS-1$
+//					                    JOptionPane.PLAIN_MESSAGE,
+//					                    icon,
+//					                    currentMeds.toArray(),
+//					                    ""); //$NON-NLS-1$
+	                Medical med = null;
+	                if (jComboBoxMedicals.getSelectedItem() instanceof Medical) {
+	                        med = (Medical) jComboBoxMedicals.getSelectedItem();
+	                }
+	               	if(currentMeds.contains(med)) {
+	               		JOptionPane.showMessageDialog(WardPharmacyNew.this, 
+							MessageBundle.getMessage("angal.medicalstockwardedit.productalreadyinserted"), //$NON-NLS-1$
+							MessageBundle.getMessage("angal.medicalstockwardedit.invalidproduct"), //$NON-NLS-1$
+							JOptionPane.ERROR_MESSAGE);
+	               		return;
+	               	}
 					if (med != null) {
+						int index = medArray.indexOf(med);
 						Double startQty = 0.;
 						Double minQty = 0.;
-						Double maxQty = currentQties.get(currentMeds.indexOf(med));
+						Double maxQty = qtyArray.get(index);
 						Double stepQty = 0.5;
 						JSpinner jSpinnerQty = new JSpinner(new SpinnerNumberModel(startQty,minQty,null,stepQty));
 						
@@ -342,6 +365,8 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 			
 			MedicalWard item = new MedicalWard(med, qty);
 			medItems.add(item);
+			medArray.add(med);
+			qtyArray.add(qty);
 			jTableMedicals.updateUI();
 		}
 	}
@@ -349,6 +374,8 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 	private void removeItem(int row) {
 		if (row != -1) {
 			medItems.remove(row);
+			medArray.remove(row);
+			qtyArray.remove(row);
 			jTableMedicals.updateUI();
 		}
 		
@@ -357,8 +384,9 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 	private JPanel getJPanelMedicalsButtons() {
 		if (jPanelMedicalsButtons == null) {
 			jPanelMedicalsButtons = new JPanel();
-			jPanelMedicalsButtons.setLayout(new BoxLayout(jPanelMedicalsButtons, BoxLayout.Y_AXIS));
-			jPanelMedicalsButtons.add(getJButtonAddMedical());
+                        jPanelMedicalsButtons.setLayout(new FlowLayout(FlowLayout.RIGHT));
+			//jPanelMedicalsButtons.setLayout(new BoxLayout(jPanelMedicalsButtons, BoxLayout.Y_AXIS));
+			//jPanelMedicalsButtons.add(getJButtonAddMedical());
 			jPanelMedicalsButtons.add(getJButtonRemoveMedical());
 		}
 		return jPanelMedicalsButtons;
@@ -398,7 +426,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 					int age = 0;
 					float weight = 0;
 					GregorianCalendar newDate = new GregorianCalendar();
-					
+					Ward wardTo = null; //
 					if (jRadioPatient.isSelected()) {
 						isPatient = true;
 						if (patientSelected != null) {
@@ -406,44 +434,90 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 							age = patientSelected.getAge();
 							weight = patientSelected.getWeight();
 						}
-					} else {
+					} 
+                    else if (jRadioWard.isSelected()) {
+						Object selectedObj = wardBox.getSelectedItem();
+						if(selectedObj instanceof Ward){
+							wardTo = (Ward) selectedObj;
+						}
+						else{
+							JOptionPane.showMessageDialog(null,
+									MessageBundle.getMessage("angal.medicalstock.multipledischarging.pleaseselectaward"));
+							return;
+						}
+                        description = wardTo.getDescription();
+						isPatient = false;
+					} 
+                    else {
 						isPatient = false;
 						description = jTextFieldUse.getText();
 					}
 					
-					ArrayList<MovementWard> manyMovementWard = new ArrayList<MovementWard>();
-					for (int i = 0; i < medItems.size(); i++) {
-						try {
-							manyMovementWard.add(new MovementWard(
-									wardSelected,
-									newDate,
-									isPatient,
-									patientSelected,
-									age,
-									weight,
-									description,
-									medItems.get(i).getMedical(),
-									medItems.get(i).getQty(),
-									MessageBundle.getMessage("angal.medicalstockwardedit.pieces")));
-						} catch (OHException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-					
+//					ArrayList<MovementWard> manyMovementWard = new ArrayList<MovementWard>();
+//					for (int i = 0; i < medItems.size(); i++) {
+//						try {
+//							manyMovementWard.add(new MovementWard(
+//									wardSelected,
+//									newDate,
+//									isPatient,
+//									patientSelected,
+//									age,
+//									weight,
+//									description,
+//									medItems.get(i).getMedical(),
+//									medItems.get(i).getQty(),
+//									MessageBundle.getMessage("angal.medicalstockwardedit.pieces"),
+//                                                                        wardTo));
+//						} catch (OHException e1) {
+//							// TODO Auto-generated catch block
+//							e1.printStackTrace();
+//						}
+//					}
+//					MovWardBrowserManager wardManager = new MovWardBrowserManager();
+//					boolean result;
+//					try {
+//						result = wardManager.newMovementWard(manyMovementWard);
+//						if (result) {
+//							fireMovementWardInserted();
+//							dispose();
+//						} else
+//							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+//					} catch (OHServiceException e1) {
+//						result = false;
+//						OHServiceExceptionUtil.showMessages(e1);
+//					}
+
+                    // innit of the datas needed to store the movement
+					//ArrayList<Movement> movements = new ArrayList<Movement>();
+					//Lot aLot = new Lot("", newDate, newDate);
+					//String refNo = "";
+                                        
+                    ArrayList<MovementWard> manyMovementWard = new ArrayList<MovementWard>();
+                    //MovStockInsertingManager movManager = new MovStockInsertingManager();
 					MovWardBrowserManager wardManager = new MovWardBrowserManager();
-					boolean result;
+                    boolean result;
 					try {
+						// MovementType typeCharge = new
+						// MedicaldsrstockmovTypeBrowserManager().getMovementType("charge");
+						for (int i = 0; i < medItems.size(); i++) {
+							manyMovementWard.add(new MovementWard(wardSelected, newDate, isPatient, patientSelected,
+									age, weight, description, medItems.get(i).getMedical(), medItems.get(i).getQty(),
+									MessageBundle.getMessage("angal.medicalstockwardedit.pieces"), wardTo, null));
+						}
+
 						result = wardManager.newMovementWard(manyMovementWard);
-						if (result) {
-							fireMovementWardInserted();
-							dispose();
-						} else
-							JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
-					} catch (OHServiceException e1) {
-						result = false;
-						OHServiceExceptionUtil.showMessages(e1);
-					}
+					} catch (OHServiceException ex) {
+                        result = false;
+                    } catch (OHException ex) {
+                        result = false;
+                    }
+					if (result) {
+                        fireMovementWardInserted();
+                        dispose();
+					} else {
+                        JOptionPane.showMessageDialog(null, MessageBundle.getMessage("angal.sql.thedatacouldnotbesaved"));
+                    
+                    }	
 				}
 			});
 		}
@@ -477,7 +551,8 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 	private JPanel getJPanelMedicals() {
 		if (jPanelMedicals == null) {
 			jPanelMedicals = new JPanel();
-			//jPanelMedicals.setLayout(new BoxLayout(jPanelMedicals, BoxLayout.X_AXIS));
+			jPanelMedicals.setLayout(new BoxLayout(jPanelMedicals, BoxLayout.Y_AXIS));
+                        jPanelMedicals.add(getJPanelMedicalsSearch());
 			jPanelMedicals.add(getJScrollPaneMedicals());
 			jPanelMedicals.add(getJPanelMedicalsButtons());
 		}
@@ -507,6 +582,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 					jTextFieldUse.setEnabled(false);
 					jTextFieldPatient.setEnabled(true);
 					jButtonPickPatient.setEnabled(true);
+                                        wardBox.setEnabled(false);
 					if (patientSelected != null) jButtonTrashPatient.setEnabled(true);
 					
 				}
@@ -638,4 +714,140 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 		}
 
 	}
+        
+        private JPanel getPanelWard() {
+		if (panelWard == null) {
+			panelWard = new JPanel();
+			panelWard.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+			panelWard.add(getJRadioWard());
+			//panelWard.add(getJLabelSelectWard());
+			panelWard.add(getWardBox());
+		}
+		return panelWard;
+	}
+
+	private JRadioButton getJRadioWard() {
+		if (jRadioWard == null) {
+			jRadioWard = new JRadioButton(MessageBundle.getMessage("angal.wardpharmacynew.ward"));
+			jRadioWard.setSelected(false);
+			jRadioWard.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					jTextFieldUse.setEnabled(false);
+					jTextFieldPatient.setEnabled(false);
+					jButtonPickPatient.setEnabled(false);
+					wardBox.setEnabled(true);
+				}
+			});
+			jRadioWard.setMinimumSize(new Dimension(55, 22));
+			jRadioWard.setMaximumSize(new Dimension(55, 22));
+		}
+		return jRadioWard;
+	}
+
+	private JComboBox getWardBox() {
+		if (wardBox == null) {
+			wardBox = new JComboBox();
+			wardBox.setPreferredSize(new Dimension(300, 30));
+			org.isf.ward.manager.WardBrowserManager wbm = new org.isf.ward.manager.WardBrowserManager();
+			ArrayList<Ward> wardList = null;
+                        try {
+                            wardList = wbm.getWards();
+                        } catch (OHServiceException ex) {
+                            Logger.getLogger(WardPharmacyNew.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+			wardBox.addItem("");
+			if(wardList != null) {
+                            for (org.isf.ward.model.Ward elem : wardList) {
+				if (!wardSelected.getCode().equals(elem.getCode()))
+					wardBox.addItem(elem);
+                            }
+                        }
+			wardBox.setEnabled(false);
+		}
+		return wardBox;
+	}
+        
+        private JPanel getJPanelMedicalsSearch() {
+            searchButton = new JButton();
+            searchButton.setPreferredSize(new Dimension(20, 20));
+            searchButton.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
+            searchButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                    jComboBoxMedicals.removeAllItems();
+                    ArrayList<Medical> results = getSearchMedicalsResults(searchTextField.getText(), medArray);
+                    for (Medical aMedical : results) {
+			jComboBoxMedicals.addItem(aMedical);
+                    }
+                }
+            });
+            
+            searchTextField = new JTextField(10);
+            searchTextField.addKeyListener(new KeyListener() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    int key = e.getKeyCode();
+                    if (key == KeyEvent.VK_ENTER) {
+                        searchButton.doClick();
+                    }
+                }
+                @Override
+                public void keyReleased(KeyEvent e) {}
+                @Override
+                public void keyTyped(KeyEvent e) {}
+            });
+            
+            searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+            searchPanel.add(searchTextField);
+            searchPanel.add(searchButton);
+            searchPanel.add(getJComboBoxMedicals());
+            searchPanel.add(getJButtonAddMedical());
+            return searchPanel;
+        }
+        private JComboBox getJComboBoxMedicals() {
+		if (jComboBoxMedicals == null) {
+			jComboBoxMedicals = new JComboBox();
+			jComboBoxMedicals.setMaximumSize(new Dimension(300, 24));
+			jComboBoxMedicals.setPreferredSize(new Dimension(300, 24));
+		}
+		for (Medical aMedical : medArray) {
+                    jComboBoxMedicals.addItem(aMedical);
+		}
+		return jComboBoxMedicals;
+	}
+        
+        private ArrayList<Medical> getSearchMedicalsResults(String s, ArrayList<Medical> medicalsList) {
+            String query = s.trim();
+            ArrayList<Medical> results = new ArrayList<Medical>();
+            for (Medical medoc : medicalsList) {
+                if(!query.equals("")) {
+                    String[] patterns = query.split(" ");
+                    String code = medoc.getProd_code().toLowerCase();
+                    String description = medoc.getDescription().toLowerCase();
+                    boolean patternFound = false;
+                    for (String pattern : patterns) {
+                        if (code.contains(pattern.toLowerCase()) || description.contains(pattern.toLowerCase())) {
+                            patternFound = true;
+                            //It is sufficient that only one pattern matches the query
+                            break;
+                        }
+                    }
+                    if (patternFound){
+                        results.add(medoc);
+                    }
+                } else {
+                    results.add(medoc);
+                }
+            }		
+            return results;
+        }
+
+//	private JLabel getJLabelSelectWard() {
+//		if (jLabelSelectWard == null) {
+//			jLabelSelectWard = new JLabel(MessageBundle.getMessage("angal.wardpharmacynew.selectward"));
+//			jLabelSelectWard.setVisible(false);
+//			jLabelSelectWard.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+//		}
+//		return jLabelSelectWard;
+//	}
 }

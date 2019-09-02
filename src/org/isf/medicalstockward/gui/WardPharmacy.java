@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -42,6 +43,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -55,6 +57,7 @@ import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstockward.manager.MovWardBrowserManager;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
+import org.isf.medstockmovtype.model.MovementType;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
@@ -148,12 +151,13 @@ public class WardPharmacy extends ModalJFrame implements
 	private boolean added = false;
 	private String[] columsIncomes = { 
 			MessageBundle.getMessage("angal.common.date"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.common.from"), //$NON-NLS-1$
 			MessageBundle.getMessage("angal.medicalstockward.medical"), //$NON-NLS-1$
 			MessageBundle.getMessage("angal.common.quantity"), //$NON-NLS-1$
 			MessageBundle.getMessage("angal.medicalstockward.units") //$NON-NLS-1$
 	};
-	private boolean[] columsResizableIncomes = { false, true, false, false };
-	private int[] columWidthIncomes = { 80, 320, 150, 50 };
+	private boolean[] columsResizableIncomes = { false, false, true, false, false };
+	private int[] columWidthIncomes = { 80, 100, 220, 150, 50 };
 	private String[] columsOutcomes = { 
 			MessageBundle.getMessage("angal.common.date"),  //$NON-NLS-1$
 			MessageBundle.getMessage("angal.medicalstockward.purpose"), //$NON-NLS-1$
@@ -199,6 +203,13 @@ public class WardPharmacy extends ModalJFrame implements
 
 	//private static final String PREFERRED_LOOK_AND_FEEL = "javax.swing.plaf.metal.MetalLookAndFeel"; //$NON-NLS-1$
 
+        /*
+         *Adds to facilitate the selection of products 
+         */
+        private JPanel searchPanel;
+        private JTextField searchTextField;
+        private JButton searchButton;
+        
 	public WardPharmacy() {
 		if (MainMenu.checkUserGrants("btnmedicalswardedit")) //$NON-NLS-1$
 			editAllowed = true;
@@ -536,6 +547,8 @@ public class WardPharmacy extends ModalJFrame implements
 			jPanelFilter.add(Box.createVerticalStrut(filterSpacing));
 			jPanelFilter.add(getJComboBoxTypes());
 			jPanelFilter.add(Box.createVerticalStrut(filterSpacing));
+                        jPanelFilter.add(getJPanelMedicalsSearch());
+			jPanelFilter.add(Box.createVerticalStrut(filterSpacing));
 			jPanelFilter.add(getJComboBoxMedicals());
 			jPanelFilter.add(Box.createVerticalStrut(filterSpacing));
 			jPanelFilter.add(getJPanelAge());
@@ -807,6 +820,70 @@ public class WardPharmacy extends ModalJFrame implements
 		return jComboBoxTypes;
 	}
 
+        private JPanel getJPanelMedicalsSearch() {
+            searchButton = new JButton();
+            searchButton.setPreferredSize(new Dimension(20, 20));
+            searchButton.setIcon(new ImageIcon("rsc/icons/zoom_r_button.png"));
+            searchButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                    jComboBoxMedicals.removeAllItems();
+                    MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
+                    ArrayList<Medical> medicals;
+                    try {
+                            medicals = medicalManager.getMedicals();
+                    } catch (OHServiceException e1) {
+                            medicals = null;
+                            OHServiceExceptionUtil.showMessages(e1);
+                    }
+                    MedicalType medicalType;
+                    if (jComboBoxTypes.getSelectedItem() instanceof String) {
+                            medicalType = null;
+                    } else {
+                            medicalType = (MedicalType) jComboBoxTypes.getSelectedItem();
+                    }
+                    if (null != medicals) {
+                        ArrayList<Medical> results = getSearchMedicalsResults(searchTextField.getText(), medicals);
+                        int originalSize = medicals.size();
+                        int resultsSize = results.size();
+                        if(originalSize == resultsSize) {
+                            jComboBoxMedicals.addItem(MessageBundle.getMessage("angal.medicalstockward.allmedicals"));
+                        }
+                        for (Medical aMedical : results) {
+				boolean ok = true;
+				if (medicalType != null)
+					ok = ok && aMedical.getType().equals(medicalType);
+				if (ok)
+					jComboBoxMedicals.addItem(aMedical);
+			}
+                    }
+                }
+            });
+            
+            searchTextField = new JTextField(15);
+            //searchTextField.setToolTipText(MessageBundle.getMessage("angal.medicalstock.pharmaceutical"));
+            searchTextField.addKeyListener(new KeyListener() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    int key = e.getKeyCode();
+                    if (key == KeyEvent.VK_ENTER) {
+                        searchButton.doClick();
+                    }
+                }
+                @Override
+                public void keyReleased(KeyEvent e) {}
+                @Override
+                public void keyTyped(KeyEvent e) {}
+            });
+            
+            searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            searchPanel.add(searchTextField);
+            searchPanel.add(searchButton);
+            searchPanel.setMaximumSize(new Dimension(filterWidth, 25));
+            searchPanel.setMinimumSize(new Dimension(filterWidth, 25));
+            searchPanel.setPreferredSize(new Dimension(filterWidth, 25));
+            return searchPanel;
+        }
 	private JComboBox getJComboBoxMedicals() {
 		if (jComboBoxMedicals == null) {
 			jComboBoxMedicals = new JComboBox();
@@ -992,6 +1069,24 @@ public class WardPharmacy extends ModalJFrame implements
 						}
 					}
 				}
+                                
+                //List movements from other wards 
+                for(MovementWard wMvnt: wardManager.getWardMovementsToWard(wardSelected.getCode(), dateFrom, dateTo)) {
+                    if (wMvnt.getWardTo().getDescription() != null) {
+						if (wMvnt.getWardTo().equals(wardSelected)) {
+							MovementType typeCharge = new MovementType("fromward", wMvnt.getWard().getDescription(), "*");
+                            wardIncomes.add(new Movement(
+                                    wMvnt.getMedical(), 
+                                    typeCharge, 
+                                    wardSelected, 
+                                    null, 
+                                    wMvnt.getDate(), 
+                                    wMvnt.getQuantity().intValue(), 
+                                    null, 
+                                    null));
+						}
+                    }
+                }
 			} catch (OHServiceException e) {
 				OHServiceExceptionUtil.showMessages(e);
 				e.printStackTrace();
@@ -1015,12 +1110,17 @@ public class WardPharmacy extends ModalJFrame implements
 				return formatDate(mov.getDate());
 			}
 			if (c == 1) {
-				return mov.getMedical();
+				if (mov.getType().getCode().equals("fromward"))
+					return mov.getType().getDescription();
+				else return mov.getRefNo();
 			}
 			if (c == 2) {
-				return pieces;
+				return mov.getMedical();
 			}
 			if (c == 3) {
+				return pieces;
+			}
+			if (c == 4) {
 				int packets = 0;
 				if (pcsPerPck != 0) {
 					packets = pieces / pcsPerPck;
@@ -1200,6 +1300,7 @@ public class WardPharmacy extends ModalJFrame implements
 
 		public DrugsModel() {
 			try {
+                //System.out.println("WardPharmacy: Looking for drugs ");
 				wardDrugs = wardManager.getMedicalsWard(wardSelected.getCode().charAt(0));
 			} catch (OHServiceException e) {
 				OHServiceExceptionUtil.showMessages(e);
@@ -1467,4 +1568,30 @@ public class WardPharmacy extends ModalJFrame implements
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss"); //$NON-NLS-1$
 		return format.format(time.getTime());
 	}
+        
+        private ArrayList<Medical> getSearchMedicalsResults(String s, ArrayList<Medical> medicalsList) {
+            String query = s.trim();
+            ArrayList<Medical> results = new ArrayList<Medical>();
+            for (Medical medoc : medicalsList) {
+                if(!query.equals("")) {
+                    String[] patterns = query.split(" ");
+                    String code = medoc.getProd_code().toLowerCase();
+                    String description = medoc.getDescription().toLowerCase();
+                    boolean patternFound = false;
+                    for (String pattern : patterns) {
+                        if (code.contains(pattern.toLowerCase()) || description.contains(pattern.toLowerCase())) {
+                            patternFound = true;
+                            //It is sufficient that only one pattern matches the query
+                            break;
+                        }
+                    }
+                    if (patternFound){
+                        results.add(medoc);
+                    }
+                } else {
+                    results.add(medoc);
+                }
+            }		
+            return results;
+        }
 }

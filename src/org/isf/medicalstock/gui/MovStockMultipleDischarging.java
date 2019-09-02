@@ -201,8 +201,6 @@ public class MovStockMultipleDischarging extends JDialog {
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					//BusyState.setBusyState(MovStockMultipleDischarging.this, true);
-					BusyState.setBusyState(MovStockMultipleDischarging.this, false);
 					if (!checkAndPrepareMovements()) {
 						return;
 					}
@@ -581,7 +579,8 @@ public class MovStockMultipleDischarging extends JDialog {
 	
 				if (ok == JOptionPane.OK_OPTION) {
 					int row = lotTable.getSelectedRow();
-					lot = lots.get(row);
+					if (row != -1) lot = lots.get(row);
+					else return null;
 				}
 				
 				if (!checkQuantityInLot(lot, qty)) lot = null;
