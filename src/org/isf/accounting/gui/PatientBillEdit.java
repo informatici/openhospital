@@ -208,6 +208,8 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 							/******* Check if it is same month ***************/
 							//checkIfsameMonth();
 							/*************************************************/
+						} else {
+							dispose();
 						}
 					}else{
 						return;
