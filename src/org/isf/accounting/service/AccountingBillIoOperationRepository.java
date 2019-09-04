@@ -24,4 +24,13 @@ public interface AccountingBillIoOperationRepository
 
 	@Query(value = "SELECT * FROM BILLS WHERE DATE(BLL_DATE) BETWEEN :dateFrom AND :dateTo", nativeQuery = true)
 	List<Bill> findAllWhereDates(@Param("dateFrom") Timestamp dateFrom, @Param("dateTo") Timestamp dateTo);
+	/**
+	 * return the bills for date between dateFrom and dateFrom to dateTo and containing items with description desc
+	 * @param dateFrom
+	 * @param dateTo
+	 * @param desc
+	 * @return the bill list
+	 */
+	@Query(value = "SELECT * FROM BILLS WHERE DATE(BLL_DATE) BETWEEN :dateFrom AND :dateTo AND  BLL_ID  IN (SELECT BLI_ID_BILL FROM BILLITEMS WHERE BLI_ITEM_DESC=:desc)", nativeQuery = true)
+	List<Bill> findAllWhereDatesAndBillItem(@Param("dateFrom") Timestamp dateFrom, @Param("dateTo") Timestamp dateTo, @Param("desc") String desc);
 }
