@@ -410,7 +410,7 @@ public class JasperReportsManager {
 			HashMap<String, Object> parameters = getHospitalParameters();
 			parameters.put("fromdate", dateFromQuery);
 			parameters.put("todate", dateToQuery);
-			parameters.put("productID", String.valueOf(medical.getCode()));
+			if (medical != null) parameters.put("productID", String.valueOf(medical.getCode()));
 			parameters.put(JRParameter.REPORT_LOCALE, new Locale(language));
 			parameters.put("REPORT_RESOURCE_BUNDLE", resourceBundle); //we need to pass our custom resource bundle
 			if (ward != null) {
@@ -459,7 +459,7 @@ public class JasperReportsManager {
             String queryString = query.getText();
             queryString = queryString.replace("$P{fromdate}", "'" + dateFromQuery + "'");
 			queryString = queryString.replace("$P{todate}", "'" + dateToQuery + "'");
-			queryString = queryString.replace("$P{productID}", "'" + String.valueOf(medical.getCode()) + "'");
+			if (medical != null) queryString = queryString.replace("$P{productID}", "'" + String.valueOf(medical.getCode()) + "'");
 			if (ward != null) queryString = queryString.replace("$P{WardCode}", "'" + ward.getCode() + "'");
 
             DbQueryLogger dbQuery = new DbQueryLogger();

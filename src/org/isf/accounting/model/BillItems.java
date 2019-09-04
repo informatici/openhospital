@@ -57,6 +57,22 @@ public class BillItems
 	@Transient
 	private volatile int hashCode = 0;
 	
+	/**
+	 * Store  the code of the item that is used for search purpose.
+	 * For medical for example it will store the prod_code.
+	 * it is necessary for medical and otherPRices items
+	 * used in the patient bill edit
+	 * The field is not persisted
+	 */
+	@Transient
+	private String itemDisplayCode;
+	
+	/**
+	 * Store the item Id that is involved in this bill item (medId, exaId, opeId...)
+	 */
+	@Transient
+	private String itemId;
+	
 	
 	public BillItems() {
 		super();
@@ -142,6 +158,27 @@ public class BillItems
 		
 		BillItems billItem = (BillItems)obj;
 		return (id == billItem.getId());
+	}
+/**
+ *get the item ID
+ * @return
+ */
+	public String getItemDisplayCode() {
+		if(itemDisplayCode==null || itemDisplayCode.equals("")){
+			itemDisplayCode=itemId;
+		}
+		return itemDisplayCode;
+	}
+
+	public void setItemDisplayCode(String itemDisplayCode) {
+		this.itemDisplayCode = itemDisplayCode;
+	}
+	public String getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(String itemId) {
+		this.itemId = itemId;
 	}
 	
 	@Override

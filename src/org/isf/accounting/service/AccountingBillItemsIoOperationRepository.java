@@ -1,5 +1,6 @@
 package org.isf.accounting.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.accounting.model.BillItems;
@@ -28,5 +29,8 @@ public interface AccountingBillItemsIoOperationRepository extends JpaRepository<
 	void insertBillItem(
 			@Param("id") Integer id, @Param("isPrice") Boolean isPrice, @Param("price") String price,
 			@Param("description") String description, @Param("amount") Double amount, @Param("qty") Integer qty);
+	
+	@Query(value = "SELECT * FROM BILLITEMS GROUP BY BLI_ITEM_DESC", nativeQuery = true)
+	ArrayList<BillItems> findAllGroupByDesc();
 	
 }

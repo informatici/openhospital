@@ -9,6 +9,7 @@ import java.util.List;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.model.Movement;
+import org.isf.medicalstock.service.MedicalStockIoOperations;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
 import org.isf.medicalstockward.service.MedicalStockWardIoOperations;
@@ -22,12 +23,13 @@ import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class MovWardBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(MovWardBrowserManager.class);
 	private MedicalStockWardIoOperations ioOperations=Context.getApplicationContext().getBean(MedicalStockWardIoOperations.class);
-
+        private MedicalStockIoOperations medicalStockIoOperations = Context.getApplicationContext().getBean(MedicalStockIoOperations.class);
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any
 	 * @param exam
@@ -71,6 +73,7 @@ public class MovWardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public ArrayList<MedicalWard> getMedicalsWard(char wardId) throws OHServiceException {
+            System.out.println("MovWardBrowserManager: Looking for drugs ");
 		return ioOperations.getMedicalsWard(wardId);
 	}
 
@@ -85,7 +88,19 @@ public class MovWardBrowserManager {
 	public ArrayList<MovementWard> getMovementWard(String wardId, GregorianCalendar dateFrom, GregorianCalendar dateTo) throws OHServiceException {
 		return ioOperations.getWardMovements(wardId, dateFrom, dateTo);
 	}
-
+        
+     /**
+	 * Gets all the movement ward with the specified criteria.
+	 * @param idwardTo the target ward id.
+	 * @param dateFrom the lower bound for the movement date range.
+	 * @param dateTo the upper bound for the movement date range.
+	 * @return all the retrieved movements.
+	 * @throws OHServiceException 
+	 */
+	public ArrayList<MovementWard> getWardMovementsToWard(String idwardTo, GregorianCalendar dateFrom, GregorianCalendar dateTo) throws OHServiceException {
+		return ioOperations.getWardMovementsToWard(idwardTo, dateFrom, dateTo);
+	}
+	
 	/**
 	 * Persists the specified movement.
 	 * @param newMovement the movement to persist.
@@ -121,8 +136,35 @@ public class MovWardBrowserManager {
 		}
 		return ioOperations.newMovementWard(newMovements);
 	}
+        
+        /**
+         * @param movementWards
+         * @param movements
+         * @return
+         * @throws OHServiceException 
+         */
+//        @Transactional(rollbackFor=OHServiceException.class)
+//        public boolean newMovementWard(ArrayList<MovementWard> movementWards, ArrayList<Movement> movements) throws OHServiceException {
+//		if (movementWards.isEmpty()) {
+//			throw new OHServiceException(new OHExceptionMessage(
+//					"emptyMovementListError", 
+//					MessageBundle.getMessage("angal.medicalstockwardedit.pleaseselectadrug"), 
+//					OHSeverityLevel.ERROR));
+//		}
+//		for (MovementWard mov : movementWards) {
+//			List<OHExceptionMessage> errors = validateMovementWard(mov);
+//	        if(!errors.isEmpty()){
+//	            throw new OHServiceException(errors);
+//	        }
+//		}
+//		boolean result = ioOperations.newMovementWard(movementWards);
+//                for(Movement mov: movements) {
+//                    result = result && medicalStockIoOperations.prepareChargingMovement(mov);
+//                } 
+//                return result;
+//	}
 
-	/**
+        /**
 	 * Updates the specified {@link MovementWard}.
 	 * @param updateMovement the movement ward to update.
 	 * @return <code>true</code> if the movement has been updated, <code>false</code> otherwise.

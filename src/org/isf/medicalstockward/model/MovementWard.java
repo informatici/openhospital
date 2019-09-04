@@ -80,6 +80,13 @@ public class MovementWard
 	@Transient
 	private volatile int hashCode = 0;
 	
+	@ManyToOne
+	@JoinColumn(name="MMVN_WRD_ID_A_TO")	
+	private Ward wardTo;
+	
+	@ManyToOne
+	@JoinColumn(name="MMVN_WRD_ID_A_FROM")	
+	private Ward wardFrom;
 	
 	public MovementWard() {}
 	
@@ -112,6 +119,39 @@ public class MovementWard
 		this.units = units;
 	}
 
+    /**
+	 * 
+	 * @param ward
+	 * @param date
+	 * @param isPatient
+	 * @param patient
+	 * @param age
+	 * @param weight
+	 * @param description
+	 * @param medical
+	 * @param quantity
+	 * @param units
+     * @param wardTo
+     * @param wardFrom
+	 */
+	public MovementWard(Ward ward, GregorianCalendar date, boolean isPatient,
+			Patient patient, int age, float weight, String description, Medical medical,
+			Double quantity, String units, Ward wardTo, Ward wardFrom) {
+		super();
+		this.ward = ward;
+		this.date = date;
+		this.isPatient = isPatient;
+		this.patient = patient;
+		this.age = age;
+		this.weight = weight;
+		this.description = description;
+		this.medical = medical;
+		this.quantity = quantity;
+		this.units = units;
+		this.wardTo = wardTo;
+		this.wardFrom = wardFrom;
+	}
+        
 	public int getCode(){
 		return code;
 	}
@@ -199,7 +239,23 @@ public class MovementWard
 	public void setMedical(Medical aMedical){
 		medical=aMedical;
 	}
-	
+        
+    public Ward getWardTo() {
+        return wardTo;
+    }
+
+    public void setWardTo(Ward wardTo) {
+        this.wardTo = wardTo;
+    }
+    
+	public Ward getWardFrom() {
+		return wardFrom;
+	}
+
+	public void setWardFrom(Ward wardFrom) {
+		this.wardFrom = wardFrom;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

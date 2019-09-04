@@ -348,6 +348,7 @@ public class BillBrowserManager {
 	public ArrayList<BillPayments> getPayments(ArrayList<Bill> billArray) throws OHServiceException {
 		return ioOperations.getPayments(billArray);
 	}
+
 	public ArrayList<Bill> getPendingBillsAffiliate(int patID) {
 		try {
 			return ioOperations.getPendingBillsAffiliate(patID);
@@ -355,5 +356,33 @@ public class BillBrowserManager {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 			return null;
 		}
-}
+	}
+
+	/**
+	 * added by u2g
+	 * Returns all the distinct stored {@link BillItems}.
+	 * 
+	 * @return a list of  distinct {@link BillItems} or null if an error occurs.
+	 * @throws OHException 
+	 */
+	public ArrayList<BillItems> getDistinctItems() throws OHException{
+		return ioOperations.getDistictsBillItems();
+		//return ioOperations.getDistictsBillItems();
+	}
+	/**
+	 * get the bills list with a given billItem
+	 * added by u2g
+	 * @param dateFrom
+	 * @param dateTo
+	 * @param billItem
+	 * @return
+	 */
+	public ArrayList<Bill> getBills(GregorianCalendar dateFrom, GregorianCalendar dateTo,BillItems billItem) {
+		try {
+			return ioOperations.getBills(dateFrom, dateTo, billItem);
+		} catch (OHException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			return null;
+		}
+	}
 }

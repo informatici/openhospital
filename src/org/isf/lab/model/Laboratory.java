@@ -92,6 +92,7 @@ public class Laboratory
 		patient=aPatId;
 		patName=aPatName;
 	}
+
 	public Laboratory(Integer aCode,Exam aExam,GregorianCalendar aDate,String aResult,
 			String aNote, Patient aPatId, String aPatName){
 		code=aCode;
@@ -218,7 +219,6 @@ public class Laboratory
 				+ ", InOutPatient=" + InOutPatient + ", age=" + age + ", sex=" + sex + ", hashCode=" + hashCode
 				+ "}\n---------------------------------------------";
 	}
-        
         
 }
 

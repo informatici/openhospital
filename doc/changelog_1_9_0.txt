@@ -1,0 +1,232 @@
+commit 1a0a8ad033fe659a778b3779e7b8758f5b48a701
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-15
+
+    Addressed security issue #2
+    
+    https://github.com/informatici/openhospital-core/network/alert/pom.xml/org.springframework.data:spring-data-jpa/closed
+
+commit cb579fe3c2e83421a21209275553739462df8898
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-15
+
+    Fixed insert query
+
+commit e0809acd5498666f10b3fd8ddabcf97454e67158
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-14
+
+    Updated changelog for v1.9.0
+
+commit a02b25655a67c0f977c411f8f22791ceb4149e2b
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-10
+
+    made changelog.sh executable
+
+commit 7bf08f300692b255270685aa19d7b90591288240
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-10
+
+    Updated changelog and added a script to generate it
+
+commit d14a7814bbd3e50ec97acfe7628d217fec87b40d
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-09
+
+    Fixed object equals() method
+
+commit c958993660d959eeaed2ca2f0e139988eb782fc6
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-09
+
+    Fixing pre-release issue #27: fix dates range filtering
+
+commit 384239b8dee74a38400804fdff931dfbb8be2bc4
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-07
+
+    Pre-release issue #19: fixing duplicated drugs
+
+commit 1a6b371270f1161bc79fa10848f80e640c9b20a8
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-07
+
+    Pre-release issue #21: fixing StockLedger report
+
+commit b95fd4ae534da835acee1f106d8cc1d4fd40fc00
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-30
+
+    Uploaded changelog version 1.9
+
+commit 095119baa300f27af6855dde8acf894da033476b
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-28
+
+    Adding missing changelogs
+    
+    (new folder doc/ not depoloyed)
+
+commit d6af36ab93ba874e5edc64bb30f1c1168d3d2e8a
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-28
+
+    Op 83 fixing reports (#19)
+    
+    * MedicalStockWard: completed movements between wards
+    - Added new incoming movements for each ToWard movement
+    - Added one field MMVN_WRD_ID_A_FROM to better handle movements between
+    wards in reports
+    - Fixed incoming movement from other ward description and outcomes report
+
+commit f947dceb02dce141440818b54b8baab94404c810
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-26
+
+    Update .travis.yml
+    
+    Revert dubugging Travis build
+
+commit 529f2b685825899368d12c473aad64d696f90660
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-26
+
+    OP-83 fixed table name case in the script
+
+commit c7c7d8a90969709b4ea39c711dca07774d220c8f
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-25
+
+    Update .travis.yml
+    
+    Debugging Travis build
+
+commit 325521fe243a67f665931eecb568ad22bb92ee04
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-25
+
+    Update .travis.yml
+    
+    Debugging Travis build...
+
+commit 5262291244f6b2b505a3377f36af41e4a6d26ffa
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-25
+
+    Renamed script and added to from_step_05.sql
+
+commit 78d311cf047f53abe4c04b27a1c6fe255b3e4005
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-25
+
+    Improved .equals method for Medical
+
+commit f3e5741d56f234ea766fb386541eeba681aa6f2a
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-24
+
+    Moved SQL script from gui -> core and fixed query for stock movement
+
+commit 06cef8197889be8eeb247d812622d6437ea3073e
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-07-24
+
+    Prevent mvnt between ward for updating the main pharmacy stocks
+
+commit 43252cbf122a0200046604a7c21765ea7a798bf7
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-24
+
+    Fixed query for stock movement type
+
+commit 6afe7897421b635c768baf193896b6ad0bb7f5f7
+Author: Marcellin <marcellintabou@gmail.com>
+Date:   2019-06-07
+
+    Search field added in GENERALDATE>EXAMS menu and also in LABORATORY>NEW
+    > +EXAM button allowing to easily select an exam
+    
+    Conflicts:
+            src/org/isf/exa/manager/ExamRowBrowsingManager.java
+            src/org/isf/exa/service/ExamRowIoOperations.java
+            src/org/isf/lab/manager/LabManager.java
+            src/org/isf/lab/model/Laboratory.java
+            src/org/isf/lab/service/LabIoOperationRepositoryCustom.java
+            src/org/isf/lab/service/LabIoOperations.java
+
+commit e457f8c575fd5cadedc3e2c5e6802daa09b95b82
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-03
+
+    Task OP-83 done (Uni2grow Cameroun)
+    
+    Transfer of products and materials between wards enabled
+
+commit 3760b51e99d136d9652a0482c013dc52e78bae71
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-18
+
+    Update Dockerfile-ohdb
+
+commit 23cd9f3a9d07e06efd6ca110fc386e6461e0fdef
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-18
+
+    Update Dockerfile-ohdb
+    
+    Selected English language only for DB
+
+commit eecece2aff717448f26cc7e8d7a1bb49facdd192
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-16
+
+    OP-85 Fixed some JUnit Tests
+
+commit f1469a3e86a753291d16385542dccdfb25d3a30d
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-06-29
+
+    Revert "task OP-91, mvnt between wards"
+
+commit dde24e8e1a2016817c2c648b6fdda21925d53b93
+Author: gildas <gildasdongmo@yahoo.fr>
+Date:   2019-06-12
+
+    add scripts migrations
+
+commit af0e90c54f8d3393e3dc35a0e3bb0d80eafe9716
+Author: Marcellin <marcellintabou@gmail.com>
+Date:   2019-06-07
+
+    Search field added in GENERALDATE>EXAMS menu and also in LABORATORY>NEW > +EXAM button allowing to easily select an exam
+
+commit ab9b6987378f281224319e5c354064fd452ab914
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-06
+
+    Task OP-82 done (Uni2grow Cameroun)
+    
+    The exams panel was inserted into a tabbedPane and a tab was added to show the history of operations performed on a patient. (Admission/Patient > Clinical sheet)
+
+commit a8fd3faf9fc43bd43f0fa4860f5e84839b5875ff
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-06
+
+    Task OP-81 done (Uni2grow Cameroun)
+    
+    Admission/Patient > Admission > Operation. modified and database modified to allow adding multiple operation to an admission.
+
+commit 969ca7444cd2f1d1892725062e11e7d69b424e11
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-03
+
+    Task OP-83 done (Uni2grow Cameroun)
+    
+    Transfer of products and materials between wards enabled
+
+commit d909c8c695969842440b550cf1608c6196aaf074
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-05-31
+
+    task OP-91 done

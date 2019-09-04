@@ -27,7 +27,7 @@ public class MovementWardForPrint implements Comparable<MovementWardForPrint>{
 		this.medical = mov.getMedical().getDescription();
 		this.quantity = mov.getQuantity();
 		this.units = mov.getUnits();
-		this.patient = mov.isPatient();
+		this.patient = mov.isPatient() || mov.getWardTo() == null || mov.getWardFrom() == null;
 	}
 
 	public int getCode(){

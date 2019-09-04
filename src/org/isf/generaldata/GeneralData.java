@@ -61,7 +61,6 @@ public class GeneralData {
 	public static boolean ENHANCEDSEARCH;
 	public static boolean XMPPMODULEENABLED;
 	public static boolean DICOMMODULEENABLED;
-	
 	public static boolean ALLOWMULTIPLEOPENEDBILL;
 	
 	public static String DEFAULT_OPENEDBILLSREPORT = "OH023_BillsReportMonth";
@@ -144,6 +143,7 @@ public class GeneralData {
 			ALLOWPRINTOPENEDBILL = myGetProperty("ALLOWPRINTOPENEDBILL", DEFAULT_ALLOWPRINTOPENEDBILL);
 			ALLOWMULTIPLEOPENEDBILL = myGetProperty("ALLOWMULTIPLEOPENEDBILL", DEFAULT_ALLOWMULTIPLEOPENEDBILL);
 			OPENEDBILLSREPORT = myGetProperty("OPENEDBILLSREPORT", DEFAULT_OPENEDBILLSREPORT);
+			ALLOWMULTIPLEOPENEDBILL = myGetProperty("ALLOWMULTIPLEOPENEDBILL", DEFAULT_ALLOWMULTIPLEOPENEDBILL);
 			
 		} catch (Exception e) { //no file
 			logger.error(">> " + FILE_PROPERTIES + " file not found.");
