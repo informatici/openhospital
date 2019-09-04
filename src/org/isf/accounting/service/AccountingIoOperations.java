@@ -1,13 +1,19 @@
 package org.isf.accounting.service;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
+import org.isf.generaldata.MessageBundle;
+import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.db.TranslateOHServiceException;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -374,5 +380,37 @@ public class AccountingIoOperations {
 		}
 		
 		return pPayment;
+	}
+	/**
+	 * Return Distincts BillItems
+	 * added by u2g
+	 * @return BillItems list 
+	 * @throws OHException
+	 */
+	public ArrayList<BillItems> getDistictsBillItems() throws OHException {
+		ArrayList<BillItems> billItems =  billItemsRepository.findAllGroupByDesc();
+		return billItems;
+	}
+	/**
+	 * return the bill list which date between dateFrom and dateTo and containing given billItem
+	 * added by u2g
+	 * @param dateFrom
+	 * @param dateTo
+	 * @param billItem
+	 * @return the bill list
+	 * @throws OHException
+	 */
+	public ArrayList<Bill> getBills(GregorianCalendar dateFrom, GregorianCalendar dateTo, BillItems billItem) throws OHException {
+		ArrayList<Bill> bills = null;
+		Timestamp timestamp1 = new Timestamp(dateFrom.getTimeInMillis());
+		Timestamp timestamp2 = new Timestamp(dateTo.getTimeInMillis());
+		if(billItem == null) {
+			bills = (ArrayList<Bill>) billRepository.findAllWhereDates(timestamp1, timestamp2);
+		}
+		else {
+			bills = (ArrayList<Bill>)billRepository.findAllWhereDatesAndBillItem(timestamp1, timestamp2, billItem.getItemDescription());
+			//for(Bill bill: bills)System.out.println("***************bill****************"+bill.toString());
+		}
+		return bills;
 	}
 }

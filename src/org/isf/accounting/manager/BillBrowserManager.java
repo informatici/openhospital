@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
 import org.isf.accounting.service.AccountingIoOperations;
 import org.isf.generaldata.MessageBundle;
+import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -311,5 +314,32 @@ public class BillBrowserManager {
 	 */
 	public ArrayList<BillPayments> getPayments(ArrayList<Bill> billArray) throws OHServiceException {
 		return ioOperations.getPayments(billArray);
+	}
+	/**
+	 * added by u2g
+	 * Returns all the distinct stored {@link BillItems}.
+	 * 
+	 * @return a list of  distinct {@link BillItems} or null if an error occurs.
+	 * @throws OHException 
+	 */
+	public ArrayList<BillItems> getDistinctItems() throws OHException{
+		return ioOperations.getDistictsBillItems();
+		//return ioOperations.getDistictsBillItems();
+	}
+	/**
+	 * get the bills list with a given billItem
+	 * added by u2g
+	 * @param dateFrom
+	 * @param dateTo
+	 * @param billItem
+	 * @return
+	 */
+	public ArrayList<Bill> getBills(GregorianCalendar dateFrom, GregorianCalendar dateTo,BillItems billItem) {
+		try {
+			return ioOperations.getBills(dateFrom, dateTo, billItem);
+		} catch (OHException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			return null;
+		}
 	}
 }
