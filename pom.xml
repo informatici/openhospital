@@ -235,15 +235,10 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.2</version>
 		</dependency>
-		<!-- <dependency>
-		    <groupId>org.processing</groupId>
-		    <artifactId>core</artifactId>
-		    <version>1.2.1</version>
-		</dependency> -->
 		<dependency>
 		    <groupId>org.processing</groupId>
 		    <artifactId>core</artifactId>
-		    <version>2.2.1</version>
+		    <version>1.2.1</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.rxtx</groupId>
@@ -256,9 +251,9 @@
 			<version>2.0.26</version>
 		</dependency>
 		<dependency>
-		    <groupId>dcm4che</groupId>
-		    <artifactId>dcm4che-imageio</artifactId>
-		    <version>2.0.26</version>
+			<groupId>dcm4che</groupId>
+			<artifactId>dcm4che-imageio</artifactId>
+			<version>2.0.26</version>
 		</dependency>
 	  	<dependency>
 	  		<groupId>org.slf4j</groupId>
@@ -325,13 +320,13 @@
                     <enabled>false</enabled>
                 </snapshots>
         </repository>
-        <!-- <repository>
+        <repository>
                 <id>cytoscape</id>
                 <name>Cytoscape Repository</name>
                 <url>http://code.cytoscape.org/nexus/content/repositories/releases/</url>
                 <snapshots>
                     <enabled>false</enabled>
                 </snapshots>
-        </repository> -->
+        </repository>
 	</repositories>
 </project>
