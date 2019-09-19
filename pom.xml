@@ -16,7 +16,7 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.framework.version>4.3.18.RELEASE</spring.framework.version>
+		<spring.framework.version>5.1.9.RELEASE</spring.framework.version>
 	</properties>
 	
 	<build>
