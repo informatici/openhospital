@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.isf.generaldata.GeneralData;
+import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
@@ -95,6 +96,7 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 	private boolean debug = false;
 	private MainMenu myFrame;
 
+		
 	public MainMenu() {
 		myFrame = this;
 
@@ -136,7 +138,7 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 		}
 
 		// get menu items
-		UserBrowsingManager manager = new UserBrowsingManager();
+		UserBrowsingManager manager = Context.getApplicationContext().getBean(UserBrowsingManager.class);
         try {
             myMenu = manager.getMenu(myUser);
         } catch (OHServiceException e) {
