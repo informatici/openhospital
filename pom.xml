@@ -16,7 +16,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.framework.version>4.3.18.RELEASE</spring.framework.version>
+		<spring.framework.version>5.1.9.RELEASE</spring.framework.version>
 	</properties>
 
 	<build>
@@ -225,6 +225,26 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+		    <groupId>javax.xml.bind</groupId>
+		    <artifactId>jaxb-api</artifactId>
+		    <version>2.2.11</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.sun.xml.bind</groupId>
+		    <artifactId>jaxb-core</artifactId>
+		    <version>2.2.11</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.sun.xml.bind</groupId>
+		    <artifactId>jaxb-impl</artifactId>
+		    <version>2.2.11</version>
+		</dependency>
+		<dependency>
+		    <groupId>javax.activation</groupId>
+		    <artifactId>activation</artifactId>
+		    <version>1.1.1</version>
+		</dependency>
+		<dependency>
 			<groupId>dcm4che</groupId>
 			<artifactId>dcm4che-core</artifactId>
 			<version>2.0.26</version>
@@ -267,7 +287,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>4.2.13.Final</version>
+			<version>5.3.12.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
@@ -277,12 +297,12 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>4.2.5.Final</version>
+			<version>5.3.12.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-c3p0</artifactId>
-			<version>4.2.13.Final</version>
+			<version>5.3.12.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.validation</groupId>
