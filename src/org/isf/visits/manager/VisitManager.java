@@ -20,7 +20,10 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.visits.model.Visit;
 import org.isf.visits.service.VisitsIoOperations;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,13 +32,15 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Component
-public class VisitManager {
+public class VisitManager implements ApplicationContextAware {
 	
 	@Autowired
 	private VisitsIoOperations ioOperations;
 	
 	@Autowired
 	private SmsOperations smsOp;
+	
+	private ApplicationContext applicationContext;
 	
 	/**
 	 * returns the list of all {@link Visit}s related to a patID
@@ -72,7 +77,7 @@ public class VisitManager {
 	public boolean newVisits(ArrayList<Visit> visits) throws OHServiceException {
 		if (!visits.isEmpty()) {
 			DateTime now = new DateTime();
-			PatientBrowserManager patMan = new PatientBrowserManager();
+			PatientBrowserManager patMan = this.applicationContext.getBean(PatientBrowserManager.class);
 			int patID = visits.get(0).getPatient().getCode();
 			ioOperations.deleteAllVisits(patID);
 			smsOp.deleteByModuleModuleID("visit", String.valueOf(patID));
@@ -140,5 +145,11 @@ public class VisitManager {
 		    return sb.toString().substring(0, SmsManager.MAX_LENGHT);
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+		
 	}
 }

@@ -291,9 +291,11 @@ public class LabIoOperations {
 		if (newCode > 0) 
 		{
 			for (LaboratoryRow aLabRow : labRow) {
-				aLabRow.setLabId(laboratory);
+				LaboratoryRow laboratoryRow = new LaboratoryRow();
+				laboratoryRow.setLabId(laboratory);
+				//laboratoryRow.setDescription(aLabRow);	
 
-				LaboratoryRow savedLaboratoryRow = rowRepository.save(aLabRow);
+				LaboratoryRow savedLaboratoryRow = rowRepository.save(laboratoryRow);
 				result = result && (savedLaboratoryRow != null);
 			}
 		}

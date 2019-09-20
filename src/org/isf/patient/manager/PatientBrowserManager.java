@@ -14,15 +14,30 @@ import org.isf.patient.model.Patient;
 import org.isf.patient.service.PatientIoOperations;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.OHServiceValidationException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-
+@Component
+@Scope("singleton")
 public class PatientBrowserManager {
 	
-	private PatientIoOperations ioOperations = Context.getApplicationContext().getBean(PatientIoOperations.class);
+	@Autowired
+	private PatientIoOperations ioOperations;
 	
+	public PatientIoOperations getIoOperations() {
+		return ioOperations;
+	}
+
+	public void setIoOperations(PatientIoOperations ioOperations) {
+		this.ioOperations = ioOperations;
+	}
+
 	/**
 	 * methot that insert a new Patient in the db
 	 * 
@@ -31,10 +46,7 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newPatient(Patient patient) throws OHServiceException {
-        List<OHExceptionMessage> errors = validatePatient(patient);
-        if(!errors.isEmpty()){
-            throw new OHServiceException(errors);
-        }
+        validate(patient);
         return ioOperations.newPatient(patient);
 	}
 	
@@ -47,10 +59,7 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updatePatient(Patient patient) throws OHServiceException {
-        List<OHExceptionMessage> errors = validatePatient(patient);
-        if(!errors.isEmpty()){
-            throw new OHServiceException(errors);
-        }
+        validate(patient);
         return ioOperations.updatePatient(patient);
 	}
 	
@@ -63,7 +72,17 @@ public class PatientBrowserManager {
 	public ArrayList<Patient> getPatient() throws OHServiceException {
         return ioOperations.getPatients();
 	}
-	
+
+	/**
+	 * method that returns the full list of Patients not logically deleted by pages
+	 * 
+	 * @return the list of patients (could be empty)
+	 * @throws OHServiceException 
+	 */
+	public ArrayList<Patient> getPatient(int page, int size) throws OHServiceException {
+        return ioOperations.getPatients(new PageRequest(page, size));
+	}
+
 	/**
 	 * method that get a Patient by his/her name
 	 * 
@@ -250,7 +269,7 @@ public class PatientBrowserManager {
             return ioOperations.mergePatientHistory(mergedPatient, patient2);
 	}
 
-    protected List<OHExceptionMessage> validatePatient(Patient patient){
+    protected void validate(Patient patient) throws OHServiceValidationException{
         List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
 
         if (StringUtils.isEmpty(patient.getFirstName())) {
@@ -269,8 +288,9 @@ public class PatientBrowserManager {
             errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), "Please select a sex",
                     OHSeverityLevel.ERROR));
         }
-
-        return errors;
+	    if(!errors.isEmpty()){
+	        throw new OHServiceValidationException(errors);
+	    }
     }
 
     private boolean checkAge(Patient patient) {
@@ -285,4 +305,5 @@ public class PatientBrowserManager {
         }
         return true;
     }
+
 }
