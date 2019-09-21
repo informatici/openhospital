@@ -48,6 +48,7 @@ import org.isf.lab.service.LabIoOperations;
 import org.isf.menu.gui.MainMenu;
 import org.isf.menu.manager.Context;
 import org.isf.patient.model.Patient;
+import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -194,7 +195,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 						ArrayList<LaboratoryForPrint> labs;
 						labs = manager.getLaboratoryForPrint(typeSelected, dateFrom.getDate(), dateTo.getDate());
 						if (!labs.isEmpty()) {
-							new LabPrintFrame(myFrame, labs); 
+							new PrintManager("Laboratory",labs,0);
 						}
 					} catch (OHServiceException e) {
 						OHServiceExceptionUtil.showMessages(e);
@@ -248,26 +249,26 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 			buttonNew.setMnemonic(KeyEvent.VK_N);
 			buttonNew.addActionListener(new ActionListener() {
 
-				public void actionPerformed(ActionEvent event) {
-					laboratory = new Laboratory(0, new Exam("", "",
-							new ExamType("", ""), 0, ""),
-							new GregorianCalendar(), "P", "", new Patient(), "");
-					if (GeneralData.LABEXTENDED) {
-						if (GeneralData.LABMULTIPLEINSERT) {
-							LabNew editrecord = new LabNew(myFrame);
-							editrecord.addLabListener(LabBrowser.this);
-							editrecord.setVisible(true);
-						} else {
-							LabEditExtended editrecord = new LabEditExtended(myFrame, laboratory, true);
-							editrecord.addLabEditExtendedListener(LabBrowser.this);
-							editrecord.setVisible(true);
-						}
-					} else {
-						LabEdit editrecord = new LabEdit(myFrame, laboratory, true);
-						editrecord.addLabEditListener(LabBrowser.this);
-						editrecord.setVisible(true);
-					}
-				}
+                public void actionPerformed(ActionEvent event) {
+                    laboratory = new Laboratory(0, new Exam("", "",
+                                    new ExamType("", ""), 0, ""),
+                                    new GregorianCalendar(), "P", "", new Patient(), "");
+                    if (GeneralData.LABEXTENDED) {
+                        if (GeneralData.LABMULTIPLEINSERT) {
+                                LabNew editrecord = new LabNew(myFrame);
+                                editrecord.addLabListener(LabBrowser.this);
+                                editrecord.setVisible(true);
+                        } else {
+                                LabEditExtended editrecord = new LabEditExtended(myFrame, laboratory, true);
+                                editrecord.addLabEditExtendedListener(LabBrowser.this);
+                                editrecord.setVisible(true);
+                        }
+                    } else {
+                        LabEdit editrecord = new LabEdit(myFrame, laboratory, true);
+                        editrecord.addLabEditListener(LabBrowser.this);
+                        editrecord.setVisible(true);
+                    }
+                }
 			});
 		}
 		return buttonNew;

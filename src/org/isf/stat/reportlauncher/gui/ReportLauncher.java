@@ -34,7 +34,6 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.stat.gui.report.GenericReportFromDateToDate;
 import org.isf.stat.gui.report.GenericReportMY;
-import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoDateTextField;
 import org.isf.xmpp.gui.CommunicationFrame;
@@ -364,9 +363,7 @@ public class ReportLauncher extends ModalJFrame{
 			jOkButton.setText(MessageBundle.getMessage("angal.stat.launchreport"));
 			jOkButton.addActionListener(new ActionListener() {   
 				public void actionPerformed(ActionEvent e) {
-					BusyState.setBusyState(ReportLauncher.this, true);
 					generateReport(false);
-					BusyState.setBusyState(ReportLauncher.this, false);
 				}
 			});
 		}
@@ -381,9 +378,7 @@ public class ReportLauncher extends ModalJFrame{
 			jCSVButton.addActionListener(new ActionListener() {   
 				@Override
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					BusyState.setBusyState(ReportLauncher.this, true);
 					generateReport(true);
-					BusyState.setBusyState(ReportLauncher.this, false);
 				}
 			});
 		}

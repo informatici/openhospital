@@ -423,18 +423,15 @@ public class LabEdit extends JDialog {
 		if (matComboBox == null) {
 			matComboBox = new JComboBox();
 			matComboBox.addItem("");
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.blood"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.urine"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.stool"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.sputum"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.cfs"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.swabs"));
-			matComboBox.addItem(MessageBundle.getMessage("angal.lab.tissues"));
-			if (!insert) {
-				try {	
-					matComboBox.setSelectedItem(lab.getMaterial());
-					}
-				catch (Exception e) {}
+			LabManager labMan = new LabManager();
+			for (String elem : labMan.getMaterialList()) {
+				matComboBox.addItem(elem);
+				if (!insert) {
+					try {	
+						matComboBox.setSelectedItem(lab.getMaterial());
+						}
+					catch (Exception e) {}
+				}
 			}
 		}
 		return matComboBox;
@@ -600,7 +597,7 @@ public class LabEdit extends JDialog {
 		ExamRowBrowsingManager rowManager = new ExamRowBrowsingManager();
 		ArrayList<ExamRow> rows;
 		try {
-			rows = rowManager.getExamRow(examSelected.getCode());
+			rows = rowManager.getExamRowByExamCode(examSelected.getCode());
 		} catch (OHServiceException e) {
 			rows = null;
 			OHServiceExceptionUtil.showMessages(e);
@@ -623,7 +620,7 @@ public class LabEdit extends JDialog {
 		ExamRowBrowsingManager eRowManager = new ExamRowBrowsingManager();
 		eRows = null;
 		try {
-			eRows = eRowManager.getExamRow(examId);
+			eRows = eRowManager.getExamRowByExamCode(examId);
 		} catch (OHServiceException e1) {
 			OHServiceExceptionUtil.showMessages(e1);
 		}

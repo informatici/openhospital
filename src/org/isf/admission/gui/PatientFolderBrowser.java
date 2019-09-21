@@ -2,15 +2,21 @@ package org.isf.admission.gui;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventListener;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 
 import javax.swing.JButton;
@@ -18,11 +24,13 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.admission.manager.AdmissionBrowserManager;
@@ -39,6 +47,8 @@ import org.isf.menu.gui.MainMenu;
 import org.isf.menu.manager.Context;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
+import org.isf.operation.gui.OperationList;
+import org.isf.operation.model.OperationRow;
 import org.isf.patient.gui.PatientInsert;
 import org.isf.patient.gui.PatientInsertExtended;
 import org.isf.patient.gui.PatientSummary;
@@ -50,12 +60,10 @@ import org.isf.stat.gui.report.GenericReportPatient;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
+import org.isf.utils.jobjects.OhDefaultCellRenderer;
 import org.isf.utils.table.TableSorter;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
-
-
-
 
 /** 
 * This class shows patient data and the list of admissions and lab exams.
@@ -175,6 +183,9 @@ public class PatientFolderBrowser extends ModalJFrame implements
 	private ArrayList<Ward> ward;
 	private ArrayList<Opd> opdList;
 	
+        private OperationList opeList;
+	private List<OperationRow> operationList;
+        
 	private String[] pColums = {
 			MessageBundle.getMessage("angal.common.datem"),
 			MessageBundle.getMessage("angal.admission.wards"),
@@ -196,7 +207,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 	private DefaultTableModel labModel;
 	TableSorter sorter;
 	TableSorter sorterLab;
-	
+	OhDefaultCellRenderer cellRenderer = new OhDefaultCellRenderer();
 	//Alex: added sorters, for Java6 only
 //	private TableRowSorter<AdmissionBrowserModel> adm_sorter;
 //	private TableRowSorter<LabBrowserModel> lab_sorter;
@@ -208,6 +219,8 @@ public class PatientFolderBrowser extends ModalJFrame implements
 	private JScrollPane scrollPaneLab;
 	
 	private JPanel tablesPanel=null;
+	
+	final String DATE_FORMAT = "dd/MM/yy";
 		
 	private JPanel getTablesPanel(){
 		tablesPanel = new JPanel(new BorderLayout());
@@ -219,17 +232,51 @@ public class PatientFolderBrowser extends ModalJFrame implements
 		//Alex: Java5 compatible
 		admModel = new AdmissionBrowserModel();
 		sorter = new TableSorter(admModel);
-		admTable = new JTable(sorter);      
+		admTable = new JTable(sorter);   
+                
+                /*** apply default oh cellRender *****/
+		admTable.setDefaultRenderer(Object.class, cellRenderer);
+		admTable.setDefaultRenderer(Double.class, cellRenderer);
+		admTable.addMouseMotionListener(new MouseMotionListener() {			
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				// TODO Auto-generated method stub
+				JTable aTable =  (JTable)e.getSource();
+		        int itsRow = aTable.rowAtPoint(e.getPoint());
+		        if(itsRow>=0){
+		        	cellRenderer.setHoveredRow(itsRow);
+		        }
+		        else{
+		        	cellRenderer.setHoveredRow(-1);
+		        }
+		        aTable.repaint();
+			}
+			
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		admTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseExited(MouseEvent e) {
+				cellRenderer.setHoveredRow(-1);
+			}
+		});
 		//sorter.addMouseListenerToHeaderInTable(admTable); no needed
 		sorter.sortByColumn(0, false); //sort by first column, descending
 		
 		for (int i=0;i<pColums.length; i++){
 			admTable.getColumnModel().getColumn(i).setPreferredWidth(pColumwidth[i]);
+			if (i == 0 || i == 4) {
+				admTable.getColumnModel().getColumn(i).setCellRenderer(new DateCellRenderer());
+			}
 		}
 		
 		scrollPane = new JScrollPane(admTable);
 		scrollPane.setPreferredSize(new Dimension(500,200));
-		tablesPanel.add(scrollPane, BorderLayout.CENTER);
+		tablesPanel.add(scrollPane, BorderLayout.NORTH);
 		
 		//Alex: added sorter, for Java6 only
 //		adm_sorter = new TableRowSorter<AdmissionBrowserModel>((AdmissionBrowserModel) admTable.getModel());
@@ -245,16 +292,53 @@ public class PatientFolderBrowser extends ModalJFrame implements
 		labModel = new LabBrowserModel();
 		sorterLab = new TableSorter(labModel);
 		labTable = new JTable(sorterLab);
+                /*** apply default oh cellRender *****/
+		labTable.setDefaultRenderer(Object.class, cellRenderer);
+		labTable.setDefaultRenderer(Double.class, cellRenderer);
+                labTable.addMouseMotionListener(new MouseMotionListener() {	
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				// TODO Auto-generated method stub
+				JTable aTable =  (JTable)e.getSource();
+		        int itsRow = aTable.rowAtPoint(e.getPoint());
+		        if(itsRow>=0){
+		        	cellRenderer.setHoveredRow(itsRow);
+		        }
+		        else{
+		        	cellRenderer.setHoveredRow(-1);
+		        }
+		        aTable.repaint();
+			}
+			
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+                labTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseExited(MouseEvent e) {
+				cellRenderer.setHoveredRow(-1);
+			}
+		});
 		sorterLab.sortByColumn(0, false);
 		
 		for (int i=0;i<plColums.length; i++){
 			labTable.getColumnModel().getColumn(i).setPreferredWidth(plColumwidth[i]);
 		}
-				
+			
+                JTabbedPane tabbedPaneLabOpe = new JTabbedPane(JTabbedPane.TOP);
+		tablesPanel.add(tabbedPaneLabOpe, BorderLayout.CENTER);
+                
 		scrollPaneLab = new JScrollPane(labTable);
 		scrollPaneLab.setPreferredSize(new Dimension(500,200));
-		tablesPanel.add(scrollPaneLab, BorderLayout.SOUTH);		
-		
+		tabbedPaneLabOpe.addTab(MessageBundle.getMessage("angal.patientfolder.tab.exams"), null, scrollPaneLab, null);
+		scrollPaneLab.setPreferredSize(new Dimension(500, 200));
+                	
+                opeList = new OperationList(patient);
+		tabbedPaneLabOpe.addTab(MessageBundle.getMessage("angal.patientfolder.tab.operations"), null, opeList, null);
+                
 		ListSelectionModel listSelectionModel = admTable.getSelectionModel();
 		listSelectionModel.addListSelectionListener(new ListSelectionListener() {
 //			private Object Object;
@@ -559,13 +643,11 @@ public class PatientFolderBrowser extends ModalJFrame implements
 			} else if (c == 0) {
 				if (r < admList.size()) {
 					Date myDate = (admList.get(r)).getAdmDate().getTime();	
-					DateFormat currentDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.ITALIAN);
-					return currentDateFormat.format(myDate);
+					return myDate;
 				} else {
 					int z = r - admList.size();
 					Date myDate = (opdList.get(z)).getVisitDate().getTime();
-					DateFormat currentDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.ITALIAN);
-					return currentDateFormat.format(myDate);
+					return myDate;
 				}
 				
 			} else if (c == 1) {				
@@ -632,8 +714,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 						return MessageBundle.getMessage("angal.admission.present"); //$NON-NLS-1$
 					else {
 						Date myDate = admList.get(r).getDisDate().getTime();
-						DateFormat currentDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.ITALIAN);
-						return currentDateFormat.format(myDate);
+						return myDate;
 					}
 				} else {
 					int z = r - admList.size();
@@ -694,8 +775,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 				//System.out.println(labList.get(r).getExam().getExamtype().getDescription());
 				
 				Date examDate = labList.get(r).getExamDate().getTime();	
-				DateFormat currentDateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.ITALIAN);
-				return currentDateFormat.format(examDate);
+				return examDate;
 			} else if (c == 1) {
 				return labList.get(r).getExam().getDescription();
 			}else if (c == 2) {
@@ -716,5 +796,26 @@ public class PatientFolderBrowser extends ModalJFrame implements
 			return false;
 		}
 	}
+	
+	public class DateCellRenderer extends DefaultTableCellRenderer {
+		/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
+				super.getTableCellRendererComponent( table, value, isSelected, hasFocus, row, column );
+				
+				if ( value instanceof Date ){
+				// Use SimpleDateFormat class to get a formatted String from Date object.
+				String strDate = new SimpleDateFormat(DATE_FORMAT).format((Date)value);
+				
+				// Sorting algorithm will work with model value. So you dont need to worry
+				// about the renderer's display value. 
+				this.setText( strDate );
+				}
+				return this;
+			}
+		}
 	
 }// class

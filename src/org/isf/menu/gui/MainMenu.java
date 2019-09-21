@@ -404,4 +404,8 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 			parentFrame.setMinButtonSize(maxPrf);
 		}
 	}// :~MainPanel
+        
+        public static User getUser() {
+		return myUser;
+	}
 }// :~MainMenu

@@ -13,7 +13,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,7 +48,6 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.jobjects.BusyState;
 import org.isf.video.gui.PatientPhotoPanel;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -491,13 +489,11 @@ public class PatientInsertExtended extends JDialog {
 //								//logger.debug("Patient photo not changed");
 //							}
 
-							BusyState.setBusyState(PatientInsertExtended.this, true);
 							try{
 								result = manager.newPatient(patient);
 							}catch(OHServiceException ex){
 								OHServiceExceptionUtil.showMessages(ex);
 							}
-							BusyState.setBusyState(PatientInsertExtended.this, false);
 							if (result)
 								firePatientInserted(patient);
 
@@ -583,13 +579,11 @@ public class PatientInsertExtended extends JDialog {
 //							//logger.debug("Patient photo not changed");
 //						}
 
-						BusyState.setBusyState(PatientInsertExtended.this, true);
 						try{
 							result = manager.updatePatient(patient);
 						}catch(OHServiceException ex){
                             OHServiceExceptionUtil.showMessages(ex);
 						}
-						BusyState.setBusyState(PatientInsertExtended.this, false);
 						if (result) {
 							firePatientUpdated(patient);
 						}

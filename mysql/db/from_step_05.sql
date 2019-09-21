@@ -49,3 +49,5 @@ source step_52_therapy_model_changes.sql;
 source step_53_sms_module_extension.sql;
 source step_54_enable_sms_on_visits.sql;
 source step_55_main_hospital_currency.sql;
+source step_56_enable_movements_between_wards.sql;
+source step_57_multiple_operations in_admission.sql;

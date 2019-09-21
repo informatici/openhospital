@@ -715,11 +715,15 @@ public class PatVacBrowser extends ModalJFrame {
 					if (vaccineComboBox.getSelectedItem().toString().equalsIgnoreCase(MessageBundle.getMessage("angal.patvac.allvaccine")))
 						vaccineCode = null;
 					char sex;
-			        if (sexSelect.equals(MessageBundle.getMessage("angal.patvac.female"))) {
+			        if (radiof.isSelected()) {
 						sex='F';
 					}else{
-						if (sexSelect.equals(MessageBundle.getMessage("angal.patvac.male"))) {sex='M'; }
-						else {sex='A';}		
+						if (radiom.isSelected()) {
+							sex='M'; 
+						}
+						else {
+							sex='A';
+						}		
 					}
 			        		        
 			        if (dateFrom.getDate() == null ) {

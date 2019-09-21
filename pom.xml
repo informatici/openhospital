@@ -103,7 +103,7 @@
 							</resources>
 						</configuration>
 					</execution>
-					<execution>
+					<!-- <execution>
 						<id>copy-doc</id>
 						<phase>validate</phase>
 						<goals>
@@ -117,7 +117,7 @@
 								</resource>
 							</resources>
 						</configuration>
-					</execution>
+					</execution> -->
 					<execution>
 						<id>copy-report</id>
 						<phase>validate</phase>
@@ -200,7 +200,13 @@
   			<groupId>org.isf</groupId>
   			<artifactId>OH-core</artifactId>
   			<version>1.9</version>
-  		</dependency>
+  			<exclusions>
+  				<exclusion>
+  					<groupId>org.apache.poi</groupId>
+  					<artifactId>poi</artifactId>
+  				</exclusion>
+  			</exclusions>
+		</dependency>
   		<!-- dependency>
 			<groupId>jcu.sal</groupId>
 			<artifactId>sal_isf</artifactId>
@@ -245,9 +251,9 @@
 			<version>2.0.26</version>
 		</dependency>
 		<dependency>
-		    <groupId>dcm4che</groupId>
-		    <artifactId>dcm4che-imageio</artifactId>
-		    <version>2.0.26</version>
+			<groupId>dcm4che</groupId>
+			<artifactId>dcm4che-imageio</artifactId>
+			<version>2.0.26</version>
 		</dependency>
 	  	<dependency>
 	  		<groupId>org.slf4j</groupId>
@@ -279,6 +285,12 @@
 	  		<artifactId>spring-context</artifactId>
 	  		<version>${spring.framework.version}</version>
 	  	</dependency>
+	  	<!-- <dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>poi-3.7</version>
+			<scope>provided</scope>
+		</dependency> -->
   </dependencies>
   <repositories>
     	<repository>

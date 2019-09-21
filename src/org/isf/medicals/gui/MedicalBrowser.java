@@ -13,16 +13,20 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,6 +34,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -44,10 +51,11 @@ import org.isf.menu.gui.MainMenu;
 import org.isf.stat.gui.report.GenericReportFromDateToDate;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalOrder;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalStock;
+import org.isf.stat.gui.report.GenericReportPharmaceuticalStockCard;
 import org.isf.utils.excel.ExcelExporter;
+import org.isf.utils.jobjects.JFromDateToDateChooserDialog;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
-import org.isf.utils.jobjects.BusyState;
 import org.isf.utils.jobjects.JMonthYearChooser;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.time.TimeTools;
@@ -105,13 +113,15 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 	private ArrayList<Medical> pMedicals;
 	private String[] pColums = {
 			MessageBundle.getMessage("angal.medicals.typem"),
-			MessageBundle.getMessage("angal.common.code"),
+			MessageBundle.getMessage("angal.common.codem"),
 			MessageBundle.getMessage("angal.common.descriptionm"),
-			MessageBundle.getMessage("angal.medicals.pcsperpck"),
+			MessageBundle.getMessage("angal.medicals.pcsperpckm"),
 			MessageBundle.getMessage("angal.medicals.stockm"),
 			MessageBundle.getMessage("angal.medicals.critlevelm"),
 			MessageBundle.getMessage("angal.medicals.outofstockm")
 	};
+	private String[] pColumsSorter = {"MDSRT_DESC", "MDSR_CODE", "MDSR_DESC", null, "STOCK", "MDSR_MIN_STOCK_QTI", "STOCK"};
+	private boolean[] pColumsNormalSorting = {true, true, true, true, true, true, false};
 	private int[] pColumwidth = {100,100,400,60,60,80,100};
 	private boolean[] pColumResizable = {true,true,true,true,true,true,true};
 	private Medical medical;
@@ -120,6 +130,15 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 	private final JFrame me;
 	
 	private String pSelection;
+	private JTextField searchString = null;
+	protected boolean altKeyReleased = true;
+	private String lastKey = "";
+	private JButton buttonAMC;
+	private void filterMedical(String key) {
+		model = new MedicalBrowsingModel(key, false);
+		table.setModel(model);
+		searchString.requestFocus();
+	}
 	
 	public MedicalBrowser() {
 		me=this;
@@ -135,6 +154,7 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 		pack();
 		setVisible(true);
 		setLocationRelativeTo(null);
+		searchString.requestFocus();
 	}
 	
 	private JPanel getContentpane() {
@@ -156,13 +176,15 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 	}
 	
 	private JTable getJTable() {
-		model = new MedicalBrowsingModel();
-		table = new JTable(model);
-
-		table.setDefaultRenderer(Object.class,new ColorTableCellRenderer());
-		for (int i=0;i<pColumwidth.length; i++){
-			table.getColumnModel().getColumn(i).setMinWidth(pColumwidth[i]);
-			if (!pColumResizable[i]) table.getColumnModel().getColumn(i).setMaxWidth(pColumwidth[i]);
+		if (table == null) {
+			model = new MedicalBrowsingModel();
+			table = new JTable(model);
+			table.setAutoCreateRowSorter(true);
+			table.setDefaultRenderer(Object.class,new ColorTableCellRenderer());
+			for (int i=0;i<pColumwidth.length; i++){
+				table.getColumnModel().getColumn(i).setMinWidth(pColumwidth[i]);
+				if (!pColumResizable[i]) table.getColumnModel().getColumn(i).setMaxWidth(pColumwidth[i]);
+			}
 		}
 		return table;
 	}
@@ -171,17 +193,62 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(new JLabel(MessageBundle.getMessage("angal.medicals.selecttype")));
 		buttonPanel.add(getComboBoxMedicalType());
+		buttonPanel.add(getSearchBox());
 		if (MainMenu.checkUserGrants("btnpharmaceuticalnew")) buttonPanel.add(getJButtonNew());
 		if (MainMenu.checkUserGrants("btnpharmaceuticaledit")) buttonPanel.add(getJButtonEdit());
 		if (MainMenu.checkUserGrants("btnpharmaceuticaldel")) buttonPanel.add(getJButtonDelete());
 		buttonPanel.add(getJButtonReport());
 		buttonPanel.add(getJButtonStock());
+		buttonPanel.add(getJButtonStockCard());
 		buttonPanel.add(getJButtonOrderList());
 		buttonPanel.add(getJButtonExpiring());
+		buttonPanel.add(getJButtonAMC());
 		buttonPanel.add(getJButtonClose());
 		return buttonPanel;
 	}
 
+	private JButton getJButtonAMC() {
+		if (buttonAMC == null) {
+			buttonAMC = new JButton(MessageBundle.getMessage("angal.medicals.averagemonthlyconsumption.abbr"));
+			buttonAMC.setMnemonic(KeyEvent.VK_M);
+			buttonAMC.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent event){
+					new GenericReportPharmaceuticalOrder(GeneralData.PHARMACEUTICALAMC);
+					
+				}
+			});
+		}
+		return buttonAMC;
+	}
+	private JTextField getSearchBox() {
+		if (searchString == null) {
+			searchString = new JTextField();
+			searchString.setColumns(15);
+			searchString.addKeyListener(new KeyListener() {
+				public void keyTyped(KeyEvent e) {
+					if (altKeyReleased) {
+						lastKey = "";
+						String s = "" + e.getKeyChar();
+						if (Character.isLetterOrDigit(e.getKeyChar())) {
+							lastKey = s;
+						}
+						filterMedical(searchString.getText());
+					}
+				}
+
+				public void keyPressed(KeyEvent e) {
+					int key = e.getKeyCode();
+					if (key == KeyEvent.VK_ALT)
+						altKeyReleased = false;
+				}
+
+				public void keyReleased(KeyEvent e) {
+					altKeyReleased = true;
+				}
+			});
+		}
+		return searchString;
+	}
 	private JButton getJButtonClose() {
 		JButton buttonClose = new JButton(MessageBundle.getMessage("angal.common.close"));
 		buttonClose.setMnemonic(KeyEvent.VK_C);
@@ -238,18 +305,39 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 				if (option == null)
 					return;
 				
+				/* Getting Report parameters */
+				String sortBy = null;
+				String groupBy = null;
+				String filter = "%" + searchString.getText() + "%";
+				if (pbox.getSelectedItem() instanceof MedicalType) groupBy = ((MedicalType) pbox.getSelectedItem()).getDescription();
+				//System.out.println("==> GROUPING : " + groupBy);
+				List<?> sortedKeys = table.getRowSorter().getSortKeys();
+				sortBy = "MDSRT_DESC, MDSR_DESC"; //default values
+				if (!sortedKeys.isEmpty()) {
+					int sortedColumn = ((SortKey) sortedKeys.get(0)).getColumn();
+					SortOrder sortedOrder = ((SortKey) sortedKeys.get(0)).getSortOrder();
+					
+					String columnName = pColumsSorter[sortedColumn];
+					String columnOrder = sortedOrder.toString().equals("ASCENDING") ? "ASC" : "DESC";
+					if (!pColumsNormalSorting[sortedColumn])
+						columnOrder = sortedOrder.toString().equals("ASCENDING") ? "DESC" : "ASC";
+					if (groupBy == null) {
+						sortBy = "MDSRT_DESC, " + columnName + " " + columnOrder;
+					} else {
+						sortBy = columnName + " " + columnOrder;
+					}
+					
+				} 
+				if (groupBy == null) {
+					groupBy = "%";
+				} 
+				
 				int i = 0;
 				if (options.indexOf(option) == i) {
-						
-						try {
-							BusyState.setBusyState(MedicalBrowser.this, true);
-							new GenericReportPharmaceuticalStock(null, GeneralData.PHARMACEUTICALSTOCK);
-							return;
-						} finally {
-							BusyState.setBusyState(MedicalBrowser.this, false);
-						}
-						
-					}
+					new GenericReportPharmaceuticalStock(null, GeneralData.PHARMACEUTICALSTOCK, filter, groupBy, sortBy, false);
+					new GenericReportPharmaceuticalStock(null, GeneralData.PHARMACEUTICALSTOCK, filter, groupBy, sortBy, true);
+					return;
+				}
 				if (options.indexOf(option) == ++i) {
 					
 					icon = new ImageIcon("rsc/icons/calendar_dialog.png"); //$NON-NLS-1$
@@ -265,14 +353,9 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 			        		icon);
 
 			        if (r == JOptionPane.OK_OPTION) {
-			        	
-						try {
-							BusyState.setBusyState(MedicalBrowser.this, true);
-							new GenericReportPharmaceuticalStock(dateChooser.getDate(), GeneralData.PHARMACEUTICALSTOCK);
-							return;
-						} finally {
-							BusyState.setBusyState(MedicalBrowser.this, false);
-						}
+						new GenericReportPharmaceuticalStock(dateChooser.getDate(), GeneralData.PHARMACEUTICALSTOCK, filter, groupBy, sortBy, false);
+						new GenericReportPharmaceuticalStock(dateChooser.getDate(), GeneralData.PHARMACEUTICALSTOCK, filter, groupBy, sortBy, true);
+						return;
 						
 			        } else {
 			            return;
@@ -281,6 +364,41 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 			}
 		});
 		return buttonStock;
+	}
+	
+	private JButton getJButtonStockCard() {
+		JButton buttonStockCard = new JButton(MessageBundle.getMessage("angal.medicals.stockcard"));
+		buttonStockCard.setMnemonic(KeyEvent.VK_K);
+		buttonStockCard.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event){
+				if (table.getSelectedRow() < 0) {
+					JOptionPane.showMessageDialog(				
+							MedicalBrowser.this,
+	                        MessageBundle.getMessage("angal.common.pleaseselectarow"),
+	                        MessageBundle.getMessage("angal.hospital"),
+	                        JOptionPane.PLAIN_MESSAGE);				
+					return;									
+				}else {
+					selectedrow = table.convertRowIndexToModel(table.getSelectedRow());
+					Medical medical = (Medical)(((MedicalBrowsingModel) model).getValueAt(selectedrow, -1));
+					
+					// Select Dates
+					JFromDateToDateChooserDialog dataRange = new JFromDateToDateChooserDialog(MedicalBrowser.this);
+					dataRange.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dataRange.setVisible(true);
+					
+					Date dateFrom = dataRange.getDateFrom();
+					Date dateTo = dataRange.getDateTo();
+					boolean toExcel = dataRange.isExcel();
+					
+					if (!dataRange.isCancel()) {
+						new GenericReportPharmaceuticalStockCard("ProductLedger", dateFrom, dateTo, medical, null, toExcel);
+						return;
+					}
+				}
+			}
+		});
+		return buttonStockCard;
 	}
 
 	private JButton getJButtonReport() {
@@ -340,8 +458,9 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 	                        JOptionPane.PLAIN_MESSAGE);				
 					return;									
 				} else {
+					selectedrow = table.convertRowIndexToModel(table.getSelectedRow());
 					MedicalBrowsingManager manager = new MedicalBrowsingManager();
-					Medical med = (Medical) (((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
+					Medical med = (Medical) (((MedicalBrowsingModel) model).getValueAt(selectedrow, -1));
 					StringBuilder deleteMessage = new StringBuilder()
 							.append(MessageBundle.getMessage("angal.medicals.deletemedical"))
 							.append(" \"")
@@ -360,7 +479,7 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 						OHServiceExceptionUtil.showMessages(e);
 					}
 					if ((n == JOptionPane.YES_OPTION) && deleted) {
-						pMedicals.remove(table.getSelectedRow());
+						pMedicals.remove(selectedrow);
 						model.fireTableDataChanged();
 						table.updateUI();
 					}
@@ -384,8 +503,8 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 	                        JOptionPane.PLAIN_MESSAGE);				
 					return;									
 				}else {		
-					selectedrow = table.getSelectedRow();
-					medical = (Medical)(((MedicalBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
+					selectedrow = table.convertRowIndexToModel(table.getSelectedRow());
+					medical = (Medical)(((MedicalBrowsingModel) model).getValueAt(selectedrow, -1));
 					MedicalEdit editrecord = new MedicalEdit(medical,false,me);
 					editrecord.addMedicalListener(MedicalBrowser.this);
 					editrecord.setVisible(true);
@@ -413,28 +532,30 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 	}
 
 	private JComboBox getComboBoxMedicalType() {
-		MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
-		pbox = new JComboBox();
-		pbox.addItem(MessageBundle.getMessage("angal.medicals.allm"));
-		ArrayList<MedicalType> type;
-		try {
-			type = manager.getMedicalType();
-		
-			//for efficiency in the sequent for
-			for (MedicalType elem : type) {
-				pbox.addItem(elem);
-			}
-		} catch (OHServiceException e1) {
-			type = null;
-			OHServiceExceptionUtil.showMessages(e1);
+		if (pbox == null) {
+			pbox = new JComboBox();
+			pbox.addItem(MessageBundle.getMessage("angal.medicals.allm"));
+			MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
+			ArrayList<MedicalType> type;
+			try {
+				type = manager.getMedicalType();
+				for (MedicalType elem : type) {
+					pbox.addItem(elem);
+				}
+			} catch (OHServiceException e) {
+				OHServiceExceptionUtil.showMessages(e);
+			}	
 		}
 		pbox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				pSelection=pbox.getSelectedItem().toString();
-				if (pSelection.compareTo(MessageBundle.getMessage("angal.medicals.allm")) == 0)
+				pSelection = pbox.getSelectedItem().toString();
+				if (pSelection.compareTo(MessageBundle.getMessage("angal.medicals.allm")) == 0) {
 					model = new MedicalBrowsingModel();
-				else
-					model = new MedicalBrowsingModel(pSelection);
+					table.setModel(model);
+				} else {
+					model = new MedicalBrowsingModel(pSelection, true);
+					table.setModel(model);
+				}
 				model.fireTableDataChanged();
 				table.updateUI();
 			}
@@ -550,19 +671,44 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 		 */
 		private static final long serialVersionUID = 1L;
 
-		public MedicalBrowsingModel(String s) {
-			MedicalBrowsingManager manager = new MedicalBrowsingManager();
-			try {
-				pMedicals = manager.getMedicals(s);
-			} catch (OHServiceException e) {
-				pMedicals = null;
-				OHServiceExceptionUtil.showMessages(e);
+		ArrayList<Medical> medicalList = new ArrayList<Medical>();
+
+		public MedicalBrowsingModel(String key, boolean isType) {
+			if (isType) {
+				MedicalBrowsingManager manager = new MedicalBrowsingManager();
+				try {
+					medicalList = pMedicals = manager.getMedicals(key, false);
+				} catch (OHServiceException e) {
+					pMedicals = null;
+					OHServiceExceptionUtil.showMessages(e);
+				}
+			} else {
+				for (Medical med : pMedicals) {
+					if (key != null) {
+						
+						String s = key + lastKey;
+						s.trim();
+						String[] tokens = s.split(" ");
+
+						if (!s.equals("")) {
+							String description = med.getProd_code() + med.getDescription();
+							int a = 0;
+							for (int j = 0; j < tokens.length ; j++) {
+								String token = tokens[j].toLowerCase();
+								if (description.toLowerCase().contains(token)) {
+									a++;
+								}
+							}
+							if (a == tokens.length) medicalList.add(med);
+						} else medicalList.add(med);
+					} else medicalList.add(med);
+				}
 			}
 		}
 		public MedicalBrowsingModel() {
 			MedicalBrowsingManager manager = new MedicalBrowsingManager();
 			try {
-				pMedicals = manager.getMedicals();
+				medicalList = pMedicals = manager.getMedicals(null, false);
 			} catch (OHServiceException e) {
 				pMedicals = null;
 				OHServiceExceptionUtil.showMessages(e);
@@ -589,9 +735,9 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 		}
 		
 		public int getRowCount() {
-			if (pMedicals == null)
+			if (medicalList == null)
 				return 0;
-			return pMedicals.size();
+			return medicalList.size();
 		}
 		
 		public String getColumnName(int c) {
@@ -603,7 +749,7 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 		}
 
 		public Object getValueAt(int r, int c) {
-			Medical med = pMedicals.get(r);
+			Medical med = medicalList.get(r);
 			double actualQty = med.getInitialqty()+med.getInqty()-med.getOutqty();
 			double minQuantity = med.getMinqty();
 			if (c == -1) {
@@ -649,8 +795,10 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 		   cell.setForeground(Color.BLACK);
 		   Medical med = pMedicals.get(row);
 		   double actualQty = med.getInitialqty()+med.getInqty()-med.getOutqty();
-		   if (actualQty <= med.getMinqty()) cell.setForeground(Color.RED); //under critical level
-		   if(((Boolean)table.getValueAt(row,6)).booleanValue()) cell.setForeground(Color.GRAY); //out of stock
+			if (((Boolean) table.getValueAt(row, 6)).booleanValue())
+				cell.setForeground(Color.GRAY); // out of stock
+			if (med.getMinqty() != 0 && actualQty <= med.getMinqty())
+				cell.setForeground(Color.RED); // under critical level
 	      return cell;
 	   }
 	}
