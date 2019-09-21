@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class GeneralData {
 	
+	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private final String FILE_PROPERTIES = "generalData.properties";
 
@@ -29,13 +30,15 @@ public class GeneralData {
 	public static boolean SINGLEUSER;
 	public static boolean AUTOMATICLOT;
 	public static boolean LOTWITHCOST;
+	
 	public static String PATIENTSHEET;
 	public static String OPDCHART;
 	public static String ADMCHART;
 	public static String DISCHART;
 	public static String PATIENTBILL;
 	public static String BILLSREPORT;
-	public static String BILLSREPORTMONTH;
+	public static String BILLSREPORTPENDING;
+	public static String BILLSREPORTMONTHLY;
 	public static String PHARMACEUTICALORDER;
 	public static String PHARMACEUTICALSTOCK;
 	public static String PHARMACEUTICALAMC;
@@ -52,12 +55,15 @@ public class GeneralData {
 	public static boolean MAINMENUALWAYSONTOP;
 	public static boolean RECEIPTPRINTER;
 	public static boolean VIDEOMODULEENABLED;
-	public static boolean DEBUG;
 	public static boolean PATIENTVACCINEEXTENDED;
 	public static boolean ENHANCEDSEARCH;
 	public static boolean XMPPMODULEENABLED;
 	public static boolean DICOMMODULEENABLED;
+	public static boolean ALLOWPRINTOPENEDBILL;
 	public static boolean ALLOWMULTIPLEOPENEDBILL;
+	public static String PATIENTBILLGROUPED;
+	public static String PATIENTBILLSTATEMENT;
+	public static boolean DEBUG;
 	
 	private static String DEFAULT_LANGUAGE = "en";
 	private static boolean DEFAULT_SINGLEUSER = false;
@@ -69,7 +75,8 @@ public class GeneralData {
 	private static String DEFAULT_DISCHART = "patient_dis_chart";
 	private static String DEFAULT_PATIENTBILL = "PatientBill";
 	private static String DEFAULT_BILLSREPORT = "BillsReport";
-	private static String DEFAULT_BILLSREPORTMONTH = "BillsReportMonth";
+	private static String DEFAULT_BILLSREPORTPENDING = "BillsReportPending";
+	private static String DEFAULT_BILLSREPORTMONTHLY = "BillsReportMonthly";
 	private static String DEFAULT_PHARMACEUTICALORDER = "PharmaceuticalOrder";
 	private static String DEFAULT_PHARMACEUTICALSTOCK = "PharmaceuticalStock";
 	private static String DEFAULT_PHARMACEUTICALAMC = "PharmaceuticalAMC";
@@ -85,12 +92,15 @@ public class GeneralData {
 	private static boolean DEFAULT_MAINMENUALWAYSONTOP = false;
 	private static boolean DEFAULT_RECEIPTPRINTER = false;
 	private static boolean DEFAULT_VIDEOMODULEENABLED = false;
-	private static boolean DEFAULT_DEBUG = false;
 	private static boolean DEFAULT_PATIENTVACCINEEXTENDED = false;
 	private static boolean DEFAULT_ENHANCEDSEARCH = false;
 	private static boolean DEFAULT_XMPPMODULEENABLED=false;
     private static boolean DEFAULT_DICOMMODULEENABLED=false;
+    private static boolean DEFAULT_ALLOWPRINTOPENEDBILL = false;
     private static boolean DEFAULT_ALLOWMULTIPLEOPENEDBILL=false;
+	private static String DEFAULT_PATIENTBILLGROUPED = "PatientBillGrouped";
+	private static String DEFAULT_PATIENTBILLSTATEMENT = "PatientBillStatement";
+	private static boolean DEFAULT_DEBUG = false;
 
 	private static GeneralData mySingleData;
 	private Properties p;
@@ -110,7 +120,8 @@ public class GeneralData {
 			DISCHART = myGetProperty("DISCHART", DEFAULT_DISCHART);
 			PATIENTBILL = myGetProperty("PATIENTBILL", DEFAULT_PATIENTBILL);
 			BILLSREPORT = myGetProperty("BILLSREPORT", DEFAULT_BILLSREPORT);
-			BILLSREPORTMONTH = myGetProperty("BILLSREPORTMONTH", DEFAULT_BILLSREPORTMONTH);
+			BILLSREPORTPENDING = myGetProperty("BILLSREPORTPENDING", DEFAULT_BILLSREPORTPENDING);
+			BILLSREPORTMONTHLY = myGetProperty("BILLSREPORTMONTHLY", DEFAULT_BILLSREPORTMONTHLY);
 			PHARMACEUTICALORDER = myGetProperty("PHARMACEUTICALORDER", DEFAULT_PHARMACEUTICALORDER);
 			PHARMACEUTICALSTOCK = myGetProperty("PHARMACEUTICALSTOCK", DEFAULT_PHARMACEUTICALSTOCK);
 			PHARMACEUTICALAMC = myGetProperty("PHARMACEUTICALAMC", DEFAULT_PHARMACEUTICALAMC);
@@ -127,12 +138,15 @@ public class GeneralData {
 			MAINMENUALWAYSONTOP = myGetProperty("MAINMENUALWAYSONTOP", DEFAULT_MAINMENUALWAYSONTOP);
 			RECEIPTPRINTER = myGetProperty("RECEIPTPRINTER", DEFAULT_RECEIPTPRINTER);
 			VIDEOMODULEENABLED = myGetProperty("VIDEOMODULEENABLED", DEFAULT_VIDEOMODULEENABLED);
-			DEBUG = myGetProperty("DEBUG", DEFAULT_DEBUG);
 			PATIENTVACCINEEXTENDED = myGetProperty("PATIENTVACCINEEXTENDED", DEFAULT_PATIENTVACCINEEXTENDED);
 			ENHANCEDSEARCH = myGetProperty("ENHANCEDSEARCH", DEFAULT_ENHANCEDSEARCH);
 			XMPPMODULEENABLED = myGetProperty("XMPPMODULEENABLED", DEFAULT_XMPPMODULEENABLED);
 			DICOMMODULEENABLED = myGetProperty("DICOMMODULEENABLED", DEFAULT_DICOMMODULEENABLED);
+			ALLOWPRINTOPENEDBILL = myGetProperty("ALLOWPRINTOPENEDBILL", DEFAULT_ALLOWPRINTOPENEDBILL);
 			ALLOWMULTIPLEOPENEDBILL = myGetProperty("ALLOWMULTIPLEOPENEDBILL", DEFAULT_ALLOWMULTIPLEOPENEDBILL);
+			PATIENTBILLGROUPED = myGetProperty("PATIENTBILLGROUPED", DEFAULT_PATIENTBILLGROUPED);
+			PATIENTBILLSTATEMENT = myGetProperty("PATIENTBILLSTATEMENT", DEFAULT_PATIENTBILLSTATEMENT);
+			DEBUG = myGetProperty("DEBUG", DEFAULT_DEBUG);
 			
 		} catch (Exception e) { //no file
 			logger.error(">> " + FILE_PROPERTIES + " file not found.");

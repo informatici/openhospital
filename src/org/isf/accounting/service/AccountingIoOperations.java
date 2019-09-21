@@ -1,17 +1,13 @@
 package org.isf.accounting.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
-import org.isf.generaldata.MessageBundle;
-import org.isf.utils.db.DbQueryLogger;
+import org.isf.patient.model.Patient;
 import org.isf.utils.db.TranslateOHServiceException;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
@@ -382,6 +378,43 @@ public class AccountingIoOperations {
 		return pPayment;
 	}
 	/**
+
+	 * Retrieves all billPayements for a given patient in the period dateFrom -> dateTo
+	 * @param dateFrom
+	 * @param dateTo
+	 * @param patient
+	 * @return
+	 * @throws OHException
+	 */
+	public ArrayList<BillPayments> getPayments(GregorianCalendar dateFrom, GregorianCalendar dateTo, Patient patient)
+			throws OHException {
+		ArrayList<BillPayments> payments =  billPaymentRepository.findByDateAndPatient(dateFrom, dateTo, patient.getCode());
+		return payments;
+	}
+	/**
+	 * Retrieves all the bills for a given patient in the period dateFrom -> dateTo
+	 * @param dateFrom
+	 * @param dateTo
+	 * @param patient
+	 * @return the bill list
+	 * @throws OHException
+	 */
+	public ArrayList<Bill> getBills(GregorianCalendar dateFrom, GregorianCalendar dateTo, Patient patient) throws OHException {
+		ArrayList<Bill> bills = billRepository.findByDateAndPatient(dateFrom, dateTo, patient.getCode());
+		return bills;
+	}
+	/**
+	 * 
+	 * @param patID
+	 * @return
+	 * @throws OHException
+	 */
+	public ArrayList<Bill> getPendingBillsAffiliate(int patID) throws OHException {
+		ArrayList<Bill> pendingBills = billRepository.findAllPendindBillsByPatient(patID);
+		return pendingBills;
+	}
+
+	/**
 	 * Return Distincts BillItems
 	 * added by u2g
 	 * @return BillItems list 
@@ -391,6 +424,7 @@ public class AccountingIoOperations {
 		ArrayList<BillItems> billItems =  billItemsRepository.findAllGroupByDesc();
 		return billItems;
 	}
+	
 	/**
 	 * return the bill list which date between dateFrom and dateTo and containing given billItem
 	 * added by u2g

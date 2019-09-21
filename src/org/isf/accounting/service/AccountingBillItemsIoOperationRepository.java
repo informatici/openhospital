@@ -1,10 +1,8 @@
 package org.isf.accounting.service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

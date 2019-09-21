@@ -1,5 +1,6 @@
 package org.isf.accounting.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -38,5 +39,11 @@ public interface AccountingBillPaymentIoOperationRepository extends JpaRepositor
 			"VALUES (:id,:date,:amount,:user)", nativeQuery= true)
 	void insertBillPayment(
 			@Param("id") Integer id, @Param("date") GregorianCalendar date,
-			@Param("amount") Double amount, @Param("user") String user);	
+			@Param("amount") Double amount, @Param("user") String user);
+	
+	@Query(value = "SELECT * FROM BILLPAYMENTS BLP INNER JOIN BILLS BLL ON BLP.BLP_ID_BILL= BLL.BLL_ID "
+			+" WHERE DATE(BLP.BLP_DATE) BETWEEN :dateFrom AND :dateTo "
+			+" AND (BLL.BLL_ID_PAT= :patientCode ) "
+			+" ORDER BY BLP_ID_BILL, BLP_DATE ASC ", nativeQuery= true)
+	ArrayList<BillPayments> findByDateAndPatient(@Param("dateFrom") GregorianCalendar dateFrom , @Param("dateTo") GregorianCalendar dateTo, @Param("patientCode") Integer patientCode);
 }
