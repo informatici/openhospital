@@ -144,6 +144,7 @@ _
 _*[.underline]#NB#*: Disease Types can be defined by the Administrator._ _Ask to your Administrator how to do it or see link:#14-general-data-general-data[General Data] in this document. +
 _
 * *Diagnosis.* Maximum three diseases can be diagnosed per each attendance (“new attendance” or “re-attendance” it does not care in this context). Normally patient reports at least one visit reason but it may happen that during same visit the Doctor finds other concurrent pathologies thus here possibility is given to record till maximum three (the first being the only one mandatory). +
+It is possible to filter in order to find diseases more easily. To do so, you will need to enter a text fragment in the search field that is part of the disease name. The closer the search text comes to the name of the disease being searched, the more precise the search is. +
  +
 _*[.underline]#NB#*: in the *OPD Out Patient Department* window only first diagnosis and its type will be show, anyway all data are stored and processed in reports and searching._
 * *Patient age*. Validity range is 0-200.
@@ -513,7 +514,7 @@ These functionalities are available in the window
 * *[.underline]##E##xcel*: Export data to Excel
 * *Stoc[.underline]##k## Card* to show the movements history for a certain pharmaceutical (can be directly selected by the list otherwise will be requested)
 
-Differently by *Pharmaceuticals [.underline]##S##tock* functionality, the *Pharmaceutical Stock [.underline]##W##ard* allows an only discharging movement to patients since is an internal management of pharmaceuticals lying in the wards after they have been “charged” by the main pharmacy. But since OpenHospital version 1.9, the *Pharmaceutical Stock [.underline]##W##ard* also allows discharging movement to other wards.
+Differently by *Pharmaceuticals [.underline]##S##tock* functionality, the *Pharmaceutical Stock [.underline]##W##ard* allows an only discharging movement to patients since is an internal management of pharmaceuticals lying in the wards after they have been “charged” by the main pharmacy. But since OpenHospital 1.9, discharging movement from ward to ward is also possible.
 
 The *_Ward Pharmacy_* window will show a *Filter Panel* on the left, a *Movements Panel* in the right-centre and a *Button Panel* at the bottom.
 
@@ -566,12 +567,12 @@ image:extracted-media/media/image39.png[WardPharmacy_new.PNG,width=456,height=42
 
 As told before, only discharging movements are allowed in this functionality. So, the solely information required are the follow:
 
-* *Patient* or *Internal Use*: you may select an already registered patient by clicking on *[.underline]##P##ick Patient* button so the movement will be associated to his/her ID or select *Internal Use* and type a description to specify that the movement is not related to a patient.
+* *Patient* or *Internal Use* or *Another ward*: you may select an already registered patient by clicking on *[.underline]##P##ick Patient* button so the movement will be associated to his/her ID or select *Internal Use* and type a description to specify that the movement is not related to a patient. You may also select *Another ward* and choose the destination ward from the list provided.
 * *Medicals*: by pressing *[.underline]##M##edical* button you will be asked for the drug to give to that patient; a first window will appear to let you select the drug (the only ones you may have in the ward as a result of a previous discharging movement in the *_Pharmaceutical Stock Browser_*) and a second one to let you specify the quantity; multiply of half-piece are allowed.
 
 image:extracted-media/media/image40.png[WardPharmacy_medical.PNG,width=273,height=129]image:extracted-media/media/image41.png[WardPharmacy_quantity.PNG,width=231,height=139]
 
-Before to press the *[.underline]##O##K* button, you may insert as many Medicals you need, it will show a correspondent number of movements in the *Outcomes* tab of the *Movement Panel* in the *_Ward Pharmacy_* window.
+Before to press the *[.underline]##O##K* button, you may insert as many Medicals you need, it will show a correspondent number of movements in the *Outcomes* tab of the *Movement Panel* in the *_Ward Pharmacy_* window. These movements will also be visible in the *Incomes* tab of the *Movement Panel* in the *_Ward Pharmacy_* window of the receiving ward, in case of discharging to another ward.
 
 == 7 Laboratory ([.underline]##L##aboratory)
 
@@ -1310,6 +1311,8 @@ To start an admission, you have to enter the following fields (on the right side
 * *Malnutrition* (not mandatory) in case of malnutrition you may check this box so you will manage the malnutrition control from the *_Patient data_* window (see Malnutrition control function).
 * *Diagnosis IN:* it is the diagnosis the patient has been admitted with
 
+TIP: It is possible to filter in order to find diseases more easily. To do this, you will need to enter a text fragment in the search fields that is part of the disease name. The closer the search text comes to the name of the disease being searched for, the more precise the search is.
+
 _*[.underline]#NB#*: Wards, AdmissionType and Diagnosis can be defined by the Administrator._ _Ask to your Administrator how to do it or see link:#14-general-data-general-data[General Data] in this document._
 
 _*[.underline]#NB#*: The "Progressive in year" field is automatically populated by the program; in case of maternity the counter can starts from first January or from first June as far as the current normative ask to the health facilities; to change this behaviour please ask to your Administrator to set the MATERNITYRESTARTINJUNE [.underline]# # flag in the configuration file or read the Administrator’s Guide._
@@ -1361,8 +1364,17 @@ Operations data that you can manage are:
 * *Operation type:* the operation type
 * *Operation result:* the result of the operation
 * *Transfusion Units:* (not mandatory): how many units of blood have been used
+* *Remark:* (not mandatory): a comment about the operation
 
 image:extracted-media/media/image95.png[Admission_operation.PNG,width=642,height=345]
+
+Since OpenHospital version 1.9, it is possible to record several operations at once. The buttons *_New_*, *_Save_* and *_Delete_* at the top right of the table allow you to manipulate the items of the table.
+
+To add a new operation, click on the button *_New_* and enter the data as mentioned above and then click on *_Save_*.
+
+WARNING: Clicking on the button *_Save_* just adds the operation to the table; it is not yet permanently recorded. 
+
+To delete a line from the table, select the line to delete by clicking on it (it automatically highlights), then click on the button *_Delete_*. When you are finished, click on the button *Save* below the table to save your changes.
 
 _*[.underline]#NB#*: OperationType and Operations can be defined by the Administrator._ _Ask to your Administrator how to do it or see link:#14-general-data-general-data[General Data] in this document._
 
@@ -1394,6 +1406,8 @@ You have to enter the following data:
 * *Discharge date:* the date of discharge
 * *Discharge type:* the type of discharge
 * *Diagnosis OUT:* it is the diagnosis the patient has been discharged with
+
+TIP: As in the case of *_Diagnosis IN_*, it is possible to filter to find diseases more easily.
 
 image:extracted-media/media/image97.png[Admission_discharge.PNG,width=642,height=337]
 
@@ -1498,10 +1512,12 @@ To access the Clinical sheet function, first of all you have to highlight the Pa
 
 image:extracted-media/media/image104.png[image,width=624,height=368]
 
-The window doesn't allow you to change data but, for the selected patient, it shows you all the out-patient (OPD) visits, the Admissions and his/her Laboratory exams; by clicking on a row in the *Data table* on the top of the window, the related laboratory exams will be showed as follow:
+The window doesn't allow you to change data but, for the selected patient, it shows you all the out-patient (OPD) visits, the Admissions, his/her Laboratory exams and the various surgeries he/she underwent; by clicking on a row in the *Data table* on the top of the window, the related laboratory exams will be showed as follow:
 
-* selected row is an Admission: all the exams done between the admission date and the discharge date will be showed in *Data table* on the bottom
-* selected row is an out-patient (OPD) visit: all the exams done after the selected OPD visit until next one (if any) or next admission date (if any) will be showed in the *Data table* on the bottom
+* selected row is an Admission: all the exams done between the admission date and the discharge date will be showed in *Data table*, in the *_Exams_* tab
+* selected row is an out-patient (OPD) visit: all the exams done after the selected OPD visit until next one (if any) or next admission date (if any) will be showed in the *Data table*, in the *_Exams_* tab
+
+The tab *_Operations_* shows the various operations recorded for the selected patient between the admission date and the discharge date. 
 
 In the *Buttons Panel* you have the following choices:
 
