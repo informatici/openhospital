@@ -387,6 +387,8 @@ As far as a *Pharmaceutical* is concerned, user can choose its:
 
 In order to avoid conflicts, you can change one of these options only. So, when the description combo box is active, the other one is not, and vice versa.
 
+Since OpenHospital version 1.9, you can quickly find a medical you are looking for. Simply type a key word that is a part of its name into the text field at the top of the pharmaceuticals products combo box and press the search button (image:extracted-media/media/image81.png[zoom_r_button.png,width=15,height=15]) that follows this text field.
+
 As far as *Movement* are concerned, user can choose its:
 
 * *_Type_*: it specifies if it’s a charge or a discharge one. If you select the discharge option, then the ward combo box gets enabled. The ward combo box allows you to find any discharging movements that refer to a specific ward.
@@ -511,7 +513,7 @@ These functionalities are available in the window
 * *[.underline]##E##xcel*: Export data to Excel
 * *Stoc[.underline]##k## Card* to show the movements history for a certain pharmaceutical (can be directly selected by the list otherwise will be requested)
 
-Differently by *Pharmaceuticals [.underline]##S##tock* functionality, the *Pharmaceutical Stock [.underline]##W##ard* allows an only discharging movement to patients since is an internal management of pharmaceuticals lying in the wards after they have been “charged” by the main pharmacy.
+Differently by *Pharmaceuticals [.underline]##S##tock* functionality, the *Pharmaceutical Stock [.underline]##W##ard* allows an only discharging movement to patients since is an internal management of pharmaceuticals lying in the wards after they have been “charged” by the main pharmacy. But since OpenHospital version 1.9, the *Pharmaceutical Stock [.underline]##W##ard* also allows discharging movement to other wards.
 
 The *_Ward Pharmacy_* window will show a *Filter Panel* on the left, a *Movements Panel* in the right-centre and a *Button Panel* at the bottom.
 
