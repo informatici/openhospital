@@ -39,7 +39,7 @@
  	<bean id="springDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
  		destroy-method="close">
  		<property name="driverClass" value="${jdbc.class:com.mysql.jdbc.Driver}" />
- 		<property name="jdbcUrl" value="${jdbc.url:jdbc:mysql://localhost:3306/oh}" />
+ 		<property name="jdbcUrl" value="${jdbc.url:jdbc:mysql://localhost:3306/oh?useLegacyDatetimeCode=false&amp;serverTimezone=UTC}" />
  		<property name="user" value="${jdbc.username:isf}" />
  		<property name="password" value="${jdbc.password:isf123}" />
  
