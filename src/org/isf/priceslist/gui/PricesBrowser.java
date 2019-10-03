@@ -25,6 +25,7 @@ import org.isf.exa.model.Exam;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
+import org.isf.menu.manager.Context;
 import org.isf.operation.manager.OperationBrowserManager;
 import org.isf.operation.model.Operation;
 import org.isf.priceslist.manager.PriceListManager;
@@ -86,6 +87,8 @@ public class PricesBrowser extends ModalJFrame {
     private PriceNode othNodes;
     private PricesOthersManager othManager = new PricesOthersManager();
     private ArrayList<PricesOthers> othArray;
+    
+    private PrintManager printManager = Context.getApplicationContext().getBean(PrintManager.class);
 	
 	public PricesBrowser() {
 		try {
@@ -138,7 +141,7 @@ public class PricesBrowser extends ModalJFrame {
 				public void actionPerformed(ActionEvent arg0) {
 					
 					try {
-						new PrintManager("PriceList", listManager.convertPrice(listSelected, priceArray), 0);
+						printManager.print("PriceList", listManager.convertPrice(listSelected, priceArray), 0);
 					} catch (OHServiceException e) {
 						OHServiceExceptionUtil.showMessages(e, PricesBrowser.this);
 					}

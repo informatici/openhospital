@@ -167,7 +167,9 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 	private JTable table;
 	private JScrollPane scrollPane;
 	private AdmittedPatientBrowser myFrame;
-	private AdmissionBrowserManager manager = new AdmissionBrowserManager();
+	
+	private PatientBrowserManager patientManager = Context.getApplicationContext().getBean(PatientBrowserManager.class);
+	private AdmissionBrowserManager admissionManager = Context.getApplicationContext().getBean(AdmissionBrowserManager.class);
 	protected boolean altKeyReleased = true;
 	protected Timer ageTimer = new Timer(1000, new ActionListener() {
 		
@@ -349,7 +351,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 		if (!GeneralData.ENHANCEDSEARCH) {
 			//Load the whole list of patients
 			try {
-				pPatient = manager.getAdmittedPatients(null);
+				pPatient = admissionManager.getAdmittedPatients(null);
 			}catch(OHServiceException e){
                 OHServiceExceptionUtil.showMessages(e);
 			}
@@ -809,18 +811,16 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 						MessageBundle.getMessage("angal.admission.deletepatient"), JOptionPane.YES_NO_OPTION);
 				
 				if (n == JOptionPane.YES_OPTION){
-					PatientBrowserManager manager = new PatientBrowserManager();
 					boolean result = false;
 					try {
-						result = manager.deletePatient(pat);
+						result = patientManager.deletePatient(pat);
 					}catch(OHServiceException e){
 						OHServiceExceptionUtil.showMessages(e);
 					}
 					if (result){
-						AdmissionBrowserManager abm = new AdmissionBrowserManager();
 						ArrayList<Admission> patientAdmissions;
 						try {
-							patientAdmissions = abm.getAdmissions(pat);
+							patientAdmissions = admissionManager.getAdmissions(pat);
 						}catch(OHServiceException ex){
 							OHServiceExceptionUtil.showMessages(ex);
 							patientAdmissions = new ArrayList<Admission>();
@@ -828,7 +828,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 
 						for (Admission elem : patientAdmissions){
 							try {
-								abm.setDeleted(elem.getId());
+								admissionManager.setDeleted(elem.getId());
 							}catch(OHServiceException e){
 								OHServiceExceptionUtil.showMessages(e);
 							}
@@ -1073,9 +1073,8 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 					}
 				}
 
-				PatientBrowserManager patManager = new PatientBrowserManager();
 				try{
-					if(patManager.mergePatient(mergedPatient, patient2)){
+					if(patientManager.mergePatient(mergedPatient, patient2)){
 						fireMyDeletedPatient(patient2);
 					}
 				}catch(OHServiceException e){
@@ -1145,7 +1144,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 		}
 		
 		try {
-			pPatient = manager.getAdmittedPatients(admissionRange, dischargeRange, searchString.getText());
+			pPatient = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, searchString.getText());
 		}catch(OHServiceException e){
 			OHServiceExceptionUtil.showMessages(e);
 		}

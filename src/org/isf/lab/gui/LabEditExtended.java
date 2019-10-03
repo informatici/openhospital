@@ -150,11 +150,10 @@ public class LabEditExtended extends JDialog {
 	
 	private ArrayList<ExamRow> eRows = null;
 	
-	private LabManager labManager = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
+	//private LabManager labManager = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
+	private LabManager labManager = Context.getApplicationContext().getBean(LabManager.class);
+	private AdmissionBrowserManager admMan = Context.getApplicationContext().getBean(AdmissionBrowserManager.class);
 	
-	
-	
-
 	public LabEditExtended(JFrame owner, Laboratory laboratory, boolean inserting) {
 		super(owner, true);
 		insert = inserting;
@@ -421,7 +420,6 @@ public class LabEditExtended extends JDialog {
 			patientComboBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					if (patientComboBox.getSelectedIndex()>0) {
-						AdmissionBrowserManager admMan = new AdmissionBrowserManager();
 						labPat=(Patient)patientComboBox.getSelectedItem();
 						setPatient(labPat);
 						Admission admission = null;

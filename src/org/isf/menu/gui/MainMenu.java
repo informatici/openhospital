@@ -314,6 +314,7 @@ public class MainMenu extends JFrame implements ActionListener, Login.LoginListe
 						return;
 					try {
 						Object target = Class.forName(app).newInstance();
+						//Object target = Context.getApplicationContext().getBean(Class.forName(app));
 						try {
 							((ModalJFrame) target).showAsModal(this);
 						} catch (ClassCastException noModalJFrame) {

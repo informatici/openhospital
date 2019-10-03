@@ -85,6 +85,8 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 	private JComboBox movTypeBox;
 	private JComboBox wardBox;
 	private String formatSelected="Java";
+	
+	private PrintManager printManager = Context.getApplicationContext().getBean(PrintManager.class);
 
 	public MedicalStockSelection(JFrame owner) {
 		super(owner, true);
@@ -469,7 +471,7 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 					}
 					ArrayList<Movement4Print> pMovements2 = convertToPrint(pMovements);
 					try {
-						new PrintManager(path,pMovements2,format);
+						printManager.print(path,pMovements2,format);
 					} catch (OHServiceException e1) {
 						JOptionPane.showMessageDialog(MedicalStockSelection.this, e1.getMessage());
 					}
