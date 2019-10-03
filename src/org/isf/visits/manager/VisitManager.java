@@ -20,10 +20,8 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.visits.model.Visit;
 import org.isf.visits.service.VisitsIoOperations;
 import org.joda.time.DateTime;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Component
-public class VisitManager implements ApplicationContextAware {
+public class VisitManager {
 	
 	@Autowired
 	private VisitsIoOperations ioOperations;
@@ -40,6 +38,7 @@ public class VisitManager implements ApplicationContextAware {
 	@Autowired
 	private SmsOperations smsOp;
 	
+	@Autowired
 	private ApplicationContext applicationContext;
 	
 	/**
@@ -145,11 +144,5 @@ public class VisitManager implements ApplicationContextAware {
 		    return sb.toString().substring(0, SmsManager.MAX_LENGHT);
 		}
 		return sb.toString();
-	}
-
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-		
 	}
 }

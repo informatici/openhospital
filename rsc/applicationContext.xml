@@ -25,6 +25,9 @@
  
  	<!-- <bean class ="org.isf.utils.EntityManagerFactoryBean" id = "entityManagerFactory"> -->
  	<!-- </bean> -->
+ 	
+ 	<!--  could be used in place of @TranslateOHException ? -->
+ 	<!-- <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/> -->
 
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location">

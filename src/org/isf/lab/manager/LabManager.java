@@ -31,8 +31,19 @@ public class LabManager {
 	@Autowired
 	private LabIoOperations ioOperations;
 	
+	@Autowired
+	private LabRowManager rowManager;
+	
 	public LabManager() {
             ioOperations = new LabIoOperations();
+	}
+	
+	public LabIoOperations getIoOperations() {
+		return ioOperations;
+	}
+
+	public void setIoOperations(LabIoOperations ioOperations) {
+		this.ioOperations = ioOperations;
 	}
 	
 	/**
@@ -366,7 +377,7 @@ public class LabManager {
 	}
 
 	private void setLabMultipleResults(List<LaboratoryForPrint> labs) throws OHServiceException {
-		LabRowManager rowManager = new LabRowManager();
+		
 		List<LaboratoryRow> rows = null;
 		
 		for (LaboratoryForPrint lab : labs) {

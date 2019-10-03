@@ -19,6 +19,7 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.ward.model.Ward;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -28,13 +29,13 @@ import org.springframework.transaction.annotation.Transactional;
  * 			- reflection from Medicals pieces per packet
  * 			- added complete Ward and Movement construction in getMovement()
  */
-@Component
+@Service
 @Transactional(rollbackFor=OHServiceException.class)
 @TranslateOHServiceException
 public class MedicalStockIoOperations {
 
 	@Autowired
-	private MovementIoOperationRepository repository;
+	private MovementIoOperationRepository movRepository;
 	
 	@Autowired
 	private LotIoOperationRepository lotRepository;
@@ -70,7 +71,7 @@ public class MedicalStockIoOperations {
 	public List<Integer> getMedicalsFromLot(
 			String lotCode) throws OHServiceException
 	{
-		List<Integer> medicalIds = repository.findAllByLot(lotCode);
+		List<Integer> medicalIds = movRepository.findAllByLot(lotCode);
 		
 		return medicalIds;
 	}
@@ -249,7 +250,7 @@ public class MedicalStockIoOperations {
 
 		Lot lot = (Lot)lotRepository.findOne(lotCode); 
 		movement.setLot(lot);
-		Movement savedMovement = repository.save(movement);
+		Movement savedMovement = movRepository.save(movement);
 		result = (savedMovement != null);
 		
 		return result;
@@ -461,11 +462,11 @@ public class MedicalStockIoOperations {
 		ArrayList<Movement> pMovement = new ArrayList<Movement>();
 		
 		
-		pMovementCode = new ArrayList<Integer>(repository.findtMovementWhereDatesAndId(wardId, dateFrom, dateTo));			
+		pMovementCode = new ArrayList<Integer>(movRepository.findtMovementWhereDatesAndId(wardId, dateFrom, dateTo));			
 		for (int i=0; i<pMovementCode.size(); i++)
 		{
 			Integer code = pMovementCode.get(i);
-			Movement movement = repository.findOne(code);
+			Movement movement = movRepository.findOne(code);
 			
 			
 			pMovement.add(i, movement);
@@ -505,13 +506,13 @@ public class MedicalStockIoOperations {
 		ArrayList<Movement> pMovement = new ArrayList<Movement>();
 		
 		
-		pMovementCode = new ArrayList<Integer>(repository.findtMovementWhereData(
+		pMovementCode = new ArrayList<Integer>(movRepository.findtMovementWhereData(
 				medicalCode, medicalType, wardId, movType, 
 				movFrom, movTo, lotPrepFrom, lotPrepTo, lotDueFrom, lotDueTo));			
 		for (int i=0; i<pMovementCode.size(); i++)
 		{
 			Integer code = pMovementCode.get(i);
-			Movement movement = repository.findOne(code);
+			Movement movement = movRepository.findOne(code);
 			
 			
 			pMovement.add(i, movement);
@@ -548,13 +549,13 @@ public class MedicalStockIoOperations {
 		ArrayList<Movement> pMovement = new ArrayList<Movement>();
 		
 		
-		pMovementCode = new ArrayList<Integer>(repository.findtMovementForPrint(
+		pMovementCode = new ArrayList<Integer>(movRepository.findtMovementForPrint(
 				medicalDescription, medicalTypeCode, wardId, movType, 
 				movFrom, movTo, lotCode, order));			
 		for (int i=0; i<pMovementCode.size(); i++)
 		{
 			Integer code = pMovementCode.get(i);
-			Movement movement = repository.findOne(code);
+			Movement movement = movRepository.findOne(code);
 			
 			
 			pMovement.add(i, movement);
@@ -631,7 +632,7 @@ public class MedicalStockIoOperations {
 		GregorianCalendar gc = new GregorianCalendar();
 				
 			
-		Timestamp time = (Timestamp)repository.findMaxDate();
+		Timestamp time = (Timestamp)movRepository.findMaxDate();
 		if (time != null) 
 		{
 			gc.setTime(time);
@@ -655,7 +656,7 @@ public class MedicalStockIoOperations {
 		boolean result = false;
 		
 			
-		if (repository.findAllWhereRefNo(refNo).size() > 0)
+		if (movRepository.findAllWhereRefNo(refNo).size() > 0)
 		{
 			result = true;
 		}		
@@ -673,7 +674,7 @@ public class MedicalStockIoOperations {
 	public ArrayList<Movement> getMovementsByReference(
 			String refNo) throws OHServiceException 
 	{
-		ArrayList<Movement> movements = (ArrayList<Movement>) repository.findAllByRefNo(refNo);
+		ArrayList<Movement> movements = (ArrayList<Movement>) movRepository.findAllByRefNo(refNo);
 						
 		
 		return movements;

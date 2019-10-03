@@ -14,15 +14,18 @@ import org.isf.admtype.model.AdmissionType;
 import org.isf.disctype.model.DischargeType;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.manager.Context;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AdmissionBrowserManager {
 
-	private AdmissionIoOperations ioOperations = Context.getApplicationContext().getBean(AdmissionIoOperations.class);
+	@Autowired
+	private AdmissionIoOperations ioOperations;
 
 	/**
 	 * Returns all patients with ward in which they are admitted.
@@ -194,8 +197,7 @@ public class AdmissionBrowserManager {
          * Initizalize AdmissionBrowserManager
          */
         Patient patient = admission.getPatient();
-        AdmissionBrowserManager abm = new AdmissionBrowserManager();
-        ArrayList<Admission> admList = abm.getAdmissions(patient);
+        ArrayList<Admission> admList = getAdmissions(patient);
 
         /*
          * Today Gregorian Calendar

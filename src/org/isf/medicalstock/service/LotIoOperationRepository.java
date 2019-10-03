@@ -6,8 +6,9 @@ import org.isf.medicalstock.model.Lot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-
+@Repository
 public interface LotIoOperationRepository extends JpaRepository<Lot, String> {      
 	
     @Query(value = "select LT_ID_A,LT_PREP_DATE,LT_DUE_DATE,LT_COST,"

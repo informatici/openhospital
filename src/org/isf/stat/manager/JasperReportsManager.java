@@ -29,6 +29,8 @@ import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
@@ -39,16 +41,19 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.util.JRLoader;
 
+@Component
 public class JasperReportsManager {
 
     private final Logger logger = LoggerFactory.getLogger(JasperReportsManager.class);
+    
+    @Autowired
+    private HospitalBrowsingManager hospitalManager;
 
     public JasperReportResultDto getExamsListPdf() throws OHServiceException {
 
         try {
             final Map<String, Object> parameters = new HashMap<String, Object>();
-            HospitalBrowsingManager hospMan = new HospitalBrowsingManager();
-            Hospital hospital = hospMan.getHospital();
+            Hospital hospital = hospitalManager.getHospital();
 
             parameters.put("hospital", hospital.getDescription());
 
@@ -82,8 +87,7 @@ public class JasperReportsManager {
 
         try{
             HashMap<String, String> parameters = new HashMap<String, String>();
-            HospitalBrowsingManager hospMan = new HospitalBrowsingManager();
-            Hospital hospital = hospMan.getHospital();
+            Hospital hospital = hospitalManager.getHospital();
             parameters.put("hospital", hospital.getDescription());
 
             String jasperFileName = "diseaseslist";
@@ -714,8 +718,7 @@ public class JasperReportsManager {
 
     private HashMap<String,Object> getHospitalParameters() throws OHServiceException {
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        HospitalBrowsingManager hospManager = new HospitalBrowsingManager();
-        Hospital hosp = hospManager.getHospital();
+        Hospital hosp = hospitalManager.getHospital();
 
         parameters.put("Hospital", hosp.getDescription());
         parameters.put("Address", hosp.getAddress());
