@@ -26,6 +26,11 @@ echo f | xcopy dicom.properties.ori dicom.properties /y
 echo f | xcopy database.properties.sample database.properties /y
 %XCHANGE32_PATH%\Xchang32.exe database.properties "3306" "%freePort%"
 %XCHANGE32_PATH%\Xchang32.exe database.properties "^x5c" "^x2f"
+cd /d %OH_PATH%\mysql\bin
+echo f | xcopy my.ori my.cnf /y
+%XCHANGE32_PATH%\Xchang32.exe my.cnf "3306" "%freePort%"
+%XCHANGE32_PATH%\Xchang32.exe my.cnf "^x5c" "^x2f"
+
 
 cd /d %OH_PATH%\mysql\bin
 echo f | xcopy my.ori my.cnf /y
@@ -63,5 +68,5 @@ set CLASSPATH=%CLASSPATH%;%OH_REPORT%
 
 cd /d %OH_PATH%oh\
 %OH_PATH%jre6\bin\java.exe -showversion -Dsun.java2d.dpiaware=false -Djava.library.path=%OH_PATH%oh\lib\native\Windows -cp %CLASSPATH% org.isf.menu.gui.Menu
-start /b %OH_PATH%mysql\bin\mysqladmin --user=root --password= --port=3307 shutdown
+start /b %OH_PATH%mysql\bin\mysqladmin --user=root --password= --port=%freePort% shutdown
 exit
