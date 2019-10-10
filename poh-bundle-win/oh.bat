@@ -29,11 +29,6 @@ echo f | xcopy database.properties.sample database.properties /y
 cd /d %OH_PATH%\mysql\bin
 echo f | xcopy my.ori my.cnf /y
 %XCHANGE32_PATH%\Xchang32.exe my.cnf "3306" "%freePort%"
-%XCHANGE32_PATH%\Xchang32.exe my.cnf "^x5c" "^x2f"
-
-
-cd /d %OH_PATH%\mysql\bin
-echo f | xcopy my.ori my.cnf /y
 %XCHANGE32_PATH%\Xchang32.exe my.cnf "OH_PATH_SUBSTITUTE" "%OH_PATH%"
 %XCHANGE32_PATH%\Xchang32.exe my.cnf "^x5c" "^x2f"
 
