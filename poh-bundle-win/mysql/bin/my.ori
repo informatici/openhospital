@@ -1,10 +1,10 @@
 [client] 					
 # password = your_password	
-port = 3307				
+port = 3306				
 socket = "OH_PATH_SUBSTITUTE/mysql/mysql.sock"  
 
 [mysqld] 
-port = 3307 
+port = 3306 
 socket = "OH_PATH_SUBSTITUTE/mysql/mysql.sock" 
 basedir = "OH_PATH_SUBSTITUTE/mysql"  
 tmpdir = "OH_PATH_SUBSTITUTE/tmp"  
