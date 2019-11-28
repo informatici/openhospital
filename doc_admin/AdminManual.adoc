@@ -1024,6 +1024,58 @@ By default, DEBUG is set to no.
 _*[.underline]#NB#*: An application restart is required in order to see the modification applied._
 
 
+==== 5.1.31 ALLOWMULTIPLEOPENEDBILL
+
+The following table shows the default value and the allowed ones:
+
+[cols=",,",options="header",]
+|===
+|key |default value |allowed values
+|ALLOWMULTIPLEOPENEDBILL |no |yes, no
+|===
+
+OpenHospital, since version 1.9, allows a patient to have multiple opened bills(invoices). If this option is enabled, when creating a new bill for a patient, if that patient already has an opened bill
+it would be asked to confirm the creation of another one.
+
+By default, ALLOWMULTIPLEOPENEDBILL is set to no.
+
+_*[.underline]#NB#*: An application restart is required in order to see the modification applied._
+
+
+==== 5.1.32 OPENEDBILLSREPORT
+
+The following table shows the default value and the allowed ones:
+
+[cols=",,",options="header",]
+|===
+|key |default value |allowed values
+|OPENEDBILLSREPORT |OH023_BillsReportMonth |OH023_BillsReportMonth
+|===
+
+OpenHospital, since version 1.9, allows a to print the list of opened bills. That parameter contains the jasper report file name to print 
+the list of opened bills. 
+
+By default, OPENEDBILLSREPORT is set to OH023_BillsReportMonth. 
+
+_*[.underline]#NB#*: An application restart is required in order to see the modification applied._
+
+==== 5.1.33 ALLOWPRINTOPENEDBILL
+
+The following table shows the default value and the allowed ones:
+
+[cols=",,",options="header",]
+|===
+|key |default value |allowed values
+|ALLOWPRINTOPENEDBILL |no |yes, no
+|===
+
+OpenHospital, since version 1.9, allows a to print the receipt of single opened invoice. when that parameter is enabled, in Accounting module
+under pending tab one can selected an opened bill and get the receipt by clicking in Receipt button in buttons panel.
+
+By default, ALLOWPRINTOPENEDBILL is set to no. 
+
+_*[.underline]#NB#*: An application restart is required in order to see the modification applied._
+
 
 === 5.2 database.properties
 

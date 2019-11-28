@@ -747,7 +747,7 @@ All functions available under *A[.underline]##c##counting* are accessible from t
 
 By default, the window shows in the *Data table* all the bills of today (current day).
 
-image:extracted-media/media/image53.png[../../Screen%20Shot%202019-07-26%20at%2015.31.44.png,width=641,height=442]
+image:extracted-media/media/image241.png[../../Screen%20Shot%202019-07-26%20at%2015.31.44.png,width=641,height=442]
 
 For each bill the following data are shown on *Data table:*
 
@@ -766,6 +766,7 @@ The following functions are accessible from the *Buttons Panel* of the *_Patient
 * *[.underline]##N##ew Bill* to insert a new bill
 * *[.underline]##E##dit Bill* to modify an already stored bill if its status is “O” (Open)
 * *[.underline]##D##elete Bill* to delete an already stored bill
+* *[.underline]##R##eceipt* to print the bill receipt
 * *Report* to print a variety of reports
 * *[.underline]##C##lose* to exit from the function *_Patients Bills Management_* and return to the *Accounting* menu
 
@@ -815,7 +816,7 @@ Then you have to select a patient. To do it, press the *find [.underline]##P##at
 
 Once you have selected the patient you can start to enter bill entries of the bill.
 
-_*[.underline]#NB#*: If the patient has a pending bill associated it will be recalled to edit it. You cannot start a new bill for a patient before to close the previous one._
+_*[.underline]#NB#*: A patient can have severals pending bills if only if the the parameter ALLOWMULTIPLEOPENEDBILL is enabled (see the administrator manual). Else If the patient has a pending bill associated it will be recalled to edit it. You cannot start a new bill for a patient before to close the previous one._
 
 There are several types of Bill entry. They are identified by the button on the *Buttons panel* on the right of the window; you have the following choices:
 
@@ -962,6 +963,7 @@ For each report, except Today (Closure), you will be asked to choose among two o
 
 * *Short Report (only BadDebts bills)*: report that show a statement with only the unpaid bills and the total for the others
 * *Full Report (all bills)*: report that show a statement with all paid and unpaid bills
+* * OH23A1-open bills list*: report that show the list of opened bills(pending bills)
 
 image:extracted-media/media/image64.png[Accounting_report_options.PNG,width=291,height=129]
 
@@ -1743,6 +1745,8 @@ OpenHospital 1.8.4 comes with this set of reports:
 * MOH 717 - Monthly Workload Report for Hospitals (Page2)
 * MOH 705A - Over 5 - Daily Outpatient Morbidity Summary Sheet
 * MOH 705A - Under 5 - Daily Outpatient Morbidity Summary Sheet
+* OH23A1 - open bills list: report that show the list of opened bills(pending bills) per period
+* OH23B1 - Revenues, Incomes & Receivables: gives the list of incomes per period
 
 === 11.2 Report Launcher (Launch Report)
 
