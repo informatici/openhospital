@@ -324,7 +324,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 
 	//Items and Payments (ALL)
 	private BillBrowserManager billManager = new BillBrowserManager(Context.getApplicationContext().getBean(AccountingIoOperations.class));
-	private PatientBrowserManager patManager = new PatientBrowserManager();
+	private PatientBrowserManager patManager = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 	
 	//Prices, Items and Payments for the tables
 	private ArrayList<BillItems> billItems = new ArrayList<BillItems>();
@@ -388,7 +388,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	
 	private void initCurrencyCod() {
 		try {
-			this.currencyCod = new HospitalBrowsingManager().getHospitalCurrencyCod();
+			this.currencyCod = Context.getApplicationContext().getBean(HospitalBrowsingManager.class).getHospitalCurrencyCod();
 		} catch (OHServiceException e) {
 			this.currencyCod = null;
 			OHServiceExceptionUtil.showMessages(e, PatientBillEdit.this);

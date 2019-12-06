@@ -121,7 +121,6 @@ public class PatientInsertExtended extends JDialog {
 	private boolean insert;
 	private boolean justSave;
 	final private Patient patient;
-	//private PatientBrowserManager manager = new PatientBrowserManager();
 	private PatientBrowserManager manager = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 	
 	// COMPONENTS: Data

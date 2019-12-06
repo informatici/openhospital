@@ -547,7 +547,7 @@ public class TherapyEdit extends JDialog {
 									MessageBundle.getMessage("angal.therapy.telephonenumberfor") + " " + patient.getName());
 							if (number != null) {
 								patient.setTelephone(number);
-								PatientBrowserManager patManager = new PatientBrowserManager();
+								PatientBrowserManager patManager = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 								try{
 									patManager.updatePatient(patient);
 								}catch(OHServiceException ex){

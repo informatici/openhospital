@@ -318,7 +318,7 @@ public class LabEdit extends JDialog {
 		if (patientComboBox == null) {
 			patientComboBox = new JComboBox();
 			patSelected=null;
-			PatientBrowserManager patBrowser = new PatientBrowserManager();
+			PatientBrowserManager patBrowser = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 			ArrayList<Patient> pat = null;
 			try {
 				pat = patBrowser.getPatient();

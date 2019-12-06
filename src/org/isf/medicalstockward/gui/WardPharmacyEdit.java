@@ -33,6 +33,7 @@ import org.isf.medicals.model.Medical;
 import org.isf.medicalstockward.manager.MovWardBrowserManager;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
+import org.isf.menu.manager.Context;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
@@ -71,7 +72,7 @@ public class WardPharmacyEdit extends JDialog {
 	private Double maxQty;
 	private int movSelectedAge;
 	private float movSelectedWeight;
-	private PatientBrowserManager patBrowser = new PatientBrowserManager();
+	private PatientBrowserManager patBrowser = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 	private ArrayList<Patient> pat = new ArrayList<Patient>();
 	private ArrayList<MedicalWard> medList = null;
 	

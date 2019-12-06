@@ -28,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
@@ -122,7 +123,7 @@ public class PatientInsert extends JDialog implements ActionListener{
 	private JLabel jNextKinLabel = null;
 	private JTextField jNextKinTextField = null;
 //	private int oldAge;
-	private PatientBrowserManager manager = new PatientBrowserManager();
+	private PatientBrowserManager manager = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 	private JLabel jLabel1 = null;
 	private JLabel jLabel = null;
 	private JLabel jAgeLabel = null;

@@ -67,6 +67,7 @@ import org.isf.medstockmovtype.model.MovementType;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.Context;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalStockCard;
 import org.isf.supplier.manager.SupplierBrowserManager;
 import org.isf.supplier.model.Supplier;
@@ -683,7 +684,7 @@ public class MovStockBrowser extends ModalJFrame {
 		if (jTableTotal == null) {
 			jTableTotal = new JTable();
 			
-			HospitalBrowsingManager hospitalManager = new HospitalBrowsingManager();
+			HospitalBrowsingManager hospitalManager = Context.getApplicationContext().getBean(HospitalBrowsingManager.class);;
 			String currencyCod;
 			try {
 				currencyCod = hospitalManager.getHospitalCurrencyCod();
@@ -1146,7 +1147,7 @@ public class MovStockBrowser extends ModalJFrame {
 				GregorianCalendar movTo, GregorianCalendar lotPrepFrom,
 				GregorianCalendar lotPrepTo, GregorianCalendar lotDueFrom,
 				GregorianCalendar lotDueTo) {
-			MovBrowserManager manager = new MovBrowserManager();
+			MovBrowserManager manager = Context.getApplicationContext().getBean(MovBrowserManager.class);
 			try {
 				moves = manager.getMovements(medicalCode, medicalType, ward,
 						movType, movFrom, movTo, lotPrepFrom, lotPrepTo,

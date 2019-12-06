@@ -32,6 +32,7 @@ import javax.swing.JTextField;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.patvac.manager.PatVacManager;
@@ -507,7 +508,7 @@ public class PatVacEdit extends JDialog {
 	private JComboBox getPatientComboBox(String regExp) {
 
 		Patient patSelected = null;
-		PatientBrowserManager patBrowser = new PatientBrowserManager();
+		PatientBrowserManager patBrowser = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 
 		if (GeneralData.ENHANCEDSEARCH){
 			try {

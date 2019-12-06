@@ -17,6 +17,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.patient.gui.PatientInsert.PatientListener;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
@@ -54,7 +55,7 @@ public class PatientBrowser extends ModalJFrame implements PatientListener{
 	private int[] pColumwidth = { 200, 30, 25 ,100, 100, 50 };
 	private int selectedrow;
 	private Patient patient;
-	private PatientBrowserManager manager = new PatientBrowserManager();
+	private PatientBrowserManager manager = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 	private ArrayList<Patient> pPat;
 	
 	
@@ -268,7 +269,7 @@ class PatientBrowserModel extends DefaultTableModel {
 	private static final long serialVersionUID = 1L;
 
 		public PatientBrowserModel() {
-			PatientBrowserManager manager = new PatientBrowserManager();
+			PatientBrowserManager manager = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 			try {
 				pPat = manager.getPatient();
 			} catch (OHServiceException e) {

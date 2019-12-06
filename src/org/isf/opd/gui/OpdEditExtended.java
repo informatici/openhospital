@@ -93,6 +93,7 @@ import org.isf.examination.model.PatientExamination;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
@@ -255,7 +256,9 @@ public class OpdEditExtended extends JDialog implements
 	private ArrayList<Disease> diseasesAll;
 	private OpdBrowserManager opdManager = new OpdBrowserManager();
 	private ArrayList<Opd> opdArray = new ArrayList<Opd>();
-	private PatientBrowserManager patBrowser = new PatientBrowserManager();
+	
+	
+	private PatientBrowserManager patBrowser = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 	private ArrayList<Patient> pat = new ArrayList<Patient>();
 
 	private Disease lastOPDDisease1;
@@ -291,7 +294,7 @@ public class OpdEditExtended extends JDialog implements
 			if(!insert) {
 				opdPatient = opd.getPatient();
 				if (opdPatient != null && opd.getPatient().getCode() != 0) { 
-					PatientBrowserManager patBrowser = new PatientBrowserManager();
+					PatientBrowserManager patBrowser = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 					opdPatient = patBrowser.getPatientAll(opd.getPatient().getCode());
 				} else { //old OPD has no PAT_ID => Create Patient from OPD
 					opdPatient = new Patient(opd);
@@ -320,7 +323,7 @@ public class OpdEditExtended extends JDialog implements
 			if(!insert) {
 				opdPatient = opd.getPatient();
 				if (opdPatient != null && opd.getPatient().getCode() != 0) { 
-					PatientBrowserManager patBrowser = new PatientBrowserManager();
+					PatientBrowserManager patBrowser = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 					opdPatient = patBrowser.getPatientAll(opd.getPatient().getCode());
 				} else { //old OPD has no PAT_ID => Create Patient from OPD
 					opdPatient = new Patient(opd);
