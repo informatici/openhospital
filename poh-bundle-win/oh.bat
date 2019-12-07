@@ -26,6 +26,10 @@ echo f | xcopy dicom.properties.ori dicom.properties /y
 echo f | xcopy database.properties.sample database.properties /y
 %XCHANGE32_PATH%\Xchang32.exe database.properties "3306" "%freePort%"
 %XCHANGE32_PATH%\Xchang32.exe database.properties "^x5c" "^x2f"
+echo f | xcopy log4j.properties.ori log4j.properties /y
+%XCHANGE32_PATH%\Xchang32.exe log4j.properties "3306" "%freePort%"
+%XCHANGE32_PATH%\Xchang32.exe log4j.properties "^x5c" "^x2f
+
 cd /d %OH_PATH%\mysql\bin
 echo f | xcopy my.ori my.cnf /y
 %XCHANGE32_PATH%\Xchang32.exe my.cnf "3306" "%freePort%"
