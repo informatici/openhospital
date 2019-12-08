@@ -36,6 +36,7 @@ import org.isf.disease.model.Disease;
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
 import org.isf.distype.model.DiseaseType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -107,8 +108,9 @@ public class DiseaseEdit extends JDialog {
 	private JCheckBox includeOpdCheckBox  = null;
 	private JCheckBox includeIpdInCheckBox  = null;
 	private JCheckBox includeIpdOutCheckBox  = null;
-
 	private String lastDescription;
+	
+	private DiseaseTypeBrowserManager manager = Context.getApplicationContext().getBean(DiseaseTypeBrowserManager.class);
 
 	/**
 	 * 
@@ -269,7 +271,7 @@ public class DiseaseEdit extends JDialog {
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					DiseaseBrowserManager manager = new DiseaseBrowserManager();
+					DiseaseBrowserManager manager = Context.getApplicationContext().getBean(DiseaseBrowserManager.class);
 
 					disease.setType((DiseaseType)typeComboBox.getSelectedItem());
 					disease.setDescription(descriptionTextField.getText());
@@ -373,14 +375,12 @@ public class DiseaseEdit extends JDialog {
 			typeComboBox.setBorder(new EmptyBorder(5, 5, 5, 5));
 			try{
 				if (insert) {
-					DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
 					ArrayList<DiseaseType> types = manager.getDiseaseType();
 					for (DiseaseType elem : types) {
 						typeComboBox.addItem(elem);
 					}
 				} else {
 					DiseaseType selectedDiseaseType=null;
-					DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
 					ArrayList<DiseaseType> types = manager.getDiseaseType();
 					for (DiseaseType elem : types) {
 						typeComboBox.addItem(elem);

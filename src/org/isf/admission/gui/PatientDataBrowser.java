@@ -472,9 +472,9 @@ class AdmissionBrowserModel extends DefaultTableModel {
 		 */
 		private static final long serialVersionUID = -453243229156512947L;
 		private AdmissionBrowserManager manager = Context.getApplicationContext().getBean(AdmissionBrowserManager.class);
+		private DiseaseBrowserManager dbm = Context.getApplicationContext().getBean(DiseaseBrowserManager.class);
 
 		public AdmissionBrowserModel() {
-			DiseaseBrowserManager dbm = new DiseaseBrowserManager();
 			WardBrowserManager wbm = new WardBrowserManager();
 			OpdBrowserManager opd = new OpdBrowserManager();
 			try {

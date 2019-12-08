@@ -38,6 +38,7 @@ import org.isf.disease.model.Disease;
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
 import org.isf.distype.model.DiseaseType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -82,6 +83,9 @@ public class DiseaseBrowser extends ModalJFrame implements DiseaseEdit.DiseaseLi
 	private JTable table;
 	private JFrame myFrame;
 	private DiseaseType pSelection;
+	private DiseaseBrowserManager manager = Context.getApplicationContext().getBean(DiseaseBrowserManager.class);
+	private DiseaseTypeBrowserManager disTypeManager = Context.getApplicationContext().getBean(DiseaseTypeBrowserManager.class);
+	
 	
 	public DiseaseBrowser() {
 		
@@ -102,12 +106,11 @@ public class DiseaseBrowser extends ModalJFrame implements DiseaseEdit.DiseaseLi
 		selectlabel = new JLabel(MessageBundle.getMessage("angal.disease.selecttype"));
 		buttonPanel.add(selectlabel);
 		
-		DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
 		pbox = new JComboBox();
 		pbox.addItem(new DiseaseType("0", MessageBundle.getMessage("angal.disease.allm")));
 		ArrayList<DiseaseType> type = null;
 		try {
-			type = manager.getDiseaseType();
+			type = disTypeManager.getDiseaseType();
 		}catch(OHServiceException e){
 			if(e.getMessages() != null){
 				for(OHExceptionMessage msg : e.getMessages()){
@@ -183,7 +186,6 @@ public class DiseaseBrowser extends ModalJFrame implements DiseaseEdit.DiseaseLi
 					return;									
 				}else {
 					selectedrow = table.getSelectedRow();
-					DiseaseBrowserManager manager = new DiseaseBrowserManager();
 					disease = (Disease)(((DiseaseBrowserModel) model).getValueAt(selectedrow, -1));
 					int n = JOptionPane.showConfirmDialog(
 							DiseaseBrowser.this,
@@ -233,7 +235,6 @@ public class DiseaseBrowser extends ModalJFrame implements DiseaseEdit.DiseaseLi
 		private static final long serialVersionUID = 1L;
 
 		public DiseaseBrowserModel(String s) {
-			DiseaseBrowserManager manager = new DiseaseBrowserManager();
 			try {
 				pDisease = manager.getDisease(s);
 			}catch(OHServiceException e){
@@ -245,7 +246,6 @@ public class DiseaseBrowser extends ModalJFrame implements DiseaseEdit.DiseaseLi
 			}
 		}
 		public DiseaseBrowserModel() {
-			DiseaseBrowserManager manager = new DiseaseBrowserManager();
 			try {
 				pDisease = manager.getDiseaseAll();
 			}catch(OHServiceException e){

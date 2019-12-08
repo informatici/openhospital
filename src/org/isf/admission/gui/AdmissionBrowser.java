@@ -257,7 +257,7 @@ public class AdmissionBrowser extends JDialog {
 	
 	private JComboBox diseaseInBox;
 	
-	private DiseaseBrowserManager dbm = new DiseaseBrowserManager();
+	private DiseaseBrowserManager dbm = Context.getApplicationContext().getBean(DiseaseBrowserManager.class);
 
 	private ArrayList<Disease> diseaseInList = null;
 	

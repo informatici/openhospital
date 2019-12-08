@@ -66,6 +66,7 @@ import org.isf.distype.model.DiseaseType;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.Context;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.patient.model.Patient;
@@ -704,7 +705,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 			jDiseaseTypeBox = new JComboBox();
 			jDiseaseTypeBox.setMaximumSize(new Dimension(300,50));
 			
-			DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
+			DiseaseTypeBrowserManager manager = Context.getApplicationContext().getBean(DiseaseTypeBrowserManager.class);
 			ArrayList<DiseaseType> types = null;
 			try {
 				types = manager.getDiseaseType();
@@ -747,7 +748,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 			jDiseaseBox.setMaximumSize(new Dimension(300, 50));
 			
 		};
-		DiseaseBrowserManager manager = new DiseaseBrowserManager();
+		DiseaseBrowserManager manager = Context.getApplicationContext().getBean(DiseaseBrowserManager.class);
 		ArrayList<Disease> diseases = null;
 		try{
 			if (((DiseaseType)jDiseaseTypeBox.getSelectedItem()).getDescription().equals(MessageBundle.getMessage("angal.opd.alltype"))){

@@ -249,8 +249,8 @@ public class OpdEditExtended extends JDialog implements
 	/*
 	 * Managers and Arrays
 	 */
-	private DiseaseTypeBrowserManager typeManager = new DiseaseTypeBrowserManager();
-	private DiseaseBrowserManager manager = new DiseaseBrowserManager();
+	private DiseaseTypeBrowserManager typeManager = Context.getApplicationContext().getBean(DiseaseTypeBrowserManager.class);
+	private DiseaseBrowserManager manager = Context.getApplicationContext().getBean(DiseaseBrowserManager.class);
 	private ArrayList<DiseaseType> types;
 	private ArrayList<Disease> diseasesOPD;
 	private ArrayList<Disease> diseasesAll;
@@ -1634,7 +1634,6 @@ public class OpdEditExtended extends JDialog implements
 					
 					try {
 						if (insert){    //Insert
-							GregorianCalendar date = new GregorianCalendar();
 							opd.setProgYear(Integer.parseInt(jOpdNumField.getText()));
 							//remember for later use
 							RememberDates.setLastOpdVisitDate(visitDateOpd);
