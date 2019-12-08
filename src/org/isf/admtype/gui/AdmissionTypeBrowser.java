@@ -21,6 +21,7 @@ import org.isf.admtype.gui.AdmissionTypeBrowserEdit.LaboratoryTypeListener;
 import org.isf.admtype.manager.AdmissionTypeBrowserManager;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -53,7 +54,7 @@ public class AdmissionTypeBrowser extends ModalJFrame implements LaboratoryTypeL
 	private JTable jTable = null;
 	private AdmissionTypeBrowserModel model;
 	private int selectedrow;
-	private AdmissionTypeBrowserManager manager = new AdmissionTypeBrowserManager();
+	private AdmissionTypeBrowserManager admissionTypeManager = Context.getApplicationContext().getBean(AdmissionTypeBrowserManager.class);
 	private AdmissionType admissionType = null;
 	private final JFrame myFrame;
 	
@@ -204,7 +205,7 @@ public class AdmissionTypeBrowser extends ModalJFrame implements LaboratoryTypeL
 								MessageBundle.getMessage("angal.hospital"), JOptionPane.YES_NO_OPTION);
 						try{
 							if ((n == JOptionPane.YES_OPTION)
-									&& (manager.deleteAdmissionType(dis))) {
+									&& (admissionTypeManager.deleteAdmissionType(dis))) {
 								pAdmissionType.remove(jTable.getSelectedRow());
 								model.fireTableDataChanged();
 								jTable.updateUI();
@@ -232,13 +233,14 @@ public class AdmissionTypeBrowser extends ModalJFrame implements LaboratoryTypeL
 class AdmissionTypeBrowserModel extends DefaultTableModel {
 		
 		
-		/**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private AdmissionTypeBrowserManager manager = Context.getApplicationContext().getBean(AdmissionTypeBrowserManager.class);
 
 		public AdmissionTypeBrowserModel() {
-			AdmissionTypeBrowserManager manager = new AdmissionTypeBrowserManager();
+			
 			try {
 				pAdmissionType = manager.getAdmissionType();
 			}catch(OHServiceException e){
