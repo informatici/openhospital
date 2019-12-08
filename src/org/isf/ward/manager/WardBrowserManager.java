@@ -25,6 +25,8 @@ public class WardBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(WardBrowserManager.class);
 	
+	private AdmissionBrowserManager admManager = Context.getApplicationContext().getBean(AdmissionBrowserManager.class); 
+	
 	private WardIoOperations ioOperations = Context.getApplicationContext().getBean(WardIoOperations.class);
 
 	/**
@@ -134,7 +136,6 @@ public class WardBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean deleteWard(Ward ward) throws OHServiceException {
-		AdmissionBrowserManager admManager = new AdmissionBrowserManager();
 		if (ward.getCode().equals("M")) {
 			throw new OHServiceException( new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), 
 					MessageBundle.getMessage("angal.ward.cannotdeletematernityward"), OHSeverityLevel.ERROR));

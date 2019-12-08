@@ -134,10 +134,8 @@ public class TestDicom
 		try {
 			blob = new SerialBlob(data);
 		} catch (SerialException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	

@@ -6,12 +6,14 @@ import org.isf.dicom.model.FileDicom;
 import org.isf.dicom.service.DicomIoOperations;
 import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
+import org.springframework.stereotype.Component;
 
 /**
  * Interface for definitions IO for Dicom acquired files
  * @author Pietro Castellucci
  * @version 1.0.0 
  */
+@Component
 public class SqlDicomManager implements DicomManagerInterface{   
 	
 	private DicomIoOperations ioOperations = Context.getApplicationContext().getBean(DicomIoOperations.class);

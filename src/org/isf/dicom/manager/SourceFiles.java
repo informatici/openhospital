@@ -101,6 +101,7 @@ public class SourceFiles extends Thread {
 	/**
 	 * load dicom file
 	 */
+	@SuppressWarnings("unused")
 	public synchronized static void loadDicom(File sourceFile, int paziente) {
 		// installLibs();
 
