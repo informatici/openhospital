@@ -18,6 +18,7 @@ import javax.swing.event.EventListenerList;
 import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.model.DischargeType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -189,7 +190,7 @@ public class DischargeTypeBrowserEdit extends JDialog{
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					DischargeTypeBrowserManager manager = new DischargeTypeBrowserManager();
+					DischargeTypeBrowserManager manager = Context.getApplicationContext().getBean(DischargeTypeBrowserManager.class);
 
 					if (descriptionTextField.getText().equals(lastdescription)){
 						dispose();	
