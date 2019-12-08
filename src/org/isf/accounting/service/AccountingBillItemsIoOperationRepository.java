@@ -1,17 +1,17 @@
 package org.isf.accounting.service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Repository
 public interface AccountingBillItemsIoOperationRepository extends JpaRepository<BillItems, Integer> {
 	
 	List<BillItems> findByBill_idOrderByIdAsc(int billId);
