@@ -134,6 +134,7 @@ public class DicomGui extends JFrame implements WindowListener {
 			w = ois.readInt();
 			position = ois.readInt();
 			lastDir = ois.readUTF();
+			ois.close();
 		} catch (Exception e) {
 			Toolkit kit = Toolkit.getDefaultToolkit();
 			Dimension screensize = kit.getScreenSize();
@@ -141,7 +142,7 @@ public class DicomGui extends JFrame implements WindowListener {
 			w = Math.round(screensize.width * factor);
 			x = Math.round((screensize.width - w) / 2);
 			y = Math.round((screensize.height - h) / 2);
-		}
+		} 
 
 		this.setBounds(x, y, w, h);
 
