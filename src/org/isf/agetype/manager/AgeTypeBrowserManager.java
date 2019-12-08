@@ -6,16 +6,17 @@ import java.util.List;
 import org.isf.agetype.model.AgeType;
 import org.isf.agetype.service.AgeTypeIoOperations;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AgeTypeBrowserManager {
 
-	private AgeTypeIoOperations ioOperations = Context.getApplicationContext().getBean(AgeTypeIoOperations.class);
+	@Autowired
+	private AgeTypeIoOperations ioOperations;
 
 	/**
 	 * Returns all available age types.

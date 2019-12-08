@@ -6,16 +6,17 @@ import java.util.List;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disctype.service.DischargeTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DischargeTypeBrowserManager {
 
-	private DischargeTypeIoOperation ioOperations = Context.getApplicationContext().getBean(DischargeTypeIoOperation.class);
+	@Autowired
+	private DischargeTypeIoOperation ioOperations;
 
 	/**
 	 * method that returns all DischargeTypes in a list

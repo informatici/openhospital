@@ -16,10 +16,10 @@ import java.util.List;
 import org.isf.disease.model.Disease;
 import org.isf.disease.service.DiseaseIoOperations;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,7 +28,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DiseaseBrowserManager {
 
-	private DiseaseIoOperations ioOperations = Context.getApplicationContext().getBean(DiseaseIoOperations.class);
+	@Autowired
+	private DiseaseIoOperations ioOperations;
 
 	/**
 	 * Returns all the stored {@link Disease} with ODP flag <code>true</code>.

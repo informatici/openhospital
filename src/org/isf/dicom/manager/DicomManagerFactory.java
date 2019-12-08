@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -36,7 +37,7 @@ public class DicomManagerFactory {
 			try {
 				init();
 
-				instance = (DicomManagerInterface) Class.forName(props.getProperty("dicom.manager.impl")).getConstructor(Class.forName("java.util.Properties")).newInstance(props);
+				instance = (DicomManagerInterface) Context.getApplicationContext().getBean(Class.forName(props.getProperty("dicom.manager.impl"))); //.getConstructor(Class.forName("java.util.Properties")).newInstance(props);
 			} catch(OHServiceException e){
 				//Already managed, ready to return OHServiceException
 				logger.error("", e);

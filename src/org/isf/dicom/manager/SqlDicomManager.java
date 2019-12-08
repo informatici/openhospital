@@ -4,8 +4,8 @@ import java.util.Properties;
 
 import org.isf.dicom.model.FileDicom;
 import org.isf.dicom.service.DicomIoOperations;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,7 +16,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SqlDicomManager implements DicomManagerInterface{   
 	
-	private DicomIoOperations ioOperations = Context.getApplicationContext().getBean(DicomIoOperations.class);
+	@Autowired
+	private DicomIoOperations ioOperations;
 	/**
 	 * Constructor
 	 */

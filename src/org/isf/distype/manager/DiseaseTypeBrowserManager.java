@@ -6,10 +6,10 @@ import java.util.List;
 import org.isf.distype.model.DiseaseType;
 import org.isf.distype.service.DiseaseTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,7 +18,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DiseaseTypeBrowserManager {
 
-	private DiseaseTypeIoOperation ioOperations = Context.getApplicationContext().getBean(DiseaseTypeIoOperation.class);
+	@Autowired
+	private DiseaseTypeIoOperation ioOperations;
 
 	/**
 	 * Returns all the stored {@link DiseaseType}s.
