@@ -60,9 +60,6 @@ import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.menu.gui.MainMenu;
 import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
-import org.isf.patient.model.Patient;
-import org.isf.priceslist.manager.PriceListManager;
-import org.isf.priceslist.model.Price;
 import org.isf.stat.gui.report.GenericReportBill;
 import org.isf.stat.gui.report.GenericReportFromDateToDate;
 import org.isf.stat.gui.report.GenericReportUserInDate;
@@ -684,26 +681,23 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 			chooseMedicalJButtonAdd.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
-					PriceListManager pManager = new PriceListManager();
-					ArrayList<Price> priceList = new ArrayList<Price>();
-					try {
-						priceList = pManager.getPrices();
-					} catch (OHServiceException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+//					PriceListManager pManager = new PriceListManager();
+//					ArrayList<Price> priceList = new ArrayList<Price>();
+//					try {
+//						priceList = pManager.getPrices();
+//					} catch (OHServiceException e) {
+//						e.printStackTrace();
+//					}
 //					System.out.println("resultSet.getFetchSize() "+priceList.size());
 //					for(int i=0; i<pManager.getPrices().size();i++)
 //						priceList.add(pManager.getPrices().get(i));
 					
 					// get bill items
-					BillBrowserManager billmanager = new BillBrowserManager();
 					ArrayList<BillItems> itemsList = new ArrayList<BillItems>();
 					
 					try {
 						itemsList = billManager.getDistinctItems();
 					} catch (OHException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					OhTableModel<BillItems> modelOh = new OhTableModel<BillItems>(itemsList,true);
@@ -735,8 +729,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 								
 								
 							} catch (OHServiceException e) {
-								// TODO Auto-generated catch block
-								//System.out.println("error "+e.getMessage());
+								e.printStackTrace();
 							}  							
 							updateTables();
 							updateTotals();

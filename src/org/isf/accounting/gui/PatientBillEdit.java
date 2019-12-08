@@ -142,7 +142,6 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 		try {
 			patientPendingBills = billManager.getPendingBills(patient.getCode());
 		} catch (OHServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (patientPendingBills.isEmpty()){
@@ -221,14 +220,12 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 				}				
 			}
 		}
-		updateUI();
-
 		//jTextFieldSearch.setEnabled(true);
 		//jTextFieldSearch.grabFocus();
 		//checkIfsameMonth();
-		// TODO qsdfqsf
-		// jTableBill.setModel(new BillTableModel());
-		// updateTotals();
+		//jTableBill.setModel(new BillTableModel());
+		//updateTotals();
+		updateUI();
 	}
 	
 	
@@ -1046,7 +1043,6 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 						
 						try {
 							
-							BillBrowserManager billManager = Context.getApplicationContext().getBean(BillBrowserManager.class);
 							billManager.newBill(newBill, billItems, payItems);
 							
 						} catch(OHServiceException ex) {
