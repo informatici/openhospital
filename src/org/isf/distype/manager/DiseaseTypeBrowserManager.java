@@ -10,10 +10,12 @@ import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.stereotype.Component;
 
 /**
  * Manager class for DisType module.
  */
+@Component
 public class DiseaseTypeBrowserManager {
 
 	private DiseaseTypeIoOperation ioOperations = Context.getApplicationContext().getBean(DiseaseTypeIoOperation.class);

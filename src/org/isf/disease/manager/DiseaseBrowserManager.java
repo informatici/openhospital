@@ -20,10 +20,12 @@ import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.stereotype.Component;
 
 /**
  * The manage class for the disease module.
  */
+@Component
 public class DiseaseBrowserManager {
 
 	private DiseaseIoOperations ioOperations = Context.getApplicationContext().getBean(DiseaseIoOperations.class);
