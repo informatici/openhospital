@@ -18,6 +18,7 @@ import javax.swing.event.EventListenerList;
 import org.isf.dlvrtype.manager.DeliveryTypeBrowserManager;
 import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -190,7 +191,7 @@ public class DeliveryTypeBrowserEdit extends JDialog{
             okButton.setMnemonic(KeyEvent.VK_O);
             okButton.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent e) {
-                    DeliveryTypeBrowserManager manager = new DeliveryTypeBrowserManager();
+                	DeliveryTypeBrowserManager manager = Context.getApplicationContext().getBean(DeliveryTypeBrowserManager.class);
 
                     try{
                         if (descriptionTextField.getText().equals(lastdescription)){

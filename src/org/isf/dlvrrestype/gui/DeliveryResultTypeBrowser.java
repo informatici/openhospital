@@ -21,6 +21,7 @@ import org.isf.dlvrrestype.gui.DeliveryResultTypeBrowserEdit.DeliveryResultTypeL
 import org.isf.dlvrrestype.manager.DeliveryResultTypeBrowserManager;
 import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -54,7 +55,7 @@ public class DeliveryResultTypeBrowser extends ModalJFrame implements DeliveryRe
 	private JTable jTable = null;
 	private DeliveryResultTypeBrowserModel model;
 	private int selectedrow;
-	private DeliveryResultTypeBrowserManager manager = new DeliveryResultTypeBrowserManager();
+	private DeliveryResultTypeBrowserManager manager = Context.getApplicationContext().getBean(DeliveryResultTypeBrowserManager.class);
 	private DeliveryResultType deliveryresultType = null;
 	private final JFrame myFrame;
 	
@@ -242,13 +243,13 @@ public class DeliveryResultTypeBrowser extends ModalJFrame implements DeliveryRe
 class DeliveryResultTypeBrowserModel extends DefaultTableModel {
 		
 		
-		/**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private DeliveryResultTypeBrowserManager manager = Context.getApplicationContext().getBean(DeliveryResultTypeBrowserManager.class);
 
 		public DeliveryResultTypeBrowserModel() {
-			DeliveryResultTypeBrowserManager manager = new DeliveryResultTypeBrowserManager();
 			try {
 				pDeliveryResultType = manager.getDeliveryResultType();
 			}catch(OHServiceException e){

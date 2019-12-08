@@ -820,7 +820,7 @@ public class AdmissionBrowser extends JDialog {
 		if (deliveryResultTypePanel == null) {
 			deliveryResultTypePanel = new JPanel();
 			
-			DeliveryResultTypeBrowserManager drtbm = new DeliveryResultTypeBrowserManager();
+			DeliveryResultTypeBrowserManager drtbm = Context.getApplicationContext().getBean(DeliveryResultTypeBrowserManager.class);
 			deliveryResultTypeBox = new JComboBox();
 			deliveryResultTypeBox.addItem("");
 			try {
@@ -848,7 +848,7 @@ public class AdmissionBrowser extends JDialog {
 		if (deliveryTypePanel == null) {
 			deliveryTypePanel = new JPanel();
 			
-			DeliveryTypeBrowserManager dtbm = new DeliveryTypeBrowserManager();
+			DeliveryTypeBrowserManager dtbm = Context.getApplicationContext().getBean(DeliveryTypeBrowserManager.class);
 			deliveryTypeBox = new JComboBox();
 			deliveryTypeBox.addItem("");
             try{
