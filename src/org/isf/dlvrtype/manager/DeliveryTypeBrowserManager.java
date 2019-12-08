@@ -10,10 +10,12 @@ import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.stereotype.Component;
 
 /**
  * The manager class for the DeliveryType module.
  */
+@Component
 public class DeliveryTypeBrowserManager {
 
     private DeliveryTypeIoOperation ioOperations = Context.getApplicationContext().getBean(DeliveryTypeIoOperation.class);

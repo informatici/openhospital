@@ -13,10 +13,12 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * Manager class for DeliveryResultTypeModule.
  */
+@Component
 public class DeliveryResultTypeBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(DeliveryResultTypeBrowserManager.class);
