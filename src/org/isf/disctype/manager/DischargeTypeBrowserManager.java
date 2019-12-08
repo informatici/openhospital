@@ -10,7 +10,9 @@ import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DischargeTypeBrowserManager {
 
 	private DischargeTypeIoOperation ioOperations = Context.getApplicationContext().getBean(DischargeTypeIoOperation.class);
