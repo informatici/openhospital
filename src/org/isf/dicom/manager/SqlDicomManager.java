@@ -69,7 +69,7 @@ public class SqlDicomManager implements DicomManagerInterface{
      */
     public FileDicom loadDettaglio(Long idFile,int idPaziente, String numeroSerie) throws OHServiceException
     {
-    	return  ioOperations.loadDettaglio(idFile, idPaziente, numeroSerie);
+    	return  ioOperations.loadDetails(idFile, idPaziente, numeroSerie);
     }
     
     /**
@@ -81,7 +81,7 @@ public class SqlDicomManager implements DicomManagerInterface{
      */
     public FileDicom loadDettaglio(long idFile,int idPaziente, String numeroSerie) throws OHServiceException
     {
-    	return  ioOperations.loadDettaglio(idFile, idPaziente, numeroSerie);
+    	return  ioOperations.loadDetails(idFile, idPaziente, numeroSerie);
     }
 
     /**

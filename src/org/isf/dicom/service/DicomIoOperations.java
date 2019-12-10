@@ -82,7 +82,7 @@ public class DicomIoOperations
 	 * @return, FileDicomDettaglio
 	 * @throws OHServiceException 
 	 */
-	public FileDicom loadDettaglio(
+	public FileDicom loadDetails(
 			Long idFile, 
 			int idPaziente, 
 			String numeroSerie) throws OHServiceException 
@@ -90,18 +90,18 @@ public class DicomIoOperations
 		if (idFile == null)
 			return null;
 		else
-			return loadDettaglio(idFile.longValue(), idPaziente, numeroSerie);
+			return loadDetails(idFile.longValue(), idPaziente, numeroSerie);
 	}
 
 	/**
-	 * Load detail
+	 * Load the Detail of DICOM
 	 * 
 	 * @param idPaziente, the id of patient
 	 * @param numeroSerie, numero della serie
 	 * @return details
 	 * @throws OHServiceException 
 	 */
-	public FileDicom loadDettaglio(
+	public FileDicom loadDetails(
 			long idFile, 
 			int idPaziente, 
 			String numeroSerie) throws OHServiceException 
