@@ -172,8 +172,10 @@ public class Tests
 		{		
 			code = _setupTestFileDicom(false);
 			FileDicom foundFileDicom = (FileDicom)jpa.find(FileDicom.class, code); 
-			FileDicom dicom = dicomIoOperation.loadDettaglio(foundFileDicom.getIdFile(), foundFileDicom.getPatId(), foundFileDicom.getDicomSeriesNumber());
+			FileDicom dicom = dicomIoOperation.loadDetails(foundFileDicom.getIdFile(), foundFileDicom.getPatId(), foundFileDicom.getDicomSeriesNumber());
+			FileDicom dicom2 = dicomIoOperation.loadDetails(new Long(foundFileDicom.getIdFile()), foundFileDicom.getPatId(), foundFileDicom.getDicomSeriesNumber());
 			
+			assertEquals(dicom.getDicomInstanceUID(), dicom2.getDicomInstanceUID());
 			assertEquals(foundFileDicom.getDicomSeriesDescription(), dicom.getDicomSeriesDescription());
 		} 
 		catch (Exception e) 

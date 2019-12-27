@@ -20,7 +20,7 @@ public interface DicomManagerInterface
     public Long[] getSerieDetail(int idPaziente, String numeroSerie) throws OHServiceException;
 
     /**
-     * delete series 
+     * Delete series 
      * @param idPaziente, the id of patient
      * @param numeroSerie, the seres number to delete
      * @return, true if success
@@ -29,7 +29,7 @@ public interface DicomManagerInterface
     public boolean deleteSerie(int idPaziente, String numeroSerie) throws OHServiceException ;
     
     /**
-    * ceck if dicom is loaded
+    * Check if dicom is loaded
     * @param idPaziente, the id of patient
     * @param numeroSerie, the seres number
     * @param dicom, the detail od dicom
@@ -39,9 +39,9 @@ public interface DicomManagerInterface
     public boolean exist(FileDicom dicom) throws OHServiceException;
 
     /**
-     * load the Detail of DICOM
+     * Load the Detail of DICOM
      * @param, idFile
-     * @return, FileDicomDettaglio
+     * @return, FileDicom
      * @throws OHServiceException 
      */
     public FileDicom loadDettaglio(Long idFile,int idPaziente, String numeroSerie) throws OHServiceException;
