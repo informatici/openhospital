@@ -51,11 +51,13 @@ public class DiseaseIoOperations {
 	}
 	
 	/**
-	 * Retrieves stored disease with the specified search parameters.
+	 * Retrieves stored disease with the specified search parameters. 
+	 * Booleans <code>opd</code>, <code>ipdIn</code> and <code>ipdOut</code> in AND logic between 
+	 * each other only when <code>true</code>, ignored otherwise
 	 * @param disTypeCode - not <code>null</code> apply to disease type
-	 * @param opd - select only diseases related to out patient
-	 * @param ipdIn - select only diseases related to in patient admission
-	 * @param ipdOut - select only diseases related to in patient outcome
+	 * @param opd - if <code>true</code> retrieves diseases related to outpatients
+	 * @param ipdIn - if <code>true</code> retrieves diseases related to inpatients' admissions
+	 * @param ipdOut - if <code>true</code> retrieves diseases related to inpatients' discharges
 	 * @return the retrieved diseases.
 	 * @throws OHServiceException if an error occurs retrieving the diseases.
 	 */

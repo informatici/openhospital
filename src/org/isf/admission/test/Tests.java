@@ -221,8 +221,10 @@ public class Tests
 		{		
 			id = _setupTestAdmission(false);
 			Admission foundAdmission = (Admission)jpa.find(Admission.class, id); 
-			ArrayList<AdmittedPatient> patients = admissionIoOperation.getAdmittedPatients(null);
+			ArrayList<AdmittedPatient> patients = admissionIoOperation.getAdmittedPatients();
+			ArrayList<AdmittedPatient> patientsNull = admissionIoOperation.getAdmittedPatients(null);
 			
+			assertEquals(patients.size(), patientsNull.size());
 			assertEquals(foundAdmission.getId(), patients.get(0).getAdmission().getId());
 		} 
 		catch (Exception e) 

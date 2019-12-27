@@ -154,9 +154,51 @@ public class Tests
 		{		
 			code = _setupTestDisease(false);
 			Disease foundDisease = (Disease)jpa.find(Disease.class, code); 
+
 			ArrayList<Disease> diseases = diseaseIoOperation.getDiseases(foundDisease.getType().getCode(), false, false, false);
+			assertEquals(true, diseases.contains(foundDisease));
 			
-			assertEquals(foundDisease.getDescription(), diseases.get(0).getDescription());
+			diseases = diseaseIoOperation.getDiseases(foundDisease.getType().getCode(), true, false, false);
+			assertEquals(false, diseases.contains(foundDisease));
+			foundDisease.setOpdInclude(true);
+			jpa.beginTransaction();	
+			jpa.persist(foundDisease);
+			jpa.commitTransaction();
+			diseases = diseaseIoOperation.getDiseases(foundDisease.getType().getCode(), true, false, false);
+			assertEquals(true, diseases.contains(foundDisease));
+
+			foundDisease = (Disease)jpa.find(Disease.class, code);
+			diseases = diseaseIoOperation.getDiseases(foundDisease.getType().getCode(), true, true, false);
+			assertEquals(false, diseases.contains(foundDisease));
+			foundDisease.setOpdInclude(true);
+			foundDisease.setIpdInInclude(true);
+			jpa.beginTransaction();	
+			jpa.persist(foundDisease);
+			jpa.commitTransaction();
+			diseases = diseaseIoOperation.getDiseases(foundDisease.getType().getCode(), true, true, false);
+			assertEquals(true, diseases.contains(foundDisease));
+
+			foundDisease = (Disease)jpa.find(Disease.class, code);
+			diseases = diseaseIoOperation.getDiseases(foundDisease.getType().getCode(), true, true, true);
+			assertEquals(false, diseases.contains(foundDisease));
+			foundDisease.setOpdInclude(true);
+			foundDisease.setIpdInInclude(true);
+			foundDisease.setIpdOutInclude(true);
+			jpa.beginTransaction();	
+			jpa.persist(foundDisease);
+			jpa.commitTransaction();
+			diseases = diseaseIoOperation.getDiseases(foundDisease.getType().getCode(), true, true, true);
+			assertEquals(true, diseases.contains(foundDisease));
+			
+			diseases = diseaseIoOperation.getDiseases(foundDisease.getType().getCode(), false, true, true);
+			assertEquals(true, diseases.contains(foundDisease));
+			
+			diseases = diseaseIoOperation.getDiseases(foundDisease.getType().getCode(), false, false, true);
+			assertEquals(true, diseases.contains(foundDisease));
+			
+			diseases = diseaseIoOperation.getDiseases(foundDisease.getType().getCode(), false, true, false);
+			assertEquals(true, diseases.contains(foundDisease));
+			
 		} 
 		catch (Exception e) 
 		{
