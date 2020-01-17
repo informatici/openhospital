@@ -6,16 +6,20 @@ import java.util.List;
 import org.isf.exa.model.ExamRow;
 import org.isf.exa.service.ExamRowIoOperations;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ExamRowBrowsingManager {
-	private ExamRowIoOperations ioOperations = Context.getApplicationContext().getBean(ExamRowIoOperations.class);
+	
+	@Autowired
+	private ExamRowIoOperations ioOperations;
 		
 	private final Logger logger = LoggerFactory.getLogger(ExamRowBrowsingManager.class);
 	
