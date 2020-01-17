@@ -12,6 +12,8 @@ import org.isf.vaccine.model.Vaccine;
 import org.isf.vaccine.service.VaccineIoOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Class that provides gui separation from database operations and gives some
@@ -24,10 +26,12 @@ import org.slf4j.LoggerFactory;
  *  20/10/2011 - Cla - insert vaccinetype managment
  *
  */
+@Component
 public class VaccineBrowserManager {
 
     private final Logger logger = LoggerFactory.getLogger(VaccineBrowserManager.class);
-	private VaccineIoOperations ioOperations = Context.getApplicationContext().getBean(VaccineIoOperations.class);
+    @Autowired
+	private VaccineIoOperations ioOperations;
 	
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

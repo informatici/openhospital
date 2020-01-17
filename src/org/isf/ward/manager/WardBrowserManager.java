@@ -13,6 +13,8 @@ import org.isf.ward.model.Ward;
 import org.isf.ward.service.WardIoOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Class that provides gui separation from database operations and gives some
@@ -21,13 +23,16 @@ import org.slf4j.LoggerFactory;
  * @author Rick
  * 
  */
+@Component
 public class WardBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(WardBrowserManager.class);
 	
-	private AdmissionBrowserManager admManager = Context.getApplicationContext().getBean(AdmissionBrowserManager.class); 
+	@Autowired
+	private AdmissionBrowserManager admManager;
 	
-	private WardIoOperations ioOperations = Context.getApplicationContext().getBean(WardIoOperations.class);
+	@Autowired
+	private WardIoOperations ioOperations;
 
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

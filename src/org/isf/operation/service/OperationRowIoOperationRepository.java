@@ -11,11 +11,13 @@ import org.isf.opd.model.Opd;
 import org.isf.operation.model.OperationRow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author hp
  */
+@Repository
 public interface OperationRowIoOperationRepository extends JpaRepository<OperationRow, String> {
     	@Query(value = "SELECT * FROM OPERATIONROW ORDER BY OPER_OPDATE DESC", nativeQuery= true)
         public ArrayList<OperationRow> getOperationRow();

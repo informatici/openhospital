@@ -10,11 +10,15 @@ import org.isf.pregtreattype.service.PregnantTreatmentTypeIoOperation;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+@Component
 public class PregnantTreatmentTypeBrowserManager {
-
-	private PregnantTreatmentTypeIoOperation ioOperations = Context.getApplicationContext().getBean(PregnantTreatmentTypeIoOperation.class);
+	
+	@Autowired
+	private PregnantTreatmentTypeIoOperation ioOperations;
 	
 	/**
 	 * return the list of {@link PregnantTreatmentType}s
