@@ -33,6 +33,7 @@ import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -103,6 +104,8 @@ public class ExamEdit extends JDialog {
 	private JComboBox typeComboBox = null;
 	private Exam exam = null;
 	private boolean insert = false;
+	
+	private ExamBrowsingManager manager = Context.getApplicationContext().getBean(ExamBrowsingManager.class);
     
 	/**
      * 
@@ -234,7 +237,6 @@ public class ExamEdit extends JDialog {
                             exam.setProcedure(Integer.parseInt(procComboBox.getSelectedItem().toString()));
                             exam.setDefaultResult(defTextField.getText().trim().toUpperCase());
 
-                            ExamBrowsingManager manager = new ExamBrowsingManager();
                             boolean result = false;
                             try {
                                     if (insert) {
@@ -323,7 +325,6 @@ public class ExamEdit extends JDialog {
 		if (typeComboBox == null) {
 			typeComboBox = new JComboBox();
 			if (insert) {
-				ExamBrowsingManager manager = new ExamBrowsingManager();
 				ArrayList<ExamType> types;
 				try {
 					types = manager.getExamType();

@@ -170,11 +170,11 @@ public class LabNew extends JDialog implements SelectionListener {
 	private ArrayList<String> matList = labManager.getMaterialList();
 	
 	//Exams (ALL)
-	private ExamBrowsingManager exaManager = new ExamBrowsingManager();
+	private ExamBrowsingManager exaManager = Context.getApplicationContext().getBean(ExamBrowsingManager.class);
 	private ArrayList<Exam> exaArray;
 	
 	//Results (ALL)
-	private ExamRowBrowsingManager examRowManager = new ExamRowBrowsingManager();
+	private ExamRowBrowsingManager examRowManager = Context.getApplicationContext().getBean(ExamRowBrowsingManager.class);
 	private ArrayList<ExamRow> exaRowArray;
 	
 	//Arrays for this Patient

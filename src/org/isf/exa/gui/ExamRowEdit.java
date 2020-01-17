@@ -28,6 +28,7 @@ import org.isf.exa.manager.ExamRowBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -189,7 +190,7 @@ public class ExamRowEdit extends JDialog {
 					examRow.setDescription(descriptionTextField.getText().toUpperCase());
 					examRow.setExamCode(exam);
 					
-					ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
+					ExamRowBrowsingManager manager = Context.getApplicationContext().getBean(ExamRowBrowsingManager.class);
 					try {
 						if (true == manager.newExamRow(examRow)) {
 							fireExamRowInserted();

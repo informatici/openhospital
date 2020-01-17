@@ -407,7 +407,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 	 * @return comboExams (JComboBox)
 	 */
 	private JComboBox getComboExams() {
-		ExamBrowsingManager managerExams = new ExamBrowsingManager();
+		ExamBrowsingManager managerExams = Context.getApplicationContext().getBean(ExamBrowsingManager.class);
 		if (comboExams == null) {
 			comboExams = new JComboBox();
 			comboExams.setPreferredSize(new Dimension(200, 30));

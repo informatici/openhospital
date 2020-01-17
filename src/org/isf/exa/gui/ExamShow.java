@@ -31,6 +31,7 @@ import org.isf.exa.manager.ExamRowBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 
@@ -159,7 +160,7 @@ public class ExamShow extends JDialog implements ExamRowListener {
 		                        JOptionPane.PLAIN_MESSAGE);				
 						return;									
 					}else {
-						ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
+						ExamRowBrowsingManager manager = Context.getApplicationContext().getBean(ExamRowBrowsingManager.class);
 						ExamRow row = (ExamRow)(((ExamRowBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
 						int n = JOptionPane.showConfirmDialog(
 	                        null,
@@ -189,9 +190,11 @@ public class ExamShow extends JDialog implements ExamRowListener {
 class ExamRowBrowsingModel extends DefaultTableModel {
 		
 	private static final long serialVersionUID = 1L;
-
+			
+	private ExamRowBrowsingManager manager = Context.getApplicationContext().getBean(ExamRowBrowsingManager.class);
+	
             public ExamRowBrowsingModel(String aCode) {
-                ExamRowBrowsingManager manager = new ExamRowBrowsingManager();
+            	
                 try {
                     pExamRow = manager.getExamRowByExamCode(aCode);
                 } catch (OHServiceException e) {
