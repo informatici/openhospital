@@ -87,6 +87,9 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 	private String formatSelected="Java";
 	
 	private PrintManager printManager = Context.getApplicationContext().getBean(PrintManager.class);
+	private MedicalBrowsingManager medicalBrowsingManager = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
+	private MedicalTypeBrowserManager medicalTypeBrowserManager = Context.getApplicationContext().getBean(MedicalTypeBrowserManager.class);
+	private MedicaldsrstockmovTypeBrowserManager medicaldsrstockmovTypeBrowserManager = Context.getApplicationContext().getBean(MedicaldsrstockmovTypeBrowserManager.class);
 
 	public MedicalStockSelection(JFrame owner) {
 		super(owner, true);
@@ -220,10 +223,9 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 
 	private JComboBox getMedicalBox() {
 		medicalBox = new JComboBox();
-		MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
 		ArrayList<Medical> medical;
 		try {
-			medical = medicalManager.getMedicals();
+			medical = medicalBrowsingManager.getMedicals();
 		} catch (OHServiceException e1) {
 			medical = null;
 			JOptionPane.showMessageDialog(null, e1.getMessage());
@@ -263,13 +265,12 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 
 	private JComboBox getMedicalTypeBox() {
 		medicalTypeBox = new JComboBox();
-		MedicalTypeBrowserManager medicalManager = new MedicalTypeBrowserManager();
 		ArrayList<MedicalType> medical;
 		
 		medicalTypeBox.addItem("All");
 		
 		try {
-			medical = medicalManager.getMedicalType();
+			medical = medicalTypeBrowserManager.getMedicalType();
 			
 			for (MedicalType aMedicalType : medical) {
 				medicalTypeBox.addItem(aMedicalType);
@@ -329,10 +330,9 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 	}
 	private JComboBox getMovementTypeBox() {
 		movTypeBox = new JComboBox();
-		MedicaldsrstockmovTypeBrowserManager typeManager = new MedicaldsrstockmovTypeBrowserManager();
 		ArrayList<MovementType> type;
 		try {
-			type = typeManager.getMedicaldsrstockmovType();
+			type = medicaldsrstockmovTypeBrowserManager.getMedicaldsrstockmovType();
 		} catch (OHServiceException e1) {
 			type = null;
 			JOptionPane.showMessageDialog(null, e1.getMessage());

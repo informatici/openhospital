@@ -73,6 +73,7 @@ public class WardPharmacyEdit extends JDialog {
 	private int movSelectedAge;
 	private float movSelectedWeight;
 	private PatientBrowserManager patBrowser = Context.getApplicationContext().getBean(PatientBrowserManager.class);
+	private MovWardBrowserManager movWardBrowserManager = Context.getApplicationContext().getBean(MovWardBrowserManager.class);
 	private ArrayList<Patient> pat = new ArrayList<Patient>();
 	private ArrayList<MedicalWard> medList = null;
 	
@@ -344,10 +345,9 @@ public class WardPharmacyEdit extends JDialog {
 					movSelected.setQuantity((Double)jSpinnerQty.getValue());
 					movSelected.setUnits((String)jComboBoxType.getSelectedItem());
 					
-					MovWardBrowserManager manager = new MovWardBrowserManager();
 					boolean result;
 					try {
-						result = manager.updateMovementWard(movSelected);
+						result = movWardBrowserManager.updateMovementWard(movSelected);
 					} catch (OHServiceException e1) {
 						result = false;
 						OHServiceExceptionUtil.showMessages(e1);

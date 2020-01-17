@@ -130,7 +130,7 @@ public class TherapyEdit extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private MedicalBrowsingManager medBrowser = new MedicalBrowsingManager();
+	private MedicalBrowsingManager medBrowser = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
 	private TherapyManager thManager = Context.getApplicationContext().getBean(TherapyManager.class);
 	private VisitManager vstManager = Context.getApplicationContext().getBean(VisitManager.class);
 	private ArrayList<Medical> medArray;

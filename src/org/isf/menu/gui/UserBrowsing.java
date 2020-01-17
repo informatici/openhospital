@@ -23,6 +23,7 @@ import javax.swing.event.AncestorListener;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
@@ -120,8 +121,8 @@ public class UserBrowsing extends ModalJFrame implements UserEdit.UserListener {
 	private String pSelection;
 	
 	private UserBrowsing myFrame;
-	private UserBrowsingManager manager = new UserBrowsingManager();
-	
+	private UserBrowsingManager manager = Context.getApplicationContext().getBean(UserBrowsingManager.class);
+
 	public UserBrowsing() {
 		
 		setTitle(MessageBundle.getMessage("angal.menu.usersbrowser"));
@@ -288,7 +289,6 @@ public class UserBrowsing extends ModalJFrame implements UserEdit.UserListener {
 	                        JOptionPane.PLAIN_MESSAGE);				
 					return;									
 				}else {
-				UserBrowsingManager manager = new UserBrowsingManager();
 				User m = (User)(((UserBrowserModel) model).getValueAt(table.getSelectedRow(), -1));
 				int n = JOptionPane.showConfirmDialog(
                         null,
@@ -332,7 +332,6 @@ public class UserBrowsing extends ModalJFrame implements UserEdit.UserListener {
 		private static final long serialVersionUID = 1L;
 
 		public UserBrowserModel(String s) {
-			UserBrowsingManager manager = new UserBrowsingManager();
             try {
                 pUser = manager.getUser(s);
             } catch (OHServiceException e) {
@@ -340,7 +339,6 @@ public class UserBrowsing extends ModalJFrame implements UserEdit.UserListener {
             }
         }
 		public UserBrowserModel() {
-			UserBrowsingManager manager = new UserBrowsingManager();
             try {
                 pUser = manager.getUser();
             } catch (OHServiceException e) {

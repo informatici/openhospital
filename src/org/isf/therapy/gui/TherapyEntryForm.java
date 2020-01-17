@@ -71,7 +71,7 @@ public class TherapyEntryForm extends JDialog {
 	/*
 	 * Managers
 	 */
-	private MedicalBrowsingManager medBrowser = new MedicalBrowsingManager();
+	private MedicalBrowsingManager medBrowser = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
 	private ArrayList<Medical> medArray = null;
 
 	/*

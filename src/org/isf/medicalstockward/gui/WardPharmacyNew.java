@@ -1,9 +1,23 @@
 package org.isf.medicalstockward.gui;
 
-import java.awt.AWTEvent;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import org.isf.generaldata.MessageBundle;
+import org.isf.medicals.model.Medical;
+import org.isf.medicalstockward.manager.MovWardBrowserManager;
+import org.isf.medicalstockward.model.MedicalWard;
+import org.isf.medicalstockward.model.MovementWard;
+import org.isf.menu.manager.Context;
+import org.isf.patient.gui.SelectPatient;
+import org.isf.patient.gui.SelectPatient.SelectionListener;
+import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.ward.model.Ward;
+
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,38 +27,6 @@ import java.util.EventListener;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-
-import org.isf.generaldata.MessageBundle;
-import org.isf.medicals.model.Medical;
-import org.isf.medicalstockward.manager.MovWardBrowserManager;
-import org.isf.medicalstockward.model.MedicalWard;
-import org.isf.medicalstockward.model.MovementWard;
-import org.isf.patient.gui.SelectPatient;
-import org.isf.patient.gui.SelectPatient.SelectionListener;
-import org.isf.patient.model.Patient;
-import org.isf.utils.exception.OHException;
-import org.isf.utils.exception.OHServiceException;
-import org.isf.ward.model.Ward;
 
 public class WardPharmacyNew extends JDialog implements SelectionListener {
 
@@ -155,7 +137,9 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
         private JButton searchButton;
         private JComboBox jComboBoxMedicals;
         //private JLabel jLabelSelectWard;
-        
+
+		private MovWardBrowserManager wardManager = Context.getApplicationContext().getBean(MovWardBrowserManager.class);
+
 	public WardPharmacyNew(JFrame owner, Ward ward, ArrayList<MedicalWard> drugs) {
 		super(owner, true);
 		wardDrugs = drugs;
@@ -494,7 +478,6 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
                                         
                     ArrayList<MovementWard> manyMovementWard = new ArrayList<MovementWard>();
                     //MovStockInsertingManager movManager = new MovStockInsertingManager();
-					MovWardBrowserManager wardManager = new MovWardBrowserManager();
                     boolean result;
 					try {
 						// MovementType typeCharge = new

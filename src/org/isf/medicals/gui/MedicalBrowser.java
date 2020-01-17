@@ -48,6 +48,7 @@ import org.isf.medicals.model.Medical;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.Context;
 import org.isf.stat.gui.report.GenericReportFromDateToDate;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalOrder;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalStock;
@@ -134,6 +135,10 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 	protected boolean altKeyReleased = true;
 	private String lastKey = "";
 	private JButton buttonAMC;
+
+	private MedicalTypeBrowserManager medicalTypeManager = Context.getApplicationContext().getBean(MedicalTypeBrowserManager.class);
+	private MedicalBrowsingManager medicalBrowsingManager = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
+
 	private void filterMedical(String key) {
 		model = new MedicalBrowsingModel(key, false);
 		table.setModel(model);
@@ -459,7 +464,6 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 					return;									
 				} else {
 					selectedrow = table.convertRowIndexToModel(table.getSelectedRow());
-					MedicalBrowsingManager manager = new MedicalBrowsingManager();
 					Medical med = (Medical) (((MedicalBrowsingModel) model).getValueAt(selectedrow, -1));
 					StringBuilder deleteMessage = new StringBuilder()
 							.append(MessageBundle.getMessage("angal.medicals.deletemedical"))
@@ -473,7 +477,7 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 									JOptionPane.YES_NO_OPTION);
 					boolean deleted;
 					try {
-						deleted = manager.deleteMedical(med);
+						deleted = medicalBrowsingManager.deleteMedical(med);
 					} catch (OHServiceException e) {
 						deleted = false;
 						OHServiceExceptionUtil.showMessages(e);
@@ -535,10 +539,9 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 		if (pbox == null) {
 			pbox = new JComboBox();
 			pbox.addItem(MessageBundle.getMessage("angal.medicals.allm"));
-			MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
 			ArrayList<MedicalType> type;
 			try {
-				type = manager.getMedicalType();
+				type = medicalTypeManager.getMedicalType();
 				for (MedicalType elem : type) {
 					pbox.addItem(elem);
 				}
@@ -675,9 +678,8 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 
 		public MedicalBrowsingModel(String key, boolean isType) {
 			if (isType) {
-				MedicalBrowsingManager manager = new MedicalBrowsingManager();
 				try {
-					medicalList = pMedicals = manager.getMedicals(key, false);
+					medicalList = pMedicals = medicalBrowsingManager.getMedicals(key, false);
 				} catch (OHServiceException e) {
 					pMedicals = null;
 					OHServiceExceptionUtil.showMessages(e);
@@ -706,9 +708,8 @@ public class MedicalBrowser extends ModalJFrame implements MedicalListener { // 
 			}
 		}
 		public MedicalBrowsingModel() {
-			MedicalBrowsingManager manager = new MedicalBrowsingManager();
 			try {
-				medicalList = pMedicals = manager.getMedicals(null, false);
+				medicalList = pMedicals = medicalBrowsingManager.getMedicals(null, false);
 			} catch (OHServiceException e) {
 				pMedicals = null;
 				OHServiceExceptionUtil.showMessages(e);

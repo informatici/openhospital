@@ -197,7 +197,9 @@ public class WardPharmacy extends ModalJFrame implements
 	private MovBrowserManager movManager = Context.getApplicationContext().getBean(MovBrowserManager.class);
 	private PrintManager printManager = Context.getApplicationContext().getBean(PrintManager.class);
 	private ArrayList<Movement> listMovementCentral = new ArrayList<Movement>();
-	private MovWardBrowserManager wardManager = new MovWardBrowserManager();
+	private MovWardBrowserManager wardManager = Context.getApplicationContext().getBean(MovWardBrowserManager.class);
+	private MedicalTypeBrowserManager medicalTypeBrowserManager = Context.getApplicationContext().getBean(MedicalTypeBrowserManager.class);
+	private MedicalBrowsingManager medicalManager = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
 	private ArrayList<MovementWard> listMovementWardFromTo = new ArrayList<MovementWard>();
 	private ArrayList<MedicalWard> wardDrugs;
 	private ArrayList<MovementWard> wardOutcomes;
@@ -795,13 +797,12 @@ public class WardPharmacy extends ModalJFrame implements
 			jComboBoxTypes = new JComboBox();
 			jComboBoxTypes.setMaximumSize(new Dimension(filterWidth, 24));
 			jComboBoxTypes.setPreferredSize(new Dimension(filterWidth, 24));
-			MedicalTypeBrowserManager medicalManager = new MedicalTypeBrowserManager();
 			ArrayList<MedicalType> medicalTypes;
 			
 			jComboBoxTypes.addItem(MessageBundle.getMessage("angal.medicalstockward.alltypes")); //$NON-NLS-1$
 			
 			try {
-				medicalTypes = medicalManager.getMedicalType();
+				medicalTypes = medicalTypeBrowserManager.getMedicalType();
 				
 				for (MedicalType aMedicalType : medicalTypes) {
 					jComboBoxTypes.addItem(aMedicalType);
@@ -830,7 +831,6 @@ public class WardPharmacy extends ModalJFrame implements
                 @Override
                 public void actionPerformed(ActionEvent ae) {
                     jComboBoxMedicals.removeAllItems();
-                    MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
                     ArrayList<Medical> medicals;
                     try {
                             medicals = medicalManager.getMedicals();
@@ -892,7 +892,6 @@ public class WardPharmacy extends ModalJFrame implements
 			jComboBoxMedicals.setMaximumSize(new Dimension(filterWidth, 24));
 			jComboBoxMedicals.setPreferredSize(new Dimension(filterWidth, 24));
 		}
-		MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
 		ArrayList<Medical> medicals;
 		try {
 			medicals = medicalManager.getMedicals();

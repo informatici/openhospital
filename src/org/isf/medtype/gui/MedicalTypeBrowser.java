@@ -21,6 +21,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.medtype.gui.MedicalTypeBrowserEdit.MedicalTypeListener;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -53,7 +54,7 @@ public class MedicalTypeBrowser extends ModalJFrame implements MedicalTypeListen
 	private JTable jTable = null;
 	private MedicalTypeBrowserModel model;
 	private int selectedrow;
-	private MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
+	private MedicalTypeBrowserManager manager = Context.getApplicationContext().getBean(MedicalTypeBrowserManager.class);
 	private MedicalType medicalType = null;
 	private final JFrame myFrame;
 	
@@ -236,7 +237,6 @@ public class MedicalTypeBrowser extends ModalJFrame implements MedicalTypeListen
 		private static final long serialVersionUID = 1L;
 
 		public MedicalTypeBrowserModel() {
-			MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
 			try {
 				pMedicalType = manager.getMedicalType();
 			} catch (OHServiceException e) {

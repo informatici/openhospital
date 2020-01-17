@@ -26,6 +26,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
@@ -47,6 +48,8 @@ class PrivilegeTree extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	private UserGroup aGroup;
+
+	private UserBrowsingManager manager = Context.getApplicationContext().getBean(UserBrowsingManager.class);
 	
 	public PrivilegeTree(UserGroupBrowsing parent, UserGroup aGroup) {
 		super(parent,MessageBundle.getMessage("angal.menu.menuitmebrowser"),true );
@@ -56,7 +59,6 @@ class PrivilegeTree extends JDialog {
 		setBounds(new Rectangle(r.x+50, r.y+50,280, 350));
 		//setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		
-		UserBrowsingManager manager = new UserBrowsingManager();
         ArrayList<UserMenuItem> myMenu = null;
         try {
             myMenu = manager.getGroupMenu(aGroup);
@@ -202,7 +204,6 @@ class PrivilegeTree extends JDialog {
 					//System.out.println(umi+" "+umi.isActive());
 					if (!umi.getCode().equals("main")) newUserMenu.add(umi);
 				}	
-				UserBrowsingManager manager = new UserBrowsingManager();
                 try {
                     manager.setGroupMenu(aGroup, newUserMenu);
                 } catch (OHServiceException e1) {

@@ -36,6 +36,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
@@ -81,7 +82,7 @@ public class CommunicationFrame extends AbstractCommunicationFrame {
 	private JTextPane userInfo;
 	private ChatMessages area;
 
-
+	private UserBrowsingManager userBrowsingManager = Context.getApplicationContext().getBean(UserBrowsingManager.class);
 
 	public CommunicationFrame(){
 		if (frame==null){
@@ -263,11 +264,10 @@ public class CommunicationFrame extends AbstractCommunicationFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				UserBrowsingManager user=new UserBrowsingManager();
 				String user_name = (String)((RosterEntry)buddyList.getSelectedValue()).getName();
                 String info = null;
                 try {
-                    info = user.getUsrInfo(user_name);
+                    info = userBrowsingManager.getUsrInfo(user_name);
                 } catch (OHServiceException e) {
                     OHServiceExceptionUtil.showMessages(e);
                 }

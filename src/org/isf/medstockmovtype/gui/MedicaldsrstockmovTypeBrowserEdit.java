@@ -19,6 +19,7 @@ import javax.swing.event.EventListenerList;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -87,6 +88,8 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 	private JPanel jCodeLabelPanel = null;
 	private JPanel jDescriptionLabelPanel = null;
 	private JLabel jDescripitonLabel = null;
+
+	private MedicaldsrstockmovTypeBrowserManager manager = Context.getApplicationContext().getBean(MedicaldsrstockmovTypeBrowserManager.class);
 	
 	/**
      * 
@@ -201,7 +204,6 @@ public class MedicaldsrstockmovTypeBrowserEdit extends JDialog{
 					medicaldsrstockmovType.setCode(codeTextField.getText());
 					medicaldsrstockmovType.setType((String) typeComboBox.getSelectedItem());
 					
-					MedicaldsrstockmovTypeBrowserManager manager = new MedicaldsrstockmovTypeBrowserManager();
 					boolean result;
 					if (insert) { // inserting
 						try {

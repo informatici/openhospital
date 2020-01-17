@@ -1,45 +1,6 @@
 package org.isf.medicalstock.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.ListIterator;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-
+import com.toedter.calendar.JDateChooser;
 import org.apache.log4j.PropertyConfigurator;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
@@ -62,7 +23,19 @@ import org.isf.ward.model.Ward;
 import org.isf.xmpp.gui.CommunicationFrame;
 import org.isf.xmpp.manager.Interaction;
 
-import com.toedter.calendar.JDateChooser;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.File;
+import java.util.*;
 
 public class MovStockMultipleDischarging extends JDialog {
 	/**
@@ -113,6 +86,8 @@ public class MovStockMultipleDischarging extends JDialog {
 	private ArrayList<Medical> pool = new ArrayList<Medical>();
 	
 	private MovStockInsertingManager movManager = Context.getApplicationContext().getBean(MovStockInsertingManager.class);
+	private MedicalBrowsingManager medicalBrowsingManager = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
+	private MedicaldsrstockmovTypeBrowserManager medicaldsrstockmovTypeBrowserManager = Context.getApplicationContext().getBean(MedicaldsrstockmovTypeBrowserManager.class);
 
 	/**
 	 * Launch the application.
@@ -148,11 +123,10 @@ public class MovStockMultipleDischarging extends JDialog {
 	}
 
 	private void initialize() {
-		MedicalBrowsingManager medMan = new MedicalBrowsingManager();
-		
+
 		ArrayList<Medical> medicals;
 		try {
-			medicals = medMan.getMedicals();
+			medicals = medicalBrowsingManager.getMedicals();
 		} catch (OHServiceException e) {
 			medicals = null;
 			OHServiceExceptionUtil.showMessages(e);
@@ -511,10 +485,9 @@ public class MovStockMultipleDischarging extends JDialog {
 	private JComboBox getJComboBoxChargeType() {
 		if (jComboBoxDischargeType == null) {
 			jComboBoxDischargeType = new JComboBox();
-			MedicaldsrstockmovTypeBrowserManager movMan = new MedicaldsrstockmovTypeBrowserManager();
 			ArrayList<MovementType> movTypes;
 			try {
-				movTypes = movMan.getMedicaldsrstockmovType();
+				movTypes = medicaldsrstockmovTypeBrowserManager.getMedicaldsrstockmovType();
 			} catch (OHServiceException e) {
 				movTypes = null;
 				OHServiceExceptionUtil.showMessages(e);

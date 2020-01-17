@@ -111,6 +111,8 @@ public class MovStockMultipleCharging extends JDialog {
 	private int optionSelected = UNITS;
 	
 	private MovStockInsertingManager movManager = Context.getApplicationContext().getBean(MovStockInsertingManager.class);
+	private MedicalBrowsingManager medicalBrowsingManager = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
+	private MedicaldsrstockmovTypeBrowserManager medicaldsrstockmovTypeBrowserManager = Context.getApplicationContext().getBean(MedicaldsrstockmovTypeBrowserManager.class);
 
 	/**
 	 * Launch the application.
@@ -141,10 +143,9 @@ public class MovStockMultipleCharging extends JDialog {
 	}
 
 	private void initialize() {
-		MedicalBrowsingManager medMan = new MedicalBrowsingManager();
 		ArrayList<Medical> medicals;
 		try {
-			medicals = medMan.getMedicals();
+			medicals = medicalBrowsingManager.getMedicals();
 		} catch (OHServiceException e) {
 			OHServiceExceptionUtil.showMessages(e);
 			medicals = null;
@@ -479,10 +480,9 @@ public class MovStockMultipleCharging extends JDialog {
 	private JComboBox getJComboBoxChargeType() {
 		if (jComboBoxChargeType == null) {
 			jComboBoxChargeType = new JComboBox();
-			MedicaldsrstockmovTypeBrowserManager movMan = new MedicaldsrstockmovTypeBrowserManager();
 			ArrayList<MovementType> movTypes;
 			try {
-				movTypes = movMan.getMedicaldsrstockmovType();
+				movTypes = medicaldsrstockmovTypeBrowserManager.getMedicaldsrstockmovType();
 			} catch (OHServiceException e) {
 				movTypes = null;
 				OHServiceExceptionUtil.showMessages(e);

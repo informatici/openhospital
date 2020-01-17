@@ -23,6 +23,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.malnutrition.gui.InsertMalnutrition.MalnutritionListener;
 import org.isf.malnutrition.manager.MalnutritionManager;
 import org.isf.malnutrition.model.Malnutrition;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.time.TimeTools;
@@ -84,6 +85,8 @@ public class MalnutritionBrowser extends JDialog implements MalnutritionListener
 	private int selectedrow;
 
 	private Admission adm;
+
+	private MalnutritionManager manager = Context.getApplicationContext().getBean(MalnutritionManager.class);
 
 	public MalnutritionBrowser(JFrame owner, Admission aAdm) {
 		super(owner, true);
@@ -165,7 +168,6 @@ public class MalnutritionBrowser extends JDialog implements MalnutritionListener
 		deleteButton.setMnemonic(KeyEvent.VK_D);
 		deleteButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				MalnutritionManager manager = new MalnutritionManager();
 				if (table.getSelectedRow() < 0) {
 					JOptionPane.showMessageDialog(
 							MalnutritionBrowser.this,
@@ -237,8 +239,7 @@ public class MalnutritionBrowser extends JDialog implements MalnutritionListener
 		private static final long serialVersionUID = 1L;
 
 		public MalnBrowsingModel(String s) {
-			MalnutritionManager manager = new MalnutritionManager();
-			
+
 			pMaln = null;
 			
 			if (null != s && false == s.isEmpty()) {

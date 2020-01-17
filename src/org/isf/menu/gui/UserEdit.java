@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
@@ -93,6 +94,8 @@ public class UserEdit extends JDialog {
     
 	private User user = null;
 	private boolean insert = false;
+
+	private UserBrowsingManager manager = Context.getApplicationContext().getBean(UserBrowsingManager.class);
     
 	/**
      * 
@@ -254,7 +257,6 @@ public class UserEdit extends JDialog {
 					}
 					user.setUserName(userName);
 					user.setDesc(descriptionTextField.getText());
-					UserBrowsingManager manager = new UserBrowsingManager();
 					boolean result = false;
 					if (insert) {
 						char[] password = pwdTextField.getPassword();
@@ -361,7 +363,6 @@ public class UserEdit extends JDialog {
 		if (typeComboBox == null) {
 			typeComboBox = new JComboBox();
 			if (insert) {
-				UserBrowsingManager manager = new UserBrowsingManager();
                 ArrayList<UserGroup> group = null;
                 try {
                     group = manager.getUserGroup();

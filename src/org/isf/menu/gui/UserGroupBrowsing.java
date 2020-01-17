@@ -18,6 +18,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.UserGroup;
 import org.isf.utils.exception.OHServiceException;
@@ -62,10 +63,10 @@ public class UserGroupBrowsing extends ModalJFrame implements GroupEdit.GroupLis
 	private DefaultTableModel model ;
 	private JTable table;
 	
-	
 	private UserGroupBrowsing myFrame;
-	
-	
+
+	private UserBrowsingManager manager = Context.getApplicationContext().getBean(UserBrowsingManager.class);
+
 	public UserGroupBrowsing() {
 		myFrame = this;
 		setTitle(MessageBundle.getMessage("angal.menu.groupsbrowser"));
@@ -159,7 +160,6 @@ public class UserGroupBrowsing extends ModalJFrame implements GroupEdit.GroupLis
 	                        JOptionPane.PLAIN_MESSAGE);				
 					return;									
 				}else {
-				UserBrowsingManager manager = new UserBrowsingManager();
 				UserGroup m = (UserGroup)(((UserGroupBrowserModel) model).getValueAt(table.getSelectedRow(), -1));
 				int n = JOptionPane.showConfirmDialog(
                         null,
@@ -205,7 +205,6 @@ public class UserGroupBrowsing extends ModalJFrame implements GroupEdit.GroupLis
 		private static final long serialVersionUID = 1L;
 
 		public UserGroupBrowserModel() {
-			UserBrowsingManager manager = new UserBrowsingManager();
             try {
                 pGroup = manager.getUserGroup();
             } catch (OHServiceException e) {

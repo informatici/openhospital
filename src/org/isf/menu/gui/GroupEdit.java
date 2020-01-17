@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.UserGroup;
 import org.isf.utils.exception.OHServiceException;
@@ -28,6 +29,8 @@ public class GroupEdit extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 	private EventListenerList groupListeners = new EventListenerList();
+
+	private UserBrowsingManager manager = Context.getApplicationContext().getBean(UserBrowsingManager.class);
 
     public interface GroupListener extends EventListener {
         public void groupUpdated(AWTEvent e);
@@ -200,11 +203,7 @@ public class GroupEdit extends JDialog {
 						return;
 					}
 					
-															
-					UserBrowsingManager manager = new UserBrowsingManager();
-					
 					group.setCode(nameTextField.getText());
-					
 					
 					group.setDesc(descriptionTextField.getText());
 					boolean result = false;

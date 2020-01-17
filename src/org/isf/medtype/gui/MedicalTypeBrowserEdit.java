@@ -18,6 +18,7 @@ import javax.swing.event.EventListenerList;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -83,6 +84,9 @@ public class MedicalTypeBrowserEdit extends JDialog{
 	private JPanel jCodeLabelPanel = null;
 	private JPanel jDescriptionLabelPanel = null;
 	private JLabel jDescripitonLabel = null;
+
+	private MedicalTypeBrowserManager manager = Context.getApplicationContext().getBean(MedicalTypeBrowserManager.class);
+
 	/**
      * 
 	 * This is the default constructor; we pass the arraylist and the selectedrow
@@ -192,7 +196,6 @@ public class MedicalTypeBrowserEdit extends JDialog{
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
 
 					medicalType.setDescription(descriptionTextField.getText());
 					medicalType.setCode(codeTextField.getText());
