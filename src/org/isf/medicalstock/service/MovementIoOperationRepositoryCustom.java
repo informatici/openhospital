@@ -1,12 +1,13 @@
 package org.isf.medicalstock.service;
 
 
+import org.isf.medicalstock.service.MedicalStockIoOperations.MovementOrder;
+import org.springframework.stereotype.Repository;
+
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.isf.medicalstock.service.MedicalStockIoOperations.MovementOrder;
-
-
+@Repository
 public interface MovementIoOperationRepositoryCustom {
 
 	List<Integer> findtMovementWhereDatesAndId(String wardId, GregorianCalendar dateFrom, GregorianCalendar dateTo);

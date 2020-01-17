@@ -1,13 +1,14 @@
 package org.isf.menu.service;
 
-import java.util.List;
-
 import org.isf.menu.model.UserMenuItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
 
+@Repository
 public interface UserMenuItemIoOperationRepository extends JpaRepository<UserMenuItem, String> {
 
     @Query(value = "select mn.*,GROUPMENU.GM_ACTIVE as IS_ACTIVE from USERGROUP inner join USER on US_UG_ID_A=UG_ID_A "

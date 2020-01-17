@@ -1,19 +1,19 @@
 package org.isf.menu.service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
 import org.isf.utils.db.TranslateOHServiceException;
 import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+@Service
 @Transactional(rollbackFor=OHServiceException.class)
 @TranslateOHServiceException
 public class MenuIoOperations 

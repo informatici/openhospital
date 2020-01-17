@@ -1,7 +1,5 @@
 package org.isf.menu.manager;
 
-import java.util.ArrayList;
-
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
@@ -12,9 +10,11 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+import java.util.ArrayList;
+
+@Component
 public class UserBrowsingManager {
 
 	@Autowired

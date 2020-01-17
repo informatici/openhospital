@@ -1,24 +1,23 @@
 package org.isf.medicalstockward.service;
 
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
-import org.isf.utils.db.DbQueryLogger;
 import org.isf.utils.db.TranslateOHServiceException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.ward.model.Ward;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 /**
  * @author mwithi
  */
-@Component
+@Service
 @Transactional(rollbackFor=OHServiceException.class)
 @TranslateOHServiceException
 public class MedicalStockWardIoOperations 
