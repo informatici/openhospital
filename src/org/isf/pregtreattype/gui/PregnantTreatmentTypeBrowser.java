@@ -18,6 +18,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.pregtreattype.gui.PregnantTreatmentTypeEdit.PregnantTreatmentTypeListener;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
@@ -53,7 +54,7 @@ public class PregnantTreatmentTypeBrowser extends ModalJFrame implements Pregnan
 	private JTable jTable = null;
 	private PregnantTreatmentTypeBrowserModel model;
 	private int selectedrow;
-	private PregnantTreatmentTypeBrowserManager manager = new PregnantTreatmentTypeBrowserManager();
+	private PregnantTreatmentTypeBrowserManager manager = Context.getApplicationContext().getBean(PregnantTreatmentTypeBrowserManager.class);
 	private PregnantTreatmentType pregnantTreatmentType = null;
 	private final JFrame myFrame;
 	
@@ -242,7 +243,7 @@ class PregnantTreatmentTypeBrowserModel extends DefaultTableModel {
 	private static final long serialVersionUID = 1L;
 
 		public PregnantTreatmentTypeBrowserModel() {
-			PregnantTreatmentTypeBrowserManager manager = new PregnantTreatmentTypeBrowserManager();
+			PregnantTreatmentTypeBrowserManager manager = Context.getApplicationContext().getBean(PregnantTreatmentTypeBrowserManager.class);
 			try {
 				pPregnantTreatmentType = manager.getPregnantTreatmentType();
 			}catch(OHServiceException e){

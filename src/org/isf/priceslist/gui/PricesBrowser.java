@@ -67,7 +67,7 @@ public class PricesBrowser extends ModalJFrame {
     private boolean[] columsResizable = {true, false};
 	private int[] columWidth = {400,150};
     
-	private PriceListManager listManager = new PriceListManager();
+	private PriceListManager listManager = Context.getApplicationContext().getBean(PriceListManager.class);
 	private ArrayList<PriceList> listArray;
 	private ArrayList<Price> priceArray;
 	private PriceList listSelected;
@@ -77,7 +77,7 @@ public class PricesBrowser extends ModalJFrame {
     private ArrayList<Exam> examArray;
     
     private PriceNode opeNodes;
-    private OperationBrowserManager operManager = new OperationBrowserManager();
+    private OperationBrowserManager operManager = Context.getApplicationContext().getBean(OperationBrowserManager.class);
     private ArrayList<Operation> operArray;
        
     private PriceNode medNodes;
@@ -85,7 +85,7 @@ public class PricesBrowser extends ModalJFrame {
     private ArrayList<Medical> mediArray;
     
     private PriceNode othNodes;
-    private PricesOthersManager othManager = new PricesOthersManager();
+    private PricesOthersManager othManager = Context.getApplicationContext().getBean(PricesOthersManager.class);
     private ArrayList<PricesOthers> othArray;
     
     private PrintManager printManager = Context.getApplicationContext().getBean(PrintManager.class);

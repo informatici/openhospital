@@ -18,6 +18,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.priceslist.gui.ListEdit.ListListener;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.PriceList;
@@ -60,7 +61,7 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 	private boolean[] columResizable = {false, false, true, false};
 	
 	private PriceList list;
-	PriceListManager listManager = new PriceListManager();
+	PriceListManager listManager = Context.getApplicationContext().getBean(PriceListManager.class);
 	private ArrayList<PriceList> listArray;
 	private JFrame myFrame;
 			
@@ -348,7 +349,7 @@ public class ListBrowser extends ModalJFrame  implements ListListener{
 		private static final long serialVersionUID = 1L;
 
 		public ListBrowserModel() {
-			listManager = new PriceListManager();
+			listManager = Context.getApplicationContext().getBean(PriceListManager.class);
 			try {
 				listArray = listManager.getLists();
 			}catch(OHServiceException e){

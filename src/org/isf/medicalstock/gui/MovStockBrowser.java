@@ -80,6 +80,7 @@ import org.isf.utils.jobjects.StockCardDialog;
 import org.isf.utils.jobjects.StockLedgerDialog;
 import org.isf.utils.time.TimeTools;
 import org.isf.ward.model.Ward;
+import org.isf.ward.manager.WardBrowserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -463,7 +464,7 @@ public class MovStockBrowser extends ModalJFrame {
 	}
 
 	private JComboBox getWardBox() {
-		org.isf.ward.manager.WardBrowserManager wbm = new org.isf.ward.manager.WardBrowserManager();
+		WardBrowserManager wbm = Context.getApplicationContext().getBean(WardBrowserManager.class);
 		wardBox = new JComboBox();
 		wardBox.setPreferredSize(new Dimension(130,25));
 		wardBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));

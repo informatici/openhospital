@@ -22,6 +22,7 @@ import java.awt.Insets;
 import javax.swing.JTextField;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.Context;
 import org.isf.opd.model.Opd;
 import org.isf.operation.manager.OperationBrowserManager;
 import org.isf.operation.manager.OperationRowBrowserManager;
@@ -119,8 +120,8 @@ public class OperationRowEdit extends JPanel {
 	public OperationRowEdit(OperationRow opRow) {
 		
 		opeRow = opRow;
-		ope = new OperationBrowserManager();
-		opeManageRow = new OperationRowBrowserManager();
+		ope = Context.getApplicationContext().getBean(OperationBrowserManager.class);
+		opeManageRow = Context.getApplicationContext().getBean(OperationRowBrowserManager.class);
 		setLayout(new BorderLayout(0, 0));
 		
 		JPanel panelHeader = new JPanel();

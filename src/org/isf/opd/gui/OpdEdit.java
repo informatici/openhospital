@@ -159,7 +159,7 @@ public class OpdEdit extends JDialog {
 	 */
 	private DiseaseTypeBrowserManager typeManager = Context.getApplicationContext().getBean(DiseaseTypeBrowserManager.class);
 	private DiseaseBrowserManager diseaseManager = Context.getApplicationContext().getBean(DiseaseBrowserManager.class);
-	private OpdBrowserManager opdManager = new OpdBrowserManager();
+	private OpdBrowserManager opdManager = Context.getApplicationContext().getBean(OpdBrowserManager.class);
 	private ArrayList<DiseaseType> types;
 	private ArrayList<Disease> diseasesAll;
 	

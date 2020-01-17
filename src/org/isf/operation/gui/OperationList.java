@@ -76,7 +76,7 @@ public class OperationList extends JPanel implements OperationRowListener, Opera
 		if (object instanceof Patient) {
 			myPatient = (Patient) object;
 		}
-		opeRowManager = new OperationRowBrowserManager();
+		opeRowManager = Context.getApplicationContext().getBean(OperationRowBrowserManager.class);
 		setLayout(new BorderLayout(0, 0));
 		ico = new javax.swing.ImageIcon("rsc/icons/oh.png").getImage(); //$NON-NLS-1$
 

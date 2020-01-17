@@ -420,7 +420,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 		wardPanel.setLayout(new BoxLayout(wardPanel, BoxLayout.Y_AXIS));
 		wardPanel.setPreferredSize(new Dimension(PANEL_WITDH, 20));
 		if (wardList == null) {
-			WardBrowserManager wbm = new WardBrowserManager();
+			WardBrowserManager wbm = Context.getApplicationContext().getBean(WardBrowserManager.class);
 			ArrayList<Ward> wardWithBeds;
 			try {
 				wardWithBeds = wbm.getWards();

@@ -254,7 +254,7 @@ public class OpdEditExtended extends JDialog implements
 	private ArrayList<DiseaseType> types;
 	private ArrayList<Disease> diseasesOPD;
 	private ArrayList<Disease> diseasesAll;
-	private OpdBrowserManager opdManager = new OpdBrowserManager();
+	private OpdBrowserManager opdManager = Context.getApplicationContext().getBean(OpdBrowserManager.class);
 	private ArrayList<Opd> opdArray = new ArrayList<Opd>();
 	
 	
@@ -1536,7 +1536,7 @@ public class OpdEditExtended extends JDialog implements
 				public void actionPerformed(ActionEvent e) {
 					boolean opdNumExist = false;
 					if(!jOpdNumField.getText().equals("")||!jOpdNumField.getText().contains(" ")) {
-						OpdBrowserManager opm = new OpdBrowserManager();
+						OpdBrowserManager opm = Context.getApplicationContext().getBean(OpdBrowserManager.class);
 						GregorianCalendar gregDate = new GregorianCalendar();
 						gregDate.setTime(OpdDateFieldCal.getDate());
 						int opdNum;

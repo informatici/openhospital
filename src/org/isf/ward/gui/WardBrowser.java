@@ -18,6 +18,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -95,7 +96,7 @@ public class WardBrowser extends ModalJFrame implements WardEdit.WardListener {
 		super();
 		myFrame = this;
 		//check if in the db maternity ward exists
-		WardBrowserManager manager = new WardBrowserManager();
+		WardBrowserManager manager = Context.getApplicationContext().getBean(WardBrowserManager.class);
 		try {
 			manager.maternityControl(true);
 		}catch(OHServiceException e){
@@ -228,7 +229,7 @@ public class WardBrowser extends ModalJFrame implements WardEdit.WardListener {
 								JOptionPane.PLAIN_MESSAGE);				
 						return;							
 					}else {
-						WardBrowserManager wardManager = new WardBrowserManager();
+						WardBrowserManager wardManager = Context.getApplicationContext().getBean(WardBrowserManager.class);
 						Ward ward = (Ward)(((WardBrowserModel) model).getValueAt(table.getSelectedRow(), -1));
 						int n = JOptionPane.showConfirmDialog(
 								WardBrowser.this,
@@ -315,7 +316,7 @@ public class WardBrowser extends ModalJFrame implements WardEdit.WardListener {
 		private static final long serialVersionUID = 1L;
 
 		public WardBrowserModel() {
-			WardBrowserManager manager = new WardBrowserManager();
+			WardBrowserManager manager = Context.getApplicationContext().getBean(WardBrowserManager.class);
 			try {
 				pWard = manager.getWards();
 			}catch(OHServiceException e){

@@ -12,6 +12,7 @@ import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.ward.model.Ward;
+import org.isf.ward.manager.WardBrowserManager;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
@@ -731,7 +732,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 		if (wardBox == null) {
 			wardBox = new JComboBox();
 			wardBox.setPreferredSize(new Dimension(300, 30));
-			org.isf.ward.manager.WardBrowserManager wbm = new org.isf.ward.manager.WardBrowserManager();
+			WardBrowserManager wbm = Context.getApplicationContext().getBean(WardBrowserManager.class);
 			ArrayList<Ward> wardList = null;
                         try {
                             wardList = wbm.getWards();

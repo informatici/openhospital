@@ -41,6 +41,7 @@ import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.DateTextField;
 import org.isf.ward.model.Ward;
+import org.isf.ward.manager.WardBrowserManager;
 
 public class MedicalStockSelection extends JDialog implements ActionListener{
 
@@ -363,7 +364,7 @@ public class MedicalStockSelection extends JDialog implements ActionListener{
 		return movTypeBox;
 	}
 	private JComboBox getWardBox() {
-		org.isf.ward.manager.WardBrowserManager wbm = new org.isf.ward.manager.WardBrowserManager();
+		WardBrowserManager wbm = Context.getApplicationContext().getBean(WardBrowserManager.class);
 		wardBox = new JComboBox();
 		wardBox.addItem("All");
 		ArrayList<Ward> wardList;

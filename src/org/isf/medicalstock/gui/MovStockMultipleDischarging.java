@@ -726,7 +726,7 @@ public class MovStockMultipleDischarging extends JDialog {
 		if (jComboBoxDestination == null) {
 			jComboBoxDestination = new JComboBox();
 			jComboBoxDestination.addItem(""); //$NON-NLS-1$
-			WardBrowserManager wardMan = new WardBrowserManager();
+			WardBrowserManager wardMan = Context.getApplicationContext().getBean(WardBrowserManager.class);
 			ArrayList<Ward> wards;
 			try {
 				wards = wardMan.getWards();

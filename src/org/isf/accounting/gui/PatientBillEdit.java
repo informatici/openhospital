@@ -311,12 +311,12 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	private String currencyCod;
 	
 	//Prices and Lists (ALL)
-	private PriceListManager prcManager = new PriceListManager();
+	private PriceListManager prcManager = Context.getApplicationContext().getBean(PriceListManager.class);
 	private ArrayList<Price> prcArray;
 	private ArrayList<PriceList> lstArray;
 	
 	//PricesOthers (ALL)
-	private PricesOthersManager othManager = new PricesOthersManager();
+	private PricesOthersManager othManager = Context.getApplicationContext().getBean(PricesOthersManager.class);
 	private ArrayList<PricesOthers> othPrices;
 
 	//Items and Payments (ALL)

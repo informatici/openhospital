@@ -39,6 +39,7 @@ import org.isf.admission.model.Admission;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.Context;
 import org.isf.operation.manager.OperationBrowserManager;
 import org.isf.operation.manager.OperationRowBrowserManager;
 import org.isf.operation.model.Operation;
@@ -67,8 +68,8 @@ public class OperationRowAdm extends JPanel implements AdmissionBrowser.Admissio
 	private JComboBox comboResult;
 	private JTextArea textAreaRemark;
 
-	OperationBrowserManager opeManager = new OperationBrowserManager();
-	OperationRowBrowserManager opeRowManager = new OperationRowBrowserManager();
+	OperationBrowserManager opeManager = Context.getApplicationContext().getBean(OperationBrowserManager.class);
+	OperationRowBrowserManager opeRowManager = Context.getApplicationContext().getBean(OperationRowBrowserManager.class);
 	OhTableOperationModel<OperationRow> modelOhOpeRow;
 	private List<OperationRow> oprowData = new ArrayList<OperationRow>();
 	private Admission myAdmission;

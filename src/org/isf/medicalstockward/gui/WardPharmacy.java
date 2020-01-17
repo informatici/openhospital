@@ -982,7 +982,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private JComboBox getJComboBoxWard() {
 		if (jComboBoxWard == null) {
 			jComboBoxWard = new JComboBox();
-			WardBrowserManager wardManager = new WardBrowserManager();
+			WardBrowserManager wardManager = Context.getApplicationContext().getBean(WardBrowserManager.class);
 			try {
 				wardList = wardManager.getWards();
 			}catch(OHServiceException e){

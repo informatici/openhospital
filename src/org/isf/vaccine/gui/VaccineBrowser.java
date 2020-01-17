@@ -19,6 +19,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -152,7 +153,7 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 		if (jSelectionCombo == null) {
 			jSelectionCombo = new JComboBox();
 			jSelectionCombo.setPreferredSize(new Dimension(200, 30));
-			VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
+			VaccineTypeBrowserManager manager = Context.getApplicationContext().getBean(VaccineTypeBrowserManager.class);
 			ArrayList<VaccineType> allVacType = null;
 			try {
 				allVacType = manager.getVaccineType();
@@ -261,7 +262,7 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 								JOptionPane.PLAIN_MESSAGE);
 						return;
 					}else {
-						VaccineBrowserManager manager = new VaccineBrowserManager();
+						VaccineBrowserManager manager = Context.getApplicationContext().getBean(VaccineBrowserManager.class);
 						Vaccine m = (Vaccine)(((VaccineBrowserModel) model).getValueAt(table.getSelectedRow(), -1));
 						int n = JOptionPane.showConfirmDialog(
 								null,
@@ -340,7 +341,7 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 		private static final long serialVersionUID = 1L;
 
 		public VaccineBrowserModel() {
-			VaccineBrowserManager manager = new VaccineBrowserManager();
+			VaccineBrowserManager manager = Context.getApplicationContext().getBean(VaccineBrowserManager.class);
             try {
                 pVaccine  = manager.getVaccine();
             } catch (OHServiceException e) {
@@ -350,7 +351,7 @@ public class VaccineBrowser extends ModalJFrame implements VaccineEdit.VaccineLi
 		
 		
 		public VaccineBrowserModel(String vaccineType) {
-			VaccineBrowserManager manager = new VaccineBrowserManager();
+			VaccineBrowserManager manager = Context.getApplicationContext().getBean(VaccineBrowserManager.class);
             try {
                 pVaccine = manager.getVaccine(vaccineType);
             } catch (OHServiceException e) {

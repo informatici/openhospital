@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.PriceList;
 import org.isf.utils.exception.OHServiceException;
@@ -117,7 +118,7 @@ public class ListEdit extends JDialog {
 					list.setDescription(jTextFieldDescription.getText());
 					list.setCurrency(jTextFieldCurrency.getText());
 					
-					PriceListManager listManager = new PriceListManager();
+					PriceListManager listManager = Context.getApplicationContext().getBean(PriceListManager.class);
 					boolean result = false;
 					try{
 						if (insert) {      // inserting

@@ -141,7 +141,7 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 	private int[] columnsAlignment = { SwingConstants.LEFT, SwingConstants.CENTER, SwingConstants.LEFT, SwingConstants.CENTER, SwingConstants.CENTER, SwingConstants.LEFT, SwingConstants.LEFT, SwingConstants.LEFT };
 	private boolean[] columnsBold = { false, true, false, false, false, false, false, false };
 	private int selectedrow;
-	private OpdBrowserManager manager = new OpdBrowserManager();
+	private OpdBrowserManager manager = Context.getApplicationContext().getBean(OpdBrowserManager.class);
 	private JButton filterButton = null;
 	private String rowCounterText = MessageBundle.getMessage("angal.opd.count") + ": ";
 	private JLabel rowCounter = null;
