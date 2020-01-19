@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -236,7 +237,7 @@ public class VaccineEdit extends JDialog {
 							                        ((VaccineType)vaccineTypeComboBox.getSelectedItem()).getDescription()));
 
                     boolean result = false;
-                    VaccineBrowserManager manager = new VaccineBrowserManager();
+                    VaccineBrowserManager manager = Context.getApplicationContext().getBean(VaccineBrowserManager.class);
                     if (insert) {
                         try {
                             result = manager.newVaccine(vaccine);
@@ -307,7 +308,7 @@ public class VaccineEdit extends JDialog {
 	private JComboBox getvaccineTypeComboBox() {
 		if (vaccineTypeComboBox == null) {
 			vaccineTypeComboBox = new JComboBox();
-			VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
+			VaccineTypeBrowserManager manager = Context.getApplicationContext().getBean(VaccineTypeBrowserManager.class);
 			ArrayList<VaccineType> types = null;
 			try {
 				types = manager.getVaccineType();

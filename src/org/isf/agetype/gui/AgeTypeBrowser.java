@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import org.isf.agetype.manager.AgeTypeBrowserManager;
 import org.isf.agetype.model.AgeType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -111,7 +112,7 @@ public class AgeTypeBrowser extends ModalJFrame {
 					    if(jTable.isEditing()){
                             jTable.getCellEditor().stopCellEditing();
                         }
-						AgeTypeBrowserManager manager = new AgeTypeBrowserManager();
+						AgeTypeBrowserManager manager = Context.getApplicationContext().getBean(AgeTypeBrowserManager.class);
 						try {
 							manager.updateAgeType(pAgeType);
 						}catch(OHServiceException e){
@@ -162,12 +163,12 @@ public class AgeTypeBrowser extends ModalJFrame {
 	class AgeTypeBrowserModel extends DefaultTableModel {
 
 		/**
-	 * 
-	 */
+	     * 
+	     */
 		private static final long serialVersionUID = 1L;
-
+		private AgeTypeBrowserManager manager = Context.getApplicationContext().getBean(AgeTypeBrowserManager.class);
+		
 		public AgeTypeBrowserModel() {
-			AgeTypeBrowserManager manager = new AgeTypeBrowserManager();
 			try {
 				pAgeType = manager.getAgeType();
 			}catch(OHServiceException e){

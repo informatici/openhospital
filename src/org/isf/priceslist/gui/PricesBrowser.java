@@ -25,6 +25,7 @@ import org.isf.exa.model.Exam;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
+import org.isf.menu.manager.Context;
 import org.isf.operation.manager.OperationBrowserManager;
 import org.isf.operation.model.Operation;
 import org.isf.priceslist.manager.PriceListManager;
@@ -66,26 +67,28 @@ public class PricesBrowser extends ModalJFrame {
     private boolean[] columsResizable = {true, false};
 	private int[] columWidth = {400,150};
     
-	private PriceListManager listManager = new PriceListManager();
+	private PriceListManager listManager = Context.getApplicationContext().getBean(PriceListManager.class);
 	private ArrayList<PriceList> listArray;
 	private ArrayList<Price> priceArray;
 	private PriceList listSelected;
 	
 	private PriceNode examNodes;
-	private ExamBrowsingManager examManager = new ExamBrowsingManager();
+	private ExamBrowsingManager examManager = Context.getApplicationContext().getBean(ExamBrowsingManager.class);
     private ArrayList<Exam> examArray;
     
     private PriceNode opeNodes;
-    private OperationBrowserManager operManager = new OperationBrowserManager();
+    private OperationBrowserManager operManager = Context.getApplicationContext().getBean(OperationBrowserManager.class);
     private ArrayList<Operation> operArray;
        
     private PriceNode medNodes;
-    private MedicalBrowsingManager mediManager = new MedicalBrowsingManager();
+    private MedicalBrowsingManager mediManager = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
     private ArrayList<Medical> mediArray;
     
     private PriceNode othNodes;
-    private PricesOthersManager othManager = new PricesOthersManager();
+    private PricesOthersManager othManager = Context.getApplicationContext().getBean(PricesOthersManager.class);
     private ArrayList<PricesOthers> othArray;
+    
+    private PrintManager printManager = Context.getApplicationContext().getBean(PrintManager.class);
 	
 	public PricesBrowser() {
 		try {
@@ -138,7 +141,7 @@ public class PricesBrowser extends ModalJFrame {
 				public void actionPerformed(ActionEvent arg0) {
 					
 					try {
-						new PrintManager("PriceList", listManager.convertPrice(listSelected, priceArray), 0);
+						printManager.print("PriceList", listManager.convertPrice(listSelected, priceArray), 0);
 					} catch (OHServiceException e) {
 						OHServiceExceptionUtil.showMessages(e, PricesBrowser.this);
 					}

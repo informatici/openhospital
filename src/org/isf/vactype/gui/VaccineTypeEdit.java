@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -205,7 +206,7 @@ public class VaccineTypeEdit extends JDialog{
 					vaccineType.setCode(codeTextField.getText());
 					
 					boolean result;
-					VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
+					VaccineTypeBrowserManager manager = Context.getApplicationContext().getBean(VaccineTypeBrowserManager.class);
 					if (insert) {// inserting
 						try {
 							result = manager.newVaccineType(vaccineType);

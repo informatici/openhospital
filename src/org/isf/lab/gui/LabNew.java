@@ -162,16 +162,19 @@ public class LabNew extends JDialog implements SelectionListener {
 	private Laboratory selectedLab = null;
 	private JTextField txtResultValue;
 	
+	//Admission
+	private AdmissionBrowserManager admissionManager = Context.getApplicationContext().getBean(AdmissionBrowserManager.class);
+	
 	//Materials
 	private LabManager labManager = Context.getApplicationContext().getBean(LabManager.class);
 	private ArrayList<String> matList = labManager.getMaterialList();
 	
 	//Exams (ALL)
-	private ExamBrowsingManager exaManager = new ExamBrowsingManager();
+	private ExamBrowsingManager exaManager = Context.getApplicationContext().getBean(ExamBrowsingManager.class);
 	private ArrayList<Exam> exaArray;
 	
 	//Results (ALL)
-	private ExamRowBrowsingManager examRowManager = new ExamRowBrowsingManager();
+	private ExamRowBrowsingManager examRowManager = Context.getApplicationContext().getBean(ExamRowBrowsingManager.class);
 	private ArrayList<ExamRow> exaRowArray;
 	
 	//Arrays for this Patient
@@ -317,10 +320,9 @@ public class LabNew extends JDialog implements SelectionListener {
 	}
 	
 	private String getIsAdmitted() {
-		AdmissionBrowserManager man = new AdmissionBrowserManager();
 		Admission adm = new Admission();
 		try {
-			adm = man.getCurrentAdmission(patientSelected);
+			adm = admissionManager.getCurrentAdmission(patientSelected);
 		}catch(OHServiceException e){
 			OHServiceExceptionUtil.showMessages(e);
 		}

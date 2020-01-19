@@ -21,6 +21,7 @@ import javax.swing.JPasswordField;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
 import org.isf.utils.db.BCrypt;
@@ -38,6 +39,8 @@ public class Login extends JDialog implements ActionListener, KeyListener {
 	private final Logger logger = LoggerFactory.getLogger(Login.class);
 
 	private EventListenerList loginListeners = new EventListenerList();
+
+	private UserBrowsingManager manager = Context.getApplicationContext().getBean(UserBrowsingManager.class);
 
 	public interface LoginListener extends EventListener {
 		public void loginInserted(AWTEvent e);
@@ -166,7 +169,6 @@ public class Login extends JDialog implements ActionListener, KeyListener {
 
 		public LoginPanel(Login myFrame) {
 
-			UserBrowsingManager manager = new UserBrowsingManager();
             try {
                 users = manager.getUser();
             } catch (OHServiceException e1) {

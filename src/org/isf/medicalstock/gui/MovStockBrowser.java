@@ -67,6 +67,7 @@ import org.isf.medstockmovtype.model.MovementType;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.Context;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalStockCard;
 import org.isf.supplier.manager.SupplierBrowserManager;
 import org.isf.supplier.model.Supplier;
@@ -79,6 +80,7 @@ import org.isf.utils.jobjects.StockCardDialog;
 import org.isf.utils.jobjects.StockLedgerDialog;
 import org.isf.utils.time.TimeTools;
 import org.isf.ward.model.Ward;
+import org.isf.ward.manager.WardBrowserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,18 +156,24 @@ public class MovStockBrowser extends ModalJFrame {
     private JTextField searchTextField;
     private JButton searchButton;
 	
-	private SupplierBrowserManager supMan = new SupplierBrowserManager();
 	private HashMap<Integer, String> supMap = new HashMap<Integer, String>();
+
+	private MedicalBrowsingManager medicalManager = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
+	private MedicalTypeBrowserManager medicalTypeBrowserManager = Context.getApplicationContext().getBean(MedicalTypeBrowserManager.class);
+	private MedicaldsrstockmovTypeBrowserManager medicaldsrstockmovTypeBrowserManager = Context.getApplicationContext().getBean(MedicaldsrstockmovTypeBrowserManager.class);
+	private MovBrowserManager movBrowserManager = Context.getApplicationContext().getBean(MovBrowserManager.class);
+	private HospitalBrowsingManager hospitalManager = Context.getApplicationContext().getBean(HospitalBrowsingManager.class);
+	private SupplierBrowserManager supplierBrowserManager = Context.getApplicationContext().getBean(SupplierBrowserManager.class);
 
 	public MovStockBrowser() {
 		myFrame = this;
 		setTitle(MessageBundle.getMessage("angal.medicalstock.stockmovementbrowser"));
 		try {
-			supMap = supMan.getHashMap(true);
+			supMap = supplierBrowserManager.getHashMap(true);
 		} catch (OHServiceException e) {
 			OHServiceExceptionUtil.showMessages(e);
 		}
-		
+
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		Dimension screensize = kit.getScreenSize();
 		final int pfrmBase = 30;
@@ -176,7 +184,7 @@ public class MovStockBrowser extends ModalJFrame {
 				* pfrmHeight / pfrmBase) / 2, screensize.width * pfrmWidth
 				/ pfrmBase, screensize.height * pfrmHeight / pfrmBase);
 		setContentPane(getContentpane());
-		
+
 		//setResizable(false);
 		updateTotals();
 		pack();
@@ -456,7 +464,7 @@ public class MovStockBrowser extends ModalJFrame {
 	}
 
 	private JComboBox getWardBox() {
-		org.isf.ward.manager.WardBrowserManager wbm = new org.isf.ward.manager.WardBrowserManager();
+		WardBrowserManager wbm = Context.getApplicationContext().getBean(WardBrowserManager.class);
 		wardBox = new JComboBox();
 		wardBox.setPreferredSize(new Dimension(130,25));
 		wardBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));
@@ -482,7 +490,6 @@ public class MovStockBrowser extends ModalJFrame {
                 @Override
                 public void actionPerformed(ActionEvent ae) {
                     medicalBox.removeAllItems();
-                    MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
                     ArrayList<Medical> medicals;
                     try {
                             medicals = medicalManager.getMedicals();
@@ -533,7 +540,6 @@ public class MovStockBrowser extends ModalJFrame {
 		medicalBox.setMaximumSize(new Dimension(150, 25));
 		medicalBox.setMinimumSize(new Dimension(150, 25));
 		medicalBox.setPreferredSize(new Dimension(150, 25));
-		MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
 		ArrayList<Medical> medical;
 		try {
 			medical = medicalManager.getMedicals();
@@ -573,13 +579,12 @@ public class MovStockBrowser extends ModalJFrame {
 	private JComboBox getMedicalTypeBox() {
 		medicalTypeBox = new JComboBox();
 		medicalTypeBox.setPreferredSize(new Dimension(130,25));
-		MedicalTypeBrowserManager medicalManager = new MedicalTypeBrowserManager();
 		ArrayList<MedicalType> medical;
 		
 		medicalTypeBox.addItem(MessageBundle.getMessage("angal.medicalstock.all"));
 		
 		try {
-			medical = medicalManager.getMedicalType();
+			medical = medicalTypeBrowserManager.getMedicalType();
 			
 			for (MedicalType aMedicalType : medical) {
 				medicalTypeBox.addItem(aMedicalType);
@@ -614,10 +619,9 @@ public class MovStockBrowser extends ModalJFrame {
 	private JComboBox getMovementTypeBox() {
 		typeBox = new JComboBox();
 		typeBox.setPreferredSize(new Dimension(130,25));
-		MedicaldsrstockmovTypeBrowserManager typeManager = new MedicaldsrstockmovTypeBrowserManager();
 		ArrayList<MovementType> type;
 		try {
-			type = typeManager.getMedicaldsrstockmovType();
+			type = medicaldsrstockmovTypeBrowserManager.getMedicaldsrstockmovType();
 		} catch (OHServiceException e1) {
 			type = null;
 			OHServiceExceptionUtil.showMessages(e1);
@@ -683,7 +687,6 @@ public class MovStockBrowser extends ModalJFrame {
 		if (jTableTotal == null) {
 			jTableTotal = new JTable();
 			
-			HospitalBrowsingManager hospitalManager = new HospitalBrowsingManager();
 			String currencyCod;
 			try {
 				currencyCod = hospitalManager.getHospitalCurrencyCod();
@@ -1146,9 +1149,8 @@ public class MovStockBrowser extends ModalJFrame {
 				GregorianCalendar movTo, GregorianCalendar lotPrepFrom,
 				GregorianCalendar lotPrepTo, GregorianCalendar lotDueFrom,
 				GregorianCalendar lotDueTo) {
-			MovBrowserManager manager = new MovBrowserManager();
 			try {
-				moves = manager.getMovements(medicalCode, medicalType, ward,
+				moves = movBrowserManager.getMovements(medicalCode, medicalType, ward,
 						movType, movFrom, movTo, lotPrepFrom, lotPrepTo,
 						lotDueFrom, lotDueTo);
 			} catch (OHServiceException e) {

@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.utils.exception.OHServiceException;
@@ -140,7 +141,7 @@ public class PricesOthersEdit extends JDialog {
 					pOther.setDischarge(jCheckBoxDischarge.isSelected());
 					pOther.setUndefined(jCheckBoxUndefined.isSelected());
 					
-					PricesOthersManager pOtherManager = new PricesOthersManager();
+					PricesOthersManager pOtherManager = Context.getApplicationContext().getBean(PricesOthersManager.class);
 					boolean result = false;
 					try{
 						if (insert) {      // inserting

@@ -21,6 +21,7 @@ import org.isf.distype.gui.DiseaseTypeBrowserEdit.DiseaseTypeListener;
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
 import org.isf.distype.model.DiseaseType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -52,7 +53,7 @@ public class DiseaseTypeBrowser extends ModalJFrame implements DiseaseTypeListen
 	private JTable jTable = null;
 	private DiseaseTypeBrowserModel model;
 	private int selectedrow;
-	private DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
+	private DiseaseTypeBrowserManager manager = Context.getApplicationContext().getBean(DiseaseTypeBrowserManager.class);
 	private DiseaseType diseaseType = null;
 	private final JFrame myFrame;
 	
@@ -240,13 +241,13 @@ public class DiseaseTypeBrowser extends ModalJFrame implements DiseaseTypeListen
 class DiseaseTypeBrowserModel extends DefaultTableModel {
 		
 		
-		/**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private DiseaseTypeBrowserManager manager = Context.getApplicationContext().getBean(DiseaseTypeBrowserManager.class);
 
 		public DiseaseTypeBrowserModel() {
-			DiseaseTypeBrowserManager manager = new DiseaseTypeBrowserManager();
 			try {
 				pDiseaseType = manager.getDiseaseType();
 			}catch(OHServiceException e){

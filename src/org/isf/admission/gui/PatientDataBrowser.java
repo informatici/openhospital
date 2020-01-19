@@ -30,6 +30,7 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.malnutrition.gui.MalnutritionBrowser;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.Context;
 import org.isf.opd.gui.OpdEdit;
 import org.isf.opd.gui.OpdEditExtended;
 import org.isf.opd.manager.OpdBrowserManager;
@@ -127,6 +128,8 @@ public class PatientDataBrowser extends ModalJFrame implements
 
 	private Patient patient = null;
 	private JFrame admittedPatientWindow = null;
+	
+	private AdmissionBrowserManager admissionManager = Context.getApplicationContext().getBean(AdmissionBrowserManager.class);
 	
 	public PatientDataBrowser(AdmittedPatientBrowser parentWindow,  Patient myPatient) {
 		super();
@@ -377,14 +380,13 @@ public class PatientDataBrowser extends ModalJFrame implements
 						if (selectedObj instanceof Admission) {
 
 							Admission adm = (Admission) sorter.getValueAt(selectedRow, -1);
-							AdmissionBrowserManager abm = new AdmissionBrowserManager();
 
 							int n = JOptionPane.showConfirmDialog(
 									null,
 									MessageBundle.getMessage("angal.admission.deleteselectedadmission"),
 									MessageBundle.getMessage("angal.hospital"),
 									JOptionPane.YES_NO_OPTION);
-							if ((n == JOptionPane.YES_OPTION) && abm.setDeleted(adm.getId())){
+							if ((n == JOptionPane.YES_OPTION) && admissionManager.setDeleted(adm.getId())){
 								admList.remove(adm);
 								admModel.fireTableDataChanged();
 								admTable.updateUI();
@@ -396,7 +398,7 @@ public class PatientDataBrowser extends ModalJFrame implements
 							}
 						} else {
 							Opd opd = (Opd) sorter.getValueAt(selectedRow, -1);
-							OpdBrowserManager delOpd = new OpdBrowserManager();
+							OpdBrowserManager delOpd = Context.getApplicationContext().getBean(OpdBrowserManager.class);
 
 							int n = JOptionPane.showConfirmDialog(
 									null,
@@ -469,12 +471,12 @@ class AdmissionBrowserModel extends DefaultTableModel {
 		 * 
 		 */
 		private static final long serialVersionUID = -453243229156512947L;
+		private AdmissionBrowserManager manager = Context.getApplicationContext().getBean(AdmissionBrowserManager.class);
+		private DiseaseBrowserManager dbm = Context.getApplicationContext().getBean(DiseaseBrowserManager.class);
 
 		public AdmissionBrowserModel() {
-			AdmissionBrowserManager manager = new AdmissionBrowserManager();
-			DiseaseBrowserManager dbm = new DiseaseBrowserManager();
-			WardBrowserManager wbm = new WardBrowserManager();
-			OpdBrowserManager opd = new OpdBrowserManager();
+			WardBrowserManager wbm = Context.getApplicationContext().getBean(WardBrowserManager.class);
+			OpdBrowserManager opd = Context.getApplicationContext().getBean(OpdBrowserManager.class);
 			try {
 				opdList = opd.getOpdList(patient.getCode());
 			}catch(OHServiceException e){

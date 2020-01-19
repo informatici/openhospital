@@ -4,6 +4,7 @@ import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
+import org.isf.menu.manager.Context;
 import org.isf.serviceprinting.print.Medical4Print;
 import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.utils.exception.OHServiceException;
@@ -51,6 +52,10 @@ public class MedicalPrintSelection extends JDialog implements ActionListener{
 	private JCheckBox docWordCheck;
 	private JCheckBox docOpenCheck;
 	private String formatSelected="Java";
+	
+	private PrintManager printManager = Context.getApplicationContext().getBean(PrintManager.class);
+	private MedicalBrowsingManager medicalBrowsingManager = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
+	private MedicalTypeBrowserManager medicalManager = Context.getApplicationContext().getBean(MedicalTypeBrowserManager.class);
 	
 	public MedicalPrintSelection(JFrame owner){
 		super(owner, true);
@@ -149,10 +154,9 @@ public class MedicalPrintSelection extends JDialog implements ActionListener{
 	}
 	private JComboBox getMedicalBox() {
 		medicalBox = new JComboBox();
-		MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
 		ArrayList<Medical> medical;
 		try {
-			medical = medicalManager.getMedicals();
+			medical = medicalBrowsingManager.getMedicals();
 		} catch (OHServiceException e1) {
 			medical = null;
 			JOptionPane.showMessageDialog(null, e1.getMessage());
@@ -183,7 +187,6 @@ public class MedicalPrintSelection extends JDialog implements ActionListener{
 	}
 	private JComboBox getMedicalTypeBox() {
 		medicalTypeBox = new JComboBox();
-		MedicalTypeBrowserManager medicalManager = new MedicalTypeBrowserManager();
 		ArrayList<MedicalType> medical;
 		
 		medicalTypeBox.addItem("All");
@@ -243,7 +246,6 @@ public class MedicalPrintSelection extends JDialog implements ActionListener{
 				if(!(medicalTypeBox.getSelectedItem() instanceof String)){
 					medicalType=((MedicalType)medicalTypeBox.getSelectedItem()).getCode();
 				}
-                MedicalBrowsingManager medicalBrowsingManager= new MedicalBrowsingManager();
 				int format = 0;
 				if(formatSelected.equalsIgnoreCase("Java")){
 					format=PrintManager.toDisplay;
@@ -261,7 +263,7 @@ public class MedicalPrintSelection extends JDialog implements ActionListener{
 
 				pMedicals4Print = convertToPrint(pMedicals);
 				try {
-					new PrintManager("rpt/pharmaceutical.jasper", pMedicals4Print,format);
+					printManager.print("rpt/pharmaceutical.jasper", pMedicals4Print,format);
 				} catch (OHServiceException e1) {
 					JOptionPane.showMessageDialog(MedicalPrintSelection.this, e1.getMessage());
 				}

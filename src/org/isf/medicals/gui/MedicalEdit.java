@@ -23,6 +23,7 @@ import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -106,6 +107,9 @@ public class MedicalEdit extends JDialog {
 	private Medical oldMedical = null;
 	private Medical medical = null;
 	private boolean insert = false;
+
+	private MedicalTypeBrowserManager medicalTypeManager = Context.getApplicationContext().getBean(MedicalTypeBrowserManager.class);
+	private MedicalBrowsingManager medicalBrowsingManager = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
 
 	/**
 	 * 
@@ -243,7 +247,6 @@ public class MedicalEdit extends JDialog {
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					MedicalBrowsingManager manager = new MedicalBrowsingManager();
 					Medical newMedical = null;
 					try {
 						newMedical = (Medical) medical.clone();
@@ -258,7 +261,7 @@ public class MedicalEdit extends JDialog {
 					boolean result = false;
 					if (insert) { // inserting
 						try {
-							result = manager.newMedical(newMedical);
+							result = medicalBrowsingManager.newMedical(newMedical);
 						} catch (OHServiceException e1) {
 							OHServiceExceptionUtil.showMessages(e1, MedicalEdit.this);
 							List<OHExceptionMessage> errors = e1.getMessages();
@@ -270,7 +273,7 @@ public class MedicalEdit extends JDialog {
 
 										if (ok == JOptionPane.OK_OPTION) {
 											try {
-												result = manager.newMedical(newMedical, true);
+												result = medicalBrowsingManager.newMedical(newMedical, true);
 											} catch (OHServiceException e2) {
 												OHServiceExceptionUtil.showMessages(e2);
 											}
@@ -285,7 +288,7 @@ public class MedicalEdit extends JDialog {
 						}
 					} else { // updating
 						try {
-							result = manager.updateMedical(newMedical);
+							result = medicalBrowsingManager.updateMedical(newMedical);
 						} catch (OHServiceException e1) {
 							List<OHExceptionMessage> errors = e1.getMessages();
 
@@ -297,7 +300,7 @@ public class MedicalEdit extends JDialog {
 
 										if (ok == JOptionPane.OK_OPTION) {
 											try {
-												result = manager.updateMedical(newMedical, true);
+												result = medicalBrowsingManager.updateMedical(newMedical, true);
 											} catch (OHServiceException e2) {
 												OHServiceExceptionUtil.showMessages(e2);
 											}
@@ -400,10 +403,9 @@ public class MedicalEdit extends JDialog {
 		if (typeComboBox == null) {
 			typeComboBox = new JComboBox();
 			if (insert) {
-				MedicalTypeBrowserManager manager = new MedicalTypeBrowserManager();
 				ArrayList<MedicalType> types;
 				try {
-					types = manager.getMedicalType();
+					types = medicalTypeManager.getMedicalType();
 					
 					for (MedicalType elem : types) {
 						typeComboBox.addItem(elem);

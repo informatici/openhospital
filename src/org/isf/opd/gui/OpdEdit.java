@@ -33,8 +33,6 @@ import java.util.Date;
 import java.util.EventListener;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -57,6 +55,7 @@ import org.isf.disease.model.Disease;
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
 import org.isf.distype.model.DiseaseType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
@@ -158,9 +157,9 @@ public class OpdEdit extends JDialog {
 	/*
 	 * Managers and Arrays
 	 */
-	private DiseaseTypeBrowserManager typeManager = new DiseaseTypeBrowserManager();
-	private DiseaseBrowserManager diseaseManager = new DiseaseBrowserManager();
-	private OpdBrowserManager opdManager = new OpdBrowserManager();
+	private DiseaseTypeBrowserManager typeManager = Context.getApplicationContext().getBean(DiseaseTypeBrowserManager.class);
+	private DiseaseBrowserManager diseaseManager = Context.getApplicationContext().getBean(DiseaseBrowserManager.class);
+	private OpdBrowserManager opdManager = Context.getApplicationContext().getBean(OpdBrowserManager.class);
 	private ArrayList<DiseaseType> types;
 	private ArrayList<Disease> diseasesAll;
 	
@@ -348,9 +347,8 @@ public class OpdEdit extends JDialog {
 		}
 		Disease elem2=null;
 		ArrayList<Disease> diseases = null;
-		DiseaseBrowserManager manager = new DiseaseBrowserManager();
 		try {
-			diseases = manager.getDiseaseOpd();
+			diseases = diseaseManager.getDiseaseOpd();
 		}catch(OHServiceException e){
 			OHServiceExceptionUtil.showMessages(e);
 		}
@@ -389,9 +387,8 @@ public class OpdEdit extends JDialog {
 		}
 		Disease elem2=null;
 		ArrayList<Disease> diseases = null;
-		DiseaseBrowserManager manager = new DiseaseBrowserManager();
 		try {
-			diseases = manager.getDiseaseOpd();
+			diseases = diseaseManager.getDiseaseOpd();
 		}catch(OHServiceException e){
 			OHServiceExceptionUtil.showMessages(e);
 		}

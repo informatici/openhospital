@@ -130,9 +130,10 @@ public class TherapyEdit extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private MedicalBrowsingManager medBrowser = new MedicalBrowsingManager();
+	private MedicalBrowsingManager medBrowser = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
 	private TherapyManager thManager = Context.getApplicationContext().getBean(TherapyManager.class);
 	private VisitManager vstManager = Context.getApplicationContext().getBean(VisitManager.class);
+	private PatientBrowserManager patientBrowserManager = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 	private ArrayList<Medical> medArray;
 	private ArrayList<Double> qtyArray = new ArrayList<Double>();
 	private ArrayList<Therapy> therapies = new ArrayList<Therapy>();
@@ -547,9 +548,8 @@ public class TherapyEdit extends JDialog {
 									MessageBundle.getMessage("angal.therapy.telephonenumberfor") + " " + patient.getName());
 							if (number != null) {
 								patient.setTelephone(number);
-								PatientBrowserManager patManager = new PatientBrowserManager();
 								try{
-									patManager.updatePatient(patient);
+									patientBrowserManager.updatePatient(patient);
 								}catch(OHServiceException ex){
 									OHServiceExceptionUtil.showMessages(ex);
 								}

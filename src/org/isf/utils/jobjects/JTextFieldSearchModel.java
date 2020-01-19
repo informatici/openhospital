@@ -30,6 +30,7 @@ import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.TextPrompt.Show;
@@ -50,7 +51,9 @@ public class JTextFieldSearchModel extends JPanel {
 	private Object selectedObject;
 	private HashMap<String, Medical> medicalMap;
 	private JDialog owner;
-	
+
+	private MedicalBrowsingManager medMan = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
+
 	/**
 	 * Creates a Dialog containing a JTextField 
 	 * with search capabilities over a certain model class
@@ -70,7 +73,6 @@ public class JTextFieldSearchModel extends JPanel {
 	}
 
 	private void initializeMedical() {
-		MedicalBrowsingManager medMan = new MedicalBrowsingManager();
 		ArrayList<Medical> medicals = null;
 		medicalMap = new HashMap<String, Medical>();
 		try {

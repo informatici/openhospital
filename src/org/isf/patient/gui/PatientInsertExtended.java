@@ -21,7 +21,6 @@ import java.util.EventListener;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -44,6 +43,7 @@ import org.isf.agetype.model.AgeType;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.generaldata.SmsParameters;
+import org.isf.menu.manager.Context;
 import org.isf.patient.gui.PatientInsertExtended.PatientListener;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
@@ -121,8 +121,8 @@ public class PatientInsertExtended extends JDialog {
 	private boolean insert;
 	private boolean justSave;
 	final private Patient patient;
-	private PatientBrowserManager manager = new PatientBrowserManager();
-
+	private PatientBrowserManager patientManager = Context.getApplicationContext().getBean(PatientBrowserManager.class);
+	
 	// COMPONENTS: Data
 	private JPanel jDataPanel = null;
 
@@ -153,6 +153,7 @@ public class PatientInsertExtended extends JDialog {
 	private JRadioButton jAgeType_Age = null;
 	private JRadioButton jAgeType_BirthDate = null;
 	private JRadioButton jAgeType_Description = null;
+	private AgeTypeBrowserManager ageTypeManager = Context.getApplicationContext().getBean(AgeTypeBrowserManager.class);
 
 	// Age Components:
 	private JPanel jAge = null;
@@ -410,7 +411,7 @@ public class PatientInsertExtended extends JDialog {
 					if (insert) {
 						String name = firstName + " " + secondName;
 						try{
-							if (manager.isPatientPresent(name)) {
+							if (patientManager.isPatientPresent(name)) {
 								switch (JOptionPane.showConfirmDialog(null,
 										MessageBundle.getMessage("angal.patient.thepatientisalreadypresent") + ". /n" + MessageBundle.getMessage("angal.patient.doyouwanttocontinue") + "?",
 										MessageBundle.getMessage("angal.patient.select"), JOptionPane.YES_NO_OPTION)) {
@@ -491,7 +492,7 @@ public class PatientInsertExtended extends JDialog {
 //							}
 
 							try{
-								result = manager.newPatient(patient);
+								result = patientManager.newPatient(patient);
 							}catch(OHServiceException ex){
 								OHServiceExceptionUtil.showMessages(ex);
 							}
@@ -581,7 +582,7 @@ public class PatientInsertExtended extends JDialog {
 //						}
 
 						try{
-							result = manager.updatePatient(patient);
+							result = patientManager.updatePatient(patient);
 						}catch(OHServiceException ex){
                             OHServiceExceptionUtil.showMessages(ex);
 						}
@@ -635,13 +636,12 @@ public class PatientInsertExtended extends JDialog {
 				calcAge(bdate);
 			}
 		} else if (jAgeType_Description.isSelected()) {
-			AgeTypeBrowserManager at = new AgeTypeBrowserManager();
 			int index = jAgeDescComboBox.getSelectedIndex();
 			AgeType ageType = null;
 			
 			if (index > 0) {
 				try {
-					ageType = at.getTypeByCode(index);
+					ageType = ageTypeManager.getTypeByCode(index);
 				}catch(OHServiceException e){
                     OHServiceExceptionUtil.showMessages(e);
 				}
@@ -1440,10 +1440,9 @@ public class PatientInsertExtended extends JDialog {
 
 			jAgeDescComboBox = new JComboBox();
 
-			AgeTypeBrowserManager at = new AgeTypeBrowserManager();
 			ArrayList<AgeType> ageList;
 			try {
-				ageList = at.getAgeType();
+				ageList = ageTypeManager.getAgeType();
 			}catch(OHServiceException e){
 				ageList = new ArrayList<AgeType>();
                 OHServiceExceptionUtil.showMessages(e);

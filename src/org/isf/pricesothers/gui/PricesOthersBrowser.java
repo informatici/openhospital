@@ -17,6 +17,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.pricesothers.gui.PricesOthersEdit.PricesOthersListener;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
@@ -56,7 +57,7 @@ public class PricesOthersBrowser extends ModalJFrame implements PricesOthersList
 	static protected Class<?>[] cTypes = {String.class, String.class, Boolean.class, Boolean.class, Boolean.class, Boolean.class, Boolean.class};
 	
 	private PricesOthers pOthers;
-	PricesOthersManager pOthersManager = new PricesOthersManager();
+	PricesOthersManager pOthersManager = Context.getApplicationContext().getBean(PricesOthersManager.class);
 	private ArrayList<PricesOthers> pOthersArray;
 	private JFrame myFrame;
 	
@@ -235,7 +236,7 @@ class PricesOthersBrowserModel extends DefaultTableModel {
 	private static final long serialVersionUID = 1L;
 
 		public PricesOthersBrowserModel() {
-			pOthersManager = new PricesOthersManager();
+			pOthersManager = Context.getApplicationContext().getBean(PricesOthersManager.class);
 			try {
 				pOthersArray = pOthersManager.getOthers();
 			}catch(OHServiceException e){

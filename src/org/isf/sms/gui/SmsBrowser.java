@@ -33,6 +33,7 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.PropertyConfigurator;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.sms.manager.SmsManager;
 import org.isf.sms.model.Sms;
 import org.isf.utils.exception.OHServiceException;
@@ -66,7 +67,7 @@ public class SmsBrowser extends ModalJFrame {
 	private int width;
 	private int eight;
 
-	private SmsManager smsManager = new SmsManager();
+	private SmsManager smsManager = Context.getApplicationContext().getBean(SmsManager.class);
 	private List<Sms> smsList = null;
 	
 	private final DateTime dateTimeAtStartOfToday = new DateTime(new DateMidnight());  

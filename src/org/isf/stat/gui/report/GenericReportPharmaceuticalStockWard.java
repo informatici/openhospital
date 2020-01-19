@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
 import org.isf.ward.model.Ward;
@@ -23,10 +24,10 @@ import net.sf.jasperreports.view.JasperViewer;
 public class GenericReportPharmaceuticalStockWard {
 	
 	private final Logger logger = LoggerFactory.getLogger(GenericReportPharmaceuticalStockWard.class);
+    private JasperReportsManager jasperReportsManager = Context.getApplicationContext().getBean(JasperReportsManager.class);
 
 	public GenericReportPharmaceuticalStockWard(Date date, String jasperFileName, Ward ward) {
 		try{
-            JasperReportsManager jasperReportsManager = new JasperReportsManager();
             JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportPharmaceuticalStockWardPdf(date, jasperFileName, ward);
             if (GeneralData.INTERNALVIEWER)
                 JasperViewer.viewReport(jasperReportResultDto.getJasperPrint(),false);

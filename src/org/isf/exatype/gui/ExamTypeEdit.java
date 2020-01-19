@@ -26,6 +26,7 @@ import javax.swing.event.EventListenerList;
 import org.isf.exatype.manager.ExamTypeBrowserManager;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -202,7 +203,7 @@ public class ExamTypeEdit extends JDialog{
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					ExamTypeBrowserManager manager = new ExamTypeBrowserManager();
+					ExamTypeBrowserManager manager = Context.getApplicationContext().getBean(ExamTypeBrowserManager.class);
 					try{
 						examType.setDescription(descriptionTextField.getText());
 						examType.setCode(codeTextField.getText());

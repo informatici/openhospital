@@ -98,7 +98,8 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 	private int[] pColumwidth = { 100, 200, 200, 200 };
 	private int[] maxWidth = {150, 200, 200, 200};
 	private boolean[] columnsVisible = { true, GeneralData.LABEXTENDED, true, true};
-	private LabManager manager;
+	private LabManager labManager = Context.getApplicationContext().getBean(LabManager.class);
+	private PrintManager printManager = Context.getApplicationContext().getBean(PrintManager.class);
 	private LabBrowsingModel model;
 	private Laboratory laboratory;
 	private int selectedrow;
@@ -117,7 +118,6 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 	public LabBrowser() {
 		super();
 		myFrame = this;
-		manager = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
 		initialize();
 		setResizable(false);
 		setVisible(true);
@@ -193,9 +193,10 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 					
 					try {
 						ArrayList<LaboratoryForPrint> labs;
-						labs = manager.getLaboratoryForPrint(typeSelected, dateFrom.getDate(), dateTo.getDate());
+						labs = labManager.getLaboratoryForPrint(typeSelected, dateFrom.getDate(), dateTo.getDate());
 						if (!labs.isEmpty()) {
-							new PrintManager("Laboratory",labs,0);
+							
+							printManager.print("Laboratory",labs,0);
 						}
 					} catch (OHServiceException e) {
 						OHServiceExceptionUtil.showMessages(e);
@@ -302,7 +303,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 							boolean deleted;
 							
 							try {
-								deleted = manager.deleteLaboratory(lab);
+								deleted = labManager.deleteLaboratory(lab);
 							} catch (OHServiceException e) {
 								deleted = false;
 								OHServiceExceptionUtil.showMessages(e);
@@ -406,7 +407,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 	 * @return comboExams (JComboBox)
 	 */
 	private JComboBox getComboExams() {
-		ExamBrowsingManager managerExams = new ExamBrowsingManager();
+		ExamBrowsingManager managerExams = Context.getApplicationContext().getBean(ExamBrowsingManager.class);
 		if (comboExams == null) {
 			comboExams = new JComboBox();
 			comboExams.setPreferredSize(new Dimension(200, 30));
@@ -528,7 +529,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private LabManager manager = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
+		private LabManager manager = Context.getApplicationContext().getBean(LabManager.class,Context.getApplicationContext().getBean(LabIoOperations.class));
 
 		public LabBrowsingModel(String exam, GregorianCalendar dateFrom, GregorianCalendar dateTo) {
 			try {

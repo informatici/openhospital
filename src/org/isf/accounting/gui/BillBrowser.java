@@ -182,7 +182,7 @@ public class BillBrowser extends ModalJFrame implements PatientBillListener {
 	
 	public BillBrowser() {
 		try {
-			this.currencyCod = new HospitalBrowsingManager().getHospitalCurrencyCod();
+			this.currencyCod = Context.getApplicationContext().getBean(HospitalBrowsingManager.class).getHospitalCurrencyCod();
 		} catch (OHServiceException e1) {
 			this.currencyCod = null;
 			if(e1.getMessages() != null){

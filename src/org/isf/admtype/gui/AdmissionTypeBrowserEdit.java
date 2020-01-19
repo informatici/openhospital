@@ -18,6 +18,7 @@ import javax.swing.event.EventListenerList;
 import org.isf.admtype.manager.AdmissionTypeBrowserManager;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -191,7 +192,7 @@ public class AdmissionTypeBrowserEdit extends JDialog{
 			okButton.setMnemonic(KeyEvent.VK_O);
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					AdmissionTypeBrowserManager manager = new AdmissionTypeBrowserManager();
+					AdmissionTypeBrowserManager manager = Context.getApplicationContext().getBean(AdmissionTypeBrowserManager.class);
 
 					if (descriptionTextField.getText().equals(lastdescription)){
 						dispose();	

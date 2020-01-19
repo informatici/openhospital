@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
 import org.slf4j.Logger;
@@ -20,10 +21,10 @@ import net.sf.jasperreports.view.JasperViewer;
 public class GenericReportPatient {
 
     private final Logger logger = LoggerFactory.getLogger(GenericReportPatient.class);
+	private JasperReportsManager jasperReportsManager = Context.getApplicationContext().getBean(JasperReportsManager.class);
 
 	public GenericReportPatient(Integer patientID, String jasperFileName) {
 		try{
-            JasperReportsManager jasperReportsManager = new JasperReportsManager();
             JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportPatientPdf(patientID, jasperFileName);
 			if (GeneralData.INTERNALVIEWER)
 				JasperViewer.viewReport(jasperReportResultDto.getJasperPrint(),false);

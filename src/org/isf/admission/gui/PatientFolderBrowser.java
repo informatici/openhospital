@@ -10,14 +10,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventListener;
 import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -48,7 +45,6 @@ import org.isf.menu.manager.Context;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.operation.gui.OperationList;
-import org.isf.operation.model.OperationRow;
 import org.isf.patient.gui.PatientInsert;
 import org.isf.patient.gui.PatientInsertExtended;
 import org.isf.patient.gui.PatientSummary;
@@ -184,23 +180,23 @@ public class PatientFolderBrowser extends ModalJFrame implements
 	private ArrayList<Opd> opdList;
 	
         private OperationList opeList;
-	private List<OperationRow> operationList;
+//	private List<OperationRow> operationList;
         
 	private String[] pColums = {
-			MessageBundle.getMessage("angal.common.datem"),
-			MessageBundle.getMessage("angal.admission.wards"),
-			MessageBundle.getMessage("angal.admission.diagnosisinm"),
-			MessageBundle.getMessage("angal.admission.diagnosisoutm"),
-			MessageBundle.getMessage("angal.admission.statusm")
-	}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			MessageBundle.getMessage("angal.common.datem"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.admission.wards"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.admission.diagnosisinm"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.admission.diagnosisoutm"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.admission.statusm") //$NON-NLS-1$
+	};
 	private int[] pColumwidth = {120, 150, 200, 200, 120 };
 	
 	private String[] plColums = {
-			MessageBundle.getMessage("angal.common.datem"),
-			MessageBundle.getMessage("angal.lab.examm"),
-			MessageBundle.getMessage("angal.common.codem"),
-			MessageBundle.getMessage("angal.lab.resultm")
-	}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			MessageBundle.getMessage("angal.common.datem"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.lab.examm"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.common.codem"), //$NON-NLS-1$
+			MessageBundle.getMessage("angal.lab.resultm") //$NON-NLS-1$
+	};
 	private int[] plColumwidth = { 150, 200, 50, 200 };
 
 	private DefaultTableModel admModel;
@@ -240,7 +236,6 @@ public class PatientFolderBrowser extends ModalJFrame implements
 		admTable.addMouseMotionListener(new MouseMotionListener() {			
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				// TODO Auto-generated method stub
 				JTable aTable =  (JTable)e.getSource();
 		        int itsRow = aTable.rowAtPoint(e.getPoint());
 		        if(itsRow>=0){
@@ -253,10 +248,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 			}
 			
 			@Override
-			public void mouseDragged(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void mouseDragged(MouseEvent e) {}
 		});
 		admTable.addMouseListener(new MouseAdapter() {
 			@Override
@@ -298,7 +290,6 @@ public class PatientFolderBrowser extends ModalJFrame implements
                 labTable.addMouseMotionListener(new MouseMotionListener() {	
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				// TODO Auto-generated method stub
 				JTable aTable =  (JTable)e.getSource();
 		        int itsRow = aTable.rowAtPoint(e.getPoint());
 		        if(itsRow>=0){
@@ -311,10 +302,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 			}
 			
 			@Override
-			public void mouseDragged(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void mouseDragged(MouseEvent e) {}
 		});
                 labTable.addMouseListener(new MouseAdapter() {
 			@Override
@@ -586,12 +574,13 @@ public class PatientFolderBrowser extends ModalJFrame implements
 		 * 
 		 */
 		private static final long serialVersionUID = -453243229156512947L;
+		private AdmissionBrowserManager manager = Context.getApplicationContext().getBean(AdmissionBrowserManager.class);
+		private DiseaseBrowserManager dbm = Context.getApplicationContext().getBean(DiseaseBrowserManager.class);
 
 		public AdmissionBrowserModel() {
-			AdmissionBrowserManager manager = new AdmissionBrowserManager();
-			DiseaseBrowserManager dbm = new DiseaseBrowserManager();
-			WardBrowserManager wbm = new WardBrowserManager();
-			OpdBrowserManager opd = new OpdBrowserManager();
+			
+			WardBrowserManager wbm = Context.getApplicationContext().getBean(WardBrowserManager.class);
+			OpdBrowserManager opd = Context.getApplicationContext().getBean(OpdBrowserManager.class);
 			try {
 				admList = manager.getAdmissions(patient);
 			}catch(OHServiceException e){
@@ -744,7 +733,7 @@ public class PatientFolderBrowser extends ModalJFrame implements
 		private static final long serialVersionUID = -8245833681073162426L;
 
 		public LabBrowserModel() {
-			LabManager lbm = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
+			LabManager lbm = Context.getApplicationContext().getBean(LabManager.class,Context.getApplicationContext().getBean(LabIoOperations.class));
 			try {
 				labList = lbm.getLaboratory(patient);
 			} catch (OHServiceException e) {

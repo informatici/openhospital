@@ -21,6 +21,7 @@ import org.isf.disctype.gui.DischargeTypeBrowserEdit.DischargeTypeListener;
 import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.model.DischargeType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -53,7 +54,7 @@ public class DischargeTypeBrowser extends ModalJFrame implements DischargeTypeLi
 	private JTable jTable = null;
 	private DischargeTypeBrowserModel model;
 	private int selectedrow;
-	private DischargeTypeBrowserManager manager = new DischargeTypeBrowserManager();
+	private DischargeTypeBrowserManager manager = Context.getApplicationContext().getBean(DischargeTypeBrowserManager.class);
 	private DischargeType dischargeType = null;
 	private final JFrame myFrame;
 	
@@ -240,13 +241,13 @@ public class DischargeTypeBrowser extends ModalJFrame implements DischargeTypeLi
 class DischargeTypeBrowserModel extends DefaultTableModel {
 		
 		
-		/**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private DischargeTypeBrowserManager manager = Context.getApplicationContext().getBean(DischargeTypeBrowserManager.class);
 
 		public DischargeTypeBrowserModel() {
-			DischargeTypeBrowserManager manager = new DischargeTypeBrowserManager();
 			try {
 				pDischargeType = manager.getDischargeType();
 			} catch (OHServiceException e) {

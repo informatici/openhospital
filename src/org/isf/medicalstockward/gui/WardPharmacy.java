@@ -61,6 +61,7 @@ import org.isf.medstockmovtype.model.MovementType;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.model.MedicalType;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.Context;
 import org.isf.patient.model.Patient;
 import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalStockCard;
@@ -196,14 +197,17 @@ public class WardPharmacy extends ModalJFrame implements
 	/*
 	 * Managers and datas
 	 */
-	private MovBrowserManager movManager = new MovBrowserManager();
+	private MovBrowserManager movManager = Context.getApplicationContext().getBean(MovBrowserManager.class);
+	private PrintManager printManager = Context.getApplicationContext().getBean(PrintManager.class);
 	private ArrayList<Movement> listMovementCentral = new ArrayList<Movement>();
-	private MovWardBrowserManager wardManager = new MovWardBrowserManager();
+	private MovWardBrowserManager wardManager = Context.getApplicationContext().getBean(MovWardBrowserManager.class);
+	private MedicalTypeBrowserManager medicalTypeBrowserManager = Context.getApplicationContext().getBean(MedicalTypeBrowserManager.class);
+	private MedicalBrowsingManager medicalManager = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
 	private ArrayList<MovementWard> listMovementWardFromTo = new ArrayList<MovementWard>();
 	private ArrayList<MedicalWard> wardDrugs;
 	private ArrayList<MovementWard> wardOutcomes;
 	private ArrayList<Movement> wardIncomes;
-
+	
 	//private static final String PREFERRED_LOOK_AND_FEEL = "javax.swing.plaf.metal.MetalLookAndFeel"; //$NON-NLS-1$
 
         /*
@@ -796,13 +800,12 @@ public class WardPharmacy extends ModalJFrame implements
 			jComboBoxTypes = new JComboBox();
 			jComboBoxTypes.setMaximumSize(new Dimension(filterWidth, 24));
 			jComboBoxTypes.setPreferredSize(new Dimension(filterWidth, 24));
-			MedicalTypeBrowserManager medicalManager = new MedicalTypeBrowserManager();
 			ArrayList<MedicalType> medicalTypes;
 			
 			jComboBoxTypes.addItem(MessageBundle.getMessage("angal.medicalstockward.alltypes")); //$NON-NLS-1$
 			
 			try {
-				medicalTypes = medicalManager.getMedicalType();
+				medicalTypes = medicalTypeBrowserManager.getMedicalType();
 				
 				for (MedicalType aMedicalType : medicalTypes) {
 					jComboBoxTypes.addItem(aMedicalType);
@@ -831,7 +834,6 @@ public class WardPharmacy extends ModalJFrame implements
                 @Override
                 public void actionPerformed(ActionEvent ae) {
                     jComboBoxMedicals.removeAllItems();
-                    MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
                     ArrayList<Medical> medicals;
                     try {
                             medicals = medicalManager.getMedicals();
@@ -893,7 +895,6 @@ public class WardPharmacy extends ModalJFrame implements
 			jComboBoxMedicals.setMaximumSize(new Dimension(filterWidth, 24));
 			jComboBoxMedicals.setPreferredSize(new Dimension(filterWidth, 24));
 		}
-		MedicalBrowsingManager medicalManager = new MedicalBrowsingManager();
 		ArrayList<Medical> medicals;
 		try {
 			medicals = medicalManager.getMedicals();
@@ -984,7 +985,7 @@ public class WardPharmacy extends ModalJFrame implements
 	private JComboBox getJComboBoxWard() {
 		if (jComboBoxWard == null) {
 			jComboBoxWard = new JComboBox();
-			WardBrowserManager wardManager = new WardBrowserManager();
+			WardBrowserManager wardManager = Context.getApplicationContext().getBean(WardBrowserManager.class);
 			try {
 				wardList = wardManager.getWards();
 			}catch(OHServiceException e){
@@ -1383,7 +1384,7 @@ public class WardPharmacy extends ModalJFrame implements
 					if (jTabbedPaneWard.getSelectedIndex() == 0) 
 					{
 						try {
-							new PrintManager("WardPharmacyOutcomes", wardManager.convertMovementWardForPrint(wardOutcomes), 0); //$NON-NLS-1$
+							printManager.print("WardPharmacyOutcomes", wardManager.convertMovementWardForPrint(wardOutcomes), 0); //$NON-NLS-1$
 						} catch (OHServiceException e) {
 							OHServiceExceptionUtil.showMessages(e, WardPharmacy.this);
 							return;
@@ -1392,7 +1393,7 @@ public class WardPharmacy extends ModalJFrame implements
 					else if (jTabbedPaneWard.getSelectedIndex() == 1) 
 					{
 						try {
-							new PrintManager("WardPharmacyIncomes", wardManager.convertMovementForPrint(wardIncomes), 0); //$NON-NLS-1$
+							printManager.print("WardPharmacyIncomes", wardManager.convertMovementForPrint(wardIncomes), 0); //$NON-NLS-1$
 						} catch (OHServiceException e) {
 							OHServiceExceptionUtil.showMessages(e, WardPharmacy.this);
 							return;

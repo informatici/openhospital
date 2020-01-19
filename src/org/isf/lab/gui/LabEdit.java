@@ -141,6 +141,8 @@ public class LabEdit extends JDialog {
 	private static final Integer dataPanelHeight=150; 
 	private static final Integer resultPanelHeight=350; 
 	private static final Integer buttonPanelHeight=40; 
+	
+	private ExamRowBrowsingManager rowManager = Context.getApplicationContext().getBean(ExamRowBrowsingManager.class);
 
 	
 	private ArrayList<ExamRow> eRows = null;
@@ -318,7 +320,7 @@ public class LabEdit extends JDialog {
 		if (patientComboBox == null) {
 			patientComboBox = new JComboBox();
 			patSelected=null;
-			PatientBrowserManager patBrowser = new PatientBrowserManager();
+			PatientBrowserManager patBrowser = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 			ArrayList<Patient> pat = null;
 			try {
 				pat = patBrowser.getPatient();
@@ -342,7 +344,7 @@ public class LabEdit extends JDialog {
 			patientComboBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					if (patientComboBox.getSelectedIndex()>0) {
-						AdmissionBrowserManager admMan = new AdmissionBrowserManager();
+						AdmissionBrowserManager admMan = Context.getApplicationContext().getBean(AdmissionBrowserManager.class);
 						patSelected = (Patient)patientComboBox.getSelectedItem();
 						patTextField.setText(patSelected.getName());
 						ageTextField.setText(patSelected.getAge()+"");
@@ -375,7 +377,7 @@ public class LabEdit extends JDialog {
 		if (examComboBox == null) {
 			examComboBox = new JComboBox();
 			Exam examSel=null;
-			ExamBrowsingManager manager = new ExamBrowsingManager();
+			ExamBrowsingManager manager = Context.getApplicationContext().getBean(ExamBrowsingManager.class);
 			ArrayList<Exam> exams;
 			try {
 				exams = manager.getExams();
@@ -423,7 +425,7 @@ public class LabEdit extends JDialog {
 		if (matComboBox == null) {
 			matComboBox = new JComboBox();
 			matComboBox.addItem("");
-			LabManager labMan = new LabManager();
+			LabManager labMan = Context.getApplicationContext().getBean(LabManager.class);
 			for (String elem : labMan.getMaterialList()) {
 				matComboBox.addItem(elem);
 				if (!insert) {
@@ -549,7 +551,7 @@ public class LabEdit extends JDialog {
 							}
 						}
 					}
-					LabManager manager = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
+					LabManager manager = Context.getApplicationContext().getBean(LabManager.class,Context.getApplicationContext().getBean(LabIoOperations.class));
 					boolean result = false;
 					if (insert) {
 						lab.setAge(tmpAge);
@@ -594,7 +596,6 @@ public class LabEdit extends JDialog {
 		}
 		examRowComboBox.addItem(result);
 
-		ExamRowBrowsingManager rowManager = new ExamRowBrowsingManager();
 		ArrayList<ExamRow> rows;
 		try {
 			rows = rowManager.getExamRowByExamCode(examSelected.getCode());
@@ -617,10 +618,9 @@ public class LabEdit extends JDialog {
 		resultPanel.removeAll();
 		resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.Y_AXIS));
 		String examId = examSelected.getCode();
-		ExamRowBrowsingManager eRowManager = new ExamRowBrowsingManager();
 		eRows = null;
 		try {
-			eRows = eRowManager.getExamRowByExamCode(examId);
+			eRows = rowManager.getExamRowByExamCode(examId);
 		} catch (OHServiceException e1) {
 			OHServiceExceptionUtil.showMessages(e1);
 		}

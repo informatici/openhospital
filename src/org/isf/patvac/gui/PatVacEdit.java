@@ -32,6 +32,7 @@ import javax.swing.JTextField;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.patvac.manager.PatVacManager;
@@ -110,7 +111,7 @@ public class PatVacEdit extends JDialog {
 	}
 
 	private int getPatientVaccineYMaxProg() {
-		PatVacManager manager = new PatVacManager();
+		PatVacManager manager = Context.getApplicationContext().getBean(PatVacManager.class);
 		try {
 			return manager.getProgYear(0);
 		} catch (OHServiceException e) {
@@ -357,7 +358,7 @@ public class PatVacEdit extends JDialog {
 			vaccineTypeComboBox.setPreferredSize(new Dimension(200, 30));
 			vaccineTypeComboBox.addItem(new VaccineType("", MessageBundle.getMessage("angal.patvac.allvaccinetype")));
 
-			VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
+			VaccineTypeBrowserManager manager = Context.getApplicationContext().getBean(VaccineTypeBrowserManager.class);
 			ArrayList<VaccineType> types = null;
 			try {
 				types = manager.getVaccineType();
@@ -401,7 +402,7 @@ public class PatVacEdit extends JDialog {
 			vaccineComboBox = new JComboBox();
 			vaccineComboBox.setPreferredSize(new Dimension(200, 30));
 		}
-		VaccineBrowserManager manager = new VaccineBrowserManager();
+		VaccineBrowserManager manager = Context.getApplicationContext().getBean(VaccineBrowserManager.class);
 
 		ArrayList<Vaccine> allVac = null;
 		vaccineComboBox.addItem(new Vaccine("", MessageBundle.getMessage("angal.patvac.allvaccine"), new VaccineType("", "")));
@@ -507,7 +508,7 @@ public class PatVacEdit extends JDialog {
 	private JComboBox getPatientComboBox(String regExp) {
 
 		Patient patSelected = null;
-		PatientBrowserManager patBrowser = new PatientBrowserManager();
+		PatientBrowserManager patBrowser = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 
 		if (GeneralData.ENHANCEDSEARCH){
 			try {
@@ -696,7 +697,7 @@ public class PatVacEdit extends JDialog {
 					patVac.setPatSex(selectedPatient.getSex());
 
 					boolean result;
-					PatVacManager manager = new PatVacManager();
+					PatVacManager manager = Context.getApplicationContext().getBean(PatVacManager.class);
 					// handling db insert/update
 					if (insert) {
 						patVac.setPatAge(selectedPatient.getAge());

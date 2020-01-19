@@ -18,6 +18,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.supplier.manager.SupplierBrowserManager;
 import org.isf.supplier.model.Supplier;
 import org.isf.utils.exception.OHServiceException;
@@ -83,6 +84,8 @@ public class SupplierBrowser extends ModalJFrame implements SupplierEdit.Supplie
 	private List<Supplier> pSupplier;
 	private Supplier supplier;
 	private final JFrame myFrame;
+
+	private SupplierBrowserManager supplierBrowserManager = Context.getApplicationContext().getBean(SupplierBrowserManager.class);
 	
 	/**
 	 * This is the default constructor
@@ -217,7 +220,6 @@ public class SupplierBrowser extends ModalJFrame implements SupplierEdit.Supplie
 								JOptionPane.PLAIN_MESSAGE);				
 						return;							
 					}else {
-                        SupplierBrowserManager supManager = new SupplierBrowserManager();
 						Supplier m = (Supplier)(((SupplierBrowserModel) model).getValueAt(table.getSelectedRow(), -1));
 						if (m.getSupDeleted().equals('Y')) return;
 						int n = JOptionPane.showConfirmDialog(
@@ -229,7 +231,7 @@ public class SupplierBrowser extends ModalJFrame implements SupplierEdit.Supplie
 						if (n == JOptionPane.YES_OPTION) {
 							m.setSupDeleted('Y');
 							try {
-								supManager.saveOrUpdate(m);
+								supplierBrowserManager.saveOrUpdate(m);
                             } catch (OHServiceException e) {
                                 OHServiceExceptionUtil.showMessages(e);
                             }
@@ -305,7 +307,6 @@ public class SupplierBrowser extends ModalJFrame implements SupplierEdit.Supplie
 		private static final long serialVersionUID = 1L;
 
 		public SupplierBrowserModel() {
-			SupplierBrowserManager supplierBrowserManager = new SupplierBrowserManager();
 			try {
 				pSupplier = supplierBrowserManager.getAll();
             } catch (OHServiceException e) {

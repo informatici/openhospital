@@ -17,6 +17,7 @@ import javax.swing.event.EventListenerList;
 import org.isf.generaldata.MessageBundle;
 import org.isf.malnutrition.manager.MalnutritionManager;
 import org.isf.malnutrition.model.Malnutrition;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.time.DateTextField;
@@ -80,7 +81,7 @@ public class InsertMalnutrition extends JDialog {
 
 	private boolean inserting;
 	
-	private MalnutritionManager manager = new MalnutritionManager();
+	private MalnutritionManager manager = Context.getApplicationContext().getBean(MalnutritionManager.class);
 
 	InsertMalnutrition(JDialog owner, Malnutrition malnutrition, boolean insert) {
 		super(owner, true);

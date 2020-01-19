@@ -1,9 +1,6 @@
 package org.isf.medstockmovtype.gui;
 
-import java.awt.AWTEvent;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -21,6 +18,7 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.medstockmovtype.gui.MedicaldsrstockmovTypeBrowserEdit.MedicaldsrstockmovTypeListener;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.model.MovementType;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -55,7 +53,7 @@ public class MedicaldsrstockmovTypeBrowser extends ModalJFrame implements Medica
 	private JTable jTable = null;
 	private MedicaldsrstockmovTypeBrowserModel model;
 	private int selectedrow;
-	private MedicaldsrstockmovTypeBrowserManager manager = new MedicaldsrstockmovTypeBrowserManager();
+	private MedicaldsrstockmovTypeBrowserManager manager = Context.getApplicationContext().getBean(MedicaldsrstockmovTypeBrowserManager.class);
 	private MovementType medicaldsrstockmovType = null;
 	private final JFrame myFrame;
 	
@@ -244,7 +242,6 @@ public class MedicaldsrstockmovTypeBrowser extends ModalJFrame implements Medica
 		private static final long serialVersionUID = 1L;
 
 		public MedicaldsrstockmovTypeBrowserModel() {
-			MedicaldsrstockmovTypeBrowserManager manager = new MedicaldsrstockmovTypeBrowserManager();
 			try {
 				pMedicaldsrstockmovType = manager.getMedicaldsrstockmovType();
 			} catch (OHServiceException e) {

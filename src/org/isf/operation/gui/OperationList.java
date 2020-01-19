@@ -14,6 +14,7 @@ import javax.swing.JTable;
 
 import org.isf.admission.model.Admission;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.opd.model.Opd;
 import org.isf.operation.gui.OperationRowEdit.OperationRowEditListener;
 import org.isf.operation.gui.OperationRowEdit.OperationRowListener;
@@ -75,7 +76,7 @@ public class OperationList extends JPanel implements OperationRowListener, Opera
 		if (object instanceof Patient) {
 			myPatient = (Patient) object;
 		}
-		opeRowManager = new OperationRowBrowserManager();
+		opeRowManager = Context.getApplicationContext().getBean(OperationRowBrowserManager.class);
 		setLayout(new BorderLayout(0, 0));
 		ico = new javax.swing.ImageIcon("rsc/icons/oh.png").getImage(); //$NON-NLS-1$
 
@@ -194,7 +195,7 @@ public class OperationList extends JPanel implements OperationRowListener, Opera
 			}
 		}
 		if (myPatient != null) {
-			AdmissionBrowserManager admManager = new AdmissionBrowserManager();
+			AdmissionBrowserManager admManager = Context.getApplicationContext().getBean(AdmissionBrowserManager.class);
 			try {
 				ArrayList<Admission> admissions = admManager.getAdmissions(myPatient);
 				oprowData = new ArrayList<OperationRow>();

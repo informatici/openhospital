@@ -28,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.operation.manager.OperationBrowserManager;
 import org.isf.operation.model.Operation;
 import org.isf.opetype.manager.OperationTypeBrowserManager;
@@ -253,7 +254,7 @@ public class OperationEdit extends JDialog {
 
 								return;
 							}
-							OperationBrowserManager manager = new OperationBrowserManager();
+							OperationBrowserManager manager = Context.getApplicationContext().getBean(OperationBrowserManager.class);
 
 							if (manager.codeControl(key)) {
 								JOptionPane.showMessageDialog(null,
@@ -278,7 +279,7 @@ public class OperationEdit extends JDialog {
 									MessageBundle.getMessage("angal.hospital"), JOptionPane.PLAIN_MESSAGE); //$NON-NLS-1$
 							return;
 						}
-						OperationBrowserManager manager = new OperationBrowserManager();
+						OperationBrowserManager manager = Context.getApplicationContext().getBean(OperationBrowserManager.class);
 						if (descriptionTextField.getText().equals(lastdescription)) {
 						} else {
 
@@ -413,7 +414,7 @@ public class OperationEdit extends JDialog {
 		if (typeComboBox == null) {
 			typeComboBox = new JComboBox();
 			if (insert) {
-				OperationTypeBrowserManager manager = new OperationTypeBrowserManager();
+				OperationTypeBrowserManager manager = Context.getApplicationContext().getBean(OperationTypeBrowserManager.class);
 				ArrayList<OperationType> types;
 				try {
 					types = manager.getOperationType();

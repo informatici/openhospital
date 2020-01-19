@@ -202,7 +202,6 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 		try {
 			patientPendingBills = billManager.getPendingBills(patient.getCode());
 		} catch (OHServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (patientPendingBills.isEmpty()){
@@ -281,14 +280,12 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 				}				
 			}
 		}
-		updateUI();
-
 		//jTextFieldSearch.setEnabled(true);
 		//jTextFieldSearch.grabFocus();
 		//checkIfsameMonth();
-		// TODO qsdfqsf
-		// jTableBill.setModel(new BillTableModel());
-		// updateTotals();
+		//jTableBill.setModel(new BillTableModel());
+		//updateTotals();
+		updateUI();
 	}
 	
 	
@@ -374,17 +371,17 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	private String currencyCod;
 	
 	//Prices and Lists (ALL)
-	private PriceListManager prcManager = new PriceListManager();
+	private PriceListManager prcManager = Context.getApplicationContext().getBean(PriceListManager.class);
 	private ArrayList<Price> prcArray;
 	private ArrayList<PriceList> lstArray;
 	
 	//PricesOthers (ALL)
-	private PricesOthersManager othManager = new PricesOthersManager();
+	private PricesOthersManager othManager = Context.getApplicationContext().getBean(PricesOthersManager.class);
 	private ArrayList<PricesOthers> othPrices;
 
 	//Items and Payments (ALL)
 	private BillBrowserManager billManager = new BillBrowserManager(Context.getApplicationContext().getBean(AccountingIoOperations.class));
-	private PatientBrowserManager patManager = new PatientBrowserManager();
+	private PatientBrowserManager patManager = Context.getApplicationContext().getBean(PatientBrowserManager.class);
 	
 	//Prices, Items and Payments for the tables
 	private ArrayList<BillItems> billItems = new ArrayList<BillItems>();
@@ -448,7 +445,7 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 	
 	private void initCurrencyCod() {
 		try {
-			this.currencyCod = new HospitalBrowsingManager().getHospitalCurrencyCod();
+			this.currencyCod = Context.getApplicationContext().getBean(HospitalBrowsingManager.class).getHospitalCurrencyCod();
 		} catch (OHServiceException e) {
 			this.currencyCod = null;
 			OHServiceExceptionUtil.showMessages(e, PatientBillEdit.this);
@@ -1106,7 +1103,6 @@ public class PatientBillEdit extends JDialog implements SelectionListener {
 						
 						try {
 							
-							BillBrowserManager billManager = Context.getApplicationContext().getBean(BillBrowserManager.class);
 							billManager.newBill(newBill, billItems, payItems);
 							
 						} catch(OHServiceException ex) {

@@ -15,6 +15,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
 import org.isf.utils.excel.ExcelExporter;
@@ -26,10 +27,10 @@ import net.sf.jasperreports.view.JasperViewer;
 public class GenericReportPharmaceuticalStock {
 	
 	private final Logger logger = LoggerFactory.getLogger(GenericReportPharmaceuticalStock.class);
+    private JasperReportsManager jasperReportsManager = Context.getApplicationContext().getBean(JasperReportsManager.class);
 
 	public GenericReportPharmaceuticalStock(Date date, String jasperFileName, String filter, String groupBy, String sortBy, boolean toExcel) {
 		try{
-            JasperReportsManager jasperReportsManager = new JasperReportsManager();
             File defaultFilename = new File(jasperReportsManager.compileDefaultFilename(jasperFileName));
             
             if (toExcel) {

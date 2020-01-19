@@ -25,6 +25,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -59,7 +60,7 @@ public class VaccineTypeBrowser extends ModalJFrame implements VaccineTypeListen
 	private JTable jTable = null;
 	private VaccineTypeBrowserModel model;
 	private int selectedrow;
-	private VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
+	private VaccineTypeBrowserManager manager = Context.getApplicationContext().getBean(VaccineTypeBrowserManager.class);
 	private VaccineType vaccineType = null;
 	
 	private final JFrame myFrame;
@@ -240,7 +241,7 @@ public class VaccineTypeBrowser extends ModalJFrame implements VaccineTypeListen
 		private static final long serialVersionUID = 1L;
 
 		public VaccineTypeBrowserModel() {
-			VaccineTypeBrowserManager manager = new VaccineTypeBrowserManager();
+			VaccineTypeBrowserManager manager = Context.getApplicationContext().getBean(VaccineTypeBrowserManager.class);
 			try {
 				pVaccineType = manager.getVaccineType();
 			} catch (OHServiceException e) {

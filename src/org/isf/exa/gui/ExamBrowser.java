@@ -37,6 +37,7 @@ import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -74,7 +75,8 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 	private JPanel jContentPanel;
 	private JPanel buttonPanel;
 	private JTextField searchTextField;
-	ArrayList<Exam> searchExam = new ArrayList<Exam>();
+	private ArrayList<Exam> searchExam = new ArrayList<Exam>();
+	private ExamBrowsingManager manager = Context.getApplicationContext().getBean(ExamBrowsingManager.class);
 	
 	public ExamBrowser() {
 		myFrame=this;
@@ -149,7 +151,6 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 		if (pbox == null) {
 			pbox = new JComboBox();
 			pbox.addItem(MessageBundle.getMessage("angal.exa.all"));
-			ExamBrowsingManager manager = new ExamBrowsingManager();
 			ArrayList<ExamType> type;
 			try {
 				type = manager.getExamType();	//for efficiency in the sequent for
@@ -203,7 +204,6 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 	                        JOptionPane.PLAIN_MESSAGE);				
 					return;									
 				}
-				ExamBrowsingManager manager = new ExamBrowsingManager();
 				Exam e = (Exam)(((ExamBrowsingModel) model).getValueAt(table.getSelectedRow(), -1));
 				StringBuilder message = new StringBuilder(MessageBundle.getMessage("angal.exa.deletefolowingexam"))
 						.append(" :")
@@ -330,9 +330,9 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
+		private ExamBrowsingManager manager = Context.getApplicationContext().getBean(ExamBrowsingManager.class);
 
 		public ExamBrowsingModel(String s) {
-			ExamBrowsingManager manager = new ExamBrowsingManager();
 			try {
 				pExam = manager.getExams(s);
                                 
@@ -343,7 +343,6 @@ public class ExamBrowser extends ModalJFrame implements ExamListener{
                         searchExam = pExam;
 		}
 		public ExamBrowsingModel() {
-			ExamBrowsingManager manager = new ExamBrowsingManager();
 			try {
 				pExam = manager.getExams();
 			} catch (OHServiceException e) {

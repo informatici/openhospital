@@ -21,6 +21,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.VoLimitedTextField;
@@ -357,7 +358,7 @@ public class WardEdit extends JDialog {
 			
 			okButton.addActionListener(new ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					WardBrowserManager manager = new WardBrowserManager();
+					WardBrowserManager manager = Context.getApplicationContext().getBean(WardBrowserManager.class);
 
 					try {
 						beds = Integer.parseInt(bedsTextField.getText());

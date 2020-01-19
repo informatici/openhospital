@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.opetype.manager.OperationTypeBrowserManager;
 import org.isf.opetype.model.OperationType;
 import org.isf.utils.exception.OHServiceException;
@@ -191,7 +192,7 @@ public class OperationTypeEdit extends JDialog{
 			okButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					String key = codeTextField.getText();
-					OperationTypeBrowserManager manager = new OperationTypeBrowserManager();
+					OperationTypeBrowserManager manager = Context.getApplicationContext().getBean(OperationTypeBrowserManager.class);
 
 					if (descriptionTextField.getText().equals(lastdescription)){
 						dispose();	
