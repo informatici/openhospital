@@ -6,7 +6,7 @@ import org.isf.dicom.model.FileDicom;
 import org.isf.utils.db.TranslateOHServiceException;
 import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 29/08/2016 - Antonio - ported to JPA
  * 
  *------------------------------------------*/
-@Component
+@Service
 @Transactional(rollbackFor=OHServiceException.class)
 @TranslateOHServiceException
 public class DicomIoOperations 
@@ -82,7 +82,7 @@ public class DicomIoOperations
 	 * @return, FileDicomDettaglio
 	 * @throws OHServiceException 
 	 */
-	public FileDicom loadDettaglio(
+	public FileDicom loadDetails(
 			Long idFile, 
 			int idPaziente, 
 			String numeroSerie) throws OHServiceException 
@@ -90,18 +90,18 @@ public class DicomIoOperations
 		if (idFile == null)
 			return null;
 		else
-			return loadDettaglio(idFile.longValue(), idPaziente, numeroSerie);
+			return loadDetails(idFile.longValue(), idPaziente, numeroSerie);
 	}
 
 	/**
-	 * Load detail
+	 * Load the Detail of DICOM
 	 * 
 	 * @param idPaziente, the id of patient
 	 * @param numeroSerie, numero della serie
 	 * @return details
 	 * @throws OHServiceException 
 	 */
-	public FileDicom loadDettaglio(
+	public FileDicom loadDetails(
 			long idFile, 
 			int idPaziente, 
 			String numeroSerie) throws OHServiceException 

@@ -8,35 +8,49 @@ import javax.swing.JOptionPane;
 
 import org.isf.accounting.manager.BillBrowserManager;
 import org.isf.accounting.model.Bill;
-import org.isf.accounting.service.AccountingIoOperations;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.manager.Context;
 import org.isf.patient.model.Patient;
 import org.isf.patient.service.PatientIoOperations;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.OHServiceValidationException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-
+@Component
 public class PatientBrowserManager {
 	
-	private PatientIoOperations ioOperations = Context.getApplicationContext().getBean(PatientIoOperations.class);
+	@Autowired
+	private PatientIoOperations ioOperations;
+	
+	@Autowired
+	private AdmissionBrowserManager admissionManager;
+	
+	@Autowired
+	private BillBrowserManager billManager;
+	
+	public PatientIoOperations getIoOperations() {
+		return ioOperations;
+	}
+
+	public void setIoOperations(PatientIoOperations ioOperations) {
+		this.ioOperations = ioOperations;
+	}
 	
 	/**
-	 * methot that insert a new Patient in the db
+	 * method that insert a new Patient in the db
 	 * 
 	 * @param patient
 	 * @return true - if the new Patient has been inserted
 	 * @throws OHServiceException 
 	 */
 	public boolean newPatient(Patient patient) throws OHServiceException {
-        List<OHExceptionMessage> errors = validatePatient(patient);
-        if(!errors.isEmpty()){
-            throw new OHServiceException(errors);
-        }
+        validate(patient);
         return ioOperations.newPatient(patient);
 	}
 	
@@ -49,10 +63,7 @@ public class PatientBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updatePatient(Patient patient) throws OHServiceException {
-        List<OHExceptionMessage> errors = validatePatient(patient);
-        if(!errors.isEmpty()){
-            throw new OHServiceException(errors);
-        }
+        validate(patient);
         return ioOperations.updatePatient(patient);
 	}
 	
@@ -65,7 +76,17 @@ public class PatientBrowserManager {
 	public ArrayList<Patient> getPatient() throws OHServiceException {
         return ioOperations.getPatients();
 	}
-	
+
+	/**
+	 * method that returns the full list of Patients not logically deleted by pages
+	 * 
+	 * @return the list of patients (could be empty)
+	 * @throws OHServiceException 
+	 */
+	public ArrayList<Patient> getPatient(int page, int size) throws OHServiceException {
+        return ioOperations.getPatients(new PageRequest(page, size));
+	}
+
 	/**
 	 * method that get a Patient by his/her name
 	 * 
@@ -113,9 +134,9 @@ public class PatientBrowserManager {
     protected List<OHExceptionMessage> validateMergePatients(Patient mergedPatient, Patient patient2) throws OHServiceException {
         List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
         boolean admitted = false;
-        AdmissionBrowserManager admMan = new AdmissionBrowserManager();
-        if (admMan.getCurrentAdmission(mergedPatient) != null) admitted = true;
-        else if (admMan.getCurrentAdmission(patient2) != null) admitted = true;
+        
+        if (admissionManager.getCurrentAdmission(mergedPatient) != null) admitted = true;
+        else if (admissionManager.getCurrentAdmission(patient2) != null) admitted = true;
         if (admitted) {
             errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.admission.merge"),
                     MessageBundle.getMessage("angal.admission.cannotmergeadmittedpatients"), OHSeverityLevel.ERROR));
@@ -124,12 +145,12 @@ public class PatientBrowserManager {
         }
 
         boolean billPending = false;
-        BillBrowserManager billMan = new BillBrowserManager(Context.getApplicationContext().getBean(AccountingIoOperations.class));
-        ArrayList<Bill> bills = billMan.getPendingBills(mergedPatient.getCode());
-        bills = billMan.getPendingBills(mergedPatient.getCode());
+        
+        ArrayList<Bill> bills = billManager.getPendingBills(mergedPatient.getCode());
+        bills = billManager.getPendingBills(mergedPatient.getCode());
         if (bills != null && !bills.isEmpty()) billPending = true;
         else {
-            bills = billMan.getPendingBills(patient2.getCode());
+            bills = billManager.getPendingBills(patient2.getCode());
             if (bills != null && !bills.isEmpty()) billPending = true;
         }
         if (billPending) {
@@ -146,10 +167,10 @@ public class PatientBrowserManager {
     }
 
     /**
-	 * method that logically delete a Patient (not phisically deleted)
+	 * method that logically delete a Patient (not physically deleted)
 	 * 
-	 * @param aPatient
-	 * @return true - if the Patient has beeb deleted (logically)
+	 * @param aPatient - the {@link Patient} to be deleted
+	 * @return true - if the Patient has been deleted (logically)
 	 * @throws OHServiceException 
 	 */
 	public boolean deletePatient(Patient patient) throws OHServiceException {
@@ -252,7 +273,7 @@ public class PatientBrowserManager {
             return ioOperations.mergePatientHistory(mergedPatient, patient2);
 	}
 
-    protected List<OHExceptionMessage> validatePatient(Patient patient){
+    protected void validate(Patient patient) throws OHServiceValidationException{
         List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
 
         if (StringUtils.isEmpty(patient.getFirstName())) {
@@ -271,8 +292,9 @@ public class PatientBrowserManager {
             errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"), "Please select a sex",
                     OHSeverityLevel.ERROR));
         }
-
-        return errors;
+	    if(!errors.isEmpty()){
+	        throw new OHServiceValidationException(errors);
+	    }
     }
 
     private boolean checkAge(Patient patient) {
@@ -287,6 +309,7 @@ public class PatientBrowserManager {
         }
         return true;
     }
+
     /**
      * 
      * @return patients list

@@ -1,27 +1,30 @@
 package org.isf.medtype.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.isf.generaldata.MessageBundle;
 import org.isf.medtype.model.MedicalType;
 import org.isf.medtype.service.MedicalTypeIoOperation;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Manager class for the medical type module.
  *
  */
+@Component
 public class MedicalTypeBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(MedicalTypeBrowserManager.class);
-	
-	private MedicalTypeIoOperation ioOperations = Context.getApplicationContext().getBean(MedicalTypeIoOperation.class);
+
+	@Autowired
+	private MedicalTypeIoOperation ioOperations;
 	
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

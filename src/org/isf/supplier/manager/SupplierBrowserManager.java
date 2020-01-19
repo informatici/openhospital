@@ -1,9 +1,5 @@
 package org.isf.supplier.manager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.manager.Context;
 import org.isf.supplier.model.Supplier;
@@ -14,11 +10,18 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.List;
+
+@Component
 public class SupplierBrowserManager {
 
     private final Logger logger = LoggerFactory.getLogger(SupplierBrowserManager.class);
-    private SupplierOperations ioOperations = Context.getApplicationContext().getBean(SupplierOperations.class);
+    @Autowired
+    private SupplierOperations ioOperations;
 
     public boolean saveOrUpdate(Supplier supplier) throws OHServiceException {
         try {

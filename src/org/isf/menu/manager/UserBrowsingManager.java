@@ -1,7 +1,5 @@
 package org.isf.menu.manager;
 
-import java.util.ArrayList;
-
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
@@ -11,10 +9,16 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+
+@Component
 public class UserBrowsingManager {
 
-	private MenuIoOperations ioOperations = Context.getApplicationContext().getBean(MenuIoOperations.class);
+	@Autowired
+	private MenuIoOperations ioOperations;
 	
 	
 	public static String getCurrentUser() {
@@ -36,6 +40,15 @@ public class UserBrowsingManager {
 	 */
 	public ArrayList<User> getUser(String groupID) throws OHServiceException {
         return ioOperations.getUser(groupID);
+	}
+	
+	/**
+	 * returns the {@link User}
+	 * @param userName - user name
+	 * @return {@link User}
+	 */
+	public User getUserByName(String userName) throws OHServiceException {
+        return ioOperations.getUserByName(userName);
 	}
 	
 	/**

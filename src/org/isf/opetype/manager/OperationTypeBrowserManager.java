@@ -10,10 +10,14 @@ import org.isf.opetype.service.OperationTypeIoOperation;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class OperationTypeBrowserManager {
-
-	private OperationTypeIoOperation ioOperations = Context.getApplicationContext().getBean(OperationTypeIoOperation.class);
+	
+	@Autowired
+	private OperationTypeIoOperation ioOperations;
 	
 	/**
 	 * return the list of {@link OperationType}s

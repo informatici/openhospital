@@ -21,6 +21,7 @@ import org.isf.visits.model.Visit;
 import org.isf.visits.service.VisitsIoOperations;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,9 @@ public class VisitManager {
 	
 	@Autowired
 	private SmsOperations smsOp;
+	
+	@Autowired
+	private ApplicationContext applicationContext;
 	
 	/**
 	 * returns the list of all {@link Visit}s related to a patID
@@ -72,7 +76,7 @@ public class VisitManager {
 	public boolean newVisits(ArrayList<Visit> visits) throws OHServiceException {
 		if (!visits.isEmpty()) {
 			DateTime now = new DateTime();
-			PatientBrowserManager patMan = new PatientBrowserManager();
+			PatientBrowserManager patMan = this.applicationContext.getBean(PatientBrowserManager.class);
 			int patID = visits.get(0).getPatient().getCode();
 			ioOperations.deleteAllVisits(patID);
 			smsOp.deleteByModuleModuleID("visit", String.valueOf(patID));

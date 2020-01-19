@@ -12,6 +12,8 @@ import org.isf.menu.manager.Context;
 import org.isf.opd.model.Opd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.isf.operation.model.OperationRow;
 import org.isf.operation.service.OperationRowIoOperations;
 import org.isf.utils.exception.OHException;
@@ -19,9 +21,11 @@ import org.isf.utils.exception.OHException;
  *
  * @author xavier
  */
+@Component
 public class OperationRowBrowserManager {
     private final Logger logger = LoggerFactory.getLogger(OperationRowBrowserManager.class);
-    private OperationRowIoOperations ioOperations = Context.getApplicationContext().getBean(OperationRowIoOperations.class);
+    @Autowired
+    private OperationRowIoOperations ioOperations;
     
     public List<OperationRow> getOperationRowByAdmission(Admission adm) throws OHException{
 	return ioOperations.getOperationRowByAdmission(adm);

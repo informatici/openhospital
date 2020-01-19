@@ -6,14 +6,26 @@ import java.util.List;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.admtype.service.AdmissionTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.OHServiceValidationException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AdmissionTypeBrowserManager {
 
-	private AdmissionTypeIoOperation ioOperations = Context.getApplicationContext().getBean(AdmissionTypeIoOperation.class);
+	@Autowired
+	private AdmissionTypeIoOperation ioOperations;
+
+	public AdmissionTypeIoOperation getIoOperations() {
+		return ioOperations;
+	}
+
+	public void setIoOperations(AdmissionTypeIoOperation ioOperations) {
+		this.ioOperations = ioOperations;
+	}
 
 	/**
 	 * Returns all the available {@link AdmissionType}s.
@@ -31,10 +43,7 @@ public class AdmissionTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean newAdmissionType(AdmissionType admissionType) throws OHServiceException {
-        List<OHExceptionMessage> errors = validateAdmissionType(admissionType, true);
-        if(!errors.isEmpty()){
-            throw new OHServiceException(errors);
-        }
+        validateAdmissionType(admissionType, true);
         return ioOperations.newAdmissionType(admissionType);
 	}
 
@@ -45,10 +54,7 @@ public class AdmissionTypeBrowserManager {
 	 * @throws OHServiceException 
 	 */
 	public boolean updateAdmissionType(AdmissionType admissionType) throws OHServiceException {
-        List<OHExceptionMessage> errors = validateAdmissionType(admissionType, false);
-        if(!errors.isEmpty()){
-            throw new OHServiceException(errors);
-        }
+        validateAdmissionType(admissionType, false);
         return ioOperations.updateAdmissionType(admissionType);
 	}
 
@@ -72,7 +78,7 @@ public class AdmissionTypeBrowserManager {
         return ioOperations.deleteAdmissionType(admissionType);
 	}
 
-    protected List<OHExceptionMessage> validateAdmissionType(AdmissionType admissionType, boolean insert) throws OHServiceException {
+    protected void validateAdmissionType(AdmissionType admissionType, boolean insert) throws OHServiceException {
         List<OHExceptionMessage> errors = new ArrayList<OHExceptionMessage>();
         String key = admissionType.getCode();
         if (key.equals("")){
@@ -94,6 +100,9 @@ public class AdmissionTypeBrowserManager {
             errors.add(new OHExceptionMessage(MessageBundle.getMessage("angal.hospital"),MessageBundle.getMessage("angal.admtype.pleaseinsertavaliddescription"),
                     OHSeverityLevel.ERROR));
         }
-        return errors;
+        if(!errors.isEmpty()){
+            throw new OHServiceValidationException(errors);
+        }
     }
+
 }

@@ -54,7 +54,10 @@ public class Tests
 	private static TestPatientContext testPatientContext;
 
     @Autowired
-    LabIoOperations labIoOperation;
+    private LabIoOperations labIoOperation;
+    
+    @Autowired
+    private LabManager labManager; 
 	
 	@BeforeClass
     public static void setUpClass()  
@@ -431,8 +434,8 @@ public class Tests
 			labRow.add("TestLabRowTestLabRowTestLabRowTestLabRowTestLabRowTestLabRow"); // Causing rollback
 			labRowList.add(labRow);
 			
-			LabManager labMan = new LabManager(labIoOperation); 
-			result = labMan.newLaboratory(laboratories, labRowList);
+			labManager.setIoOperations(labIoOperation); 
+			result = labManager.newLaboratory(laboratories, labRowList);
 			
 			assertEquals(true, result);
 			_checkLaboratoryIntoDb(laboratory.getCode());

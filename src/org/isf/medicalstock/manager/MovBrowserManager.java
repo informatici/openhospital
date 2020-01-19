@@ -6,24 +6,22 @@ import java.util.GregorianCalendar;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicalstock.model.Movement;
 import org.isf.medicalstock.service.MedicalStockIoOperations;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class MovBrowserManager {
 	
 	private final Logger logger = LoggerFactory.getLogger(MovBrowserManager.class);
 	
+	@Autowired
 	private MedicalStockIoOperations ioOperations;
-	
-	public MovBrowserManager(){
-		ioOperations = Context.getApplicationContext().getBean(MedicalStockIoOperations.class);
-	}
 	
 	/**
 	 * Retrieves all the {@link Movement}s.

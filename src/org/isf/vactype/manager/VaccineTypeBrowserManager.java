@@ -19,12 +19,16 @@ import org.isf.vactype.model.VaccineType;
 import org.isf.vactype.service.VacTypeIoOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class VaccineTypeBrowserManager {
 	
     private final Logger logger = LoggerFactory.getLogger(VaccineTypeBrowserManager.class);
 	
-	private VacTypeIoOperation ioOperations = Context.getApplicationContext().getBean(VacTypeIoOperation.class);
+    @Autowired
+	private VacTypeIoOperation ioOperations;
 	
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

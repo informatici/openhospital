@@ -6,17 +6,20 @@ import java.util.List;
 import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.dlvrtype.service.DeliveryTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * The manager class for the DeliveryType module.
  */
+@Component
 public class DeliveryTypeBrowserManager {
 
-    private DeliveryTypeIoOperation ioOperations = Context.getApplicationContext().getBean(DeliveryTypeIoOperation.class);
+	@Autowired
+    private DeliveryTypeIoOperation ioOperations;
 
     /**
      * Returns all stored {@link DeliveryType}s.

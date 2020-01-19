@@ -6,22 +6,25 @@ import java.util.List;
 import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.dlvrrestype.service.DeliveryResultTypeIoOperation;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Manager class for DeliveryResultTypeModule.
  */
+@Component
 public class DeliveryResultTypeBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(DeliveryResultTypeBrowserManager.class);
 	
-	private DeliveryResultTypeIoOperation ioOperations = Context.getApplicationContext().getBean(DeliveryResultTypeIoOperation.class);
+	@Autowired
+	private DeliveryResultTypeIoOperation ioOperations;
 	
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

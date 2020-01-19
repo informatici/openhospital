@@ -1,18 +1,21 @@
 package org.isf.menu.service;
 
-import java.util.List;
-
 import org.isf.menu.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 
+@Repository
 public interface UserIoOperationRepository extends JpaRepository<User, String> {
     public List<User> findAllByOrderByUserNameAsc();    
 
+    public User findByUserName(String userName);  
+    
     @Query(value = "SELECT * FROM USER WHERE US_UG_ID_A = :groupId ORDER BY US_ID_A", nativeQuery= true)
     public List<User> findAllWhereUserGroupNameByOrderUserNameAsc(@Param("groupId") String groupId);
     

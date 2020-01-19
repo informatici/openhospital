@@ -4,17 +4,20 @@ import java.util.Properties;
 
 import org.isf.dicom.model.FileDicom;
 import org.isf.dicom.service.DicomIoOperations;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Interface for definitions IO for Dicom acquired files
  * @author Pietro Castellucci
  * @version 1.0.0 
  */
+@Component
 public class SqlDicomManager implements DicomManagerInterface{   
 	
-	private DicomIoOperations ioOperations = Context.getApplicationContext().getBean(DicomIoOperations.class);
+	@Autowired
+	private DicomIoOperations ioOperations;
 	/**
 	 * Constructor
 	 */
@@ -66,7 +69,7 @@ public class SqlDicomManager implements DicomManagerInterface{
      */
     public FileDicom loadDettaglio(Long idFile,int idPaziente, String numeroSerie) throws OHServiceException
     {
-    	return  ioOperations.loadDettaglio(idFile, idPaziente, numeroSerie);
+    	return  ioOperations.loadDetails(idFile, idPaziente, numeroSerie);
     }
     
     /**
@@ -78,7 +81,7 @@ public class SqlDicomManager implements DicomManagerInterface{
      */
     public FileDicom loadDettaglio(long idFile,int idPaziente, String numeroSerie) throws OHServiceException
     {
-    	return  ioOperations.loadDettaglio(idFile, idPaziente, numeroSerie);
+    	return  ioOperations.loadDetails(idFile, idPaziente, numeroSerie);
     }
 
     /**

@@ -27,10 +27,10 @@ import org.isf.patient.model.Patient;
 import org.isf.utils.db.TranslateOHServiceException;
 import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
 @Transactional(rollbackFor=OHServiceException.class)
 @TranslateOHServiceException
 public class LabIoOperations {
@@ -291,9 +291,11 @@ public class LabIoOperations {
 		if (newCode > 0) 
 		{
 			for (LaboratoryRow aLabRow : labRow) {
-				aLabRow.setLabId(laboratory);
+				LaboratoryRow laboratoryRow = new LaboratoryRow();
+				laboratoryRow.setLabId(laboratory);
+				//laboratoryRow.setDescription(aLabRow);	
 
-				LaboratoryRow savedLaboratoryRow = rowRepository.save(aLabRow);
+				LaboratoryRow savedLaboratoryRow = rowRepository.save(laboratoryRow);
 				result = result && (savedLaboratoryRow != null);
 			}
 		}

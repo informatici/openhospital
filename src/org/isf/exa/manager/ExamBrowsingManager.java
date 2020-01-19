@@ -11,13 +11,14 @@ import org.isf.exa.model.Exam;
 import org.isf.exa.service.ExamIoOperations;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Class that provides gui separation from database operations and gives some
@@ -26,9 +27,11 @@ import org.slf4j.LoggerFactory;
  * @author bob
  * 
  */
+@Component
 public class ExamBrowsingManager {
 
-	private ExamIoOperations ioOperations = Context.getApplicationContext().getBean(ExamIoOperations.class);
+	@Autowired
+	private ExamIoOperations ioOperations;
 
 	private final Logger logger = LoggerFactory.getLogger(ExamBrowsingManager.class);
 	

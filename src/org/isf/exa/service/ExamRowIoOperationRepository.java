@@ -7,9 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-
+@Repository
 public interface ExamRowIoOperationRepository extends JpaRepository<ExamRow, Integer> {
     
     @Query(value = "SELECT * FROM EXAMROW", nativeQuery= true)// ORDER BY EXR_ID, EXR_DESC", nativeQuery= true)

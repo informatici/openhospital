@@ -599,6 +599,51 @@ public class Tests
 				
 		return;
 	}
+	
+	@Test
+	public void testIoGetBillsTimeRangeAndItem() 
+	{
+		int id = 0;
+		//billDate = new GregorianCalendar(10, 9, 8); //from src/org/isf/accounting/test/TestBill.java
+		GregorianCalendar dateFrom = new GregorianCalendar(10, 9, 7);
+		GregorianCalendar dateTo = new GregorianCalendar(10, 9, 9);
+		
+		try 
+		{
+			id = _setupTestBill(false);
+			Bill foundBill = (Bill)jpa.find(Bill.class, id); 
+			
+			ArrayList<Bill> bills = accountingIoOperation.getBills(dateFrom, dateTo, (Patient) null);
+			assertEquals(true, bills.contains(foundBill));
+			
+			bills = accountingIoOperation.getBills(new GregorianCalendar(10, 0, 1), dateFrom, (Patient) null);
+			assertEquals(false, bills.contains(foundBill));
+			
+			bills = accountingIoOperation.getBills(dateTo, new GregorianCalendar(11, 0, 1), (Patient) null);
+			assertEquals(false, bills.contains(foundBill));
+			
+			id = _setupTestBillItems(false);
+			BillItems foundBillItem = (BillItems)jpa.find(BillItems.class, id);
+			foundBill = (Bill)jpa.find(Bill.class, foundBillItem.getBill().getId());
+			
+			bills = accountingIoOperation.getBills(dateFrom, dateTo, foundBillItem);
+			assertEquals(true, bills.contains(foundBill));
+			
+			id = _setupTestBillItems(true);
+			foundBillItem = (BillItems)jpa.find(BillItems.class, id);
+			
+			bills = accountingIoOperation.getBills(dateFrom, dateTo, foundBillItem);
+			assertEquals(true, bills.contains(foundBill));
+			
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();		
+			assertEquals(true, false);
+		}
+				
+		return;
+	}
 
 	@Test
 	public void testIoGetBillsPayment() 
@@ -643,6 +688,29 @@ public class Tests
 			ArrayList<BillPayments> payments = accountingIoOperation.getPayments(bills);
 			
 			assertEquals(foundBill.getAmount(), payments.get(0).getBill().getAmount(), 0.1);
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();		
+			assertEquals(true, false);
+		}
+				
+		return;
+	}
+	
+	@Test
+	public void testIoGetDistictsBillItems() 
+	{
+		int id = 0;
+		
+		
+		try 
+		{
+			id = _setupTestBillItems(false);
+			BillItems foundBillItem = (BillItems)jpa.find(BillItems.class, id); 
+			ArrayList<BillItems> billItems = accountingIoOperation.getDistictsBillItems();
+			
+			assertEquals(true, billItems.contains(foundBillItem));
 		} 
 		catch (Exception e) 
 		{
@@ -742,7 +810,7 @@ public class Tests
 		
 		return;
 	}
-		
+	
 	private int _setupTestBillPayments(
 			boolean usingSet) throws OHException 
 	{
@@ -777,4 +845,5 @@ public class Tests
 		
 		return;
 	}
+	
 }

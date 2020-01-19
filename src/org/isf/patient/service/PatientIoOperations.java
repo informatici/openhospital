@@ -34,11 +34,12 @@ import org.isf.utils.db.TranslateOHServiceException;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-@Component
+@Service
 @Transactional(rollbackFor=OHServiceException.class)
 @TranslateOHServiceException
 public class PatientIoOperations 
@@ -58,6 +59,22 @@ public class PatientIoOperations
 		
 		
 		pPatient = new ArrayList<Patient>(repository.findAllWhereDeleted());			
+					
+		return pPatient;
+	}
+	
+	/**
+	 * method that returns the full list of Patients not logically deleted by page
+	 * 
+	 * @return the list of patients
+	 * @throws OHServiceException
+	 */
+	public ArrayList<Patient> getPatients(Pageable pageable) throws OHServiceException 
+	{
+		ArrayList<Patient> pPatient = null;
+		
+		
+		pPatient = new ArrayList<Patient>(repository.findAllWhereDeleted(pageable));			
 					
 		return pPatient;
 	}

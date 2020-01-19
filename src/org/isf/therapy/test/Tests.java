@@ -43,7 +43,7 @@ public class Tests
 	private static TestPatientContext testPatientContext;
 
     @Autowired
-    TherapyIoOperations therapyIoOperation;
+    private TherapyIoOperations therapyIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  

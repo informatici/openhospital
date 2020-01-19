@@ -13,12 +13,16 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ExamTypeBrowserManager {
 
 	private final Logger logger = LoggerFactory.getLogger(ExamTypeBrowserManager.class);
 	
-	private ExamTypeIoOperation ioOperations = Context.getApplicationContext().getBean(ExamTypeIoOperation.class);
+	@Autowired
+	private ExamTypeIoOperation ioOperations;
 
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

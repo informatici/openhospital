@@ -6,6 +6,14 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.isf.generaldata.GeneralData;
+import org.isf.generaldata.MessageBundle;
+import org.isf.hospital.manager.HospitalBrowsingManager;
+import org.isf.hospital.model.Hospital;
+import org.isf.utils.exception.OHServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -16,24 +24,23 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
 
-import org.isf.generaldata.GeneralData;
-import org.isf.generaldata.MessageBundle;
-import org.isf.hospital.manager.HospitalBrowsingManager;
-import org.isf.hospital.model.Hospital;
-import org.isf.utils.exception.OHServiceException;
-
+@Component
 public class PrintManager {
 	public static final int toDisplay = 0;
 
 	public static final int toPdf = 1;
 
 	public static final int toPrint = 2;
-
-	public PrintManager(String filename, List<?> toPrint, int action) throws OHServiceException {
+	
+	@Autowired
+	private HospitalBrowsingManager hospitalManager;
+	
+	public PrintManager() {}
+	
+	public void print(String filename, List<?> toPrint, int action) throws OHServiceException {
 		
 		HashMap<String, Object> parameters = new HashMap<String, Object>();
-		HospitalBrowsingManager hospMan = new HospitalBrowsingManager();
-		Hospital hospital = hospMan.getHospital();
+		Hospital hospital = hospitalManager.getHospital();
 		parameters.put("ospedaleNome", hospital.getDescription());
 		parameters.put("ospedaleIndirizzo", hospital.getAddress());
 		parameters.put("ospedaleCitta", hospital.getCity());

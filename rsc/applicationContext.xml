@@ -27,6 +27,9 @@
  
  	<!-- <bean class ="org.isf.utils.EntityManagerFactoryBean" id = "entityManagerFactory"> -->
  	<!-- </bean> -->
+ 	
+ 	<!--  could be used in place of @TranslateOHException ? -->
+ 	<!-- <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/> -->
 
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location">
@@ -38,7 +41,7 @@
  	<bean id="springDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
  		destroy-method="close">
  		<property name="driverClass" value="${jdbc.class:com.mysql.jdbc.Driver}" />
- 		<property name="jdbcUrl" value="${jdbc.url:jdbc:mysql://localhost:3306/oh}" />
+ 		<property name="jdbcUrl" value="${jdbc.url:jdbc:mysql://localhost:3306/oh?useLegacyDatetimeCode=false&amp;serverTimezone=UTC}" />
  		<property name="user" value="${jdbc.username:isf}" />
  		<property name="password" value="${jdbc.password:isf123}" />
  
@@ -63,6 +66,7 @@
  				<prop key="hibernate.show_sql">${hibernate.show_sql:false}</prop>
  				<prop key="hibernate.format_sql">${hibernate.format_sql:true}</prop>
  				<prop key="hibernate.dialect">${hibernate.dialect:org.hibernate.dialect.MySQLDialect}</prop>
+ 				<prop key="hibernate.id.new_generator_mappings">false</prop>
  			</props>
  		</property>
  	</bean>

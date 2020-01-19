@@ -7,8 +7,9 @@ import org.isf.lab.model.Laboratory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-
+@Repository
 public interface LabIoOperationRepository extends JpaRepository<Laboratory, Integer> {
 
     @Query(value = "SELECT * FROM LABORATORY JOIN EXAM ON LAB_EXA_ID_A = EXA_ID_A "

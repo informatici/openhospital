@@ -18,17 +18,21 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
 /**
  * @author Vero
  * 
  */
+@Component
 public class OpdBrowserManager {
 	
 	private final Logger logger = LoggerFactory.getLogger(OpdBrowserManager.class);
 	
-	private OpdIoOperations ioOperations = Context.getApplicationContext().getBean(OpdIoOperations.class);
+	@Autowired
+	private OpdIoOperations ioOperations;
 	
 	/**
 	 * Verify if the object is valid for CRUD and return a list of errors, if any

@@ -12,13 +12,17 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+@Component
 public class PricesOthersManager {
 
 	private final Logger logger = LoggerFactory.getLogger(PricesOthersManager.class);
 	
-	private PriceOthersIoOperations ioOperations = Context.getApplicationContext().getBean(PriceOthersIoOperations.class);
+	@Autowired
+	private PriceOthersIoOperations ioOperations;
 
 	/**
 	 * return the list of {@link PriceOthers}s in the DB
