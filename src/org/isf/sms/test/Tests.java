@@ -30,7 +30,7 @@ public class Tests
 	private static TestSmsContext testSmsContext;
 
     @Autowired
-    SmsOperations smsIoOperation;
+    private SmsOperations smsIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  

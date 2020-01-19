@@ -28,7 +28,7 @@ public class Tests
 	private static TestSupplierContext testSupplierContext;
 
     @Autowired
-    SupplierOperations supplierIoOperation;	
+    private SupplierOperations supplierIoOperation;
 	
 	@BeforeClass
     public static void setUpClass()  

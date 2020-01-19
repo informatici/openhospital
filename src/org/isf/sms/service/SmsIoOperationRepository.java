@@ -8,9 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-
+@Repository
 public interface SmsIoOperationRepository extends JpaRepository<Sms, Integer> {
 
     @Query(value = "SELECT * FROM SMS WHERE DATE(SMS_DATE_SCHED) BETWEEN :start AND :stop ORDER BY SMS_DATE_SCHED ASC", nativeQuery= true)
