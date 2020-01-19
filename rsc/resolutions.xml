@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<root/>
+<root>
+<Device description="TOSHIBA Web Camera - HD">
+<Resolution os="win">320x240</Resolution>
+<Resolution os="win">640x480</Resolution>
+</Device>
+</root>

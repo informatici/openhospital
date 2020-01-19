@@ -80,6 +80,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.toedter.calendar.JDateChooser;
+import java.awt.event.KeyListener;
+import javax.swing.ImageIcon;
+import javax.swing.JTextField;
 
 public class WardPharmacy extends ModalJFrame implements 
 	WardPharmacyEdit.MovementWardListeners, 

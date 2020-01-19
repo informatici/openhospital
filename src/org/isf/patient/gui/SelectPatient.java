@@ -16,6 +16,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -36,9 +37,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import org.isf.accounting.gui.BillBrowser;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.menu.manager.Context;
+import org.isf.menu.gui.MainMenu;
+import org.isf.patient.gui.PatientInsertExtended.PatientListener;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHServiceException;
@@ -59,6 +63,7 @@ public class SelectPatient extends JDialog {
 		
 	}
 	
+	
 	private void fireSelectedPatient(Patient patient) {
 		new AWTEvent(new Object(), AWTEvent.RESERVED_ID_MAX + 1) {
 
@@ -70,6 +75,7 @@ public class SelectPatient extends JDialog {
 		EventListener[] listeners = selectionListener.getListeners(SelectionListener.class);
 		for (int i = 0; i < listeners.length; i++)
 			((SelectionListener)listeners[i]).patientSelected(patient);
+			//System.out.println("patient ..............."+patient.getFirstName());
 	}
 //---------------------------------------------------------------------------	
 	private static final long serialVersionUID = 1L;
@@ -85,6 +91,10 @@ public class SelectPatient extends JDialog {
 	private JButton jSearchButton;
 	private JPanel jPanelDataPatient;
 	private Patient patient;
+	public Patient getPatient() {
+		return patient;
+	}
+	private JButton buttonNew;
 	private PatientSummary ps;
 	private String[] patColums = {
 			MessageBundle.getMessage("angal.common.code"),
@@ -195,6 +205,34 @@ public class SelectPatient extends JDialog {
 		if (GeneralData.ENHANCEDSEARCH) {
 			jSearchButton.doClick();
 		}
+	}
+	public SelectPatient(JFrame owner, boolean abbleAddPatient, boolean full) {
+		super(owner, true);
+		if (!GeneralData.ENHANCEDSEARCH) {
+			if(!full)
+				patArray = patManager.getPatientHeadWithHeightAndWeight();
+			else
+				try {
+					patArray = patManager.getPatient();
+				} catch (OHServiceException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			patSearch = patArray;
+		}
+		ps = new PatientSummary(patient);
+		initComponents();
+		addWindowListener(new WindowAdapter() {
+
+			public void windowClosing(WindowEvent e) {
+				// to free memory
+				patArray.clear();
+				patSearch.clear();
+				dispose();
+			}
+		});
+		setLocationRelativeTo(null);
+		buttonNew.setVisible(abbleAddPatient);
 	}
 
 	private void initComponents() {
@@ -440,7 +478,10 @@ public class SelectPatient extends JDialog {
 			jPanelTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			jPanelTop.add(getJLabelSearch());
 			jPanelTop.add(getJTextFieldSearchPatient());
-			if (GeneralData.ENHANCEDSEARCH) jPanelTop.add(getJSearchButton());
+			if (MainMenu.checkUserGrants("btnadmnew"))
+				jPanelTop.add(getButtonNew());
+			if (GeneralData.ENHANCEDSEARCH)
+				jPanelTop.add(getJSearchButton());
 		}
 		return jPanelTop;
 	}
@@ -468,6 +509,29 @@ public class SelectPatient extends JDialog {
 			});
 		}
 		return jSearchButton;
+	}
+	private JButton getButtonNew() {
+		//JButton buttonNew = new JButton(MessageBundle.getMessage("angal.admission.newpatient"));
+		buttonNew = new JButton(MessageBundle.getMessage("angal.admission.newpatient"));
+		buttonNew.setMnemonic(KeyEvent.VK_N);
+		buttonNew.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+
+				if (GeneralData.PATIENTEXTENDED) {
+					PatientInsertExtended newrecord = new PatientInsertExtended(SelectPatient.this, new Patient(),
+							true);
+					newrecord.addPatientListener((PatientListener) SelectPatient.this);
+					newrecord.setVisible(true);
+				} else {
+					PatientInsert newrecord = new PatientInsert(SelectPatient.this, new Patient(), true);
+					newrecord.addPatientListener((org.isf.patient.gui.PatientInsert.PatientListener) SelectPatient.this);
+					newrecord.setVisible(true);
+				}
+
+			}
+		});
+		return buttonNew;
 	}
 
 	private JPanel getJPanelButtons() {
@@ -543,5 +607,13 @@ public class SelectPatient extends JDialog {
 			setHorizontalAlignment(CENTER);	   
 			return cell;
 	   }
+	}
+
+	public void setButtonNew(JButton buttonNew) {
+		this.buttonNew = buttonNew;
+	}
+	List<BillBrowser> billBrowserListeners = new ArrayList<BillBrowser>();
+	public void addSelectionListener(BillBrowser l) {
+		billBrowserListeners.add(l);
 	}
 }

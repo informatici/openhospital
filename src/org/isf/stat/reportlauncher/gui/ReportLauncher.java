@@ -20,8 +20,12 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.swing.BorderFactory;
@@ -36,6 +40,7 @@ import org.isf.stat.gui.report.GenericReportFromDateToDate;
 import org.isf.stat.gui.report.GenericReportMY;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoDateTextField;
+import org.isf.utils.time.TimeTools;
 import org.isf.xmpp.gui.CommunicationFrame;
 import org.isf.xmpp.manager.Interaction;
 
@@ -64,6 +69,8 @@ public class ReportLauncher extends ModalJFrame{
 	private JLabel jToDateLabel = null;
 	private VoDateTextField jToDateField = null;
 	private VoDateTextField jFromDateField = null;
+	private GregorianCalendar dateFrom = new GregorianCalendar();
+	private GregorianCalendar dateTo = new GregorianCalendar();
 	
 	
 	private JLabel jRptLabel = null;
@@ -84,6 +91,9 @@ public class ReportLauncher extends ModalJFrame{
 		{"angal.stat.labsummaryforopd", 				"OH008_lab_summary_for_opd", 										"monthyear"},
 		{"angal.stat.inpatientreport", 					"OH009_InPatientReport", 											"twodates"},
 		{"angal.stat.outpatientreport", 				"OH010_OutPatientReport", 											"twodates"},
+		{"angal.stat.allIncomes",						"BillsReport",														"twodates"},
+		{"angal.stat.allIncomespending",				"BillsReportPending",												"twodates"},
+		{"angal.stat.allIncomesmonth",					"BillsReportMonthly",												"twodates"},
 		{"angal.stat.pageonecensusinfo", 				"hmis108_cover", 													"twodatesfrommonthyear"},
 		{"angal.stat.pageonereferrals", 				"hmis108_referrals", 												"monthyear"},
 		{"angal.stat.pageoneoperations", 				"hmis108_operations", 												"monthyear"},
@@ -100,12 +110,11 @@ public class ReportLauncher extends ModalJFrame{
 		{"angal.stat.monthlyworkloadreportpage2", 		"MOH717_Monthly_Workload_Report_for_Hospitals_page2", 				"monthyear"},
 		{"angal.stat.dailyopdmorbiditysummaryunder5", 	"MOH705A_Under_5_Years_Daily_Outpatient_Morbidity_Summary_Sheet", 	"monthyear"},
 		{"angal.stat.dailyopdmorbiditysummaryover5", 	"MOH705B_Over_5_Years_Daily_Outpatient_Morbidity_Summary_Sheet", 	"monthyear"},
+		
 	};
 	
 	private JComboBox shareWith=null;//nicola
-	Interaction userOh=null;
-
-	
+	Interaction userOh=null;	
 	
 //	private final JFrame myFrame;
 	

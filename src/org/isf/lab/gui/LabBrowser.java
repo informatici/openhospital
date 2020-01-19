@@ -250,26 +250,26 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 			buttonNew.setMnemonic(KeyEvent.VK_N);
 			buttonNew.addActionListener(new ActionListener() {
 
-                            public void actionPerformed(ActionEvent event) {
-                                laboratory = new Laboratory(0, new Exam("", "",
-                                                new ExamType("", ""), 0, ""),
-                                                new GregorianCalendar(), "P", "", new Patient(), "");
-                                if (GeneralData.LABEXTENDED) {
-                                    if (GeneralData.LABMULTIPLEINSERT) {
-                                            LabNew editrecord = new LabNew(myFrame);
-                                            editrecord.addLabListener(LabBrowser.this);
-                                            editrecord.setVisible(true);
-                                    } else {
-                                            LabEditExtended editrecord = new LabEditExtended(myFrame, laboratory, true);
-                                            editrecord.addLabEditExtendedListener(LabBrowser.this);
-                                            editrecord.setVisible(true);
-                                    }
-                                } else {
-                                    LabEdit editrecord = new LabEdit(myFrame, laboratory, true);
-                                    editrecord.addLabEditListener(LabBrowser.this);
-                                    editrecord.setVisible(true);
-                                }
-                            }
+                public void actionPerformed(ActionEvent event) {
+                    laboratory = new Laboratory(0, new Exam("", "",
+                                    new ExamType("", ""), 0, ""),
+                                    new GregorianCalendar(), "P", "", new Patient(), "");
+                    if (GeneralData.LABEXTENDED) {
+                        if (GeneralData.LABMULTIPLEINSERT) {
+                                LabNew editrecord = new LabNew(myFrame);
+                                editrecord.addLabListener(LabBrowser.this);
+                                editrecord.setVisible(true);
+                        } else {
+                                LabEditExtended editrecord = new LabEditExtended(myFrame, laboratory, true);
+                                editrecord.addLabEditExtendedListener(LabBrowser.this);
+                                editrecord.setVisible(true);
+                        }
+                    } else {
+                        LabEdit editrecord = new LabEdit(myFrame, laboratory, true);
+                        editrecord.addLabEditListener(LabBrowser.this);
+                        editrecord.setVisible(true);
+                    }
+                }
 			});
 		}
 		return buttonNew;
