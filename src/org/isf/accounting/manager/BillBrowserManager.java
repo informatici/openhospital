@@ -11,6 +11,7 @@ import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
 import org.isf.accounting.service.AccountingIoOperations;
 import org.isf.generaldata.MessageBundle;
+import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -110,6 +111,38 @@ public class BillBrowserManager {
 		if (billID == 0) return new ArrayList<BillItems>();
 		return ioOperations.getItems(billID);
 	}
+	/**
+	 * Retrieves all the bills of a given patient between dateFrom and datTo
+	 * @param dateFrom
+	 * @param dateTo
+	 * @param patient
+	 * @return the bills list
+	 */
+	public ArrayList<Bill> getBills(GregorianCalendar dateFrom, GregorianCalendar dateTo,Patient patient) {
+		try {
+			return ioOperations.getBills(dateFrom, dateTo, patient);
+		} catch (OHException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			return null;
+		}
+	}
+	/**
+	 * Retrieves all the billPayments for a given patient between dateFrom and dateTo
+	 * @param dateFrom
+	 * @param dateTo
+	 * @param patient
+	 * @return
+	 */
+	
+	public ArrayList<BillPayments> getPayments(GregorianCalendar dateFrom, GregorianCalendar dateTo,Patient patient) {
+		try {
+			return ioOperations.getPayments(dateFrom, dateTo, patient);
+		} catch (OHException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			return null;
+		}
+	}
+	
 
 	/**
 	 * Retrieves all the stored {@link BillPayments}.
@@ -315,8 +348,22 @@ public class BillBrowserManager {
 	public ArrayList<BillPayments> getPayments(ArrayList<Bill> billArray) throws OHServiceException {
 		return ioOperations.getPayments(billArray);
 	}
+
 	/**
-	 * added by u2g
+	 * Retrieves all the {@link Bill}s associated to the specified {@link Patient}.
+	 * @param patID - the Patient's ID
+	 * @return the list of {@link Bill}s
+	 */
+	public ArrayList<Bill> getPendingBillsAffiliate(int patID) {
+		try {
+			return ioOperations.getPendingBillsAffiliate(patID);
+		} catch (OHException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+			return null;
+		}
+	}
+
+	/**
 	 * Returns all the distinct stored {@link BillItems}.
 	 * 
 	 * @return a list of  distinct {@link BillItems} or null if an error occurs.
@@ -328,7 +375,6 @@ public class BillBrowserManager {
 	}
 	/**
 	 * get the bills list with a given billItem
-	 * added by u2g
 	 * @param dateFrom
 	 * @param dateTo
 	 * @param billItem

@@ -613,13 +613,13 @@ public class Tests
 			id = _setupTestBill(false);
 			Bill foundBill = (Bill)jpa.find(Bill.class, id); 
 			
-			ArrayList<Bill> bills = accountingIoOperation.getBills(dateFrom, dateTo, null);
+			ArrayList<Bill> bills = accountingIoOperation.getBills(dateFrom, dateTo, (Patient) null);
 			assertEquals(true, bills.contains(foundBill));
 			
-			bills = accountingIoOperation.getBills(new GregorianCalendar(10, 0, 1), dateFrom, null);
+			bills = accountingIoOperation.getBills(new GregorianCalendar(10, 0, 1), dateFrom, (Patient) null);
 			assertEquals(false, bills.contains(foundBill));
 			
-			bills = accountingIoOperation.getBills(dateTo, new GregorianCalendar(11, 0, 1), null);
+			bills = accountingIoOperation.getBills(dateTo, new GregorianCalendar(11, 0, 1), (Patient) null);
 			assertEquals(false, bills.contains(foundBill));
 			
 			id = _setupTestBillItems(false);
