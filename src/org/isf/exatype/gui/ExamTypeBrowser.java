@@ -29,6 +29,7 @@ import org.isf.exatype.gui.ExamTypeEdit.ExamTypeListener;
 import org.isf.exatype.manager.ExamTypeBrowserManager;
 import org.isf.exatype.model.ExamType;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -59,7 +60,7 @@ public class ExamTypeBrowser extends ModalJFrame implements ExamTypeListener{
 	private JTable jTable = null;
 	private ExamTypeBrowserModel model;
 	private int selectedrow;
-	private ExamTypeBrowserManager manager = new ExamTypeBrowserManager();
+	private ExamTypeBrowserManager manager = Context.getApplicationContext().getBean(ExamTypeBrowserManager.class);
 	private ExamType examType = null;
 	private final JFrame myFrame;
 	
@@ -251,7 +252,7 @@ class ExamTypeBrowserModel extends DefaultTableModel {
 	private static final long serialVersionUID = 1L;
 
 		public ExamTypeBrowserModel() {
-			ExamTypeBrowserManager manager = new ExamTypeBrowserManager();
+			ExamTypeBrowserManager manager = Context.getApplicationContext().getBean(ExamTypeBrowserManager.class);
 			try {
 				pExamType = manager.getExamType();
 			} catch (OHServiceException e) {

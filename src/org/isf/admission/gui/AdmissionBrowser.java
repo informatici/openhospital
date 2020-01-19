@@ -1828,7 +1828,7 @@ public class AdmissionBrowser extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 					
 					PatientExamination patex;
-					ExaminationBrowserManager examManager = new ExaminationBrowserManager();
+					ExaminationBrowserManager examManager = Context.getApplicationContext().getBean(ExaminationBrowserManager.class);
 					
 					PatientExamination lastPatex = null;
 					try {

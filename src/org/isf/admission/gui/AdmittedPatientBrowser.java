@@ -715,7 +715,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 					Patient pat = patient.getPatient();
 					
 					PatientExamination patex;
-					ExaminationBrowserManager examManager = new ExaminationBrowserManager();
+					ExaminationBrowserManager examManager = Context.getApplicationContext().getBean(ExaminationBrowserManager.class);
 					
 					PatientExamination lastPatex = null;
 					try {

@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 import org.isf.generaldata.MessageBundle;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.hospital.model.Hospital;
+import org.isf.menu.manager.Context;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -66,7 +67,7 @@ public class HospitalBrowser extends ModalJFrame{
 	
 	public HospitalBrowser(){
 		super();			
-		manager = new HospitalBrowsingManager();
+		manager = Context.getApplicationContext().getBean(HospitalBrowsingManager.class);
 		try {
 			hospital= manager.getHospital();
 		} catch (OHServiceException e) {

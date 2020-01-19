@@ -425,7 +425,7 @@ public class LabEdit extends JDialog {
 		if (matComboBox == null) {
 			matComboBox = new JComboBox();
 			matComboBox.addItem("");
-			LabManager labMan = new LabManager();
+			LabManager labMan = Context.getApplicationContext().getBean(LabManager.class);
 			for (String elem : labMan.getMaterialList()) {
 				matComboBox.addItem(elem);
 				if (!insert) {
@@ -551,7 +551,7 @@ public class LabEdit extends JDialog {
 							}
 						}
 					}
-					LabManager manager = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
+					LabManager manager = Context.getApplicationContext().getBean(LabManager.class,Context.getApplicationContext().getBean(LabIoOperations.class));
 					boolean result = false;
 					if (insert) {
 						lab.setAge(tmpAge);

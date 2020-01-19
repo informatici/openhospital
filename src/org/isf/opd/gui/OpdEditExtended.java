@@ -1494,7 +1494,7 @@ public class OpdEditExtended extends JDialog implements
 						return;
 					}
 					
-					ExaminationBrowserManager examManager = new ExaminationBrowserManager();
+					ExaminationBrowserManager examManager = Context.getApplicationContext().getBean(ExaminationBrowserManager.class);
 					PatientExamination patex = null;
 					PatientExamination lastPatex = null;
 					try {

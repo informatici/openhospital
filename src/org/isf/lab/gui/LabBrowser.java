@@ -529,7 +529,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private LabManager manager = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
+		private LabManager manager = Context.getApplicationContext().getBean(LabManager.class,Context.getApplicationContext().getBean(LabIoOperations.class));
 
 		public LabBrowsingModel(String exam, GregorianCalendar dateFrom, GregorianCalendar dateTo) {
 			try {
