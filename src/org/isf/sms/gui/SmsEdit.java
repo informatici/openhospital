@@ -31,6 +31,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.patient.gui.SelectPatient;
 import org.isf.patient.gui.SelectPatient.SelectionListener;
@@ -72,7 +73,7 @@ public class SmsEdit extends JDialog implements SelectionListener {
 	
 	private int MAX_LENGHT;
 	
-	private SmsManager smsManager = new SmsManager();
+	private SmsManager smsManager = Context.getApplicationContext().getBean(SmsManager.class);
 	
 	/**
 	 * Launch the application.

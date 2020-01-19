@@ -156,7 +156,6 @@ public class MovStockBrowser extends ModalJFrame {
     private JTextField searchTextField;
     private JButton searchButton;
 	
-	private SupplierBrowserManager supMan = new SupplierBrowserManager();
 	private HashMap<Integer, String> supMap = new HashMap<Integer, String>();
 
 	private MedicalBrowsingManager medicalManager = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
@@ -164,16 +163,17 @@ public class MovStockBrowser extends ModalJFrame {
 	private MedicaldsrstockmovTypeBrowserManager medicaldsrstockmovTypeBrowserManager = Context.getApplicationContext().getBean(MedicaldsrstockmovTypeBrowserManager.class);
 	private MovBrowserManager movBrowserManager = Context.getApplicationContext().getBean(MovBrowserManager.class);
 	private HospitalBrowsingManager hospitalManager = Context.getApplicationContext().getBean(HospitalBrowsingManager.class);
+	private SupplierBrowserManager supplierBrowserManager = Context.getApplicationContext().getBean(SupplierBrowserManager.class);
 
 	public MovStockBrowser() {
 		myFrame = this;
 		setTitle(MessageBundle.getMessage("angal.medicalstock.stockmovementbrowser"));
 		try {
-			supMap = supMan.getHashMap(true);
+			supMap = supplierBrowserManager.getHashMap(true);
 		} catch (OHServiceException e) {
 			OHServiceExceptionUtil.showMessages(e);
 		}
-		
+
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		Dimension screensize = kit.getScreenSize();
 		final int pfrmBase = 30;
@@ -184,7 +184,7 @@ public class MovStockBrowser extends ModalJFrame {
 				* pfrmHeight / pfrmBase) / 2, screensize.width * pfrmWidth
 				/ pfrmBase, screensize.height * pfrmHeight / pfrmBase);
 		setContentPane(getContentpane());
-		
+
 		//setResizable(false);
 		updateTotals();
 		pack();

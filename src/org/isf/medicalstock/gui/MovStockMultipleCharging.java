@@ -113,6 +113,7 @@ public class MovStockMultipleCharging extends JDialog {
 	private MovStockInsertingManager movManager = Context.getApplicationContext().getBean(MovStockInsertingManager.class);
 	private MedicalBrowsingManager medicalBrowsingManager = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
 	private MedicaldsrstockmovTypeBrowserManager medicaldsrstockmovTypeBrowserManager = Context.getApplicationContext().getBean(MedicaldsrstockmovTypeBrowserManager.class);
+	private SupplierBrowserManager supplierBrowserManager = Context.getApplicationContext().getBean(SupplierBrowserManager.class);
 
 	/**
 	 * Launch the application.
@@ -743,7 +744,6 @@ public class MovStockMultipleCharging extends JDialog {
 		if (jComboBoxSupplier == null) {
 			jComboBoxSupplier = new JComboBox();
 			jComboBoxSupplier.addItem(""); //$NON-NLS-1$
-			SupplierBrowserManager supplierBrowserManager = new SupplierBrowserManager();
 			ArrayList<Supplier> suppliers = null;
 			try {
 				suppliers = (ArrayList<Supplier>) supplierBrowserManager.getList();

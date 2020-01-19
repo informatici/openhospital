@@ -72,6 +72,7 @@ public class TherapyEntryForm extends JDialog {
 	 * Managers
 	 */
 	private MedicalBrowsingManager medBrowser = Context.getApplicationContext().getBean(MedicalBrowsingManager.class);
+	private TherapyManager therapyManager = Context.getApplicationContext().getBean(TherapyManager.class);
 	private ArrayList<Medical> medArray = null;
 
 	/*
@@ -763,9 +764,8 @@ public class TherapyEntryForm extends JDialog {
 					boolean notify = false;
 					boolean sms = false;
 
-					TherapyManager thManager = Context.getApplicationContext().getBean(TherapyManager.class);
 					try {
-						thRow = thManager.newTherapy(therapyID, patID, startDate, endDate, medical, qty, unitID, freqInDay, freqInPeriod, note, notify, sms);
+						thRow = therapyManager.newTherapy(therapyID, patID, startDate, endDate, medical, qty, unitID, freqInDay, freqInPeriod, note, notify, sms);
 						therapyID = thRow.getTherapyID();
 					} catch (OHServiceException e){
 						OHServiceExceptionUtil.showMessages(e, TherapyEntryForm.this);

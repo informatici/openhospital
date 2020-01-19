@@ -26,6 +26,7 @@ import net.sf.jasperreports.view.JasperViewer;
 	public class GenericReportUserInDate {
 
     private final Logger logger = LoggerFactory.getLogger(GenericReportUserInDate.class);
+	private JasperReportsManager jasperReportsManager = Context.getApplicationContext().getBean(JasperReportsManager.class);
 
 		public GenericReportUserInDate(String fromDate, String toDate, String aUser, String jasperFileName) {
 			new GenericReportUserInDate(fromDate, toDate, aUser, jasperFileName, true, true);
@@ -33,7 +34,6 @@ import net.sf.jasperreports.view.JasperViewer;
 
 		public  GenericReportUserInDate(String fromDate, String toDate, String aUser, String jasperFileName, boolean show, boolean askForPrint) {
 			try{
-                JasperReportsManager jasperReportsManager = Context.getApplicationContext().getBean(JasperReportsManager.class);
                 JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportUserInDatePdf(fromDate, toDate, aUser, jasperFileName);
 				if (show) {
                     if (GeneralData.INTERNALVIEWER) {

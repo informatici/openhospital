@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.event.EventListenerList;
 
 import org.isf.generaldata.MessageBundle;
+import org.isf.menu.manager.Context;
 import org.isf.supplier.manager.SupplierBrowserManager;
 import org.isf.supplier.model.Supplier;
 import org.isf.utils.exception.OHServiceException;
@@ -111,6 +112,8 @@ public class SupplierEdit extends JDialog {
 //	private String lastdescription;
 	private Supplier supplier = null;
 	private boolean insert = false;
+
+	private SupplierBrowserManager supplierBrowserManager = Context.getApplicationContext().getBean(SupplierBrowserManager.class);
 	
 	/**
 	 * 
@@ -257,8 +260,7 @@ public class SupplierEdit extends JDialog {
 								JOptionPane.PLAIN_MESSAGE);
 						return;
 					}
-                    SupplierBrowserManager manager = new SupplierBrowserManager();
-					
+
 					supplier.setSupName(nameTextField.getText());
 					supplier.setSupAddress(addressTexField.getText().trim());
 					supplier.setSupTaxcode(taxcodeTestField.getText());
@@ -272,7 +274,7 @@ public class SupplierEdit extends JDialog {
 					boolean result = false;
 					if (insert) { // inserting
 						try {
-							result = manager.saveOrUpdate(supplier);
+							result = supplierBrowserManager.saveOrUpdate(supplier);
                         } catch (OHServiceException ex) {
                             OHServiceExceptionUtil.showMessages(ex);
                         }
@@ -282,7 +284,7 @@ public class SupplierEdit extends JDialog {
 					}
 					else { // updating
 						try {
-							result = manager.saveOrUpdate(supplier);
+							result = supplierBrowserManager.saveOrUpdate(supplier);
                         } catch (OHServiceException ex) {
                             OHServiceExceptionUtil.showMessages(ex);
                         }

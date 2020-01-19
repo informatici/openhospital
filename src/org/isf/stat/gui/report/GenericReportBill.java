@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
 import org.isf.generaldata.TxtPrinter;
+import org.isf.menu.manager.Context;
 import org.isf.serviceprinting.manager.PrintReceipt;
 import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
@@ -22,6 +23,7 @@ import net.sf.jasperreports.view.JasperViewer;
 public class GenericReportBill {
 
     private final Logger logger = LoggerFactory.getLogger(GenericReportBill.class);
+	private JasperReportsManager jasperReportsManager = Context.getApplicationContext().getBean(JasperReportsManager.class);
 
 	public GenericReportBill(Integer billID, String jasperFileName) {
 		new GenericReportBill(billID, jasperFileName, true, true);
@@ -32,7 +34,6 @@ public class GenericReportBill {
 		TxtPrinter.getTxtPrinter();
 		
 		try {
-            JasperReportsManager jasperReportsManager = new JasperReportsManager();
             JasperReportResultDto jasperReportPDFResultDto = jasperReportsManager.getGenericReportBillPdf(billID, jasperFileName, show, askForPrint);
 
 			if (show) {

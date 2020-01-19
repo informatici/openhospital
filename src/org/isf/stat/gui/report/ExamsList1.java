@@ -15,10 +15,11 @@ import net.sf.jasperreports.view.JasperViewer;
 public class ExamsList1 {
 
 	private final Logger logger = LoggerFactory.getLogger(ExamsList1.class);
+	private JasperReportsManager jasperReportsManager = Context.getApplicationContext().getBean(JasperReportsManager.class);
 
 	public ExamsList1() {
 		try {
-			JasperReportsManager jasperReportsManager = Context.getApplicationContext().getBean(JasperReportsManager.class);
+
 			JasperReportResultDto jasperReportResultDto = jasperReportsManager.getExamsListPdf();
 
 			// shows at video

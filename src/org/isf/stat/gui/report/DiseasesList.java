@@ -15,10 +15,11 @@ import net.sf.jasperreports.view.JasperViewer;
 public class DiseasesList {
 	
 	private final Logger logger = LoggerFactory.getLogger(DiseasesList.class);
+	private JasperReportsManager jasperReportsManager = Context.getApplicationContext().getBean(JasperReportsManager.class);
 
 	public DiseasesList() {
+
 		try {
-			JasperReportsManager jasperReportsManager = Context.getApplicationContext().getBean(JasperReportsManager.class);
 			JasperReportResultDto jasperReportResultDto = jasperReportsManager.getDiseasesListPdf();
 
 			// shows at video
