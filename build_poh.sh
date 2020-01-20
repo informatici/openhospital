@@ -51,9 +51,11 @@ mvn package
 mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > database.sql
 
 # create distribution folders
+FULL_DIR="./OpenHospital-$version"
 WIN_DIR="./poh-win32-$poh_win32_version-$version"
 LINUX32_DIR="./poh-linux-x32-$poh_linux_version-$version"
 LINUX64_DIR="./poh-linux-x64-$poh_linux_version-$version"
+mkdir -p $FULL_DIR/doc
 mkdir -p $WIN_DIR/oh/doc
 mkdir -p $LINUX32_DIR/oh/doc
 mkdir -p $LINUX64_DIR/oh/doc
@@ -62,6 +64,7 @@ mkdir -p $LINUX64_DIR/oh/doc
 if command_exists asciidoctor-pdf; then
     asciidoctor-pdf ./doc/doc_admin/AdminManual.adoc -o AdminManual.pdf
     asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o UserManual.pdf
+    cp *.pdf $FULL_DIR/oh/doc
     cp *.pdf $WIN_DIR/oh/doc
     cp *.pdf $LINUX32_DIR/oh/doc
     cp *.pdf $LINUX64_DIR/oh/doc
@@ -71,6 +74,12 @@ fi
 echo 'Extract changelogs...'
 cp core/doc/`ls core/doc/ -r | head -n 1` core_`ls core/doc/ -r | head -n 1`
 cp gui/doc/`ls gui/doc/ -r | head -n 1` gui_`ls gui/doc/ -r | head -n 1`
+
+echo 'Assemble OpenHospital (full)...'
+cp -rf ./gui/target/OpenHospital20/* $FULL_DIR
+cp *.txt $FULL_DIR/doc
+cp CHANGELOG.md $FULL_DIR
+cp LICENSE $FULL_DIR
 
 echo 'Assemble OH Windows portable...'
 cp -rf ./poh-bundle-win/* $WIN_DIR
@@ -100,6 +109,7 @@ cp POH-linux-changelog.md $LINUX64_DIR
 cp LICENSE $LINUX64_DIR
 
 echo 'Package...'
+zip -r $FULL_DIR.zip $FULL_DIR
 zip -r $WIN_DIR.zip $WIN_DIR
 tar -cvzf $LINUX32_DIR.tar.gz $LINUX32_DIR
 tar -cvzf $LINUX64_DIR.tar.gz $LINUX64_DIR
@@ -115,6 +125,6 @@ sed -i "s/VERSION/$version/g" CHANGELOG.md
 sed -i "s/CHECKSUM/$checksum/g" CHANGELOG.md
 
 # clean up
-rm -rf $WIN_DIR $LINUX32_DIR $LINUX64_DIR *.sql *.txt
+rm -rf $FULL_DIR $WIN_DIR $LINUX32_DIR $LINUX64_DIR *.sql *.txt
 
-echo "Portable distributions of Open Hospital created successfully."
+echo "Full and portable distributions of Open Hospital created successfully."
