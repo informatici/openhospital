@@ -52,9 +52,9 @@ mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > 
 
 # create distribution folders
 FULL_DIR="./OpenHospital-$version"
-WIN_DIR="./poh-win32-$poh_win32_version-$version"
-LINUX32_DIR="./poh-linux-x32-$poh_linux_version-$version"
-LINUX64_DIR="./poh-linux-x64-$poh_linux_version-$version"
+WIN_DIR="./poh-win32-$poh_win32_version-core-$version"
+LINUX32_DIR="./poh-linux-x32-$poh_linux_version-core-$version"
+LINUX64_DIR="./poh-linux-x64-$poh_linux_version-core-$version"
 mkdir -p $FULL_DIR/doc
 mkdir -p $FULL_DIR/mysql
 mkdir -p $WIN_DIR/oh/doc
