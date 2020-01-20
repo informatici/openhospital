@@ -21,9 +21,9 @@ deploy:
   skip_cleanup: true
   file_glob: true
   file: 
-   - "OpenHospital-*.zip"
-   - "poh-*.zip"
-   - "poh-*.tar.gz"
+   - OpenHospital-*.zip
+   - poh-*.zip
+   - poh-*.tar.gz
   overwrite: true
   on:
     tags: true
