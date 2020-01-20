@@ -9,6 +9,9 @@ Changelog vVERSION:
 - New! Multiple Operations in Admission and available in Clinical Sheet
 - New! Search fields for Exams in Laboratory
 - New! Online documentation in portable format Asciidoctor (available at [openhospital-doc](http://github.com/informatici/openhospital-doc))
+- (fix) Fixed startup when connectivity is not available
+- (fix) Fixed step_57 file name
+- (fix) OP-126 List box problem in Examination module
 
 Brought to you by:
 - Informatici Senza Frontiere opensource community

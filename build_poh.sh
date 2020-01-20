@@ -73,6 +73,8 @@ else show_doc;
 fi
 
 echo 'Extract changelogs...'
+cd core && ./changelog.sh && cd ..
+cd gui && ./changelog.sh && cd ..
 cp core/doc/`ls core/doc/ -r | head -n 1` core_`ls core/doc/ -r | head -n 1`
 cp gui/doc/`ls gui/doc/ -r | head -n 1` gui_`ls gui/doc/ -r | head -n 1`
 
