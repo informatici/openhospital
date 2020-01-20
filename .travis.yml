@@ -14,13 +14,14 @@ script:
 before_deploy:
 - curl https://github.com/lindell/github-release-cli/releases/download/1.3.0/github-releaser-travis -L --output github-releaser && chmod +x github-releaser
 - export BODY=$(envsubst < ./CHANGELOG.md)
-- export FILES=poh*.*
-- export FILES=OpenHospital-*.*
+- export FILES=$(ls *.zip *.tar.gz)
 
 deploy:
   provider: script
   script: "./github-releaser -draft -verbose"
   skip_cleanup: true
+  file_glob: true
+  file: "${FILES}"
   overwrite: true
   on:
     tags: true
