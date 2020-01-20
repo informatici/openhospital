@@ -56,6 +56,7 @@ WIN_DIR="./poh-win32-$poh_win32_version-$version"
 LINUX32_DIR="./poh-linux-x32-$poh_linux_version-$version"
 LINUX64_DIR="./poh-linux-x64-$poh_linux_version-$version"
 mkdir -p $FULL_DIR/doc
+mkdir -p $FULL_DIR/mysql
 mkdir -p $WIN_DIR/oh/doc
 mkdir -p $LINUX32_DIR/oh/doc
 mkdir -p $LINUX64_DIR/oh/doc
@@ -64,7 +65,7 @@ mkdir -p $LINUX64_DIR/oh/doc
 if command_exists asciidoctor-pdf; then
     asciidoctor-pdf ./doc/doc_admin/AdminManual.adoc -o AdminManual.pdf
     asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o UserManual.pdf
-    cp *.pdf $FULL_DIR/oh/doc
+    cp *.pdf $FULL_DIR/doc
     cp *.pdf $WIN_DIR/oh/doc
     cp *.pdf $LINUX32_DIR/oh/doc
     cp *.pdf $LINUX64_DIR/oh/doc
@@ -77,6 +78,7 @@ cp gui/doc/`ls gui/doc/ -r | head -n 1` gui_`ls gui/doc/ -r | head -n 1`
 
 echo 'Assemble OpenHospital (full)...'
 cp -rf ./gui/target/OpenHospital20/* $FULL_DIR
+cp -rf ./core/mysql/db/* $FULL_DIR
 cp *.txt $FULL_DIR/doc
 cp CHANGELOG.md $FULL_DIR
 cp LICENSE $FULL_DIR
