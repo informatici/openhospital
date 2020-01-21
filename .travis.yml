@@ -24,6 +24,7 @@ deploy:
   provider: script
   script: "./github-releaser -draft -verbose"
   skip_cleanup: true
+  file_glob: true
   file: {"${OH_FULL_PKG}","${POH_LINUX32_PKG}","${POH_LINUX64_PKG}","${POH_WIN32_PKG}"} 
   overwrite: true
   on:
