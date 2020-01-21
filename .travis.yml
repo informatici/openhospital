@@ -18,7 +18,7 @@ before_deploy:
 - export POH_LINUX32_PKG=$(ls poh-linux-x32-*.tar.gz)
 - export POH_LINUX64_PKG=$(ls poh-linux-x64-*.tar.gz)
 - export POH_WIN32_PKG=$(ls poh-win32-*.zip)
-- export PACKAGES=$(ls *.zip *.tar.gz)
+- export PACKAGES=$(ls *.zip *.tar.gz | sed 's/ /*/g')
 
 deploy:
   provider: releases
