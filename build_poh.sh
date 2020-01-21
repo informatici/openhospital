@@ -117,9 +117,11 @@ zip -r $FULL_DIR.zip $FULL_DIR
 zip -r $WIN_DIR.zip $WIN_DIR
 tar -cvzf $LINUX32_DIR.tar.gz $LINUX32_DIR
 tar -cvzf $LINUX64_DIR.tar.gz $LINUX64_DIR
+mkdir release-files
+cp *.zip *.tar.gz release-files/
 
 # check
-ls
+ls release-files/
 
 echo 'Compute SHA256 checksum...'
 checksum=$(sha256sum *.zip *.gz)
@@ -129,6 +131,6 @@ sed -i "s/VERSION/$version/g" CHANGELOG.md
 sed -i "s/CHECKSUM/$checksum/g" CHANGELOG.md
 
 # clean up
-rm -rf $FULL_DIR $WIN_DIR $LINUX32_DIR $LINUX64_DIR *.sql *.txt
+rm -rf $FULL_DIR $WIN_DIR $LINUX32_DIR $LINUX64_DIR *.sql *.txt release-files/
 
 echo "Full and portable distributions of Open Hospital created successfully."
