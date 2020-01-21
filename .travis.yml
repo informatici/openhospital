@@ -21,14 +21,10 @@ before_deploy:
 - export PACKAGES=$(ls *.zip *.tar.gz | sed 's/ /*/g')
 
 deploy:
-  provider: releases
-  #script: "./github-releaser -draft -verbose"
+  provider: script
+  script: "./github-releaser -draft -verbose"
   skip_cleanup: true
-  file: 
-    - "${OH_FULL_PKG}"
-    - "${POH_LINUX32_PKG}" 
-    - "${POH_LINUX64_PKG}" 
-    - "${POH_WIN32_PKG}" 
+  file: {"${OH_FULL_PKG}","${POH_LINUX32_PKG}","${POH_LINUX64_PKG}","${POH_WIN32_PKG}"} 
   overwrite: true
   on:
     tags: true
