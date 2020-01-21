@@ -14,7 +14,7 @@ script:
 before_deploy:
 - curl https://github.com/lindell/github-release-cli/releases/download/1.3.0/github-releaser-travis -L --output github-releaser && chmod +x github-releaser
 - export BODY=$(envsubst < ./CHANGELOG.md)
-- export FILES=poh-*.*
+- export FILES=release-files/*
 
 deploy:
   provider: script
