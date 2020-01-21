@@ -14,18 +14,12 @@ script:
 before_deploy:
 - curl https://github.com/lindell/github-release-cli/releases/download/1.3.0/github-releaser-travis -L --output github-releaser && chmod +x github-releaser
 - export BODY=$(envsubst < ./CHANGELOG.md)
-- export OH_FULL_PKG=$(ls OpenHospital-*.zip)
-- export POH_LINUX32_PKG=$(ls poh-linux-x32-*.tar.gz)
-- export POH_LINUX64_PKG=$(ls poh-linux-x64-*.tar.gz)
-- export POH_WIN32_PKG=$(ls poh-win32-*.zip)
-- export PACKAGES=$(ls *.zip *.tar.gz | sed 's/ /*/g')
+- export FILES=poh-*.*
 
 deploy:
   provider: script
   script: "./github-releaser -draft -verbose"
   skip_cleanup: true
-  file_glob: true
-  file: {"${OH_FULL_PKG}","${POH_LINUX32_PKG}","${POH_LINUX64_PKG}","${POH_WIN32_PKG}"} 
   overwrite: true
   on:
     tags: true
