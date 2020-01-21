@@ -18,12 +18,13 @@ before_deploy:
 - export POH_LINUX32_PKG=$(ls poh-linux-x32-*.tar.gz)
 - export POH_LINUX64_PKG=$(ls poh-linux-x64-*.tar.gz)
 - export POH_WIN32_PKG=$(ls poh-win32-*.zip)
+- export PACKAGES=$(ls *.zip *.tar.gz)
 
 deploy:
-  provider: script
-  script: "./github-releaser -draft -verbose"
+  provider: releases
+  #script: "./github-releaser -draft -verbose"
   skip_cleanup: true
-  file: "${OH_FULL_PKG}"   
+  file: "${PACKAGES}"   
   overwrite: true
   on:
     tags: true
