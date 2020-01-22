@@ -1,0 +1,649 @@
+commit 18567c673a4ffd9809a8c0e92c09485a79589d20
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-20
+
+    Hotfix Travis build #169 failed
+
+commit 9d9b91b08fab3111759aeac54483139a70ad5570
+Author: vicusotto <vito988@gmail.com>
+Date:   2020-01-19
+
+    OP-113 Spring annotation for @Component, @Service and @Repository of modules S to U #time 1h (#35)
+    
+    OP-113 Spring annotation for @Component, @Service and @Repository of modules S to U #time 1h
+
+commit e5b605c80d16cd0c238e38a56112036624e0b534
+Author: giuseppe.sorge <giuseppe.sorge90@gmail.com>
+Date:   2020-01-19
+
+    Op 102 master refactoring for api (#34)
+    
+    OP-110
+
+commit ec3022b3b98e3f41e9fc4047eff8c66a7fb41db8
+Author: giuseppe.sorge <giuseppe.sorge90@gmail.com>
+Date:   2020-01-17
+
+    OP-102 master refactoring for api
+    
+    OP-112 and OP-114
+
+commit d051b14e6ef328a93cb9e9f2ebd84c9fc476251e
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-17
+
+    Restored default values for DB connection
+
+commit 168743fb423c30ac3aeeda405370a3be9de2675b
+Author: vicusotto <vito988@gmail.com>
+Date:   2020-01-17
+
+    OP-111 Modules with M
+    
+    Spring annotation for @Component, @Service and @Repository of M modules, organize imports #time 1h (#29)
+
+commit d5aa3378a4267864ba546f92d6cf35f49e9a4706
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-17
+
+    OP-110 #comment converting package Exa
+    
+    and removed warnings and unwanted TODOs
+
+commit 2a887cccdfe074678bf833b0d00d3599d05f79a0
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-27
+
+    Added missing JUnit tests
+
+commit b3fd109cd2dae9ef306f92d3b640170aba66eaf3
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-27
+
+    Refactoring one method and fixed some comments
+
+commit c0d48d1d078e70deca744e7e91a970cef9bda08f
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-10
+
+    Refactoring one method
+
+commit 30ffc4d42c405a375c277e6e894a2ba2871c8caf
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-10
+
+    Solved issue #26 (like in master)
+
+commit a89f7d6eb90f7c07f3674139adebe9d60e704483
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-10
+
+    Removed unused method
+
+commit 2b22d7874d77177e1ce3963cc15ce4d21ec3808b
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-10
+
+    Fixed script (like in master branch)
+
+commit eb87c8462ee660a1d1c36ed3e1a01037d1930115
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 Added @Autowired on the new @Component
+
+commit c6de5bc35791a1da3d22376c3f74c1f2f1f89922
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting packages DeliveryType and DeliveryResultType
+    
+    and removed warnings and unwanted TODOs
+
+commit b3d185942318d501fcd8383ca830f1173616e37e
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting packages Disease and DiseaseType
+    
+    and removed warnings and unwanted TODOs
+
+commit 0b01cd11b91e128cabdbb2d25e92d0b9f253d728
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting package DischargeType
+    
+    and removed warnings and unwanted TODOs
+
+commit 406c0271b09bd1247c57eb9a04cbdf8c07af2b6a
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting package Dicom
+    
+    and removed warnings and unwanted TODOs
+
+commit ed13338ea75cd1f1edb50600128d899b171ac477
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting package AgeType
+    
+    and removed all warnings and unwanted TODOs
+
+commit df643e1a074c36bebf4fe0c48667e4e92c0cdd08
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting package AdmissionType
+    
+    and removed all warnings and unwanted TODOs
+
+commit 8c5cba1112de887c7d4341fb7d3cfd484fc38e91
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting package Admission
+    
+    and removed all warnings and unwanted TODOs
+
+commit efafa19d1679df21b2945973a0fb708157a504ce
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting module Accounting
+    
+    and removed all warnings and unwanted TODOs
+
+commit c3dcc1ad0fb52f75b1d4970eaef244ade7e353af
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-06
+
+    @Autowired on PatientBrowserManager for TherapyManager
+
+commit 298a7a920e64e65cd290f182e0a799b6109e0dc8
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-11-28
+
+    Fixed step_57 file name
+
+commit eb6db95a884bbd81f525e4daed5b2a3e25a1b877
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-11-27
+
+    Update applicationContext.xml (#26)
+    
+    Fixing startup when connectivity is not available
+
+commit e6fdb1b5cd462007df1668ea6c9e76acb57e9a04
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-10-03
+
+    Legacy with previous versions of JDBC driver
+    
+    As by https://stackoverflow.com/a/27276523/5309541
+
+commit 40f174657caa18cefabeb5c6eaef81c15731e761
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-10-03
+
+    Started refactoring for 'springfying' core:
+    
+    1. all ...Manager.java should be @Component
+    2. all ...Repository.java should be @Repository
+    3. all ...IoOperations.java should be @Service
+    4. in case of doubts use @Component
+
+commit b0e5e77296a67422e25c88a9ada4c4997fe23391
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-09-21
+
+    Op 84 & op 88 print open bill & patient invoices summary (#23)
+    
+    * filter bills by patient
+    * add print opened invoices parameters
+    * Fixed accounting reports
+    * provided three reports: all, pending and monthly
+    * added new patient's statement report
+    * Added missing javadoc
+
+commit a9da8c5014ec124474ad9b179cb68dcbc2902030
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-09-21
+
+    Added missing javadoc
+
+commit d0d24380813df93c55cef62cd98a146a6de36deb
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-09-21
+
+    Fixed accounting reports
+    
+    - provided three reports: all, pending and monthly
+    - added new patient's statement report
+
+commit 17f6186ef165fcf5faba4694b0a5577abeaa810f
+Author: antonio <me.verni@gmail.com>
+Date:   2019-09-19
+
+    Bump to spring 5.1.9
+
+commit 4e842d92a141c891d9c32d450483f9a8097fe1ae
+Author: antonio <me.verni@gmail.com>
+Date:   2019-09-19
+
+    Removed static ApplicationContext initialization from Context
+
+commit a4c21dda1f99e8f1b6163fe6d695b3f1d785a4c5
+Author: antonio <me.verni@gmail.com>
+Date:   2019-09-19
+
+    Added new hibernate parameter to disable autoincrement via database table
+
+commit b645a9ba6fc015ffc7407332341b92fb9e86f993
+Author: antonio <me.verni@gmail.com>
+Date:   2019-09-19
+
+    Fixed Spring issue with pageable and native queries
+
+commit a15b1d4e276c7f33fa9373b0d6c2cc00e89693be
+Author: antonio <me.verni@gmail.com>
+Date:   2019-09-17
+
+    Restored wrong merge
+
+commit a634062ad79892bdd7d9e36314c8494ed2a0eb83
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-04-22
+
+    Added pagination support to Patient list
+
+commit 56a3eb7531ebce31d1ca8441c9e977f08fc582e1
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-04-16
+
+    PatientBrowserManager to spring Component
+
+commit d868b2657f17d3d5ba6c2ab33871698af2c9db69
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-09-04
+
+    Op 87 op 90 allow multiple open bill and filter bill by product (#22)
+    
+    Tasks U2G_OP_90 and U2G_OP_87
+    
+    Allow a customer to have several open invoices and Filters invoices on a specific product
+
+commit 96e2306942be2f60cc9c79b50cdf377bb957d931
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-21
+
+    Updated changelog
+
+commit c1db7f30ad25a01511178538a9002a47566f3f50
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-15
+
+    Addressed security issue #2
+    
+    https://github.com/informatici/openhospital-core/network/alert/pom.xml/org.springframework.data:spring-data-jpa/closed
+
+commit fc7480481e9a2b9b1c6b51422449713ba37f43af
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-15
+
+    Fixed insert query
+
+commit 02045f02f5d8c44fa23578db0f0efb1edf2a3b92
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-14
+
+    Updated changelog for v1.9.0
+
+commit d9e1f37dc34739dffdcd446d78ffe8d96d525dcd
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-10
+
+    made changelog.sh executable
+
+commit d7218f8d78dc7402c5c2dfb22113fe5bbc11a7ce
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-10
+
+    Updated changelog and added a script to generate it
+
+commit 047f777e9946d7e620820ee41020a2995644c959
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-09
+
+    Fixed object equals() method
+
+commit 5b0d75468f9165b4349d54bb8cb9c09bb2e4c920
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-09
+
+    Fixing pre-release issue #27: fix dates range filtering
+
+commit 06abe7ed33079fbdc5d453c1699df6b901371f9a
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-07
+
+    Pre-release issue #19: fixing duplicated drugs
+
+commit 4da2c0d75ddc3125d2e5b2f57f1b695464764091
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-07
+
+    Pre-release issue #21: fixing StockLedger report
+
+commit 02728a6744bf46d4341b1e86f5ae3efb421b5d0e
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-30
+
+    Uploaded changelog version 1.9
+
+commit a90a9f390fb41975c38c0610a83265ff77f497bd
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-28
+
+    Adding missing changelogs
+    
+    (new folder doc/ not depoloyed)
+
+commit 1bedd37963ae6237a9469ac012b2f149b89707b4
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-28
+
+    Op 83 fixing reports (#19)
+    
+    * MedicalStockWard: completed movements between wards
+    - Added new incoming movements for each ToWard movement
+    - Added one field MMVN_WRD_ID_A_FROM to better handle movements between
+    wards in reports
+    - Fixed incoming movement from other ward description and outcomes report
+
+commit 6ed526bc601f26279d511def11e017ec5b99f0e6
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-26
+
+    Update .travis.yml
+    
+    Revert dubugging Travis build
+
+commit 1c8ef582d60e5193dd26cbd865b56404ea345f12
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-26
+
+    OP-83 fixed table name case in the script
+
+commit 16f3450f4cf55d93c38abb8775d0e5a4dc01da48
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-25
+
+    Update .travis.yml
+    
+    Debugging Travis build
+
+commit 6984ce294f18140cf229a497cdf538fcf9dbd741
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-25
+
+    Update .travis.yml
+    
+    Debugging Travis build...
+
+commit 1d2877e8bb13f820392f1acd7e8fa3c04abe6a8d
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-25
+
+    Renamed script and added to from_step_05.sql
+
+commit 47c42e2eb75e50628e7b6563f8c046cbb6c0fdcf
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-25
+
+    Improved .equals method for Medical
+
+commit 5a20020c6389afddb603989848f2bd354d0ef509
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-24
+
+    Moved SQL script from gui -> core and fixed query for stock movement
+
+commit c4f028e80b402d8dbea4b4a9e8e89280c33b3e5f
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-07-24
+
+    Prevent mvnt between ward for updating the main pharmacy stocks
+
+commit 23affd12031613f44443c91aa3f3cf9ad266639f
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-24
+
+    Fixed query for stock movement type
+
+commit 02cf8a4b86a23a3f6418a4d16cb2a3f33b4e6c7f
+Author: Marcellin <marcellintabou@gmail.com>
+Date:   2019-06-07
+
+    Search field added in GENERALDATE>EXAMS menu and also in LABORATORY>NEW
+    > +EXAM button allowing to easily select an exam
+    
+    Conflicts:
+            src/org/isf/exa/manager/ExamRowBrowsingManager.java
+            src/org/isf/exa/service/ExamRowIoOperations.java
+            src/org/isf/lab/manager/LabManager.java
+            src/org/isf/lab/model/Laboratory.java
+            src/org/isf/lab/service/LabIoOperationRepositoryCustom.java
+            src/org/isf/lab/service/LabIoOperations.java
+
+commit c5b385e7695314834fc6b7bcdfa27210937457da
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-03
+
+    Task OP-83 done (Uni2grow Cameroun)
+    
+    Transfer of products and materials between wards enabled
+
+commit a2f5db5a9be5dccff4b048ec092fb010c4416672
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-18
+
+    Update Dockerfile-ohdb
+
+commit ce89525a6e9eff0a2a5790a3016f91c5129b5388
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-18
+
+    Update Dockerfile-ohdb
+    
+    Selected English language only for DB
+
+commit dcf9d9877fdcb9549ee0f50d4fa5fb8226ef5c97
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-16
+
+    OP-85 Fixed some JUnit Tests
+
+commit 2a20529467ed0ce110ba8508725bff986485c3e5
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-11
+
+    OP-72 #comment Fixed many missing changes from previous commits
+
+commit c3e3dac48d9ad86306e580bac8c906fc75b4a337
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-11
+
+    OP-72 #comment added missing SupplierBrowserManager method
+
+commit a576e10ce6ed907f1ae004e49ddcba3183782914
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-11
+
+    OP-72 #comment added missing GeneralData parameter
+
+commit 7e2e0564d895cf7c1ee6d54293f3d3ef6ca0cfe4
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-03
+
+    OP-72 #comment Medical Stock Ward: improvement from Wolisso
+    
+    - Added new report for stock at date in PDF and Excel formats
+    - Separated columns for packets/units
+
+commit e177bd5bd4d6e68ab31a521b1788b4aba1ec5828
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-03
+
+    OP-72 #comment Medical Browser: ported improvments from Wolisso
+    
+    - Added JTextField for search
+    - Added JTable autoRowSorted
+    - Added new Stock Report that reflect the actual filtering, sorting and
+    grouping
+
+commit b84bbe042ae2e7e0ef3d4f0117cff71828953a2e
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-01
+
+    Removed from comments the references to the old DbQueryLogger
+
+commit d7e583840aa0a487f0c1b7d852942ead454cc6ba
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-01
+
+    OP-72 #comment Laboratory: added new material "film"
+    
+    and moved the list into manager
+
+commit cb5c8f816082ca61c852f2a0600662db938fe81e
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-01
+
+    OP-72 #comment SF-FR14: Enabled OPD custom numbering
+
+commit 2761f303c2d576fb17849226a7acea5094f9a6b2
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-06-29
+
+    Revert "task OP-91, mvnt between wards"
+
+commit c686fb10732641ce20aea463bca21b5da2207e99
+Author: gildas <gildasdongmo@yahoo.fr>
+Date:   2019-06-12
+
+    add scripts migrations
+
+commit 5184f02a3630f8452fb800b2beae0d20276211ed
+Author: Marcellin <marcellintabou@gmail.com>
+Date:   2019-06-07
+
+    Search field added in GENERALDATE>EXAMS menu and also in LABORATORY>NEW > +EXAM button allowing to easily select an exam
+
+commit 26c852c8ab796e1ea6233a82deae2936308c231e
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-06
+
+    Task OP-82 done (Uni2grow Cameroun)
+    
+    The exams panel was inserted into a tabbedPane and a tab was added to show the history of operations performed on a patient. (Admission/Patient > Clinical sheet)
+
+commit 5d0e71d77b9f4a344ff56cea4344358a875097b5
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-06
+
+    Task OP-81 done (Uni2grow Cameroun)
+    
+    Admission/Patient > Admission > Operation. modified and database modified to allow adding multiple operation to an admission.
+
+commit 58e895ed797602b13254e36992fcac57f8e0f3d0
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-03
+
+    Task OP-83 done (Uni2grow Cameroun)
+    
+    Transfer of products and materials between wards enabled
+
+commit ca45470eba9ca02c4db3afcfe74f4d99784c0338
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-05-31
+
+    task OP-91 done
+
+commit d207993b0c11b62e20efe3b3a8985a6ebdac62ad
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-09-04
+
+    Op 87 op 90 allow multiple open bill and filter bill by product (#22)
+    
+    Tasks U2G_OP_90 and U2G_OP_87
+    
+    Allow a customer to have several open invoices and Filters invoices on a specific product
+
+commit 6f7fe64baab2e6af56bde106937631861bbfc080
+Author: Uni2grow <julio.tcheptang.u2g@gmail.com>
+Date:   2019-06-14
+
+    add print opened invoices parameters
+
+commit 8691d37bd360ec837e4a83d0daf725a6c5a2288a
+Author: Uni2grow <julio.tcheptang.u2g@gmail.com>
+Date:   2019-06-03
+
+    filter bills by patient
+
+commit 87f1d1191207f8ecded911d2058f50815961c1e6
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-05-08
+
+    Added OHServiceValidationException to PatientBrowserManager validate
+
+commit 61a2eb10da104c238caf342a8c3bddb3dcfab22f
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-05-08
+
+    AdmissionTypeBrowserManager to component. Added OHServiceValidationException to AdmissionTypeBrowserManager validate
+
+commit 943557268a51f971d8b31d38c1793ab6ebd612ae
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-05-08
+
+    First add of specific validation exception type
+
+commit d1de249e9fdd9d8a495975302631ae37df82b0aa
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-04-22
+
+    Added UserBrowsingManager to spring Service. Added getUserByName method to UserBrowsingManager
+
+commit 19792550e30ee5f9f6ad816fbd67250602afd9e6
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-04-22
+
+    Added pagination support to Patient list
+
+commit 331226872ec5766cd87bf6504215fa7c0b1b8697
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-04-16
+
+    PatientBrowserManager to spring Component
+
+commit 6b454130924913379c364b77c9cf8dc432100a68
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-04-22
+
+    Added UserBrowsingManager to spring Service. Added getUserByName method to UserBrowsingManager
+
+commit f7ad6bb2d982fbf1e4ffc5d5d872cbc54b22b864
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-04-22
+
+    Added pagination support to Patient list
+
+commit 76c234208fe7db802ca5e2836272dbbb68b8c0a7
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-04-16
+
+    PatientBrowserManager to spring Component
