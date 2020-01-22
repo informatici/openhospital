@@ -80,10 +80,11 @@ cp gui/doc/`ls gui/doc/ -r | head -n 1` gui_`ls gui/doc/ -r | head -n 1`
 
 echo 'Assemble OpenHospital (full)...'
 cp -rf ./gui/target/OpenHospital20/* $FULL_DIR
-cp -rf ./core/mysql/db/* $FULL_DIR
+cp -rf ./core/mysql/db/* $FULL_DIR/mysql
+cp ./core/doc/*.txt $FULL_DIR/doc
 cp *.txt $FULL_DIR/doc
-cp CHANGELOG.md $FULL_DIR
 cp LICENSE $FULL_DIR
+rm $FULL_DIR/changelog.sh
 
 echo 'Assemble OH Windows portable...'
 cp -rf ./poh-bundle-win/* $WIN_DIR
