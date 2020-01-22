@@ -84,7 +84,7 @@ echo 'Assemble OpenHospital (full)...'
 cp -rf ./gui/target/OpenHospital20/* $FULL_DIR
 cp -rf ./core/mysql/db/* $FULL_DIR/mysql
 rm $FULL_DIR/generate_changelog.sh
-# cp *.txt $FULL_DIR/doc
+# cp *.txt $FULL_DIR/doc 
 cp LICENSE $FULL_DIR
 cp CHANGELOG $FULL_DIR
 
