@@ -1,6 +1,6 @@
 #!/bin/bash
 # This script assembles the portable distributions of Open Hospital.
-set -x
+
 command_exists () { type "$1" &> /dev/null ; }
 
 requirements="java mvn docker-compose mysql zip tar"
