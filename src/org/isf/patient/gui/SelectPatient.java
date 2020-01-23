@@ -40,8 +40,8 @@ import javax.swing.table.DefaultTableModel;
 import org.isf.accounting.gui.BillBrowser;
 import org.isf.generaldata.GeneralData;
 import org.isf.generaldata.MessageBundle;
-import org.isf.menu.manager.Context;
 import org.isf.menu.gui.MainMenu;
+import org.isf.menu.manager.Context;
 import org.isf.patient.gui.PatientInsertExtended.PatientListener;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
@@ -49,7 +49,7 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.VoLimitedTextField;
 
-public class SelectPatient extends JDialog {
+public class SelectPatient extends JDialog implements PatientListener {
 	
 //LISTENER INTERFACE --------------------------------------------------------
 	private EventListenerList selectionListener = new EventListenerList();
@@ -215,7 +215,6 @@ public class SelectPatient extends JDialog {
 				try {
 					patArray = patManager.getPatient();
 				} catch (OHServiceException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			patSearch = patArray;
@@ -412,7 +411,8 @@ public class SelectPatient extends JDialog {
 						
 						int index = jTablePatient.getSelectedRow();
 						patient = (Patient)jTablePatient.getValueAt(index, -1);
-						patient.setPhoto(patient.getPhoto());
+						if (patient.getPhoto() != null)
+							patient.setPhoto(patient.getPhoto());
 						updatePatientSummary();
 						
 					}
@@ -615,5 +615,20 @@ public class SelectPatient extends JDialog {
 	List<BillBrowser> billBrowserListeners = new ArrayList<BillBrowser>();
 	public void addSelectionListener(BillBrowser l) {
 		billBrowserListeners.add(l);
+	}
+
+
+	@Override
+	public void patientUpdated(AWTEvent e) {}
+
+
+	@Override
+	public void patientInserted(AWTEvent e) {
+		Patient patient = (Patient) e.getSource();
+		patSearch.add(0, patient);
+		((SelectPatientModel) jTablePatient.getModel()).fireTableDataChanged();
+		if (jTablePatient.getRowCount() > 0)
+			jTablePatient.setRowSelectionInterval(0, 0);
+		
 	}
 }
