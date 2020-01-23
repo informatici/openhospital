@@ -42,6 +42,8 @@ major=$(grep VER_MAJOR $version_file | cut -d"=" -f2)
 minor=$(grep VER_MINOR $version_file | cut -d"=" -f2)
 release=$(grep VER_RELEASE $version_file | cut -d"=" -f2)
 version="$major.$minor.$release"
+sed -i "s/VERSION/$version/g" CHANGELOG.md
+head --lines=-4 CHANGELOG.md > CHANGELOG
 
 # compile core and gui projects
 docker-compose -f core/docker-compose.yml up -d
@@ -72,45 +74,52 @@ if command_exists asciidoctor-pdf; then
 else show_doc;
 fi
 
-echo 'Extract changelogs...'
-cd core && ./changelog.sh && cd ..
-cd gui && ./changelog.sh && cd ..
-cp core/doc/`ls core/doc/ -r | head -n 1` core_`ls core/doc/ -r | head -n 1`
-cp gui/doc/`ls gui/doc/ -r | head -n 1` gui_`ls gui/doc/ -r | head -n 1`
+# echo 'Extract changelogs...'
+# cd core && ./changelog.sh && cd ..
+# cd gui && ./changelog.sh && cd ..
+# cp core/doc/`ls core/doc/ -r | head -n 1` core_`ls core/doc/ -r | head -n 1`
+# cp gui/doc/`ls gui/doc/ -r | head -n 1` gui_`ls gui/doc/ -r | head -n 1`
 
 echo 'Assemble OpenHospital (full)...'
 cp -rf ./gui/target/OpenHospital20/* $FULL_DIR
-cp -rf ./core/mysql/db/* $FULL_DIR
-cp *.txt $FULL_DIR/doc
-cp CHANGELOG.md $FULL_DIR
+cp -rf ./core/mysql/db/* $FULL_DIR/mysql
+rm $FULL_DIR/generate_changelog.sh || true
+# cp *.txt $FULL_DIR/doc 
 cp LICENSE $FULL_DIR
+cp CHANGELOG $FULL_DIR
 
 echo 'Assemble OH Windows portable...'
 cp -rf ./poh-bundle-win/* $WIN_DIR
 cp -rf ./gui/target/OpenHospital20/* $WIN_DIR/oh
+rm $WIN_DIR/oh/generate_changelog.sh || true
 cp *.sql $WIN_DIR
-cp *.txt $WIN_DIR/oh/doc
+# cp *.txt $WIN_DIR/oh/doc
 cp POH-README.md $WIN_DIR
 cp POH-win-changelog.md $WIN_DIR
 cp LICENSE $WIN_DIR
+cp CHANGELOG $WIN_DIR
 
 echo 'Assemble OH Linux x32 portable...'
 cp -rf ./poh-bundle-linux-x32/* $LINUX32_DIR
 cp -rf ./gui/target/OpenHospital20/* $LINUX32_DIR/oh
+rm $LINUX32_DIR/oh/generate_changelog.sh || true
 cp *.sql $LINUX32_DIR
-cp *.txt $LINUX32_DIR/oh/doc
+# cp *.txt $LINUX32_DIR/oh/doc
 cp POH-README.md $LINUX32_DIR
 cp POH-linux-changelog.md $LINUX32_DIR
 cp LICENSE $LINUX32_DIR
+cp CHANGELOG $LINUX32_DIR
 
 echo 'Assemble OH Linux x64 portable...'
 cp -rf ./poh-bundle-linux-x64/* $LINUX64_DIR
 cp -rf ./gui/target/OpenHospital20/* $LINUX64_DIR/oh
+rm $LINUX64_DIR/oh/generate_changelog.sh || true
 cp *.sql $LINUX64_DIR
-cp *.txt $LINUX64_DIR/oh/doc
+# cp *.txt $LINUX64_DIR/oh/doc
 cp POH-README.md $LINUX64_DIR
 cp POH-linux-changelog.md $LINUX64_DIR
 cp LICENSE $LINUX64_DIR
+cp CHANGELOG $LINUX64_DIR
 
 echo 'Package...'
 zip -r $FULL_DIR.zip $FULL_DIR
@@ -127,10 +136,9 @@ echo 'Compute SHA256 checksum...'
 checksum=$(sha256sum *.zip *.gz)
 checksum=${checksum//$'\n'/\\n}
 echo $checksum
-sed -i "s/VERSION/$version/g" CHANGELOG.md
 sed -i "s/CHECKSUM/$checksum/g" CHANGELOG.md
 
 # clean up
-rm -rf $FULL_DIR $WIN_DIR $LINUX32_DIR $LINUX64_DIR *.sql *.txt release-files/
+rm -rf $FULL_DIR $WIN_DIR $LINUX32_DIR $LINUX64_DIR *.sql *.txt
 
 echo "Full and portable distributions of Open Hospital created successfully."
