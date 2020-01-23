@@ -83,7 +83,7 @@ fi
 echo 'Assemble OpenHospital (full)...'
 cp -rf ./gui/target/OpenHospital20/* $FULL_DIR
 cp -rf ./core/mysql/db/* $FULL_DIR/mysql
-rm $FULL_DIR/generate_changelog.sh
+rm $FULL_DIR/generate_changelog.sh || true
 # cp *.txt $FULL_DIR/doc 
 cp LICENSE $FULL_DIR
 cp CHANGELOG $FULL_DIR
@@ -91,7 +91,7 @@ cp CHANGELOG $FULL_DIR
 echo 'Assemble OH Windows portable...'
 cp -rf ./poh-bundle-win/* $WIN_DIR
 cp -rf ./gui/target/OpenHospital20/* $WIN_DIR/oh
-rm $WIN_DIR/oh/generate_changelog.sh
+rm $WIN_DIR/oh/generate_changelog.sh || true
 cp *.sql $WIN_DIR
 # cp *.txt $WIN_DIR/oh/doc
 cp POH-README.md $WIN_DIR
@@ -102,7 +102,7 @@ cp CHANGELOG $WIN_DIR
 echo 'Assemble OH Linux x32 portable...'
 cp -rf ./poh-bundle-linux-x32/* $LINUX32_DIR
 cp -rf ./gui/target/OpenHospital20/* $LINUX32_DIR/oh
-rm $LINUX32_DIR/oh/generate_changelog.sh
+rm $LINUX32_DIR/oh/generate_changelog.sh || true
 cp *.sql $LINUX32_DIR
 # cp *.txt $LINUX32_DIR/oh/doc
 cp POH-README.md $LINUX32_DIR
@@ -113,7 +113,7 @@ cp CHANGELOG $LINUX32_DIR
 echo 'Assemble OH Linux x64 portable...'
 cp -rf ./poh-bundle-linux-x64/* $LINUX64_DIR
 cp -rf ./gui/target/OpenHospital20/* $LINUX64_DIR/oh
-rm $LINUX64_DIR/oh/generate_changelog.sh
+rm $LINUX64_DIR/oh/generate_changelog.sh || true
 cp *.sql $LINUX64_DIR
 # cp *.txt $LINUX64_DIR/oh/doc
 cp POH-README.md $LINUX64_DIR
