@@ -1,3 +1,21 @@
+commit b095060b4150b4e7184868968cb32cb6bed16e3a
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-23
+
+    Added missing bundle key
+
+commit 7857c14ec1193b0660364ef95537acea09c48883
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-23
+
+    Fixed small bug when creating new patient from selection window
+
+commit 7749cfed5a6e8e7f4a7e5b821806b0d02c47e1f6
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-22
+
+    Uploaded changelog 1.9.1
+
 commit b495715f8f3cb1de4883e1b39ee4f83abb5b1513
 Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
 Date:   2020-01-20
