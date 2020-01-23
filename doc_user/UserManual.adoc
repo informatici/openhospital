@@ -1753,7 +1753,7 @@ OpenHospital 1.8.4 comes with this set of reports:
 
 With this function you can produce all reports listed in previous paragraph. Once you press the *S[.underline]##t##atistics* button on the main menu the *_Report Launcher_* window showed below will appear:
 
-image:extracted-media/media/image124.PNG[image,width=642,height=121]
+image:extracted-media/media/image124.png[image,width=642,height=121]
 
 To produce one report, you must operate as follow:
 
