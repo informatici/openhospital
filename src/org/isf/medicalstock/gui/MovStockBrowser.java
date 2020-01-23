@@ -257,7 +257,7 @@ public class MovStockBrowser extends ModalJFrame {
 	}
 	
 	private JButton getStockLedgerButton() {
-		stockLedgerButton = new JButton(MessageBundle.getMessage("StockLedger"));
+		stockLedgerButton = new JButton(MessageBundle.getMessage("angal.medicalstock.stockledger"));
 		stockLedgerButton.setMnemonic(KeyEvent.VK_L);
 		stockLedgerButton.addActionListener(new ActionListener() {
 
