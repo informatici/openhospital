@@ -1,3 +1,20 @@
+commit 43f9dae2769d54c513749a1991834f5795910542
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-29
+
+    Mwithi fixing examination parameters (#49)
+    
+    PatientExamination:
+    - changed Weight value to "int" to reflect the DB
+    - changed Height value to "double" to reflect the DB
+    - added HEIGHT_STEP parameter
+
+commit 3cb182cdf51224c599daa431c0eb5c492fa515c5
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-23
+
+    Updated changelog
+
 commit b095060b4150b4e7184868968cb32cb6bed16e3a
 Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
 Date:   2020-01-23
