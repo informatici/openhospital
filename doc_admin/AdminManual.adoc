@@ -1120,27 +1120,27 @@ image:extracted-media/media/image29.png[image,width=646,height=423]
 * *HEIGHT_MIN:* the height minimum value, use to initialize the height slider in the *_Examination_* window.
 * *HEIGHT_MAX:* the height maximum value, use to initialize the height slider in the *_Examination_* window.
 * *HEIGHT_INIT:* the height initial value.
+* *HEIGHT_STEP:* the step used when moving the height slider
 * *WEIGHT_UNIT:* the Weight unit
-* *WEIGHT _MIN:* the Weight minimum value, use to initialize the Weight slider in the *_Examination_* window.
-* *WEIGHT _MAX:* the Weight maximum value, use to initialize the Weight slider in the *_Examination_* window.
-* *WEIGHT _INIT:* the Weight initial value.
-* *WEIGHT _STEP:* the step used when moving the weight slider
+* *WEIGHT_MIN:* the Weight minimum value, use to initialize the Weight slider in the *_Examination_* window.
+* *WEIGHT_MAX:* the Weight maximum value, use to initialize the Weight slider in the *_Examination_* window.
+* *WEIGHT_INIT:* the Weight initial value.
 * *AP_UNIT:* the Arterial pressure unit
-* *AP _MIN:* the Arterial pressure minimum value
-* *AP _MAX:* the Arterial pressure maximum value
+* *AP_MIN:* the Arterial pressure minimum value
+* *AP_MAX:* the Arterial pressure maximum value
 * *HR_UNIT:* the Heart rate unit
-* *HR _MIN:* the Heart rate minimum value
-* *HR _MAX:* the Heart rate maximum value
-* *HR _INIT:* the Heart rate initial value
+* *HR_MIN:* the Heart rate minimum value
+* *HR_MAX:* the Heart rate maximum value
+* *HR_INIT:* the Heart rate initial value
 * *TEMP_UNIT:* the temperature unit
-* *TEMP _INIT:* the temperature initial value
-* *TEMP _MIN:* the temperature minimum value
-* *TEMP _MAX:* the temperature maximum value
-* *TEMP _STEP:* the temperature step used when moving the slider
-* *SAT _INIT:* the saturation initial value
-* *SAT _MIN:* the saturation minimum value
-* *SAT _MAX:* the saturation maximum value
-* *SAT _STEP:* the saturation step used when moving the slider
+* *TEMP_INIT:* the temperature initial value
+* *TEMP_MIN:* the temperature minimum value
+* *TEMP_MAX:* the temperature maximum value
+* *TEMP_STEP:* the temperature step used when moving the slider
+* *SAT_INIT:* the saturation initial value
+* *SAT_MIN:* the saturation minimum value
+* *SAT_MAX:* the saturation maximum value
+* *SAT_STEP:* the saturation step used when moving the slider
 * [#_log4j.properties_1 .anchor]##
 
 === 5.5 h8.properties
