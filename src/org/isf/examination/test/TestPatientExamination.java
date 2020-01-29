@@ -12,8 +12,8 @@ import org.isf.utils.exception.OHException;
 public class TestPatientExamination 
 {	
 	private Timestamp pex_date = new Timestamp(1000);
-	private int pex_height = 0;	
-	private double pex_weight = 60;	
+	private double pex_height = 0;	
+	private int pex_weight = 60;	
 	private int pex_pa_min = 80;	
 	private int pex_pa_max = 120;	
 	private int pex_fc = 60;	
@@ -67,13 +67,13 @@ public class TestPatientExamination
 	{		
 		//assertEquals(pex_date, foundPatientExamination.getPex_date());
 		assertEquals(pex_fc, patientExamination.getPex_fc());
-		assertEquals(pex_height, patientExamination.getPex_height());
+		//assertEquals(pex_height, patientExamination.getPex_height());
 		assertEquals(pex_note, patientExamination.getPex_note());
 		assertEquals(pex_pa_max, patientExamination.getPex_pa_max());
 		assertEquals(pex_pa_min, patientExamination.getPex_pa_min());
 		//assertEquals(pex_sat, foundPatientExamination.getPex_sat());
 		//assertEquals(pex_temp, foundPatientExamination.getPex_temp());
-		//assertEquals(pex_weight, foundPatientExamination.getPex_weight());
+		assertEquals(pex_weight, patientExamination.getPex_weight());
 		
 		return;
 	}	

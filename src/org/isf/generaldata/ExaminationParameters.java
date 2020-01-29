@@ -31,6 +31,9 @@ public class ExaminationParameters {
 	public static String HEIGHT_UNIT;
 	private static String DEFAULT_HEIGHT_UNIT = "cm";
 	
+	public static double HEIGHT_STEP;
+	private static double DEFAULT_HEIGHT_STEP = 0.1;
+	
 	public static String WEIGHT_UNIT;
 	private static String DEFAULT_WEIGHT_UNIT = "Kg";
 	
@@ -40,8 +43,8 @@ public class ExaminationParameters {
 	public static int WEIGHT_MAX;
 	private static int DEFAULT_WEIGHT_MAX = 400;
 	
-	public static double WEIGHT_STEP;
-	private static double DEFAULT_WEIGHT_STEP = 0.1;
+//	public static double WEIGHT_STEP;
+//	private static double DEFAULT_WEIGHT_STEP = 0.1;
 	
 	public static int WEIGHT_INIT;
 	private static int DEFAULT_WEIGHT_INIT = 80;
@@ -109,9 +112,10 @@ public class ExaminationParameters {
 			HEIGHT_MIN = myGetProperty("HEIGHT_MIN", DEFAULT_HEIGHT_MIN);
 			HEIGHT_MAX = myGetProperty("HEIGHT_MAX", DEFAULT_HEIGHT_MAX);
 			HEIGHT_INIT = myGetProperty("HEIGHT_INIT", DEFAULT_HEIGHT_INIT);
+			HEIGHT_STEP = myGetProperty("HEIGHT_STEP", DEFAULT_HEIGHT_STEP);
 			WEIGHT_MIN = myGetProperty("WEIGHT_MIN", DEFAULT_WEIGHT_MIN);
 			WEIGHT_MAX = myGetProperty("WEIGHT_MAX", DEFAULT_WEIGHT_MAX);
-			WEIGHT_STEP = myGetProperty("WEIGHT_STEP", DEFAULT_WEIGHT_STEP);
+			//WEIGHT_STEP = myGetProperty("WEIGHT_STEP", DEFAULT_WEIGHT_STEP);
 			WEIGHT_INIT = myGetProperty("WEIGHT_INIT", DEFAULT_WEIGHT_INIT);
 			AP_MIN = myGetProperty("AP_MIN", DEFAULT_AP_MIN);
 			AP_MAX = myGetProperty("AP_MAX", DEFAULT_AP_MAX);
