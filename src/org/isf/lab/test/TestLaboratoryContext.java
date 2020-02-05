@@ -35,14 +35,13 @@ public class TestLaboratoryContext
     {
 		jpa.beginTransaction();			
 		jpa.createQuery("SELECT * FROM LABORATORY", Laboratory.class, false);
-		List<Laboratory> Laboratorys = (List<Laboratory>)jpa.getList();
-		for (Laboratory laboratory: Laboratorys) 
+		List<Laboratory> Laboratories = (List<Laboratory>)jpa.getList();
+		for (Laboratory laboratory: Laboratories) 
 		{    		
 			int index = savedLaboratory.indexOf(laboratory);
 			
-			
 			if (index == -1)
-			{				
+			{	
 				jpa.remove(laboratory);
 			}
 	    }        

@@ -229,7 +229,7 @@ public class Tests
 			ExamType foundExamType = (ExamType)jpa.find(ExamType.class, code); 
 			ArrayList<ExamType> examTypes = examIoOperation.getExamType();
 			
-			assertEquals(foundExamType.getDescription(), examTypes.get(examTypes.size()-1).getDescription());
+			assertEquals(examTypes.contains(foundExamType), true);
 		} 
 		catch (Exception e) 
 		{

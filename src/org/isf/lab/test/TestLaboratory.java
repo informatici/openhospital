@@ -21,7 +21,7 @@ public class TestLaboratory
 	private String note = "TestNote";
 	private String patName = "TestPatientName";
 	private String InOutPatient = "O";
-	private int age = 37;
+	private Integer age = 37;
 	private String sex = "F";
     
 			

@@ -2,6 +2,7 @@ package org.isf.medicalstock.test;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -14,7 +15,7 @@ public class TestLot
 	private GregorianCalendar now = new GregorianCalendar();
 	private GregorianCalendar preparationDate = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);
 	private GregorianCalendar dueDate = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);
-	private double cost = 10.10;
+	private BigDecimal cost = new BigDecimal(10.10);
 	    
 			
 	public Lot setup(
@@ -51,7 +52,7 @@ public class TestLot
 	public void check(
 			Lot lot) 
 	{		
-    	assertEquals(cost, lot.getCost(), 0.0);
+    	assertEquals(cost.doubleValue(), lot.getCost().doubleValue(), 0.0);
     	assertEquals(dueDate, lot.getDueDate());
     	assertEquals(preparationDate, lot.getPreparationDate());
 		

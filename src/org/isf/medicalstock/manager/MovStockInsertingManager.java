@@ -1,5 +1,6 @@
 package org.isf.medicalstock.manager;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -116,7 +117,7 @@ public class MovStockInsertingManager {
 						OHSeverityLevel.ERROR));
 			}
 			if (GeneralData.LOTWITHCOST) {
-				Double cost = lot.getCost();
+				BigDecimal cost = lot.getCost();
 				if (cost == null || cost.doubleValue() <= 0.) {
 					errors.add(new OHExceptionMessage("zeroLotCostError",
 							MessageBundle.getMessage("angal.medicalstock.multiplecharging.zerocostsnotallowed"), //$NON-NLS-1$

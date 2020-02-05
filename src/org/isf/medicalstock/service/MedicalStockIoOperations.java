@@ -1,5 +1,6 @@
 package org.isf.medicalstock.service;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -603,7 +604,7 @@ public class MedicalStockIoOperations {
 		lot.setCode((String)object[0]);
 		lot.setPreparationDate(_convertTimestampToCalendar((Timestamp)object[1]));
 		lot.setDueDate(_convertTimestampToCalendar((Timestamp)object[2]));
-		lot.setCost((Double)object[3]);
+		lot.setCost(new BigDecimal((Double) object[3]));
 		lot.setQuantity(((Double)object[4]).intValue());
 		
 		return lot;

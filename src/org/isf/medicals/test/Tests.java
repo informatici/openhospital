@@ -214,7 +214,7 @@ public class Tests
 	@Test
 	public void testIoGetMedicalsType() 
 	{
-		int code = 0;
+		Integer code = 0;
 		
 		
 		try 
