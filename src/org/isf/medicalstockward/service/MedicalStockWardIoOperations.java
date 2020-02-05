@@ -249,9 +249,7 @@ public class MedicalStockWardIoOperations
 	public ArrayList<MedicalWard> getMedicalsWard(
 			char wardId) throws OHServiceException
 	{
-            System.out.println("MedicalStockWardIoOperations: Looking for drugs ");
 		ArrayList<MedicalWard> medicalWards = new ArrayList<MedicalWard>(repository.findAllWhereWard(wardId));
-		System.out.println("MedicalStockWardIoOperations " + medicalWards.size() + " drugs in "+wardId);
 		for (int i=0; i<medicalWards.size(); i++)
 		{
 			double qty = Double.valueOf(medicalWards.get(i).getInQuantity() - medicalWards.get(i).getOutQuantity());

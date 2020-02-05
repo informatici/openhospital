@@ -393,7 +393,7 @@ public class Tests
 		{		
 			code = _setupTestMedicalWard(false);
 			MedicalWard foundMedicalWard = (MedicalWard)jpa.find(MedicalWard.class, code); 
-			ArrayList<MedicalWard> medicalWards = medicalIoOperation.getMedicalsWard(foundMedicalWard.getId().getWardId());			
+			ArrayList<MedicalWard> medicalWards = medicalIoOperation.getMedicalsWard(foundMedicalWard.getWard().getCode().charAt(0));			
 			assertEquals((double)(foundMedicalWard.getInQuantity()-foundMedicalWard.getOutQuantity()), medicalWards.get(0).getQty(), 0.1);
 		} 
 		catch (Exception e) 

@@ -2,11 +2,10 @@ package org.isf.serviceprinting.print;
 
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstockward.model.MedicalWard;
-import org.isf.utils.exception.OHException;
 import org.isf.ward.model.Ward;
 
 /**
- * 		   @author mwithi
+ * @author mwithi
  * 
  */
 public class MedicalWardForPrint implements Comparable<MedicalWardForPrint> {
@@ -21,12 +20,7 @@ public class MedicalWardForPrint implements Comparable<MedicalWardForPrint> {
 		super();
 		this.ward = ward;
 		this.medical = null;
-		try {
-			this.medical = med.getMedical();
-		} catch (OHException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.medical = med.getMedical();
 		this.qty = med.getQty();
 		this.code = medical.getProd_code();
 		this.packets = 0;

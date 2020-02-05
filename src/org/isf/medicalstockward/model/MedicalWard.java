@@ -9,6 +9,7 @@ import javax.persistence.Transient;
 import org.isf.medicals.model.Medical;
 import org.isf.utils.db.DbJpaUtil;
 import org.isf.utils.exception.OHException;
+import org.isf.ward.model.Ward;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /*------------------------------------------
@@ -50,13 +51,13 @@ public class MedicalWard implements Comparable<Object>
 	public MedicalWard(Medical medical, Double qty) {
 		super();
 		this.id = new MedicalWardId(); 
-		this.id.setMedicalId(medical.getCode());
+		this.id.setMedical(medical);
 		this.qty = qty;
 	}
 	
-	public MedicalWard(char ward_id, int medical_id, float in_quantity, float out_quantity) {
+	public MedicalWard(Ward ward, Medical medical, float in_quantity, float out_quantity) {
 		super();
-		this.id = new MedicalWardId(ward_id, medical_id);  
+		this.id = new MedicalWardId(ward, medical);  
 		this.in_quantity = in_quantity;
 		this.out_quantity = out_quantity;
 	}
@@ -65,27 +66,12 @@ public class MedicalWard implements Comparable<Object>
 		return id;
 	}
 	
-	public void setId(char ward_id, int medical_id) {
-		this.id = new MedicalWardId(ward_id, medical_id); 
+	public void setId(Ward ward, Medical medical) {
+		this.id = new MedicalWardId(ward, medical); 
 	}
 	
-	public Medical getMedical() throws OHException {
-		jpa = getDbJpaUtil();
-		jpa.beginTransaction();
-		Medical medical = (Medical)jpa.find(Medical.class, id.getMedicalId()); 
-		jpa.commitTransaction();
-		return medical;
-	}
-	
-	private DbJpaUtil getDbJpaUtil() {
-		if (jpa == null) {
-			return new DbJpaUtil();
-		}
-		return jpa;
-	}
-
 	public void setMedical(Medical medical) {
-		this.id.setMedicalId(medical.getCode());
+		this.id.setMedical(medical);
 	}
 	
 	public Double getQty() {
@@ -103,7 +89,7 @@ public class MedicalWard implements Comparable<Object>
 		
 		try {
 			jpa.beginTransaction();	
-			medical = (Medical)jpa.find(Medical.class, id.getMedicalId());
+			medical = (Medical)jpa.find(Medical.class, id.getMedical());
 			jpa.commitTransaction();
 			if (anObject instanceof MedicalWard)
 				return (medical.getDescription().toUpperCase().compareTo(
@@ -114,20 +100,16 @@ public class MedicalWard implements Comparable<Object>
 		}		
 	}
 
-	public char getWardId() {
-		return this.id.getWardId();
+	public Ward getWard() {
+		return this.id.getWard();
 	}
 	
-	public void setWardId(char ward_id) {
-		this.id.setWardId(ward_id);
+	public void setWard(Ward ward) {
+		this.id.setWard(ward);
 	}
 
-	public int getMedicalId() {
-		return this.id.getMedicalId();
-	}
-	
-	public void setMedicalId(int medical_id) {
-		this.id.setMedicalId(medical_id);
+	public Medical getMedical() {
+		return this.id.getMedical();
 	}
 	
 	public float getInQuantity() {
@@ -157,7 +139,7 @@ public class MedicalWard implements Comparable<Object>
 		}
 		
 		MedicalWard ward = (MedicalWard)obj;
-		return (this.id.getMedicalId() == ward.id.getMedicalId());
+		return (this.id.getMedical() == ward.id.getMedical());
 	}
 	
 	@Override
@@ -166,7 +148,7 @@ public class MedicalWard implements Comparable<Object>
 	        final int m = 23;
 	        int c = 133;
 	        
-	        c = m * c + this.id.getMedicalId();
+	        c = m * c + this.id.getMedical().getCode();
 	        
 	        this.hashCode = c;
 	    }

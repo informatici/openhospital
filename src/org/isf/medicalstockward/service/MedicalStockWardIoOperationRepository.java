@@ -35,7 +35,7 @@ public interface MedicalStockWardIoOperationRepository extends JpaRepository<Med
     		"VALUES (?, ?, ?, '0')", nativeQuery= true)
     public void insertMedicalWard(@Param("ward") String ward, @Param("medical") int medical, @Param("quantity") Double quantity); 
         
-    @Query(value = "SELECT mw FROM MedicalWard mw WHERE mw.id.ward_id=:ward")
+    @Query(value = "SELECT * FROM MEDICALDSRWARD WHERE MDSRWRD_WRD_ID_A = :ward", nativeQuery= true)
     public List<MedicalWard> findAllWhereWard(@Param("ward") char wardId); 
 
 }
