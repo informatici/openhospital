@@ -1,3 +1,9 @@
+commit 6958f8668f5bd6d2d961cf7ee5787fbe104449fd
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-29
+
+    Updated changelog
+
 commit 89af01105fe86ecb696ac29a30b781d6a502c998
 Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
 Date:   2020-01-29
