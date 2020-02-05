@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+
 import org.isf.accounting.model.BillItems;
 import org.isf.generaldata.MessageBundle;
 import org.isf.medicalstockward.model.MedicalWard;
@@ -191,20 +192,10 @@ public class OhTableModel<T> implements TableModel{
 			if(obj instanceof MedicalWard){
 				MedicalWard mdwObj=(MedicalWard)obj;
 				if(columnIndex==0){
-					try {
-						value= mdwObj.getMedical().getProd_code()!=null? mdwObj.getMedical().getProd_code() : mdwObj.getMedical().getCode()+"";
-					} catch (OHException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					value= mdwObj.getMedical().getProd_code()!=null? mdwObj.getMedical().getProd_code() : mdwObj.getMedical().getCode()+"";
 				}
 				else{
-					try {
-						value=mdwObj.getMedical().getDescription();
-					} catch (OHException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					value=mdwObj.getMedical().getDescription();
 				}
 			}
 			if(obj instanceof PricesOthers){

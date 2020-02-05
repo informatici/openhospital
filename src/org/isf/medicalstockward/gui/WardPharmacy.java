@@ -67,7 +67,6 @@ import org.isf.serviceprinting.manager.PrintManager;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalStockCard;
 import org.isf.stat.gui.report.GenericReportPharmaceuticalStockWard;
 import org.isf.utils.excel.ExcelExporter;
-import org.isf.utils.exception.OHException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.gui.OHServiceExceptionUtil;
 import org.isf.utils.jobjects.ModalJFrame;
@@ -80,9 +79,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.toedter.calendar.JDateChooser;
-import java.awt.event.KeyListener;
-import javax.swing.ImageIcon;
-import javax.swing.JTextField;
 
 public class WardPharmacy extends ModalJFrame implements 
 	WardPharmacyEdit.MovementWardListeners, 
@@ -294,11 +290,7 @@ public class WardPharmacy extends ModalJFrame implements
 					else if (jTabbedPaneWard.getSelectedIndex() == 2) {
 						if (jTableDrugs.getSelectedRow() >= 0) {
 							MedicalWard medicalWard = (MedicalWard) ((jTableDrugs.getModel()).getValueAt(jTableDrugs.getSelectedRow(), -1));
-							try {
-								medical = medicalWard.getMedical();
-							} catch (OHException e) {
-								JOptionPane.showMessageDialog(WardPharmacy.this, e.getMessage(), getTitle(), JOptionPane.ERROR_MESSAGE);
-							}
+							medical = medicalWard.getMedical();
 						}
 					}
 					
@@ -1324,12 +1316,8 @@ public class WardPharmacy extends ModalJFrame implements
 				return wardDrug;
 			}
 			if (c == 0) {
-				try {
-					wardDrug.getMedical();
-					return wardDrug.getMedical().getDescription();
-				} catch (OHException e) {
-					JOptionPane.showMessageDialog(WardPharmacy.this, e.getMessage(), getTitle(), JOptionPane.ERROR_MESSAGE);
-				}
+				wardDrug.getMedical();
+				return wardDrug.getMedical().getDescription();
 			}
 			if (c == 1) {
 				return wardDrug.getQty();

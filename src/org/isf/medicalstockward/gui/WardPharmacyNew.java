@@ -1,24 +1,9 @@
 package org.isf.medicalstockward.gui;
 
-import org.isf.generaldata.MessageBundle;
-import org.isf.medicals.model.Medical;
-import org.isf.medicalstockward.manager.MovWardBrowserManager;
-import org.isf.medicalstockward.model.MedicalWard;
-import org.isf.medicalstockward.model.MovementWard;
-import org.isf.menu.manager.Context;
-import org.isf.patient.gui.SelectPatient;
-import org.isf.patient.gui.SelectPatient.SelectionListener;
-import org.isf.patient.model.Patient;
-import org.isf.utils.exception.OHException;
-import org.isf.utils.exception.OHServiceException;
-import org.isf.ward.model.Ward;
-import org.isf.ward.manager.WardBrowserManager;
-
-import javax.swing.*;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-import java.awt.*;
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -28,6 +13,39 @@ import java.util.EventListener;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
+
+import org.isf.generaldata.MessageBundle;
+import org.isf.medicals.model.Medical;
+import org.isf.medicalstockward.manager.MovWardBrowserManager;
+import org.isf.medicalstockward.model.MedicalWard;
+import org.isf.medicalstockward.model.MovementWard;
+import org.isf.menu.manager.Context;
+import org.isf.patient.gui.SelectPatient;
+import org.isf.patient.gui.SelectPatient.SelectionListener;
+import org.isf.patient.model.Patient;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.ward.manager.WardBrowserManager;
+import org.isf.ward.model.Ward;
 
 public class WardPharmacyNew extends JDialog implements SelectionListener {
 
@@ -145,12 +163,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 		super(owner, true);
 		wardDrugs = drugs;
 		for (MedicalWard elem : wardDrugs) {
-			try {
-				medArray.add(elem.getMedical());
-			} catch (OHException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			medArray.add(elem.getMedical());
 			qtyArray.add(elem.getQty());
 		}
 		wardSelected = ward;
@@ -241,11 +254,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 					// remove already inserted items
 					for (MedicalWard medItem : medItems) {
 						Medical med = null;
-						try {
-							med = medItem.getMedical();
-						} catch (OHException e1) {
-							e1.printStackTrace();
-						}
+						med = medItem.getMedical();
 						currentMeds.add(med);
 					}
 					
@@ -492,8 +501,6 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 						result = wardManager.newMovementWard(manyMovementWard);
 					} catch (OHServiceException ex) {
                         result = false;
-                    } catch (OHException ex) {
-                        result = false;
                     }
 					if (result) {
                         fireMovementWardInserted();
@@ -664,11 +671,7 @@ public class WardPharmacyNew extends JDialog implements SelectionListener {
 				return medItems.get(r);
 			}
 			if (c == 0) {
-				try {
-					return medItems.get(r).getMedical().getDescription();
-				} catch (OHException e) {
-					return null;
-				}
+				return medItems.get(r).getMedical().getDescription();
 			}
 			if (c == 1) {
 				return medItems.get(r).getQty(); 
