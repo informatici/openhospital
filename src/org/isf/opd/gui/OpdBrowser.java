@@ -74,6 +74,7 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.jobjects.ModalJFrame;
 import org.isf.utils.jobjects.VoLimitedTextField;
+import org.isf.utils.time.TimeTools;
 
 public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, OpdEditExtended.SurgeryListener {
 
@@ -1090,6 +1091,15 @@ public class OpdBrowser extends ModalJFrame implements OpdEdit.SurgeryListener, 
 						jAgeFromTextField.setText(ageTo.toString());
 						ageFrom=ageTo;
 						return;
+					}
+					
+					//TODO: to retrieve resultset size instead of assuming 1 year as limit for the warning
+					if (TimeTools.getDaysBetweenDates(dateFrom, dateTo, true) >= 360) {
+						int ok = JOptionPane.showConfirmDialog(OpdBrowser.this, 
+								MessageBundle.getMessage("angal.common.thiscouldretrievealargeamountofdataproceed"),
+								MessageBundle.getMessage("angal.hospital"),
+								JOptionPane.OK_CANCEL_OPTION);
+						if (ok != JOptionPane.OK_OPTION) return;
 					}
 					
 					model = new OpdBrowsingModel(diseasetype,disease,getDateFrom(), getDateTo(),ageFrom,ageTo,sex,newPatient);

@@ -1117,7 +1117,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				!searchString.getText().isEmpty();	
 		if (!isFilteredList) {
 			int ok = JOptionPane.showConfirmDialog(AdmittedPatientBrowser.this, 
-					MessageBundle.getMessage("angal.admission.thiscouldretrievealargeamountofdataproceed"),
+					MessageBundle.getMessage("angal.common.thiscouldretrievealargeamountofdataproceed"),
 					MessageBundle.getMessage("angal.hospital"),
 					JOptionPane.OK_CANCEL_OPTION);
 			if (ok != JOptionPane.OK_OPTION) return;
