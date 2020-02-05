@@ -1,3 +1,36 @@
+commit 519af207e1be7e4087c2d901d3307c4746fe8559
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-02-05
+
+    Updated changelog
+
+commit 5fd83db13f5bcbaacdb705cb8c71c658b2e7d32b
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-02-05
+
+    OP-160 handled large queries (1 year) in OPD with warning message (#52)
+    
+    * OP-160 handled large queries (1 year) in OPD with warning message
+    * TODO: to retrieve resultset size instead of assuming 1 year as limit for the warning
+
+commit b76e34741f6f357a9bae8274f6bd6578c5cd02d6
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-02-05
+
+    Changed the @EmbeddableId for MedicalWard entity (#51)
+
+commit 0f41d787cb7be8ffc2ccf08490b730c18cda7581
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-02-05
+
+    Fixed nullable object mapped by a primitive type (#50)
+
+commit 2db245859546e421dbbf970cd51e4fa8a3255193
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-31
+
+    Added missing reports
+
 commit 93614f2335098c6fab265e7e4ac46e6847587ffb
 Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
 Date:   2020-01-29
