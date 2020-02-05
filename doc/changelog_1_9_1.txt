@@ -1,3 +1,33 @@
+commit 456e99ebebdae92b83f289d7d3c7c554c9ddfe20
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-02-05
+
+    Updated Changelog
+
+commit 79e9ab330b3243974e668d76e7881d0a2fafc58f
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-02-05
+
+    Changed the @EmbeddableId for MedicalWard entity (#41)
+
+commit 3a4c535c87e6a5ae3d4f582896270eda1dd5eaab
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-02-05
+
+    Fixed problem of wrong reference key forced in MEDICALDSRSTOCKMOV table (#40)
+
+commit 12ae942d6a385252ed52bddab537d6c60250d503
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-02-05
+
+    Op 167 nullable attributes declared using primitive data types (#39)
+    
+    * Fixed nullable object mapped by a primitive type
+    * Fixed Double to BigDecimal casting
+    * Fixed a similar problem in Laboratory
+    * Fixed same problem in Laboratory and Lot entities
+    * Fixed tests when running on populated BD (e.g. demo data)
+
 commit 6958f8668f5bd6d2d961cf7ee5787fbe104449fd
 Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
 Date:   2020-01-29
