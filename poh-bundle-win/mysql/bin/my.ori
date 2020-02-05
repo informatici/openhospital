@@ -22,6 +22,7 @@ server-id	= 1
 skip-innodb
 bind-address = 0.0.0.0
 skip-name-resolve
+lower_case_table_names = 1
 
 [mysqldump] 
 quick 
