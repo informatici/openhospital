@@ -327,12 +327,14 @@ public class MovStockBrowser extends ModalJFrame {
 		
 		// amount
 		for (Movement mov : moves) {
-			BigDecimal itemAmount = new BigDecimal(Double.toString(mov.getQuantity()));
-			if (mov.getType().getType().contains("+")) {
-				totalAmount = totalAmount.add(itemAmount.multiply(new BigDecimal(mov.getLot().getCost())));
-			} else {
-				totalQti -= mov.getQuantity();
-				totalAmount = totalAmount.subtract(itemAmount.multiply(new BigDecimal(mov.getLot().getCost())));
+			BigDecimal itemAmount = new BigDecimal(mov.getQuantity());
+			if (GeneralData.LOTWITHCOST && mov.getLot().getCost() != null) {
+				if (mov.getType().getType().contains("+")) {
+					totalAmount = totalAmount.add(itemAmount.multiply(mov.getLot().getCost()));
+				} else {
+					totalQti -= mov.getQuantity();
+					totalAmount = totalAmount.subtract(itemAmount.multiply(mov.getLot().getCost()));
+				}
 			}
 		}
 		jTableTotal.getModel().setValueAt(totalAmount, 0, 12);
@@ -1181,7 +1183,7 @@ public class MovStockBrowser extends ModalJFrame {
 		public Object getValueAt(int r, int c) {
 			Movement movement = moves.get(r);
 			Lot lot = movement.getLot();
-			Double cost = lot.getCost();
+			BigDecimal cost = lot.getCost();
 			int qty = movement.getQuantity();
 			int col = -1;
 			if (c == col) {
@@ -1217,8 +1219,8 @@ public class MovStockBrowser extends ModalJFrame {
 				return origin != null ? supMap.get(new Integer(origin.getSupId())) : "";
 			} else if (c == ++col){
 				return cost;
-			} else if (c == ++col){
-				return cost * qty;
+			} else if (c == ++col && cost != null){
+				return cost.multiply(new BigDecimal(qty));
 			}
 			return null;
 		}

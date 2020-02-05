@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -419,10 +420,10 @@ public class MovStockMultipleCharging extends JDialog {
 							GregorianCalendar expiringDate = askExpiringDate();
 							lot = new Lot("", preparationDate, expiringDate); //$NON-NLS-1$
 							// Cost
-							double cost = 0;
+							BigDecimal cost = new BigDecimal(0);
 							if (GeneralData.LOTWITHCOST) {
 								cost = askCost(qty);
-								if (cost == 0.) 
+								if (cost.compareTo(new BigDecimal(0)) == 0) 
 									return;
 							}
 							isNewLot = true;
@@ -436,10 +437,10 @@ public class MovStockMultipleCharging extends JDialog {
 										return;
 									}
 									// Lot Cost
-									double cost = 0;
+									BigDecimal cost = new BigDecimal(0);
 									if (GeneralData.LOTWITHCOST) {
 										cost = askCost(qty);
-										if (cost == 0.) 
+										if (cost.compareTo(new BigDecimal(0)) == 0) 
 											return;
 									}
 									isNewLot = true;
@@ -498,7 +499,7 @@ public class MovStockMultipleCharging extends JDialog {
 		return jComboBoxChargeType;
 	}
 
-	protected double askCost(int qty) {
+	protected BigDecimal askCost(int qty) {
 		double cost = 0.;
 		do {
 			String input = JOptionPane.showInputDialog(MovStockMultipleCharging.this, 
@@ -518,9 +519,9 @@ public class MovStockMultipleCharging extends JDialog {
 					JOptionPane.showMessageDialog(MovStockMultipleCharging.this, 
 							MessageBundle.getMessage("angal.medicalstock.multiplecharging.pleaseinsertavalidvalue")); //$NON-NLS-1$
 				}
-			} else return cost;
+			} else return new BigDecimal(cost);
 		} while (cost == 0.);
-		return cost;
+		return new BigDecimal(cost);
 	}
 	
 	protected double askTotalCost() {
@@ -833,7 +834,7 @@ public class MovStockMultipleCharging extends JDialog {
 			int ppp = medical.getPcsperpck().intValue() == 0 ? 1 : medical.getPcsperpck().intValue();
 			int option = units.get(r);
 			int total = option == UNITS ? qty : ppp * qty;
-			double cost = lot.getCost();
+			BigDecimal cost = lot.getCost();
 			if (c == -1) {
 				return movement;
 			} else if (c == 0) {
@@ -855,7 +856,7 @@ public class MovStockMultipleCharging extends JDialog {
 			} else if (c == 8) {
 				return cost;
 			} else if (c == 9) {
-				return cost * total;
+				return cost.multiply(new BigDecimal(total));
 			}
 			return null;
 		}
@@ -892,7 +893,7 @@ public class MovStockMultipleCharging extends JDialog {
 					e.printStackTrace();
 				}
 			} else if (c == 8) {
-				lot.setCost((Double) value);
+				lot.setCost((BigDecimal) value);
 			}
 			movements.set(r, movement);
 			fireTableDataChanged();
