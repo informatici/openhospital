@@ -24,6 +24,7 @@ skip-innodb
 bind-address = 0.0.0.0
 log = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql.log"
 log-error = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql.err.log"
+lower_case_table_names = 1
 
 [mysqldump] 
 quick 

@@ -1,3 +1,7 @@
+0.0.6 (02/2020)
+--------------
+- added lower_case_table_names = 1 in [mysqld] to avoid cross-OS data transfer problems 
+
 0.0.5 (08/2019)
 --------------
 - added support for x64 architecture for Linux

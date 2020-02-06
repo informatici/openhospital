@@ -1,3 +1,7 @@
+0.0.6 (02/2020)
+--------------
+- added lower_case_table_names = 1 in [mysqld] to avoid cross-OS data transfer problems 
+
 0.0.5 (05/06/2017)
 ------------------
 - Updated scripts for POH (windows version use always port 3307 for MySQL)

@@ -32,8 +32,8 @@ done
 set -e
 
 # set the portable distribution version
-poh_win32_version="0.0.5"
-poh_linux_version="0.0.5"
+poh_win32_version="0.0.6"
+poh_linux_version="0.0.6"
 
 # get the Open Hospital version
 version_file=./gui/rsc/version.properties
