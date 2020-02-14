@@ -806,7 +806,7 @@ public class AdmittedPatientBrowser extends ModalJFrame implements
 				patient = (AdmittedPatient) table.getValueAt(table.getSelectedRow(), -1);
 				Patient pat = patient.getPatient();
 				
-				int n = JOptionPane.showConfirmDialog(null,
+				int n = JOptionPane.showConfirmDialog(AdmittedPatientBrowser.this,
 						MessageBundle.getMessage("angal.admission.deletepatient") + " " +pat.getName() + "?",
 						MessageBundle.getMessage("angal.admission.deletepatient"), JOptionPane.YES_NO_OPTION);
 				
