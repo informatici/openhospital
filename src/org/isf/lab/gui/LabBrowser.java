@@ -73,7 +73,7 @@ public class LabBrowser extends ModalJFrame implements LabListener, LabEditListe
 	private static final String VERSION=MessageBundle.getMessage("angal.versione");
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+	private static final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	
 	private JPanel jContentPane = null;
 	private JPanel jButtonPanel = null;
