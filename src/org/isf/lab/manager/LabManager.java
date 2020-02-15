@@ -197,7 +197,7 @@ public class LabManager {
 			return ioOperations.newLabFirstProcedure(laboratory);
 		}
 		else if (laboratory.getExam().getProcedure() == 2) {
-			if (labRow == null || labRow.isEmpty())
+			if (labRow == null)
 				throw new OHServiceException(new OHExceptionMessage("labRowNullOrEmptyError", 
 		        		MessageBundle.getMessage("angal.labnew.someexamswithoutresultpleasecheck"), 
 		        		OHSeverityLevel.ERROR));
@@ -224,7 +224,7 @@ public class LabManager {
 			return ioOperations.newLabFirstProcedure(laboratory);
 		}
 		else if (laboratory.getExam().getProcedure() == 2) {
-			if (labRow == null || labRow.isEmpty())
+			if (labRow == null)
 				throw new OHServiceException(new OHExceptionMessage("labRowNullOrEmptyError", 
 		        		MessageBundle.getMessage("angal.labnew.someexamswithoutresultpleasecheck"), 
 		        		OHSeverityLevel.ERROR));
@@ -252,7 +252,7 @@ public class LabManager {
 			return ioOperations.updateLabFirstProcedure(laboratory);
 		}
 		else if (laboratory.getExam().getProcedure() == 2) {
-			if (labRow == null || labRow.isEmpty())
+			if (labRow == null)
 				throw new OHServiceException(new OHExceptionMessage("labRowNullOrEmptyError", 
 		        		MessageBundle.getMessage("angal.labnew.someexamswithoutresultpleasecheck"), 
 		        		OHSeverityLevel.ERROR));
