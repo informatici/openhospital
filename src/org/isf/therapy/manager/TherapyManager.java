@@ -8,7 +8,6 @@ import org.isf.generaldata.MessageBundle;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
 import org.isf.medicalstockward.manager.MovWardBrowserManager;
-import org.isf.menu.manager.Context;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
@@ -41,6 +40,9 @@ public class TherapyManager {
 	
 	@Autowired
 	private PatientBrowserManager patientManager;
+	
+	@Autowired
+	private MedicalBrowsingManager medManager;
 	
 	/**
 	 * Returns a {@link Therapy} object from a {@link TherapyRow} (DB record)
@@ -101,7 +103,6 @@ public class TherapyManager {
 			//System.out.println(formatDate(dates[i]));
 		}
 		
-		MedicalBrowsingManager medManager = new MedicalBrowsingManager();
 		Medical med = medManager.getMedical(medId);
 		Therapy th = new Therapy(therapyID,	patID, dates, med, qty, "", freqInDay, note, notify, sms);
 		datesArray.clear();
