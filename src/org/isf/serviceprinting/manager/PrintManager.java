@@ -3,6 +3,7 @@ package org.isf.serviceprinting.manager;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
@@ -59,7 +60,7 @@ public class PrintManager {
 				switch (action) {
 				case 0:
 					if (GeneralData.INTERNALVIEWER)
-						JasperViewer.viewReport(jasperPrint,false);
+						JasperViewer.viewReport(jasperPrint,false, new Locale(GeneralData.LANGUAGE));
 					else { 
 						String PDFfile = "rpt/PDF/" + filename + ".pdf";
 						JasperExportManager.exportReportToPdfFile(jasperPrint, PDFfile);
