@@ -151,6 +151,7 @@ public class LabEditExtended extends JDialog {
 	
 	//private LabManager labManager = new LabManager(Context.getApplicationContext().getBean(LabIoOperations.class));
 	private LabManager labManager = Context.getApplicationContext().getBean(LabManager.class);
+	private LabRowManager lRowManager = Context.getApplicationContext().getBean(LabRowManager.class);
 	private AdmissionBrowserManager admMan = Context.getApplicationContext().getBean(AdmissionBrowserManager.class);
 	private ExamRowBrowsingManager rowManager = Context.getApplicationContext().getBean(ExamRowBrowsingManager.class);
 	
@@ -767,7 +768,6 @@ public class LabEditExtended extends JDialog {
 					resultPanel.add(new SubPanel(r, "N"));
 			}
 		} else {
-			LabRowManager lRowManager = new LabRowManager();
 
 			ArrayList<LaboratoryRow> lRows;
 			try {

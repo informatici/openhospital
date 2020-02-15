@@ -143,6 +143,8 @@ public class LabEdit extends JDialog {
 	private static final Integer buttonPanelHeight=40; 
 	
 	private ExamRowBrowsingManager rowManager = Context.getApplicationContext().getBean(ExamRowBrowsingManager.class);
+	
+	private LabRowManager lRowManager = Context.getApplicationContext().getBean(LabRowManager.class);
 
 	
 	private ArrayList<ExamRow> eRows = null;
@@ -631,7 +633,6 @@ public class LabEdit extends JDialog {
 					resultPanel.add(new SubPanel(r, "N"));
 			}
 		} else {
-			LabRowManager lRowManager = new LabRowManager();
 
 			ArrayList<LaboratoryRow> lRows;
 			try {
