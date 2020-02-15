@@ -34,14 +34,6 @@ public class LabManager {
 	@Autowired
 	private LabRowManager rowManager;
 	
-	public LabManager() {
-            ioOperations = new LabIoOperations();
-	}
-	
-	public LabIoOperations getIoOperations() {
-		return ioOperations;
-	}
-
 	public void setIoOperations(LabIoOperations ioOperations) {
 		this.ioOperations = ioOperations;
 	}
@@ -383,7 +375,7 @@ public class LabManager {
 		for (LaboratoryForPrint lab : labs) {
 			String labResult = lab.getResult();
 			if (labResult.equalsIgnoreCase(MessageBundle.getMessage("angal.lab.multipleresults"))) {
-				rows = rowManager.getLabRowByLabId(lab.getCode());
+				rows = ioOperations.getLabRow(lab.getCode());
 				
 				if (rows == null || rows.size() == 0) {
 					lab.setResult(MessageBundle.getMessage("angal.lab.allnegative"));
