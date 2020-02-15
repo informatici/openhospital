@@ -1,5 +1,7 @@
 package org.isf.stat.gui.report;
 
+import java.util.Locale;
+
 import javax.swing.JOptionPane;
 
 import org.isf.generaldata.GeneralData;
@@ -24,7 +26,7 @@ public class ExamsList1 {
 
 			// shows at video
 			if (GeneralData.INTERNALVIEWER)
-				JasperViewer.viewReport(jasperReportResultDto.getJasperPrint(), false);
+				JasperViewer.viewReport(jasperReportResultDto.getJasperPrint(), false, new Locale(GeneralData.LANGUAGE));
 			else {
 				Runtime rt = Runtime.getRuntime();
 				rt.exec(GeneralData.VIEWER + " " + jasperReportResultDto.getFilename());

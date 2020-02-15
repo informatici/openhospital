@@ -10,6 +10,7 @@ import java.io.File;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -54,7 +55,7 @@ public class GenericReportPharmaceuticalStockCard {
             } else {
                 JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportPharmaceuticalStockCardPdf(jasperFileName, defaultFilename.getName(), dateFrom, dateTo, medical, ward);
                 if (GeneralData.INTERNALVIEWER)
-                    JasperViewer.viewReport(jasperReportResultDto.getJasperPrint(),false);
+                    JasperViewer.viewReport(jasperReportResultDto.getJasperPrint(),false, new Locale(GeneralData.LANGUAGE));
                 else {
                     Runtime rt = Runtime.getRuntime();
                     rt.exec(GeneralData.VIEWER +" "+ jasperReportResultDto.getFilename());

@@ -10,6 +10,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
@@ -52,7 +53,7 @@ public class GenericReportBill {
 
 			if (show) {
                 if (GeneralData.INTERNALVIEWER) {
-                    JasperViewer.viewReport(jasperReportPDFResultDto.getJasperPrint(), false);
+                    JasperViewer.viewReport(jasperReportPDFResultDto.getJasperPrint(), false, new Locale(GeneralData.LANGUAGE));
                 } else {
                     Runtime rt = Runtime.getRuntime();
                     rt.exec(GeneralData.VIEWER + " " + jasperReportPDFResultDto.getFilename());
@@ -114,7 +115,7 @@ public class GenericReportBill {
 
 			if (show) {
 				if (GeneralData.INTERNALVIEWER) {	
-					JasperViewer.viewReport(jasperPrint, false);
+					JasperViewer.viewReport(jasperPrint, false, new Locale(GeneralData.LANGUAGE));
 				} else {
 					try {
 						Runtime rt = Runtime.getRuntime();

@@ -1,6 +1,7 @@
 package org.isf.stat.gui.report;
 
 import java.io.File;
+import java.util.Locale;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -52,7 +53,7 @@ public class GenericReportMY {
 			} else {
                 JasperReportResultDto jasperReportResultDto = jasperReportsManager.getGenericReportMYPdf(month,year,jasperFileName);
                 if (GeneralData.INTERNALVIEWER)
-                    JasperViewer.viewReport(jasperReportResultDto.getJasperPrint(),false);
+                    JasperViewer.viewReport(jasperReportResultDto.getJasperPrint(),false, new Locale(GeneralData.LANGUAGE));
                 else {
                     Runtime rt = Runtime.getRuntime();
                     rt.exec(GeneralData.VIEWER +" "+ jasperReportResultDto.getFilename());
