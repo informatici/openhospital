@@ -180,7 +180,7 @@ $F{AliveFemaleAdult}.longValue()+$F{DeadFemaleAdult}.longValue())]]></variableEx
 			</band>
 		</background>
 		<title>
-			<band height="50"  isSplitAllowed="true" >
+			<band height="68"  isSplitAllowed="true" >
 				<staticText>
 					<reportElement
 						mode="Opaque"
@@ -216,7 +216,7 @@ $F{AliveFemaleAdult}.longValue()+$F{DeadFemaleAdult}.longValue())]]></variableEx
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
-				<text><![CDATA[NUMBER OF ADMISSIONS AND AND DEATH BY DIAGNOSIS (disease out, discharge date)]]></text>
+				<text><![CDATA[NUMBER OF ADMISSIONS AND AND DEATH BY DIAGNOSIS* (disease out, discharge date)]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -291,6 +291,19 @@ $F{AliveFemaleAdult}.longValue()+$F{DeadFemaleAdult}.longValue())]]></variableEx
 						<font fontName="SansSerif" pdfFontName="Helvetica" size="11" isBold="false"/>
 					</textElement>
 				<text><![CDATA[Year:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="44"
+						width="535"
+						height="15"
+						key="staticText-37"/>
+					<box></box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font pdfFontName="Helvetica" size="8" isBold="false"/>
+					</textElement>
+				<text><![CDATA[*only closed admission will be counted]]></text>
 				</staticText>
 			</band>
 		</title>
