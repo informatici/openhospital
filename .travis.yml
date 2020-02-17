@@ -3,5 +3,6 @@ before_install:
 - sudo service mysql stop
 - docker-compose up -d
 - docker ps
+- chmod +x mvnw
 after_success:
 - docker-compose down

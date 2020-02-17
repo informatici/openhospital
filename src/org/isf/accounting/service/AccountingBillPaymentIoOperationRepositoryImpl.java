@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Transactional
-class AccountingBillPaymentIoOperationRepositoryImpl implements AccountingBillPaymentIoOperationRepositoryCustom {
+public class AccountingBillPaymentIoOperationRepositoryImpl implements AccountingBillPaymentIoOperationRepositoryCustom {
 	
 	@PersistenceContext
 	private EntityManager entityManager;

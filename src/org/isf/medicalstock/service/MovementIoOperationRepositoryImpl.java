@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Transactional
-class MovementIoOperationRepositoryImpl implements MovementIoOperationRepositoryCustom {
+public class MovementIoOperationRepositoryImpl implements MovementIoOperationRepositoryCustom {
 	
 	@PersistenceContext
 	private EntityManager entityManager;

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Transactional
-class PatientIoOperationRepositoryImpl implements PatientIoOperationRepositoryCustom {
+public class PatientIoOperationRepositoryImpl implements PatientIoOperationRepositoryCustom {
 	
 	@PersistenceContext
 	private EntityManager entityManager;

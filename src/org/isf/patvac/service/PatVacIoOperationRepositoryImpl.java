@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Transactional
-class PatVacIoOperationRepositoryImpl implements PatVacIoOperationRepositoryCustom {
+public class PatVacIoOperationRepositoryImpl implements PatVacIoOperationRepositoryCustom {
 	
 	@PersistenceContext
 	private EntityManager entityManager;

@@ -70,7 +70,7 @@ public class PatientIoOperations
 		ArrayList<Patient> pPatient = null;
 		
 		
-		pPatient = new ArrayList<Patient>(repository.findAllWhereDeleted(pageable));			
+		pPatient = new ArrayList<Patient>(repository.findAllByDeletedIsNullOrDeletedEqualsOrderByName("N", pageable));
 					
 		return pPatient;
 	}
