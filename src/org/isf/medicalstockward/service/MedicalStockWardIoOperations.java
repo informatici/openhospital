@@ -45,15 +45,13 @@ public class MedicalStockWardIoOperations
 		ArrayList<MovementWard> pMovementWard = new ArrayList<MovementWard>(); 
 		
 		
-		pMovementWardCode = new ArrayList<Integer>(repository.findAllWardMovement(wardId, dateFrom, dateTo));			
-		for (int i=0; i<pMovementWardCode.size(); i++)
-		{
-			Integer code = pMovementWardCode.get(i);
-			MovementWard movementWard = movementRepository.findOne(code);
-			
-			
-			pMovementWard.add(movementWard);
-		}
+		pMovementWardCode = new ArrayList<Integer>(repository.findAllWardMovement(wardId, dateFrom, dateTo));
+        for (Integer code : pMovementWardCode) {
+            MovementWard movementWard = movementRepository.findOne(code);
+
+
+            pMovementWard.add(movementWard);
+        }
 		
 		return pMovementWard;
 	}
@@ -228,7 +226,7 @@ public class MedicalStockWardIoOperations
         }
 		else
 		{
-			if (qty.doubleValue() < 0)
+			if (qty < 0)
 			{
 				repository.updateInQuantity(-qty, ward, medical);
 			}
@@ -252,7 +250,7 @@ public class MedicalStockWardIoOperations
 		ArrayList<MedicalWard> medicalWards = new ArrayList<MedicalWard>(repository.findAllWhereWard(wardId));
 		for (int i=0; i<medicalWards.size(); i++)
 		{
-			double qty = Double.valueOf(medicalWards.get(i).getInQuantity() - medicalWards.get(i).getOutQuantity());
+			double qty = (double) (medicalWards.get(i).getInQuantity() - medicalWards.get(i).getOutQuantity());
 			if (qty != 0) {
 				medicalWards.get(i).setQty(qty);
 			} else {

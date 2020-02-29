@@ -286,7 +286,7 @@ public class PatientExamination implements Serializable, Comparable<PatientExami
 	public double getBMI() {
 		if (pex_height != 0) {
 			double temp = Math.pow(10, 2); // 2 <-- decimal digits;
-			return Math.round((pex_weight / Math.pow(new Double(pex_height) / 100, 2)) * temp) / temp ;
+			return Math.round((pex_weight / Math.pow(pex_height / 100, 2)) * temp) / temp ;
 		} else return 0;
 	}
 	

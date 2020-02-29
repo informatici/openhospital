@@ -59,13 +59,12 @@ public class PatientIoOperationRepositoryImpl implements PatientIoOperationRepos
 				"SELECT PAT_ID FROM PATIENT LEFT JOIN (SELECT PEX_PAT_ID, PEX_HEIGHT AS PAT_HEIGHT, "
 				+ "PEX_WEIGHT AS PAT_WEIGHT FROM PATIENTEXAMINATION GROUP BY PEX_PAT_ID ORDER BY PEX_DATE DESC) "
 				+ "AS HW ON PAT_ID = HW.PEX_PAT_ID WHERE (PAT_DELETED='N' or PAT_DELETED is null) ");
-		
-		
-		for (int i=0; i<words.length; i++) 
-		{
-			queryBld.append("AND CONCAT_WS(PAT_ID, LOWER(PAT_SNAME), LOWER(PAT_FNAME), LOWER(PAT_NOTE), LOWER(PAT_TAXCODE)) ");
-			queryBld.append("LIKE CONCAT('%', \"" + words[i] + "\" , '%') ");
-		}
+
+
+        for (String word : words) {
+            queryBld.append("AND CONCAT_WS(PAT_ID, LOWER(PAT_SNAME), LOWER(PAT_FNAME), LOWER(PAT_NOTE), LOWER(PAT_TAXCODE)) ");
+            queryBld.append("LIKE CONCAT('%', \"" + word + "\" , '%') ");
+        }
 		queryBld.append(" ORDER BY PAT_ID DESC");
 
 		return queryBld.toString();

@@ -65,10 +65,10 @@ public class TestDiseaseContext
 		List<String> missingDiseaseTypeList = (List<String>)jpa.getList();
 		ArrayList<String> missingDiseaseType = new ArrayList<String>(missingDiseaseTypeList);	
 		missingDiseaseType.removeAll(diseaseTypeArray);
-		for (int i = 0; i < missingDiseaseType.size(); i++) {
-			DiseaseType diseaseType = new DiseaseType(missingDiseaseType.get(i), "Add because missing...");
-			jpa.persist(diseaseType);
-		}
+        for (String s : missingDiseaseType) {
+            DiseaseType diseaseType = new DiseaseType(s, "Add because missing...");
+            jpa.persist(diseaseType);
+        }
 		jpa.commitTransaction();
         		
         return;

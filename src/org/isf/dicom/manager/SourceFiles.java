@@ -59,20 +59,21 @@ public class SourceFiles extends Thread {
 		// installLibs();
 		File[] files = sourceFile.listFiles();
 
-		for (int i = 0; i < files.length; i++) {
+        for (File value : files) {
 
-			try {
-				Thread.sleep(10);
-			} catch (Exception e) {
-			}
+            try {
+                Thread.sleep(10);
+            } catch (Exception e) {
+            }
 
-			if (!files[i].isDirectory()) {
-				loadDicom(files[i], patient);
-				filesLoaded++;
-				dicomLoader.setLoaded(filesLoaded);
-			} else if (!".".equals(files[i].getName()) && !"..".equals(files[i].getName()))
-				loadDicomDir(files[i], patient);
-		}
+            if (!value.isDirectory()) {
+                loadDicom(value, patient);
+                filesLoaded++;
+                dicomLoader.setLoaded(filesLoaded);
+            }
+            else if (!".".equals(value.getName()) && !"..".equals(value.getName()))
+                loadDicomDir(value, patient);
+        }
 	}
 
 	public static int countFiles(File sourceFile, int patient) {
@@ -80,12 +81,12 @@ public class SourceFiles extends Thread {
 
 		File[] files = sourceFile.listFiles();
 
-		for (int i = 0; i < files.length; i++) {
-			if (!files[i].isDirectory())
-				num++;
-			else if (!".".equals(files[i].getName()) && !"..".equals(files[i].getName()))
-				num = num + countFiles(files[i], patient);
-		}
+        for (File value : files) {
+            if (!value.isDirectory())
+                num++;
+            else if (!".".equals(value.getName()) && !"..".equals(value.getName()))
+                num = num + countFiles(value, patient);
+        }
 		return num;
 	}
 

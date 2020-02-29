@@ -227,7 +227,7 @@ public class DiseaseBrowserManager {
 
         Disease oldDisease = null;
         if(!insert){
-            oldDisease = getDiseaseByCode(Integer.valueOf(disease.getCode()));
+            oldDisease = getDiseaseByCode(Integer.parseInt(disease.getCode()));
         }
         String lastDescription = oldDisease == null ? null : oldDisease.getDescription();
         //if inserting or description has changed on updating

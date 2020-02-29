@@ -321,7 +321,7 @@ public class Tests
 			maxId = _getPriceMax();
 			Price copyPrice = (Price)jpa.find(Price.class, maxId);
 			assertEquals(id+1, maxId);
-			assertEquals(2 * price.getPrice().doubleValue(), copyPrice.getPrice().doubleValue(), 0.10);
+			assertEquals(2 * price.getPrice(), copyPrice.getPrice(), 0.10);
 		} 
 		catch (Exception e) 
 		{
@@ -349,7 +349,7 @@ public class Tests
 			maxId = _getPriceMax();
 			Price copyPrice = (Price)jpa.find(Price.class, maxId);
 			assertEquals(id+1, maxId);
-			assertEquals(Math.round(2 * price.getPrice().doubleValue() / 3) *3, copyPrice.getPrice().doubleValue(), 0.10);
+			assertEquals(Math.round(2 * price.getPrice() / 3) *3, copyPrice.getPrice(), 0.10);
 		} 
 		catch (Exception e) 
 		{

@@ -153,7 +153,7 @@ public class TableSorter extends TableMap {
 		compares++;
 		for (int level = 0; level < sortingColumns.size(); level++) {
 			Integer column = (Integer) sortingColumns.elementAt(level);
-			int result = compareRowsByColumn(row1, row2, column.intValue());
+			int result = compareRowsByColumn(row1, row2, column);
 			if (result != 0) {
 				return ascending ? result : -result;
 			}
@@ -285,7 +285,7 @@ public class TableSorter extends TableMap {
 	public void sortByColumn(int column, boolean ascending) {
 		this.ascending = ascending;
 		sortingColumns.removeAllElements();
-		sortingColumns.addElement(new Integer(column));
+		sortingColumns.addElement(column);
 		sort(this);
 		super.tableChanged(new TableModelEvent(this));
 	}

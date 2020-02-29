@@ -48,14 +48,14 @@ public abstract class VideoDevice {
 		if (resolutionsStringArray != null && resolutions != null)
 		{
 			int nres = resolutionsStringArray.size();
-			
-			for (int i =0; i < nres; i++)	{
-				String [] res = resolutionsStringArray.get(i).split("x");
-				
-				resolutions.add(new Resolution(res[0], res[1]));
-				
-				//System.out.println(res[0] + "x" + res[1]);
-			}
+
+            for (String s : resolutionsStringArray) {
+                String[] res = s.split("x");
+
+                resolutions.add(new Resolution(res[0], res[1]));
+
+                //System.out.println(res[0] + "x" + res[1]);
+            }
 			
 			if (defaultResolution != null)
 			{

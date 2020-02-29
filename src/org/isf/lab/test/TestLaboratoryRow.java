@@ -9,7 +9,7 @@ import org.isf.utils.exception.OHException;
 
 public class TestLaboratoryRow 
 {	
-	private Integer code = new Integer(0);
+	private Integer code = 0;
     private String description = "TestDescription";
     
 			

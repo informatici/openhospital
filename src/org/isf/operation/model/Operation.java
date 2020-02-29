@@ -144,8 +144,8 @@ public class Operation
 	        c = m * c + ((code == null) ? 0 : code.hashCode());
 	        c = m * c + ((description == null) ? 0 : description.hashCode());
 	        c = m * c + ((type == null) ? 0 : type.hashCode());
-	        c = m * c + ((major == null) ? 0 : major.intValue());
-	        c = m * c + ((lock == null) ? 0 : lock.intValue());
+	        c = m * c + ((major == null) ? 0 : major);
+	        c = m * c + ((lock == null) ? 0 : lock);
 	        
 	        this.hashCode = c;
 	    }

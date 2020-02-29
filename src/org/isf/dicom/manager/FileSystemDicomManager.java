@@ -98,7 +98,7 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 			Long[] _Longs = new Long[_longs.length];
 
 			for (int i = 0; i < _Longs.length; i++) {
-				_Longs[i] = new Long(_longs[i]);
+				_Longs[i] = _longs[i];
 				// System.out.println(" getDettaglioSerie("+idPaziente+","+numeroSerie+") = "+_longs[i]);
 			}
 
@@ -132,8 +132,8 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 			File[] f = deleteFolder.listFiles();
 			boolean deleted = true;
 
-			for (int i = 0; i < f.length; i++) {
-				deleted = deleted && f[i].delete();
+			for (File file : f) {
+				deleted = deleted && file.delete();
 				// System.out.println(f[i].getAbsolutePath()+" del "+dl);
 			}
 			return deleted && deleteFolder.delete();
@@ -573,9 +573,9 @@ public class FileSystemDicomManager implements DicomManagerInterface {
 	private FileDicom[] compact(FileDicom[] db) {
 		Vector<FileDicom> rv = new Vector<FileDicom>(0);
 
-		for (int i = 0; i < db.length; i++)
-			if (db[i] != null)
-				rv.addElement(db[i]);
+		for (FileDicom fileDicom : db)
+			if (fileDicom != null)
+				rv.addElement(fileDicom);
 
 		FileDicom[] ret = new FileDicom[rv.size()];
 

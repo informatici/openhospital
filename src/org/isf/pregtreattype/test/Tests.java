@@ -121,14 +121,12 @@ public class Tests
 			code = _setupTestPregnantTreatmentType(false);
 			PregnantTreatmentType foundPregnantTreatmentType = (PregnantTreatmentType)jpa.find(PregnantTreatmentType.class, code); 
 			ArrayList<PregnantTreatmentType> pregnantTreatmentTypes = pregnantTreatmentTypeIoOperation.getPregnantTreatmentType();
-			
-			for (int i=0; i<pregnantTreatmentTypes.size(); i++)
-			{
-				if (pregnantTreatmentTypes.get(i).getCode().equals(code))
-				{
-					assertEquals(foundPregnantTreatmentType.getDescription(), pregnantTreatmentTypes.get(i).getDescription());
-				}
-			}
+
+            for (PregnantTreatmentType pregnantTreatmentType : pregnantTreatmentTypes) {
+                if (pregnantTreatmentType.getCode().equals(code)) {
+                    assertEquals(foundPregnantTreatmentType.getDescription(), pregnantTreatmentType.getDescription());
+                }
+            }
 		} 
 		catch (Exception e) 
 		{

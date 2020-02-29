@@ -182,7 +182,7 @@ public class Tests
 			code = _setupTestOperation(false);
 			Operation foundOperation = (Operation)jpa.find(Operation.class, code);
 			jpa.flush();
-			int lock = foundOperation.getLock().intValue();
+			int lock = foundOperation.getLock();
 			foundOperation.setDescription("Update");
 			result = operationIoOperations.updateOperation(foundOperation);
 			Operation updateOperation = (Operation)jpa.find(Operation.class, code); 
