@@ -23,7 +23,7 @@ public class TestPrice
 		Price price;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			price = new Price();
 			_setParameters(list, price);

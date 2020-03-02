@@ -23,7 +23,7 @@ public class TestBillItems
 		BillItems billItem;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			billItem = new BillItems();
 			_setParameters(billItem, bill);

@@ -20,7 +20,7 @@ public class TestLaboratoryRow
 		LaboratoryRow laboratoryRow;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			laboratoryRow = new LaboratoryRow();
 			_setParameters(laboratoryRow, laboratory);

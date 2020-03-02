@@ -21,7 +21,7 @@ public class TestMedicalWard
 		MedicalWard medicalward;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			medicalward = new MedicalWard();
 			_setParameters(medicalward, medical, ward);

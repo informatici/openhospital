@@ -24,7 +24,7 @@ public class TestLot
 		Lot lot;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			lot = new Lot();
 			_setParameters(lot);

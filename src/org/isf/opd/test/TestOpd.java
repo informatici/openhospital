@@ -32,7 +32,7 @@ public class TestOpd
 		Opd opd;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			opd = new Opd();
 			_setParameters(patient, disease, opd);

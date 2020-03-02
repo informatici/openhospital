@@ -24,7 +24,7 @@ public class TestVisit
 		Visit visit;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			visit = new Visit();
 			_setParameters(patient, visit);

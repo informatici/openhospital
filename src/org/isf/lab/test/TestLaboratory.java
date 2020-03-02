@@ -33,7 +33,7 @@ public class TestLaboratory
 		Laboratory laboratory;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			laboratory = new Laboratory();
 			_setParameters(laboratory, exam, patient);

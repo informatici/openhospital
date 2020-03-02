@@ -24,7 +24,7 @@ public class TestPricesOthers
 		PricesOthers pricesOthers;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			pricesOthers = new PricesOthers();
 			_setParameters(pricesOthers);

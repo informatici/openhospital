@@ -21,7 +21,7 @@ public class TestOperation
 		Operation operation;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			operation = new Operation();
 			_setParameters(operation, operationType);

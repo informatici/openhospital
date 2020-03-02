@@ -27,7 +27,7 @@ public class TestPatientVaccine
 		PatientVaccine patientVaccine;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			patientVaccine = new PatientVaccine();
 			_setParameters(patient, vaccine, patientVaccine);

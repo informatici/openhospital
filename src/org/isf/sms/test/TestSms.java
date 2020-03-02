@@ -28,7 +28,7 @@ public class TestSms
 		Sms sms;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			sms = new Sms();
 			_setParameters(sms);

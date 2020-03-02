@@ -22,7 +22,7 @@ public class TestUser
 		User user;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			user = new User();
 			_setParameters(user, userGroupName);

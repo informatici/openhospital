@@ -20,7 +20,7 @@ public class TestVaccine
 		Vaccine vaccine;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			vaccine = new Vaccine();
 			_setParameters(vaccineType, vaccine);

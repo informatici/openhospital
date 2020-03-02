@@ -42,7 +42,7 @@ public class Interaction{
 		for(RosterEntry r:entries)
 		{
 			presence = roster.getPresence(r.getUser());
-			if(presence.isAvailable()== true)
+			if(presence.isAvailable())
 				entries_online.add(r.getName());
 		}
 

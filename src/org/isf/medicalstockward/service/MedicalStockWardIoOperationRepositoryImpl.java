@@ -56,7 +56,7 @@ public class MedicalStockWardIoOperationRepositoryImpl implements MedicalStockWa
 		}
 		if ((dateFrom != null) && (dateTo != null)) 
 		{
-			if (firstParam == false) 
+			if (!firstParam)
 			{
 				query.append("AND ");
 			}

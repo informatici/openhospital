@@ -20,7 +20,7 @@ public class TestPriceList
 		PriceList priceList;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			priceList = new PriceList();
 			_setParameters(priceList);

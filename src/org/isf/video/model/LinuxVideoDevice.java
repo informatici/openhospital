@@ -50,7 +50,7 @@ public class LinuxVideoDevice extends VideoDevice {
 		ArrayList<String> resolutions = null;
 		String defaultResolution = null;
 		
-		if (ignoreFile == false)	{
+		if (!ignoreFile)	{
 			resolutions = getResolutionsFromFile();
 			defaultResolution = getDefaultResolution();
 		}

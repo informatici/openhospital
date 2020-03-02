@@ -424,14 +424,13 @@ public class MedicalStockIoOperations {
 		if (medicalWard != null)
 		{			
 			medicalWard.setInQuantity(medicalWard.getInQuantity()+quantity);
-			medicalStockRepository.save(medicalWard);
 		}
 		else
 		{
 			medicalWard = new MedicalWard(ward, medical, quantity, 0);
-			medicalStockRepository.save(medicalWard);
 		}
-		
+		medicalStockRepository.save(medicalWard);
+
 		return true;
 	}
 

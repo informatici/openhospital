@@ -18,7 +18,7 @@ public class TestUserGroup
 		UserGroup userGroup;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			userGroup = new UserGroup();
 			_setParameters(userGroup);

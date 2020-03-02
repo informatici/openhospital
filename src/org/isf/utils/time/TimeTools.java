@@ -251,12 +251,11 @@ public class TimeTools {
 		GregorianCalendar calendar = new GregorianCalendar();
 		if (noTime) {
 			calendar.setTime(date);
-			System.out.println(formatDateTime(calendar, null));
 		} else {
 			calendar.setTimeInMillis(date.getTime());
-			System.out.println(formatDateTime(calendar, null));
 		}
-		
+		System.out.println(formatDateTime(calendar, null));
+
 		return calendar;
 	}
 	

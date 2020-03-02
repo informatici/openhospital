@@ -32,7 +32,7 @@ public class TestBill
 		Bill bill;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			bill = new Bill();
 			_setParameters(bill, priceList, patient);

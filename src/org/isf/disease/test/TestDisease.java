@@ -20,7 +20,7 @@ public class TestDisease
 		Disease disease;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			disease = new Disease();
 			_setParameters(disease, diseaseType);

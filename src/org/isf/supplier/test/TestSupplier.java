@@ -23,7 +23,7 @@ public class TestSupplier
 		Supplier supplier;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			supplier = new Supplier();
 			_setParameters(supplier);

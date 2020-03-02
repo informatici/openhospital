@@ -23,7 +23,7 @@ public class TestHospital
 		Hospital hospital;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			hospital = new Hospital();
 			_setParameters(hospital);

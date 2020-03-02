@@ -19,7 +19,7 @@ public class TestMovementType
 		MovementType movementType;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			movementType = new MovementType();
 			_setParameters(movementType);

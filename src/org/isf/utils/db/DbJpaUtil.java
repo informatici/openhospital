@@ -209,7 +209,7 @@ public class DbJpaUtil
 	  		Class<?> aClass, 
 	  		boolean jpql) throws OHException
 	{	  	
-	  	if (jpql == true)
+	  	if (jpql)
 	  	{
 	  		_createJPQLQuery(aQuery, aClass);
 	  	}

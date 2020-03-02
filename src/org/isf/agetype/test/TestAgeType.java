@@ -20,7 +20,7 @@ public class TestAgeType
 		AgeType ageType;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			ageType = new AgeType();
 			_setParameters(ageType);

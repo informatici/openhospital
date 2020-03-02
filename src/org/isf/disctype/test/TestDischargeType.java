@@ -18,7 +18,7 @@ public class TestDischargeType
 		DischargeType dischargeType;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			dischargeType = new DischargeType();
 			_setParameters(dischargeType);

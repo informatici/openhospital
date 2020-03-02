@@ -20,7 +20,7 @@ public class TestGroupMenu
 		GroupMenu groupMenu;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			groupMenu = new GroupMenu();
 			_setParameters(groupMenu);

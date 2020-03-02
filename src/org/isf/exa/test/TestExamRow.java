@@ -19,7 +19,7 @@ public class TestExamRow
 		ExamRow examRow;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			examRow = new ExamRow();
 			_setParameters(examRow, exam);

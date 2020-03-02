@@ -47,7 +47,7 @@ public class VideoDeviceStreamApplet extends PApplet	{
 	}
 
 	public void draw()	{
-		if (videoDeviceStream != null && videoDeviceStream.available() == true)	{
+		if (videoDeviceStream != null && videoDeviceStream.available())	{
 			videoDeviceStream.read();
 			
 			image(videoDeviceStream, 0, 0, appletWidth, appletHeight);

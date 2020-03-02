@@ -18,7 +18,7 @@ public class TestDeliveryResultType
 		DeliveryResultType deliveryResultType;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			deliveryResultType = new DeliveryResultType();
 			_setParameters(deliveryResultType);

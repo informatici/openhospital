@@ -20,7 +20,7 @@ public class TestExam
 		Exam exam;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			exam = new Exam();
 			_setParameters(exam, procedure, examtype);

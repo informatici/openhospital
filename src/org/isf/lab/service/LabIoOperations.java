@@ -354,7 +354,7 @@ public class LabIoOperations {
 		boolean result = updateLabFirstProcedure(laboratory);
 		
 		
-		if (result == true)
+		if (result)
 		{		
 			for (String aLabRow : labRow) {
 				LaboratoryRow laboratoryRow = new LaboratoryRow();

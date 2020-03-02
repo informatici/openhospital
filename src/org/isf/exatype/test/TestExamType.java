@@ -18,7 +18,7 @@ public class TestExamType
 		ExamType examType;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			examType = new ExamType();
 			_setParameters(examType);

@@ -157,7 +157,7 @@ public class ExamBrowsingManager {
 	 */
 	public boolean newExam(Exam exam) throws OHServiceException {
 		try {
-			if (true == isKeyPresent(exam)) {
+			if (isKeyPresent(exam)) {
 				throw new OHServiceException(new OHExceptionMessage(null, 
 						MessageBundle.getMessage("angal.exa.changethecodebecauseisalreadyinuse"),
 						OHSeverityLevel.ERROR));

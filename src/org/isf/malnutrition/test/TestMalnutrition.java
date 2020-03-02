@@ -23,7 +23,7 @@ public class TestMalnutrition
 	{
 		Malnutrition malnutrition;
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			malnutrition = new Malnutrition();
 			_setParameters(admission, malnutrition);

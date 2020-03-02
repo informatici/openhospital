@@ -18,7 +18,7 @@ public class TestPregnantTreatmentType
 		PregnantTreatmentType pregnantTreatmentType;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			pregnantTreatmentType = new PregnantTreatmentType();
 			_setParameters(pregnantTreatmentType);

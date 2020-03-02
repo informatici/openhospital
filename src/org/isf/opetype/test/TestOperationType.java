@@ -18,7 +18,7 @@ public class TestOperationType
 		OperationType operationType;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			operationType = new OperationType();
 			_setParameters(operationType);

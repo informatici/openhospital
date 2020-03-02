@@ -27,7 +27,7 @@ public class TestWard
 		Ward ward;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			ward = new Ward();
 			_setParameters(ward);

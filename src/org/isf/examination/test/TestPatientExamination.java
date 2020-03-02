@@ -29,7 +29,7 @@ public class TestPatientExamination
 		PatientExamination patientExamination;
 	
 
-		if (usingSet == true)
+		if (usingSet)
 		{
 			patientExamination = new PatientExamination();
 			_setParameters(patientExamination, patient);

@@ -60,7 +60,7 @@ public class TestAdmission
 		Admission admission;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			admission = new Admission();
 			_setParameters(admission, ward, patient, admissionType, diseaseIn, diseaseOut1, diseaseOut2, 	

@@ -18,7 +18,7 @@ public class TestAdmissionType
 		AdmissionType admissionType;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			admissionType = new AdmissionType();
 			_setParameters(admissionType);

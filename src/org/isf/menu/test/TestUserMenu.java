@@ -25,7 +25,7 @@ public class TestUserMenu
 		UserMenuItem userMenuItem;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			userMenuItem = new UserMenuItem();
 			_setParameters(userMenuItem);

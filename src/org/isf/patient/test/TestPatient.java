@@ -42,7 +42,7 @@ public class TestPatient
 		Patient patient;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			patient = new Patient();
 			_setParameters(patient);

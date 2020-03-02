@@ -32,7 +32,7 @@ public class TestTherapy
 		TherapyRow therapyRow;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			therapyRow = new TherapyRow();
 			_setParameters(patient, medical, therapyRow);

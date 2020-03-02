@@ -46,7 +46,7 @@ public class TestDicom
 		FileDicom dicom;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			dicom = new FileDicom();
 			_setParameters(dicom);

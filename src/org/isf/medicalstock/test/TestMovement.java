@@ -32,7 +32,7 @@ public class TestMovement
 		Movement movement;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			movement = new Movement();
 			_setParameters(movement, medical, movementType, ward, lot, supplier);

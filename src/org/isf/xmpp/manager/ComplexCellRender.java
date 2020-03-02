@@ -42,7 +42,7 @@ public class ComplexCellRender extends JLabel implements ListCellRenderer {
 		Roster roster=server.getRoster();
 		Presence presence;
 		presence =roster.getPresence(((RosterEntry)value).getUser());
-		if(presence.isAvailable()== true){
+		if(presence.isAvailable()){
 			renderer.setIcon(online);
 			renderer.setFont(new Font("Arial",Font.BOLD,14));
 		}

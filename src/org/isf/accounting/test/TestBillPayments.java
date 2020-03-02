@@ -23,7 +23,7 @@ public class TestBillPayments
 		BillPayments billPayment;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			billPayment = new BillPayments();
 			_setParameters(billPayment, bill);

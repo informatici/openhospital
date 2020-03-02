@@ -18,7 +18,7 @@ public class TestMedicalType
 		MedicalType medicalType;
 	
 				
-		if (usingSet == true)
+		if (usingSet)
 		{
 			medicalType = new MedicalType();
 			_setParameters(medicalType);
