@@ -1,0 +1,109 @@
+1;Parálisis atónica aguda ;ND;0;1;1
+2;Cólera;ND;0;1;1
+3;Diarrea-Disentería;ND;2;1;1
+4;Lombriz de Guinea;ND;0;1;1
+5;Sarampión;ND;0;1;1
+6;Meningitis;ND;0;1;1
+7;Tétano neonatal (edad inferior  a 28 días);ND;3;1;1
+8;Plaga;ND;0;1;1
+9;Rabia;ND;0;1;1
+10;Fiebre viral hemorrágica;ND;0;1;1
+11;Fiebre Amarilla;ND;0;1;1
+12;Anemia;NC;0;1;1
+13;Enfermedad Dental y afecciones;NC;0;1;1
+14;Diabetes Mellitus;NC;0;1;1
+15;Enfermedades gastro-intestinales (no infectiva);NC;1;1;1
+16;Hipertensión;NC;0;1;1
+17;Enfermedad Mental;NC;0;1;1
+18;Epilepsia;NC;0;1;1
+19;Otras enfermedades cardiovasculares;NC;0;1;1
+20;Malnutrición Grave (marasmo,kwashiorkor,marasmico-kwash);NC;6;1;0
+22;Trauma - Violencia Doméstica;NC;0;1;1
+23;Trauma - Otros intencionales;NC;0;1;1
+24;Trauma en la calle  accidentes de tráfico;NC;0;1;1
+25;Trauma - Otros No intencionales;NC;0;1;1
+26;Otras complicaciones del embarazo;MP;1;0;1
+27;Afecciones perinatales;MP;0;1;1
+28;Abortos;MP;0;1;1
+29;SIDA;OC;0;1;1
+30;Diarrea-no hemorrágica;OC;0;1;1
+31;Diarrea-Persistente;OC;0;1;1
+32;Infecciones del oído;OC;1;0;1
+33;Infecciones de la vista;OC;0;1;1
+34;Infección Genital - Secreción Uretral;OC;1;0;1
+35;Infección Genital - Secreción Vaginal;OC;1;0;1
+36;Infección Genital - Ulcerativa;OC;1;0;1
+37;Lombrices Intestinales;OC;0;1;1
+38;Lepra;OC;0;1;1
+39;Malaria;OC;0;1;1
+40;No neumonía - resfrío o tos;OC;0;1;1
+41;Oncocercosis;OC;0;1;1
+42;Neumonía;OC;0;1;1
+43;Enfermedades de la piel;OC;0;1;1
+44;Tuberculosis;OC;2;1;1
+46;Fiebre tifoidea;OC;0;1;1
+47;Infección Vias Urinarias (UTI);OC;2;1;1
+48;Otras (No especificadas);OC;1;0;1
+49;Cualquier otro tipo de Enfermedad (especificar);AO;2;1;1
+50;Otras enfermedades infecciosas emergentes (especificar);ND;0;1;1
+56;Muerte en OPD;OC;0;1;1
+57;Condiciones otorrinolaringóiatricas;OC;0;1;1
+58;Condiciones oculares;OC;0;1;1
+59;Infección por trasmisión sexual (STI);OC;1;1;1
+60;Hepatitis;OC;1;0;1
+61;Osteomielitis;OC;1;0;1
+62;Peritonitis;OC;1;0;1
+63;Pirexia de origen desconocido (PUO);OC;1;0;1
+64;Septicemia;OC;1;0;1
+65;Presión arterial alta durante el embarazo;MP;0;1;1
+66;Hemorragia relacionada con el embarazo (APH/PPH);MP;0;1;1
+67;Sepsis relacionada con el embarazo;MP;1;0;1
+68;Asma;NC;0;1;1
+69;Enfermedades la boca y afecciones;NC;0;1;1
+70;Trastornos endocrinos y metabólicos (otros);NC;0;1;1
+71;Trastornos de ansiedad;NC;0;1;1
+72;Mania;NC;0;1;1
+73;Depresión;NC;0;1;1
+74;Esquizofrenia;NC;0;1;1
+75;Abuso de drogas y alcohol;NC;0;1;1
+76;Trastornos de la mente y de la infancia;NC;0;1;1
+77;Malnutrición grave (kwashiorkor);NC;2;0;1
+78;Malnutrición grave (marasmo);NC;3;0;1
+79;Malnutrición grave (marasmic-kwash);NC;2;0;1
+80;Bajo peso para la edad;NC;0;1;1
+81;Lesiones - (trauma debido a otras causas);NC;0;1;1
+82;Mordedura de Animal/serpiente;NC;0;1;1
+83;Envenenamiento;NC;1;0;1
+84;Cirrosis hepática;NC;0;1;1
+85;Carcinoma hepatocelular;NC;0;1;1
+86;Enfermedades hepáticas (otras);NC;0;1;1
+87;Hernias;NC;0;1;1
+88;Enfermedades del apéndice;NC;0;1;1
+89;Enfermedades de músculos del esqueleto y del tejido conectivo;NC;0;1;1
+90;Enfermedades del aparato genito-urinario (no infectivo);NC;0;1;1
+91;Malformaciones y anomalías cromosómicas congénitas;ND;1;0;1
+92;Complicaciones y atención quirúrgica;NC;0;1;1
+93;Neoplasia de Benine (todos los tipos);NC;16;1;1
+94;Cáncer de la mamas;NC;0;1;1
+95;Cáncer de la próstata;ND;1;0;1
+96;Tumor maligno de los órganos digestivos;NC;0;1;1
+97;Tumor maligno de los pulmones;NC;0;1;1
+98;Sarcomas y otros cánceres de piel;NC;0;1;1
+99;Tumor maligno del tejido hemopoyético;NC;0;1;1
+100;Otras neoplasias malignas;NC;0;1;1
+101;Úlceras curables;NC;0;1;1
+102;Evento cerebro-vascular;NC;0;1;1
+103;Paro cardíaco;NC;0;1;1
+104;Hemorragia gastro-intestinal;NC;0;1;1
+105;Dificultad respiratoria;NC;0;1;1
+106;Insuficiencia renal aguda;NC;1;0;1
+107;Sepsis aguda;NC;1;0;1
+108;Esquistosomiasis;NC;0;1;1
+110;Enfermedades inflamatorias pélvicas (PID);OC;0;1;1
+111;Tétano (edad superior  a 28 días);OC;1;1;1
+112;Parto obstruido;MP;0;1;1
+113;Otros tipos de meningitis;OC;0;1;1
+114;Esquistosomiasis;OC;0;1;1
+115;Enfermedad del sueño;OC;0;1;1
+116;Malaria durante el embarazo;MP;0;1;1
+117;Lesiones - (accidentes de tráfico);NC;0;1;1

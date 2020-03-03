@@ -1,0 +1,261 @@
+commit 345f10d5189797fa42b065064cfb9daa2d3717ec
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-10
+
+    made changelog.sh executable
+
+commit e3d89b4e0caabfbb43599c83c887daa9866eab20
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-10
+
+    Updated changelog and added a script to generate it
+
+commit 182bbc8c2fbcdbda1164bb342cd30b34e1d4206c
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-09
+
+    Fixing pre-release issue #26: fix gender filtering
+
+commit adee69aeb82d559af094c8d503d99fa075769624
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-08
+
+    Removed some unused imports
+
+commit 99398860c8e5bfc330f25e7764ef696f7e1504f2
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-08
+
+    Fixing pre-release issue #25: fixed report query
+
+commit a72cebad2afea1b7bacac8d3a688afa754e00e3c
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-08
+
+    Fixing pre-release issue #23: removed report type selection
+
+commit 2364a2c60c9fa230c83b0ab65377c7318768fc07
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-08
+
+    Fixed remove exam behavior in Laboratory
+
+commit 9dbecda8d827d2bafcb6f873de8da949186626c3
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-07
+
+    Pre-release issue #22: fixing multiple result insert
+
+commit c991115969aad2919bd864874f37a6a0da5275bf
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-08-07
+
+    Fixing StockLedger and StockProduct reports initial and ending balances
+    
+    and other reports
+
+commit a8343628d92253fa1af717f93f39cfa441eb3785
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-30
+
+    Uploaded changelog for version 1.9.0
+
+commit 61c3f58c933a6d7bcbcc3480d72d5c8cee9feaf9
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-30
+
+    Updated version to 1.9.0
+
+commit 0e16e329634a1004d72ec15d7cad235efc3385d8
+Author: transifex-integration[bot] <43880903+transifex-integration[bot]@users.noreply.github.com>
+Date:   2019-07-28
+
+    Translate '/bundle/language_en.properties' in 'it' (#24)
+    
+    * Translate /bundle/language_en.properties in it
+    
+    translation completed for the source file '/bundle/language_en.properties'
+    on the 'it' language
+    
+    * Updated italian language bundle
+
+commit 9a32cb964c3e224b7a286ef827f0d47145f43271
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-28
+
+    Removed Admin and User manuals (generated during release)
+    
+    and doc/ folder from deployment (changelogs will be generated)
+
+commit c1125fceb0fd3b42dc29452992952b0dbaf92a0b
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-28
+
+    Adding missing changelogs
+
+commit 28007d02f12cd34b56ad7da18c9113550e9f000c
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-28
+
+    Op 83 fixing reports (#23)
+    
+    MedicalStockWard: completed movements between wards
+    - Added origin column in Incoming Table
+    - Added new incoming movements for each ToWard movement
+    - Added one field MMVN_WRD_ID_A_FROM to better handle movements between
+    wards in reports
+    - Fixed PharmaceuticalStockWard with quantities from other wards
+
+commit 8e312fc2d6520027df28cc4c0cc002fc74cc0df8
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-28
+
+    Fixed some UNICODE characters
+
+commit c62ea9723c5f7ee36e5580fcf388dfa172486f0b
+Author: transifex-integration[bot] <43880903+transifex-integration[bot]@users.noreply.github.com>
+Date:   2019-07-28
+
+    Translate /bundle/language_en.properties in es
+    
+    translation completed for the source file '/bundle/language_en.properties'
+    on the 'es' language
+
+commit 1bc5be2d5305c44a52526a092bc71a60e035875f
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-26
+
+    Formatting the code and completed String externalization
+
+commit 4f5aa84880f6aecc1e417d79e25d464f3a4f128d
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-26
+
+    Fixed Transf Unit field parsing when left empty
+
+commit f5ccbf61db0f7f8b89ca5f1c9bc7ffb47d3c6ddc
+Author: transifex-integration[bot] <43880903+transifex-integration[bot]@users.noreply.github.com>
+Date:   2019-07-25
+
+    Translate /bundle/language_en.properties in es
+    
+    translation completed for the source file '/bundle/language_en.properties'
+    on the 'es' language
+
+commit db2bed283051d1c80fea3ea550f6d7d7391e80df
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-25
+
+    Fixed medical selection
+
+commit fbe27ee98447d904ec90b387d1eb16be24bc2d08
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-24
+
+    Moved SQL step from gui -> core and fixed lot selection when CANCEL
+
+commit fdea49a3f9a39822b3c0e73bc95292a4451595f6
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-07-24
+
+    Prevent mvnt between ward for updating the main pharmacy stocks
+
+commit a434eae8e715f571e65743d29633cf26b63d4410
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-24
+
+    Aligned with master
+
+commit b38cc221114e9087d4cd713c023d9035e927447e
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-17
+
+    Updated 'poh_files' for new code structure divided in components
+
+commit 3d0cfa890017f6666c7b339bb634f7cce5310a01
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-17
+
+    Updated oh.bat to include "gui" component
+
+commit 29a5efa1a29a1de8b97ae636a499e42b82312adc
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-07-11
+
+    OP-91 #comment fixed indentation
+
+commit 07f87e8b58bf302452d251e2bf0a26eb6387f4c6
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-11
+
+    Update commit to complete the task OP-81
+
+commit 7a34da4217dac1d227c2322835e328c54b342be7
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-06
+
+    corrective commit to update the previous one
+
+commit 0fa241e060f4740cbbced67e2678e984fc7f6430
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-06
+
+    Task OP-81 (Uni2grow Cameroun)
+    
+    Admission/Patient > Admission > Operation. modified and database modified to allow adding multiple operation to an admission.
+
+commit 56c49d991de85b9127c8cf037f791b5c9ca9c9e8
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-11
+
+    Update commit to complete the task OP-81
+
+commit 0e24501d0043f59e7df3fc363b3e14bedd5cb282
+Author: Marcellin <marcellintabou@gmail.com>
+Date:   2019-06-07
+
+    Search field added in GENERALDATE>EXAMS menu and also in LABORATORY>NEW > +EXAM button allowing to easily select an exam
+
+commit d53cfb42d88a87b13daa23007beccdd75c8b90fc
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-06
+
+    Task OP-82 done (Uni2grow Cameroun)
+    
+    The exams panel was inserted into a tabbedPane and a tab was added to show the history of operations performed on a patient. (Admission/Patient > Clinical sheet)
+
+commit e7af5ea78762c2a69ad693974d039ddae550f97d
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-06
+
+    corrective commit to update the previous one
+
+commit 2e099259d13f945b92f1ed341e3c6759ccc5af88
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-06
+
+    Task OP-81 done (Uni2grow Cameroun)
+    
+    Admission/Patient > Admission > Operation. modified and database modified to allow adding multiple operation to an admission.
+
+commit 2fd48082d5085e4084a1db2f9a4e67011d949a0a
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-06-03
+
+    Task OP-83 done (Uni2grow Cameroun)
+    
+    Transfer of products and materials between wards enabled
+
+commit 5ab6a169780d26f85090f3fd0a9d575deeeb7e38
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-05-31
+
+    Task OP-86 done (Uni2grow Cameroun)
+    
+    Search fields was added in Pharmaceutical stock & Pharmaceutical Stock Ward to facilitate quick selection of medicals.
+
+commit 0871743340b54d747fc82ea8b03b20f2ae85722b
+Author: Xavier <martinxaviertchembe@gmail.com>
+Date:   2019-05-31
+
+    Task OP-91 done (Uni2grow Cameroun)

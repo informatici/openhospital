@@ -1,0 +1,357 @@
+commit 519af207e1be7e4087c2d901d3307c4746fe8559
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-02-05
+
+    Updated changelog
+
+commit 5fd83db13f5bcbaacdb705cb8c71c658b2e7d32b
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-02-05
+
+    OP-160 handled large queries (1 year) in OPD with warning message (#52)
+    
+    * OP-160 handled large queries (1 year) in OPD with warning message
+    * TODO: to retrieve resultset size instead of assuming 1 year as limit for the warning
+
+commit b76e34741f6f357a9bae8274f6bd6578c5cd02d6
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-02-05
+
+    Changed the @EmbeddableId for MedicalWard entity (#51)
+
+commit 0f41d787cb7be8ffc2ccf08490b730c18cda7581
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-02-05
+
+    Fixed nullable object mapped by a primitive type (#50)
+
+commit 2db245859546e421dbbf970cd51e4fa8a3255193
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-31
+
+    Added missing reports
+
+commit 93614f2335098c6fab265e7e4ac46e6847587ffb
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-29
+
+    Updated changelog
+
+commit 43f9dae2769d54c513749a1991834f5795910542
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-29
+
+    Mwithi fixing examination parameters (#49)
+    
+    PatientExamination:
+    - changed Weight value to "int" to reflect the DB
+    - changed Height value to "double" to reflect the DB
+    - added HEIGHT_STEP parameter
+
+commit 3cb182cdf51224c599daa431c0eb5c492fa515c5
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-23
+
+    Updated changelog
+
+commit b095060b4150b4e7184868968cb32cb6bed16e3a
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-23
+
+    Added missing bundle key
+
+commit 7857c14ec1193b0660364ef95537acea09c48883
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-23
+
+    Fixed small bug when creating new patient from selection window
+
+commit 7749cfed5a6e8e7f4a7e5b821806b0d02c47e1f6
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-22
+
+    Uploaded changelog 1.9.1
+
+commit b495715f8f3cb1de4883e1b39ee4f83abb5b1513
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-20
+
+    Updated version
+
+commit 3da31d43ebd665573c6e9299baccf3216e65ce14
+Author: vicusotto <vito988@gmail.com>
+Date:   2020-01-19
+
+    OP-113 Defined Managers of S to U modules as Spring Bean #time 1h (#47)
+    
+    OP-113 Defined Managers of S to U modules as Spring Bean #time 1h
+
+commit 53bc4dc28c5ab3f9629f4a255e0be1ac056d212a
+Author: giuseppe.sorge <giuseppe.sorge90@gmail.com>
+Date:   2020-01-19
+
+    Op 102 master refactoring for api (#46)
+    
+    OP-110
+
+commit 3121b0d2a4a1733d0b0a41d5133584732a82e901
+Author: giuseppe.sorge <giuseppe.sorge90@gmail.com>
+Date:   2020-01-17
+
+    Op 102 master refactoring for api
+    
+    OP-112 and OP-114
+
+commit 38e3013a54d0190abaacc59d0a4f1e3298738895
+Author: vicusotto <vito988@gmail.com>
+Date:   2020-01-17
+
+    OP-111 Modules with M
+    
+    Defined Managers of M modules as Spring Bean #time 1h (#41)
+
+commit 6803bebd4e2216faab0c215e08b642e289ae3644
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2020-01-17
+
+    OP-110 #comment converting package Exa
+    
+    and removed warnings and unwanted TODOs
+
+commit a01e6bdcd3daf3858279cbe5be3207838e8b5ceb
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting packages DeliveryType and DeliveryResultType
+    
+    and removed warnings and unwanted TODOs
+
+commit 6f5afa180a59e356f2548f56769a35ffbe1bffef
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting packages Disease and DiseaseType
+    
+    and removed warnings and unwanted TODOs
+
+commit 30a79a1da5c0a50aa9a62a6c10ee503fe9a9cd9d
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting package DischargeType
+    
+    and removed warnings and unwanted TODOs
+
+commit 53f3592ec9c977bf785a470c67db417bbb590a19
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting package Dicom
+    
+    and removed warnings and unwanted TODOs
+
+commit 0ebbe0763b1d72bd17acbbd4d3fd0c5c35ec24de
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting package AgeType
+    
+    and removed all warnings and unwanted TODOs
+
+commit 871f54c6c24eb47a39746eca1b69bdca96362b58
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting package AdmissionType
+    
+    and removed all warnings and unwanted TODOs
+
+commit 0be7eeae77e1500bce1e7a325891c0404135b4af
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting package Admission
+    
+    and removed all warnings and unwanted TODOs, plus some cosmetic changes
+    to the code
+
+commit 738eb9ff6964ce9e1278845bc23ee24b37d6efc1
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-08
+
+    OP-109 #comment converting package Accounting
+    
+    and removed all warnings and unwanted TODOs
+
+commit c34eabda811904e12e2425fff3f7683b2c511bb8
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-12-06
+
+    OP-102 #comment spread initial changes #time 0.5h
+
+commit b8a681f9d5d12559ba15eb7bf661e4eed5ba2bf3
+Author: aalsabag <43807484+aalsabag@users.noreply.github.com>
+Date:   2019-11-27
+
+    OP-126 list box (#38)
+    
+    Fixed bug regarding unusable comments box
+
+commit f69554be93799716591283a3f7914d56c2436e67
+Author: transifex-integration[bot] <43880903+transifex-integration[bot]@users.noreply.github.com>
+Date:   2019-11-09
+
+    Translate /bundle/language_en.properties in ar (#30)
+    
+    at least 85% translated for the source file '/bundle/language_en.properties'
+    on the 'ar' language
+
+commit 8a324e0e8e7a10597208ef9dfb11627c19890c93
+Author: transifex-integration[bot] <43880903+transifex-integration[bot]@users.noreply.github.com>
+Date:   2019-11-09
+
+    Translate /bundle/language_en.properties in fr (#31)
+    
+    at least 85% translated for the source file '/bundle/language_en.properties'
+    on the 'fr' language
+
+commit 658e6d02cfbcb081cf517261f20f14462f100b9d
+Author: transifex-integration[bot] <43880903+transifex-integration[bot]@users.noreply.github.com>
+Date:   2019-11-09
+
+    Translate /bundle/language_en.properties in de (#32)
+    
+    at least 85% translated for the source file '/bundle/language_en.properties'
+    on the 'de' language
+
+commit d43ed718bba2b8d3f32607ad4e25cbdbc7c9e0bd
+Author: transifex-integration[bot] <43880903+transifex-integration[bot]@users.noreply.github.com>
+Date:   2019-11-09
+
+    Translate /bundle/language_en.properties in it (#33)
+    
+    at least 85% translated for the source file '/bundle/language_en.properties'
+    on the 'it' language
+
+commit 029173bb725e3a2657d52fc882bc913aa06fe4c2
+Author: transifex-integration[bot] <43880903+transifex-integration[bot]@users.noreply.github.com>
+Date:   2019-11-09
+
+    Translate /bundle/language_en.properties in pt (#34)
+    
+    at least 85% translated for the source file '/bundle/language_en.properties'
+    on the 'pt' language
+
+commit b5970f2784227bd6fdaf54be4f5e5a0c4c020cb1
+Author: transifex-integration[bot] <43880903+transifex-integration[bot]@users.noreply.github.com>
+Date:   2019-11-09
+
+    Translate /bundle/language_en.properties in es (#35)
+    
+    at least 85% translated for the source file '/bundle/language_en.properties'
+    on the 'es' language
+
+commit 28f343a7709e2986007a6ce004104c26f8ef1098
+Author: transifex-integration[bot] <43880903+transifex-integration[bot]@users.noreply.github.com>
+Date:   2019-11-09
+
+    Translate /bundle/language_en.properties in sw (#36)
+    
+    at least 85% translated for the source file '/bundle/language_en.properties'
+    on the 'sw' language
+
+commit 8fe4bb4166f96e38bb5a9cfba47e6310c72d5bf5
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-10-03
+
+    Started refactoring due to 'springfied' core:
+    
+    Replace all "... = new ...Manager" with
+    Context.getApplicationContext().getBean(...Manager.class);
+
+commit 6a4c2862c7777a5d1e02abbe10940cfa5f180274
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-09-21
+
+    Op 84 & op 88 print open bill & patient invoices summary (#27)
+    
+    * Patient Statement in Accounting module (invoices summary)
+    * Three new reports at Statistic module: all, pending and monthly
+
+commit 5eeb25eb70fa0f58ce066314f09264886695f61c
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-09-20
+
+    Downgrade Spring for Java6 compliance
+
+commit df353f01976083988c1b181bb27f6c0dca7fad57
+Author: antonio <me.verni@gmail.com>
+Date:   2019-09-19
+
+    Spring bump to 5.1.9
+
+commit 43ecad91ee55e4d80096879bb79c851794303577
+Author: antonio <me.verni@gmail.com>
+Date:   2019-09-19
+
+    Removed direct creation of UserBrowsingManager instances
+
+commit 63e61b08cf8f2845f83e515b5551d4eb509371b6
+Author: antonio <me.verni@gmail.com>
+Date:   2019-09-19
+
+    Added init of application context in main
+
+commit 61cb2843428b90b63d9894c4f8587bb2256fa9a8
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-04-16
+
+    PatientBrowserManager from context
+
+commit b3e95f33f900ce5ce54406fd658484213436eb8e
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-09-04
+
+    Roll-back last changes on pom.xml
+    
+    The libraries where temporary unavailable
+
+commit c902f6c4e0da4c954b4e045919dd85e8a1bcdfba
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-09-03
+
+    Updated org.processing library to 2.2.1
+
+commit d899b94dcd73a83587b81f8652c86732c6ff2fa5
+Author: Alessandro Domanico <alessandro.domanico@yahoo.it>
+Date:   2019-09-02
+
+    Fixed some bundles and questions logic
+
+commit 3c056538167774cecb783b01f9aa0f0dd618d1c4
+Author: gildas <gildasdongmo@yahoo.fr>
+Date:   2019-06-13
+
+    Allow a customer to have several open invoices.
+    
+    Allow a customer to have several open invoice and Filters invoices on a specific product
+
+commit f3e9602df5575d2b7190671e330b1c2a092f62fa
+Author: gildas <gildasdongmo@yahoo.fr>
+Date:   2019-05-31
+
+    Task OP-86 done (Uni2grow Cameroun)
+    
+    Search fields was added in Pharmaceutical stock & Pharmaceutical Stock Ward to facilitate quick selection of medicals.
+
+commit a0d24ed8c7e3016ddec07a1e2c241c5e54d6b79a
+Author: Uni2grow <julio.tcheptang.u2g@gmail.com>
+Date:   2019-05-31
+
+    task U2G_OP_90
+
+commit 350eab6eda5e9cc01188c995007d35820db79222
+Author: Antonio Verni <me.verni@gmail.com>
+Date:   2019-04-16
+
+    PatientBrowserManager from context

@@ -1,0 +1,397 @@
+1;K;Glucose Test Strip
+2;L;Acetic Acid Glacial 1 ltr
+3;L;Aceton 99% 1ltr
+4;L;Copper 11 Sulphate 500g
+5;L;EDTA Di- sodium salt 100g
+6;L;Ethanol Absolute 1ltr
+7;L;Formaldehyde solution 35-38% 1ltr
+8;L;Hydrochloric Acid 30-33% 1ltr
+9;L;Iodine Crystal 100g
+10;L;Methanol 99% 1ltr
+11;L;Phenol crystals 1kg
+12;L;Potassium iodide 100g
+13;L;Sodium Carbonate Anhydrous 500g
+14;L;Sodium Citrate 100g
+15;L;Sodium Sulphate 500g
+16;L;Sodium Nitrate 25g
+17;L;Sulphosalicylic Acid 500g
+18;L;Sulphuric Acid Conc 1ltr
+19;L;Xylene 2.5 ltrs
+20;L;Sodium Fluoride
+21;L;Potassium Oxalate
+22;L;Brilliant Cresyl Blue
+23;L;Ammonium Oxalate
+24;L;4 Dimethyl Aminobenzaldelyde
+25;L;Trichloro acetic Acid
+26;L;Non 111 Chloride (Ferric chloride)
+27;L;Sodium Carbonate Anhydrous
+28;L;Trisodium Citrate
+29;L;Crystal Violet
+30;K;GPT (ALT) 200ml ( Does not have NAOH)
+31;K;GOT ( AST) 200ml has no NAOH) AS 101
+32;K;GOT ( AST) 200ml (Calorimetric) AS 147
+33;K;HIV 1/2 Capillus Kit 100Tests
+34;K;HIV Buffer for determine Kit
+35;K;HIV Determine 1/11 (Abbott) 100Tests
+36;K;HIV UNIGOLD 1/11 Test Kits 20 Tests
+37;K;Pregnacy ( HGG Latex) 50 tests
+38;K;RPR 125mm x 75mm
+39;K;RPR ( VDRL Carbon ) Antigen 5ml
+40;D;Adrenaline 1mg/ml 1ml Amp
+41;D;Aminophylline 25mg/ml,10ml Amp
+42;D;Amphotericin B 50mg Vial
+43;D;Ampicillin 500mg Vial
+44;D;Atropine 1mg/ml 1ml Amp
+45;D;Benzathine Penicillin 2.4 MIU Vial
+46;D;Benzyl Penicillin 1 MIU Vial
+47;D;Benzyl Penicillin 5 MIU Vial
+48;D;Chloramphenicol 1g Vial
+49;D;Chloroquine 40mg Base/ml 5ml Amp
+50;D;Chlorpromazine 25mg/ml/2ml Amp
+51;D;Cloxacillin 500mg Vial
+52;D;Cyclophosphamide 200mg Vial
+53;D;Cyclophosphamide 500mg Vial
+54;D;Diazepam 5mg / ml 2ml Amp
+55;D;Diclofenac 25mg/ml 3ml Amp
+56;D;Digoxin 0.25 mg/ml 2ml Amp
+57;D;Furosemide 10mg/ml 2ml Amp
+58;D;Gentamicin 40mg/ml 2ml
+59;D;Haloperidol 5mg/ml 1ml Amp
+60;D;Haloperidol Decanoate 50mg/ml 1ml Amp
+61;D;Hydralazine 20mg Vial
+62;D;Hydrocortisone 100mg Vial
+63;D;Hyoscine Butyl Bromide 20mg/ml/ Amp
+64;D;Insulin Soluble 100IU/ml 10ml Vial
+65;D;Insulin Isophane 100IU/ml 10ml Vial
+66;D;Insulin Mixtard 30/70 100IU/ml 10ml Vial
+67;D;Insulin Mixtard 30/70 100IU/ml 5x3ml catridges
+68;D;Insulin Isophane 40IU/ml 10ml
+69;D;Iron Dextran 10mg/ml 2ml Vial
+70;D;Ketamine 10mg/ml 20ml Vial
+71;D;Ketamine 10mg/ml 10ml Vial
+72;D;Lignocaine 2% 20ml Vial
+73;D;Lignocaine 2% Adrenaline Dent.cartridges
+74;D;Lignocaine spinal 50mg/ml 2ml Amp
+75;D;Methylergomeatrine 0.2mg/ml 1ml Amp
+76;D;Methylergomeatrine 0.5mg/ml 1ml Amp
+77;D;Metoclopramide 5mg/ml 100ml Amp
+78;D;Metronidazole 5mg/ml 2ml IV
+79;D;Morphine 15mg/ml 1ml Amp
+80;D;Oxytocin 10 IU/ml 1ml Amp
+81;D;Pethidine 100mg/ml 2ml Amp
+82;D;Pethidine 50mg/ml 1ml Amp
+83;D;Phenobarbital 100mg/ml 2ml Amp
+84;D;Phytomenadione 10mg/ml 1ml Amp
+85;D;Phytomenadione 1mg/ml 1ml Amp
+86;D;Procaine Penicillin Fortified 4 MIU Vial
+87;D;Promethazine 25mg/ml 2ml Amp
+88;D;Quinine Di-HCI 300mg/ml 2ml Amp
+89;D;Ranitidine 25mg/ml 2ml Amp
+90;D;Streptomycin 1g Vial
+91;D;Suxamethonium 500mg Vial
+92;D;Suxamethonium 500mg/ml 2ml Amp
+93;D;tetanus Antitoxin 1500 IU 1ml Amp
+94;D;Thiopental Sodium 500mg Vial
+95;D;Water for Injection 10ml Vial
+96;D;Sodium Chloride 0.9% IV 500ml
+97;D;Sodium Lactate Compound IV 500ml
+98;D;Acetazolamide 250mg Tab
+99;D;Acyclovir 200mg Tab
+100;D;Aciclovir
+101;D;Aminophylline 100mg Tab
+102;D;Albendazole 400mg Tab
+103;D;Albendazole 200mg Tab
+104;D;Amitriptyline 25mg Tab
+105;D;Amoxicillin 250mg Caps
+106;D;Amoxicillin /Clavulanate 375mg Tab
+107;D;Ascorbic Acid 100mg tab
+108;D;Aspirin 300mg Tab
+109;D;Atenolol 50mg Tab
+110;D;Atenolol 100mg Tab
+111;D;Bendrofluazide 5mg Tab
+112;D;Benzhexol 2mg Tab
+113;D;Benzhexol 5mg Tab
+114;D;Bisacodyl 5mg Tab
+115;D;Calcium Lactate 300mg Tab
+116;D;Carbamazepine 200mg Tab
+117;D;Carbimazole 5mg Tab
+118;D;Charcoal 250mg Tab
+119;D;Chloramphenicol 250mg Caps
+120;D;Chloroquine Uncoated 150mg Tab
+121;D;Chloroquine Coated 150mg Tab
+122;K;UREA Calorimetric 300 Tests
+123;D;Chlorphenimine 4mg Tab
+124;D;Chlorpromazine 100mg Tab
+125;D;Chlorpromazine 25mg Tab
+126;D;Cimetidine 200mg Tab
+127;D;Cimetidine 400mg Tab
+128;D;Ciprofloxacine 500mg Tab
+129;D;Ciprofloxacine 250mg Tab
+130;D;Cloxacillin 250mg Tab
+131;D;Codein Phosphate 30mg Tab
+132;D;Cotrimoxazole 100/20mg Paed Tab
+133;D;Cotrimoxazole 400/80mg Tab
+134;D;Darrows Half Strength 500ml
+135;D;Dexamethasone 4mg/ml 2ml Amp
+136;D;Dexamethasone 4mg/ml 1ml Amp
+137;D;Dextrose 5% IV 500ml
+138;D;Dextrose 30% IV 100ml
+139;D;Dextrose 50% IV 100ml
+140;D;Dexamethasone 0.5mg Tab
+141;D;Diazepam 5mg Tab
+142;D;Diclofenac 50mg Tab
+143;D;Diethylcarbamazine 50mg Tab
+144;D;Digoxin 0.25 mg Tab
+145;D;Doxycycline 100mg Tab
+146;D;Ephedrine 30mg Tab
+147;D;Erythromycin 250mg Tab
+148;D;Fansidar 500/25mg Tab (50dosesx3)
+149;D;Fansidar 500/25mg Tab
+150;D;Ferrous Sulphate 200mg Tab
+151;D;Fluconazole 100mg Tab
+152;D;Fluconazole 100mg 24 Caps
+153;D;Folic Acid 1mg Tab
+154;D;Folic Acid 5mg Tab
+155;D;Folic Acid/Ferrous Sulp 0.5/200mg Tab
+156;D;Folic Acid 15mg Tab
+157;D;Frusemide 40mg Tab
+158;D;Glibenclamide 5mg Tab
+159;D;Griseofulvin 500mg Tab
+160;D;Haloperidol 5mg Tab
+161;D;Haloperidol 5mg
+162;D;Hydralazine 25mg Tab
+163;D;Hyoscine 10mg Tab
+164;D;Ibuprofen 200mg Tab
+165;D;Imipramine 25mg Tab
+166;D;Indomethacin 25mg Tab
+167;D;Isoniazid 300mg Tab
+168;D;Ketoconazole 200mg Tab
+169;D;Salbutamol 4mg Tab
+170;D;Spironolactone 25mg Tab
+171;D;Tolbutamide 500mg tab
+172;D;Vitamin A 200.000 IU Caps
+173;D;Vitamin B Complex Tab
+174;D;Oral Rehydration Salt (ORS)
+175;D;Paracetamol 120mg/5ml Syrup
+176;D;Paracetamol 120mg/5ml 100ml
+177;D;Quinine 100mg/5ml Syrup 100ml
+178;D;Alcohol 95% not denatured 20Ltrs
+179;D;Chlorhexidine/Cetrimide 1.5/15% 1Ltr
+180;D;Chlorhexidine/Cetrimide 1.5/15% 5Ltr
+181;D;Gentian Violet 25g Tin
+182;D;Hydrogen Peroxide 6% 250ml
+183;D;Iodine Solution 2% 500ml
+184;D;Sodium Hypochlorite solution 0.75 Ltr
+185;D;liquid detergent 5Ltr Perfumed
+186;D;Soap Blue Bar 550g
+187;D;Liquid detergent 20Ltr
+188;D;Soap Powder Hand wash 5kg
+189;D;Sodium Hypochlorite solution 5Ltr
+190;D;Betamethasone 0.1% eye/ear/nose drops
+191;D;Betamethasone 0.1% Neomycin 0.35 %eye drops 7.5ml
+192;D;Chloramphenicol 0.5% Eye Drops 10ml
+193;D;Cloramphenicol 1% Eye Ointment 3.5g
+194;D;Gentamicin 0.3% eye/ear drops 10ml
+195;D;Hydrocortisone 1% eye drops 5ml
+196;D;Tetracycline eye ointment 1% 3.5g
+197;D;Beclomethasone 50mcg Inhaler
+198;K;Urine Test Strips 3 Parameters 100 tests
+199;D;Salbutamol solution for inhalation 5ml
+200;D;Salbutamol Inhaler 10ml
+201;D;Clotrimazole 500mg Pessaries
+202;D;Clotrimazole 100mg Pessaries
+203;D;Diazepam 2mg/ml 2.5ml Rectal Tube
+204;D;Antihaemorrhoid suppositories
+205;D;Nystatin 100.000 IU Pessaries
+206;D;Dextrose Monohydrate Apyrogen 25Kg
+207;D;Amoxicillin 125mg/5ml Powd. Susp 100ml
+208;D;Chloramphenicol 125mg/5ml Susp 3Ltr
+209;D;Chloramphenicol 125mg/5ml Susp 100ml
+210;D;Cotrimoxazole 200+40mg/5ml Susp 3Ltr
+211;D;Cotrimoxazole 200+40mg/5ml Susp 100ml
+212;D;Nystatin 500.000IU/ Susp/ Drops
+213;D;Pyridoxine 50mg Tab
+214;D;Quinine 300mg Tab
+215;D;Ranitidine 150mg Tab
+216;D;Rifampicin/Isoniazid 150/100 Tab
+217;D;Sodium Chloride Apyrogen 50kg
+218;K;Field stain A and B
+219;K;Genitian Violet
+220;K;Neutral Red
+221;K;Eosin Yellowish
+222;K;Giemsa Stain
+223;K;Anti Serum A 10ml
+224;S;Blood giving set Disposable
+225;S;Blood Transfer Bag 300ml
+226;S;Insulin Syringe 100IU with Needle G26/29
+227;S;IV Cannula G16 with Port
+228;S;IV Cannula G18 with Port
+229;S;IV Cannula G20 with Port
+230;S;IV Cannula G22 with Port
+231;S;IV Cannula G24 without Port
+232;S;IV Cannula G24 with Port
+233;S;IV Giving set Disposable
+234;S;Needle container disposable of contaminated
+235;S;Needles Luer G20 Disposable
+236;S;Needles Luer G21 Disposable
+237;S;Needles Luer G22 Disposable
+238;S;Needles Luer G23 Disposable
+239;S;Needles Spinal G20x75-120mm
+240;S;Needles Spinal G22x75-120mm
+241;S;Needles Spinal G25x75-120mm
+242;S;Needles Spinal G22x40mm
+243;S;Scalp Vein G19 Infusion set
+244;S;Scalp Vein G21 Infusion set
+245;S;Scalp Vein G23 Infusion set
+246;S;Scalp Vein G25 Infusion set
+247;S;Syringe Feeding/Irrigation 50/60ml
+248;S;Syringe Luer 2ml With Needle Disposable
+249;S;Syringe Luer 10ml With Needle Disposable
+250;S;Syringe Luer 20ml With Needle Disposable
+251;S;Syringe Luer 5ml With Needle Disposable
+252;S;Airway Guedel Size 00
+253;S;Airway Guedel Size 0
+254;S;Airway Guedel Size 1
+255;S;Airway Guedel Size 2
+256;S;Airway Guedel Size 3
+257;S;Eye Pad Sterile
+258;S;Adhesive Tape 2.5cm x 5m
+259;S;Adhesive Tape 7.5cm x 5m
+260;S;cotton Wool 500G
+261;S;Cotton Wool 200G
+262;S;Elastic Bandage 10cm x 4.5m
+263;S;Elastic Bandage 7.5cm x 4.5m
+264;S;Gauze Bandage 7.5cm x 3.65-4m
+265;S;Gauze Bandage 10cm x 4m
+266;S;Gauze Pads Non Sterile 10cm x 10cm
+267;S;Gauze Pads  Sterile 10cm x 10cm
+268;S;Gauze Hydrophylic 90cm x 91cm
+269;S;Plaster of Paris 10cm
+270;S;Plaster of Paris 15cm
+271;S;Catheter Foley CH20 3 Way Balloon
+272;S;Catheter Foley CH8 3 Way Balloon
+273;S;Catheter Foley CH10 3 Way Balloon
+274;S;Catheter Foley CH12 3 Way Balloon
+275;S;Catheter Foley CH14 3 Way Balloon
+276;S;Catheter Foley CH16 3 Way Balloon
+277;S;Catheter Foley CH18 3 Way Balloon
+278;S;Catheter Stopper for All sizes
+279;S;Nasogastric Tube G5 (Children)
+280;S;Nasogastric Tube G8 (Children)
+281;S;Nasogastric Tube G6 (Children)
+282;S;Nasogastric Tube G10 (Children)
+283;S;Nasogastric Tube G14 (Children)
+284;S;Nasogastric Tube G16 (Children)
+285;S;Rectal Tube CH24
+286;S;Rectal Tube CH26
+287;S;Suction Catheter Size 6 Disposable
+288;S;Suction Catheter Size 8 Disposable
+289;S;Suction Catheter Size 16 Disposable
+290;S;Suction Catheter Size 12 Disposable
+291;S;Suction Catheter Size 14 Disposable
+292;S;Suction Catheter Size 10 Disposable
+293;S;Gloves Domestic
+294;S;Gloves High risk non sterile Medium
+295;S;Gloves Gynaecological 7.5-8
+296;S;Gloves Non Sterile Medium Disposable
+297;S;Gloves Non Sterile Large Disposable
+298;S;Gloves Surgical Sterile 6
+299;S;Gloves Surgical Sterile 6.5
+300;S;Gloves Surgical Sterile 7
+301;S;Gloves Surgical Sterile 7.5
+302;S;Gloves Surgical Sterile 8
+303;S;Gloves Surgical Sterile 8.5
+304;S;Tongue depressor Disposable
+305;S;Bedpan Plastic Autoclavable
+306;S;Bedpan Stainless Steel
+307;S;Body Bag 70 x 215cm  (Adult)
+308;S;Bowl Without Lid 7 x 12cm stainless steel
+309;S;Bowl Without Lid 8 x 16cm stainless steel
+310;S;Bowl Without Lid 10 x 24cm stainless steel
+311;S;Air ring set 43x15cm, rubber with pump
+312;S;Colostomy Bag closed 30mm size 2
+313;S;Colostomy Bag closed 30mm size 3
+314;S;Colostomy Bag open re-usable 35mm
+315;S;Ear syringe rubber 60ml
+316;S;First Aid kit
+317;S;Gallipot stainless steel 300ml/15cm
+318;S;Gallipot stainless steel 200ml/10cm
+319;S;Hot water Bottle 2Ltr
+320;S;Instrument Box With Lid 20x10x5cm
+321;S;Instrument Tray 30 x 20 x 2cm
+322;S;Irrigation can with accessories
+323;S;Kidney Dish stainless Steel 24cm
+324;S;Kidney Dish stainless Steel 20cm
+325;S;Kidney Dish Polypropylene 24cm
+326;S;Mackintosh Plastic (Apron) per 1m
+327;S;Mackintosh Rubber Brown (sheeting) per 1m
+328;S;Measuring Cup Graduated 25ml
+329;S;Neck Support Small
+330;S;Neck Support Medium
+331;S;Neck Support Large
+332;S;Spoon Medicine 5ml
+333;S;Apron Plastic Re-usable
+334;S;Apron Plastic Re-usable local
+335;S;Apron Polythene Disp Non Sterile
+336;S;Razor Blades Disposable 5pc
+337;S;Stethoscope Foetal Metal
+338;S;Stethoscope Foetal Wood
+339;S;Surgical Brush (Scrubbing)
+340;S;Surgical Mop 12 x 15
+341;S;Tablet Counting Tray
+342;S;Toilet Paper Rolls
+343;S;Traction Kit Children
+344;S;Traction Kit Adult
+345;S;Thermometer Clinical Flat Type
+346;S;Thermometer Clinical Prismatic Type
+347;S;Umbilical Cord Tie non sterile 100m
+348;S;Umbilical Cord Tie sterile 22m
+349;S;Urinal 1Ltr / 2Ltr
+350;S;Urine Collecting Bag sterile 2Ltr
+351;S;Insectcide Spray 400g
+352;S;Mosquito Net Impregnated Medium
+353;S;Mosquito Net Impregnated Large
+354;S;Mosquito Net Non Impregnated Medium
+355;S;Mosquito Net Non Impregnated Large
+356;S;Mosquito Net Impregnation Tablet
+357;S;Mosquito Net Impregnation Liquid 500ml
+358;S;Mosquito Wall spray Powder 80g
+359;S;Handle for surgical blade No 3
+360;S;Handle for surgical blade No 4
+361;S;Surgical Blades No 20
+362;S;Surgical Blades No 21
+363;S;Surgical Blades No 22
+364;S;Surgical Blades No 23
+365;S;Needle suture No 5 round
+366;S;Needle suture No 5 cutting
+367;S;Needle suture No 6 Round
+368;S;Suture Cutgut Chromic (0)
+369;S;Suture Cutgut Chromic (2) RN22240TH
+370;S;Suture Cutgut Chromic (2/0) RN22230TH
+371;S;Suture Cutgut Chromic (3/0) RN2325TF
+372;S;Suture Cutgut Plain (2/0) RN1230TF
+373;S;Suture Silk (1) S595
+374;S;Suture Silk (2/0) RN5230TF
+375;S;Suture PGA (3/0) RN3330TF
+376;S;Lead Apron 100cmx60cm
+377;S;X-Ray Developer 2.6kg for 22.5Ltr
+378;S;X-Ray Film 18x24cm
+379;S;X-Ray Film 20x40cm
+380;S;X-Ray Film 24x30cm
+381;S;X-Ray Film 30x40cm
+382;S;X-Ray Film 35x35cm
+383;S;X-Ray Film 43x35cm
+384;S;X-Ray Film Cassette  18x24cm with screen
+385;S;X-Ray Film Cassette  24x30cm with screen
+386;S;X-Ray Film Cassette  30x40cm with screen
+387;S;X-Ray Film Cassette  35x35cm with screen
+388;S;X-Ray Film Cassette  35x43cm with screen
+389;S;X-Ray Fixer 3.3kg for 22.5 Ltr
+390;S;Barium Sulphate for X-Ray 1kg
+391;S;Diatrizoate Meglumin Sod 76% 20ml Amp
+392;K;Anti Serum B 10ml
+393;K;Anti Serum AB 10ml
+394;K;Anti Serum D 10ml
+395;K;Creatinine 200ml (Calorimetric)
+396;K;Glucose GOD PAD  6 x 100ml (Colorimetric)
+397;K;Glucose Test Strips (Hyloguard)

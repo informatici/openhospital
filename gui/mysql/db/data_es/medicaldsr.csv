@@ -1,0 +1,397 @@
+1;K;Tira de prueba para Glucosa 
+2;L;Ácido Acético Glacial 1 l
+3;L;Acetona 99% 1l
+4;L;Sulfato de Cobre 11 500 g
+5;L;EDTA Sal disódica 100 g
+6;L;Etanol Absoluto 1l
+7;L;Solución Formaldehído 35-38% 1l
+8;L;Ácido clorhídrico 30-33% 1 l
+9;L;Cristal de yodo 100 g
+10;L;Metanolo 99% 1 l
+11;L;Cristales de fenol 1 Kg
+12;L;Yoduro de Potasio 100 g
+13;L;Carbonato de sodio anhidro 500 g
+14;L;Citrato de Sodio 100 g
+15;L;Sulfato de Sodio 500 g
+16;L;Nitrato de Sodio 25 g
+17;L;Ácido Sulfosalicílico 500 g
+18;L;Ácido Sulfúrico Concentrado 500 g
+19;L;Xileno 2,5 l
+20;L;Fluoruro de Sodio
+21;L;Oxalato de Potasio
+22;L;Azul brillante de cresilo
+23;L;Oxalato de Amonio
+24;L;4 Dimetilaminobenzaldehído
+25;L;Ácido acético Tricloro
+26;L;No 111 Cloruro (Cloruro Férrico)
+27;L;Carbonato de Sodio Anhidro
+28;L;Citrato Trisódico 
+29;L;Cristal Violeta
+30;K;GPT (ALT) 200ml ( No tiene NAOH)
+31;K;GOT (AST) 200ml ( No tiene NAOH) como 101
+32;K;GOT (AST) 200ml ( calorimétrico) como 147
+33;K;HIV 1/2 Capillus Kit 100 Tests
+34;K;Regulador para determinar el HIV Kit
+35;K;HIV Determinador 1/11 (Abbott) 100 Tests
+36;K;HIV UNIGOLD 1/11 Test Kits 20 Tests
+37;K;Embarazo (HGG Látex) 50 Tests
+38;K;RPR 125mm x 75mm
+39;K;RPR ( VDRL Carbón ) Antígeno 5ml
+40;D;Adrenalina 1 mg/ml, 10 ml Ampolla
+41;D;Aminofilina 25 mg/ml, 10 ml Ampolla
+42;D;Anfotericina B 50 mg Frasco
+43;D;Ampicilina 500 mg Frasco
+44;D;Atropina 1 mg/ml 1ml Ampolla
+45;D;Penicilina Benzatina 2,4 MIU Frasco
+46;D;Penicilina Benzatina 1 MIU Frasco
+47;D;Penicilina Benzatina 5 MIU Frasco
+48;D;Cloranfenicol 1 g  Frasco
+49;D;Cloroquina 400 mg Base/ml 5 ml Frasco
+50;D;Clorpromazina 25 mg/ml/2 ml Frasco
+51;D;Cloxacilina 500 mg Frasco
+52;D;Ciclofosfamida 200 mg Frasco
+53;D;Ciclofosfamida 500 mg Frasco
+54;D;Diazepam 5mg / ml 2ml Ampolla
+55;D;Diclofenac 25mg/ml 3ml Ampolla
+56;D;Digoxina 0.25 mg/ml 2ml Ampolla
+57;D;Furosemida 10mg/ml 2ml Ampolla
+58;D;Gentamicina 40mg/ml 2ml
+59;D;Haloperidol 5mg/ml 1ml Ampolla
+60;D;Haloperidol Decanoato 50mg/ml 1ml Ampolla
+61;D;Hydralazina 20 mg Frasco
+62;D;Hydrocortisona 100 mg Frasco
+63;D;Hioscina Butil Bromuro 20mg/ml /Ampolla
+64;D;Insulina Soluble 100IU/ml 10ml Frasco
+65;D;Insulina NPH 100IU/ml 10ml Frasco
+66;D;Insulina de Mixtard 30/70 100IU/ml 10ml Frasco
+67;D;Insulina de Mixtard 30/70 100IU/ml 5x3ml cartuchos
+68;D;Insulina NPH 40IU/ml 10ml 
+69;D;Hierro Dextrano 10mg/ml 2ml Frasco
+70;D;Ketamina 10mg/ml 20ml Frasco
+71;D;Ketamina 10mg/ml 10ml Frasco
+72;D;Lidocaína 2% 20 ml Frasco
+73;D;Lidocaína 2% Adrenalina Dent. Cartuchos
+74;D;Lidocaína Espinal 50 mg/ml 2 ml Ampolla
+75;D;Methylergometrine 0,2mg/ml 1ml Ampolla
+76;D;Methylergometrine 0,5mg/ml 1ml Ampolla
+77;D;Metoclopramida 5mg/ml 100ml Ampolla
+78;D;Metronidazol 5mg/ml 2ml IV
+79;D;Morfina 15 mg/ml 1ml Ampolla
+80;D;Oxitocina 10 IU/ml 1ml Ampolla
+81;D;Petidina 100mg/ml 2ml Ampolla
+82;D;Petidina 500mg/ml 2ml Ampolla
+83;D;Fenobarbital 100mg/ml 2ml Ampolla
+84;D;Phytomenadione 10mg/ml 1ml Ampolla
+85;D;Phytomenadione 1 mg/ml 1ml Ampolla
+86;D;Penicilina Procaína Fortificada 4 MIU Frasco
+87;D;Prometazina 25mg/ml 2ml Ampolla
+88;D;Quinina Di-HCI 300mg/ml 2ml Ampolla
+89;D;Ranitidina 25mg/ml 2ml Ampolla
+90;D;Estreptomicina 1g Frasco
+91;D;Suxametonio 500mg Frasco
+92;D;Suxametonio 500mg/ml 2ml Ampolla
+93;D;Antitoxina para Tétano 1500 UI 1 ml Ampolla
+94;D;Sodio Tiopental 500 mg Frasco
+95;D;Agua para Inyección 10 ml Frasco
+96;D;Cloruro de Sodio  0.9% IV 500ml
+97;D;Compuesto de Sodio Lactato IV 500 ml
+98;D;Acetazolamida 250mg Pastillas
+99;D;Aciclovir 200mg Pastillas
+100;D;Aciclovir
+101;D;Aminofilina 100mg Pastillas
+102;D;Albendazol 400mg Pastillas
+103;D;Albendazol 200mg Pastillas
+104;D;Amitriptilina 25mg Pastillas
+105;D;Amoxicilina 250mg Cápsulas
+106;D;amoxicilina / ácido clavulánico 375 mg Pastillas
+107;D;Ácido Ascórbico 100 mg Pastillas
+108;D;Aspirina 300 mg Pastillas
+109;D;Atenolol 50 mg Pastillas
+110;D;Atenolol 100 mg Pastillas
+111;D;Bendrofluazida 5mg Pastillas
+112;D;Benzhexol 2mg Pastillas
+113;D;Benzhexol 5mg Pastillas
+114;D;Bisacodyl 5mg Pastillas
+115;D;Lactato de Calcio 300 mg Pastillas
+116;D;Carbamazepina 200 mg Pastillas
+117;D;Carbimazole 5mg Pastillas
+118;D;Carbón  250 mg Pastillas
+119;D;Cloranfenicol 250mg Cápsulas
+120;D;Cloroquina sin recubrimiento 150 mg Pastillas
+121;D;Cloroquina recubierta 150 mg Pastillas
+122;K;UREA Calorimétrica 300 Tests
+123;D;Clorofenimina 40 mg Pastillas
+124;D;Clorpromazina 100mg Pastillas
+125;D;Clorpromazina 25mg Pastillas
+126;D;Cimetidina 200mg Pastillas
+127;D;Cimetidina 400mg Pastillas
+128;D;Ciprofloxacina 500mg Pastillas
+129;D;Ciprofloxacina 250mg Pastillas
+130;D;Cloxacilina 250mg Pastillas
+131;D;Fosfato de Codeína 30 mg Pastillas
+132;D;Cotrimoxazole 100/20mg Infantil Pastillas
+133;D;Cotrimoxazole 400/80mg  Pastillas
+134;D;Darrows Fuerza Media 500 ml
+135;D;Dexametasona 4mg/ml 2ml Ampolla
+136;D;Dexametasona 4mg/ml 1ml Ampolla
+137;D;Dextrosa 5% IV 500ml
+138;D;Dextrosa 30% IV 100ml
+139;D;Dextrosa 50% IV 100ml
+140;D;Dexametasona 0.5mg Pastillas
+141;D;Diazepam 5mg Pastillas
+142;D;Diclofenac 50mg Pastillas
+143;D;Diethylcarbamazine 50mg Pastillas
+144;D;Digoxina 0.25 mg Pastillas
+145;D;Doxicicline 100mg Pastillas
+146;D;Efedrina 30 mg Pastillas
+147;D;Eritromicina 250mg Pastillas
+148;D;Fansidar 500/25mg Pastillas (50 dosis x3)
+149;D;Fansidar 500/25mg Pastillas 
+150;D;Sulfato de  Hierro 200 mg Pastillas 
+151;D;Fluconazol 100mg Pastillas
+152;D;Fluconazol 100mg 24 Cápsulas
+153;D;Ácido Fólico 1 mg Pastillas
+154;D;Ácido Fólico 5 mg Pastillas
+155;D;Ácido Fólico/ Sulf. Hierro 0,5/200 mg Pastillas
+156;D;Ácido Fólico 15 mg Pastillas
+157;D;Furosemida 40 mg Pastillas
+158;D;Glibenclamida 5 mg Pastillas
+159;D;Griseofulvina 500 mg Pastillas
+160;D;Haloperidol 5 mg Pastillas
+161;D;Haloperidol 5 mg 
+162;D;Hidralazina 25 mg Pastillas
+163;D;Hioscina 10 mg Pastillas
+164;D;Ibuprofeno 200 mg Pastillas
+165;D;Imipramina 25 mg Pastillas
+166;D;Indometacina 25 mg Pastillas
+167;D;Isoniazida 300 mg Pastillas
+168;D;Ketoconazol 200mg Pastillas
+169;D;Salbutamol 4 mg Pastillas
+170;D;Espironolactona 25 mg Pastillas
+171;D;Tolbutamida 500 mg Pastillas
+172;D;Vitamina A 200.000 UI Cápsulas
+173;D;Complejo de Vitamina B Cápsulas
+174;D;Sal para Rehidratación Oral (ORS)
+175;D;Paracetamol 120mg /5ml Jarabe
+176;D;Paracetamol 120mg /5ml 100 ml
+177;D;Quinina 100mg/5 ml Jarabe 100 ml
+178;D;Alcohol 95% no desnaturalizado 20l
+179;D;Clorhexidina / Cetrimida 1,5/15% 1 l
+180;D;Clorhexidina / Cetrimida 1,5/15% 5 l
+181;D;Violeta de Genciana 25 g en Pote
+182;D;Peróxido de Hidrógeno 6% 250 ml
+183;D;Solución de Yoduro 2% 500 ml
+184;D;Solución de Hipoclorito de Sodio 0,75 l
+185;D;Detergente líquido perfumado 5 l
+186;D;Jabón azul en barra 550 g
+187;D;Detergente líquido 20 l
+188;D;Jabón en Polvo para lavado de manos 5 Kg
+189;D;Solución de Hipoclorito de Sodio 5 l
+190;D;Betametasona 0,1% Ojos/Oídos/Nariz Gotas
+191;D;Betametasona 0,1% Neomicina 0.35 % ojos  Gotas
+192;D;Cloramfenicol 0,5% ojos Gotas 10 ml
+193;D;Cloramfenicol 1% ungüento para ojos  3,5 ml
+194;D;Gentamicina 0,3% Ojos/Oídos/Nariz Gotas 10 ml
+195;D;Hidrocortisona 1% Ojos Gotas 5 ml
+196;D;Tetraciclina ungüento para ojos 1% 3,5 mg
+197;D;Beclametasona 50 mcg Inhalador
+198;K;Tira de prueba Orina 3 parámetros 100 tests
+199;D;Solución de  Salbutamol para inhalaciones 5 ml
+200;D;Salbutamol Inhalador 10 ml
+201;D;Clotrimazol 500 mg Pesarios
+202;D;Clotrimazol 100 mg Pesarios
+203;D;Diazepam 2mg/ml 2,5ml Tubo Rectal 
+204;D;Supositorios Anti Hemorroides
+205;D;Nistatina 100.000 UI Pesarios
+206;D;Dextrosa Monohidratada para Apirógeno 25Kg
+207;D;Amoxicilina 125 mg/5 ml polvo suspensión 100 ml
+208;D;Cloramfenicol 125 mg/5 ml Suspensión 3Ltr
+209;D;Cloramfenicol 125 mg/5 ml Suspensión 100 ml
+210;D;Cotrimoxazol 200+40 mg/5 ml Suspensión 3Ltr
+211;D;Cotrimoxazol 200+40 mg/5 ml Suspensión 100 ml
+212;D;Nistatina 500.000IU/ Suspensión/ Gotas
+213;D;Piridoxina 50 mg Pastillas
+214;D;Quinina 300 mg Pastillas
+215;D;Ranitidina 150 mg Pastillas
+216;D;Rifampicina /Isoniazida  150/100 Pastillas
+217;D;Cloruro de Sodio  para Apirógeno 50 Kg
+218;K;Mancha de Campo A y B
+219;K;Violeta de Genciana
+220;K;Rojo Neutro
+221;K;Eosina Amarillenta
+222;K;Mancha de Giemsa
+223;K;Anti Suero A 10 ml
+224;S;Set desechable para donación de sangre
+225;S;Bolsa para Transfusión de Sangre  300 ml
+226;S;Jeringa para Insulina 100 UI con Aguja G26/29
+227;S;IV Cánula G16 con Cierre
+228;S;IV Cánula G18 con Cierre
+229;S;IV Cánula G20 con Cierre
+230;S;IV Cánula G22 con Cierre
+231;S;IV Cánula G24 sin Cierre
+232;S;IV Cánula G24 con Cierre
+233;S;IV Set desechable para donación 
+234;S;Recipiente para agujas desechables o contaminadas
+235;S;Agujas desechables Luer G20
+236;S;Agujas desechables Luer G21
+237;S;Agujas desechables Luer G22
+238;S;Agujas desechables Luer G23
+239;S;Agujas Espinales G20x75-120 mm
+240;S;Agujas Espinales G22x75-120 mm
+241;S;Agujas Espinales G25x75-120 mm
+242;S;Agujas Espinales G22x40 mm
+243;S;Set infusión Vena del Cuero Cabelludo G19
+244;S;Set infusión Vena del Cuero Cabelludo G21
+245;S;Set infusión Vena del Cuero Cabelludo G23
+246;S;Set infusión Vena del Cuero Cabelludo G25
+247;S;Jeringa para alimentación / Irrigación 50/60 ml
+248;S;Jeringa Luer 2 ml con Aguja Desechable
+249;S;Jeringa Luer 10 ml con Aguja Desechable
+250;S;Jeringa Luer 20 ml con Aguja Desechable
+251;S;Jeringa Luer 5 ml con Aguja Desechable
+252;S;Cánula de Guedel Formato 00
+253;S;Cánula de Guedel Formato 0
+254;S;Cánula de Guedel Formato 1
+255;S;Cánula de Guedel Formato 2
+256;S;Cánula de Guedel Formato 3
+257;S;Almohadilla Estéril para ojos
+258;S;Cinta Adhesiva 2,5 cm x 5 m
+259;S;Cinta Adhesiva 7,5 cm x 5 m
+260;S;Algodón 500 g
+261;S;Algodón 200 g
+262;S;Venda Elástica 10 cm x 4,5 m
+263;S;Venda Elástica 7,5 cm x 4,5 m
+264;S;Gasa para vendaje 7,5 cm x 3,65 -4 m
+265;S;Gasa para vendaje 10 cm x 4 m
+266;S;Gasa no estéril 10 cm x 10 cm
+267;S;Gasa estéril 10 cm x 10 cm
+268;S;Gasa Hidrófila  90cm x 91cm
+269;S;Yeso Blanco 10 cm
+270;S;Yeso Blanco 15 cm
+271;S;Catéter Foley CH20 3 Formato Balón
+272;S;Catéter Foley CH8 3 Formato Balón
+273;S;Catéter Foley CH10 3 Formato Balón
+274;S;Catéter Foley CH12 3 Formato Balón
+275;S;Catéter Foley CH14 3 Formato Balón
+276;S;Catéter Foley CH16 3 Formato Balón
+277;S;Catéter Foley CH18 3 Formato Balón
+278;S;Catéter Obturador para todas las medidas
+279;S;Tubo Nasogástrico G5 (Niños)
+280;S;Tubo Nasogástrico G8 (Niños)
+281;S;Tubo Nasogástrico G6 (Niños)
+282;S;Tubo Nasogástrico G10 (Niños)
+283;S;Tubo Nasogástrico G14 (Niños)
+284;S;Tubo Nasogástrico G16 (Niños)
+285;S;Tubo Rectal CH24
+286;S;Tubo Rectal CH26
+287;S;Catéter de Succión Fomato 6 Desechable
+288;S;Catéter de Succión Fomato 8 Desechable
+289;S;Catéter de Succión Fomato 16 Desechable
+290;S;Catéter de Succión Fomato 12 Desechable
+291;S;Catéter de Succión Fomato 14 Desechable
+292;S;Catéter de Succión Fomato 10 Desechable
+293;S;Guantes Domésticos
+294;S;Guantes Alto riesgo No estériles Medianos
+295;S;Guantes Ginecológicos 7,5 -8
+296;S;Guantes No estériles Medianos Desechables
+297;S;Guantes No estériles Grandes Desechables
+298;S;Guantes Quirúrgicos Estériles 6
+299;S;Guantes Quirúrgicos Estériles 6,5
+300;S;Guantes Quirúrgicos Estériles 7
+301;S;Guantes Quirúrgicos Estériles 7,5
+302;S;Guantes Quirúrgicos Estériles 8
+303;S;Guantes Quirúrgicos Estériles 8,5
+304;S;Depresor de Lengua Desechable
+305;S;Bacinilla auto esterilizante de plástico
+306;S;Bacinilla Acero Inoxidable
+307;S;Saco para Cuerpos 70 x 215 cm (Adultos)
+308;S;Tazón sin Tapa 7 x 12 cm Acero Inoxidable
+309;S;Tazón sin Tapa 8 x 16 cm Acero Inoxidable
+310;S;Tazón sin Tapa 10 x 24 cm Acero Inoxidable
+311;S;Set Anillo a Aire 43x15 cm, goma con bomba
+312;S;Bolsa para Colostomía cerrado 30mm Formato 2
+313;S;Bolsa para Colostomía cerrado 30mm Formato 3
+314;S;Bolsa para Colostomía abierto reutilizable 30mm 
+315;S;Jeringa de caucho para oídos
+316;S;Kit primeros auxilios
+317;S;Colofonia de Acero Inoxidable 300 ml/15 cm
+318;S;Colofonia de Acero Inoxidable 200 ml/10 cm
+319;S;Botella agua caliente 2 l
+320;S;Caja de instrumentos con tapa 20 x 10 x 5cm 
+321;S;Bandeja de Instrumentos 30 x 20 x 2cm
+322;S;Lata de riego con accessorios
+323;S;Plato Renal Acero Inoxidable 24 cm 
+324;S;Plato Renal Acero Inoxidable 20 cm 
+325;S;Plato Renal Acero Polipropileno 24 cm 
+326;S;Impermeable de plástico  (Delantal) 1 m
+327;S;Impermeable de Goma marrón  (láminas) 1 m
+328;S;Copa de medición Graduada 25 ml
+329;S;Soporte de Cuello Pequeño
+330;S;Soporte de Cuello Mediano
+331;S;Soporte de Cuello Grande
+332;S;Cuchara para medicinas 5 ml
+333;S;Delantal de plástico reutilizable
+334;S;Delantal de plástico reutilizable locales
+335;S;Delantal de polietileno desechable no Estéril
+336;S;Hojas de Afeitar Desechables 5 un
+337;S;Estetoscopio Fetal Metálico
+338;S;Estetoscopio Fetal de Madera
+339;S;Cepillo Quirúrgico (Fregado)
+340;S;Lampazo Quirúrgico  12 x 15
+341;S;Bandeja contadora de Pastillas
+342;S;Rollos de Papel Higiénico
+343;S;Kit para Tracción Niños
+344;S;Kit para Tracción Adultos
+345;S;Termómetro clínico - Tipo Plano
+346;S;Termómetro clínico - Tipo prismático
+347;S;Lazo para Cordón Umbilical no Estéril 100 m
+348;S;Lazo para Cordón Umbilical Estéril 22 m
+349;S;Orinal 1 / 2 l
+350;S;Bolsa Colectora de Orina Estéril 2 l
+351;S;Insecticida Spray 400 g 
+352;S;Mosquitera impregnada Media
+353;S;Mosquitera impregnada Grande
+354;S;Mosquitera No impregnada Media
+355;S;Mosquitera No impregnada Grande
+356;S;Impregnación para Mosquitera Pastillas
+357;S;Impregnación para Mosquitera líquido 500 ml
+358;S;Repelente Spray para Mosquitos 80 g
+359;S;Mango para Bisturí Quirúrgico Núm. 3
+360;S;Mango para Bisturí Quirúrgico Núm. 4
+361;S;Bisturí Quirúrgico Núm. 20
+362;S;Bisturí Quirúrgico Núm. 21
+363;S;Bisturí Quirúrgico Núm. 22
+364;S;Bisturí Quirúrgico Núm. 23
+365;S;Aguja para Sutura Núm. 5  Redondeada
+366;S;Aguja para Sutura Núm. 5  de Corte
+367;S;Aguja para Sutura Núm. 6  Redondeada
+368;S;Cuerda de tripa para Sutura Crómica (0)
+369;S;Cuerda de tripa para Sutura Crómica (2) RN22240TH
+370;S;Cuerda de tripa para Sutura Crómica (2/0) RN22230TH
+371;S;Cuerda de tripa para Sutura Crómica (3/0) RN2325TF
+372;S;Cuerda de tripa para Sutura Simple (2/0) RN1230TF
+373;S;Seda para Sutura (1) S595
+374;S;Seda para Sutura (2/0) RN5230TF
+375;S;Sutura Sintética (PGA) (3/0) RN3330TF
+376;S;Delantal de Plomo 100 x 60cm
+377;S;Revelador de Rayos X 2,6 kg por 22,5 l
+378;S;Película Rayos-X  18 x 24 cm
+379;S;Película Rayos-X  20 x 40 cm
+380;S;Película Rayos-X  24 x 30 cm
+381;S;Película Rayos-X  30 x 40 cm
+382;S;Película Rayos-X  35 x 35 cm
+383;S;Película Rayos-X  43 x 35 cm
+384;S;Película Casete Rayos-X  18 x 24 cm con pantalla
+385;S;Película Casete Rayos-X  24 x 30 cm con pantalla
+386;S;Película Casete Rayos-X  30 x 40 cm con pantalla
+387;S;Película Casete Rayos-X  35 x 35 cm con pantalla
+388;S;Película Casete Rayos-X  35 x 43 cm con pantalla
+389;S;Fijador Rayos-X  3,3 Kg por 22,5 lt
+390;S;Sulfato de  Bario para Rayos-X 1 Kg 
+391;S;Diatrizoato Megluminq Sodio 76% 20ml Ampollas
+392;K;Anti Suero B 10 ml
+393;K;Anti Suero AB 10 ml
+394;K;Anti Suero D 10 ml
+395;K;Creatinina 200 ml (Calorimétrica)
+396;K;Glucosio GOD PAD 6 x 200 ml (Calorimétrica)
+397;K;Tira de prueba para Glucosa (Hyloguard)
