@@ -28,11 +28,11 @@ public class LaboratoryForPrint {
 	
 	private String getConvertedString(GregorianCalendar time){
 		String string=String.valueOf(time.get(GregorianCalendar.DAY_OF_MONTH));
-		string+="/"+String.valueOf(time.get(GregorianCalendar.MONTH)+1);
-		string+="/"+String.valueOf(time.get(GregorianCalendar.YEAR));
-		string+="  "+String.valueOf(time.get(GregorianCalendar.HOUR_OF_DAY));
-		string+=":"+String.valueOf(time.get(GregorianCalendar.MINUTE));
-		string+=":"+String.valueOf(time.get(GregorianCalendar.SECOND));
+		string+="/"+ (time.get(GregorianCalendar.MONTH) + 1);
+		string+="/"+ time.get(GregorianCalendar.YEAR);
+		string+="  "+ time.get(GregorianCalendar.HOUR_OF_DAY);
+		string+=":"+ time.get(GregorianCalendar.MINUTE);
+		string+=":"+ time.get(GregorianCalendar.SECOND);
 		return string;
 	}
 

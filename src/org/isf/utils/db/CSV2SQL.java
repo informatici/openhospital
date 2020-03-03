@@ -219,9 +219,9 @@ public class CSV2SQL {
 								+ "', '"
 								+ MDSR_CODE
 								+ "', "
-								+ String.valueOf(pcsXpck)
+								+ pcsXpck
 								+ ", "
-								+ String.valueOf(QTY) + ");\n");
+								+ QTY + ");\n");
 					} catch (NumberFormatException e) {
 						System.out.println("Wrong MDSR_PCS_X_PCK: "	+ MDSR_PCS_X_PCK);
 						System.exit(-2);

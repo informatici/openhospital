@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VaccineTypeIoOperationRepository extends JpaRepository<VaccineType, String> {
-    public List<VaccineType> findAllByOrderByDescriptionAsc();
+    List<VaccineType> findAllByOrderByDescriptionAsc();
 }

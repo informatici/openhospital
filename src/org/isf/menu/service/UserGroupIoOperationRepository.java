@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface UserGroupIoOperationRepository extends JpaRepository<UserGroup, String> {
-    public List<UserGroup> findAllByOrderByCodeAsc();    
+    List<UserGroup> findAllByOrderByCodeAsc();
 
     @Modifying
     @Transactional

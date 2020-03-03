@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface PatVacIoOperationRepository extends JpaRepository<PatientVaccine, Integer>, PatVacIoOperationRepositoryCustom {
 
     @Query(value = "SELECT MAX(PAV_YPROG) FROM PATIENTVACCINE", nativeQuery= true)
-    public Integer findMaxCode();
+    Integer findMaxCode();
     
     @Query(value = "SELECT MAX(PAV_YPROG) FROM PATIENTVACCINE WHERE YEAR(PAV_DATE) = :year", nativeQuery= true)
-    public Integer findMaxCodeWhereVaccineDate(@Param("year") Integer year);   
+    Integer findMaxCodeWhereVaccineDate(@Param("year") Integer year);
 }

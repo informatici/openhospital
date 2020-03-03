@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExamTypeIoOperationRepository extends JpaRepository<ExamType, String> {
-    public List<ExamType> findAllByOrderByDescriptionAsc();
+    List<ExamType> findAllByOrderByDescriptionAsc();
 }

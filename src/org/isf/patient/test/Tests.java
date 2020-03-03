@@ -237,8 +237,8 @@ public class Tests
 	{		
 		try 
 		{		
-			Patient patient = testPatient.setup(true);;
-			boolean result = patientIoOperation.newPatient(patient);
+			Patient patient = testPatient.setup(true);
+            boolean result = patientIoOperation.newPatient(patient);
 			
 			assertEquals(true, result);
 		} 

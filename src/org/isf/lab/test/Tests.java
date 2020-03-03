@@ -302,8 +302,8 @@ public class Tests
 			jpa.persist(patient);
 			jpa.commitTransaction();
 			
-			Laboratory laboratory = testLaboratory.setup(exam, patient, false);;
-			result = labIoOperation.newLabFirstProcedure(laboratory);
+			Laboratory laboratory = testLaboratory.setup(exam, patient, false);
+            result = labIoOperation.newLabFirstProcedure(laboratory);
 			
 			assertEquals(true, result);
 			_checkLaboratoryIntoDb(laboratory.getCode());

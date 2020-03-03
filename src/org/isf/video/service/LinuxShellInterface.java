@@ -49,7 +49,7 @@ public class LinuxShellInterface {
 	
 	
 	public static String[] getDeviceIdAndBusId(String vendorHexId, String productHexId)	{
-		String ids[] = {"",""};
+		String[] ids = {"",""};
 		
 		//Stringcommand =	"lsusb | grep " + vendorHexId + ":" + productHexId;
 		String command =	"lsusb | grep " + vendorHexId + ":" + productHexId + "| "

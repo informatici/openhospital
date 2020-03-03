@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AgeTypeIoOperationRepository extends JpaRepository<AgeType, String> {
-    public List<AgeType> findAllByOrderByCodeAsc();	
-    public AgeType findOneByCode(String code);
+    List<AgeType> findAllByOrderByCodeAsc();
+    AgeType findOneByCode(String code);
 }

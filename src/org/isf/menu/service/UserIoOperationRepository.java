@@ -12,12 +12,12 @@ import java.util.List;
 
 @Repository
 public interface UserIoOperationRepository extends JpaRepository<User, String> {
-    public List<User> findAllByOrderByUserNameAsc();    
+    List<User> findAllByOrderByUserNameAsc();
 
-    public User findByUserName(String userName);  
+    User findByUserName(String userName);
     
     @Query(value = "SELECT * FROM USER WHERE US_UG_ID_A = :groupId ORDER BY US_ID_A", nativeQuery= true)
-    public List<User> findAllWhereUserGroupNameByOrderUserNameAsc(@Param("groupId") String groupId);
+    List<User> findAllWhereUserGroupNameByOrderUserNameAsc(@Param("groupId") String groupId);
     
     @Modifying
     @Transactional

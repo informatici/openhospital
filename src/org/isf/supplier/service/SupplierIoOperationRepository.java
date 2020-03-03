@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface SupplierIoOperationRepository extends JpaRepository<Supplier, Integer> {
     
     @Query(value = "SELECT * FROM SUPPLIER WHERE SUP_DELETED = 'N'", nativeQuery= true)
-    public List<Supplier> findAllWhereNotDeleted();
+    List<Supplier> findAllWhereNotDeleted();
 }

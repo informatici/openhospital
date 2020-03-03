@@ -7,7 +7,7 @@ public enum OHSeverityLevel {
 	WARNING(2),
 	QUESTION(3);
 	
-	private OHSeverityLevel(int swingSeverity){
+	OHSeverityLevel(int swingSeverity){
 		this.swingSeverity = swingSeverity;
 	}
 	

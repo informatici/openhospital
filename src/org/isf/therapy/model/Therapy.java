@@ -141,7 +141,7 @@ public class Therapy {
 	}
 	
 	public String toString() {
-		String desc = "" + String.valueOf(qty) + this.units + " of " + medical.toString() + " - " + this.freqInDay + " per day";
+		String desc = "" + qty + this.units + " of " + medical.toString() + " - " + this.freqInDay + " per day";
 		return desc;
 	}
 }

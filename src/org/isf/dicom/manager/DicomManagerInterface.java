@@ -17,7 +17,7 @@ public interface DicomManagerInterface
      * @return
      * @throws OHServiceException 
      */
-    public Long[] getSerieDetail(int idPaziente, String numeroSerie) throws OHServiceException;
+    Long[] getSerieDetail(int idPaziente, String numeroSerie) throws OHServiceException;
 
     /**
      * Delete series 
@@ -26,7 +26,7 @@ public interface DicomManagerInterface
      * @return, true if success
      * @throws OHServiceException 
      */
-    public boolean deleteSerie(int idPaziente, String numeroSerie) throws OHServiceException ;
+    boolean deleteSerie(int idPaziente, String numeroSerie) throws OHServiceException ;
     
     /**
     * Check if dicom is loaded
@@ -36,7 +36,7 @@ public interface DicomManagerInterface
     * @return true if file exist
      * @throws OHServiceException 
     */
-    public boolean exist(FileDicom dicom) throws OHServiceException;
+    boolean exist(FileDicom dicom) throws OHServiceException;
 
     /**
      * Load the Detail of DICOM
@@ -44,7 +44,7 @@ public interface DicomManagerInterface
      * @return, FileDicom
      * @throws OHServiceException 
      */
-    public FileDicom loadDettaglio(Long idFile,int idPaziente, String numeroSerie) throws OHServiceException;
+    FileDicom loadDettaglio(Long idFile, int idPaziente, String numeroSerie) throws OHServiceException;
     
     /**
      * Load detail
@@ -53,7 +53,7 @@ public interface DicomManagerInterface
      * @return, details
      * @throws OHServiceException 
      */
-    public FileDicom loadDettaglio(long idFile,int idPaziente, String numeroSerie) throws OHServiceException;
+    FileDicom loadDettaglio(long idFile, int idPaziente, String numeroSerie) throws OHServiceException;
 
     /**
      * load metadata from DICOM files fo the patient
@@ -61,12 +61,12 @@ public interface DicomManagerInterface
      * @return
      * @throws OHServiceException 
      */
-    public FileDicom[] loadFilesPaziente(int idPaziente) throws OHServiceException;
+    FileDicom[] loadFilesPaziente(int idPaziente) throws OHServiceException;
 
     /**
      * save the DICOM file and metadata
      * @param dicom
      * @throws OHServiceException 
      */
-    public void saveFile(FileDicom dicom) throws OHServiceException;
+    void saveFile(FileDicom dicom) throws OHServiceException;
 }

@@ -14,13 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 public interface TherapyIoOperationRepository extends JpaRepository<TherapyRow, Integer> {
 
     @Query(value = "SELECT * FROM THERAPIES JOIN (MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A) ON THR_MDSR_ID = MDSR_ID ORDER BY THR_PAT_ID, THR_ID", nativeQuery= true)
-    public List<TherapyRow> findAllByOrderPatientAndIdAsc();
+    List<TherapyRow> findAllByOrderPatientAndIdAsc();
     
     @Query(value = "SELECT * FROM THERAPIES JOIN (MEDICALDSR JOIN MEDICALDSRTYPE ON MDSR_MDSRT_ID_A = MDSRT_ID_A) ON THR_MDSR_ID = MDSR_ID WHERE THR_PAT_ID = :patient ORDER BY THR_PAT_ID, THR_ID", nativeQuery= true)
-    public List<TherapyRow> findAllWherePatientByOrderPatientAndIdAsc(@Param("patient") Integer patient);
+    List<TherapyRow> findAllWherePatientByOrderPatientAndIdAsc(@Param("patient") Integer patient);
     
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM THERAPIES WHERE THR_PAT_ID = :patient", nativeQuery= true)
-    public void deleteWherePatient(@Param("patient") Integer patient);
+    void deleteWherePatient(@Param("patient") Integer patient);
 }

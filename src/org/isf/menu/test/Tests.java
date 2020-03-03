@@ -614,8 +614,8 @@ public class Tests
 		{		
 			code = _setupTestUserGroup(false);
 			UserGroup foundUserGroup = (UserGroup)jpa.find(UserGroup.class, code); 
-			foundUserGroup.setDesc("Update");;
-			result = menuIoOperation.updateUserGroup(foundUserGroup);
+			foundUserGroup.setDesc("Update");
+            result = menuIoOperation.updateUserGroup(foundUserGroup);
 			UserGroup updateUserGroup = (UserGroup)jpa.find(UserGroup.class, code); 
 			
 			assertEquals(true, result);

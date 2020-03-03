@@ -64,7 +64,7 @@ public class AgeTypeIoOperations
 		AgeType ageType = null;
 				
 		
-		code = "d" + String.valueOf(index-1);
+		code = "d" + (index - 1);
 		ageType = repository.findOneByCode(code); 
 
 		return ageType;

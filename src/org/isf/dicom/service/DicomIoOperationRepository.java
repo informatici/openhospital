@@ -12,17 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface DicomIoOperationRepository extends JpaRepository<FileDicom, Long> {
-    public List<FileDicom> findAllByOrderByFileNameAsc();	
+    List<FileDicom> findAllByOrderByFileNameAsc();
     
     @Query(value = "SELECT * FROM DICOM WHERE DM_PAT_ID = :id AND DM_FILE_SER_NUMBER = :file ORDER BY DM_FILE_NOME", nativeQuery= true)
-    public List<FileDicom> findAllWhereIdAndNumberByOrderNameAsc(@Param("id") Long id, @Param("file") String file);
+    List<FileDicom> findAllWhereIdAndNumberByOrderNameAsc(@Param("id") Long id, @Param("file") String file);
     @Query(value = "SELECT * FROM DICOM WHERE DM_PAT_ID = :id GROUP BY DM_FILE_SER_INST_UID", nativeQuery= true)
-    public List<FileDicom> findAllWhereIdGroupByUid(@Param("id") Long id);    
+    List<FileDicom> findAllWhereIdGroupByUid(@Param("id") Long id);
     @Query(value = "SELECT * FROM DICOM WHERE DM_PAT_ID = :id AND DM_FILE_SER_NUMBER = :file AND DM_FILE_INST_UID = :uid", nativeQuery= true)
-    public List<FileDicom> findAllWhereIdAndFileAndUid(@Param("id") Long id, @Param("file") String file, @Param("uid") String uid);
+    List<FileDicom> findAllWhereIdAndFileAndUid(@Param("id") Long id, @Param("file") String file, @Param("uid") String uid);
     
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM DICOM WHERE DM_PAT_ID = :id AND DM_FILE_SER_NUMBER = :file", nativeQuery= true)
-    public void deleteByIdAndNumber(@Param("id") Long id, @Param("file") String file);    
+    void deleteByIdAndNumber(@Param("id") Long id, @Param("file") String file);
 }

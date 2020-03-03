@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface HospitalIoOperationRepository extends JpaRepository<Hospital, String> {
 
     @Query(value = "SELECT HOS_CURR_COD FROM HOSPITAL", nativeQuery= true)
-    public String findHospitalCurrent();
+    String findHospitalCurrent();
     
 }
