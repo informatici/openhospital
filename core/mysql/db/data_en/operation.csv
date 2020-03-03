@@ -1,0 +1,48 @@
+1;OB;Caesarian section;1;0
+2;OB;Hysterectomy;1;0
+3;OB;Ruptured uterus;1;0
+4;OB;Injured uterus;1;0
+5;OB;Evacuations;1;0
+6;OB;Incomplete abortion;1;0
+7;OB;Septic abortion;1;0
+8;OB;Dilatation and curettage;1;0
+9;OB;Repair of vesico-vaginal fistula (vvf);1;0
+10;GY;Acute abdomen;1;0
+11;GY;Ectopic pregnancy;1;0
+12;GY;Peritonitis;1;0
+13;GY;Pelvic abscess;1;0
+14;GY;Uterine fibroids;1;0
+15;GY;Ovarian tumours;1;0
+16;GY;Uterine prolapse;1;0
+17;GY;Cystocele;1;0
+18;MG;Circumcision;1;0
+19;MG;Phimosis;1;0
+20;MG;Paraphimosis;1;0
+21;MG;Dorsal slit-paraphimosis;1;0
+22;MG;Uretheral stricture-bougienage;1;0
+23;MG;Hydrocelectomy;1;0
+24;MG;Testicular tumours;1;0
+25;MG;Prostatectomy;1;0
+26;MG;Prostate biopsy;1;0
+27;MG;Bladder biopsy;1;0
+28;AG;Hernia (inguinal & femoral);1;0
+29;AG;Strangulated;1;0
+30;AG;Non strangulated;1;0
+31;AG;Epigastrical Hernia;1;0
+32;AG;Intestinal obstruction;1;0
+33;AG;Mechanical;1;0
+34;AG;Volvulus;1;0
+35;AG;Laparotomy;1;0
+36;AG;Penetrating abdominal injuries;1;0
+37;AG;Peritonitis;1;0
+38;AG;Appendicitis;1;0
+39;AG;Cholecystitis;1;0
+40;AG;Abdominal Tumours;1;0
+41;OR;Reduction of fractures;1;0
+42;OR;Upper limb;1;0
+43;OR;Lower limb;1;0
+44;OR;Osteomyelitis - sequestrectomy;1;0
+45;OS;Incision & Drainage;1;0
+46;OS;Debridement;1;0
+47;OS;Mise -a- plat;1;0
+48;OS;Surgical toilet  & suture;1;0

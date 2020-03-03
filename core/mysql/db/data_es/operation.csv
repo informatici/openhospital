@@ -1,0 +1,50 @@
+1;OB;Cesáreas;1;0
+2;OB;primeros auxilios;1;0
+3;OB;optativo;1;0
+4;OB;Histerectomía;1;0
+5;OB;Ruptura del útero;1;0
+6;OB;útero lesionado;1;0
+8;OB;Evacuaciones;1;0
+9;OB;Aborto Incompleto;1;0
+10;OB;Aborto séptico;1;0
+11;OB;Dilatación y legrado;1;0
+12;OB;Reparación de la fístula vesicovaginal (FVV);1;0
+13;GY;Abdomen Agudo;1;0
+14;GY;Embarazo eptópico;1;0
+15;GY;Peritonitis;1;0
+16;GY;Absceso pélvico;1;0
+17;GY;Fibromas uterinos;1;0
+18;GY;Tumores de ovario;1;0
+19;GY;Prolapso uterino;1;0
+20;GY;Cistocele;1;0
+21;MG;Circuncisión;1;0
+22;MG;fimosis;1;0
+23;MG;parafimosis;1;0
+24;MG;parafimosis con hendidura dorsal ;1;0
+25;MG;estenosis-cateterismo  ureteral ;1;0
+26;MG;Hidrocelctomía;1;0
+27;MG;Tumores a los testículos;1;0
+28;MG;Prostatectomía;1;0
+29;MG;Biopsía de próstata;1;0
+30;MG;Biopsía de vejiga;1;0
+31;AG;Hernia (inguinal y femoral);1;0
+32;AG;Estrangulado;1;0
+33;AG;No estrangulado;1;0
+34;AG;Hernia epigástrica;1;0
+37;AG;Obstrucción intestinal;1;0
+38;AG;Mecánico;1;0
+39;AG;Vólvulo;1;0
+40;AG;Laparotomía;1;0
+41;AG;Heridas penetrantes abdominales;1;0
+42;AG;Peritonitis;1;0
+43;AG;Apendicitis;1;0
+44;AG;Colecistitis;1;0
+45;AG;Tumores al abdomen;1;0
+46;OR;Reducción de fracturas;1;0
+47;OR;Extremidad superior;1;0
+48;OR;Extremidad inferior;1;0
+49;OR;osteomielitis - secuestrectomía;1;0
+50;OS;Incisión y drenaje;1;0
+51;OS;Desbridamiento;1;0
+52;OS;Mise -a- plat;1;0
+53;OS;Aseo quirúrgico y sutura;1;0

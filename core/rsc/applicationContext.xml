@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:repository="http://www.springframework.org/schema/data/repository"
+	
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/data/jpa 
+		http://www.springframework.org/schema/data/jpa/spring-jpa-1.11.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+		http://www.springframework.org/schema/data/repository 
+		http://www.springframework.org/schema/data/repository/spring-repository-1.11.xsd
+		">
+		
+	<context:component-scan base-package="org.isf" />
+	<jpa:repositories base-package="org.isf" />
+ 
+ 	<!-- <bean class ="org.isf.utils.EntityManagerFactoryBean" id = "entityManagerFactory"> -->
+ 	<!-- </bean> -->
+ 	
+ 	<!--  could be used in place of @TranslateOHException ? -->
+ 	<!-- <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/> -->
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>file:rsc/database.properties</value>
+		</property>
+		<property name="ignoreResourceNotFound" value="true"/>
+	</bean>
+ 
+ 	<bean id="springDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+ 		destroy-method="close">
+ 		<property name="driverClass" value="${jdbc.class:com.mysql.jdbc.Driver}" />
+ 		<property name="jdbcUrl" value="${jdbc.url:jdbc:mysql://localhost:3306/oh?useLegacyDatetimeCode=false&amp;serverTimezone=UTC}" />
+ 		<property name="user" value="${jdbc.username:isf}" />
+ 		<property name="password" value="${jdbc.password:isf123}" />
+ 
+ 		<!-- these are C3P0 properties -->
+ 		<property name="acquireIncrement" value="1" />
+ 		<property name="minPoolSize" value="0" />
+ 		<property name="maxPoolSize" value="10" />
+ 		<property name="maxIdleTime" value="300" />
+ 		<property name="maxStatements" value="0" />
+ 
+ 	</bean>
+ 
+ 	<bean id="entityManagerFactory"
+ 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+ 		<property name="dataSource" ref="springDataSource" />
+ 		<property name="packagesToScan" value="org.isf"/>
+ 		<property name="jpaVendorAdapter">
+ 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+ 		</property>
+ 		<property name="jpaProperties">
+ 			<props>
+ 				<prop key="hibernate.show_sql">${hibernate.show_sql:false}</prop>
+ 				<prop key="hibernate.format_sql">${hibernate.format_sql:true}</prop>
+ 				<prop key="hibernate.dialect">${hibernate.dialect:org.hibernate.dialect.MySQLDialect}</prop>
+ 				<prop key="hibernate.id.new_generator_mappings">false</prop>
+ 			</props>
+ 		</property>
+ 	</bean>
+ 
+ 	<tx:annotation-driven />
+ 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+ 		<property name="entityManagerFactory" ref="entityManagerFactory" />
+ 	</bean>
+ 	
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+
+</beans>
