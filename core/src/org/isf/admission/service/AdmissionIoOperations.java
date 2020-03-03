@@ -328,8 +328,8 @@ public class AdmissionIoOperations
 		
 		
 		Patient foundPatient = patientRepository.findOne(patientId);  
-		foundPatient.setPhoto(null);;
-		Patient savedPatient = patientRepository.save(foundPatient);
+		foundPatient.setPhoto(null);
+        Patient savedPatient = patientRepository.save(foundPatient);
 		result = (savedPatient != null);    
 		
 		return result;

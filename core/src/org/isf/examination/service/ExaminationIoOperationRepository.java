@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExaminationIoOperationRepository extends JpaRepository<PatientExamination, Integer> {
     @Query(value = "SELECT * FROM PATIENTEXAMINATION WHERE PEX_PAT_ID = :id ORDER BY PEX_DATE DESC", nativeQuery= true)
-    public List<PatientExamination> findAllByIdOrderDesc(@Param("id") int id);
+    List<PatientExamination> findAllByIdOrderDesc(@Param("id") int id);
     @Query(value = "SELECT * FROM PATIENTEXAMINATION WHERE PEX_PAT_ID = :id ORDER BY PEX_DATE DESC LIMIT :limit", nativeQuery= true)
-    public List<PatientExamination> findAllByIdOrderDescLimited(@Param("id") int id, @Param("limit") int limit);
+    List<PatientExamination> findAllByIdOrderDescLimited(@Param("id") int id, @Param("limit") int limit);
 }

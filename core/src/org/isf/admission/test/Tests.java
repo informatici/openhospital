@@ -354,8 +354,8 @@ public class Tests
 			
 			Admission admission = testAdmission.setup(ward, patient, admissionType, diseaseIn, diseaseOut1, 
 					diseaseOut2, diseaseOut3, operation, dischargeType, pregTreatmentType, 
-					deliveryType, deliveryResult, true);;
-					result = admissionIoOperation.newAdmission(admission);
+					deliveryType, deliveryResult, true);
+			result = admissionIoOperation.newAdmission(admission);
 					
 					assertEquals(true, result);
 					_checkAdmissionIntoDb(admission.getId());
@@ -415,8 +415,8 @@ public class Tests
 						
 			Admission admission = testAdmission.setup(ward, patient, admissionType, diseaseIn, diseaseOut1, 
 					diseaseOut2, diseaseOut3, operation, dischargeType, pregTreatmentType, 
-					deliveryType, deliveryResult, true);;
-					id = admissionIoOperation.newAdmissionReturnKey(admission);
+					deliveryType, deliveryResult, true);
+			id = admissionIoOperation.newAdmissionReturnKey(admission);
 					
 					_checkAdmissionIntoDb(id);
 		} 

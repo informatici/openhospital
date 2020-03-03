@@ -51,7 +51,7 @@ public class MedicalStockIoOperations {
 		
 	
 	public enum MovementOrder {
-		DATE, WARD, PHARMACEUTICAL_TYPE, TYPE;
+		DATE, WARD, PHARMACEUTICAL_TYPE, TYPE
 	}
 
 	/**

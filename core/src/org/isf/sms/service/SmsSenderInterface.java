@@ -17,7 +17,7 @@ public interface SmsSenderInterface {
 	 * @param debug - if <code>true</code> the method should not really send the sms (for debug)
 	 * @return <code>true</code> if the SMS has been sent, <code>false</code> otherwise
 	 */
-	public abstract boolean sendSMS(Sms sms, boolean debug);
+    boolean sendSMS(Sms sms, boolean debug);
 	
 	/**
 	 * Public method to initialize the SmsSender.
@@ -25,6 +25,6 @@ public interface SmsSenderInterface {
 	 * For HTTP Sender it could check if the URL is reachable
 	 * @return
 	 */
-	public boolean initialize();
+    boolean initialize();
 	
 }

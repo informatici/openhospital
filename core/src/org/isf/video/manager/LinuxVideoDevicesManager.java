@@ -78,7 +78,7 @@ public class LinuxVideoDevicesManager extends VideoDevicesManager {
 		String deviceFile = path[path.length-1];
 		deviceParams.put("deviceFile", deviceFile);
 		
-		String ids[] = LinuxShellInterface.getDeviceIdAndBusId(vendorHexId, productHexId);
+		String[] ids = LinuxShellInterface.getDeviceIdAndBusId(vendorHexId, productHexId);
 		String idBus = ids[0];
 		String idDevice = ids[1];
 		

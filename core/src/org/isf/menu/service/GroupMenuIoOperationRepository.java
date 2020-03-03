@@ -13,11 +13,11 @@ public interface GroupMenuIoOperationRepository extends JpaRepository<GroupMenu,
 
 	@Modifying
     @Query(value = "INSERT INTO GROUPMENU (GM_UG_ID_A, GM_MNI_ID_A, GM_ACTIVE) values(:groupId, :menuId, :active)", nativeQuery= true)
-    public int insert(@Param("groupId") String groupId, @Param("menuId") String menuId, @Param("active") String acive);
+    int insert(@Param("groupId") String groupId, @Param("menuId") String menuId, @Param("active") String acive);
     
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM GROUPMENU WHERE GM_UG_ID_A = :id", nativeQuery= true)
-    public void deleteWhereUserGroup(@Param("id") String id); 	
+    void deleteWhereUserGroup(@Param("id") String id);
        
 }

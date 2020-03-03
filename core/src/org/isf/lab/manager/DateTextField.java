@@ -92,10 +92,10 @@ public class DateTextField extends JPanel{
 		add(new JLabel("/"));
 		add(year);
 		if(String.valueOf(time.get(GregorianCalendar.DAY_OF_MONTH)).length()==1)
-			day.setText("0"+String.valueOf(time.get(GregorianCalendar.DAY_OF_MONTH)));
+			day.setText("0"+ time.get(GregorianCalendar.DAY_OF_MONTH));
 		else day.setText(String.valueOf(time.get(GregorianCalendar.DAY_OF_MONTH)));
 		if(String.valueOf(time.get(GregorianCalendar.MONTH)+1).length()==1)
-			month.setText("0"+String.valueOf(time.get(GregorianCalendar.MONTH)+1));
+			month.setText("0"+ (time.get(GregorianCalendar.MONTH) + 1));
 		else month.setText(String.valueOf(time.get(GregorianCalendar.MONTH)));
 		year.setText(String.valueOf(time.get(GregorianCalendar.YEAR)));
 

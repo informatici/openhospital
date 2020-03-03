@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MedicalStockMovementTypeIoOperationRepository extends JpaRepository<MovementType, String> {
-    public List<MovementType> findAllByOrderByDescriptionAsc();    
-    public List<MovementType> findAllByCode(String code);
+    List<MovementType> findAllByOrderByDescriptionAsc();
+    List<MovementType> findAllByCode(String code);
 }

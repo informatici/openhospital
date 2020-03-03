@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PregnantTreatmentTypeIoOperationRepository extends JpaRepository<PregnantTreatmentType, String> {
-    public List<PregnantTreatmentType> findAllByOrderByDescriptionAsc();
+    List<PregnantTreatmentType> findAllByOrderByDescriptionAsc();
 }

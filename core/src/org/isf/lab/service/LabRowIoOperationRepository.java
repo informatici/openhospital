@@ -16,11 +16,11 @@ public interface LabRowIoOperationRepository extends JpaRepository<LaboratoryRow
 	@Modifying
 	@Transactional
     @Query(value = "DELETE FROM LABORATORYROW WHERE LABR_LAB_ID = :id", nativeQuery= true)
-	public void deleteWhereLab(@Param("id") Integer id);
+    void deleteWhereLab(@Param("id") Integer id);
 	
 	@Modifying
 	@Transactional
     @Query(value = "SELECT * FROM LABORATORYROW WHERE LABR_LAB_ID = :id", nativeQuery= true)
-	public ArrayList<LaboratoryRow> findAllByLaboratoryCode(@Param("id") Integer id);
+    ArrayList<LaboratoryRow> findAllByLaboratoryCode(@Param("id") Integer id);
         
 }

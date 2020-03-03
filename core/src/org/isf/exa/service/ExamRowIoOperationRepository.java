@@ -14,23 +14,23 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ExamRowIoOperationRepository extends JpaRepository<ExamRow, Integer> {
     
     @Query(value = "SELECT * FROM EXAMROW", nativeQuery= true)// ORDER BY EXR_ID, EXR_DESC", nativeQuery= true)
-    public List<ExamRow> findAllExamRow();   
+    List<ExamRow> findAllExamRow();
     
     @Query(value = "SELECT * FROM EXAMROW WHERE EXR_ID = :code ORDER BY EXR_ID, EXR_DESC", nativeQuery= true)
-    public List<ExamRow> findAllWhereIdByOrderIdAndDescriptionAsc(@Param("code") int code);    
+    List<ExamRow> findAllWhereIdByOrderIdAndDescriptionAsc(@Param("code") int code);
     
     @Query(value = "SELECT * FROM EXAMROW WHERE EXR_DESC = :description ORDER BY EXR_DESC", nativeQuery= true)
-    public List<ExamRow> findAllWhereDescriptionByOrderDescriptionAsc(@Param("description") String description);
+    List<ExamRow> findAllWhereDescriptionByOrderDescriptionAsc(@Param("description") String description);
     
     @Query(value = "SELECT * FROM EXAMROW WHERE EXR_ID = :code AND EXR_DESC = :description ORDER BY EXR_ID, EXR_DESC", nativeQuery= true)
-    public List<ExamRow> findAllWhereIdAndDescriptionByOrderIdAndDescriptionAsc(@Param("code") int code, @Param("description") String description);
+    List<ExamRow> findAllWhereIdAndDescriptionByOrderIdAndDescriptionAsc(@Param("code") int code, @Param("description") String description);
     
     @Modifying 
     @Transactional
     @Query(value = "DELETE FROM EXAMROW WHERE EXR_EXA_ID_A = :code", nativeQuery= true)
-    public void deleteExamRowWhereExamCode(@Param("code")String code);   
+    void deleteExamRowWhereExamCode(@Param("code") String code);
     
     @Query(value = "SELECT * FROM EXAMROW WHERE EXR_EXA_ID_A = :examCode ORDER BY EXR_DESC", nativeQuery= true)
-    public List<ExamRow> getExamRowByExamCode(@Param("examCode") String examCode);
+    List<ExamRow> getExamRowByExamCode(@Param("examCode") String examCode);
 
 }

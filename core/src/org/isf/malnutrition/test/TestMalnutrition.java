@@ -13,9 +13,9 @@ public class TestMalnutrition
 {	 
 	private int code = 0;
 	private GregorianCalendar now = new GregorianCalendar();
-	private GregorianCalendar dateSupp = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);;
-	private GregorianCalendar dateConf = new GregorianCalendar(now.get(Calendar.YEAR), 10, 11);;
-	private float height = (float)185.47;
+	private GregorianCalendar dateSupp = new GregorianCalendar(now.get(Calendar.YEAR), 1, 1);
+    private GregorianCalendar dateConf = new GregorianCalendar(now.get(Calendar.YEAR), 10, 11);
+    private float height = (float)185.47;
 	private float weight = (float)70.70;
 	
 	public Malnutrition setup(Admission admission,

@@ -85,7 +85,7 @@ public class Movement4Print {
 			return "No Date";
 		String string = String
 				.valueOf(time.get(GregorianCalendar.DAY_OF_MONTH));
-		string += "/" + String.valueOf(time.get(GregorianCalendar.MONTH) + 1);
+		string += "/" + (time.get(GregorianCalendar.MONTH) + 1);
 		String year = String.valueOf(time.get(GregorianCalendar.YEAR));
 		year = year.substring(2, year.length());
 		string += "/" + year;

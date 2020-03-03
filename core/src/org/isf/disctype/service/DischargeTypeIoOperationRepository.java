@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DischargeTypeIoOperationRepository extends JpaRepository<DischargeType, String> {
-    public List<DischargeType> findAllByOrderByDescriptionAsc();
+    List<DischargeType> findAllByOrderByDescriptionAsc();
 }

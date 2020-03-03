@@ -15,16 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 public interface SmsIoOperationRepository extends JpaRepository<Sms, Integer> {
 
     @Query(value = "SELECT * FROM SMS WHERE DATE(SMS_DATE_SCHED) BETWEEN :start AND :stop ORDER BY SMS_DATE_SCHED ASC", nativeQuery= true)
-    public List<Sms> findAllWhereBetweenDatesByOrderDate(@Param("start") Date start, @Param("stop") Date stop);
+    List<Sms> findAllWhereBetweenDatesByOrderDate(@Param("start") Date start, @Param("stop") Date stop);
         
     @Query(value = "SELECT * FROM SMS WHERE DATE(SMS_DATE_SCHED) BETWEEN :start AND :stop AND SMS_DATE_SENT IS NULL ORDER BY SMS_DATE_SCHED ASC", nativeQuery= true)
-    public List<Sms> findAllWhereSentNotNullBetweenDatesByOrderDate(@Param("start") Date start, @Param("stop") Date stop);
+    List<Sms> findAllWhereSentNotNullBetweenDatesByOrderDate(@Param("start") Date start, @Param("stop") Date stop);
 	
     @Query(value = "SELECT * FROM SMS WHERE SMS_DATE_SENT IS NULL ORDER BY SMS_DATE_SCHED ASC", nativeQuery= true)
-    public List<Sms> findAllWhereSentNotNullByOrderDate();
+    List<Sms> findAllWhereSentNotNullByOrderDate();
     
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM SMS WHERE SMS_MOD = :mod AND SMS_MOD_ID = :id AND SMS_DATE_SENT IS NULL", nativeQuery= true)
-    public void deleteWhereModuleAndId(@Param("mod") String mod, @Param("id") String id);
+    void deleteWhereModuleAndId(@Param("mod") String mod, @Param("id") String id);
 }

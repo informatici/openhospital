@@ -222,7 +222,7 @@ public class TherapyRow
 	}
 	
 	public String toString() {
-		String string = medicalId.toString() + " - " + this.unitID + " " + String.valueOf(this.qty) + "/" + this.freqInDay + "/" + this.freqInPeriod; 
+		String string = medicalId.toString() + " - " + this.unitID + " " + this.qty + "/" + this.freqInDay + "/" + this.freqInPeriod;
 		return string;
 	}
 	

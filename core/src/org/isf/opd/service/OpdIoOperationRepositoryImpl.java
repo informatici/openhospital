@@ -60,7 +60,7 @@ public class OpdIoOperationRepositoryImpl implements OpdIoOperationRepositoryCus
 			query += " AND OPD_AGE BETWEEN \"" + ageFrom + "\" AND \"" + ageTo + "\"";
 		}
 		if (sex != 'A') {
-			query += " AND OPD_SEX =  \"" + String.valueOf(sex) + "\"";
+			query += " AND OPD_SEX =  \"" + sex + "\"";
 		}
 		if (newPatient != 'A') {
 			query += " AND OPD_NEW_PAT =  \"" + newPatient + "\"";

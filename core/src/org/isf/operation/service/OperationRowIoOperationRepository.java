@@ -20,11 +20,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OperationRowIoOperationRepository extends JpaRepository<OperationRow, String> {
     	@Query(value = "SELECT * FROM OPERATIONROW ORDER BY OPER_OPDATE DESC", nativeQuery= true)
-        public ArrayList<OperationRow> getOperationRow();
+        ArrayList<OperationRow> getOperationRow();
         
-        public ArrayList<OperationRow> findByAdmission(Admission adm);
+        ArrayList<OperationRow> findByAdmission(Admission adm);
         
-        public OperationRow findById(int id);
+        OperationRow findById(int id);
         
-        public ArrayList<OperationRow> findByOpd(Opd opd);
+        ArrayList<OperationRow> findByOpd(Opd opd);
 }

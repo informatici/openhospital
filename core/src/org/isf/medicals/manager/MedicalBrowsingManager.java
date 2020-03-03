@@ -276,8 +276,8 @@ public class MedicalBrowsingManager {
 			errors.add(new OHExceptionMessage("similarsFoundWarning", 
 					message.toString(), 
 					OHSeverityLevel.WARNING));
-		};
-		return errors;
+		}
+        return errors;
 	}
 	
 }
