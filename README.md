@@ -4,12 +4,7 @@ This is the ***release*** repository for the [Open Hospital][openhospital]'s pro
 [Here][releases] you can download the portable distribution of Open Hospital.
 
 ### For Developers (how to contribute)
-Please refer to the individual repositories (components) and related README:
-- https://github.com/informatici/openhospital-core
-- https://github.com/informatici/openhospital-gui
-- https://github.com/informatici/openhospital-doc
-- ***(WIP)*** https://github.com/informatici/openhospital-api
-- ***(WIP)*** https://github.com/informatici/openhospital-ui
+Please read the [CONTRIBUTING.md](https://github.com/informatici/openhospital/blob/master/CONTRIBUTING.md) file
 
 ## How to create Open Hospital portable
 
