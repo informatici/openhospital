@@ -27,6 +27,8 @@ The GitHub issues are disabled on the single components repositories,
 and are only enabled on this one, with the only purpose to collect tickets (unplanned issues/bugs) and the issues about the parent repository,
 while the Jira Ticketing system is meant to organise the whole project (planned issues) among all components.
 
+You can use the following filter on Jira to identify the good first issues to handle https://github.com/giuseppesorge/openhospital.git
+
 ## Roadmap 
 
 https://drive.google.com/file/d/1EQeQkwq2koF-42wdVUbpE6fuiwcprqqS/view?usp=sharing
