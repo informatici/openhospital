@@ -17,6 +17,7 @@ The whole project is distributed across 6 git repositories (one main/aggregation
 - Committee https://openhospital.atlassian.net/wiki/spaces/OHC/overview
 - User Manual: https://github.com/informatici/openhospital-doc/blob/master/doc_user/UserManual.adoc
 - Admin Manual: https://github.com/informatici/openhospital-doc/blob/master/doc_admin/AdminManual.adoc
+- [FAQ](https://openhospital.atlassian.net/wiki/spaces/OH/pages/568951013/Getting+Started+FAQ)
 
 ## Issues
 
