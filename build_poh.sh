@@ -46,8 +46,11 @@ sed -i "s/VERSION/$version/g" CHANGELOG.md
 head --lines=-4 CHANGELOG.md > CHANGELOG
 
 # compile core and gui projects
+export NODE_ENV=production
+mkdir -p api/src/main/openhospital-ui
+cp -rf ui/* api/src/main/openhospital-ui/
 docker-compose -f core/docker-compose.yml up -d
-mvn package
+mvn clean package -Dbundle-oh-ui
 
 # dump the database to a SQL script
 mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > database.sql
