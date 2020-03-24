@@ -18,6 +18,7 @@
   <modules>
       <module>core</module>
       <module>gui</module>
+      <module>api</module>
   </modules>
 
   <properties>

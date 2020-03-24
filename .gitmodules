@@ -7,3 +7,9 @@
 [submodule "doc"]
 	path = doc
 	url = https://github.com/paurav-munshi/openhospital-doc
+[submodule "api"]
+	path = api
+	url = https://github.com/paurav-munshi/openhospital-api
+[submodule "ui"]
+	path = ui
+	url = https://github.com/paurav-munshi/openhospital-ui
