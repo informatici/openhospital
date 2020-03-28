@@ -1,7 +1,10 @@
 # Open Hospital [![Build Status](https://travis-ci.org/informatici/openhospital.svg?branch=master)](https://travis-ci.org/informatici/openhospital)
 
-This is the *root* project of the [Open Hospital][openhospital] code base.  
+This is the ***release*** repository for the [Open Hospital][openhospital]'s project. It is not meant for developers but only to publish releases packages called *portable* (means all-in-one, with embedded MySQL Server and JVM)   
 [Here][releases] you can download the portable distribution of Open Hospital.
+
+### For Developers (how to contribute)
+Please read the [CONTRIBUTING.md](https://github.com/informatici/openhospital/blob/master/CONTRIBUTING.md) file
 
 ## How to create Open Hospital portable
 
