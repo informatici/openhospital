@@ -12,12 +12,12 @@ Changelog vVERSION:
 - (fix) Fixed startup when connectivity is not available
 - (fix) Fixed step_57 file name
 - (fix) OP-126 List box problem in Examination module
-- (fix) OP-167, OP-168, OP-160 
+- (fix) OP-167, OP-168, OP-160, OP-140, OP-183, OP-174, OP-158, OP-182
 - (fix) Some minor fixes
 
 Brought to you by:
 - Informatici Senza Frontiere opensource community
-- Uni2grow Cameroun
+- Uni2grow Camerun
 - Intesys s.r.l.
 
 **Languages**: French, Italian, English, Portuguese, Swahili, German, Spanish, Arabic

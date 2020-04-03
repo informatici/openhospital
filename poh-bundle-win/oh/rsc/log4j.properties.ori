@@ -1,8 +1,8 @@
-# logging di default su file, livello FINEST (debug++)
-log4j.rootCategory=FINEST, null
+# global logging to RollingFile (logs/ folder), available levels INFO, DEBUG, FINEST (debug++)
+log4j.rootCategory=INFO,RollingFile
 
 # Null appender (off)
-log4j.appender.null=org.apache.log4j.varia.NullAppender
+log4j.appender.null=org.apache.log4j.varia.NullAppender 	
 
 # StdOut Appender (with classes) (not used)
 log4j.appender.StdOut = org.apache.log4j.ConsoleAppender
@@ -24,13 +24,13 @@ log4j.appender.DB.password=isf123
 log4j.appender.DB.sql=INSERT INTO LOG (LOG_TYPE, LOG_CLASS, LOG_METHOD, LOG_TIME, LOG_MESS, LOG_USER) VALUES (1, '%C', '%M', '%d{yyyy-MM-dd HH:mm:ss}', LEFT('%m', 1024), '%X{OHUser}')
 log4j.appender.DB.layout=org.apache.log4j.PatternLayout
 
-# Assigning appenders to packages
-log4j.category.org.isf=DEBUG,RollingFile
+# Assigning appenders to packages (application loggers)
+log4j.category.org.isf=INFO,RollingFile,StdOut
 log4j.additivity.org.isf = false
 
-# Assigning appenders to Hibernate packages
-# - SQL query will be logged
-# - parameters will be logged with prefix "binding parameter [?]"
+# Assigning appenders to Hibernate packages (DB loggers)
+# - hibernate.SQL to DEBUG for SQL queries to be logged
+# - hibernate.type to TRACE for queries parameters to be logged with "binding parameter [?]"
 log4j.logger.org.hibernate=INFO,RollingFile,StdOut
-log4j.logger.org.hibernate.SQL=INFO,RollingFile,StdOut
-log4j.logger.org.hibernate.type=INFO,RollingFile,StdOut
+#log4j.logger.org.hibernate.SQL=INFO,RollingFile,StdOut
+#log4j.logger.org.hibernate.type=INFO,RollingFile,StdOut

@@ -79,7 +79,6 @@ cd $POH_PATH/$MYSQL_DIR/
 rm -f $POH_PATH/etc/mysql/my.cnf
 rm -f $POH_PATH/$OH_DIR/rsc/database.properties
 rm -f $POH_PATH/$OH_DIR/rsc/log4j.properties
-rm -f $POH_PATH/$OH_DIR/rsc/h8.properties
 rm -f $POH_PATH/$OH_DIR/rsc/dicom.properties
 
 exit 0

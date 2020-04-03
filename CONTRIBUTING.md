@@ -17,6 +17,7 @@ The whole project is distributed across 6 git repositories (one main/aggregation
 - Committee https://openhospital.atlassian.net/wiki/spaces/OHC/overview
 - User Manual: https://github.com/informatici/openhospital-doc/blob/master/doc_user/UserManual.adoc
 - Admin Manual: https://github.com/informatici/openhospital-doc/blob/master/doc_admin/AdminManual.adoc
+- [FAQ](https://openhospital.atlassian.net/wiki/spaces/OH/pages/568951013/Getting+Started+FAQ)
 
 ## Issues
 
@@ -26,6 +27,8 @@ The whole project is distributed across 6 git repositories (one main/aggregation
 The GitHub issues are disabled on the single components repositories,
 and are only enabled on this one, with the only purpose to collect tickets (unplanned issues/bugs) and the issues about the parent repository,
 while the Jira Ticketing system is meant to organise the whole project (planned issues) among all components.
+
+It is possible to use the following filter on Jira to identify the good first issues to handle: https://openhospital.atlassian.net/issues/?filter=10206
 
 ## Roadmap 
 
