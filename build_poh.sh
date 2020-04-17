@@ -51,6 +51,7 @@ mkdir -p api/src/main/openhospital-ui
 cp -rf ui/* api/src/main/openhospital-ui/
 docker-compose -f core/docker-compose.yml up -d
 mvn clean package -Dbundle-oh-ui
+rm -rf api/src/main/openhospital-ui
 
 # dump the database to a SQL script
 mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > database.sql
@@ -94,6 +95,7 @@ cp CHANGELOG $FULL_DIR
 echo 'Assemble OH Windows portable...'
 cp -rf ./poh-bundle-win/* $WIN_DIR
 cp -rf ./gui/target/OpenHospital20/* $WIN_DIR/oh
+cp ./api/target/openhospital-api.jar $WIN_DIR/oh/
 rm $WIN_DIR/oh/generate_changelog.sh || true
 cp *.sql $WIN_DIR
 # cp *.txt $WIN_DIR/oh/doc
@@ -105,6 +107,7 @@ cp CHANGELOG $WIN_DIR
 echo 'Assemble OH Linux x32 portable...'
 cp -rf ./poh-bundle-linux-x32/* $LINUX32_DIR
 cp -rf ./gui/target/OpenHospital20/* $LINUX32_DIR/oh
+cp ./api/target/openhospital-api.jar $LINUX32_DIR/oh/
 rm $LINUX32_DIR/oh/generate_changelog.sh || true
 cp *.sql $LINUX32_DIR
 # cp *.txt $LINUX32_DIR/oh/doc
@@ -116,6 +119,7 @@ cp CHANGELOG $LINUX32_DIR
 echo 'Assemble OH Linux x64 portable...'
 cp -rf ./poh-bundle-linux-x64/* $LINUX64_DIR
 cp -rf ./gui/target/OpenHospital20/* $LINUX64_DIR/oh
+cp ./api/target/openhospital-api.jar $LINUX64_DIR/oh/
 rm $LINUX64_DIR/oh/generate_changelog.sh || true
 cp *.sql $LINUX64_DIR
 # cp *.txt $LINUX64_DIR/oh/doc
