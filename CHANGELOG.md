@@ -7,7 +7,9 @@ Changelog vVERSION:
 - OP-169 Added search fields for diagnosis in Admission form
 - OP-171 New fields in Examination form
 - OP-172 Added 'undefined' material in lab (not compulsory)
-- OP-143 Dicom module compatible with JPG/JPEG formats
+- OP-173 Dicom module compatible with JPG/JPEG formats
+- OP-143 new "patient profession" and "marital status" fields
+- OP-144 New "breathing" field in examination
 - Several minor improvements
 
 
