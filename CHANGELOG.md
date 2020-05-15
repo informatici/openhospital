@@ -10,7 +10,11 @@ Changelog vVERSION:
 - OP-173 Dicom module compatible with JPG/JPEG formats
 - OP-143 new "patient profession" and "marital status" fields
 - OP-144 New "breathing" field in examination
-- Several minor improvements
+- OP-189 Introduced ICD10 subset for languages EN, IT and FR
+- OP-208 Fixed Patient numbering
+- OP-140 Fixed JPG library
+- OP-207 Fixed AUTOMATICLOT
+- Many minor improvements
 
 
 Brought to you by:
