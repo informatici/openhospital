@@ -54,7 +54,7 @@ do
   echo "Waiting docker..."
   sleep 5
 done
-cat dump.log
+cat dump_error.log
 
 # build and test the code
 mvn package
