@@ -3,6 +3,12 @@ set OH_PATH=%~dps0
 set XCHANGE32_PATH=%OH_PATH%\mysql\bin
 set freePort=
 set startPort=3306
+FOR /F "tokens=2,2 delims==" %%i IN ('findstr /i "dicom.max.size" %OH_PATH%oh\rsc\dicom.properties.ori') DO (
+  set dicom_size=%%i
+)
+if "%dicom_size%" equ "" (
+	set dicom_size=4M
+)
 
 :SEARCHPORT
 netstat -o -n -a | find "LISTENING" | find ":%startPort% " > NUL
@@ -34,6 +40,7 @@ cd /d %OH_PATH%\mysql\bin
 echo f | xcopy my.ori my.cnf /y
 %XCHANGE32_PATH%\Xchang32.exe my.cnf "3306" "%freePort%"
 %XCHANGE32_PATH%\Xchang32.exe my.cnf "OH_PATH_SUBSTITUTE" "%OH_PATH%"
+%XCHANGE32_PATH%\Xchang32.exe my.cnf "DICOM_SIZE" "%dicom_size%"
 %XCHANGE32_PATH%\Xchang32.exe my.cnf "^x5c" "^x2f"
 
 start /b /min %OH_PATH%mysql\bin\mysqld --defaults-file=%OH_PATH%mysql\bin\my.cnf --standalone --console

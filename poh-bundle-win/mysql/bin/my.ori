@@ -11,7 +11,7 @@ tmpdir = "OH_PATH_SUBSTITUTE/tmp"
 datadir = "OH_PATH_SUBSTITUTE/mysql/data" 
 skip-locking 
 key_buffer = 16M 
-max_allowed_packet = 16M 
+max_allowed_packet = DICOM_SIZE
 table_cache = 64 
 sort_buffer_size = 512K 
 net_buffer_length = 8K 
