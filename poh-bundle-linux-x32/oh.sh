@@ -3,6 +3,7 @@
 MYSQL_DIR="mysql-5.0.51a-linux-i686"
 JAVA_DIR="jre1.6.0_45"
 OH_DIR="oh"
+DICOM_DEFAULT_SIZE="4M"
 
 where_i_am=$(pwd)
 cd $(dirname $0)
@@ -16,7 +17,10 @@ while [ $(netstat -tna | grep -e '^tcp' | awk '{ print $4 }' | grep ":$mysql_por
 done
 
 POH_PATH_ESCAPED=$(echo $POH_PATH | sed -e 's/\//\\\//g')
-sed -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$mysql_port/" $POH_PATH/etc/mysql/my.ori > $POH_PATH/etc/mysql/my.cnf
+DICOM_MAX_SIZE=$(grep -i '^dicom.max.size' $POH_PATH/$OH_DIR/rsc/dicom.properties.ori  | cut -f2 -d'=')
+: ${DICOM_MAX_SIZE:=$DICOM_DEFAULT_SIZE}
+
+sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$mysql_port/" $POH_PATH/etc/mysql/my.ori > $POH_PATH/etc/mysql/my.cnf
 sed -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" $POH_PATH/$OH_DIR/rsc/dicom.properties.ori > $POH_PATH/$OH_DIR/rsc/dicom.properties
 sed -e "s/3306/$mysql_port/" $POH_PATH/$OH_DIR/rsc/database.properties.sample > $POH_PATH/$OH_DIR/rsc/database.properties
 sed -e "s/MYSQL_PORT/$mysql_port/" $POH_PATH/$OH_DIR/rsc/log4j.properties.ori > $POH_PATH/$OH_DIR/rsc/log4j.properties
