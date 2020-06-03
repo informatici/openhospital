@@ -47,10 +47,17 @@ head --lines=-4 CHANGELOG.md > CHANGELOG
 
 # compile core and gui projects
 docker-compose -f core/docker-compose.yml up -d
-mvn package
 
 # dump the database to a SQL script
-mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > database.sql
+until mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > database.sql 2>dump_error.log
+do
+  echo "Waiting docker..."
+  sleep 5
+done
+cat dump_error.log
+
+# build and test the code
+mvn package
 
 # create distribution folders
 FULL_DIR="./OpenHospital-$version"

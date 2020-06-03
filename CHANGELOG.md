@@ -2,18 +2,24 @@ OpenHospital vVERSION
 ------------------------------
 
 Changelog vVERSION:
-- Completely refactored code: Spring + Maven + JUnit + JPA for better performances and as a stepping stone to the upcoming web-based version
-- New! Search fields for diagnosis in OPD and Admission
-- New! Search fields for pharmaceuticals in Pharmacy Stock
-- New! Movements between Wards available
-- New! Multiple Operations in Admission and available in Clinical Sheet
-- New! Search fields for Exams in Laboratory
-- New! Online documentation in portable format Asciidoctor (available at [openhospital-doc](http://github.com/informatici/openhospital-doc))
-- (fix) Fixed startup when connectivity is not available
-- (fix) Fixed step_57 file name
-- (fix) OP-126 List box problem in Examination module
-- (fix) OP-167, OP-168, OP-160, OP-140, OP-183, OP-174, OP-158, OP-182
-- (fix) Some minor fixes
+- OP-80 Introduced Audit fields for all tables
+- OP-139 Updated webcam libraries
+- OP-169 Added search fields for diagnosis in Admission form
+- OP-171 New fields in Examination form and decimal values handlings
+- OP-172 Added 'undefined' material in lab (not compulsory)
+- OP-173 Dicom module compatible with JPG/JPEG formats
+- OP-173 Dicom new setting dicom.max.size (see Admin Manual)
+- OP-173 Dicom new setting DICOMTHUMBNAILS (see Admin Manual)
+- OP-143 New "patient profession" and "marital status" fields
+- OP-144 New "breathing" field in examination
+- OP-189 Introduced ICD10 subset for languages EN, IT and FR
+- OP-194 Fixed Operations result's descriptions
+- OP-208 Fixed Patient numbering
+- OP-140 Fixed JPG library
+- OP-207 Fixed AUTOMATICLOT
+- OP-208 Fixed portable's DB initialization
+- Many minor improvements
+
 
 Brought to you by:
 - Informatici Senza Frontiere opensource community
