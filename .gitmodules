@@ -1,12 +1,12 @@
 [submodule "core"]
 	path = core
 	url = https://github.com/informatici/openhospital-core
-	branch = 1.10
+	branch = master
 [submodule "gui"]
 	path = gui
 	url = https://github.com/informatici/openhospital-gui
-	branch = 1.10
+	branch = master
 [submodule "doc"]
 	path = doc
 	url = https://github.com/informatici/openhospital-doc
-	branch = 1.10
+	branch = master
