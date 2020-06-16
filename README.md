@@ -10,8 +10,8 @@ Please read the [CONTRIBUTING.md](https://github.com/informatici/openhospital/bl
 
 To create the Open Hospital portable distributions,
 make sure to have installed the following dependencies on a Linux machine:
-_JDK 6+, Maven, asciidoctor-pdf, docker-compose, MySQL client, zip._
- 
+_JDK 8+, Maven, asciidoctor-pdf, docker-compose, MySQL client, zip._
+
 Then follow these simple steps:
 
  1. Clone this repository and initialize the submodules:

@@ -8,7 +8,7 @@ show_req () {
     echo `tput smul`$1' not found'`tput sgr0`
     echo ''
     echo 'Make sure to have installed the following dependencies on a Linux machine:'
-    echo 'JDK 6+, Maven, asciidoctor-pdf, docker-compose, MySQL client, zip'
+    echo 'JDK 8+, Maven, asciidoctor-pdf, docker-compose, MySQL client, zip'
     exit 1
 }
 
@@ -91,7 +91,7 @@ echo 'Assemble OpenHospital (full)...'
 cp -rf ./gui/target/OpenHospital20/* $FULL_DIR
 cp -rf ./core/mysql/db/* $FULL_DIR/mysql
 rm $FULL_DIR/generate_changelog.sh || true
-# cp *.txt $FULL_DIR/doc 
+# cp *.txt $FULL_DIR/doc
 cp LICENSE $FULL_DIR
 cp CHANGELOG $FULL_DIR
 
