@@ -5,4 +5,4 @@ build:
 	./build_poh.sh
 
 clean:
-	git clean -xdf
+	git clean -xdff
