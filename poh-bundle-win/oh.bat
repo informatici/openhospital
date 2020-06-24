@@ -73,6 +73,6 @@ set CLASSPATH=%CLASSPATH%;%OH_BUNDLE%
 set CLASSPATH=%CLASSPATH%;%OH_REPORT%
 
 cd /d %OH_PATH%oh\
-%OH_PATH%jdk8u252-b09-jre\bin\java.exe -Dlog4j.configuration=%OH_PATH%oh/rsc/log4j.properties -showversion -Dsun.java2d.dpiaware=false -Djava.library.path=%OH_PATH%oh\lib\native\Windows -cp %CLASSPATH% org.isf.menu.gui.Menu
+%OH_PATH%jdk-11.0.7+10-jre\bin\java.exe -Dlog4j.configuration=%OH_PATH%oh/rsc/log4j.properties -showversion -Dsun.java2d.dpiaware=false -Djava.library.path=%OH_PATH%oh\lib\native\Windows -cp %CLASSPATH% org.isf.menu.gui.Menu
 start /b %OH_PATH%mysql\bin\mysqladmin --user=root --password= --port=%freePort% shutdown
 exit

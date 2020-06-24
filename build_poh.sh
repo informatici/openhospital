@@ -97,7 +97,7 @@ cp CHANGELOG $FULL_DIR
 
 echo 'Assemble OH Windows portable...'
 cp -rf ./poh-bundle-win/* $WIN_DIR
-curl -L https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09.1/OpenJDK8U-jre_x86-32_windows_hotspot_8u252b09.zip > win-java.zip
+curl -L https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.7%2B10.2/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.7_10.zip > win-java.zip
 unzip win-java.zip -d $WIN_DIR
 rm win-java.zip
 cp -rf ./gui/target/OpenHospital20/* $WIN_DIR/oh
@@ -111,7 +111,7 @@ cp CHANGELOG $WIN_DIR
 
 echo 'Assemble OH Linux x32 portable...'
 cp -rf ./poh-bundle-linux-x32/* $LINUX32_DIR
-curl -L https://cdn.azul.com/zulu/bin/zulu8.46.0.19-ca-jre8.0.252-linux_i686.tar.gz | tar xz -C $LINUX32_DIR
+curl -L https://cdn.azul.com/zulu/bin/zulu11.39.15-ca-jre11.0.7-linux_i686.tar.gz | tar xz -C $LINUX32_DIR
 cp -rf ./gui/target/OpenHospital20/* $LINUX32_DIR/oh
 rm $LINUX32_DIR/oh/generate_changelog.sh || true
 cp *.sql $LINUX32_DIR
@@ -123,7 +123,7 @@ cp CHANGELOG $LINUX32_DIR
 
 echo 'Assemble OH Linux x64 portable...'
 cp -rf ./poh-bundle-linux-x64/* $LINUX64_DIR
-curl -L https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jre_x64_linux_hotspot_8u252b09.tar.gz | tar xz -C $LINUX64_DIR
+curl -L https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.7%2B10/OpenJDK11U-jre_x64_linux_hotspot_11.0.7_10.tar.gz | tar xz -C $LINUX64_DIR
 cp -rf ./gui/target/OpenHospital20/* $LINUX64_DIR/oh
 rm $LINUX64_DIR/oh/generate_changelog.sh || true
 cp *.sql $LINUX64_DIR
