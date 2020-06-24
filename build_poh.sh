@@ -37,7 +37,7 @@ version=$(grep -m 1 "</version>" pom.xml | grep -o "[0-9.]*")
 # clone core, gui and doc repositories
 git clone -b v$version https://github.com/informatici/openhospital-core.git core
 git clone -b v$version https://github.com/informatici/openhospital-gui.git gui
-git clone https://github.com/informatici/openhospital-doc.git doc
+git clone -b v$version https://github.com/informatici/openhospital-doc.git doc
 
 # set the portable distribution version
 poh_win32_version="0.0.6"
