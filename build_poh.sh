@@ -31,13 +31,13 @@ do
     fi
 done
 
-# get the Open Hospital version
-version=$(grep -m 1 "</version>" pom.xml | grep -o "[0-9.]*")
+# get the Open Hospital version from git describe
+version=$(git describe --tags)
 
 # clone core, gui and doc repositories
-git clone -b v$version https://github.com/informatici/openhospital-core.git core
-git clone -b v$version https://github.com/informatici/openhospital-gui.git gui
-git clone -b v$version https://github.com/informatici/openhospital-doc.git doc
+git clone -b $version https://github.com/informatici/openhospital-core.git core
+git clone -b $version https://github.com/informatici/openhospital-gui.git gui
+git clone -b $version https://github.com/informatici/openhospital-doc.git doc
 
 # set the portable distribution version
 poh_win32_version="0.0.6"
