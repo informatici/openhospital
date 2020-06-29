@@ -5,3 +5,6 @@
 *.sql
 poh-win*
 poh-linux*
+core
+gui
+doc

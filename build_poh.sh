@@ -1,9 +1,11 @@
 #!/bin/bash
 # This script assembles the portable distributions of Open Hospital.
 
+set -e
+
 command_exists () { type "$1" &> /dev/null ; }
 
-requirements="java mvn docker-compose mysql zip tar"
+requirements="java mvn git docker-compose mysql zip tar"
 show_req () {
     echo `tput smul`$1' not found'`tput sgr0`
     echo ''
@@ -29,19 +31,18 @@ do
     fi
 done
 
-set -e
+# get the Open Hospital version from git describe
+version=$(git describe --abbrev=0)
+
+# clone core, gui and doc repositories
+git clone -b v$version https://github.com/informatici/openhospital-core.git core
+git clone -b v$version https://github.com/informatici/openhospital-gui.git gui
+git clone -b v$version https://github.com/informatici/openhospital-doc.git doc
 
 # set the portable distribution version
 poh_win32_version="0.0.6"
 poh_linux_version="0.0.6"
 
-# get the Open Hospital version
-version_file=./gui/rsc/version.properties
-test -f $version_file
-major=$(grep VER_MAJOR $version_file | cut -d"=" -f2)
-minor=$(grep VER_MINOR $version_file | cut -d"=" -f2)
-release=$(grep VER_RELEASE $version_file | cut -d"=" -f2)
-version="$major.$minor.$release"
 sed -i "s/VERSION/$version/g" CHANGELOG.md
 head --lines=-4 CHANGELOG.md > CHANGELOG
 
