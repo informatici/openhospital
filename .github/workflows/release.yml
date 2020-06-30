@@ -1,7 +1,5 @@
 name: Release
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   pull_request:
   push:
@@ -10,14 +8,11 @@ on:
     tags:
       - 'v*'
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
+    # ubuntu-latest is still 18.04 as of 6/2020
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - name: Setup Java JDK
       uses: actions/setup-java@v1.3.0
@@ -25,12 +20,10 @@ jobs:
         java-version: 1.8
     
     - name: Install asciidoctor
-      run: sudo apt install ruby-asciidoctor-pdf
-
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      run: sudo gem install asciidoctor-pdf --pre
+      
     - uses: actions/checkout@v2
 
-    # Runs a single command using the runners shell
     - name: Build OH packages
       run: ./build_poh.sh
 
