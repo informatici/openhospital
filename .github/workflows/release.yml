@@ -1,0 +1,44 @@
+name: Release
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  pull_request:
+  push:
+    paths-ignore:
+      - '**.md'
+    tags:
+      - 'v*'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - name: Setup Java JDK
+      uses: actions/setup-java@v1.3.0
+      with:
+        java-version: 1.8
+    
+    - name: Install asciidoctor
+      run: gem install asciidoctor-pdf --pre
+
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    # Runs a single command using the runners shell
+    - name: Build OH packages
+      run: ./build_poh.sh
+
+    - name: Create draft release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v1
+      with:
+        draft: true
+        files: ./release-files/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
