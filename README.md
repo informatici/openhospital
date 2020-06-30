@@ -1,14 +1,14 @@
 # Open Hospital [![Build Status](https://travis-ci.org/informatici/openhospital.svg?branch=master)](https://travis-ci.org/informatici/openhospital)
 
-This is the ***release*** repository for the [Open Hospital][openhospital]'s project. It is not meant for developers but only to publish releases packages called *portable* (means all-in-one, with embedded MySQL Server and JVM)   
-[Here][releases] you can download the portable distribution of Open Hospital.
+This repository is used to assemble the portable (or all-in-one) packages of the [Open Hospital][openhospital] project, which you can download [here][releases].
 
-### For Developers (how to contribute)
-Please read the [CONTRIBUTING.md](https://github.com/informatici/openhospital/blob/master/CONTRIBUTING.md) file
+## How to contribute
 
-## How to create Open Hospital portable
+If you'd like to contribute to the Open Hospital project, please read [CONTRIBUTING.md][contributing].
 
-To create the Open Hospital portable distributions,
+## How to create Open Hospital packages
+
+To create the Open Hospital packages,
 make sure to have installed the following dependencies on a Linux machine:
 _JDK 8+, Maven, asciidoctor-pdf, docker-compose, MySQL client, zip._
 
@@ -16,9 +16,9 @@ Then follow these simple steps:
 
  1. Clone this repository and initialize the submodules:
 
-        git clone --recurse-submodules https://github.com/informatici/openhospital
+        git clone https://github.com/informatici/openhospital
 
- 2. Run the script that compiles the projects *core* and *gui*, and assembles the portable distributions:
+ 2. Run the script that compiles the components of Open Hospital, and assembles the portable distributions:
 
         cd openhospital
         ./build_poh.sh
@@ -26,3 +26,4 @@ Then follow these simple steps:
 
  [openhospital]: https://www.open-hospital.org/
  [releases]: https://github.com/informatici/openhospital/releases
+ [contributing]: https://github.com/informatici/openhospital/blob/master/CONTRIBUTING.md
