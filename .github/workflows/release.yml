@@ -23,6 +23,8 @@ jobs:
       run: sudo gem install asciidoctor-pdf --pre
       
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
     - name: Build OH packages
       run: ./build_poh.sh
