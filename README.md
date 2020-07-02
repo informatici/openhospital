@@ -1,4 +1,4 @@
-# Open Hospital [![Build Status](https://travis-ci.org/informatici/openhospital.svg?branch=master)](https://travis-ci.org/informatici/openhospital)
+# Open Hospital
 
 This repository is used to assemble the portable (or all-in-one) packages of the [Open Hospital][openhospital] project, which you can download [here][releases].
 
