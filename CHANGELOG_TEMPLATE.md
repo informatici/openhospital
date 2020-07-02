@@ -1,7 +1,7 @@
-OpenHospital vVERSION
-------------------------------
+OpenHospital VERSION
+---------------------
 
-Changelog vVERSION:
+Changelog VERSION:
 
 CHANGELOGCORE
 
