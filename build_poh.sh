@@ -32,7 +32,7 @@ do
 done
 
 # get the Open Hospital version from git describe
-version=$(git describe --abbrev=0)
+version=$(git describe --abbrev=0 --tags)
 
 # clone core, gui and doc repositories
 git clone -b $version https://github.com/informatici/openhospital-core.git core
