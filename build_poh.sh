@@ -43,7 +43,22 @@ git clone -b v$version https://github.com/informatici/openhospital-doc.git doc
 poh_win32_version="0.0.6"
 poh_linux_version="0.0.6"
 
+# generate changelog from previous tag
+cd core
+last_tag=$(git tag --sort=-committerdate | head -1)
+second_last_tag=$(git tag --sort=-committerdate | head -2 | tail -n 1)
+changelogcore=$(git log --no-merges --pretty=format:%s $last_tag..$second_last_tag | grep -i "^OP" | sed 's/^/ - /')
+cd ..; cd gui
+last_tag=$(git tag --sort=-committerdate | head -1)
+second_last_tag=$(git tag --sort=-committerdate | head -2 | tail -n 1)
+changeloggui=$(git log --no-merges --pretty=format:%s $last_tag..$second_last_tag | grep -i "^OP" | sed 's/^/ - /')
+cd ..
+
+cp CHANGELOG_TEMPLATE.md CHANGELOG.md
 sed -i "s/VERSION/$version/g" CHANGELOG.md
+sed -i "s/CHANGELOGCORE/${changelogcore//$'\n'/\\n}/g" CHANGELOG.md
+sed -i "s/CHANGELOGGUI/${changeloggui//$'\n'/\\n}/g" CHANGELOG.md
+
 head --lines=-4 CHANGELOG.md > CHANGELOG
 
 # compile core and gui projects
