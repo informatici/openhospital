@@ -32,18 +32,28 @@ do
 done
 
 # get the Open Hospital version from git describe
-version=$(git describe --abbrev=0)
+version=$(git describe --abbrev=0 --tags)
 
 # clone core, gui and doc repositories
-git clone -b v$version https://github.com/informatici/openhospital-core.git core
-git clone -b v$version https://github.com/informatici/openhospital-gui.git gui
-git clone -b v$version https://github.com/informatici/openhospital-doc.git doc
+git clone -b $version https://github.com/informatici/openhospital-core.git core
+git clone -b $version https://github.com/informatici/openhospital-gui.git gui
+git clone -b $version https://github.com/informatici/openhospital-doc.git doc
 
 # set the portable distribution version
 poh_win32_version="0.0.6"
 poh_linux_version="0.0.6"
 
+# generate changelog from previous tag
+cd core
+lasttag=$(git tag --sort=-committerdate | head -1)
+secondlasttag=$(git tag --sort=-committerdate | head -2 | tail -n 1)
+cd ..
+
+cp CHANGELOG_TEMPLATE.md CHANGELOG.md
 sed -i "s/VERSION/$version/g" CHANGELOG.md
+sed -i "s/SECONDLASTTAG/${secondlasttag//$'\n'/\\n}/g" CHANGELOG.md
+sed -i "s/LASTTAG/${lasttag//$'\n'/\\n}/g" CHANGELOG.md
+
 head --lines=-4 CHANGELOG.md > CHANGELOG
 
 # compile core and gui projects
