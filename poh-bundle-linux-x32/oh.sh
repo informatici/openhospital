@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MYSQL_DIR="mysql-5.0.51a-linux-i686"
+MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-i686"
 JAVA_DIR="zulu8.46.0.19-ca-jre8.0.252-linux_i686"
 OH_DIR="oh"
 DICOM_DEFAULT_SIZE="4M"
