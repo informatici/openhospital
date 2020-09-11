@@ -5,7 +5,7 @@ set -e
 
 command_exists () { type "$1" &> /dev/null ; }
 
-requirements="java mvn git docker-compose mysql zip tar"
+requirements="java mvn git docker-compose mysql zip tar wget xargs"
 show_req () {
     echo `tput smul`$1' not found'`tput sgr0`
     echo ''
