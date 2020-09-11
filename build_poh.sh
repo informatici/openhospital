@@ -56,16 +56,15 @@ sed -i "s/LASTTAG/${lasttag//$'\n'/\\n}/g" CHANGELOG.md
 
 head --lines=-4 CHANGELOG.md > CHANGELOG
 
-# compile core and gui projects
-docker-compose -f core/docker-compose.yml up -d
-
 # dump the database to a SQL script
+docker-compose -f core/docker-compose.yml up -d
 until mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > database.sql 2>dump_error.log
 do
-  echo "Waiting docker..."
+  echo "Waiting for MySQL to start..."
   sleep 5
 done
 cat dump_error.log
+docker-compose -f core/docker-compose.yml down
 
 # build and test the code
 mvn package
