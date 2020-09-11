@@ -12,3 +12,4 @@ doc
 CHANGELOG.md
 CHANGELOG
 .project
+*.log
