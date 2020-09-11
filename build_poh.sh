@@ -98,6 +98,21 @@ fi
 # cp core/doc/`ls core/doc/ -r | head -n 1` core_`ls core/doc/ -r | head -n 1`
 # cp gui/doc/`ls gui/doc/ -r | head -n 1` gui_`ls gui/doc/ -r | head -n 1`
 
+DOWNLOAD_DIR="/tmp/oh-downloads"
+mkdir -p $DOWNLOAD_DIR
+download_jre_mysql() {
+    pushd $DOWNLOAD_DIR
+    URL_LIST=(
+        "https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09.1/OpenJDK8U-jre_x86-32_windows_hotspot_8u252b09.zip"
+        "https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jre_x64_linux_hotspot_8u252b09.tar.gz"
+        "https://cdn.azul.com/zulu/bin/zulu8.46.0.19-ca-jre8.0.252-linux_i686.tar.gz"
+        "https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-win32.zip"
+        "https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-x86_64.tar.gz"
+        "https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-i686.tar.gz")
+    echo "${URL_LIST[@]}" | xargs -n 1 -P 6 wget -q
+    popd
+}
+
 echo 'Assemble OpenHospital (full)...'
 cp -rf ./gui/target/OpenHospital20/* $FULL_DIR
 cp -rf ./core/mysql/db/* $FULL_DIR/mysql
@@ -106,15 +121,13 @@ rm $FULL_DIR/generate_changelog.sh || true
 cp LICENSE $FULL_DIR
 cp CHANGELOG $FULL_DIR
 
+echo 'Download MySQL and JRE binaries...'
+download_jre_mysql
+
 echo 'Assemble OH Windows portable...'
 cp -rf ./poh-bundle-win/* $WIN_DIR
-curl -L https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09.1/OpenJDK8U-jre_x86-32_windows_hotspot_8u252b09.zip > win-java.zip
-unzip win-java.zip -d $WIN_DIR
-rm win-java.zip
-curl -L https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-win32.zip --output win-mysql.zip
-unzip win-mysql.zip -d $WIN_DIR
-mv $WIN_DIR/mysql-5.7.30-win32 $WIN_DIR/mysql
-rm win-mysql.zip
+unzip $DOWNLOAD_DIR/OpenJDK8U-jre_x86-32_windows_hotspot_8u252b09.zip -d $WIN_DIR
+unzip $DOWNLOAD_DIR/mysql-5.7.30-win32.zip -d $WIN_DIR
 cp -rf ./gui/target/OpenHospital20/* $WIN_DIR/oh
 rm $WIN_DIR/oh/generate_changelog.sh || true
 cp *.sql $WIN_DIR
@@ -126,8 +139,8 @@ cp CHANGELOG $WIN_DIR
 
 echo 'Assemble OH Linux x32 portable...'
 cp -rf ./poh-bundle-linux-x32/* $LINUX32_DIR
-curl -L https://cdn.azul.com/zulu/bin/zulu8.46.0.19-ca-jre8.0.252-linux_i686.tar.gz | tar xz -C $LINUX32_DIR
-curl -L https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-i686.tar.gz | tar xz -C $LINUX32_DIR
+tar xz -C $LINUX32_DIR -f $DOWNLOAD_DIR/zulu8.46.0.19-ca-jre8.0.252-linux_i686.tar.gz
+tar xz -C $LINUX32_DIR -f $DOWNLOAD_DIR/mysql-5.7.30-linux-glibc2.12-i686.tar.gz
 cp -rf ./gui/target/OpenHospital20/* $LINUX32_DIR/oh
 rm $LINUX32_DIR/oh/generate_changelog.sh || true
 cp *.sql $LINUX32_DIR
@@ -139,8 +152,8 @@ cp CHANGELOG $LINUX32_DIR
 
 echo 'Assemble OH Linux x64 portable...'
 cp -rf ./poh-bundle-linux-x64/* $LINUX64_DIR
-curl -L https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jre_x64_linux_hotspot_8u252b09.tar.gz | tar xz -C $LINUX64_DIR
-curl -L https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-x86_64.tar.gz | tar xz -C $LINUX64_DIR
+tar xz -C $LINUX64_DIR -f $DOWNLOAD_DIR/OpenJDK8U-jre_x64_linux_hotspot_8u252b09.tar.gz
+tar xz -C $LINUX64_DIR -f $DOWNLOAD_DIR/mysql-5.7.30-linux-glibc2.12-x86_64.tar.gz
 cp -rf ./gui/target/OpenHospital20/* $LINUX64_DIR/oh
 rm $LINUX64_DIR/oh/generate_changelog.sh || true
 cp *.sql $LINUX64_DIR
