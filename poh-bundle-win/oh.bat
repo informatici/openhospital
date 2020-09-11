@@ -1,6 +1,6 @@
 @echo off
 set OH_PATH=%~dps0
-set XCHANGE32_PATH=%OH_PATH%\mysql\bin
+set XCHANGE32_PATH=%OH_PATH%\mysql-5.7.30-win32\bin
 set freePort=
 set startPort=3306
 FOR /F "tokens=2,2 delims==" %%i IN ('findstr /i "dicom.max.size" %OH_PATH%oh\rsc\dicom.properties.ori') DO (
@@ -36,18 +36,18 @@ echo f | xcopy log4j.properties.ori log4j.properties /y
 %XCHANGE32_PATH%\Xchang32.exe log4j.properties "3306" "%freePort%"
 %XCHANGE32_PATH%\Xchang32.exe log4j.properties "^x5c" "^x2f
 
-cd /d %OH_PATH%\mysql\bin
+cd /d %OH_PATH%\mysql-5.7.30-win32\bin
 echo f | xcopy my.ori my.cnf /y
 %XCHANGE32_PATH%\Xchang32.exe my.cnf "3306" "%freePort%"
 %XCHANGE32_PATH%\Xchang32.exe my.cnf "OH_PATH_SUBSTITUTE" "%OH_PATH%"
 %XCHANGE32_PATH%\Xchang32.exe my.cnf "DICOM_SIZE" "%dicom_size%"
 %XCHANGE32_PATH%\Xchang32.exe my.cnf "^x5c" "^x2f"
 
-start /b /min %OH_PATH%mysql\bin\mysqld --defaults-file=%OH_PATH%mysql\bin\my.cnf --standalone --console
+start /b /min %OH_PATH%mysql-5.7.30-win32\bin\mysqld --defaults-file=%OH_PATH%mysql-5.7.30-win32\bin\my.cnf --standalone --console
 
 IF EXIST "%OH_PATH%database.sql" (
   echo Initializing database...
-  %OH_PATH%mysql\bin\mysql -u root --port=%freePort% oh < "%OH_PATH%database.sql"
+  %OH_PATH%mysql-5.7.30-win32\bin\mysql -u root --port=%freePort% oh < "%OH_PATH%database.sql"
   echo Database initialized.
   DEL %OH_PATH%database.sql
 ) ELSE (
@@ -74,5 +74,5 @@ set CLASSPATH=%CLASSPATH%;%OH_REPORT%
 
 cd /d %OH_PATH%oh\
 %OH_PATH%jdk8u252-b09-jre\bin\java.exe -Dlog4j.configuration=%OH_PATH%oh/rsc/log4j.properties -showversion -Dsun.java2d.dpiaware=false -Djava.library.path=%OH_PATH%oh\lib\native\Windows -cp %CLASSPATH% org.isf.menu.gui.Menu
-start /b %OH_PATH%mysql\bin\mysqladmin --user=root --password= --port=%freePort% shutdown
+start /b %OH_PATH%mysql-5.7.30-win32\bin\mysqladmin --user=root --password= --port=%freePort% shutdown
 exit
