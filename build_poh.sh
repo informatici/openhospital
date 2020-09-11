@@ -82,6 +82,7 @@ mkdir -p $LINUX64_DIR/oh/doc
 
 # compile and assemble documentation
 if command_exists asciidoctor-pdf; then
+    echo 'Compile documentation...'
     asciidoctor-pdf ./doc/doc_admin/AdminManual.adoc -o AdminManual.pdf
     asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o UserManual.pdf
     cp *.pdf $FULL_DIR/doc
