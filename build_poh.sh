@@ -169,7 +169,7 @@ zip -r $WIN_DIR.zip $WIN_DIR
 tar -cvzf $LINUX32_DIR.tar.gz $LINUX32_DIR
 tar -cvzf $LINUX64_DIR.tar.gz $LINUX64_DIR
 mkdir release-files
-cp *.zip *.tar.gz release-files/
+mv *.zip *.tar.gz release-files/
 
 # check
 ls release-files/
