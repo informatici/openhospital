@@ -5,6 +5,7 @@
 *.sql
 poh-win*
 poh-linux*
+OpenHospital-*
 core
 gui
 doc
