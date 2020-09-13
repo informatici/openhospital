@@ -64,10 +64,10 @@ do
   sleep 5
 done
 if grep Error dump_error.log; then exit 1; fi
-docker-compose -f core/docker-compose.yml down
 
 # build and test the code
 mvn package
+docker-compose -f core/docker-compose.yml down
 
 # create distribution folders
 FULL_DIR="./OpenHospital-$version"
