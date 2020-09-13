@@ -175,7 +175,7 @@ mv *.zip *.tar.gz release-files/
 ls release-files/
 
 echo 'Compute SHA256 checksum...'
-checksum=$(sha256sum *.zip *.gz)
+checksum=$(sha256sum release-files/*.{zip,gz})
 checksum=${checksum//$'\n'/\\n}
 echo $checksum
 sed -i "s/CHECKSUM/$checksum/g" CHANGELOG.md
