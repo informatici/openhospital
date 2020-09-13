@@ -58,7 +58,7 @@ head --lines=-4 CHANGELOG.md > CHANGELOG
 
 # dump the database to a SQL script
 docker-compose -f core/docker-compose.yml up -d
-until mysqldump --protocol tcp -h localhost -u isf -pisf123 --compatible=mysql40 oh > database.sql 2>dump_error.log
+until mysqldump --protocol tcp -h localhost -u isf -pisf123 --no-tablespaces --compatible=mysql40 oh > database.sql 2>dump_error.log
 do
   echo "Waiting for MySQL to start..."
   sleep 5
