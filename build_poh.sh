@@ -63,7 +63,7 @@ do
   echo "Waiting for MySQL to start..."
   sleep 5
 done
-cat dump_error.log
+if grep Error dump_error.log; then exit 1; fi
 docker-compose -f core/docker-compose.yml down
 
 # build and test the code
