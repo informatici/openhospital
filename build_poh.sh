@@ -45,10 +45,10 @@ poh_win32_version="0.0.6"
 poh_linux_version="0.0.6"
 
 # generate changelog from previous tag
-cd core
+pushd core
 lasttag=$(git tag --sort=-committerdate | head -1)
 secondlasttag=$(git tag --sort=-committerdate | head -2 | tail -n 1)
-cd ..
+popd
 
 cp CHANGELOG_TEMPLATE.md CHANGELOG.md
 sed -i "s/VERSION/$version/g" CHANGELOG.md
