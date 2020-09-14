@@ -111,7 +111,7 @@ download_jre_mysql() {
         "https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-win32.zip"
         "https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-x86_64.tar.gz"
         "https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-i686.tar.gz")
-    echo "${URL_LIST[@]}" | xargs -n 1 -P 6 wget -q
+    echo "${URL_LIST[@]}" | xargs -n 1 -P 6 wget -q -nc
     popd
 }
 
