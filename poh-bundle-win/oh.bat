@@ -36,14 +36,14 @@ echo f | xcopy log4j.properties.ori log4j.properties /y
 %REPLACE_PATH%\replace.exe "3306" "%freePort%" -- log4j.properties 
 %REPLACE_PATH%\replace.exe "^x5c" "^x2f" -- log4j.properties 
 
-cd /d %OH_PATH%\mysql-5.7.30-win32\bin
+cd /d %OH_PATH%\
 echo f | xcopy my.ori my.cnf /y
 %REPLACE_PATH%\replace.exe  "3306" "%freePort%" -- my.cnf 
 %REPLACE_PATH%\replace.exe "OH_PATH_SUBSTITUTE" "%OH_PATH%" -- my.cnf 
 %REPLACE_PATH%\replace.exe "DICOM_SIZE" "%dicom_size%" -- my.cnf 
 %REPLACE_PATH%\replace.exe "^x5c" "^x2f" -- my.cnf 
 
-start /b /min %OH_PATH%mysql-5.7.30-win32\bin\mysqld --defaults-file=%OH_PATH%mysql-5.7.30-win32\bin\my.cnf --standalone --console
+start /b /min %OH_PATH%mysql-5.7.30-win32\bin\mysqld --defaults-file=%OH_PATH%\my.cnf --standalone --console
 
 IF EXIST "%OH_PATH%database.sql" (
   echo Initializing database...
