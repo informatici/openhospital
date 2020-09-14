@@ -170,17 +170,16 @@ zip -r $FULL_DIR.zip $FULL_DIR
 zip -r $WIN_DIR.zip $WIN_DIR
 tar -cvzf $LINUX32_DIR.tar.gz $LINUX32_DIR
 tar -cvzf $LINUX64_DIR.tar.gz $LINUX64_DIR
-mkdir release-files
-mv *.zip *.tar.gz release-files/
-
-# check
-ls release-files/
 
 echo 'Compute SHA256 checksum...'
-checksum=$(sha256sum release-files/*.{zip,gz})
-checksum=${checksum//$'\n'/\\n}
+checksum=$(sha256sum *.{zip,gz})
 echo $checksum
+checksum=${checksum//$'\n'/\\n}
 sed -i "s/CHECKSUM/$checksum/g" CHANGELOG.md
+
+mkdir -p release-files
+mv *.zip *.tar.gz release-files/
+ls release-files
 
 # clean up
 rm -rf $FULL_DIR $WIN_DIR $LINUX32_DIR $LINUX64_DIR *.sql *.txt
