@@ -68,7 +68,7 @@ echo
 if grep Error dump_error.log; then exit 1; fi
 
 # build and test the code
-mvn package
+mvn -T 1.5C package
 docker-compose -f core/docker-compose.yml down
 
 # create distribution folders
