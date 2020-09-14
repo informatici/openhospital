@@ -35,6 +35,7 @@ done
 version=$(git describe --abbrev=0 --tags)
 
 # clone core, gui and doc repositories
+rm -rf core gui doc 
 git clone -b $version https://github.com/informatici/openhospital-core.git core
 git clone -b $version https://github.com/informatici/openhospital-gui.git gui
 git clone -b $version https://github.com/informatici/openhospital-doc.git doc
