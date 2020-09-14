@@ -31,8 +31,9 @@ do
     fi
 done
 
-# get the Open Hospital version from git describe
-version=$(git describe --abbrev=0 --tags)
+# get Open Hospital version from git describe or OH_VERSION env variable
+version="${OH_VERSION:-$(git describe --abbrev=0 --tags)}" 
+echo "Building Open Hospital version: $version"
 
 # clone core, gui and doc repositories
 rm -rf core gui doc 
