@@ -118,7 +118,7 @@ download_jre_mysql() {
 echo 'Assemble OpenHospital (full)...'
 cp -rf ./gui/target/OpenHospital20/* $FULL_DIR
 cp -rf ./core/mysql/db/* $FULL_DIR/mysql
-rm $FULL_DIR/generate_changelog.sh || true
+rm -rf $FULL_DIR/generate_changelog.sh
 # cp *.txt $FULL_DIR/doc
 cp LICENSE $FULL_DIR
 cp CHANGELOG $FULL_DIR
@@ -131,7 +131,7 @@ cp -rf ./poh-bundle-win/* $WIN_DIR
 unzip $DOWNLOAD_DIR/OpenJDK8U-jre_x86-32_windows_hotspot_8u252b09.zip -d $WIN_DIR
 unzip $DOWNLOAD_DIR/mysql-5.7.30-win32.zip -d $WIN_DIR
 cp -rf ./gui/target/OpenHospital20/* $WIN_DIR/oh
-rm $WIN_DIR/oh/generate_changelog.sh || true
+rm -rf $WIN_DIR/oh/generate_changelog.sh
 cp *.sql $WIN_DIR
 # cp *.txt $WIN_DIR/oh/doc
 cp POH-README.md $WIN_DIR
@@ -144,7 +144,7 @@ cp -rf ./poh-bundle-linux-x32/* $LINUX32_DIR
 tar xz -C $LINUX32_DIR -f $DOWNLOAD_DIR/zulu8.46.0.19-ca-jre8.0.252-linux_i686.tar.gz
 tar xz -C $LINUX32_DIR -f $DOWNLOAD_DIR/mysql-5.7.30-linux-glibc2.12-i686.tar.gz
 cp -rf ./gui/target/OpenHospital20/* $LINUX32_DIR/oh
-rm $LINUX32_DIR/oh/generate_changelog.sh || true
+rm -rf $LINUX32_DIR/oh/generate_changelog.sh
 cp *.sql $LINUX32_DIR
 # cp *.txt $LINUX32_DIR/oh/doc
 cp POH-README.md $LINUX32_DIR
@@ -157,7 +157,7 @@ cp -rf ./poh-bundle-linux-x64/* $LINUX64_DIR
 tar xz -C $LINUX64_DIR -f $DOWNLOAD_DIR/OpenJDK8U-jre_x64_linux_hotspot_8u252b09.tar.gz
 tar xz -C $LINUX64_DIR -f $DOWNLOAD_DIR/mysql-5.7.30-linux-glibc2.12-x86_64.tar.gz
 cp -rf ./gui/target/OpenHospital20/* $LINUX64_DIR/oh
-rm $LINUX64_DIR/oh/generate_changelog.sh || true
+rm -rf $LINUX64_DIR/oh/generate_changelog.sh
 cp *.sql $LINUX64_DIR
 # cp *.txt $LINUX64_DIR/oh/doc
 cp POH-README.md $LINUX64_DIR
