@@ -1,14 +1,14 @@
 [client] 					
 # password = your_password	
-port = 3306				
-socket = "OH_PATH_SUBSTITUTE/mysql/mysql.sock"  
+port = 3306		
+socket = "OH_PATH_SUBSTITUTE/mysql-5.7.30-win32/mysql.sock"  
 
 [mysqld] 
 port = 3306 
-socket = "OH_PATH_SUBSTITUTE/mysql/mysql.sock" 
-basedir = "OH_PATH_SUBSTITUTE/mysql"  
+socket = "OH_PATH_SUBSTITUTE/mysql-5.7.30-win32/mysql.sock" 
+basedir = "OH_PATH_SUBSTITUTE/mysql-5.7.30-win32"  
 tmpdir = "OH_PATH_SUBSTITUTE/tmp"  
-datadir = "OH_PATH_SUBSTITUTE/mysql/data" 
+datadir = "OH_PATH_SUBSTITUTE/mysql-5.7.30-win32/data" 
 skip-locking 
 key_buffer = 16M 
 max_allowed_packet = DICOM_SIZE
