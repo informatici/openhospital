@@ -5,12 +5,12 @@ set -e
 
 command_exists () { type "$1" &> /dev/null ; }
 
-requirements="java mvn git docker-compose mysqldump zip tar wget xargs"
+requirements="java mvn git docker docker-compose zip tar wget xargs"
 show_req () {
     echo `tput smul`$1' not found'`tput sgr0`
     echo ''
     echo 'Make sure to have installed the following dependencies on a Linux machine:'
-    echo 'JDK 8+, Maven, asciidoctor-pdf, docker-compose, MySQL client, zip'
+    echo 'JDK 8+, Maven, asciidoctor-pdf, docker, docker-compose, zip'
     exit 1
 }
 
@@ -61,7 +61,7 @@ head --lines=-4 CHANGELOG.md > CHANGELOG
 # dump the database to a SQL script
 docker-compose -f core/docker-compose.yml up -d
 echo -n "Waiting for MySQL to start."
-until mysqldump --protocol tcp -h localhost -u isf -pisf123 --no-tablespaces oh > database.sql 2>dump_error.log
+until docker exec -i core_database_1 mysqldump --protocol tcp -h localhost -u isf -pisf123 --no-tablespaces oh > database.sql 2>dump_error.log
 do
   echo -n "."; sleep 2
 done
