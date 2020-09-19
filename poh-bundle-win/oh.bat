@@ -49,11 +49,9 @@ IF EXIST "%OH_PATH%database.sql" (
   IF ERRORLEVEL 1 (goto END)
   start /b /min %OH_PATH%mysql-5.7.30-win32\bin\mysqld --tmpdir=%OH_PATH%\tmp --standalone --console
   %OH_PATH%mysql-5.7.30-win32\bin\mysql -u root --port=%freePort% -e "CREATE SCHEMA oh; GRANT ALL ON oh.* TO 'isf'@'localhost' IDENTIFIED BY 'isf123'; GRANT ALL ON oh.* TO 'isf'@'%' IDENTIFIED BY 'isf123';"
-  %OH_PATH%mysql-5.7.30-win32\bin\mysql -u root --port=%freePort% oh < "%OH_PATH%step_00_create_user.sql"
   %OH_PATH%mysql-5.7.30-win32\bin\mysql -u root --port=%freePort% oh < "%OH_PATH%database.sql"
   IF ERRORLEVEL 1 (goto END)
   echo Database initialized.
-  DEL %OH_PATH%step_00_create_user.sql
   DEL %OH_PATH%database.sql
 ) ELSE (
   echo "missing database.sql or Database already initialized"
