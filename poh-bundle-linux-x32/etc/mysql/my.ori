@@ -7,13 +7,13 @@ socket = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.sock"
 port = MYSQL_PORT 
 socket = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.sock"
 pid-file = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.pid"
-basedir = "OH_PATH_SUBSTITUTE/mysql-5.0.51a-linux-i686"  
+basedir = "OH_PATH_SUBSTITUTE/mysql-5.7.30-linux-glibc2.12-i686"  
 tmpdir = "OH_PATH_SUBSTITUTE/tmp"  
 datadir = "OH_PATH_SUBSTITUTE/var/lib/mysql" 
-skip-locking 
-key_buffer = 16M 
-max_allowed_packet = DICOM_SIZE 
-table_cache = 64
+skip-external-locking 
+key_buffer_size = 16M 
+max_allowed_packet = DICOM_SIZE
+table_open_cache = 64
 sort_buffer_size = 512K 
 net_buffer_length = 8K 
 read_buffer_size = 256K 
@@ -22,7 +22,8 @@ myisam_sort_buffer_size = 8M
 server-id	= 1 
 skip-innodb
 bind-address = 0.0.0.0
-log = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql.log"
+general_log_file = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql.log"
+slow_query_log_file = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql-slow-query.log"
 log-error = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql.err.log"
 lower_case_table_names = 1
 

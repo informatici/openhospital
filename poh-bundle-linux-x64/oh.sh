@@ -20,31 +20,42 @@ POH_PATH_ESCAPED=$(echo $POH_PATH | sed -e 's/\//\\\//g')
 DICOM_MAX_SIZE=$(grep -i '^dicom.max.size' $POH_PATH/$OH_DIR/rsc/dicom.properties.ori  | cut -f2 -d'=')
 : ${DICOM_MAX_SIZE:=$DICOM_DEFAULT_SIZE}
 
+rm -f $POH_PATH/etc/mysql/my.cnf or true
 sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$mysql_port/" $POH_PATH/etc/mysql/my.ori > $POH_PATH/etc/mysql/my.cnf
+chmod 0444 $POH_PATH/etc/mysql/my.cnf
 sed -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" $POH_PATH/$OH_DIR/rsc/dicom.properties.ori > $POH_PATH/$OH_DIR/rsc/dicom.properties
 sed -e "s/3306/$mysql_port/" $POH_PATH/$OH_DIR/rsc/database.properties.sample > $POH_PATH/$OH_DIR/rsc/database.properties
 sed -e "s/MYSQL_PORT/$mysql_port/" $POH_PATH/$OH_DIR/rsc/log4j.properties.ori > $POH_PATH/$OH_DIR/rsc/log4j.properties
 
-echo "Starting MySQL... "
-cd $POH_PATH/$MYSQL_DIR/
-./bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
-if [ $? -ne 0 ]; then
-	echo "Error: Database not started!"
-	exit 1
-fi
-
 if [ -f $POH_PATH/database.sql ]
 then
     echo "Initializing database... on port $mysql_port"
+    cd $POH_PATH/$MYSQL_DIR/
+    ./bin/mysqld --initialize-insecure --basedir=./ --datadir=../var/lib/mysql
+    if [ $? -ne 0 ]; then
+		echo "Error: Initialization failed!"
+		exit 1
+	fi
+	echo "Default schemas initialized..."
+	./bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
     # Wait till the MySQL socket file is created
     while [ ! -e $POH_PATH/var/run/mysqld/mysql.sock ]; do sleep 1; done
+    ./bin/mysql -u root --port=$mysql_port -e "CREATE SCHEMA oh; GRANT ALL ON oh.* TO 'isf'@'localhost' IDENTIFIED BY 'isf123'; GRANT ALL ON oh.* TO 'isf'@'%' IDENTIFIED BY 'isf123';"
     ./bin/mysql --socket=$POH_PATH/var/run/mysqld/mysql.sock -u root --port=$mysql_port oh < $POH_PATH/database.sql
     if [ $? -ne 0 ]; then
-	echo "Error: Database not initialized!"
-	exit 2
+		echo "Error: Database not initialized!"
+		exit 2
     fi
     echo "Database initialized."
     rm $POH_PATH/database.sql
+else
+	cd $POH_PATH/$MYSQL_DIR/
+	echo "Starting MySQL... "
+	./bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
+	if [ $? -ne 0 ]; then
+		echo "Error: Database not started!"
+		exit 1
+	fi
 fi
 
 echo "Starting Open Hospital... "

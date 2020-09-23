@@ -9,10 +9,10 @@ socket = "OH_PATH_SUBSTITUTE/mysql-5.7.30-win32/mysql.sock"
 basedir = "OH_PATH_SUBSTITUTE/mysql-5.7.30-win32"  
 tmpdir = "OH_PATH_SUBSTITUTE/tmp"  
 datadir = "OH_PATH_SUBSTITUTE/mysql-5.7.30-win32/data" 
-skip-locking 
-key_buffer = 16M 
+skip-external-locking 
+key_buffer_size = 16M 
 max_allowed_packet = DICOM_SIZE
-table_cache = 64 
+table_open_cache = 64 
 sort_buffer_size = 512K 
 net_buffer_length = 8K 
 read_buffer_size = 256K 
