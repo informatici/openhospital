@@ -31,6 +31,8 @@ if [ -f $POH_PATH/database.sql ]
 then
     echo "Initializing database... on port $mysql_port"
     cd $POH_PATH/$MYSQL_DIR/
+    rm -rf ../var/lib/mysql
+    mkdir -p ../var/lib/mysql
     ./bin/mysqld --initialize-insecure --basedir=./ --datadir=../var/lib/mysql
     if [ $? -ne 0 ]; then
 		echo "Error: Initialization failed!"
