@@ -40,7 +40,7 @@ then
 	./bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
     # Wait till the MySQL socket file is created
     while [ ! -e $POH_PATH/var/run/mysqld/mysql.sock ]; do sleep 1; done
-    ./bin/mysql -u root --port=$mysql_port -e "CREATE SCHEMA oh; GRANT ALL ON oh.* TO 'isf'@'localhost' IDENTIFIED BY 'isf123'; GRANT ALL ON oh.* TO 'isf'@'%' IDENTIFIED BY 'isf123';"
+    ./bin/mysql --socket=$POH_PATH/var/run/mysqld/mysql.sock -u root --port=$mysql_port -e "CREATE SCHEMA oh; GRANT ALL ON oh.* TO 'isf'@'localhost' IDENTIFIED BY 'isf123'; GRANT ALL ON oh.* TO 'isf'@'%' IDENTIFIED BY 'isf123';"
     ./bin/mysql --socket=$POH_PATH/var/run/mysqld/mysql.sock -u root --port=$mysql_port oh < $POH_PATH/database.sql
     if [ $? -ne 0 ]; then
 		echo "Error: Database not initialized!"
