@@ -47,8 +47,8 @@ poh_linux_version="0.0.6"
 
 # generate changelog from previous tag
 pushd core
-lasttag=$(git tag --sort=-committerdate | head -1)
-secondlasttag=$(git tag --sort=-committerdate | head -2 | tail -n 1)
+lasttag=$(git tag -l --sort=-v:refname | head -1)
+secondlasttag=$(git tag -l --sort=-v:refname | head -2 | tail -n 1)
 popd
 
 cp CHANGELOG_TEMPLATE.md CHANGELOG.md

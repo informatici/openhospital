@@ -3,9 +3,9 @@ OpenHospital VERSION
 
 Changelog:
 
-
  - [Core component changelog](https://github.com/informatici/openhospital-core/compare/SECONDLASTTAG...LASTTAG)
  - [Gui component changelog](https://github.com/informatici/openhospital-gui/compare/SECONDLASTTAG...LASTTAG)
+ - [Doc component changelog](https://github.com/informatici/openhospital-doc/compare/SECONDLASTTAG...LASTTAG)
 
 Brought to you by:
 - Informatici Senza Frontiere open source community
