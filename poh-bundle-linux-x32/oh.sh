@@ -33,12 +33,14 @@ then
     cd $POH_PATH/$MYSQL_DIR/
     rm -rf ../var/lib/mysql
     mkdir -p ../var/lib/mysql
+    mkdir -p ../var/log/mysql
     ./bin/mysqld --initialize-insecure --basedir=./ --datadir=../var/lib/mysql
     if [ $? -ne 0 ]; then
 		echo "Error: Initialization failed!"
 		exit 1
 	fi
 	echo "Default schemas initialized..."
+	echo -n "Starting MySQL Server."
 	./bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
     # Wait till the MySQL socket file is created
     while [ ! -e $POH_PATH/var/run/mysqld/mysql.sock ]; do sleep 1; done
