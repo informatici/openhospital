@@ -40,7 +40,7 @@ cd /d %OH_PATH%
 echo f | xcopy my.ori %OH_PATH%mysql-5.7.30-win32\bin\my.cnf /y
 %REPLACE_PATH%\replace.exe 3306 %freePort% -- %OH_PATH%mysql-5.7.30-win32\bin\my.cnf
 %REPLACE_PATH%\replace.exe OH_PATH_SUBSTITUTE %OH_PATH% -- %OH_PATH%mysql-5.7.30-win32\bin\my.cnf
-%REPLACE_PATH%\replace.exe DICOM_SIZE %dicom_size% -- %OH_PATH%mysql-5.7.30-win32\bin\my.cnf
+%REPLACE_PATH%\replace.exe DICOM_SIZE %dicom_size% -- %OH_PATH%\mysql-5.7.30-win32\bin\my.cnf
 REM %REPLACE_PATH%\replace.exe "^x5c" "^x2f" -- my.cnf 
 
 IF EXIST "%OH_PATH%database.sql" (
