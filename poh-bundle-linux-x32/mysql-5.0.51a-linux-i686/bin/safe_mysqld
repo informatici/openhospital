@@ -1,1 +1,0 @@
-mysqld_safe

@@ -10,7 +10,7 @@ If you'd like to contribute to the Open Hospital project, please read [CONTRIBUT
 
 To create the Open Hospital packages,
 make sure to have installed the following dependencies on a Linux machine:
-_JDK 8+, Maven, asciidoctor-pdf, docker-compose, MySQL client, zip._
+_JDK 8+, Maven, asciidoctor-pdf, docker, docker-compose, zip_.
 
 Then follow these simple steps:
 

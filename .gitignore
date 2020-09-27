@@ -5,8 +5,12 @@
 *.sql
 poh-win*
 poh-linux*
+OpenHospital-*
 core
 gui
 doc
 CHANGELOG.md
 CHANGELOG
+.project
+*.log
+release-files

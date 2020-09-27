@@ -1,6 +1,6 @@
 @echo off
 set OH_PATH=%~dps0
-set XCHANGE32_PATH=%OH_PATH%\mysql\bin
+set REPLACE_PATH=%OH_PATH%\mysql-5.7.30-win32\bin
 set freePort=
 set startPort=3306
 FOR /F "tokens=2,2 delims==" %%i IN ('findstr /i "dicom.max.size" %OH_PATH%oh\rsc\dicom.properties.ori') DO (
@@ -27,31 +27,35 @@ echo "MySQL will listen on the free port %freePort%"
 
 cd /d %OH_PATH%\oh\rsc
 echo f | xcopy dicom.properties.ori dicom.properties /y
-%XCHANGE32_PATH%\Xchang32.exe dicom.properties "OH_PATH_SUBSTITUTE" "%OH_PATH%"
-%XCHANGE32_PATH%\Xchang32.exe dicom.properties "^x5c" "^x2f"
+%REPLACE_PATH%\replace.exe OH_PATH_SUBSTITUTE %OH_PATH% -- dicom.properties
+REM %REPLACE_PATH%\replace.exe "^x5c" "^x2f" -- dicom.properties
 echo f | xcopy database.properties.sample database.properties /y
-%XCHANGE32_PATH%\Xchang32.exe database.properties "3306" "%freePort%"
-%XCHANGE32_PATH%\Xchang32.exe database.properties "^x5c" "^x2f"
+%REPLACE_PATH%\replace.exe 3306 %freePort% -- database.properties
+REM %REPLACE_PATH%\replace.exe "^x5c" "^x2f" -- database.properties 
 echo f | xcopy log4j.properties.ori log4j.properties /y
-%XCHANGE32_PATH%\Xchang32.exe log4j.properties "3306" "%freePort%"
-%XCHANGE32_PATH%\Xchang32.exe log4j.properties "^x5c" "^x2f
+%REPLACE_PATH%\replace.exe 3306 %freePort% -- log4j.properties
+REM %REPLACE_PATH%\replace.exe "^x5c" "^x2f" -- log4j.properties 
 
-cd /d %OH_PATH%\mysql\bin
-echo f | xcopy my.ori my.cnf /y
-%XCHANGE32_PATH%\Xchang32.exe my.cnf "3306" "%freePort%"
-%XCHANGE32_PATH%\Xchang32.exe my.cnf "OH_PATH_SUBSTITUTE" "%OH_PATH%"
-%XCHANGE32_PATH%\Xchang32.exe my.cnf "DICOM_SIZE" "%dicom_size%"
-%XCHANGE32_PATH%\Xchang32.exe my.cnf "^x5c" "^x2f"
-
-start /b /min %OH_PATH%mysql\bin\mysqld --defaults-file=%OH_PATH%mysql\bin\my.cnf --standalone --console
+cd /d %OH_PATH%
+echo f | xcopy my.ori %OH_PATH%mysql-5.7.30-win32\bin\my.cnf /y
+%REPLACE_PATH%\replace.exe 3306 %freePort% -- %OH_PATH%mysql-5.7.30-win32\bin\my.cnf
+%REPLACE_PATH%\replace.exe OH_PATH_SUBSTITUTE %OH_PATH% -- %OH_PATH%mysql-5.7.30-win32\bin\my.cnf
+%REPLACE_PATH%\replace.exe DICOM_SIZE %dicom_size% -- %OH_PATH%\mysql-5.7.30-win32\bin\my.cnf
+REM %REPLACE_PATH%\replace.exe "^x5c" "^x2f" -- my.cnf 
 
 IF EXIST "%OH_PATH%database.sql" (
   echo Initializing database...
-  %OH_PATH%mysql\bin\mysql -u root --port=%freePort% oh < "%OH_PATH%database.sql"
+  %OH_PATH%mysql-5.7.30-win32\bin\mysqld --initialize-insecure --tmpdir=%OH_PATH%\tmp
+  IF ERRORLEVEL 1 (goto END)
+  start /b /min %OH_PATH%mysql-5.7.30-win32\bin\mysqld --tmpdir=%OH_PATH%\tmp --standalone --console
+  %OH_PATH%mysql-5.7.30-win32\bin\mysql -u root --port=%freePort% -e "CREATE SCHEMA oh; GRANT ALL ON oh.* TO 'isf'@'localhost' IDENTIFIED BY 'isf123'; GRANT ALL ON oh.* TO 'isf'@'%' IDENTIFIED BY 'isf123';"
+  %OH_PATH%mysql-5.7.30-win32\bin\mysql -u root --port=%freePort% oh < "%OH_PATH%database.sql"
+  IF ERRORLEVEL 1 (goto END)
   echo Database initialized.
   DEL %OH_PATH%database.sql
 ) ELSE (
   echo "missing database.sql or Database already initialized"
+  start /b /min %OH_PATH%mysql-5.7.30-win32\bin\mysqld --tmpdir=%OH_PATH%\tmp --standalone --console
 )
 
 set OH_HOME=%OH_PATH%oh
@@ -74,5 +78,9 @@ set CLASSPATH=%CLASSPATH%;%OH_REPORT%
 
 cd /d %OH_PATH%oh\
 %OH_PATH%jdk8u252-b09-jre\bin\java.exe -Dlog4j.configuration=%OH_PATH%oh/rsc/log4j.properties -showversion -Dsun.java2d.dpiaware=false -Djava.library.path=%OH_PATH%oh\lib\native\Windows -cp %CLASSPATH% org.isf.menu.gui.Menu
-start /b %OH_PATH%mysql\bin\mysqladmin --user=root --password= --port=%freePort% shutdown
+start /b %OH_PATH%mysql-5.7.30-win32\bin\mysqladmin --user=root --password= --port=%freePort% shutdown
 exit
+
+:END
+echo Error initializing the DB.
+pause
