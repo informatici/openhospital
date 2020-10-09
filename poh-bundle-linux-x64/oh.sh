@@ -12,7 +12,7 @@ cd $where_i_am
 
 # Find a free port to run MySQL starting from the default port.
 mysql_port=3306
-while [ $(netstat -tna | grep -e '^tcp' | awk '{ print $4 }' | grep ":$mysql_port") ]; do
+while [ $(ss -tna | awk '{ print $4 }' | grep ":$mysql_port") ]; do
 	mysql_port=$(expr $mysql_port + 1)
 done
 
