@@ -6,14 +6,14 @@ POH_VERSION ?= "1.0"
 
 all: build
 
-clean: clean-downloads
+clean:
 	git clean -xdff
 clean-downloads:
-	rm -rf /tmp/oh-download
+	rm -rf *.zip *.tar.gz
 
 assemble: build
 
-build: clone-all
+build: clone-all dw-all
 	mvn -T 1.5C package
 
 clone-all: core gui doc
