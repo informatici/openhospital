@@ -31,6 +31,17 @@ oh-admin-manual.pdf:
 oh-user-manual.pdf: 
 	asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o oh-user-manual.pdf
 
+CHANGELOG:
+	pushd core; \
+	lasttag=$(shell git tag -l --sort=-v:refname | head -1); \
+	secondlasttag=$(shell git tag -l --sort=-v:refname | head -2 | tail -n 1); \
+	popd; \
+	cp CHANGELOG_TEMPLATE.md CHANGELOG.md; \
+	sed -i "s/VERSION/$(OH_VERSION)/g" CHANGELOG.md; \
+	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" CHANGELOG.md; \
+	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" CHANGELOG.md; \
+	head --lines=-4 CHANGELOG.md > CHANGELOG
+
 dw-all: dw-jre-all dw-mysql-all
 dw-jre-all: jre-linux32.tar.gz jre-linux64.tar.gz jre-win.zip
 dw-mysql-all: mysql-linux32.tar.gz mysql-linux64.tar.gz mysql-win.zip
