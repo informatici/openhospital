@@ -106,9 +106,9 @@ mkdir -p $DOWNLOAD_DIR
 download_jre_mysql() {
     pushd $DOWNLOAD_DIR
     URL_LIST=(
-        "https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09.1/OpenJDK8U-jre_x86-32_windows_hotspot_8u252b09.zip"
-        "https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jre_x64_linux_hotspot_8u252b09.tar.gz"
-        "https://cdn.azul.com/zulu/bin/zulu8.46.0.19-ca-jre8.0.252-linux_i686.tar.gz"
+        "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.7%2B10.2/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.7_10.zip"
+        "https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.7%2B10/OpenJDK11U-jre_x64_linux_hotspot_11.0.7_10.tar.gz"
+        "https://cdn.azul.com/zulu/bin/zulu11.39.15-ca-jre11.0.7-linux_i686.tar.gz"
         "https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-win32.zip"
         "https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-x86_64.tar.gz"
         "https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-i686.tar.gz")
@@ -129,7 +129,7 @@ download_jre_mysql
 
 echo 'Assemble OH Windows portable...'
 cp -rf ./poh-bundle-win/* $WIN_DIR
-unzip $DOWNLOAD_DIR/OpenJDK8U-jre_x86-32_windows_hotspot_8u252b09.zip -d $WIN_DIR
+unzip $DOWNLOAD_DIR/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.7_10.zip -d $WIN_DIR
 unzip $DOWNLOAD_DIR/mysql-5.7.30-win32.zip -d $WIN_DIR -x "*/lib/*"
 cp -rf ./gui/target/OpenHospital20/* $WIN_DIR/oh
 rm -rf $WIN_DIR/oh/generate_changelog.sh
@@ -142,7 +142,7 @@ cp CHANGELOG $WIN_DIR
 
 echo 'Assemble OH Linux x32 portable...'
 cp -rf ./poh-bundle-linux-x32/* $LINUX32_DIR
-tar xz -C $LINUX32_DIR -f $DOWNLOAD_DIR/zulu8.46.0.19-ca-jre8.0.252-linux_i686.tar.gz
+tar xz -C $LINUX32_DIR -f $DOWNLOAD_DIR/zulu11.39.15-ca-jre11.0.7-linux_i686.tar.gz
 tar xz -C $LINUX32_DIR -f $DOWNLOAD_DIR/mysql-5.7.30-linux-glibc2.12-i686.tar.gz --exclude="*/lib/*"
 cp -rf ./gui/target/OpenHospital20/* $LINUX32_DIR/oh
 rm -rf $LINUX32_DIR/oh/generate_changelog.sh
@@ -155,7 +155,7 @@ cp CHANGELOG $LINUX32_DIR
 
 echo 'Assemble OH Linux x64 portable...'
 cp -rf ./poh-bundle-linux-x64/* $LINUX64_DIR
-tar xz -C $LINUX64_DIR -f $DOWNLOAD_DIR/OpenJDK8U-jre_x64_linux_hotspot_8u252b09.tar.gz
+tar xz -C $LINUX64_DIR -f $DOWNLOAD_DIR/OpenJDK11U-jre_x64_linux_hotspot_11.0.7_10.tar.gz
 tar xz -C $LINUX64_DIR -f $DOWNLOAD_DIR/mysql-5.7.30-linux-glibc2.12-x86_64.tar.gz --exclude="*/lib/*"
 cp -rf ./gui/target/OpenHospital20/* $LINUX64_DIR/oh
 rm -rf $LINUX64_DIR/oh/generate_changelog.sh
