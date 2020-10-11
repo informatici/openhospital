@@ -2,7 +2,7 @@ SHELL = /bin/bash
 OH_VERSION ?= $(shell git describe --abbrev=0 --tags)
 POH_VERSION ?= "1.0"
 
-.PHONY: build clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all
+.PHONY: build clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile compile-all docs-all
 
 all: build
 
@@ -13,11 +13,14 @@ clean-downloads:
 
 assemble: build
 
-build: clone-all dw-all
+build: compile-all dw-all
+
+compile-all: compile docs-all CHANGELOG
+
+compile: clone-all
 	mvn -T 1.5C package
 
 clone-all: core gui doc
-	@echo Cloned all projects.
 core:
 	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git core
 gui:
@@ -25,13 +28,13 @@ gui:
 doc:
 	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git doc
 
-docs-all: oh-admin-manual.pdf oh-user-manual.pdf
-oh-admin-manual.pdf:
+docs-all: doc oh-admin-manual.pdf oh-user-manual.pdf
+oh-admin-manual.pdf: doc
 	asciidoctor-pdf ./doc/doc_admin/AdminManual.adoc -o oh-admin-manual.pdf
-oh-user-manual.pdf: 
+oh-user-manual.pdf: doc
 	asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o oh-user-manual.pdf
 
-CHANGELOG:
+CHANGELOG: core
 	pushd core; \
 	lasttag=$(shell git tag -l --sort=-v:refname | head -1); \
 	secondlasttag=$(shell git tag -l --sort=-v:refname | head -2 | tail -n 1); \
