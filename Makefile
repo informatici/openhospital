@@ -23,7 +23,7 @@ build: compile-all dw-all
 compile-all: compile docs-all CHANGELOG database.sql
 
 # Assemble targets
-assemble-all: $(FULL).zip
+assemble-all: $(FULL).zip $(WIN).zip
 
 $(FULL).zip: compile-all
 	mkdir -p $(FULL) $(FULL)/doc $(FULL)/mysql
@@ -33,6 +33,16 @@ $(FULL).zip: compile-all
 	cp LICENSE $(FULL)
 	cp CHANGELOG $(FULL)
 	zip -r $(FULL).zip $(FULL)
+
+$(WIN).zip: compile-all
+	mkdir -p $(WIN)/oh/doc $(FULL)/mysql
+	cp -rf ./poh-bundle-win/* $(WIN)
+	unzip jre-win.zip -d $(WIN)
+	unzip mysql-win.zip -d $(WIN) -x "*/lib/*"
+	cp -rf ./gui/target/OpenHospital20/* $(WIN)/oh
+	rm -rf $(WIN)/oh/generate_changelog.sh
+	cp *.sql POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
+	zip -r $(WIN).zip $(WIN)
 
 # Compile application binaries
 compile: clone-all
