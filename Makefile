@@ -1,10 +1,10 @@
 SHELL = /bin/bash
 OH_VERSION ?= $(shell git describe --abbrev=0 --tags)
-POH_VERSION ?= "1.0"
-FULL = "openhospital-$(OH_VERSION)"
-WIN = "poh-win32-$(POH_VERSION)-core-$(OH_VERSION)"
-LINUX32 = "poh-linux-x32-$(POH_VERSION)-core-$(OH_VERSION)"
-LINUX64 = "poh-linux-x64-$(POH_VERSION)-core-$(OH_VERSION)"
+POH_VERSION ?= 1.0
+FULL = openhospital-$(OH_VERSION)
+WIN = poh-win32-$(POH_VERSION)-core-$(OH_VERSION)
+LINUX32 = poh-linux-x32-$(POH_VERSION)-core-$(OH_VERSION)
+LINUX64 = poh-linux-x64-$(POH_VERSION)-core-$(OH_VERSION)
 
 .PHONY: build clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile compile-all docs-all
 
