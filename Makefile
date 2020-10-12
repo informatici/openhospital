@@ -26,7 +26,7 @@ compile-all: compile docs-all CHANGELOG database.sql
 assemble-all: $(FULL).zip $(WIN).zip
 
 $(FULL).zip: compile-all
-	mkdir -p $(FULL) $(FULL)/doc $(FULL)/mysql
+	mkdir -p $(FULL)/doc $(FULL)/mysql
 	cp -rf ./gui/target/OpenHospital20/* $(FULL)
 	cp -rf ./core/mysql/db/* $(FULL)/mysql
 	rm -rf $(FULL)/generate_changelog.sh
@@ -37,8 +37,8 @@ $(FULL).zip: compile-all
 $(WIN).zip: compile-all
 	mkdir -p $(WIN)/oh/doc $(FULL)/mysql
 	cp -rf ./poh-bundle-win/* $(WIN)
-	unzip jre-win.zip -d $(WIN)
-	unzip mysql-win.zip -d $(WIN) -x "*/lib/*"
+	unzip -f jre-win.zip -d $(WIN)
+	unzip -f mysql-win.zip -d $(WIN) -x "*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(WIN)/oh
 	rm -rf $(WIN)/oh/generate_changelog.sh
 	cp *.sql POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
