@@ -32,7 +32,6 @@ echo ""
 ######## OPENHOSPITAL Configuration
 # POH_PATH is the directory where Portable OpenHospital files are located
 # POH_PATH=/usr/local/OpenHospital
-POH_PATH=/home/mizzio/Scaricati/OH_dev/poh-linux-x64-0.0.6-core-1.10.0
 SCRIPT_NAME="oh.sh"
 
 # set current dir
