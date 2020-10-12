@@ -22,7 +22,7 @@
 #
 
 echo ""
-echo "**************************************************é"
+echo "***************************************************"
 echo "* Warning - Do not run this script as root user ! *"
 echo "***************************************************"
 echo ""
@@ -32,6 +32,8 @@ echo ""
 ######## OPENHOSPITAL Configuration
 # POH_PATH is the directory where Portable OpenHospital files are located
 # POH_PATH=/usr/local/OpenHospital
+
+# name of this shell script
 SCRIPT_NAME="oh.sh"
 
 # set current dir
@@ -136,9 +138,10 @@ while [ $(ss -tna | awk '{ print $4 }' | grep ":$MYSQL_PORT") ]; do
 done
 
 rm -f $POH_PATH/etc/mysql/my.cnf or true
+sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$MYSQL_PORT/" -e "s/MYSQL_DISTRO/$MYSQL_DISTRO/g" $POH_PATH/etc/mysql/my.ori > $POH_PATH/etc/mysql/my.cnf
 
-sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$MYSQL_PORT/" $POH_PATH/etc/mysql/my.ori > $POH_PATH/etc/mysql/my.cnf
 chmod 0444 $POH_PATH/etc/mysql/my.cnf
+
 sed -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" $POH_PATH/$OH_DIR/rsc/dicom.properties.ori > $POH_PATH/$OH_DIR/rsc/dicom.properties
 sed -e "s/3306/$MYSQL_PORT/" $POH_PATH/$OH_DIR/rsc/database.properties.sample > $POH_PATH/$OH_DIR/rsc/database.properties
 sed -e "s/MYSQL_PORT/$MYSQL_PORT/" $POH_PATH/$OH_DIR/rsc/log4j.properties.ori > $POH_PATH/$OH_DIR/rsc/log4j.properties
