@@ -19,7 +19,7 @@ clean-downloads:
 compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG database.sql
 
 # Assemble targets
-assemble-all: $(FULL).zip $(WIN).zip $(LINUX32).tar.gz
+assemble-all: $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
 
 $(FULL).zip: compile-all
 	mkdir -p $(FULL)/doc $(FULL)/mysql
@@ -52,6 +52,17 @@ $(LINUX32).tar.gz: compile-all dw-all
 	cp *.sql POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
 	cp *.pdf $(LINUX32)/oh/doc
 	tar -cvzf $(LINUX32).tar.gz $(LINUX32)
+
+$(LINUX64).tar.gz: compile-all dw-all
+	mkdir -p $(LINUX64)/oh/doc
+	cp -rf ./poh-bundle-linux-x64/* $(LINUX64)
+	tar xz -C $(LINUX64) -f jre-linux64.tar.gz
+	tar xz -C $(LINUX64) -f mysql-linux64.tar.gz --exclude="*/lib/*"
+	cp -rf ./gui/target/OpenHospital20/* $(LINUX64)/oh
+	rm -rf $(LINUX64)/oh/generate_changelog.sh
+	cp *.sql POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
+	cp *.pdf $(LINUX64)/oh/doc
+	tar -cvzf $(LINUX64).tar.gz $(LINUX64)
 
 # Compile application binaries
 gui/target/OpenHospital20/bin/OH-gui.jar: clone-all
