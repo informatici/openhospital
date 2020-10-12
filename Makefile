@@ -1,6 +1,10 @@
 SHELL = /bin/bash
 OH_VERSION ?= $(shell git describe --abbrev=0 --tags)
 POH_VERSION ?= "1.0"
+FULL = "openhospital-$(OH_VERSION)"
+WIN = "poh-win32-$(POH_VERSION)-core-$(OH_VERSION)"
+LINUX32 = "poh-linux-x32-$(POH_VERSION)-core-$(OH_VERSION)"
+LINUX64 = "poh-linux-x64-$(POH_VERSION)-core-$(OH_VERSION)"
 
 .PHONY: build clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile compile-all docs-all
 
@@ -16,7 +20,19 @@ assemble: build
 
 build: compile-all dw-all
 
-compile-all: compile docs-all CHANGELOG
+compile-all: compile docs-all CHANGELOG database.sql
+
+# Assemble targets
+assemble-all: $(FULL).zip
+
+$(FULL).zip: compile-all
+	mkdir -p $(FULL) $(FULL)/doc $(FULL)/mysql
+	cp -rf ./gui/target/OpenHospital20/* $(FULL)
+	cp -rf ./core/mysql/db/* $(FULL)/mysql
+	rm -rf $(FULL)/generate_changelog.sh
+	cp LICENSE $(FULL)
+	cp CHANGELOG $(FULL)
+	zip -r $(FULL).zip $(FULL)
 
 # Compile application binaries
 compile: clone-all
