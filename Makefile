@@ -94,12 +94,12 @@ oh-user-manual.pdf: doc
 
 # Create database dump
 database.sql: core
-	docker-compose -f core/docker-compose.yml up -d; \
-	echo -n "Waiting for MySQL to start."; \
+	docker-compose -f core/docker-compose.yml up -d
+	echo -n "Waiting for MySQL to start." ; \
 	until docker exec -i core_database_1 mysqldump --protocol tcp -h localhost -u isf -pisf123 --no-tablespaces oh > database.sql 2>dump_error.log; \
-	do echo -n "."; sleep 2; done; \
-	docker-compose -f core/docker-compose.yml down; \
-	if grep Error dump_error.log; then exit 1; fi; \
+	do echo -n "."; sleep 2; done
+	docker-compose -f core/docker-compose.yml down
+	if grep Error dump_error.log; then exit 1; fi
 	
 # Create changelog file
 CHANGELOG: core
