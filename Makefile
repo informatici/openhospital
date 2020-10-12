@@ -10,6 +10,8 @@ LINUX64 = poh-linux-x64-$(POH_VERSION)-core-$(OH_VERSION)
 
 all: compile-all dw-all assemble-all
 
+all: compile-all dw-all release-files
+
 # Clean targets
 clean:
 	git clean -xdff
@@ -19,7 +21,13 @@ clean-downloads:
 compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG database.sql
 
 # Assemble targets
-assemble-all: $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
+release-files: $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
+	checksum="$(shell sha256sum $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz)"; \
+	checksum=$${checksum//$$'\n'/\\n}; \
+	sed -i "s/CHECKSUM/$$checksum/g" CHANGELOG.md
+	mkdir -p release-files
+	mv $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz release-files/
+	ls release-files
 
 $(FULL).zip: compile-all
 	mkdir -p $(FULL)/doc $(FULL)/mysql
