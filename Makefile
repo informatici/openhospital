@@ -8,7 +8,7 @@ LINUX64 = "poh-linux-x64-$(POH_VERSION)-core-$(OH_VERSION)"
 
 .PHONY: build clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile compile-all docs-all
 
-all: build
+all: compile-all dw-all assemble-all
 
 # Clean targets
 clean:
@@ -16,11 +16,7 @@ clean:
 clean-downloads:
 	rm -rf *.zip *.tar.gz
 
-assemble: build
-
-build: compile-all dw-all
-
-compile-all: compile docs-all CHANGELOG database.sql
+compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG database.sql
 
 # Assemble targets
 assemble-all: $(FULL).zip $(WIN).zip
@@ -45,7 +41,7 @@ $(WIN).zip: compile-all
 	zip -r $(WIN).zip $(WIN)
 
 # Compile application binaries
-compile: clone-all
+gui/target/OpenHospital20/bin/OH-gui.jar: clone-all
 	mvn -T 1.5C package
 
 # Clone repositories of OH components
