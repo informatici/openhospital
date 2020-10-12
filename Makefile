@@ -28,16 +28,18 @@ $(FULL).zip: compile-all
 	rm -rf $(FULL)/generate_changelog.sh
 	cp LICENSE $(FULL)
 	cp CHANGELOG $(FULL)
+	cp *.pdf $(FULL)/doc
 	zip -r $(FULL).zip $(FULL)
 
-$(WIN).zip: compile-all
-	mkdir -p $(WIN)/oh/doc $(FULL)/mysql
+$(WIN).zip: compile-all dw-all
+	mkdir -p $(WIN)/oh/doc
 	cp -rf ./poh-bundle-win/* $(WIN)
 	unzip -f jre-win.zip -d $(WIN)
 	unzip -f mysql-win.zip -d $(WIN) -x "*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(WIN)/oh
 	rm -rf $(WIN)/oh/generate_changelog.sh
 	cp *.sql POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
+	cp *.pdf $(WIN)/oh/doc
 	zip -r $(WIN).zip $(WIN)
 
 $(LINUX32).tar.gz: compile-all dw-all
