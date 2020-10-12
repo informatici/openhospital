@@ -74,7 +74,9 @@ $(LINUX64).tar.gz: compile-all dw-all
 
 # Compile application binaries
 gui/target/OpenHospital20/bin/OH-gui.jar: clone-all
+	docker-compose -f core/docker-compose.yml up -d
 	mvn -T 1.5C package
+	docker-compose -f core/docker-compose.yml down
 
 # Clone repositories of OH components
 clone-all: core gui doc
