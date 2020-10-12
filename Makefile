@@ -6,6 +6,7 @@ POH_VERSION ?= "1.0"
 
 all: build
 
+# Clean targets
 clean:
 	git clean -xdff
 clean-downloads:
@@ -17,9 +18,11 @@ build: compile-all dw-all
 
 compile-all: compile docs-all CHANGELOG
 
+# Compile application binaries
 compile: clone-all
 	mvn -T 1.5C package
 
+# Clone repositories of OH components
 clone-all: core gui doc
 core:
 	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git core
@@ -28,12 +31,14 @@ gui:
 doc:
 	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git doc
 
+# Compile documentation
 docs-all: doc oh-admin-manual.pdf oh-user-manual.pdf
 oh-admin-manual.pdf: doc
 	asciidoctor-pdf ./doc/doc_admin/AdminManual.adoc -o oh-admin-manual.pdf
 oh-user-manual.pdf: doc
 	asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o oh-user-manual.pdf
 
+# Create changelog file
 CHANGELOG: core
 	pushd core; \
 	lasttag=$(shell git tag -l --sort=-v:refname | head -1); \
@@ -45,6 +50,7 @@ CHANGELOG: core
 	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" CHANGELOG.md; \
 	head --lines=-4 CHANGELOG.md > CHANGELOG
 
+# Download JRE and MySQL
 dw-all: dw-jre-all dw-mysql-all
 dw-jre-all: jre-linux32.tar.gz jre-linux64.tar.gz jre-win.zip
 dw-mysql-all: mysql-linux32.tar.gz mysql-linux64.tar.gz mysql-win.zip
