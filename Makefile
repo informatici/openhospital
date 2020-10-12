@@ -6,9 +6,7 @@ WIN = poh-win32-$(POH_VERSION)-core-$(OH_VERSION)
 LINUX32 = poh-linux-x32-$(POH_VERSION)-core-$(OH_VERSION)
 LINUX64 = poh-linux-x64-$(POH_VERSION)-core-$(OH_VERSION)
 
-.PHONY: build clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile compile-all docs-all
-
-all: compile-all dw-all assemble-all
+.PHONY: clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile-all docs-all
 
 all: compile-all dw-all release-files
 
