@@ -36,10 +36,11 @@ version="${OH_VERSION:-$(git describe --abbrev=0 --tags)}"
 echo "Building Open Hospital version: $version"
 
 # clone core, gui and doc repositories
-rm -rf core gui doc 
-git clone -b $version https://github.com/informatici/openhospital-core.git core
-git clone -b $version https://github.com/informatici/openhospital-gui.git gui
-git clone -b $version https://github.com/informatici/openhospital-doc.git doc
+COMPONENTS="core gui doc"
+rm -rf $COMPONENTS
+for component in $COMPONENTS; do
+    git clone -b $version https://github.com/informatici/openhospital-${component}.git $component
+done
 
 # set the portable distribution version
 poh_win32_version="0.0.6"
