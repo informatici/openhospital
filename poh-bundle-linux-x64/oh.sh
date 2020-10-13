@@ -57,6 +57,7 @@ JAVA_DISTRO="OpenJDK11U-jdk_x64_linux_openj9_11.0.8_10_openj9-0.21.0"
 JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.8%2B10_openj9-0.21.0"
 JAVA_DIR="jdk-11.0.8+10"
 
+MYSQL_PORT=3307
 
 OH_DIR="oh"
 DATABASE_NAME="oh"
@@ -130,8 +131,6 @@ DICOM_MAX_SIZE=$(grep -i '^dicom.max.size' $POH_PATH/$OH_DIR/rsc/dicom.propertie
 : ${DICOM_MAX_SIZE:=$DICOM_DEFAULT_SIZE}
 
 ######## Database setup
-
-MYSQL_PORT=3307
 
 while [ $(ss -tna | awk '{ print $4 }' | grep ":$MYSQL_PORT") ]; do
 	MYSQL_PORT=$(expr $MYSQL_PORT + 1)
