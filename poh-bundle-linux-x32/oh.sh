@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-i686"
-JAVA_DIR="jdk8u252-b09-jre"
+JAVA_DIR="zulu11.39.15-ca-jre11.0.7-linux_i686"
 OH_DIR="oh"
 DICOM_DEFAULT_SIZE="4M"
 
