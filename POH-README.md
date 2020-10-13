@@ -20,7 +20,7 @@ The Linux version has been tested on Ubuntu 20.04 x64 updated to October 2020. T
 
 - unzip the package in any directory
 - cd to the directory
-- on Windows, double click on the oh.bat batch file
+- on Windows, start POH by double clicking on the oh.bat batch file
 - on Linux, start POH by running ./oh.sh
 
 Bugs, issues and feature requests should be reported on
