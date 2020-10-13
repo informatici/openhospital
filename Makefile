@@ -29,9 +29,13 @@ compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG databas
 
 # Assemble targets
 release-files: $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
-	checksum="$(shell sha256sum $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz)"
-	checksum=$${checksum//$$'\n'/\\n}
-	sed -i "s/CHECKSUM/$$checksum/g" CHANGELOG.md
+	echo "Checksum:" >> CHANGELOG.md
+	echo "\`\`\`" >> CHANGELOG.md
+	sha256sum $(FULL).zip >> CHANGELOG.md
+	sha256sum $(WIN).zip >> CHANGELOG.md
+	sha256sum $(LINUX32).tar.gz >> CHANGELOG.md
+	sha256sum $(LINUX64).tar.gz >> CHANGELOG.md
+	echo "\`\`\`" >> CHANGELOG.md	
 	mkdir -p release-files
 	mv $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz release-files/
 	ls release-files
@@ -120,7 +124,7 @@ CHANGELOG: core
 	sed -i "s/VERSION/$(OH_VERSION)/g" CHANGELOG.md
 	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" CHANGELOG.md
 	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" CHANGELOG.md
-	head --lines=-4 CHANGELOG.md > CHANGELOG
+	cp CHANGELOG.md CHANGELOG
 
 # Download JRE and MySQL
 dw-all: dw-jre-all dw-mysql-all
