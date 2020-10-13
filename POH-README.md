@@ -14,8 +14,14 @@ program and the data will be kept.  POH uses its own version of the Java Virtual
 Machine and the MySQL server and everything is contained in the root
 installation directory.  POH is released under the GNU GPL 3.0 License.
 
-The Linux version has been tested on Ubuntu 16.04 i386 and on Arch Linux x64
-updated to July 2019. The Windows version has been tested on Windows 10.  
+The Linux version has been tested on Ubuntu 20.04 x64 updated to October 2020. The Windows version has been tested on Windows 10. 
+
+# Running POH - Quickstart
+
+- unzip the package in any directory
+- cd to the directory
+- on Windows, double click on the oh.bat batch file
+- on Linux, start POH by running ./oh.sh
 
 Bugs, issues and feature requests should be reported on
 our repository on GitHub: https://github.com/informatici/openhospital
