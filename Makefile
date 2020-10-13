@@ -49,8 +49,8 @@ $(FULL).zip: compile-all
 $(WIN).zip: compile-all dw-all
 	mkdir -p $(WIN)/oh/doc
 	cp -rf ./poh-bundle-win/* $(WIN)
-	unzip -f $(JRE_WIN) -d $(WIN)
-	unzip -f $(MYSQL_WIN) -d $(WIN) -x "*/lib/*"
+	unzip $(JRE_WIN) -d $(WIN)
+	unzip $(MYSQL_WIN) -d $(WIN) -x "*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(WIN)/oh
 	rm -rf $(WIN)/oh/generate_changelog.sh
 	cp *.sql POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
