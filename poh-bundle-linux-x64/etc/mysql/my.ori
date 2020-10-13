@@ -7,7 +7,7 @@ socket = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.sock"
 port = MYSQL_PORT 
 socket = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.sock"
 pid-file = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.pid"
-basedir = "OH_PATH_SUBSTITUTE/mysql-5.7.30-linux-glibc2.12-x86_64"  
+basedir = "OH_PATH_SUBSTITUTE/MYSQL_DISTRO"  
 tmpdir = "OH_PATH_SUBSTITUTE/tmp"  
 datadir = "OH_PATH_SUBSTITUTE/var/lib/mysql" 
 skip-external-locking 
