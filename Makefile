@@ -5,6 +5,12 @@ FULL = openhospital-$(OH_VERSION)
 WIN = poh-win32-$(POH_VERSION)-core-$(OH_VERSION)
 LINUX32 = poh-linux-x32-$(POH_VERSION)-core-$(OH_VERSION)
 LINUX64 = poh-linux-x64-$(POH_VERSION)-core-$(OH_VERSION)
+JRE_WIN = jre-win.zip
+JRE_LINUX32 = jre-linux32.tar.gz
+JRE_LINUX64 = jre-linux64.tar.gz
+MYSQL_WIN = mysql-win.zip
+MYSQL_LINUX32 = mysql-linux32.tar.gz
+MYSQL_LINUX64 = mysql-linux64.tar.gz
 
 .PHONY: clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile-all docs-all
 
@@ -40,8 +46,8 @@ $(FULL).zip: compile-all
 $(WIN).zip: compile-all dw-all
 	mkdir -p $(WIN)/oh/doc
 	cp -rf ./poh-bundle-win/* $(WIN)
-	unzip -f jre-win.zip -d $(WIN)
-	unzip -f mysql-win.zip -d $(WIN) -x "*/lib/*"
+	unzip -f $(JRE_WIN) -d $(WIN)
+	unzip -f $(MYSQL_WIN) -d $(WIN) -x "*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(WIN)/oh
 	rm -rf $(WIN)/oh/generate_changelog.sh
 	cp *.sql POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
@@ -51,8 +57,8 @@ $(WIN).zip: compile-all dw-all
 $(LINUX32).tar.gz: compile-all dw-all
 	mkdir -p $(LINUX32)/oh/doc
 	cp -rf ./poh-bundle-linux-x32/* $(LINUX32)
-	tar xz -C $(LINUX32) -f jre-linux32.tar.gz
-	tar xz -C $(LINUX32) -f mysql-linux32.tar.gz --exclude="*/lib/*"
+	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
+	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(LINUX32)/oh
 	rm -rf $(LINUX32)/oh/generate_changelog.sh
 	cp *.sql POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
@@ -62,8 +68,8 @@ $(LINUX32).tar.gz: compile-all dw-all
 $(LINUX64).tar.gz: compile-all dw-all
 	mkdir -p $(LINUX64)/oh/doc
 	cp -rf ./poh-bundle-linux-x64/* $(LINUX64)
-	tar xz -C $(LINUX64) -f jre-linux64.tar.gz
-	tar xz -C $(LINUX64) -f mysql-linux64.tar.gz --exclude="*/lib/*"
+	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
+	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(LINUX64)/oh
 	rm -rf $(LINUX64)/oh/generate_changelog.sh
 	cp *.sql POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
@@ -115,17 +121,17 @@ CHANGELOG: core
 
 # Download JRE and MySQL
 dw-all: dw-jre-all dw-mysql-all
-dw-jre-all: jre-linux32.tar.gz jre-linux64.tar.gz jre-win.zip
-dw-mysql-all: mysql-linux32.tar.gz mysql-linux64.tar.gz mysql-win.zip
-jre-linux32.tar.gz:
-	wget -q -nc https://cdn.azul.com/zulu/bin/zulu11.39.15-ca-jre11.0.7-linux_i686.tar.gz -O jre-linux32.tar.gz
-jre-linux64.tar.gz:
-	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.7%2B10/OpenJDK11U-jre_x64_linux_hotspot_11.0.7_10.tar.gz -O jre-linux64.tar.gz
-jre-win.zip:
-	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.7%2B10.2/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.7_10.zip -O jre-win.zip
-mysql-linux32.tar.gz:
-	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-i686.tar.gz -O mysql-linux32.tar.gz
-mysql-linux64.tar.gz:
-	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-x86_64.tar.gz -O mysql-linux64.tar.gz
-mysql-win.zip:
-	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-win32.zip -O mysql-win.zip
+dw-jre-all: $(JRE_LINUX32) $(JRE_LINUX64) $(JRE_WIN)
+dw-mysql-all: $(MYSQL_LINUX32) $(MYSQL_LINUX64) $(MYSQL_WIN)
+$(JRE_LINUX32):
+	wget -q -nc https://cdn.azul.com/zulu/bin/zulu11.39.15-ca-jre11.0.7-linux_i686.tar.gz -O $(JRE_LINUX32)
+$(JRE_LINUX64):
+	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.7%2B10/OpenJDK11U-jre_x64_linux_hotspot_11.0.7_10.tar.gz -O $(JRE_LINUX64)
+$(JRE_WIN):
+	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.7%2B10.2/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.7_10.zip -O $(JRE_WIN)
+$(MYSQL_LINUX32):
+	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-i686.tar.gz -O $(MYSQL_LINUX32)
+$(MYSQL_LINUX64):
+	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-x86_64.tar.gz -O $(MYSQL_LINUX64)
+$(MYSQL_WIN):
+	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-win32.zip -O $(MYSQL_WIN)
