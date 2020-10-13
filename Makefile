@@ -1,16 +1,19 @@
-SHELL = /bin/bash
+SHELL := /bin/bash
+.SHELLFLAGS := -eu -o pipefail -c
+.ONESHELL: 			# single recipes are run in one bash session, instead of one per line
+.DELETE_ON_ERROR:	# delete the target if it failed
 OH_VERSION ?= $(shell git describe --abbrev=0 --tags)
 POH_VERSION ?= 1.0
-FULL = openhospital-$(OH_VERSION)
-WIN = poh-win32-$(POH_VERSION)-core-$(OH_VERSION)
-LINUX32 = poh-linux-x32-$(POH_VERSION)-core-$(OH_VERSION)
-LINUX64 = poh-linux-x64-$(POH_VERSION)-core-$(OH_VERSION)
-JRE_WIN = jre-win.zip
-JRE_LINUX32 = jre-linux32.tar.gz
-JRE_LINUX64 = jre-linux64.tar.gz
-MYSQL_WIN = mysql-win.zip
-MYSQL_LINUX32 = mysql-linux32.tar.gz
-MYSQL_LINUX64 = mysql-linux64.tar.gz
+FULL := openhospital-$(OH_VERSION)
+WIN := poh-win32-$(POH_VERSION)-core-$(OH_VERSION)
+LINUX32 := poh-linux-x32-$(POH_VERSION)-core-$(OH_VERSION)
+LINUX64 := poh-linux-x64-$(POH_VERSION)-core-$(OH_VERSION)
+JRE_WIN := jre-win.zip
+JRE_LINUX32 := jre-linux32.tar.gz
+JRE_LINUX64 := jre-linux64.tar.gz
+MYSQL_WIN := mysql-win.zip
+MYSQL_LINUX32 := mysql-linux32.tar.gz
+MYSQL_LINUX64 := mysql-linux64.tar.gz
 
 .PHONY: clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile-all docs-all
 
@@ -26,8 +29,8 @@ compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG databas
 
 # Assemble targets
 release-files: $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
-	checksum="$(shell sha256sum $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz)"; \
-	checksum=$${checksum//$$'\n'/\\n}; \
+	checksum="$(shell sha256sum $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz)"
+	checksum=$${checksum//$$'\n'/\\n}
 	sed -i "s/CHECKSUM/$$checksum/g" CHANGELOG.md
 	mkdir -p release-files
 	mv $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz release-files/
@@ -101,22 +104,22 @@ oh-user-manual.pdf: doc
 # Create database dump
 database.sql: core
 	docker-compose -f core/docker-compose.yml up -d
-	echo -n "Waiting for MySQL to start." ; \
-	until docker exec -i core_database_1 mysqldump --protocol tcp -h localhost -u isf -pisf123 --no-tablespaces oh > database.sql 2>dump_error.log; \
+	echo -n "Waiting for MySQL to start."
+	until docker exec -i core_database_1 mysqldump --protocol tcp -h localhost -u isf -pisf123 --no-tablespaces oh > database.sql 2>dump_error.log;
 	do echo -n "."; sleep 2; done
 	docker-compose -f core/docker-compose.yml down
 	if grep Error dump_error.log; then exit 1; fi
 	
 # Create changelog file
 CHANGELOG: core
-	pushd core; \
-	lasttag=$(shell git tag -l --sort=-v:refname | head -1); \
-	secondlasttag=$(shell git tag -l --sort=-v:refname | head -2 | tail -n 1); \
-	popd; \
-	cp CHANGELOG_TEMPLATE.md CHANGELOG.md; \
-	sed -i "s/VERSION/$(OH_VERSION)/g" CHANGELOG.md; \
-	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" CHANGELOG.md; \
-	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" CHANGELOG.md; \
+	pushd core
+	lasttag=$(shell git tag -l --sort=-v:refname | head -1)
+	secondlasttag=$(shell git tag -l --sort=-v:refname | head -2 | tail -n 1)
+	popd
+	cp CHANGELOG_TEMPLATE.md CHANGELOG.md
+	sed -i "s/VERSION/$(OH_VERSION)/g" CHANGELOG.md
+	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" CHANGELOG.md
+	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" CHANGELOG.md
 	head --lines=-4 CHANGELOG.md > CHANGELOG
 
 # Download JRE and MySQL
