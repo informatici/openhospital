@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
 .ONESHELL: 			# single recipes are run in one bash session, instead of one per line
-.DELETE_ON_ERROR:	# delete the target if it failed
+.DELETE_ON_ERROR:		# delete the target if its recipe failed
 OH_VERSION ?= $(shell git describe --abbrev=0 --tags)
 POH_VERSION ?= 1.0
 FULL := openhospital-$(OH_VERSION)
