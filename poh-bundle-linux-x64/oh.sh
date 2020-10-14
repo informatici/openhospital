@@ -31,7 +31,7 @@ echo ""
 
 ######## OPENHOSPITAL Configuration
 # POH_PATH is the directory where Portable OpenHospital files are located
-# POH_PATH=/usr/local/OpenHospital
+# POH_PATH=/usr/local/PortableOpenHospital
 
 # name of this shell script
 SCRIPT_NAME="oh.sh"
@@ -80,8 +80,8 @@ if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 		read -p "(y/n)?" choice
 		case "$choice" in 
 			y|Y ) echo "yes";;
-			n|N ) echo "Exiting..."; exit 0;;
-			* ) echo "Invalid";;
+			n|N ) echo "Exiting..."; exit 1;;
+			* ) echo "Invalid choice";;
 		esac
 
 		# Downloading mysql binary
@@ -104,8 +104,8 @@ if [ ! -d "$POH_PATH/$JAVA_DIR" ]; then
 		read -p "(y/n)?" choice
 		case "$choice" in 
 			y|Y ) echo "yes";;
-			n|N ) echo "Exiting..."; exit 0;;
-			* ) echo "Invalid";;
+			n|N ) echo "Exiting..."; exit 1;;
+			* ) echo "Invalid choice";;
 		esac
 
 		# Downloading openjdk binaries
@@ -121,8 +121,6 @@ fi
 
 echo "Setting up environment...."
 
-# Find a free port to run MySQL starting from the default port
-
 POH_PATH_ESCAPED=$(echo $POH_PATH | sed -e 's/\//\\\//g')
 
 ######## DICOM setup
@@ -132,6 +130,9 @@ DICOM_MAX_SIZE=$(grep -i '^dicom.max.size' $POH_PATH/$OH_DIR/rsc/dicom.propertie
 
 ######## Database setup
 
+# Find a free TCP port to run MySQL starting from the default port
+
+echo "Looking for a free TCP port for MySQL database..."
 while [ $(ss -tna | awk '{ print $4 }' | grep ":$MYSQL_PORT") ]; do
 	MYSQL_PORT=$(expr $MYSQL_PORT + 1)
 done
@@ -147,15 +148,16 @@ sed -e "s/MYSQL_PORT/$MYSQL_PORT/" $POH_PATH/$OH_DIR/rsc/log4j.properties.ori > 
 
 if [ -f $POH_PATH/database.sql ]
 then
-    echo "Initializing MySQL database... on port $MYSQL_PORT"
-#    cd $POH_PATH/$MYSQL_DIR/
-    rm -rf $POH_PATH/var/lib/mysql
-    mkdir -p $POH_PATH/var/lib/mysql
-    mkdir -p $POH_PATH/var/log/mysql
-    $POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/var/lib/mysql
-    if [ $? -ne 0 ]; then
+	echo "Initializing MySQL database... on port $MYSQL_PORT"
+
+	rm -rf $POH_PATH/var/lib/mysql
+	mkdir -p $POH_PATH/var/lib/mysql
+	mkdir -p $POH_PATH/var/log/mysql
+	$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/var/lib/mysql
+    
+	if [ $? -ne 0 ]; then
 		echo "Error: MySQL initialization failed!"
-		exit 1
+		exit 2
 	fi
 	echo "Default schemas initialized..."
 	echo "Starting MySQL Server."
@@ -165,7 +167,6 @@ then
 	# Wait till the MySQL socket file is created
 	while [ ! -e $POH_PATH/var/run/mysqld/mysql.sock ]; do sleep 1; done
 
-
 	echo "Dropping OH Database (if existing)..."
 	$POH_PATH/$MYSQL_DIR/bin/mysql --socket=$POH_PATH/var/run/mysqld/mysql.sock -u root --port=$MYSQL_PORT -e "DROP DATABASE IF EXISTS $DATABASE_NAME;"
 
@@ -174,19 +175,19 @@ then
 
 	echo "Importing schema..."
 	$POH_PATH/$MYSQL_DIR/bin/mysql --socket=$POH_PATH/var/run/mysqld/mysql.sock -u root --port=$MYSQL_PORT oh < $POH_PATH/database.sql
-    if [ $? -ne 0 ]; then
+	if [ $? -ne 0 ]; then
 		echo -n "Error: Database not initialized!"
 		exit 2
-    fi
-    echo "Database initialized !"
-#    rm $POH_PATH/database.sql # we don't need to remove the database file
-else
+	fi
+	echo "Database initialized !"
+
+	else
 	cd $POH_PATH/$MYSQL_DIR/
-	echo  "Starting MySQL... "
+	echo "Starting MySQL... "
 	$POH_PATH/$MYSQL_DIR/bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
 	if [ $? -ne 0 ]; then
 		echo "Error: Database not started!"
-		exit 1
+		exit 2
 	fi
 fi
 
