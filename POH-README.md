@@ -14,8 +14,8 @@ program and the data will be kept.  POH uses its own version of the Java Virtual
 Machine and the MySQL server and everything is contained in the root
 installation directory.  POH is released under the GNU GPL 3.0 License.
 
-The Linux version has been tested on on Ubuntu 16.04 32bit and
-Ubuntu 20.04 x64 updated to October 2020.
+The Linux version has been tested on on Ubuntu 16.04 i386 (32bit) and
+Ubuntu 20.04 x64 (64bit) updated to October 2020.
 The Windows version has been tested on Windows 10. 
 
 # Running POH - Quickstart
