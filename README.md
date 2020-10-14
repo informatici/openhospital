@@ -6,9 +6,9 @@ This repository is used to assemble the portable (or all-in-one) packages of the
 
 If you'd like to contribute to the Open Hospital project, please read [CONTRIBUTING.md][contributing].
 
-## How to create Portable Open Hospital packages
+## How to create Open Hospital packages
 
-To create the Portable Open Hospital packages,
+To create the Open Hospital packages,
 make sure to have installed the following dependencies on a Linux machine:
 _JDK 8+, Maven, asciidoctor-pdf, docker, docker-compose, zip_.
 
