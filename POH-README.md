@@ -21,7 +21,7 @@ The Windows version has been tested on Windows 10.
 # Running POH - Quickstart
 
 - unzip the package in any directory
-- cd to the directory
+- browse to the directory
 - on Windows, start POH by double clicking on the oh.bat batch file
 - on Linux, start POH by running ./oh.sh
 
