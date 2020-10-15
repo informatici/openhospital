@@ -25,7 +25,9 @@ help:
 	@echo -e "\t$(JRE_WIN), $(JRE_LINUX32), $(JRE_LINUX64), $(MYSQL_WIN), $(MYSQL_LINUX32), $(MYSQL_LINUX64)"
 
 # Clean targets
-clean:
+clean: clean-downloads
+	rm -rf release-files core gui doc poh-linux* poh-win* CHANGELOG CHANGELOG.md database.sql *.pdf
+clean-all:
 	git clean -xdff
 clean-downloads:
 	rm -rf *.zip *.tar.gz
