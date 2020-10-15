@@ -19,6 +19,11 @@ MYSQL_LINUX64 := mysql-linux64.tar.gz
 
 all: compile-all dw-all release-files
 
+help:
+	@echo -e "Main make targets available:\n\tall (default), clean, database.sql, clone-all, dw-all, compile-all, docs-all, dw-jre-all, dw-mysql-all, oh-admin-manual.pdf, oh-user-manual.pdf, core, gui, doc"
+	@echo -e "\t$(WIN).zip, $(LINUX32).tar.gz, $(LINUX64).tar.gz, $(FULL).zip"
+	@echo -e "\t$(JRE_WIN), $(JRE_LINUX32), $(JRE_LINUX64), $(MYSQL_WIN), $(MYSQL_LINUX32), $(MYSQL_LINUX64)"
+
 # Clean targets
 clean:
 	git clean -xdff
