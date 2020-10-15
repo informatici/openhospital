@@ -24,8 +24,8 @@ Then follow these simple steps:
         make
     
     You can also parallelize some make tasks by using the `-j` flag (e.g. `make -j4`)
-    or use intermediate targets to build single parts of the distribution 
-    (e.g. `make database.sql` to create the database dump).
+    or use intermediate targets to build single parts of the distribution -
+    use `make help` to see a list of available targets.
 
 
  [openhospital]: https://www.open-hospital.org/
