@@ -10,18 +10,22 @@ If you'd like to contribute to the Open Hospital project, please read [CONTRIBUT
 
 To create the Open Hospital packages,
 make sure to have installed the following dependencies on a Linux machine:
-_JDK 8+, Maven, asciidoctor-pdf, docker, docker-compose, zip_.
+_JDK 8+, Maven, asciidoctor-pdf, docker, docker-compose, zip, GNU make_.
 
 Then follow these simple steps:
 
- 1. Clone this repository and initialize the submodules:
+ 1. Clone this repository:
 
         git clone https://github.com/informatici/openhospital
 
  2. Run the script that compiles the components of Open Hospital, and assembles the portable distributions:
 
         cd openhospital
-        ./build_poh.sh
+        make
+    
+    You can also parallelize some make tasks by using the `-j` flag (e.g. `make -j4`)
+    or use intermediate targets to build single parts of the distribution -
+    use `make help` to see a list of available targets.
 
 
  [openhospital]: https://www.open-hospital.org/

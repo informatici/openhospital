@@ -14,8 +14,3 @@ Brought to you by:
 
 **Languages**: French, Italian, English, Portuguese, Swahili, German, Spanish, Arabic
 *Brought to you by Transifex community*
-
-SHA256 checksum:
-```
-CHECKSUM
-```
