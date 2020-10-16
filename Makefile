@@ -3,7 +3,7 @@ SHELL := /bin/bash
 .ONESHELL: 			# single recipes are run in one bash session, instead of one per line
 .DELETE_ON_ERROR:		# delete the target if its recipe failed
 OH_VERSION ?= $(shell git describe --abbrev=0 --tags)
-POH_VERSION ?= 1.0
+POH_VERSION ?= 0.1
 FULL := openhospital-$(OH_VERSION)
 WIN := poh-win32-$(POH_VERSION)-core-$(OH_VERSION)
 LINUX32 := poh-linux-x32-$(POH_VERSION)-core-$(OH_VERSION)
