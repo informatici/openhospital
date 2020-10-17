@@ -62,7 +62,7 @@ Then follow these simple steps:
     You can also parallelize some make tasks by using the `-j` flag (e.g. `make -j4`)
     or use intermediate targets to build single parts of the distribution -
     use `make help` to see a list of available targets.
-<details>
+</details>
 
  [openhospital]: https://www.open-hospital.org/
  [core]: https://github.com/informatici/openhospital-core
