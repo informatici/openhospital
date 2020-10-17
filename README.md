@@ -41,7 +41,7 @@ You can reach out to the community of contributors by joining
 our [Slack workspace][slack] or by subscribing to our [mailing list][ml].
 
 
-## How to create Open Hospital packages
+## How to create OH packages
 
 <details><summary>:construction_worker: :package:</summary>
 To create the Open Hospital packages,
