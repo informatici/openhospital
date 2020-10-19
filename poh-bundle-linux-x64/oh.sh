@@ -26,7 +26,6 @@
 ######## OPENHOSPITAL Configuration
 # POH_PATH is the directory where Portable OpenHospital files are located
 # POH_PATH=/usr/local/PortableOpenHospital
-#POH_PATH=/home/mizzio/Scaricati/OH_dev/poh-linux-x64-0.0.6-core-1.10.0
 
 # name of this shell script
 SCRIPT_NAME="oh.sh"
@@ -302,4 +301,6 @@ rm -f $POH_PATH/$OH_DIR/rsc/dicom.properties
 
 echo "Done ! "
 
+# go back to starting directory
+cd $CURRENT_DIR
 exit 0
