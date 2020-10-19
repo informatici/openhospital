@@ -1,4 +1,4 @@
-# Portable Open Hospital
+# Portable Open Hospital - POH
 
 Open Hospital (https://www.open-hospital.org/en/) is a free and open source
 software for healthcare data management. Its portable version (Portable Open
@@ -24,6 +24,7 @@ The Windows version has been tested on Windows 10.
 - browse to the directory
 - on Windows, start POH by double clicking on the oh.bat batch file
 - on Linux, start POH by running ./oh.sh
+- on Linux, to reset existing installation, run ./oh.sh -r
 
 Bugs, issues and feature requests should be reported on
 our repository on GitHub: https://github.com/informatici/openhospital
