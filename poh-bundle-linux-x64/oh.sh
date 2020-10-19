@@ -131,7 +131,6 @@ done
 echo "Checking for software...."
 
 # MySQL
-
 if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 
 	if [ ! -f "$POH_PATH/$MYSQL_DIR.tar.gz" ]; then
@@ -156,7 +155,6 @@ if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 fi
 
 # Java
-
 if [ ! -d "$POH_PATH/$JAVA_DIR" ]; then
 
 	if [ ! -f "$POH_PATH/$JAVA_DISTRO.tar.gz" ]; then
