@@ -21,17 +21,12 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-echo ""
-echo "***************************************************"
-echo "* Warning - Do not run this script as root user ! *"
-echo "***************************************************"
-echo ""
-
 ######## Environment check:
 
 ######## OPENHOSPITAL Configuration
 # POH_PATH is the directory where Portable OpenHospital files are located
 # POH_PATH=/usr/local/PortableOpenHospital
+#POH_PATH=/home/mizzio/Scaricati/OH_dev/poh-linux-x64-0.0.6-core-1.10.0
 
 # name of this shell script
 SCRIPT_NAME="oh.sh"
@@ -58,6 +53,9 @@ JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/j
 JAVA_DIR="jdk-11.0.8+10"
 
 MYSQL_PORT=3307
+MYSQL_SOCKET="var/run/mysqld/mysql.sock"
+DB_CREATE_SQL="database.sql"
+DB_ARCHIVED_SQL="database.sql.imported"
 
 OH_DIR="oh"
 DATABASE_NAME="oh"
@@ -65,15 +63,79 @@ DATABASE_USER="isf"
 DATABASE_PASSWORD="isf123"
 DICOM_DEFAULT_SIZE="4M"
 
+######################## DO NOT EDIT BELOW THIS LINE ########################
+
 cd $POH_PATH
 
-######################## DO NOT EDIT BELOW THIS LINE ########################
+echo ""
+echo "***************************************************"
+echo "* Warning - Do not run this script as root user ! *"
+echo "***************************************************"
+echo ""
+
+######## User input / option parsing
+
+function script_usage {
+	echo "Usage: $(basename $0) [-h --reset]" 2>&1
+        echo "   -h       shows this short help"
+        echo "   -r       reset Portable Open Hospital Installation"
+	exit 0
+}
+
+
+function restore_db {
+	if [ -f $POH_PATH/$DB_CREATE_SQL ];
+	then
+	        echo "Found SQL creation script, starting OH...."
+
+	elif [ -f $POH_PATH/$DB_ARCHIVED_SQL ];
+	then
+	        echo "Found archived SQL creation script, restoring and starting OH...."
+		mv $POH_PATH/$DB_ARCHIVED_SQL $POH_PATH/$DB_CREATE_SQL
+	fi
+}
+
+function start_database {
+	cd $POH_PATH/$MYSQL_DIR/
+	echo "Starting MySQL... "
+	$POH_PATH/$MYSQL_DIR/bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
+	if [ $? -ne 0 ]; then
+		echo "Error: Database not started!"
+		exit 2
+	fi
+}
+
+
+# list of arguments expected in the input
+optstring=":hr"
+
+# function to parse input
+while getopts ${optstring} arg; do
+	case ${arg} in
+	"h")
+		script_usage
+		;;
+	"r")
+        	echo "Resetting Portable Open Hospital Installation...."
+		restore_db
+		;;
+	?)
+		echo "Invalid option: -${OPTARG}."
+		exit 2
+		;;
+	esac
+done
+
+
+######## Script start
 
 echo "Checking for software...."
 
+# MySQL
+
 if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 
-		if [ ! -f "$POH_PATH/$MYSQL_DIR.tar.gz" ]; then
+	if [ ! -f "$POH_PATH/$MYSQL_DIR.tar.gz" ]; then
 
 		echo "Warning - MySQL  not found. Do you want to download it ? (-630 Mb)"
 
@@ -94,6 +156,7 @@ if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 	echo "Using $MYSQL_DIR"
 fi
 
+# Java
 
 if [ ! -d "$POH_PATH/$JAVA_DIR" ]; then
 
@@ -136,6 +199,9 @@ echo "Looking for a free TCP port for MySQL database..."
 while [ $(ss -tna | awk '{ print $4 }' | grep ":$MYSQL_PORT") ]; do
 	MYSQL_PORT=$(expr $MYSQL_PORT + 1)
 done
+echo "Found TCP port $MYSQL_PORT!"
+
+# Creating MySQL configuration
 
 rm -f $POH_PATH/etc/mysql/my.cnf or true
 sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$MYSQL_PORT/" -e "s/MYSQL_DISTRO/$MYSQL_DISTRO/g" $POH_PATH/etc/mysql/my.ori > $POH_PATH/etc/mysql/my.cnf
@@ -146,49 +212,48 @@ sed -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" $POH_PATH/$OH_DIR/rsc/dicom.pr
 sed -e "s/3306/$MYSQL_PORT/" $POH_PATH/$OH_DIR/rsc/database.properties.sample > $POH_PATH/$OH_DIR/rsc/database.properties
 sed -e "s/MYSQL_PORT/$MYSQL_PORT/" $POH_PATH/$OH_DIR/rsc/log4j.properties.ori > $POH_PATH/$OH_DIR/rsc/log4j.properties
 
-if [ -f $POH_PATH/database.sql ]
-then
+if [ -f $POH_PATH/$DB_CREATE_SQL ]; then
 	echo "Initializing MySQL database... on port $MYSQL_PORT"
 
+	# Recreate directory structure
 	rm -rf $POH_PATH/var/lib/mysql
 	mkdir -p $POH_PATH/var/lib/mysql
 	mkdir -p $POH_PATH/var/log/mysql
+
+	# Inizialize MySQL
 	$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/var/lib/mysql
     
 	if [ $? -ne 0 ]; then
 		echo "Error: MySQL initialization failed!"
 		exit 2
 	fi
-	echo "Default schemas initialized..."
-	echo "Starting MySQL Server."
 
-	$POH_PATH/$MYSQL_DIR/bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
+	# Starting MySQL
+	start_database;	
 
 	# Wait till the MySQL socket file is created
-	while [ ! -e $POH_PATH/var/run/mysqld/mysql.sock ]; do sleep 1; done
+	while [ ! -e $POH_PATH/$MYSQL_SOCKET ]; do sleep 1; done
 
 	echo "Dropping OH Database (if existing)..."
-	$POH_PATH/$MYSQL_DIR/bin/mysql --socket=$POH_PATH/var/run/mysqld/mysql.sock -u root --port=$MYSQL_PORT -e "DROP DATABASE IF EXISTS $DATABASE_NAME;"
+	$POH_PATH/$MYSQL_DIR/bin/mysql --socket=$POH_PATH/$MYSQL_SOCKET -u root --port=$MYSQL_PORT -e "DROP DATABASE IF EXISTS $DATABASE_NAME;"
 
 	echo "Creating OH Database..."
-	$POH_PATH/$MYSQL_DIR/bin/mysql --socket=$POH_PATH/var/run/mysqld/mysql.sock -u root --port=$MYSQL_PORT -e "CREATE DATABASE $DATABASE_NAME; GRANT ALL ON oh.* TO '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD'; GRANT ALL ON oh.* TO '$DATABASE_USER'@'%' IDENTIFIED BY '$DATABASE_PASSWORD';"
+	$POH_PATH/$MYSQL_DIR/bin/mysql --socket=$POH_PATH/$MYSQL_SOCKET -u root --port=$MYSQL_PORT -e "CREATE DATABASE $DATABASE_NAME; GRANT ALL ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD'; GRANT ALL ON $DATABASE_NAME.* TO '$DATABASE_USER'@'%' IDENTIFIED BY '$DATABASE_PASSWORD';"
 
-	echo "Importing schema..."
-	$POH_PATH/$MYSQL_DIR/bin/mysql --socket=$POH_PATH/var/run/mysqld/mysql.sock -u root --port=$MYSQL_PORT oh < $POH_PATH/database.sql
+	echo "Importing database schema..."
+	$POH_PATH/$MYSQL_DIR/bin/mysql --socket=$POH_PATH/$MYSQL_SOCKET -u root --port=$MYSQL_PORT $DATABASE_NAME < $POH_PATH/$DB_CREATE_SQL
 	if [ $? -ne 0 ]; then
 		echo -n "Error: Database not initialized!"
 		exit 2
 	fi
 	echo "Database initialized !"
 
-	else
-	cd $POH_PATH/$MYSQL_DIR/
-	echo "Starting MySQL... "
-	$POH_PATH/$MYSQL_DIR/bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
-	if [ $? -ne 0 ]; then
-		echo "Error: Database not started!"
-		exit 2
-	fi
+	# archive sql creation script
+	echo "Achiving SQL creation script..."
+	mv $POH_PATH/$DB_CREATE_SQL $POH_PATH/$DB_ARCHIVED_SQL
+else
+	# Starting MySQL
+	start_database;
 fi
 
 ######## CLASSPATH setup
@@ -216,12 +281,15 @@ case $ARCH in
 		;;
 esac
 
+######## Portable Open Hospital start
+
 echo "Starting Open Hospital Portable... "
 
 cd $POH_PATH/$OH_DIR/
 $POH_PATH/$JAVA_DIR/bin/java -Dsun.java2d.dpiaware=false -Djava.library.path=${NATIVE_LIB_PATH} -classpath $CLASSPATH org.isf.menu.gui.Menu 2>&1 > /dev/null
 
 echo "Exiting Open Hospital Portable..."
+
 echo "Shutting down MySQL... "
 
 $POH_PATH/$MYSQL_DIR/bin/mysqladmin --host=127.0.0.1 --port=$MYSQL_PORT --user=root shutdown 2>&1 > /dev/null
