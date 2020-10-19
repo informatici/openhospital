@@ -75,7 +75,7 @@ echo ""
 ######## User input / option parsing
 
 function script_usage {
-	echo "Usage: $(basename $0) [-h --reset]" 2>&1
+	echo "Usage: $(basename $0) [-h -r]" 2>&1
         echo "   -h       shows this short help"
         echo "   -r       reset Portable Open Hospital Installation"
 	exit 0
