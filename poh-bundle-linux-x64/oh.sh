@@ -77,7 +77,7 @@ echo ""
 function script_usage {
 	echo "Usage: $(basename $0) [-h -r]" 2>&1
         echo "   -h       shows this short help"
-        echo "   -r       reset Portable Open Hospital Installation"
+        echo "   -r       reset Portable Open Hospital installation"
 	exit 0
 }
 
@@ -115,7 +115,7 @@ while getopts ${optstring} arg; do
 		script_usage
 		;;
 	"r")
-        	echo "Resetting Portable Open Hospital Installation...."
+        	echo "Resetting Portable Open Hospital installation...."
 		restore_db
 		;;
 	?)
