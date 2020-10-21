@@ -201,7 +201,7 @@ echo "Found TCP port $MYSQL_PORT!"
 # Creating MySQL configuration
 
 rm -f $POH_PATH/etc/mysql/my.cnf or true
-sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$MYSQL_PORT/" -e "s/MYSQL_DISTRO/$MYSQL_DISTRO/g" $POH_PATH/etc/mysql/my.ori > $POH_PATH/etc/mysql/my.cnf
+sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$MYSQL_PORT/" -e "s/MYSQL_DISTRO/$MYSQL_DIR/g" $POH_PATH/etc/mysql/my.ori > $POH_PATH/etc/mysql/my.cnf
 
 chmod 0444 $POH_PATH/etc/mysql/my.cnf
 
