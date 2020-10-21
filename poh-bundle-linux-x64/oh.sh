@@ -210,7 +210,7 @@ sed -e "s/3306/$MYSQL_PORT/" $POH_PATH/$OH_DIR/rsc/database.properties.sample > 
 sed -e "s/MYSQL_PORT/$MYSQL_PORT/" $POH_PATH/$OH_DIR/rsc/log4j.properties.ori > $POH_PATH/$OH_DIR/rsc/log4j.properties
 
 if [ -f $POH_PATH/$DB_CREATE_SQL ]; then
-	echo "Initializing MySQL database... on port $MYSQL_PORT"
+	echo "Initializing MySQL database on port $MYSQL_PORT..."
 
 	# Recreate directory structure
 	rm -rf $POH_PATH/var/lib/mysql
@@ -280,12 +280,12 @@ esac
 
 ######## Portable Open Hospital start
 
-echo "Starting Open Hospital Portable... "
+echo "Starting Portable Open Hospital... "
 
 cd $POH_PATH/$OH_DIR/
 $POH_PATH/$JAVA_DIR/bin/java -Dsun.java2d.dpiaware=false -Djava.library.path=${NATIVE_LIB_PATH} -classpath $CLASSPATH org.isf.menu.gui.Menu 2>&1 > /dev/null
 
-echo "Exiting Open Hospital Portable..."
+echo "Exiting Portable Open Hospital..."
 
 echo "Shutting down MySQL... "
 
