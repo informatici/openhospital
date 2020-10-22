@@ -135,7 +135,7 @@ if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 
 	if [ ! -f "$POH_PATH/$MYSQL_DIR.tar.gz" ]; then
 
-		echo "Warning - MySQL  not found. Do you want to download it ? (-630 Mb)"
+		echo "Warning - MySQL  not found. Do you want to download it ? (630 MB)"
 
 		read -p "(y/n)?" choice
 		case "$choice" in 
