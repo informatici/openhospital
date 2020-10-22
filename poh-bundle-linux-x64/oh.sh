@@ -55,7 +55,7 @@ SCRIPT_NAME=$(basename "$0")
 CURRENT_DIR=$PWD
 
 # check user
-if [ "$EUID" -e 0 ]
+if [ $(id -u) -eq 0 ]
   then echo "Error - do not run this script as root."
   exit 1
 fi
