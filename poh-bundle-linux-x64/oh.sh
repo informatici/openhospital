@@ -159,7 +159,7 @@ if [ ! -d "$POH_PATH/$JAVA_DIR" ]; then
 
 	if [ ! -f "$POH_PATH/$JAVA_DISTRO.tar.gz" ]; then
 
-		echo "Warning - JAVA  not found. Do you want to download it ? (-180 Mb)"
+		echo "Warning - JAVA  not found. Do you want to download it ? (180 MB)"
 
 		read -p "(y/n)?" choice
 		case "$choice" in 
