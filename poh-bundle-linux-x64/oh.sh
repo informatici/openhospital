@@ -28,7 +28,7 @@
 # POH_PATH=/usr/local/PortableOpenHospital
 
 # name of this shell script
-SCRIPT_NAME="oh.sh"
+SCRIPT_NAME=$(basename "$0")
 
 # set current dir
 CURRENT_DIR=$PWD
