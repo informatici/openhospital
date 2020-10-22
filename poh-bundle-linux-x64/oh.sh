@@ -185,7 +185,7 @@ POH_PATH_ESCAPED=$(echo $POH_PATH | sed -e 's/\//\\\//g')
 
 ######## DICOM setup
 
-DICOM_MAX_SIZE=$(grep -i '^dicom.max.size' $POH_PATH/$OH_DIR/rsc/dicom.properties.ori  | cut -f2 -d'=')
+DICOM_MAX_SIZE=$(grep -i '^dicom.max.size' $POH_PATH/$OH_DIR/rsc/dicom.properties.dist  | cut -f2 -d'=')
 : ${DICOM_MAX_SIZE:=$DICOM_DEFAULT_SIZE}
 
 ######## Database setup
@@ -205,7 +205,7 @@ sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAP
 
 chmod 0444 $POH_PATH/etc/mysql/my.cnf
 
-sed -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" $POH_PATH/$OH_DIR/rsc/dicom.properties.ori > $POH_PATH/$OH_DIR/rsc/dicom.properties
+sed -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" $POH_PATH/$OH_DIR/rsc/dicom.properties.dist > $POH_PATH/$OH_DIR/rsc/dicom.properties
 sed -e "s/3306/$MYSQL_PORT/" $POH_PATH/$OH_DIR/rsc/database.properties.sample > $POH_PATH/$OH_DIR/rsc/database.properties
 sed -e "s/MYSQL_PORT/$MYSQL_PORT/" $POH_PATH/$OH_DIR/rsc/log4j.properties.ori > $POH_PATH/$OH_DIR/rsc/log4j.properties
 
