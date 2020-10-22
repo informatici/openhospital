@@ -27,21 +27,6 @@
 # POH_PATH is the directory where Portable OpenHospital files are located
 # POH_PATH=/usr/local/PortableOpenHospital
 
-# name of this shell script
-SCRIPT_NAME=$(basename "$0")
-
-# set current dir
-CURRENT_DIR=$PWD
-
-if [ -z $POH_PATH ]; then
-	echo "Warning - POH_PATH not found. Please set it up properly."
-		if [ ! -f ./$SCRIPT_NAME ]; then
-		echo "Error - oh.sh not found in the current PATH. Please cd the directory where POH was unzipped or set up POH_PATH properly."
-		exit 0
-		fi
-	POH_PATH=$PWD
-fi
-
 ######## Software configuration - change at your own risk :-)
 
 MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-x86_64"
@@ -63,13 +48,29 @@ DATABASE_PASSWORD="isf123"
 DICOM_DEFAULT_SIZE="4M"
 
 ######################## DO NOT EDIT BELOW THIS LINE ########################
+# name of this shell script
+SCRIPT_NAME=$(basename "$0")
 
-cd $POH_PATH
+# set current dir
+CURRENT_DIR=$PWD
 
+# check user
 if [ "$EUID" -e 0 ]
   then echo "Error - do not run this script as root."
   exit 1
 fi
+
+# set POH_PATH if not defined
+if [ -z $POH_PATH ]; then
+	echo "Warning - POH_PATH not found. Please set it up properly."
+		if [ ! -f ./$SCRIPT_NAME ]; then
+		echo "Error - oh.sh not found in the current PATH. Please cd the directory where POH was unzipped or set up POH_PATH properly."
+		exit 0
+		fi
+	POH_PATH=$PWD
+fi
+
+cd $POH_PATH
 
 ######## User input / option parsing
 
