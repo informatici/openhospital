@@ -66,11 +66,10 @@ DICOM_DEFAULT_SIZE="4M"
 
 cd $POH_PATH
 
-echo ""
-echo "***************************************************"
-echo "* Warning - Do not run this script as root user ! *"
-echo "***************************************************"
-echo ""
+if [ "$EUID" -e 0 ]
+  then echo "Error - do not run this script as root."
+  exit 1
+fi
 
 ######## User input / option parsing
 
