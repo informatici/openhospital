@@ -32,16 +32,22 @@
 MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-x86_64"
 MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
 
-### JDK 8
+### JRE 8 - openlogic
 #JAVA_DISTRO="openlogic-openjdk-jre-8u262-b10-linux-x64"
 #JAVA_URL="https://builds.openlogic.com/downloadJDK/openlogic-openjdk-jre/8u262-b10/"
 #JAVA_DIR="openlogic-openjdk-jre-8u262-b10-linux-64"
 
-### JDK 11
-JAVA_DISTRO="OpenJDK11U-jdk_x64_linux_openj9_11.0.8_10_openj9-0.21.0"
-JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.8%2B10_openj9-0.21.0"
-JAVA_DIR="jdk-11.0.8+10"
+### JRE 11 - zulu
+#JAVA_DISTRO="zulu11.43.21-ca-jre11.0.9-linux_x64"
+#JAVA_URL="https://cdn.azul.com/zulu/bin"
+#JAVA_DIR="zulu11.43.21-ca-jre11.0.9-linux_x64"
 
+### JRE 11 - openjdk
+JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9%2B11.1"
+JAVA_DISTRO="OpenJDK11U-jre_x64_linux_hotspot_11.0.9_11"
+JAVA_DIR="jdk-11.0.9+11-jre"
+
+# Database
 MYSQL_PORT=3307
 MYSQL_SOCKET="var/run/mysqld/mysql.sock"
 DB_CREATE_SQL="database.sql"
@@ -165,7 +171,7 @@ if [ ! -d "$POH_PATH/$JAVA_DIR" ]; then
 
 	if [ ! -f "$POH_PATH/$JAVA_DISTRO.tar.gz" ]; then
 
-		echo "Warning - JAVA  not found. Do you want to download it ? (180 MB)"
+		echo "Warning - JAVA  not found. Do you want to download it ? (50 MB)"
 
 		read -p "(y/n)?" choice
 		case "$choice" in 
