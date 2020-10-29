@@ -32,13 +32,17 @@
 MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-i686"
 MYSQL_URL="https://dev.mysql.com/get/Downloads/MySQL-5.7/"
 
+### JDK 8
 #JAVA_DISTRO="openlogic-openjdk-8u262-b10-linux-x32"
-#JAVA_DISTRO="zulu8.46.0.19-ca-jre8.0.252-linux_i686"
-JAVA_DISTRO="zulu11.43.21-ca-jdk11.0.9-linux_i686"
-#JAVA_URL="https://builds.openlogic.com/downloadJDK/openlogic-openjdk/8u262-b10/"
-JAVA_URL="https://cdn.azul.com/zulu/bin/"
 #JAVA_DIR="openlogic-openjdk-8u262-b10-linux-32"
+#JAVA_URL="https://builds.openlogic.com/downloadJDK/openlogic-openjdk/8u262-b10/"
+#JAVA_DISTRO="zulu8.46.0.19-ca-jre8.0.252-linux_i686"
 #JAVA_DIR="zulu8.46.0.19-ca-jre8.0.252-linux_i686"
+#JAVA_URL="https://cdn.azul.com/zulu/bin/"
+
+### JDK 11
+JAVA_DISTRO="zulu11.43.21-ca-jdk11.0.9-linux_i686"
+JAVA_URL="https://cdn.azul.com/zulu/bin/"
 JAVA_DIR="zulu11.43.21-ca-jdk11.0.9-linux_i686"
 
 MYSQL_PORT=3307
