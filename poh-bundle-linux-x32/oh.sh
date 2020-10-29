@@ -47,6 +47,7 @@ JAVA_DISTRO="zulu11.43.21-ca-jre11.0.9-linux_i686"
 JAVA_URL="https://cdn.azul.com/zulu/bin/"
 JAVA_DIR="zulu11.43.21-ca-jre11.0.9-linux_i686"
 
+# Database
 MYSQL_PORT=3307
 MYSQL_SOCKET="var/run/mysqld/mysql.sock"
 DB_CREATE_SQL="database.sql"
