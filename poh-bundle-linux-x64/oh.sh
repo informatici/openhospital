@@ -32,6 +32,12 @@
 MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-x86_64"
 MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
 
+### JDK 8
+#JAVA_DISTRO="openlogic-openjdk-jre-8u262-b10-linux-x64"
+#JAVA_URL="https://builds.openlogic.com/downloadJDK/openlogic-openjdk-jre/8u262-b10/"
+#JAVA_DIR="openlogic-openjdk-jre-8u262-b10-linux-x64"
+
+### JDK 11
 JAVA_DISTRO="OpenJDK11U-jdk_x64_linux_openj9_11.0.8_10_openj9-0.21.0"
 JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.8%2B10_openj9-0.21.0"
 JAVA_DIR="jdk-11.0.8+10"
