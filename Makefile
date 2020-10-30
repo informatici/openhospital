@@ -147,7 +147,7 @@ dw-all: dw-jre-all dw-mysql-all
 dw-jre-all: $(JRE_LINUX32) $(JRE_LINUX64) $(JRE_WIN)
 dw-mysql-all: $(MYSQL_LINUX32) $(MYSQL_LINUX64) $(MYSQL_WIN)
 $(JRE_LINUX32):
-	wget -q -nc https://cdn.azul.com/zulu/bin/zulu11.43.21-ca-jre11.0.9-linux_i686 -O $(JRE_LINUX32)
+	wget -q -nc https://cdn.azul.com/zulu/bin/zulu11.43.21-ca-jre11.0.9-linux_i686.tar.gz -O $(JRE_LINUX32)
 $(JRE_LINUX64):
 	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9%2B11.1/OpenJDK11U-jre_x64_linux_hotspot_11.0.9_11.tar.gz -O $(JRE_LINUX64)
 $(JRE_WIN):
