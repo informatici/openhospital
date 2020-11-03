@@ -3,4 +3,4 @@
 #dicom.max.size=1024B, 2048B, 1M, 16M, 256M, 512M, 1024M, 1G			size examples
 dicom.manager.impl=org.isf.dicom.manager.SqlDicomManager
 dicom.storage.filesystem=OH_PATH_SUBSTITUTE/dicom_storage
-dicom.max.size=4M
+dicom.max.size=DICOM_SIZE
