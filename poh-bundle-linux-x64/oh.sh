@@ -51,24 +51,26 @@ OH_DISTRO=portable
 
 ######## Software configuration - change at your own risk :-)
 
+
 MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
 MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
 
 # Database
 MYSQL_PORT=3306
-MYSQL_SERVER=127.0.0.1
+MYSQL_SERVER="127.0.0.1"
 MYSQL_SOCKET="var/run/mysqld/mysql.sock"
+
+DATABASE_NAME="oh"
+DATABASE_USER="isf"
+DATABASE_PASSWORD="isf123"
+DICOM_MAX_SIZE="4M"
+
+OH_DIR="oh"
 SQL_DIR="sql"
 DB_CREATE_SQL="database.sql"
 DB_ARCHIVED_SQL="database.sql.imported"
 DB_DEMO="demo.sql"
 DATE=`date +%Y-%m-%d_%H-%M-%S`
-
-OH_DIR="oh"
-DATABASE_NAME="oh"
-DATABASE_USER="isf"
-DATABASE_PASSWORD="isf123"
-DICOM_MAX_SIZE="4M"
 
 ######## JAVA 64bit - Default architecture
 ### JRE 8 - openlogic
@@ -140,9 +142,9 @@ cd $POH_PATH
 
 function script_usage {
 	echo "Usage: $(basename $0) [-h -r -d -c -s -v -f]" 2>&1
-        echo "   -h       shows this short help"
+        echo "   -h       shows this help"
         echo "   -r       restore Portable Open Hospital installation"
-        echo "   -d       start Portable Open Hospital in demo mode"
+        echo "   -d       start Portable Open Hospital in demo mode (experimental - not working)"
         echo "   -c       clean Portable Open Hospital installation"
         echo "   -s       save Portable Open Hospital database data"
         echo "   -v       show Portable Open Hospital version information"
@@ -290,14 +292,14 @@ function inizialize_database {
 
 function load_database () {
 	echo "Dropping OH Database (if existing)..."
-	$POH_PATH/$MYSQL_DIR/bin/mysql --socket=$POH_PATH/$MYSQL_SOCKET -u root --port=$MYSQL_PORT -e "DROP DATABASE IF EXISTS $DATABASE_NAME;"
+	$POH_PATH/$MYSQL_DIR/bin/mysql -u root -h $MYSQL_SERVER --port=$MYSQL_PORT -e "DROP DATABASE IF EXISTS $DATABASE_NAME;"
 
 	echo "Creating OH Database..."
-	$POH_PATH/$MYSQL_DIR/bin/mysql --socket=$POH_PATH/$MYSQL_SOCKET -u root --port=$MYSQL_PORT -e "CREATE DATABASE $DATABASE_NAME; GRANT ALL ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD'; GRANT ALL ON $DATABASE_NAME.* TO '$DATABASE_USER'@'%' IDENTIFIED BY '$DATABASE_PASSWORD';"
+	$POH_PATH/$MYSQL_DIR/bin/mysql -u root -h $MYSQL_SERVER --port=$MYSQL_PORT -e "CREATE DATABASE $DATABASE_NAME; GRANT ALL ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD'; GRANT ALL ON $DATABASE_NAME.* TO '$DATABASE_USER'@'%' IDENTIFIED BY '$DATABASE_PASSWORD';"
 
 	echo "Importing database schema $DB_CREATE_SQL..."
 	cd $POH_PATH/sql
-	$POH_PATH/$MYSQL_DIR/bin/mysql --socket=$POH_PATH/$MYSQL_SOCKET -u root --port=$MYSQL_PORT $DATABASE_NAME < $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
+	$POH_PATH/$MYSQL_DIR/bin/mysql -u root -h $MYSQL_SERVER --port=$MYSQL_PORT $DATABASE_NAME < $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
 	if [ $? -ne 0 ]; then
 		echo "Error: Database not initialized!"
 		exit 2
@@ -308,7 +310,7 @@ function load_database () {
 
 function dump_database {
 	echo "Dumping MySQL database... "
-	$POH_PATH/$MYSQL_DIR/bin/mysqldump --socket=$POH_PATH/$MYSQL_SOCKET -u root --port=$MYSQL_PORT $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
+	$POH_PATH/$MYSQL_DIR/bin/mysqldump -h $MYSQL_SERVER --port=$MYSQL_PORT -u root $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
 	if [ $? -ne 0 ]; then
 		echo "Error: Database not dumped!"
 		exit 2
@@ -389,7 +391,6 @@ if [ $OH_DISTRO = portable ]; then
 	exit 1
 	fi
 fi
-
 
 ######## Environment setup
 
