@@ -47,7 +47,7 @@ esac
 
 ######## Open Hospital configuration
 OH_DISTRO=portable
-#OH_DISTRO=full
+#OH_DISTRO=client
 
 ######## Software configuration - change at your own risk :-)
 
@@ -141,14 +141,14 @@ cd $POH_PATH
 ######## User input / option parsing
 
 function script_usage {
-	echo "Usage: $(basename $0) [-h -r -d -c -s -v -f]" 2>&1
+	echo "Usage: $(basename $0) [-h -r -d -c -s -v -z]" 2>&1
         echo "   -h       shows this help"
         echo "   -r       restore Portable Open Hospital installation"
         echo "   -d       start Portable Open Hospital in demo mode (experimental - not working)"
         echo "   -c       clean Portable Open Hospital installation"
         echo "   -s       save Portable Open Hospital database data"
         echo "   -v       show Portable Open Hospital version information"
-        echo "   -f       start full Open Hospital client"
+        echo "   -z       start Open Hospital client"
 	exit 0
 }
 
@@ -330,7 +330,7 @@ function clean {
 
 
 # list of arguments expected in the input
-optstring=":hrdcsvf"
+optstring=":hrdcsvz"
 
 # function to parse input
 while getopts ${optstring} arg; do
@@ -370,9 +370,9 @@ while getopts ${optstring} arg; do
         	`$JAVA_BIN -version`
 		exit 1;
 		;;
-	"f")
-        	echo "Starting full Open Hospital client.."
-		OH_DISTRO=full
+	"z")
+        	echo "Starting Open Hospital client.."
+		OH_DISTRO=client
 		;;
 	?)
 		echo "Invalid option: -${OPTARG}. See -h for help"
@@ -398,9 +398,9 @@ echo "Setting up environment...."
 
 POH_PATH_ESCAPED=$(echo $POH_PATH | sed -e 's/\//\\\//g')
 
-######## DICOM - log4j setup
-
+######## DICOM setup
 echo "Setting up configuration files...."
+
 #DICOM_MAX_SIZE=$(grep -i '^dicom.max.size' $POH_PATH/$OH_DIR/rsc/dicom.properties.dist  | cut -f2 -d'=')
 #: ${DICOM_MAX_SIZE:=$DICOM_DEFAULT_SIZE}
 sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/" $POH_PATH/$OH_DIR/rsc/dicom.properties.dist > $POH_PATH/$OH_DIR/rsc/dicom.properties
@@ -454,7 +454,7 @@ do
 	CLASSPATH="$i":$CLASSPATH
 done
 
-######## Portable Open Hospital start
+######## Open Hospital start
 
 echo "Starting Portable Open Hospital... "
 
