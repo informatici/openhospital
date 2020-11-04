@@ -51,10 +51,6 @@ OH_DISTRO=portable
 
 ######## Software configuration - change at your own risk :-)
 
-
-MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
-MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
-
 # Database
 MYSQL_PORT=3306
 MYSQL_SERVER="127.0.0.1"
@@ -71,6 +67,10 @@ DB_CREATE_SQL="database.sql"
 DB_ARCHIVED_SQL="database.sql.imported"
 DB_DEMO="demo.sql"
 DATE=`date +%Y-%m-%d_%H-%M-%S`
+
+######## MySQL Software
+MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
+MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
 
 ######## JAVA 64bit - Default architecture
 ### JRE 8 - openlogic
@@ -89,9 +89,7 @@ JAVA_DISTRO="OpenJDK11U-jre_x64_linux_hotspot_11.0.9_11"
 JAVA_DIR="jdk-11.0.9+11-jre"
 
 ######## JAVA 32bit
-
-if [ $JAVA_ARCH = 32 ]
-	then
+if [ $JAVA_ARCH = 32 ]; then
 	# Setting JRE 32 bit
 	
 	### JRE 8 - openlogic 32bit
@@ -110,31 +108,13 @@ if [ $JAVA_ARCH = 32 ]
 	#JAVA_DIR="zulu11.43.21-ca-jre11.0.9-linux_i686"
 fi
 
-######## set PATH
-# name of this shell script
-SCRIPT_NAME=$(basename "$0")
 
-# set current dir
-CURRENT_DIR=$PWD
-
-# set POH_PATH if not defined
-if [ -z $POH_PATH ]; then
-	echo "Warning: POH_PATH not found - using current directory"
-		if [ ! -f ./$SCRIPT_NAME ]; then
-		echo "Error - oh.sh not found in the current PATH. Please cd the directory where POH was unzipped or set up POH_PATH properly."
-		exit 0
-		fi
-	POH_PATH=$PWD
-fi
-
-# set java bin
-JAVA_BIN=$POH_PATH/$JAVA_DIR/bin/java
-
-cd $POH_PATH
-
-######## System wide JAVA
+######## set JAVA_BIN
 # Uncomment this if you want to use system wide JAVA
 #JAVA_BIN=`which java`
+
+# name of this shell script
+SCRIPT_NAME=$(basename "$0")
 
 ######################## DO NOT EDIT BELOW THIS LINE ########################
 
@@ -154,21 +134,33 @@ function script_usage {
 
 ######## Functions
 
+function set_path {
+	# set current dir
+	CURRENT_DIR=$PWD
+	# set POH_PATH if not defined
+	if [ -z $POH_PATH ]; then
+	echo "Warning: POH_PATH not found - using current directory"
+		if [ ! -f ./$SCRIPT_NAME ]; then
+		echo "Error - oh.sh not found in the current PATH. Please cd the directory where POH was unzipped or set up POH_PATH properly."
+		exit 1
+		fi
+	POH_PATH=$PWD
+	POH_PATH_ESCAPED=$(echo $POH_PATH | sed -e 's/\//\\\//g')
+	fi
+}
+
 function restore_db {
-	if [ -f $POH_PATH/$SQL_DIR/$DB_CREATE_SQL ];
-	then
-	        echo "Found SQL creation script, starting OH...."
+	if [ -f $POH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
+	        echo "Found SQL creation script!"
 	elif [ -f $POH_PATH/$SQL_DIR/$DB_ARCHIVED_SQL ];
 	then
-	        echo "Found archived SQL creation script, restoring it and starting OH...."
+	        echo "Found archived SQL creation script, restoring it..."
 		mv $POH_PATH/$SQL_DIR/$DB_ARCHIVED_SQL $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
-#		clean;
 	fi
 }
 
 function demo_mode {
-	if [ -f $POH_PATH/$SQL_DIR/$DB_DEMO ];
-	then
+	if [ -f $POH_PATH/$SQL_DIR/$DB_DEMO ]; then
 	        echo "Found SQL Demo database, starting OH in demo mode...."
 		DB_CREATE_SQL=$DB_DEMO
 
@@ -193,7 +185,7 @@ if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 		read -p "(y/n)?" choice
 		case "$choice" in 
 			y|Y ) echo "yes";;
-			n|N ) echo "Exiting..."; exit 1;;
+			n|N ) echo "Exiting..."; exit 0;;
 			* ) echo "Invalid choice"; exit 1 ;;
 		esac
 
@@ -214,7 +206,7 @@ fi
 
 # Java
 function java_check {
-if [ ! -x "$JAVA_BIN" ]; then
+if [ ! -x $JAVA_BIN ]; then
 	if [ ! -f "$POH_PATH/$JAVA_DISTRO.tar.gz" ]; then
 
 		echo "Warning - JAVA  not found. Do you want to download it ? (50 MB)"
@@ -222,7 +214,7 @@ if [ ! -x "$JAVA_BIN" ]; then
 		read -p "(y/n)?" choice
 		case "$choice" in 
 			y|Y ) echo "yes";;
-			n|N ) echo "Exiting..."; exit 1;;
+			n|N ) echo "Exiting..."; exit 0;;
 			* ) echo "Invalid choice"; exit 1 ;;
 		esac
 
@@ -252,7 +244,6 @@ function start_database {
 	echo "MySQL server started! "
 }
 
-
 function shutdown_database {
 	echo "Shutting down MySQL... "
 	$POH_PATH/$MYSQL_DIR/bin/mysqladmin --host=$MYSQL_SERVER --port=$MYSQL_PORT --user=root shutdown 2>&1 > /dev/null
@@ -260,7 +251,7 @@ function shutdown_database {
 	while [ -e $POH_PATH/$MYSQL_SOCKET ]; do sleep 1; done
 }
 
-function inizialize_database {
+function config_database {
 	# Find a free TCP port to run MySQL starting from the default port
 	echo "Looking for a free TCP port for MySQL database..."
 	while [ $(ss -tna | awk '{ print $4 }' | grep ":$MYSQL_PORT") ]; do
@@ -269,21 +260,19 @@ function inizialize_database {
 	echo "Found TCP port $MYSQL_PORT!"
 
 	# Creating MySQL configuration
-	rm -f $POH_PATH/etc/mysql/my.cnf
+	#rm -f $POH_PATH/etc/mysql/my.cnf
+	echo "Generating MySQL config file..."
 	sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$MYSQL_PORT/" -e "s/MYSQL_DISTRO/$MYSQL_DIR/g" $POH_PATH/etc/mysql/my.cnf.dist > $POH_PATH/etc/mysql/my.cnf
+}
 
-	chmod 0444 $POH_PATH/etc/mysql/my.cnf
-
-	echo "Initializing MySQL database on port $MYSQL_PORT..."
-
+function inizialize_database {
 	# Recreate directory structure
 	rm -rf $POH_PATH/var/lib/mysql
 	mkdir -p $POH_PATH/var/lib/mysql
 	mkdir -p $POH_PATH/var/log/mysql
-
 	# Inizialize MySQL
+	echo "Initializing MySQL database on port $MYSQL_PORT..."
 	$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/var/lib/mysql
-    
 	if [ $? -ne 0 ]; then
 		echo "Error: MySQL initialization failed!"
 		exit 2
@@ -319,11 +308,13 @@ function dump_database {
 }
 
 function clean {
+	restore_db;
 	echo "Removing files... "
 	rm -f $POH_PATH/etc/mysql/my.cnf
 	rm -f $POH_PATH/$OH_DIR/rsc/database.properties
 	rm -f $POH_PATH/$OH_DIR/rsc/log4j.properties
 	rm -f $POH_PATH/$OH_DIR/rsc/dicom.properties
+	rm -rf $POH_PATH/var/lib/mysql
 	rm -f $POH_PATH/var/run/mysqld/*.sock*
 	rm -f $POH_PATH/var/run/mysqld/*.pid*
 }
@@ -340,21 +331,24 @@ while getopts ${optstring} arg; do
 		;;
 	"r")
         	echo "Resetting Portable Open Hospital installation...."
+		set_path;
 		restore_db;
 		;;
 	"d")
         	echo "Starting Portable Open Hospital in demo mode..."
+		set_path;
 		demo_mode;
 		;;
 	"c")
         	echo "Cleaning Portable Open Hospital installation..."
+		set_path;
 		clean;
-		rm -rf $POH_PATH/var/lib/mysql
         	echo "Done !"
 		exit 0
 		;;
 	"s")
         	echo "Saving Portable Open Hospital database"
+		set_path;
 		start_database;
 		dump_database;
 		shutdown_database;
@@ -363,12 +357,13 @@ while getopts ${optstring} arg; do
 		;;
 	"v")	# show versions
         	echo "Architecture is $ARCH"
-        	echo "Showing Software versions:"
+        	echo "Showing software versions:"
 		source $OH_DIR/rsc/version.properties
         	echo "Open Hospital version" $VER_MAJOR.$VER_MINOR.$VER_RELEASE
-        	echo "MySQL version $MYSQL_DIR"
-        	`$JAVA_BIN -version`
-		exit 1;
+        	echo "MySQL version: $MYSQL_DIR"
+        	echo "JAVA version:"
+		echo $JAVA_DISTRO
+		exit 0;
 		;;
 	"z")
         	echo "Starting Open Hospital client.."
@@ -392,11 +387,18 @@ if [ $OH_DISTRO = portable ]; then
 	fi
 fi
 
+set_path;
+
+# set JAVA_BIN
+if [ -z $JAVA_BIN ]; then
+	JAVA_BIN=$POH_PATH/$JAVA_DIR/bin/java
+fi
+
 ######## Environment setup
 
-echo "Setting up environment...."
+cd $POH_PATH
 
-POH_PATH_ESCAPED=$(echo $POH_PATH | sed -e 's/\//\\\//g')
+echo "Setting up environment...."
 
 ######## DICOM setup
 echo "Setting up configuration files...."
@@ -409,8 +411,6 @@ sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/" $POH_PATH/$OH_DIR/rsc/dicom.properties.di
 sed -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBSERVER/$MYSQL_SERVER/" -e "s/DBUSER/$DATABASE_USER/" -e "s/DBPASS/$DATABASE_PASSWORD/" \
 $POH_PATH/$OH_DIR/rsc/log4j.properties.dist > $POH_PATH/$OH_DIR/rsc/log4j.properties
 
-######## Database setup
-
 ######## database.properties setup
 echo "jdbc.url=jdbc:mysql://$MYSQL_SERVER:$MYSQL_PORT/$DATABASE_NAME" > $POH_PATH/$OH_DIR/rsc/database.properties
 echo "jdbc.username=$DATABASE_USER" >> $POH_PATH/$OH_DIR/rsc/database.properties
@@ -420,11 +420,15 @@ echo "jdbc.password=$DATABASE_PASSWORD" >> $POH_PATH/$OH_DIR/rsc/database.proper
 
 java_check;
 
+######## Database setup
+
 # Start MySQL and create database
 if [ $OH_DISTRO = portable ]; then
 	if [ -f $POH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
 		# Check for MySQL software
 		mysql_check;
+		# Config MySQL
+		config_database;
 		# Prepare MySQL
 		inizialize_database;
 		# Start MySQL
@@ -437,6 +441,8 @@ if [ $OH_DISTRO = portable ]; then
 	else
 		# Check for MySQL software
 		mysql_check;
+		# Config MySQL
+		config_database;
 		# Starting MySQL
 		start_database;
 	fi
@@ -456,21 +462,21 @@ done
 
 ######## Open Hospital start
 
-echo "Starting Portable Open Hospital... "
+echo "Starting Open Hospital... "
 
 cd $POH_PATH/$OH_DIR
 
 $JAVA_BIN -Dsun.java2d.dpiaware=false -Djava.library.path=${NATIVE_LIB_PATH} -classpath $CLASSPATH org.isf.menu.gui.Menu 2>&1 > /dev/null
 
-echo "Exiting Portable Open Hospital..."
+echo "Exiting Open Hospital..."
 
 if [ $OH_DISTRO = portable ]; then
 	shutdown_database;
 fi
 
-# cleaning up
-echo "Done ! "
-
 # go back to starting directory
 cd $CURRENT_DIR
+
+# exiting
+echo "Done ! "
 exit 0
