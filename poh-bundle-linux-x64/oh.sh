@@ -122,13 +122,13 @@ SCRIPT_NAME=$(basename "$0")
 
 function script_usage {
 	echo "Usage: $(basename $0) [-h -r -d -c -s -v -z]" 2>&1
-        echo "   -h       shows this help"
-        echo "   -r       restore Portable Open Hospital installation"
-        echo "   -d       start Portable Open Hospital in demo mode (experimental - not working)"
-        echo "   -c       clean Portable Open Hospital installation"
-        echo "   -s       save Portable Open Hospital database data"
-        echo "   -v       show Portable Open Hospital version information"
-        echo "   -z       start Open Hospital client"
+        echo "   -r       restore  Portable Open Hospital installation"
+        echo "   -c       clean    Portable Open Hospital installation"
+        echo "   -s       save     Portable Open Hospital database data"
+        echo "   -d       start    Portable Open Hospital in demo mode (experimental - not working)"
+        echo "   -v       show     Portable Open Hospital version information"
+        echo "   -z       start    Open Hospital client"
+        echo "   -h       show this help"
 	exit 0
 }
 
