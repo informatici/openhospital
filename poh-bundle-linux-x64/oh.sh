@@ -156,6 +156,9 @@ function restore_db {
 	then
 	        echo "Found archived SQL creation script, restoring it..."
 		mv $POH_PATH/$SQL_DIR/$DB_ARCHIVED_SQL $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
+	else
+		echo "No SQL creation script found !"
+		exit 1;
 	fi
 }
 
@@ -308,7 +311,6 @@ function dump_database {
 }
 
 function clean {
-	restore_db;
 	echo "Removing files... "
 	rm -f $POH_PATH/etc/mysql/my.cnf
 	rm -f $POH_PATH/$OH_DIR/rsc/database.properties
@@ -317,6 +319,7 @@ function clean {
 	rm -rf $POH_PATH/var/lib/mysql
 	rm -f $POH_PATH/var/run/mysqld/*.sock*
 	rm -f $POH_PATH/var/run/mysqld/*.pid*
+	restore_db;
 }
 
 
