@@ -52,13 +52,12 @@ OH_DISTRO=portable
 ######## Software configuration - change at your own risk :-)
 
 # Database
-MYSQL_PORT=3306
 MYSQL_SERVER="127.0.0.1"
-MYSQL_SOCKET="var/run/mysqld/mysql.sock"
-
+MYSQL_PORT=3306
 DATABASE_NAME="oh"
 DATABASE_USER="isf"
 DATABASE_PASSWORD="isf123"
+
 DICOM_MAX_SIZE="4M"
 
 OH_DIR="oh"
@@ -243,7 +242,7 @@ function start_database {
 		exit 2
 	fi
 	# Wait till the MySQL socket file is created
-	while [ ! -e $POH_PATH/$MYSQL_SOCKET ]; do sleep 1; done
+	while [ -e $POH_PATH/var/run/mysqld/mysql.sock ]; do sleep 1; done
 	echo "MySQL server started! "
 }
 
@@ -251,7 +250,7 @@ function shutdown_database {
 	echo "Shutting down MySQL... "
 	$POH_PATH/$MYSQL_DIR/bin/mysqladmin --host=$MYSQL_SERVER --port=$MYSQL_PORT --user=root shutdown 2>&1 > /dev/null
 	# Wait till the MySQL socket file is removed
-	while [ -e $POH_PATH/$MYSQL_SOCKET ]; do sleep 1; done
+	while [ -e $POH_PATH/var/run/mysqld/mysql.sock ]; do sleep 1; done
 }
 
 function config_database {
@@ -263,7 +262,6 @@ function config_database {
 	echo "Found TCP port $MYSQL_PORT!"
 
 	# Creating MySQL configuration
-	#rm -f $POH_PATH/etc/mysql/my.cnf
 	echo "Generating MySQL config file..."
 	sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$MYSQL_PORT/" -e "s/MYSQL_DISTRO/$MYSQL_DIR/g" $POH_PATH/etc/mysql/my.cnf.dist > $POH_PATH/etc/mysql/my.cnf
 }
