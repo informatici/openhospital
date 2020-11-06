@@ -103,7 +103,6 @@ if [ $JAVA_ARCH = 32 ]; then
 	#JAVA_DIR="zulu11.43.21-ca-jre11.0.9-linux_i686"
 fi
 
-
 ######## set JAVA_BIN
 # Uncomment this if you want to use system wide JAVA
 #JAVA_BIN=`which java`
@@ -154,9 +153,7 @@ if [ -z $JAVA_BIN ]; then
 fi
 if [ ! -x $JAVA_BIN ]; then
 	if [ ! -f "$POH_PATH/$JAVA_DISTRO.tar.gz" ]; then
-
-		echo "Warning - JAVA  not found. Do you want to download it ? (50 MB)"
-
+		echo "Warning - JAVA not found. Do you want to download it? (50 MB)"
 		read -p "(y/n)?" choice
 		case "$choice" in 
 			y|Y ) echo "yes";;
@@ -189,9 +186,7 @@ fi
 function mysql_check {
 if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 	if [ ! -f "$POH_PATH/$MYSQL_DIR.tar.gz" ]; then
-
-		echo "Warning - MySQL  not found. Do you want to download it ? (630 MB)"
-
+		echo "Warning - MySQL not found. Do you want to download it? (630 MB)"
 		read -p "(y/n)?" choice
 		case "$choice" in 
 			y|Y ) echo "yes";;
@@ -215,7 +210,7 @@ if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 	rm $MYSQL_DIR.tar.gz
 	echo "Done !"
 else	
-	echo "MySQL found !"
+	echo "MySQL found!"
 	echo "Using $MYSQL_DIR"
 fi
 }
@@ -276,20 +271,20 @@ function load_database () {
 		exit 2
 	fi
 	cd $POH_PATH/
-	echo "Database imported !"
+	echo "Database imported!"
 	# Archive sql creation script
 	echo "Achiving SQL creation script..."
 	mv $POH_PATH/$SQL_DIR/$DB_CREATE_SQL $POH_PATH/$SQL_DIR/$DB_ARCHIVED_SQL
 }
 
 function dump_database {
-	echo "Dumping MySQL database... "
+	echo "Dumping MySQL database..."
 	$POH_PATH/$MYSQL_DIR/bin/mysqldump -h $MYSQL_SERVER --port=$MYSQL_PORT -u root $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
 	if [ $? -ne 0 ]; then
 		echo "Error: Database not dumped!"
 		exit 2
 	fi
-	echo "MySQL dump file $SQL_DIR/mysqldump_$DATE.sql completed ! "
+	echo "MySQL dump file $SQL_DIR/mysqldump_$DATE.sql completed!"
 }
 
 function shutdown_database {
@@ -307,13 +302,13 @@ function restore_db {
 	        echo "Found archived SQL creation script, restoring it..."
 		mv $POH_PATH/$SQL_DIR/$DB_ARCHIVED_SQL $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
 	else
-		echo "No SQL creation script found !"
+		echo "No SQL creation script found!"
 		exit 1;
 	fi
 }
 
 function clean {
-	echo "Removing files... "
+	echo "Removing files..."
 	rm -f $POH_PATH/etc/mysql/my.cnf
 	rm -f $POH_PATH/$OH_DIR/rsc/database.properties
 	rm -f $POH_PATH/$OH_DIR/rsc/log4j.properties
@@ -327,7 +322,7 @@ function clean {
 # demo mode - experimental - not working
 function demo_mode {
 	if [ -f $POH_PATH/$SQL_DIR/$DB_DEMO ]; then
-	        echo "Found SQL Demo database, starting OH in demo mode...."
+	        echo "Found SQL Demo database, starting OH in demo mode..."
 		DB_CREATE_SQL=$DB_DEMO
 
 #		inizialize_database;
@@ -368,7 +363,7 @@ while getopts ${optstring} arg; do
 		exit 0
 		;;
 	"s")
-        	echo "Saving Portable Open Hospital database"
+        	echo "Saving Portable Open Hospital database..."
 		set_path;
 		start_database;
 		dump_database;
@@ -387,7 +382,7 @@ while getopts ${optstring} arg; do
 		exit 0;
 		;;
 	"x")
-        	echo "Starting Open Hospital client.."
+        	echo "Starting Open Hospital client..."
 		OH_DISTRO=client
 		;;
 	?)
@@ -410,7 +405,7 @@ fi
 
 ######## Environment setup
 
-echo "Setting up environment...."
+echo "Setting up environment..."
 set_path;
 
 # check for JAVA
@@ -419,7 +414,7 @@ java_check;
 cd $POH_PATH
 
 ######## DICOM setup
-echo "Setting up configuration files...."
+echo "Setting up configuration files..."
 
 #DICOM_MAX_SIZE=$(grep -i '^dicom.max.size' $POH_PATH/$OH_DIR/rsc/dicom.properties.dist  | cut -f2 -d'=')
 #: ${DICOM_MAX_SIZE:=$DICOM_DEFAULT_SIZE}
@@ -473,7 +468,7 @@ done
 
 ######## Open Hospital start
 
-echo "Starting Open Hospital... "
+echo "Starting Open Hospital..."
 
 cd $POH_PATH/$OH_DIR
 
@@ -489,5 +484,5 @@ fi
 cd $CURRENT_DIR
 
 # exiting
-echo "Done ! "
+echo "Done!"
 exit 0
