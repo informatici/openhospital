@@ -176,7 +176,6 @@ function demo_mode {
 	fi
 }
 
-
 # MySQL
 function mysql_check {
 if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
@@ -197,7 +196,13 @@ if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 	fi
 	echo "Unpacking $MYSQL_DIR..."
 	tar zxvf $MYSQL_DIR.tar.gz
-	echo "Removing downloaded file"
+	if [ -x $POH_PATH/$MYSQL_DIR/bin/mysqld_safe ]; then
+		echo "MySQL unpacked successfully!"
+	else 
+		echo "Error unpacking MySQL, exiting"
+		exit 1
+	fi
+	echo "Removing downloaded file..."
 	rm $MYSQL_DIR.tar.gz
 	echo "Done !"
 else	
@@ -226,8 +231,14 @@ if [ ! -x $JAVA_BIN ]; then
 	fi
 	echo "Unpacking $JAVA_DISTRO..."
 	tar zxvf $JAVA_DISTRO.tar.gz
+	if [ -x $POH_PATH/$JAVA_DIR/bin/java ]; then
+		echo "Java unpacked successfully!"
+	else 
+		echo "Error unpacking Java, exiting"
+		exit 1
+	fi
 	echo "Removing downloaded file..."
-#	rm $JAVA_DISTRO.tar.gz
+	rm $JAVA_DISTRO.tar.gz
 	echo "Done !"
 else
 	echo "Java found !"
