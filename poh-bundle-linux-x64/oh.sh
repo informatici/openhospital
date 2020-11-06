@@ -208,7 +208,7 @@ if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 	fi
 	echo "Removing downloaded file..."
 	rm $MYSQL_DIR.tar.gz
-	echo "Done !"
+	echo "Done!"
 else	
 	echo "MySQL found!"
 	echo "Using $MYSQL_DIR"
@@ -359,7 +359,7 @@ while getopts ${optstring} arg; do
         	echo "Cleaning Portable Open Hospital installation..."
 		set_path;
 		clean;
-        	echo "Done !"
+        	echo "Done!"
 		exit 0
 		;;
 	"s")
@@ -368,7 +368,7 @@ while getopts ${optstring} arg; do
 		start_database;
 		dump_database;
 		shutdown_database;
-        	echo "Done !"
+        	echo "Done!"
 		exit 0
 		;;
 	"v")	# show versions
