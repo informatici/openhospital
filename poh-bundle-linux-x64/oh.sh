@@ -234,25 +234,6 @@ else
 fi
 }
 
-function start_database {
-	echo "Starting MySQL server... "
-	$POH_PATH/$MYSQL_DIR/bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
-	if [ $? -ne 0 ]; then
-		echo "Error: Database not started!"
-		exit 2
-	fi
-	# Wait till the MySQL socket file is created
-	while [ -e $POH_PATH/var/run/mysqld/mysql.sock ]; do sleep 1; done
-	echo "MySQL server started! "
-}
-
-function shutdown_database {
-	echo "Shutting down MySQL... "
-	$POH_PATH/$MYSQL_DIR/bin/mysqladmin --host=$MYSQL_SERVER --port=$MYSQL_PORT --user=root shutdown 2>&1 > /dev/null
-	# Wait till the MySQL socket file is removed
-	while [ -e $POH_PATH/var/run/mysqld/mysql.sock ]; do sleep 1; done
-}
-
 function config_database {
 	# Find a free TCP port to run MySQL starting from the default port
 	echo "Looking for a free TCP port for MySQL database..."
@@ -266,6 +247,20 @@ function config_database {
 	sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$MYSQL_PORT/" -e "s/MYSQL_DISTRO/$MYSQL_DIR/g" $POH_PATH/etc/mysql/my.cnf.dist > $POH_PATH/etc/mysql/my.cnf
 }
 
+function start_database {
+	echo "Starting MySQL server... "
+	$POH_PATH/$MYSQL_DIR/bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
+	if [ $? -ne 0 ]; then
+		echo "Error: Database not started!"
+		exit 2
+	fi
+	# Wait till the MySQL socket file is created
+	while [ -e $POH_PATH/var/run/mysqld/mysql.sock ]; do sleep 1; done
+	# Wait till the MySQL tcp port is open
+	until nc -z $MYSQL_SERVER $MYSQL_PORT; do sleep 1; done
+	echo "MySQL server started! "
+}
+
 function inizialize_database {
 	# Recreate directory structure
 	rm -rf $POH_PATH/var/lib/mysql
@@ -273,7 +268,7 @@ function inizialize_database {
 	mkdir -p $POH_PATH/var/log/mysql
 	# Inizialize MySQL
 	echo "Initializing MySQL database on port $MYSQL_PORT..."
-	$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/var/lib/mysql
+	$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/var/lib/mysql 2>&1 > /dev/null 
 	if [ $? -ne 0 ]; then
 		echo "Error: MySQL initialization failed!"
 		exit 2
@@ -291,11 +286,14 @@ function load_database () {
 	cd $POH_PATH/sql
 	$POH_PATH/$MYSQL_DIR/bin/mysql -u root -h $MYSQL_SERVER --port=$MYSQL_PORT $DATABASE_NAME < $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
 	if [ $? -ne 0 ]; then
-		echo "Error: Database not initialized!"
+		echo "Error: Database not imported!"
 		exit 2
 	fi
 	cd $POH_PATH/
-	echo "Database initialized !"
+	echo "Database imported !"
+	# Archive sql creation script
+	echo "Achiving SQL creation script..."
+	mv $POH_PATH/$SQL_DIR/$DB_CREATE_SQL $POH_PATH/$SQL_DIR/$DB_ARCHIVED_SQL
 }
 
 function dump_database {
@@ -306,6 +304,13 @@ function dump_database {
 		exit 2
 	fi
 	echo "MySQL dump file $SQL_DIR/mysqldump_$DATE.sql completed ! "
+}
+
+function shutdown_database {
+	echo "Shutting down MySQL... "
+	$POH_PATH/$MYSQL_DIR/bin/mysqladmin --host=$MYSQL_SERVER --port=$MYSQL_PORT --user=root shutdown 2>&1 > /dev/null
+	# Wait till the MySQL socket file is removed
+	while [ -e $POH_PATH/var/run/mysqld/mysql.sock ]; do sleep 1; done
 }
 
 function clean {
@@ -436,9 +441,6 @@ if [ $OH_DISTRO = portable ]; then
 		start_database;	
 		# Create database and load data
 		load_database;
-		# Archive sql creation script
-		echo "Achiving SQL creation script..."
-		mv $POH_PATH/$SQL_DIR/$DB_CREATE_SQL $POH_PATH/$SQL_DIR/$DB_ARCHIVED_SQL
 	else
 		# Check for MySQL software
 		mysql_check;
