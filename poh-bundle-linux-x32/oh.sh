@@ -178,7 +178,7 @@ if [ ! -x $JAVA_BIN ]; then
 	fi
 	echo "Removing downloaded file..."
 	rm $JAVA_DISTRO.tar.gz
-	echo "Done !"
+	echo "Done!"
 fi
 }
 
