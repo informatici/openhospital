@@ -37,10 +37,31 @@ DATABASE_NAME="oh"
 DATABASE_USER="isf"
 DATABASE_PASSWORD="isf123"
 
+<<<<<<< HEAD
 DICOM_MAX_SIZE="4M"
 
 OH_DIR="oh"
 SQL_DIR="sql"
+=======
+### JRE 8 - openlogic
+#JAVA_DISTRO="openlogic-openjdk-jre-8u262-b10-linux-x64"
+#JAVA_URL="https://builds.openlogic.com/downloadJDK/openlogic-openjdk-jre/8u262-b10/"
+#JAVA_DIR="openlogic-openjdk-jre-8u262-b10-linux-64"
+
+### JRE 11 - zulu
+#JAVA_DISTRO="zulu11.43.21-ca-jre11.0.9-linux_x64"
+#JAVA_URL="https://cdn.azul.com/zulu/bin"
+#JAVA_DIR="zulu11.43.21-ca-jre11.0.9-linux_x64"
+
+### JRE 11 - openjdk
+JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9%2B11.1"
+JAVA_DISTRO="OpenJDK11U-jre_x64_linux_hotspot_11.0.9_11"
+JAVA_DIR="jdk-11.0.9+11-jre"
+
+# Database
+MYSQL_PORT=3307
+MYSQL_SOCKET="var/run/mysqld/mysql.sock"
+>>>>>>> f82803f5187283d14dbae19b1fdf255cd7ba6dc2
 DB_CREATE_SQL="database.sql"
 DB_ARCHIVED_SQL="database.sql.imported"
 DB_DEMO="demo.sql"
@@ -242,6 +263,7 @@ function start_database {
 	echo "MySQL server started! "
 }
 
+<<<<<<< HEAD
 function inizialize_database {
 	# Recreate directory structure
 	rm -rf $POH_PATH/var/lib/mysql
@@ -255,6 +277,9 @@ function inizialize_database {
 		exit 2
 	fi
 }
+=======
+		echo "Warning - JAVA  not found. Do you want to download it ? (50 MB)"
+>>>>>>> f82803f5187283d14dbae19b1fdf255cd7ba6dc2
 
 function load_database () {
 	echo "Dropping OH Database (if existing)..."
