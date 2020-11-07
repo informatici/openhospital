@@ -154,7 +154,7 @@ fi
 if [ ! -x $JAVA_BIN ]; then
 	if [ ! -f "$POH_PATH/$JAVA_DISTRO.tar.gz" ]; then
 		echo "Warning - JAVA not found. Do you want to download it? (50 MB)"
-		read -p "(y/n)?" choice
+		read -p "(y/n)? " choice
 		case "$choice" in 
 			y|Y ) echo "yes";;
 			n|N ) echo "Exiting..."; exit 0;;
@@ -187,7 +187,7 @@ function mysql_check {
 if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 	if [ ! -f "$POH_PATH/$MYSQL_DIR.tar.gz" ]; then
 		echo "Warning - MySQL not found. Do you want to download it? (630 MB)"
-		read -p "(y/n)?" choice
+		read -p "(y/n)? " choice
 		case "$choice" in 
 			y|Y ) echo "yes";;
 			n|N ) echo "Exiting..."; exit 0;;
@@ -278,13 +278,15 @@ function load_database () {
 }
 
 function dump_database {
-	echo "Dumping MySQL database..."
-	$POH_PATH/$MYSQL_DIR/bin/mysqldump -h $MYSQL_SERVER --port=$MYSQL_PORT -u root $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
-	if [ $? -ne 0 ]; then
-		echo "Error: Database not dumped!"
+	if [ ! -x "$POH_PATH/$MYSQL_DIR/bin/mysqldump " ]; then
+		echo "Dumping MySQL database..."
+		$POH_PATH/$MYSQL_DIR/bin/mysqldump -h $MYSQL_SERVER --port=$MYSQL_PORT -u root $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
+		if [ $? -ne 0 ]; then
+			echo "Error: Database not dumped!"
 		exit 2
-	fi
+		fi
 	echo "MySQL dump file $SQL_DIR/mysqldump_$DATE.sql completed!"
+	fi
 }
 
 function shutdown_database {
@@ -363,13 +365,21 @@ while getopts ${optstring} arg; do
 		exit 0
 		;;
 	"s")
-        	echo "Saving Portable Open Hospital database..."
 		set_path;
-		start_database;
-		dump_database;
-		shutdown_database;
-        	echo "Done!"
-		exit 0
+		# checking if data exist
+		if [ -d $POH_PATH/var/lib/mysql ]; then
+			mysql_check;
+			config_database;
+			start_database;
+	        	echo "Saving Portable Open Hospital database..."
+			dump_database;
+			shutdown_database;
+	        	echo "Done!"
+			exit 0
+		else
+	        	echo "Error: no data found! Exiting"
+			exit 1
+		fi
 		;;
 	"v")	# show versions
         	echo "Architecture is $ARCH"
@@ -433,11 +443,11 @@ echo "jdbc.password=$DATABASE_PASSWORD" >> $POH_PATH/$OH_DIR/rsc/database.proper
 
 # Start MySQL and create database
 if [ $OH_DISTRO = portable ]; then
+	# Check for MySQL software
+	mysql_check;
+	# Config MySQL
+	config_database;
 	if [ -f $POH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
-		# Check for MySQL software
-		mysql_check;
-		# Config MySQL
-		config_database;
 		# Prepare MySQL
 		inizialize_database;
 		# Start MySQL
@@ -445,10 +455,6 @@ if [ $OH_DISTRO = portable ]; then
 		# Create database and load data
 		load_database;
 	else
-		# Check for MySQL software
-		mysql_check;
-		# Config MySQL
-		config_database;
 		# Starting MySQL
 		start_database;
 	fi
