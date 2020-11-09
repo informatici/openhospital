@@ -22,12 +22,20 @@
 #
 #
 
+# SET DEBUG mode
+# saner programming env: these switches turn some bugs into errors
+set -o errexit -o pipefail -o noclobber -o nounset
+
 ######## Open Hospital - Portable Open Hospital Configuration
 # POH_PATH is the directory where Portable OpenHospital files are located
 # POH_PATH=/usr/local/PortableOpenHospital
 
 OH_DISTRO=portable
 #OH_DISTRO=client
+
+# Language setting
+#OH_LANGUAGE=en fr es it pt
+OH_LANGUAGE=en
 
 ######## Software configuration - change at your own risk :-)
 # Database
@@ -48,14 +56,13 @@ DB_DEMO="demo.sql"
 DATE=`date +%Y-%m-%d_%H-%M-%S`
 
 ######## Define architecture
+
 ARCH=`uname -m`
 case $ARCH in
 	x86_64|amd64|AMD64)
-		NATIVE_LIB_PATH=$POH_PATH/$OH_DIR/lib/native/Linux/amd64
 		JAVA_ARCH=64
 		;;
 	i[3456789]86|x86|i86pc)
-		NATIVE_LIB_PATH=$POH_PATH/$OH_DIR/lib/native/Linux/i386
 		JAVA_ARCH=32
 		;;
 	*)
@@ -68,7 +75,8 @@ esac
 MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
 MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
 
-######## JAVA 64bit - Default architecture
+######## JAVA Software
+######## JAVA 64bit - default architecture
 ### JRE 8 - openlogic
 #JAVA_DISTRO="openlogic-openjdk-jre-8u262-b10-linux-x64"
 #JAVA_URL="https://builds.openlogic.com/downloadJDK/openlogic-openjdk-jre/8u262-b10/"
@@ -117,26 +125,40 @@ SCRIPT_NAME=$(basename "$0")
 
 function script_usage {
 	echo ""
-	echo " Portable Open Hospital - Usage: $(basename $0) [-h -r -d -c -s -v -x]"
+	echo " Portable Open Hospital"
 	echo ""
-        echo "   -r       restore  POH installation"
-        echo "   -c       clean POH installation"
-        echo "   -s       save POH database data"
-        echo "   -d       start POH in demo mode (experimental - not working)"
-        echo "   -v       show POH version information"
-        echo "   -x       start Open Hospital client"
-        echo "   -h       show this help"
+	echo " Usage: $SCRIPT_NAME [-option]"
+	echo "   -r    restore POH installation"
+	echo "   -c    clean POH installation"
+	echo "   -s    save POH database data"
+	echo "   -x    start Open Hospital - client mode"
+	echo "   -d    start POH in demo mode (experimental - not working)"
+	echo "   -t    test database connection (client mode)"
+	echo ""
+	echo "   -l    en | fr | it | es | pt -  set language"
+	echo ""
+	echo "   -v    show POH version information"
+	echo "   -h    show this help"
 	echo ""
 	exit 0
 }
 
 ######## Functions
 
+function get_confirmation {
+read -p "(y/n)? " choice
+case "$choice" in 
+	y|Y ) echo "yes";;
+	n|N ) echo "Exiting..."; exit 0;;
+	* ) echo "Invalid choice"; exit 1 ;;
+esac
+}
+
 function set_path {
 	# set current dir
 	CURRENT_DIR=$PWD
 	# set POH_PATH if not defined
-	if [ -z $POH_PATH ]; then
+	if [ -z ${POH_PATH+x} ]; then
 	echo "Warning: POH_PATH not found - using current directory"
 		if [ ! -f ./$SCRIPT_NAME ]; then
 		echo "Error - oh.sh not found in the current PATH. Please cd the directory where POH was unzipped or set up POH_PATH properly."
@@ -147,21 +169,35 @@ function set_path {
 	fi
 }
 
+function set_language {
+	if [ -z ${OH_LANGUAGE+x} ]; then
+		OH_LANGUAGE=en
+	fi
+
+	case $OH_LANGUAGE in 
+		en|fr|it|es|pt) 
+			echo "Setting Open Hospital language to $OH_LANGUAGE"
+		;;
+		*)
+		echo "Invalid option: $OH_LANGUAGE"
+		exit 1;
+		;;
+	esac
+	# set language in OH config file
+	[ -f $POH_PATH/$OH_DIR/rsc/generalData.properties ] && mv $POH_PATH/$OH_DIR/rsc/generalData.properties $POH_PATH/$OH_DIR/rsc/generalData.properties.old
+	sed -e "s/OH_SET_LANGUAGE/$OH_LANGUAGE/" $POH_PATH/$OH_DIR/rsc/generalData.properties.dist > $POH_PATH/$OH_DIR/rsc/generalData.properties
+}
+
 # Java
 function java_check {
-if [ -z $JAVA_BIN ]; then
+if [ -z ${JAVA_BIN+x} ]; then
 	JAVA_BIN=$POH_PATH/$JAVA_DIR/bin/java
 fi
+
 if [ ! -x $JAVA_BIN ]; then
 	if [ ! -f "$POH_PATH/$JAVA_DISTRO.tar.gz" ]; then
 		echo "Warning - JAVA not found. Do you want to download it? (50 MB)"
-		read -p "(y/n)? " choice
-		case "$choice" in 
-			y|Y ) echo "yes";;
-			n|N ) echo "Exiting..."; exit 0;;
-			* ) echo "Invalid choice"; exit 1 ;;
-		esac
-
+		get_confirmation;
 		# Downloading openjdk binaries
 		echo "Downloading $JAVA_DISTRO..."
 		wget $JAVA_URL/$JAVA_DISTRO.tar.gz
@@ -188,13 +224,7 @@ function mysql_check {
 if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 	if [ ! -f "$POH_PATH/$MYSQL_DIR.tar.gz" ]; then
 		echo "Warning - MySQL not found. Do you want to download it? (630 MB)"
-		read -p "(y/n)? " choice
-		case "$choice" in 
-			y|Y ) echo "yes";;
-			n|N ) echo "Exiting..."; exit 0;;
-			* ) echo "Invalid choice"; exit 1 ;;
-		esac
-
+		get_confirmation;
 		# Downloading mysql binary
 		echo "Downloading $MYSQL_DIR..."
 		wget $MYSQL_URL/$MYSQL_DIR.tar.gz
@@ -226,6 +256,7 @@ function config_database {
 
 	# Creating MySQL configuration
 	echo "Generating MySQL config file..."
+	[ -f $POH_PATH/etc/mysql/my.cnf ] && mv -f $POH_PATH/etc/mysql/my.cnf $POH_PATH/etc/mysql/my.cnf.old
 	sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" -e "s/MYSQL_PORT/$MYSQL_PORT/" -e "s/MYSQL_DISTRO/$MYSQL_DIR/g" $POH_PATH/etc/mysql/my.cnf.dist > $POH_PATH/etc/mysql/my.cnf
 }
 
@@ -290,6 +321,17 @@ function dump_database {
 	fi
 }
 
+function test_database_connection {
+	echo "Testing database connection..."
+	DBTEST=$($POH_PATH/$MYSQL_DIR/bin/mysql --host=$MYSQL_SERVER --port=$MYSQL_PORT --user=$DATABASE_USER --password=$DATABASE_PASSWORD -e "USE $DATABASE_NAME" >/dev/null 2>&1; echo "$?" )
+	if [ $DBTEST -eq 0 ];then
+		echo "Database connection successfully established!"
+	else
+		echo "Error: can't connect to database. Exiting"
+		exit 1
+	fi
+}
+
 function shutdown_database {
 	echo "Shutting down MySQL... "
 	$POH_PATH/$MYSQL_DIR/bin/mysqladmin --host=$MYSQL_SERVER --port=$MYSQL_PORT --user=root shutdown 2>&1 > /dev/null
@@ -311,11 +353,15 @@ function restore_db {
 }
 
 function clean {
+	echo "Warning: do you want to remove all data and configuration files ?"
+	get_confirmation;
 	echo "Removing files..."
 	rm -f $POH_PATH/etc/mysql/my.cnf
-	rm -f $POH_PATH/$OH_DIR/rsc/database.properties
-	rm -f $POH_PATH/$OH_DIR/rsc/log4j.properties
-	rm -f $POH_PATH/$OH_DIR/rsc/dicom.properties
+	rm -f $POH_PATH/$OH_DIR/rsc/generalData.properties.old
+	rm -f $POH_PATH/$OH_DIR/rsc/database.properties.old
+	rm -f $POH_PATH/$OH_DIR/rsc/log4j.properties.old
+	rm -f $POH_PATH/$OH_DIR/rsc/dicom.properties.old
+	rm -f $POH_PATH/$OH_DIR/logs/*
 	rm -rf $POH_PATH/var/lib/mysql
 	rm -f $POH_PATH/var/run/mysqld/*.sock*
 	rm -f $POH_PATH/var/run/mysqld/*.pid*
@@ -338,34 +384,34 @@ function demo_mode {
 	fi
 }
 
-
-# list of arguments expected in the input
-optstring=":hrdcsvx"
+# list of arguments expected in user the input
+OPTIND=1 # Reset in case getopts has been used previously in the shell.
+OPTSTRING=":h?rdcsvxtl:"
 
 # function to parse input
-while getopts ${optstring} arg; do
-	case ${arg} in
-	"h")
+while getopts ${OPTSTRING} opt; do
+	case ${opt} in
+	h)	# help
 		script_usage;
 		;;
-	"r")
+	r)	# restore 
         	echo "Resetting Portable Open Hospital installation...."
 		set_path;
 		restore_db;
 		;;
-	"d")
+	d)	# demo mode
         	echo "Starting Portable Open Hospital in demo mode..."
 		set_path;
 		demo_mode;
 		;;
-	"c")
+	c)	# clean
         	echo "Cleaning Portable Open Hospital installation..."
 		set_path;
 		clean;
         	echo "Done!"
 		exit 0
 		;;
-	"s")
+	s)	# save database
 		set_path;
 		# checking if data exist
 		if [ -d $POH_PATH/var/lib/mysql ]; then
@@ -382,29 +428,51 @@ while getopts ${optstring} arg; do
 			exit 1
 		fi
 		;;
-	"v")	# show versions
+	v)	# show versions
+		set_path;
+		set_language;
         	echo "Architecture is $ARCH"
-        	echo "Showing software versions:"
+        	echo "Software versions:"
 		source $OH_DIR/rsc/version.properties
         	echo "Open Hospital version" $VER_MAJOR.$VER_MINOR.$VER_RELEASE
+        	echo "language is set to $OH_LANGUAGE"
         	echo "MySQL version: $MYSQL_DIR"
         	echo "JAVA version:"
 		echo $JAVA_DISTRO
 		exit 0;
 		;;
-	"x")
+	x)	# start in client mode
         	echo "Starting Open Hospital client..."
 		OH_DISTRO=client
 		;;
-	?)
-		echo "Invalid option: -${OPTARG}. See -h for help"
+	l)	# set language
+		set_path;
+		OH_LANGUAGE=$OPTARG
+		set_language;
+		;;
+	t)	# test database connection
+		set_path;
+		if [ $OH_DISTRO = portable ]; then
+			echo "Only for client mode. Exiting"
+			exit 1
+		fi
+		test_database_connection;
+		exit 0
+		;;
+	?)	# default
+		echo "Invalid option: -${OPTARG}. See $SCRIPT_NAME -h for help"
 		exit 2
 		;;
 	esac
 done
 
+######################## Script start ########################
 
-######## Script start
+# check distro
+if [ -z $OH_DISTRO ]; then
+		echo "Error - OH_DISTRO not defined [client - portable]"
+	exit 1
+fi
 
 # check user
 if [ $OH_DISTRO = portable ]; then
@@ -414,28 +482,31 @@ if [ $OH_DISTRO = portable ]; then
 	fi
 fi
 
+echo "Starting Open Hospital - $OH_DISTRO..."
+
 ######## Environment setup
 
 echo "Setting up environment..."
+
 set_path;
-
-# check for JAVA
+set_language;
 java_check;
-
-cd $POH_PATH
 
 ######## DICOM setup
 echo "Setting up configuration files..."
 
+[ -f $POH_PATH/$OH_DIR/rsc/dicom.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/dicom.properties $POH_PATH/$OH_DIR/rsc/dicom.properties.old
 #DICOM_MAX_SIZE=$(grep -i '^dicom.max.size' $POH_PATH/$OH_DIR/rsc/dicom.properties.dist  | cut -f2 -d'=')
 #: ${DICOM_MAX_SIZE:=$DICOM_DEFAULT_SIZE}
 sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/" $POH_PATH/$OH_DIR/rsc/dicom.properties.dist > $POH_PATH/$OH_DIR/rsc/dicom.properties
 
 ######## log4j.properties setup
+[ -f $POH_PATH/$OH_DIR/rsc/log4j.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/log4j.properties $POH_PATH/$OH_DIR/rsc/log4j.properties.old
 sed -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBSERVER/$MYSQL_SERVER/" -e "s/DBUSER/$DATABASE_USER/" -e "s/DBPASS/$DATABASE_PASSWORD/" \
 $POH_PATH/$OH_DIR/rsc/log4j.properties.dist > $POH_PATH/$OH_DIR/rsc/log4j.properties
 
-######## database.properties setup
+######## database.properties setup 
+[ -f $POH_PATH/$OH_DIR/rsc/database.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/database.properties $POH_PATH/$OH_DIR/rsc/database.properties.old
 echo "jdbc.url=jdbc:mysql://$MYSQL_SERVER:$MYSQL_PORT/$DATABASE_NAME" > $POH_PATH/$OH_DIR/rsc/database.properties
 echo "jdbc.username=$DATABASE_USER" >> $POH_PATH/$OH_DIR/rsc/database.properties
 echo "jdbc.password=$DATABASE_PASSWORD" >> $POH_PATH/$OH_DIR/rsc/database.properties
@@ -460,6 +531,20 @@ if [ $OH_DISTRO = portable ]; then
 		start_database;
 	fi
 fi
+
+# test database
+test_database_connection;
+
+######## NATIVE LIB setup
+
+case $JAVA_ARCH in
+	64)
+		NATIVE_LIB_PATH=$POH_PATH/$OH_DIR/lib/native/Linux/amd64
+	;;
+	32)
+		NATIVE_LIB_PATH=$POH_PATH/$OH_DIR/lib/native/Linux/i386
+	;;
+esac
 
 ######## CLASSPATH setup
 
