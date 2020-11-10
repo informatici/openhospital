@@ -33,9 +33,9 @@ set -o errexit -o pipefail -o noclobber -o nounset
 OH_DISTRO=portable
 #OH_DISTRO=client
 
-# Language setting
+# Language setting - default set to en
 #OH_LANGUAGE=en fr es it pt
-OH_LANGUAGE=en
+#OH_LANGUAGE=en
 
 ######## Software configuration - change at your own risk :-)
 # Database
@@ -176,7 +176,7 @@ function set_language {
 
 	case $OH_LANGUAGE in 
 		en|fr|it|es|pt) 
-			echo "Setting Open Hospital language to $OH_LANGUAGE"
+			echo "Open Hospital language is set to $OH_LANGUAGE"
 		;;
 		*)
 		echo "Invalid option: $OH_LANGUAGE"
@@ -435,7 +435,6 @@ while getopts ${OPTSTRING} opt; do
         	echo "Software versions:"
 		source $OH_DIR/rsc/version.properties
         	echo "Open Hospital version" $VER_MAJOR.$VER_MINOR.$VER_RELEASE
-        	echo "language is set to $OH_LANGUAGE"
         	echo "MySQL version: $MYSQL_DIR"
         	echo "JAVA version:"
 		echo $JAVA_DISTRO
@@ -469,7 +468,7 @@ done
 ######################## Script start ########################
 
 # check distro
-if [ -z $OH_DISTRO ]; then
+if [ -z ${OH_DISTRO+x} ]; then
 		echo "Error - OH_DISTRO not defined [client - portable]"
 	exit 1
 fi
