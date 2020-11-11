@@ -24,7 +24,7 @@
 
 # SET DEBUG mode
 # saner programming env: these switches turn some bugs into errors
-set -o errexit -o pipefail -o noclobber -o nounset
+#set -o errexit -o pipefail -o noclobber -o nounset
 
 ######## Open Hospital - Portable Open Hospital Configuration
 # POH_PATH is the directory where Portable OpenHospital files are located
@@ -180,7 +180,7 @@ function set_language {
 		;;
 		*)
 		echo "Invalid option: $OH_LANGUAGE"
-		exit 1;
+		exit 1
 		;;
 	esac
 	# set language in OH config file
@@ -216,6 +216,9 @@ if [ ! -x $JAVA_BIN ]; then
 	echo "Removing downloaded file..."
 	rm $JAVA_DISTRO.tar.gz
 	echo "Done!"
+else
+	echo "JAVA found!"
+	echo "Using $JAVA_DIR"
 fi
 }
 
@@ -314,7 +317,7 @@ function dump_database {
 		echo "Dumping MySQL database..."
 		$POH_PATH/$MYSQL_DIR/bin/mysqldump -h $MYSQL_SERVER --port=$MYSQL_PORT -u root $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
 		if [ $? -ne 0 ]; then
-			echo "Error: Database not dumped!"
+			echo "Error: Database not dumped! Exiting."
 		exit 2
 		fi
 	echo "MySQL dump file $SQL_DIR/mysqldump_$DATE.sql completed!"
@@ -327,8 +330,8 @@ function test_database_connection {
 	if [ $DBTEST -eq 0 ];then
 		echo "Database connection successfully established!"
 	else
-		echo "Error: can't connect to database. Exiting"
-		exit 1
+		echo "Error: can't connect to database! Exiting."
+		exit 2
 	fi
 }
 
@@ -347,8 +350,8 @@ function restore_db {
 	        echo "Found archived SQL creation script, restoring it..."
 		mv $POH_PATH/$SQL_DIR/$DB_ARCHIVED_SQL $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
 	else
-		echo "No SQL creation script found!"
-		exit 1;
+		echo "No SQL creation script found! Exiting."
+		exit 2
 	fi
 }
 
@@ -438,7 +441,7 @@ while getopts ${OPTSTRING} opt; do
         	echo "MySQL version: $MYSQL_DIR"
         	echo "JAVA version:"
 		echo $JAVA_DISTRO
-		exit 0;
+		exit 0
 		;;
 	x)	# start in client mode
         	echo "Starting Open Hospital client..."
