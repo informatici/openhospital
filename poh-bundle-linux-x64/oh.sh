@@ -72,8 +72,11 @@ case $ARCH in
 esac
 
 ######## MySQL Software
+#MYSQL_DIR="mysql-8.0.22-linux-glibc2.17-x86_64-minimal"
+#MYSQL_URL="https://dev.mysql.com/get/Downloads/MySQL-8.0/"
 MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
 MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
+EXT="tar.gz"
 
 ######## JAVA Software
 ######## JAVA 64bit - default architecture
@@ -203,7 +206,7 @@ if [ ! -x $JAVA_BIN ]; then
 		wget $JAVA_URL/$JAVA_DISTRO.tar.gz
 	fi
 	echo "Unpacking $JAVA_DISTRO..."
-	tar zxvf $JAVA_DISTRO.tar.gz
+	tar xf $JAVA_DISTRO.tar.gz
 	# check for java binary
 	if [ -x $POH_PATH/$JAVA_DIR/bin/java ]; then
 		echo "Java unpacked successfully!"
@@ -225,15 +228,15 @@ fi
 # MySQL
 function mysql_check {
 if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
-	if [ ! -f "$POH_PATH/$MYSQL_DIR.tar.gz" ]; then
+	if [ ! -f "$POH_PATH/$MYSQL_DIR.$EXT" ]; then
 		echo "Warning - MySQL not found. Do you want to download it? (630 MB)"
 		get_confirmation;
 		# Downloading mysql binary
 		echo "Downloading $MYSQL_DIR..."
-		wget $MYSQL_URL/$MYSQL_DIR.tar.gz
+		wget $MYSQL_URL/$MYSQL_DIR.$EXT
 	fi
 	echo "Unpacking $MYSQL_DIR..."
-	tar zxvf $MYSQL_DIR.tar.gz
+	tar xf $MYSQL_DIR.$EXT
 	if [ -x $POH_PATH/$MYSQL_DIR/bin/mysqld_safe ]; then
 		echo "MySQL unpacked successfully!"
 	else 
@@ -241,7 +244,7 @@ if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 		exit 1
 	fi
 	echo "Removing downloaded file..."
-	rm $MYSQL_DIR.tar.gz
+	rm $MYSQL_DIR.$EXT
 	echo "Done!"
 else	
 	echo "MySQL found!"
@@ -280,6 +283,7 @@ function start_database {
 function inizialize_database {
 	# Recreate directory structure
 	rm -rf $POH_PATH/var/lib/mysql
+	mkdir -p $POH_PATH/var/run/mysql
 	mkdir -p $POH_PATH/var/lib/mysql
 	mkdir -p $POH_PATH/var/log/mysql
 	# Inizialize MySQL
@@ -296,7 +300,10 @@ function load_database () {
 	$POH_PATH/$MYSQL_DIR/bin/mysql -u root -h $MYSQL_SERVER --port=$MYSQL_PORT -e "DROP DATABASE IF EXISTS $DATABASE_NAME;"
 
 	echo "Creating OH Database..."
-	$POH_PATH/$MYSQL_DIR/bin/mysql -u root -h $MYSQL_SERVER --port=$MYSQL_PORT -e "CREATE DATABASE $DATABASE_NAME; GRANT ALL ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD'; GRANT ALL ON $DATABASE_NAME.* TO '$DATABASE_USER'@'%' IDENTIFIED BY '$DATABASE_PASSWORD';"
+	$POH_PATH/$MYSQL_DIR/bin/mysql -u root -h $MYSQL_SERVER --port=$MYSQL_PORT -e \
+       	"CREATE DATABASE $DATABASE_NAME; CREATE USER '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD'; \
+	CREATE USER '$DATABASE_USER'@'%' IDENTIFIED BY '$DATABASE_PASSWORD'; GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost'; \
+	GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'%' ; "
 
 	echo "Importing database schema $DB_CREATE_SQL..."
 	cd $POH_PATH/sql
@@ -342,6 +349,15 @@ function shutdown_database {
 	while [ -e $POH_PATH/var/run/mysqld/mysql.sock ]; do sleep 1; done
 }
 
+function clean_database {
+	echo "Warning: do you want to remove all data ?"
+	get_confirmation;
+	echo "Removing data..."
+	rm -rf $POH_PATH/var/lib/mysql/*
+	rm -rf $POH_PATH/var/log/mysql/*
+	rm -f $POH_PATH/var/run/mysqld/*
+}
+
 function restore_db {
 	if [ -f $POH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
 	        echo "Found SQL creation script!"
@@ -355,20 +371,21 @@ function restore_db {
 	fi
 }
 
-function clean {
-	echo "Warning: do you want to remove all data and configuration files ?"
+function clean_files {
+	echo "Warning: do you want to remove all configuration and log files ?"
 	get_confirmation;
 	echo "Removing files..."
 	rm -f $POH_PATH/etc/mysql/my.cnf
+	rm -f $POH_PATH/etc/mysql/my.cnf.old
+	rm -f $POH_PATH/$OH_DIR/rsc/generalData.properties
 	rm -f $POH_PATH/$OH_DIR/rsc/generalData.properties.old
+	rm -f $POH_PATH/$OH_DIR/rsc/database.properties
 	rm -f $POH_PATH/$OH_DIR/rsc/database.properties.old
+	rm -f $POH_PATH/$OH_DIR/rsc/log4j.properties
 	rm -f $POH_PATH/$OH_DIR/rsc/log4j.properties.old
+	rm -f $POH_PATH/$OH_DIR/rsc/dicom.properties
 	rm -f $POH_PATH/$OH_DIR/rsc/dicom.properties.old
 	rm -f $POH_PATH/$OH_DIR/logs/*
-	rm -rf $POH_PATH/var/lib/mysql
-	rm -f $POH_PATH/var/run/mysqld/*.sock*
-	rm -f $POH_PATH/var/run/mysqld/*.pid*
-	restore_db;
 }
 
 # demo mode - experimental - not working
@@ -376,14 +393,6 @@ function demo_mode {
 	if [ -f $POH_PATH/$SQL_DIR/$DB_DEMO ]; then
 	        echo "Found SQL Demo database, starting OH in demo mode..."
 		DB_CREATE_SQL=$DB_DEMO
-
-#		inizialize_database;
-#		start_database;
-#		cd $POH_PATH/sql
-#	elif [ -f $POH_PATH/$SQL_DIR/$DB_ARCHIVED_SQL ];
-#	then
-#	        echo "Found archived SQL creation script, restoring and starting OH...."
-#		mv $POH_PATH/$SQL_DIR/$DB_ARCHIVED_SQL $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
 	fi
 }
 
@@ -404,13 +413,16 @@ while getopts ${OPTSTRING} opt; do
 		;;
 	d)	# demo mode
         	echo "Starting Portable Open Hospital in demo mode..."
+		OH_DISTRO=portable
 		set_path;
 		demo_mode;
 		;;
 	c)	# clean
         	echo "Cleaning Portable Open Hospital installation..."
 		set_path;
-		clean;
+		clean_files;
+		clean_database;
+		restore_db;
         	echo "Done!"
 		exit 0
 		;;
@@ -444,7 +456,6 @@ while getopts ${OPTSTRING} opt; do
 		exit 0
 		;;
 	x)	# start in client mode
-        	echo "Starting Open Hospital client..."
 		OH_DISTRO=client
 		;;
 	l)	# set language
