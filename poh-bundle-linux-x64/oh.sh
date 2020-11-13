@@ -329,7 +329,7 @@ function import_database () {
 	GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'%' ; "
 
 	echo "Importing database schema $DB_CREATE_SQL..."
-	cd $POH_PATH/sql
+	cd $POH_PATH/$SQL_DIR
 	$POH_PATH/$MYSQL_DIR/bin/mysql -u root -h $MYSQL_SERVER --port=$MYSQL_PORT $DATABASE_NAME < $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
 	if [ $? -ne 0 ]; then
 		echo "Error: Database not imported!"
@@ -472,7 +472,7 @@ while getopts ${OPTSTRING} opt; do
 	D)	# demo mode
         	echo "Starting Portable Open Hospital in demo mode..."
 		OH_DISTRO=portable
-		DEMO_MODE=on
+		DEMO_MODE="on"
 		;;
 	v)	# show versions
 		set_path;
@@ -509,10 +509,16 @@ if [ $OH_DISTRO = portable ]; then
 	fi
 fi
 
+######## Environment setup
+
+echo "Setting up environment..."
+
 set_path;
+set_language;
+java_check;
 
 # check demo mode
-if [ "$DEMO_MODE" = "on" ]; then
+if [ $DEMO_MODE = "on" ]; then
 	if [ -f $POH_PATH/$SQL_DIR/$DB_DEMO ]; then
 	        echo "Found SQL Demo database, starting OH in demo mode..."
 		DB_CREATE_SQL=$DB_DEMO
@@ -523,13 +529,6 @@ if [ "$DEMO_MODE" = "on" ]; then
 fi
 
 echo "Starting Open Hospital - $OH_DISTRO..."
-
-######## Environment setup
-
-echo "Setting up environment..."
-
-set_language;
-java_check;
 
 ######## DICOM setup
 echo "Setting up configuration files..."
