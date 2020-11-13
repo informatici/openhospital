@@ -36,7 +36,7 @@ DEMO_MODE=off
 
 # Language setting - default set to en
 #OH_LANGUAGE=en fr es it pt
-OH_LANGUAGE=it
+#OH_LANGUAGE=en
 
 ######## Software configuration - change at your own risk :-)
 # Database
@@ -164,9 +164,9 @@ function set_path {
 	CURRENT_DIR=$PWD
 	# set POH_PATH if not defined
 	if [ -z ${POH_PATH+x} ]; then
-	echo "Warning: POH_PATH not found - using current directory"
-	if [ ! -f ./$SCRIPT_NAME ]; then
-		echo "Error - oh.sh not found in the current PATH. Please cd the directory where POH was unzipped or set up POH_PATH properly."
+		echo "Warning: POH_PATH not found - using current directory"
+		if [ ! -f ./$SCRIPT_NAME ]; then
+			echo "Error - oh.sh not found in the current PATH. Please cd the directory where POH was unzipped or set up POH_PATH properly."
 		exit 1
 	fi
 	POH_PATH=$PWD
@@ -378,7 +378,6 @@ function clean_database {
 }
 
 function restore_database {
-	clean_database;
 	read -p "Enter sql dump/backup file that you want to restore (in sql/ subdirectory) -> " DB_CREATE_SQL
 	if [ -f $POH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
 	        echo "Found $SQL_DIR/$DB_CREATE_SQL, restoring it..."
@@ -418,6 +417,7 @@ while getopts ${OPTSTRING} opt; do
 	r)	# restore 
         	echo "Restoring Portable Open Hospital installation...."
 		set_path;
+		clean_database;
 		restore_database;
 		;;
 	c)	# clean
@@ -450,8 +450,6 @@ while getopts ${OPTSTRING} opt; do
 		;;
 	l)	# set language
 		OH_LANGUAGE=$OPTARG
-		set_path;
-		set_language;
 		;;
 	t)	# test database connection
 		set_path;
