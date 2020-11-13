@@ -1,7 +1,7 @@
 0.0.x (11/2020)
 --------------
 - reworked entirely oh.sh startup script
-- unified for x32, x64, Portable and client version of Open Hospital
+- unified for x32, x64, Portable and Client version of Open Hospital
 - centralized variable configuration in the script
 - added multiple options - see oh.sh -h for more information
 
