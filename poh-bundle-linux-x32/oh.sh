@@ -178,7 +178,6 @@ function set_language {
 	if [ -z ${OH_LANGUAGE+x} ]; then
 		OH_LANGUAGE=en
 	fi
-
 	case $OH_LANGUAGE in 
 		en|fr|it|es|pt) 
 			echo "Open Hospital language is set to $OH_LANGUAGE"
@@ -419,7 +418,16 @@ while getopts ${OPTSTRING} opt; do
 		set_path;
 		clean_database;
 		restore_database;
+		# checking if data exist
+		mysql_check;
+		config_database;
+		inizialize_database;
+		start_database;
+		import_database;
+        	echo "Done!"
+		exit 0
 		;;
+
 	c)	# clean
         	echo "Cleaning Portable Open Hospital installation..."
 		set_path;
