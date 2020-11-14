@@ -1,5 +1,4 @@
 [client]
-# password = your_password
 port = MYSQL_PORT
 socket = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.sock"  
 

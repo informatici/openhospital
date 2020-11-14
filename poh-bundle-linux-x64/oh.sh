@@ -73,11 +73,12 @@ case $ARCH in
 esac
 
 ######## MySQL Software
-#MYSQL_DIR="mysql-8.0.22-linux-glibc2.17-x86_64-minimal"
-#MYSQL_URL="https://dev.mysql.com/get/Downloads/MySQL-8.0/"
+#MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-10.2.36/bintar-linux-x86_64"
+#MYSQL_DIR="mariadb-10.2.36-linux-$ARCH"
 MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
 MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
 EXT="tar.gz"
+
 
 ######## JAVA Software
 ######## JAVA 64bit - default architecture
@@ -199,10 +200,10 @@ function java_lib_setup {
 	case $JAVA_ARCH in
 		64)
 		NATIVE_LIB_PATH=$POH_PATH/$OH_DIR/lib/native/Linux/amd64
-	;;
+		;;
 		32)
 		NATIVE_LIB_PATH=$POH_PATH/$OH_DIR/lib/native/Linux/i386
-	;;
+		;;
 	esac
 
 	# CLASSPATH setup
@@ -299,7 +300,17 @@ function inizialize_database {
 	mkdir -p $POH_PATH/var/log/mysql
 	# Inizialize MySQL
 	echo "Initializing MySQL database on port $MYSQL_PORT..."
-	$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/$MYSQL_DATA_DIR 2>&1 > /dev/null 
+	case "$MYSQL_DIR" in 
+		*mysql*)
+			$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/$MYSQL_DATA_DIR 2>&1 > /dev/null
+			;;
+		*mariadb*)
+			# mariadb
+			$POH_PATH/$MYSQL_DIR/scripts/mysql_install_db --basedir="$POH_PATH/$MYSQL_DIR" --datadir="$POH_PATH/$MYSQL_DATA_DIR" \
+			--auth-root-authentication-method=normal 2>&1 > /dev/null
+			;;
+	esac
+
 	if [ $? -ne 0 ]; then
 		echo "Error: MySQL initialization failed! Exiting"
 		exit 2
