@@ -19,7 +19,6 @@ read_buffer_size = 256K
 read_rnd_buffer_size = 512K 
 myisam_sort_buffer_size = 8M 
 server-id	= 1 
-skip-innodb
 bind-address = localhost
 general_log_file = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql.log"
 slow_query_log_file = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql-slow-query.log"
