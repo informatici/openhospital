@@ -38,6 +38,9 @@ DEMO_MODE=off
 #OH_LANGUAGE=en fr es it pt
 #OH_LANGUAGE=en
 
+# set debug level - INFO | DEBUG
+#DEBUG_LEVEL=INFO
+
 ######## Software configuration - change at your own risk :-)
 # Database
 MYSQL_SERVER="127.0.0.1"
@@ -73,12 +76,11 @@ case $ARCH in
 esac
 
 ######## MySQL Software
-#MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-10.2.36/bintar-linux-x86_64"
-#MYSQL_DIR="mariadb-10.2.36-linux-$ARCH"
-MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
-MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
+MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-10.2.36/bintar-linux-x86_64"
+MYSQL_DIR="mariadb-10.2.36-linux-$ARCH"
+#MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
+#MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
 EXT="tar.gz"
-
 
 ######## JAVA Software
 ######## JAVA 64bit - default architecture
@@ -139,6 +141,7 @@ function script_usage {
 	echo "   -s    save OH database"
 	echo "   -r    restore OH database"
 	echo "   -c    clean POH installation"
+	echo "   -d    start POH in debug mode"
 	echo "   -C    start Open Hospital - Client mode"
 	echo "   -t    test database connection (Client mode only)"
 	echo "   -v    show POH version information"
@@ -415,7 +418,7 @@ function clean_files {
 
 # list of arguments expected in user the input
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
-OPTSTRING=":h?rcsCtGDvl:"
+OPTSTRING=":h?rcsdCtGDvl:"
 
 # function to parse input
 while getopts ${OPTSTRING} opt; do
@@ -428,7 +431,6 @@ while getopts ${OPTSTRING} opt; do
 		set_path;
 		clean_database;
 		restore_database;
-		# checking if data exist
 		mysql_check;
 		config_database;
 		inizialize_database;
@@ -445,6 +447,12 @@ while getopts ${OPTSTRING} opt; do
 		clean_database;
         	echo "Done!"
 		exit 0
+		;;
+	d)	# debug
+        	echo "Starting Portable Open Hospital in debug mode..."
+		set_path;
+		DEBUG_LEVEL=DEBUG
+		echo "Debug level set to $DEBUG_LEVEL"
 		;;
 	s)	# save database
 		set_path;
@@ -527,6 +535,11 @@ if [ $OH_DISTRO = portable ]; then
 	fi
 fi
 
+# debug level - set default to INFO
+if [ -z ${DEBUG_LEVEL+x} ]; then
+	DEBUG_LEVEL=INFO
+fi	
+		
 ######## Environment setup
 
 echo "Setting up environment..."
@@ -585,7 +598,7 @@ sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/" $POH_PATH/$OH_DIR/rsc/dicom.properties.di
 
 ######## log4j.properties setup
 [ -f $POH_PATH/$OH_DIR/rsc/log4j.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/log4j.properties $POH_PATH/$OH_DIR/rsc/log4j.properties.old
-sed -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBSERVER/$MYSQL_SERVER/" -e "s/DBUSER/$DATABASE_USER/" -e "s/DBPASS/$DATABASE_PASSWORD/" \
+sed -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBSERVER/$MYSQL_SERVER/" -e "s/DBUSER/$DATABASE_USER/" -e "s/DBPASS/$DATABASE_PASSWORD/" -e "s/DEBUG_LEVEL/$DEBUG_LEVEL/" \
 $POH_PATH/$OH_DIR/rsc/log4j.properties.dist > $POH_PATH/$OH_DIR/rsc/log4j.properties
 
 ######## database.properties setup 
