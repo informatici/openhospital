@@ -38,6 +38,9 @@ DEMO_MODE=off
 #OH_LANGUAGE=en fr es it pt
 #OH_LANGUAGE=en
 
+# set debug level - INFO | DEBUG
+#DEBUG_LEVEL=INFO
+
 ######## Software configuration - change at your own risk :-)
 # Database
 MYSQL_SERVER="127.0.0.1"
@@ -73,10 +76,10 @@ case $ARCH in
 esac
 
 ######## MySQL Software
-#MYSQL_DIR="mysql-8.0.22-linux-glibc2.17-x86_64-minimal"
-#MYSQL_URL="https://dev.mysql.com/get/Downloads/MySQL-8.0/"
-MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
-MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
+MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-10.2.36/bintar-linux-x86_64"
+MYSQL_DIR="mariadb-10.2.36-linux-$ARCH"
+#MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
+#MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
 EXT="tar.gz"
 
 ######## JAVA Software
@@ -138,6 +141,7 @@ function script_usage {
 	echo "   -s    save OH database"
 	echo "   -r    restore OH database"
 	echo "   -c    clean POH installation"
+	echo "   -d    start POH in debug mode"
 	echo "   -C    start Open Hospital - Client mode"
 	echo "   -t    test database connection (Client mode only)"
 	echo "   -v    show POH version information"
@@ -199,10 +203,10 @@ function java_lib_setup {
 	case $JAVA_ARCH in
 		64)
 		NATIVE_LIB_PATH=$POH_PATH/$OH_DIR/lib/native/Linux/amd64
-	;;
+		;;
 		32)
 		NATIVE_LIB_PATH=$POH_PATH/$OH_DIR/lib/native/Linux/i386
-	;;
+		;;
 	esac
 
 	# CLASSPATH setup
@@ -299,7 +303,16 @@ function inizialize_database {
 	mkdir -p $POH_PATH/var/log/mysql
 	# Inizialize MySQL
 	echo "Initializing MySQL database on port $MYSQL_PORT..."
-	$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/$MYSQL_DATA_DIR 2>&1 > /dev/null 
+	case "$MYSQL_DIR" in 
+		*mysql*)
+			$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/$MYSQL_DATA_DIR 2>&1 > /dev/null
+			;;
+		*mariadb*)
+			$POH_PATH/$MYSQL_DIR/scripts/mysql_install_db --basedir="$POH_PATH/$MYSQL_DIR" --datadir="$POH_PATH/$MYSQL_DATA_DIR" \
+			--auth-root-authentication-method=normal 2>&1 > /dev/null
+			;;
+	esac
+
 	if [ $? -ne 0 ]; then
 		echo "Error: MySQL initialization failed! Exiting"
 		exit 2
@@ -329,9 +342,10 @@ function import_database () {
 
 	echo "Importing database schema $DB_CREATE_SQL..."
 	cd $POH_PATH/$SQL_DIR
-	$POH_PATH/$MYSQL_DIR/bin/mysql -u root -h $MYSQL_SERVER --port=$MYSQL_PORT $DATABASE_NAME < $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
+	$POH_PATH/$MYSQL_DIR/bin/mysql --local-infile=1 -u root -h $MYSQL_SERVER --port=$MYSQL_PORT $DATABASE_NAME < $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
 	if [ $? -ne 0 ]; then
 		echo "Error: Database not imported!"
+		shutdown_database;
 		exit 2
 	fi
 	echo "Database imported!"
@@ -343,7 +357,8 @@ function dump_database {
 		$POH_PATH/$MYSQL_DIR/bin/mysqldump -h $MYSQL_SERVER --port=$MYSQL_PORT -u root $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
 		if [ $? -ne 0 ]; then
 			echo "Error: Database not dumped! Exiting."
-		exit 2
+			shutdown_database;
+			exit 2
 		fi
 	echo "MySQL dump file $SQL_DIR/mysqldump_$DATE.sql completed!"
 	fi
@@ -405,7 +420,7 @@ function clean_files {
 
 # list of arguments expected in user the input
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
-OPTSTRING=":h?rcsCtGDvl:"
+OPTSTRING=":h?rcsdCtGDvl:"
 
 # function to parse input
 while getopts ${OPTSTRING} opt; do
@@ -418,12 +433,12 @@ while getopts ${OPTSTRING} opt; do
 		set_path;
 		clean_database;
 		restore_database;
-		# checking if data exist
 		mysql_check;
 		config_database;
 		inizialize_database;
 		start_database;
 		import_database;
+		shutdown_database;
         	echo "Done!"
 		exit 0
 		;;
@@ -435,6 +450,12 @@ while getopts ${OPTSTRING} opt; do
 		clean_database;
         	echo "Done!"
 		exit 0
+		;;
+	d)	# debug
+        	echo "Starting Portable Open Hospital in debug mode..."
+		set_path;
+		DEBUG_LEVEL=DEBUG
+		echo "Debug level set to $DEBUG_LEVEL"
 		;;
 	s)	# save database
 		set_path;
@@ -517,6 +538,11 @@ if [ $OH_DISTRO = portable ]; then
 	fi
 fi
 
+# debug level - set default to INFO
+if [ -z ${DEBUG_LEVEL+x} ]; then
+	DEBUG_LEVEL=INFO
+fi	
+		
 ######## Environment setup
 
 echo "Setting up environment..."
@@ -537,25 +563,6 @@ if [ $DEMO_MODE = "on" ]; then
 fi
 
 echo "Starting Open Hospital - $OH_DISTRO..."
-
-######## DICOM setup
-echo "Setting up configuration files..."
-
-[ -f $POH_PATH/$OH_DIR/rsc/dicom.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/dicom.properties $POH_PATH/$OH_DIR/rsc/dicom.properties.old
-#DICOM_MAX_SIZE=$(grep -i '^dicom.max.size' $POH_PATH/$OH_DIR/rsc/dicom.properties.dist  | cut -f2 -d'=')
-#: ${DICOM_MAX_SIZE:=$DICOM_DEFAULT_SIZE}
-sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/" $POH_PATH/$OH_DIR/rsc/dicom.properties.dist > $POH_PATH/$OH_DIR/rsc/dicom.properties
-
-######## log4j.properties setup
-[ -f $POH_PATH/$OH_DIR/rsc/log4j.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/log4j.properties $POH_PATH/$OH_DIR/rsc/log4j.properties.old
-sed -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBSERVER/$MYSQL_SERVER/" -e "s/DBUSER/$DATABASE_USER/" -e "s/DBPASS/$DATABASE_PASSWORD/" \
-$POH_PATH/$OH_DIR/rsc/log4j.properties.dist > $POH_PATH/$OH_DIR/rsc/log4j.properties
-
-######## database.properties setup 
-[ -f $POH_PATH/$OH_DIR/rsc/database.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/database.properties $POH_PATH/$OH_DIR/rsc/database.properties.old
-echo "jdbc.url=jdbc:mysql://$MYSQL_SERVER:$MYSQL_PORT/$DATABASE_NAME" > $POH_PATH/$OH_DIR/rsc/database.properties
-echo "jdbc.username=$DATABASE_USER" >> $POH_PATH/$OH_DIR/rsc/database.properties
-echo "jdbc.password=$DATABASE_PASSWORD" >> $POH_PATH/$OH_DIR/rsc/database.properties
 
 ######## Database setup
 
@@ -583,6 +590,25 @@ test_database_connection;
 
 # setup java lib
 java_lib_setup;
+
+######## DICOM setup
+echo "Setting up configuration files..."
+
+[ -f $POH_PATH/$OH_DIR/rsc/dicom.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/dicom.properties $POH_PATH/$OH_DIR/rsc/dicom.properties.old
+#DICOM_MAX_SIZE=$(grep -i '^dicom.max.size' $POH_PATH/$OH_DIR/rsc/dicom.properties.dist  | cut -f2 -d'=')
+#: ${DICOM_MAX_SIZE:=$DICOM_DEFAULT_SIZE}
+sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/" $POH_PATH/$OH_DIR/rsc/dicom.properties.dist > $POH_PATH/$OH_DIR/rsc/dicom.properties
+
+######## log4j.properties setup
+[ -f $POH_PATH/$OH_DIR/rsc/log4j.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/log4j.properties $POH_PATH/$OH_DIR/rsc/log4j.properties.old
+sed -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBSERVER/$MYSQL_SERVER/" -e "s/DBUSER/$DATABASE_USER/" -e "s/DBPASS/$DATABASE_PASSWORD/" -e "s/DEBUG_LEVEL/$DEBUG_LEVEL/" \
+$POH_PATH/$OH_DIR/rsc/log4j.properties.dist > $POH_PATH/$OH_DIR/rsc/log4j.properties
+
+######## database.properties setup 
+[ -f $POH_PATH/$OH_DIR/rsc/database.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/database.properties $POH_PATH/$OH_DIR/rsc/database.properties.old
+echo "jdbc.url=jdbc:mysql://$MYSQL_SERVER:$MYSQL_PORT/$DATABASE_NAME" > $POH_PATH/$OH_DIR/rsc/database.properties
+echo "jdbc.username=$DATABASE_USER" >> $POH_PATH/$OH_DIR/rsc/database.properties
+echo "jdbc.password=$DATABASE_PASSWORD" >> $POH_PATH/$OH_DIR/rsc/database.properties
 
 ######## Open Hospital start
 

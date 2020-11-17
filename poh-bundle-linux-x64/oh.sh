@@ -342,9 +342,10 @@ function import_database () {
 
 	echo "Importing database schema $DB_CREATE_SQL..."
 	cd $POH_PATH/$SQL_DIR
-	$POH_PATH/$MYSQL_DIR/bin/mysql -u root -h $MYSQL_SERVER --port=$MYSQL_PORT $DATABASE_NAME < $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
+	$POH_PATH/$MYSQL_DIR/bin/mysql --local-infile=1 -u root -h $MYSQL_SERVER --port=$MYSQL_PORT $DATABASE_NAME < $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
 	if [ $? -ne 0 ]; then
 		echo "Error: Database not imported!"
+		shutdown_database;
 		exit 2
 	fi
 	echo "Database imported!"
@@ -356,7 +357,8 @@ function dump_database {
 		$POH_PATH/$MYSQL_DIR/bin/mysqldump -h $MYSQL_SERVER --port=$MYSQL_PORT -u root $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
 		if [ $? -ne 0 ]; then
 			echo "Error: Database not dumped! Exiting."
-		exit 2
+			shutdown_database;
+			exit 2
 		fi
 	echo "MySQL dump file $SQL_DIR/mysqldump_$DATE.sql completed!"
 	fi
@@ -436,6 +438,7 @@ while getopts ${OPTSTRING} opt; do
 		inizialize_database;
 		start_database;
 		import_database;
+		shutdown_database;
         	echo "Done!"
 		exit 0
 		;;
