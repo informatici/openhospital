@@ -139,7 +139,7 @@ function script_usage {
 	echo ""
 	echo " Usage: $SCRIPT_NAME [-option]"
 	echo ""
-	echo "   -l    en|fr|it|es|pt   --> set language [default: oh.sh -l en]"
+	echo "   -l    en|fr|it|es|pt   --> set language [default set to en]"
 	echo ""
 	echo "   -s    save OH database"
 	echo "   -r    restore OH database"
