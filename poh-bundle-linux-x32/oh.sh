@@ -36,9 +36,9 @@ DEMO_MODE=off
 
 # Language setting - default set to en
 #OH_LANGUAGE=en fr es it pt
-#OH_LANGUAGE=en
+#OH_LANGUAGE=it
 
-# set debug level - INFO | DEBUG
+# set debug level to INFO | DEBUG - default set to INFO
 #DEBUG_LEVEL=INFO
 
 ######## Software configuration - change at your own risk :-)
@@ -55,7 +55,7 @@ OH_DIR="oh"
 SQL_DIR="sql"
 MYSQL_SOCKET="var/run/mysqld/mysql.sock"
 MYSQL_DATA_DIR="var/lib/mysql/"
-DB_CREATE_SQL="create_all_en.sql"
+#DB_CREATE_SQL="create_all_en.sql" # default to create_all_en.sql
 DB_DEMO="create_all_demo.sql"
 DATE=`date +%Y-%m-%d_%H-%M-%S`
 
@@ -76,8 +76,10 @@ case $ARCH in
 esac
 
 ######## MySQL Software
+# MariaDB
 MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-10.2.36/bintar-linux-x86_64"
 MYSQL_DIR="mariadb-10.2.36-linux-$ARCH"
+# MySQL
 #MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
 #MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
 EXT="tar.gz"
@@ -131,8 +133,9 @@ SCRIPT_NAME=$(basename "$0")
 ######## User input / option parsing
 
 function script_usage {
+	# show help
 	echo ""
-	echo " Portable Open Hospital Client | OH"
+	echo " Portable Open Hospital Client - OH"
 	echo ""
 	echo " Usage: $SCRIPT_NAME [-option]"
 	echo ""
@@ -142,7 +145,7 @@ function script_usage {
 	echo "   -r    restore OH database"
 	echo "   -c    clean POH installation"
 	echo "   -d    start POH in debug mode"
-	echo "   -C    start Open Hospital - Client mode"
+	echo "   -C    start Open Hospital - Client / Server mode"
 	echo "   -t    test database connection (Client mode only)"
 	echo "   -v    show POH version information"
 	echo "   -D    start POH in Demo mode"
@@ -158,8 +161,8 @@ function get_confirmation {
 read -p "(y/n)? " choice
 case "$choice" in 
 	y|Y ) echo "yes";;
-	n|N ) echo "Exiting..."; exit 0;;
-	* ) echo "Invalid choice"; exit 1 ;;
+	n|N ) echo "Exiting."; exit 0;;
+	* ) echo "Invalid choice. Exiting."; exit 1 ;;
 esac
 }
 
@@ -168,34 +171,31 @@ function set_path {
 	CURRENT_DIR=$PWD
 	# set POH_PATH if not defined
 	if [ -z ${POH_PATH+x} ]; then
-		echo "Warning: POH_PATH not found - using current directory"
-		if [ ! -f ./$SCRIPT_NAME ]; then
+#		echo "Warning: POH_PATH not found - using current directory"
+		POH_PATH=$CURRENT_DIR
+		if [ ! -f $POH_PATH/$SCRIPT_NAME ]; then
 			echo "Error - oh.sh not found in the current PATH. Please cd the directory where POH was unzipped or set up POH_PATH properly."
-		exit 1
+			exit 1
+		fi
 	fi
-	POH_PATH=$PWD
 	POH_PATH_ESCAPED=$(echo $POH_PATH | sed -e 's/\//\\\//g')
-	fi
 }
 
 function set_language {
+	# Set OH interface languange - set default to en
 	if [ -z ${OH_LANGUAGE+x} ]; then
 		OH_LANGUAGE=en
 	fi
 	case $OH_LANGUAGE in 
 		en|fr|it|es|pt) 
-			echo "Open Hospital language is set to $OH_LANGUAGE"
-		;;
+			# set database creation script in chosen language
+			DB_CREATE_SQL="create_all_$OH_LANGUAGE.sql"
+			;;
 		*)
-		echo "Invalid option: $OH_LANGUAGE"
-		exit 1
+			echo "Invalid option: $OH_LANGUAGE. Exiting."
+			exit 1
 		;;
 	esac
-	# set language in OH config file
-	[ -f $POH_PATH/$OH_DIR/rsc/generalData.properties ] && mv $POH_PATH/$OH_DIR/rsc/generalData.properties $POH_PATH/$OH_DIR/rsc/generalData.properties.old
-	sed -e "s/OH_SET_LANGUAGE/$OH_LANGUAGE/" $POH_PATH/$OH_DIR/rsc/generalData.properties.dist > $POH_PATH/$OH_DIR/rsc/generalData.properties
-	# set database creation script
-	DB_CREATE_SQL="create_all_$OH_LANGUAGE.sql"
 }
 
 function java_lib_setup {
@@ -240,9 +240,9 @@ if [ ! -x $JAVA_BIN ]; then
 	if [ -x $POH_PATH/$JAVA_DIR/bin/java ]; then
 		echo "Java unpacked successfully!"
 		JAVA_BIN=$POH_PATH/$JAVA_DIR/bin/java
-		echo "Java found !"
+		echo "Java found!"
 	else 
-		echo "Error unpacking Java, exiting"
+		echo "Error unpacking Java. Exiting."
 		exit 1
 	fi
 	echo "Removing downloaded file..."
@@ -268,7 +268,7 @@ if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 	if [ -x $POH_PATH/$MYSQL_DIR/bin/mysqld_safe ]; then
 		echo "MySQL unpacked successfully!"
 	else 
-		echo "Error unpacking MySQL, exiting"
+		echo "Error unpacking MySQL. Exiting."
 		exit 1
 	fi
 	echo "Removing downloaded file..."
@@ -297,7 +297,6 @@ function config_database {
 
 function inizialize_database {
 	# Recreate directory structure
-	rm -rf $POH_PATH/$MYSQL_DATA_DIR
 	mkdir -p $POH_PATH/$MYSQL_DATA_DIR
 	mkdir -p $POH_PATH/var/run/mysqld
 	mkdir -p $POH_PATH/var/log/mysql
@@ -305,16 +304,16 @@ function inizialize_database {
 	echo "Initializing MySQL database on port $MYSQL_PORT..."
 	case "$MYSQL_DIR" in 
 		*mysql*)
-			$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/$MYSQL_DATA_DIR 2>&1 > /dev/null
+			$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --socket=$POH_PATH/$MYSQL_SOCKET --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/$MYSQL_DATA_DIR 2>&1 > /dev/null
 			;;
 		*mariadb*)
-			$POH_PATH/$MYSQL_DIR/scripts/mysql_install_db --basedir="$POH_PATH/$MYSQL_DIR" --datadir="$POH_PATH/$MYSQL_DATA_DIR" \
+			$POH_PATH/$MYSQL_DIR/scripts/mysql_install_db --socket=$POH_PATH/$MYSQL_SOCKET --basedir="$POH_PATH/$MYSQL_DIR" --datadir="$POH_PATH/$MYSQL_DATA_DIR" \
 			--auth-root-authentication-method=normal 2>&1 > /dev/null
 			;;
 	esac
 
 	if [ $? -ne 0 ]; then
-		echo "Error: MySQL initialization failed! Exiting"
+		echo "Error: MySQL initialization failed! Exiting."
 		exit 2
 	fi
 }
@@ -323,7 +322,7 @@ function start_database {
 	echo "Starting MySQL server... "
 	$POH_PATH/$MYSQL_DIR/bin/mysqld_safe --defaults-file=$POH_PATH/etc/mysql/my.cnf 2>&1 > /dev/null &
 	if [ $? -ne 0 ]; then
-		echo "Error: Database not started! Exiting"
+		echo "Error: Database not started! Exiting."
 		exit 2
 	fi
 	# Wait till the MySQL socket file is created
@@ -335,16 +334,18 @@ function start_database {
 
 function import_database () {
 	echo "Creating OH Database..."
+	# Create OH database and user
 	$POH_PATH/$MYSQL_DIR/bin/mysql -u root -h $MYSQL_SERVER --port=$MYSQL_PORT -e \
        	"CREATE DATABASE $DATABASE_NAME; CREATE USER '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD'; \
 	CREATE USER '$DATABASE_USER'@'%' IDENTIFIED BY '$DATABASE_PASSWORD'; GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost'; \
 	GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'%' ; "
 
+	# Create OH database structure
 	echo "Importing database schema $DB_CREATE_SQL..."
 	cd $POH_PATH/$SQL_DIR
 	$POH_PATH/$MYSQL_DIR/bin/mysql --local-infile=1 -u root -h $MYSQL_SERVER --port=$MYSQL_PORT $DATABASE_NAME < $POH_PATH/$SQL_DIR/$DB_CREATE_SQL
 	if [ $? -ne 0 ]; then
-		echo "Error: Database not imported!"
+		echo "Error: Database not imported! Exiting."
 		shutdown_database;
 		exit 2
 	fi
@@ -352,9 +353,10 @@ function import_database () {
 }
 
 function dump_database {
-	if [ ! -x "$POH_PATH/$MYSQL_DIR/bin/mysqldump " ]; then
+	# Save OH database if existing
+	if [ ! -x "$POH_PATH/$MYSQL_DIR/bin/mysqldump" ]; then
 		echo "Dumping MySQL database..."
-		$POH_PATH/$MYSQL_DIR/bin/mysqldump -h $MYSQL_SERVER --port=$MYSQL_PORT -u root $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
+		$POH_PATH/$MYSQL_DIR/bin/mysqldump --skip-extended-insert -h $MYSQL_SERVER --port=$MYSQL_PORT -u root $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
 		if [ $? -ne 0 ]; then
 			echo "Error: Database not dumped! Exiting."
 			shutdown_database;
@@ -364,7 +366,24 @@ function dump_database {
 	fi
 }
 
+function shutdown_database {
+	echo "Shutting down MySQL..."
+	$POH_PATH/$MYSQL_DIR/bin/mysqladmin --host=$MYSQL_SERVER --port=$MYSQL_PORT --user=root shutdown 2>&1 > /dev/null
+	# Wait till the MySQL socket file is removed
+	while [ -e $POH_PATH/$MYSQL_SOCKET ]; do sleep 1; done
+}
+
+function clean_database {
+	echo "Warning: do you want to remove all data and database ?"
+	get_confirmation;
+	echo "Removing data..."
+	# remove databases
+	rm -rf $POH_PATH/$MYSQL_DATA_DIR/*
+	rm -ff $POH_PATH/var/run/mysqld/*
+}
+
 function test_database_connection {
+	# Test connection to the OH MySQL database
 	echo "Testing database connection..."
 	DBTEST=$($POH_PATH/$MYSQL_DIR/bin/mysql --host=$MYSQL_SERVER --port=$MYSQL_PORT --user=$DATABASE_USER --password=$DATABASE_PASSWORD -e "USE $DATABASE_NAME" >/dev/null 2>&1; echo "$?" )
 	if [ $DBTEST -eq 0 ];then
@@ -375,38 +394,14 @@ function test_database_connection {
 	fi
 }
 
-function shutdown_database {
-	echo "Shutting down MySQL... "
-	$POH_PATH/$MYSQL_DIR/bin/mysqladmin --host=$MYSQL_SERVER --port=$MYSQL_PORT --user=root shutdown 2>&1 > /dev/null
-	# Wait till the MySQL socket file is removed
-	while [ -e $POH_PATH/$MYSQL_SOCKET ]; do sleep 1; done
-}
-
-function clean_database {
-	echo "Warning: do you want to remove all data ?"
-	get_confirmation;
-	echo "Removing data..."
-	rm -rf $POH_PATH/$MYSQL_DATA_DIR/*
-	rm -rf $POH_PATH/var/log/mysql/*
-	rm -f $POH_PATH/var/run/mysqld/*
-}
-
-function restore_database {
-	read -p "Enter sql dump/backup file that you want to restore (in sql/ subdirectory) -> " DB_CREATE_SQL
-	if [ -f $POH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
-	        echo "Found $SQL_DIR/$DB_CREATE_SQL, restoring it..."
-	else
-		echo "No SQL file found! Exiting."
-		exit 2
-	fi
-}
-
 function clean_files {
+	# clean all generated files - leave only .dist files
 	echo "Warning: do you want to remove all configuration and log files ?"
 	get_confirmation;
 	echo "Removing files..."
 	rm -f $POH_PATH/etc/mysql/my.cnf
 	rm -f $POH_PATH/etc/mysql/my.cnf.old
+	rm -f $POH_PATH/var/log/mysql/*
 	rm -f $POH_PATH/$OH_DIR/rsc/generalData.properties
 	rm -f $POH_PATH/$OH_DIR/rsc/generalData.properties.old
 	rm -f $POH_PATH/$OH_DIR/rsc/database.properties
@@ -417,6 +412,27 @@ function clean_files {
 	rm -f $POH_PATH/$OH_DIR/rsc/dicom.properties.old
 	rm -f $POH_PATH/$OH_DIR/logs/*
 }
+
+
+######## Pre-flight checks
+
+# check user running the script
+if [ $(id -u) -eq 0 ]; then
+	echo "Error - do not run this script as root. Exiting."
+	exit 1
+fi
+
+# debug level - set default to INFO
+if [ -z ${DEBUG_LEVEL+x} ]; then
+	DEBUG_LEVEL=INFO
+fi	
+
+######## Environment setup
+
+set_path;
+set_language;
+
+######## User input
 
 # list of arguments expected in user the input
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
@@ -429,23 +445,21 @@ while getopts ${OPTSTRING} opt; do
 		script_usage;
 		;;
 	r)	# restore 
-        	echo "Restoring Portable Open Hospital installation...."
-		set_path;
+        	echo "Restoring Portable Open Hospital database...."
 		clean_database;
-		restore_database;
-		mysql_check;
-		config_database;
-		inizialize_database;
-		start_database;
-		import_database;
-		shutdown_database;
-        	echo "Done!"
-		exit 0
+		# ask user for database to restore
+		read -p "Enter SQL dump/backup file that you want to restore - (in sql/ subdirectory) -> " DB_CREATE_SQL
+		if [ -f $POH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
+		        echo "Found $SQL_DIR/$DB_CREATE_SQL, restoring it..."
+		else
+			echo "No SQL file found! Exiting."
+			exit 2
+		fi
+        	echo "Restore ready!"
 		;;
 
 	c)	# clean
         	echo "Cleaning Portable Open Hospital installation..."
-		set_path;
 		clean_files;
 		clean_database;
         	echo "Done!"
@@ -453,12 +467,10 @@ while getopts ${OPTSTRING} opt; do
 		;;
 	d)	# debug
         	echo "Starting Portable Open Hospital in debug mode..."
-		set_path;
 		DEBUG_LEVEL=DEBUG
 		echo "Debug level set to $DEBUG_LEVEL"
 		;;
 	s)	# save database
-		set_path;
 		# checking if data exist
 		if [ -d $POH_PATH/$MYSQL_DATA_DIR/$DATABASE_NAME ]; then
 			mysql_check;
@@ -470,7 +482,7 @@ while getopts ${OPTSTRING} opt; do
 	        	echo "Done!"
 			exit 0
 		else
-	        	echo "Error: no data found! Exiting"
+	        	echo "Error: no data found! Exiting."
 			exit 1
 		fi
 		;;
@@ -479,11 +491,11 @@ while getopts ${OPTSTRING} opt; do
 		;;
 	l)	# set language
 		OH_LANGUAGE=$OPTARG
+		set_language;
 		;;
 	t)	# test database connection
-		set_path;
 		if [ $OH_DISTRO = portable ]; then
-			echo "Only for client mode. Exiting"
+			echo "Only for client mode. Exiting."
 			exit 1
 		fi
 		test_database_connection;
@@ -491,12 +503,11 @@ while getopts ${OPTSTRING} opt; do
 		;;
 	G)	# set up GSM
 		echo "Setting up GSM..."
-		set_path;
 		java_check;
 		java_lib_setup;
 		cd $POH_PATH/$OH_DIR
 		$JAVA_BIN -Djava.library.path=${NATIVE_LIB_PATH} -classpath "$OH_CLASSPATH" org.isf.utils.sms.SetupGSM "$@"
-		exit 1;
+		exit 0;
 		;;
 	D)	# demo mode
         	echo "Starting Portable Open Hospital in demo mode..."
@@ -504,9 +515,10 @@ while getopts ${OPTSTRING} opt; do
 		DEMO_MODE="on"
 		;;
 	v)	# show versions
-		set_path;
-		set_language;
         	echo "Architecture is $ARCH"
+		echo "Open Hospital is configured in $OH_DISTRO mode"
+		echo "Language is set to $OH_LANGUAGE"
+		echo "Demo mode is set to $DEMO_MODE"
         	echo "Software versions:"
 		source $POH_PATH/$OH_DIR/rsc/version.properties
         	echo "Open Hospital version" $VER_MAJOR.$VER_MINOR.$VER_RELEASE
@@ -517,7 +529,7 @@ while getopts ${OPTSTRING} opt; do
 		;;
 	?)	# default
 		echo "Invalid option: -${OPTARG}. See $SCRIPT_NAME -h for help"
-		exit 2
+		exit 3
 		;;
 	esac
 done
@@ -526,43 +538,30 @@ done
 
 # check distro
 if [ -z ${OH_DISTRO+x} ]; then
-		echo "Error - OH_DISTRO not defined [client - portable]"
+	echo "Error - OH_DISTRO not defined [client - portable]! Exiting."
 	exit 1
 fi
-
-# check user
-if [ $OH_DISTRO = portable ]; then
-	if [ $(id -u) -eq 0 ]; then
-		echo "Error - do not run this script as root."
-	exit 1
-	fi
-fi
-
-# debug level - set default to INFO
-if [ -z ${DEBUG_LEVEL+x} ]; then
-	DEBUG_LEVEL=INFO
-fi	
-		
-######## Environment setup
-
-echo "Setting up environment..."
-
-set_path;
-set_language;
-java_check;
 
 # check demo mode
 if [ $DEMO_MODE = "on" ]; then
 	if [ -f $POH_PATH/$SQL_DIR/$DB_DEMO ]; then
-	        echo "Found SQL Demo database, starting OH in demo mode..."
+	        echo "Found SQL demo database, starting OH in demo mode..."
 		DB_CREATE_SQL=$DB_DEMO
 	else
-	      	echo "Error: no $DB_DEMO found! Exiting"
-	exit 1
+	      	echo "Error: no $DB_DEMO found! Exiting."
+		exit 1
 	fi
 fi
 
-echo "Starting Open Hospital - $OH_DISTRO..."
+echo "Starting Open Hospital in $OH_DISTRO mode..."
+echo "POH_PATH set to $POH_PATH"
+echo "POH language is set to $OH_LANGUAGE"
+
+# check for java
+java_check;
+
+# setup java lib
+java_lib_setup;
 
 ######## Database setup
 
@@ -572,6 +571,7 @@ if [ $OH_DISTRO = portable ]; then
 	mysql_check;
 	# Config MySQL
 	config_database;
+	# Check if OH database already exists
 	if [ ! -d $POH_PATH/$MYSQL_DATA_DIR/$DATABASE_NAME ]; then
 		# Prepare MySQL
 		inizialize_database;
@@ -588,16 +588,11 @@ fi
 # test database
 test_database_connection;
 
-# setup java lib
-java_lib_setup;
+echo "Setting up OH configuration files..."
 
 ######## DICOM setup
-echo "Setting up configuration files..."
-
 [ -f $POH_PATH/$OH_DIR/rsc/dicom.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/dicom.properties $POH_PATH/$OH_DIR/rsc/dicom.properties.old
-#DICOM_MAX_SIZE=$(grep -i '^dicom.max.size' $POH_PATH/$OH_DIR/rsc/dicom.properties.dist  | cut -f2 -d'=')
-#: ${DICOM_MAX_SIZE:=$DICOM_DEFAULT_SIZE}
-sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/" $POH_PATH/$OH_DIR/rsc/dicom.properties.dist > $POH_PATH/$OH_DIR/rsc/dicom.properties
+sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" $POH_PATH/$OH_DIR/rsc/dicom.properties.dist > $POH_PATH/$OH_DIR/rsc/dicom.properties
 
 ######## log4j.properties setup
 [ -f $POH_PATH/$OH_DIR/rsc/log4j.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/log4j.properties $POH_PATH/$OH_DIR/rsc/log4j.properties.old
@@ -610,11 +605,18 @@ echo "jdbc.url=jdbc:mysql://$MYSQL_SERVER:$MYSQL_PORT/$DATABASE_NAME" > $POH_PAT
 echo "jdbc.username=$DATABASE_USER" >> $POH_PATH/$OH_DIR/rsc/database.properties
 echo "jdbc.password=$DATABASE_PASSWORD" >> $POH_PATH/$OH_DIR/rsc/database.properties
 
+######## generalData.properties language setup 
+# set language in OH config file
+[ -f $POH_PATH/$OH_DIR/rsc/generalData.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/generalData.properties $POH_PATH/$OH_DIR/rsc/generalData.properties.old
+sed -e "s/OH_SET_LANGUAGE/$OH_LANGUAGE/" $POH_PATH/$OH_DIR/rsc/generalData.properties.dist > $POH_PATH/$OH_DIR/rsc/generalData.properties
+
 ######## Open Hospital start
 
 echo "Starting Open Hospital..."
 
 cd $POH_PATH/$OH_DIR
+
+# OH GUI launch
 $JAVA_BIN -Dsun.java2d.dpiaware=false -Djava.library.path=${NATIVE_LIB_PATH} -classpath $OH_CLASSPATH org.isf.menu.gui.Menu 2>&1 > /dev/null
 
 echo "Exiting Open Hospital..."
