@@ -139,7 +139,7 @@ function script_usage {
 	echo ""
 	echo " Usage: $SCRIPT_NAME [-option]"
 	echo ""
-	echo "   -l    en|fr|it|es|pt   --> set language [default: oh.sh -l en]"
+	echo "   -l    en|fr|it|es|pt   --> set language [default set to en]"
 	echo ""
 	echo "   -s    save OH database"
 	echo "   -r    restore OH database"
@@ -227,15 +227,15 @@ if [ -z ${JAVA_BIN+x} ]; then
 fi
 
 if [ ! -x $JAVA_BIN ]; then
-	if [ ! -f "$POH_PATH/$JAVA_DISTRO.tar.gz" ]; then
+	if [ ! -f "$POH_PATH/$JAVA_DISTRO.$EXT" ]; then
 		echo "Warning - JAVA not found. Do you want to download it? (50 MB)"
 		get_confirmation;
 		# Downloading openjdk binaries
 		echo "Downloading $JAVA_DISTRO..."
-		wget $JAVA_URL/$JAVA_DISTRO.tar.gz
+		wget -P $POH_PATH/ $JAVA_URL/$JAVA_DISTRO.$EXT
 	fi
 	echo "Unpacking $JAVA_DISTRO..."
-	tar xf $JAVA_DISTRO.tar.gz
+	tar xf $POH_PATH/$JAVA_DISTRO.tar.gz -C $POH_PATH/
 	# check for java binary
 	if [ -x $POH_PATH/$JAVA_DIR/bin/java ]; then
 		echo "Java unpacked successfully!"
@@ -246,7 +246,7 @@ if [ ! -x $JAVA_BIN ]; then
 		exit 1
 	fi
 	echo "Removing downloaded file..."
-	rm $JAVA_DISTRO.tar.gz
+	rm $POH_PATH/$JAVA_DISTRO.$EXT
 	echo "Done!"
 else
 	echo "JAVA found!"
@@ -261,10 +261,10 @@ if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 		get_confirmation;
 		# Downloading mysql binary
 		echo "Downloading $MYSQL_DIR..."
-		wget $MYSQL_URL/$MYSQL_DIR.$EXT
+		wget -P $POH_PATH/ $MYSQL_URL/$MYSQL_DIR.$EXT
 	fi
 	echo "Unpacking $MYSQL_DIR..."
-	tar xf $MYSQL_DIR.$EXT
+	tar xf $POH_PATH/$MYSQL_DIR.$EXT -C $POH_PATH/
 	if [ -x $POH_PATH/$MYSQL_DIR/bin/mysqld_safe ]; then
 		echo "MySQL unpacked successfully!"
 	else 
@@ -272,7 +272,7 @@ if [ ! -d "$POH_PATH/$MYSQL_DIR" ]; then
 		exit 1
 	fi
 	echo "Removing downloaded file..."
-	rm $MYSQL_DIR.$EXT
+	rm $POH_PATH/$MYSQL_DIR.$EXT
 	echo "Done!"
 else	
 	echo "MySQL found!"
