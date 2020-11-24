@@ -1,3 +1,10 @@
+0.0.x (11/2020)
+--------------
+- reworked entirely oh.sh startup script
+- unified for x32, x64, Portable and Client version of Open Hospital
+- centralized variable configuration in the script
+- added multiple options - see oh.sh -h for more information
+
 0.0.6 (02/2020)
 --------------
 - added lower_case_table_names = 1 in [mysqld] to avoid cross-OS data transfer problems 
