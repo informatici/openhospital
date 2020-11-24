@@ -36,6 +36,7 @@ jobs:
         draft: true
         files: ./release-files/*
         body_path: CHANGELOG.md
-
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
