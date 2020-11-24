@@ -29,19 +29,19 @@ MYSQL_LINUX64 := mysql-linux64.tar.gz
 all: compile-all dw-all release-files
 
 help:
-	@echo -e "Main make targets available:\n\tall (default), clean, database.sql, clone-all, dw-all, compile-all, docs-all, dw-jre-all, dw-mysql-all, oh-admin-manual.pdf, oh-user-manual.pdf, core, gui, doc"
+	@echo -e "Main make targets available:\n\tall (default), clean, clone-all, dw-all, compile-all, docs-all, dw-jre-all, dw-mysql-all, oh-admin-manual.pdf, oh-user-manual.pdf, core, gui, doc"
 	@echo -e "\t$(WIN).zip, $(LINUX32).tar.gz, $(LINUX64).tar.gz, $(FULL).zip"
 	@echo -e "\t$(JRE_WIN), $(JRE_LINUX32), $(JRE_LINUX64), $(MYSQL_WIN), $(MYSQL_LINUX32), $(MYSQL_LINUX64)"
 
 # Clean targets
 clean: clean-downloads
-	rm -rf release-files core gui doc poh-linux* poh-win* CHANGELOG CHANGELOG.md database.sql *.pdf
+	rm -rf release-files core gui doc poh-linux* poh-win* CHANGELOG CHANGELOG.md *.pdf
 clean-all:
 	git clean -xdff
 clean-downloads:
 	rm -rf *.zip *.tar.gz
 
-compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG database.sql
+compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG
 
 # Assemble targets
 release-files: $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
@@ -51,7 +51,7 @@ release-files: $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
 	sha256sum $(WIN).zip >> CHANGELOG.md
 	sha256sum $(LINUX32).tar.gz >> CHANGELOG.md
 	sha256sum $(LINUX64).tar.gz >> CHANGELOG.md
-	echo "\`\`\`" >> CHANGELOG.md	
+	echo "\`\`\`" >> CHANGELOG.md
 	mkdir -p release-files
 	mv $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz release-files/
 	ls release-files
@@ -72,8 +72,9 @@ $(WIN).zip: compile-all dw-all
 	unzip $(JRE_WIN) -d $(WIN)
 	unzip $(MYSQL_WIN) -d $(WIN) -x "*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(WIN)/oh
+	cp -a ./core/mysql/db $(WIN)/sql
 	rm -rf $(WIN)/oh/generate_changelog.sh
-	cp *.sql POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
+	cp POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
 	cp *.pdf $(WIN)/oh/doc
 	zip -r $(WIN).zip $(WIN)
 
@@ -83,8 +84,9 @@ $(LINUX32).tar.gz: compile-all dw-all
 	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(LINUX32)/oh
+	cp -a ./core/mysql/db $(LINUX32)/sql
 	rm -rf $(LINUX32)/oh/generate_changelog.sh
-	cp *.sql POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
+	cp POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
 	cp *.pdf $(LINUX32)/oh/doc
 	tar -cvzf $(LINUX32).tar.gz $(LINUX32)
 
@@ -94,16 +96,17 @@ $(LINUX64).tar.gz: compile-all dw-all
 	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(LINUX64)/oh
+	cp -a ./core/mysql/db $(LINUX64)/sql
 	rm -rf $(LINUX64)/oh/generate_changelog.sh
-	cp *.sql POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
+	cp POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
 	cp *.pdf $(LINUX64)/oh/doc
 	tar -cvzf $(LINUX64).tar.gz $(LINUX64)
 
 # Compile application binaries
 gui/target/OpenHospital20/bin/OH-gui.jar: clone-all
-	docker-compose -f core/docker-compose.yml up -d
-	mvn -T 1.5C package
-	docker-compose -f core/docker-compose.yml down
+#	docker-compose -f core/docker-compose.yml up -d
+	mvn -T 1.5C clean install -DskipTests
+#	docker-compose -f core/docker-compose.yml down
 
 # Clone repositories of OH components
 clone-all: core gui doc
@@ -122,13 +125,13 @@ oh-user-manual.pdf: doc
 	asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o oh-user-manual.pdf
 
 # Create database dump
-database.sql: core
-	docker-compose -f core/docker-compose.yml up -d
-	echo -n "Waiting for MySQL to start."
-	until docker exec -i core_database_1 mysqldump --protocol tcp -h localhost -u isf -pisf123 --no-tablespaces oh > database.sql 2>dump_error.log;
-	do echo -n "."; sleep 2; done
-	docker-compose -f core/docker-compose.yml down
-	if grep Error dump_error.log; then exit 1; fi
+# database.sql: core
+#	docker-compose -f core/docker-compose.yml up -d
+#	echo -n "Waiting for MySQL to start."
+#	until docker exec -i core_database_1 mysqldump --protocol tcp -h localhost -u isf -pisf123 --no-tablespaces oh > database.sql 2>dump_error.log;
+#	do echo -n "."; sleep 2; done
+#	docker-compose -f core/docker-compose.yml down
+#	if grep Error dump_error.log; then exit 1; fi
 	
 # Create changelog file
 CHANGELOG: core
