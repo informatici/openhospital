@@ -104,9 +104,7 @@ $(LINUX64).tar.gz: compile-all dw-all
 
 # Compile application binaries
 gui/target/OpenHospital20/bin/OH-gui.jar: clone-all
-#	docker-compose -f core/docker-compose.yml up -d
-	mvn -T 1.5C clean install -DskipTests
-#	docker-compose -f core/docker-compose.yml down
+	mvn -T 1.5C package
 
 # Clone repositories of OH components
 clone-all: core gui doc
@@ -124,15 +122,6 @@ oh-admin-manual.pdf: doc
 oh-user-manual.pdf: doc
 	asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o oh-user-manual.pdf
 
-# Create database dump
-# database.sql: core
-#	docker-compose -f core/docker-compose.yml up -d
-#	echo -n "Waiting for MySQL to start."
-#	until docker exec -i core_database_1 mysqldump --protocol tcp -h localhost -u isf -pisf123 --no-tablespaces oh > database.sql 2>dump_error.log;
-#	do echo -n "."; sleep 2; done
-#	docker-compose -f core/docker-compose.yml down
-#	if grep Error dump_error.log; then exit 1; fi
-	
 # Create changelog file
 CHANGELOG: core
 	pushd core
