@@ -8,7 +8,8 @@ Changelog:
  - [Doc component changelog](https://github.com/informatici/openhospital-doc/compare/SECONDLASTTAG...LASTTAG)
 
 Brought to you by:
-- Informatici Senza Frontiere open source community
+- Informatici Senza Frontiere
+- Open source community
 - Uni2grow Camerun
 - Intesys s.r.l.
 
