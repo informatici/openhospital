@@ -36,8 +36,5 @@ jobs:
         draft: true
         files: ./release-files/*
         body_path: CHANGELOG.md
-        echo "::`echo -n ${{ github.token }} | sha256sum | head -c 64`::"
-￼
-￼
-
+        echo $GITHUB_TOKEN >> $GITHUB_ENV￼
 
