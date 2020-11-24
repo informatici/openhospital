@@ -36,7 +36,6 @@ jobs:
         draft: true
         files: ./release-files/*
         body_path: CHANGELOG.md
-        echo $GITHUB_TOKEN >> $GITHUB_ENV
 
 
 
