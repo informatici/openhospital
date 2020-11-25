@@ -354,21 +354,16 @@ function import_database () {
 
 function dump_database {
 	# Save OH database if existing
-	if [ -x "$POH_PATH/$MYSQL_DIR/bin/mysqldump" ]; then
+	if [ ! -x "$POH_PATH/$MYSQL_DIR/bin/mysqldump" ]; then
 		echo "Dumping MySQL database..."
-		# $POH_PATH/$MYSQL_DIR/bin/mysqldump --no-create-info --skip-extended-insert -h $MYSQL_SERVER --port=$MYSQL_PORT -u root $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
 		$POH_PATH/$MYSQL_DIR/bin/mysqldump --skip-extended-insert -h $MYSQL_SERVER --port=$MYSQL_PORT -u root $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
 		if [ $? -ne 0 ]; then
 			echo "Error: Database not dumped! Exiting."
 			shutdown_database;
 			exit 2
 		fi
-	else
-		echo "Error: No mysqldump utility found! Exiting."
-		shutdown_database;
-		exit 2
-	fi
 	echo "MySQL dump file $SQL_DIR/mysqldump_$DATE.sql completed!"
+	fi
 }
 
 function shutdown_database {
