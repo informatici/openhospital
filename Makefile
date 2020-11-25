@@ -35,13 +35,13 @@ help:
 
 # Clean targets
 clean: clean-downloads
-	rm -rf release-files core gui doc poh-linux* poh-win* CHANGELOG CHANGELOG.md *.pdf
+	rm -rf release-files core gui doc poh-linux* poh-win* CHANGELOG CHANGELOG.md database.sql *.pdf
 clean-all:
 	git clean -xdff
 clean-downloads:
 	rm -rf *.zip *.tar.gz
 
-compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG
+compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG database.sql
 
 # Assemble targets
 release-files: $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
@@ -72,9 +72,9 @@ $(WIN).zip: compile-all dw-all
 	unzip $(JRE_WIN) -d $(WIN)
 	unzip $(MYSQL_WIN) -d $(WIN) -x "*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(WIN)/oh
-	cp -a ./core/mysql/db $(WIN)/sql
+	#cp -a ./core/mysql/db $(WIN)/sql
 	rm -rf $(WIN)/oh/generate_changelog.sh
-	cp POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
+	cp *.sql POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
 	cp *.pdf $(WIN)/oh/doc
 	zip -r $(WIN).zip $(WIN)
 
@@ -104,7 +104,9 @@ $(LINUX64).tar.gz: compile-all dw-all
 
 # Compile application binaries
 gui/target/OpenHospital20/bin/OH-gui.jar: clone-all
+	docker-compose -f core/docker-compose.yml up -d
 	mvn -T 1.5C package
+	docker-compose -f core/docker-compose.yml down
 
 # Clone repositories of OH components
 clone-all: core gui doc
@@ -122,6 +124,15 @@ oh-admin-manual.pdf: doc
 oh-user-manual.pdf: doc
 	asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o oh-user-manual.pdf
 
+# Create database dump
+database.sql: core
+	docker-compose -f core/docker-compose.yml up -d
+	echo -n "Waiting for MySQL to start."
+	until docker exec -i core_database_1 mysqldump --protocol tcp -h localhost -u isf -pisf123 --no-tablespaces oh > database.sql 2>dump_error.log;
+	do echo -n "."; sleep 2; done
+	docker-compose -f core/docker-compose.yml down
+	if grep Error dump_error.log; then exit 1; fi
+	
 # Create changelog file
 CHANGELOG: core
 	pushd core
