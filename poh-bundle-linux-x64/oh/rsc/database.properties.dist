@@ -1,0 +1,3 @@
+jdbc.url=jdbc:mysql://DBSERVER:DBPORT/DBNAME
+jdbc.username=DBUSER
+jdbc.password=DBPASS

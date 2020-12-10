@@ -4,7 +4,7 @@ socket = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.sock"
 
 [mysqld] 
 port = MYSQL_PORT 
-bind-address = localhost
+bind-address = MYSQL_SERVER
 socket = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.sock"
 pid-file = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.pid"
 basedir = "OH_PATH_SUBSTITUTE/MYSQL_DISTRO"  
@@ -14,6 +14,8 @@ general_log_file = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql.log"
 slow_query_log_file = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql-slow-query.log"
 log-error = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql.err.log"
 
+
+sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
 max_allowed_packet = DICOM_SIZE
 skip-external-locking 
 key_buffer_size = 16M
