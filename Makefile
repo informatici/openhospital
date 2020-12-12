@@ -156,8 +156,8 @@ $(JRE_LINUX64):
 $(JRE_WIN):
 	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9%2B11.1/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.9_11.zip -O $(JRE_WIN)
 $(MYSQL_LINUX32):
-	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-i686.tar.gz -O $(MYSQL_LINUX32)
+	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.31-linux-glibc2.12-i686.tar.gz -O $(MYSQL_LINUX32)
 $(MYSQL_LINUX64):
-	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-linux-glibc2.12-x86_64.tar.gz -O $(MYSQL_LINUX64)
+	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.31-linux-glibc2.12-x86_64.tar.gz -O $(MYSQL_LINUX64)
 $(MYSQL_WIN):
-	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.30-win32.zip -O $(MYSQL_WIN)
+	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.31-win32.zip -O $(MYSQL_WIN)
