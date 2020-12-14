@@ -1,18 +1,18 @@
 [client]
 port = MYSQL_PORT
-socket = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.sock"  
+socket = "OH_PATH_SUBSTITUTE/RUN_DIR/mysql.sock"  
 
 [mysqld] 
 port = MYSQL_PORT 
 bind-address = MYSQL_SERVER
-socket = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.sock"
-pid-file = "OH_PATH_SUBSTITUTE/var/run/mysqld/mysql.pid"
+socket = "OH_PATH_SUBSTITUTE/RUN_DIR/mysql.sock"
+pid-file = "OH_PATH_SUBSTITUTE/RUN_DIR/mysql.pid"
 basedir = "OH_PATH_SUBSTITUTE/MYSQL_DISTRO"  
-tmpdir = "OH_PATH_SUBSTITUTE/tmp"  
-datadir = "OH_PATH_SUBSTITUTE/var/lib/mysql" 
-general_log_file = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql.log"
-slow_query_log_file = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql-slow-query.log"
-log-error = "OH_PATH_SUBSTITUTE/var/log/mysql/mysql.err.log"
+tmpdir = "OH_PATH_SUBSTITUTE/RUN_DIR"  
+datadir = "OH_PATH_SUBSTITUTE/DATA_DIR" 
+general_log_file = "OH_PATH_SUBSTITUTE/LOG_DIR/mysql.log"
+slow_query_log_file = "OH_PATH_SUBSTITUTE/LOG_DIR/mysql-slow-query.log"
+log-error = "OH_PATH_SUBSTITUTE/LOG_DIR/mysql.err.log"
 
 
 sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION

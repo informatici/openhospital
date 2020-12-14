@@ -44,9 +44,8 @@ DEMO_MODE=off
 ######## Software configuration - change at your own risk :-)
 # Database
 MYSQL_SERVER=localhost
-#MYSQL_SERVER="127.0.0.1"
 MYSQL_PORT=3306
-MYSQL_ROOT_PW="root2020oh"
+MYSQL_ROOT_PW="root2020oh111"
 DATABASE_NAME=oh
 DATABASE_USER=isf
 DATABASE_PASSWORD=isf123
@@ -55,8 +54,12 @@ DICOM_MAX_SIZE="4M"
 
 OH_DIR=oh
 SQL_DIR=sql
-MYSQL_SOCKET="var/run/mysqld/mysql.sock"
-MYSQL_DATA_DIR="var/lib/mysql/"
+DICOM_DIR="data/dicom_storage"
+DATA_DIR="data/db"
+LOG_DIR="data/log"
+BACKUP_DIR=sql
+RUN_DIR=tmp
+#MYSQL_SOCKET="$RUN_DIR/mysql.sock"
 #DB_CREATE_SQL="create_all_en.sql" # default to create_all_en.sql
 DB_DEMO="create_all_demo.sql"
 DATE=`date +%Y-%m-%d_%H-%M-%S`
@@ -82,7 +85,7 @@ esac
 MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-10.2.36/bintar-linux-x86_64"
 MYSQL_DIR="mariadb-10.2.36-linux-$ARCH"
 # MySQL
-#MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
+#MYSQL_DIR="mysql-5.7.31-linux-glibc2.12-$ARCH"
 #MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
 EXT="tar.gz"
 
@@ -181,6 +184,10 @@ function set_path {
 		fi
 	fi
 	POH_PATH_ESCAPED=$(echo $POH_PATH | sed -e 's/\//\\\//g')
+	DATA_DIR_ESCAPED=$(echo $DATA_DIR | sed -e 's/\//\\\//g')
+	RUN_DIR_ESCAPED=$(echo $RUN_DIR | sed -e 's/\//\\\//g')
+	LOG_DIR_ESCAPED=$(echo $LOG_DIR | sed -e 's/\//\\\//g')
+	DICOM_DIR_ESCAPED=$(echo $DICOM_DIR | sed -e 's/\//\\\//g')
 }
 
 function set_language {
@@ -301,25 +308,26 @@ function config_database {
 	echo "Generating MySQL config file..."
 	[ -f $POH_PATH/etc/mysql/my.cnf ] && mv -f $POH_PATH/etc/mysql/my.cnf $POH_PATH/etc/mysql/my.cnf.old
 	sed -e "s/MYSQL_SERVER/$MYSQL_SERVER/g" -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" \
-	    -e "s/MYSQL_PORT/$MYSQL_PORT/" -e "s/MYSQL_DISTRO/$MYSQL_DIR/g" $POH_PATH/etc/mysql/my.cnf.dist > $POH_PATH/etc/mysql/my.cnf
+	-e "s/RUN_DIR/$RUN_DIR_ESCAPED/g" -e "s/DATA_DIR/$DATA_DIR_ESCAPED/g" -e "s/LOG_DIR/$LOG_DIR_ESCAPED/g" \
+	-e "s/MYSQL_PORT/$MYSQL_PORT/g" -e "s/MYSQL_DISTRO/$MYSQL_DIR/g" $POH_PATH/etc/mysql/my.cnf.dist > $POH_PATH/etc/mysql/my.cnf
 }
 
 function inizialize_database {
 	# Recreate directory structure
-	mkdir -p $POH_PATH/$MYSQL_DATA_DIR
-	mkdir -p $POH_PATH/var/run/mysqld
-	mkdir -p $POH_PATH/var/log/mysql
+	mkdir -p "$POH_PATH/$DATA_DIR"
+	mkdir -p "$POH_PATH/$RUN_DIR"
+	mkdir -p "$POH_PATH/$LOG_DIR"
+	mkdir -p "$POH_PATH/$DICOM_DIR"
+	mkdir -p "$POH_PATH/$BACKUP_DIR"
 	# Inizialize MySQL
 	echo "Initializing MySQL database on port $MYSQL_PORT..."
 	case "$MYSQL_DIR" in 
 	*mariadb*)
-#		$POH_PATH/$MYSQL_DIR/scripts/mysql_install_db --socket=$POH_PATH/$MYSQL_SOCKET --basedir="$POH_PATH/$MYSQL_DIR" --datadir="$POH_PATH/$MYSQL_DATA_DIR" \
-		$POH_PATH/$MYSQL_DIR/scripts/mysql_install_db --basedir=$POH_PATH/$MYSQL_DIR --datadir="$POH_PATH/$MYSQL_DATA_DIR" \
+		$POH_PATH/$MYSQL_DIR/scripts/mysql_install_db --basedir=$POH_PATH/$MYSQL_DIR --datadir="$POH_PATH/$DATA_DIR" \
 		--auth-root-authentication-method=normal 2>&1 > /dev/null
 		;;
 	*mysql*)
-#		$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --socket=$POH_PATH/$MYSQL_SOCKET --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/$MYSQL_DATA_DIR 2>&1 > /dev/null
-		$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/$MYSQL_DATA_DIR 2>&1 > /dev/null
+		$POH_PATH/$MYSQL_DIR/bin/mysqld --initialize-insecure --basedir=$POH_PATH/$MYSQL_DIR --datadir=$POH_PATH/$DATA_DIR 2>&1 > /dev/null
 		;;
 	esac
 
@@ -382,7 +390,7 @@ function dump_database {
 	if [ -x "$POH_PATH/$MYSQL_DIR/bin/mysqldump" ]; then
 		echo "Dumping MySQL database..."
 		# $POH_PATH/$MYSQL_DIR/bin/mysqldump --no-create-info --skip-extended-insert -h $MYSQL_SERVER --port=$MYSQL_PORT -u root $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
-		$POH_PATH/$MYSQL_DIR/bin/mysqldump --skip-extended-insert -u root --password=$MYSQL_ROOT_PW --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp $DATABASE_NAME > $POH_PATH/$SQL_DIR/mysqldump_$DATE.sql
+		$POH_PATH/$MYSQL_DIR/bin/mysqldump --skip-extended-insert -u root --password=$MYSQL_ROOT_PW --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp $DATABASE_NAME > $POH_PATH/$BACKUP_DIR/mysqldump_$DATE.sql
 		if [ $? -ne 0 ]; then
 			echo "Error: Database not dumped! Exiting."
 			shutdown_database;
@@ -393,7 +401,7 @@ function dump_database {
 		shutdown_database;
 		exit 2
 	fi
-	echo "MySQL dump file $SQL_DIR/mysqldump_$DATE.sql completed!"
+	echo "MySQL dump file $BACKUP_DIR/mysqldump_$DATE.sql completed!"
 }
 
 function shutdown_database {
@@ -408,8 +416,8 @@ function clean_database {
 	get_confirmation;
 	echo "Removing data..."
 	# remove databases
-	rm -rf $POH_PATH/$MYSQL_DATA_DIR/*
-	rm -ff $POH_PATH/var/run/mysqld/*
+	rm -rf $POH_PATH/$DATA_DIR/*
+	rm -rf $POH_PATH/$RUN_DIR/*
 }
 
 function test_database_connection {
@@ -431,7 +439,7 @@ function clean_files {
 	echo "Removing files..."
 	rm -f $POH_PATH/etc/mysql/my.cnf
 	rm -f $POH_PATH/etc/mysql/my.cnf.old
-	rm -f $POH_PATH/var/log/mysql/*
+	rm -f $POH_PATH/$LOG_DIR/*
 	rm -f $POH_PATH/$OH_DIR/rsc/generalData.properties
 	rm -f $POH_PATH/$OH_DIR/rsc/generalData.properties.old
 	rm -f $POH_PATH/$OH_DIR/rsc/database.properties
@@ -502,7 +510,7 @@ while getopts ${OPTSTRING} opt; do
 		;;
 	s)	# save database
 		# checking if data exist
-		if [ -d $POH_PATH/$MYSQL_DATA_DIR/$DATABASE_NAME ]; then
+		if [ -d $POH_PATH/$DATA_DIR/$DATABASE_NAME ]; then
 			mysql_check;
 			config_database;
 			start_database;
@@ -602,7 +610,7 @@ if [ $OH_DISTRO = portable ]; then
 	# Config MySQL
 	config_database;
 	# Check if OH database already exists
-	if [ ! -d $POH_PATH/$MYSQL_DATA_DIR/$DATABASE_NAME ]; then
+	if [ ! -d $POH_PATH/$DATA_DIR/$DATABASE_NAME ]; then
 		# Prepare MySQL
 		inizialize_database;
 		# Start MySQL
@@ -624,23 +632,24 @@ echo "Setting up OH configuration files..."
 
 ######## DICOM setup
 [ -f $POH_PATH/$OH_DIR/rsc/dicom.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/dicom.properties $POH_PATH/$OH_DIR/rsc/dicom.properties.old
-sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" $POH_PATH/$OH_DIR/rsc/dicom.properties.dist > $POH_PATH/$OH_DIR/rsc/dicom.properties
+sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$POH_PATH_ESCAPED/g" \
+    -e "s/DICOM_DIR/$DICOM_DIR_ESCAPED/g" $POH_PATH/$OH_DIR/rsc/dicom.properties.dist > $POH_PATH/$OH_DIR/rsc/dicom.properties
 
 ######## log4j.properties setup
 [ -f $POH_PATH/$OH_DIR/rsc/log4j.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/log4j.properties $POH_PATH/$OH_DIR/rsc/log4j.properties.old
-sed -e "s/DBSERVER/$MYSQL_SERVER/" -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBUSER/$DATABASE_USER/" -e "s/DBPASS/$DATABASE_PASSWORD/" -e "s/DEBUG_LEVEL/$DEBUG_LEVEL/" \
-$POH_PATH/$OH_DIR/rsc/log4j.properties.dist > $POH_PATH/$OH_DIR/rsc/log4j.properties
+sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
+    -e "s/DEBUG_LEVEL/$DEBUG_LEVEL/g" $POH_PATH/$OH_DIR/rsc/log4j.properties.dist > $POH_PATH/$OH_DIR/rsc/log4j.properties
 
 ######## database.properties setup 
 [ -f $POH_PATH/$OH_DIR/rsc/database.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/database.properties $POH_PATH/$OH_DIR/rsc/database.properties.old
-sed -e "s/DBSERVER/$MYSQL_SERVER/" -e "s/DBPORT/$MYSQL_PORT/" -e"s/DBNAME/$DATABASE_NAME/" \
--e "s/DBUSER/$DATABASE_USER/" -e "s/DBPASS/$DATABASE_PASSWORD/" \
+sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/g" -e"s/DBNAME/$DATABASE_NAME/g" \
+    -e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
 $POH_PATH/$OH_DIR/rsc/database.properties.dist > $POH_PATH/$OH_DIR/rsc/database.properties
 
 ######## generalData.properties language setup 
 # set language in OH config file
 [ -f $POH_PATH/$OH_DIR/rsc/generalData.properties ] && mv -f $POH_PATH/$OH_DIR/rsc/generalData.properties $POH_PATH/$OH_DIR/rsc/generalData.properties.old
-sed -e "s/OH_SET_LANGUAGE/$OH_LANGUAGE/" $POH_PATH/$OH_DIR/rsc/generalData.properties.dist > $POH_PATH/$OH_DIR/rsc/generalData.properties
+sed -e "s/OH_SET_LANGUAGE/$OH_LANGUAGE/g" $POH_PATH/$OH_DIR/rsc/generalData.properties.dist > $POH_PATH/$OH_DIR/rsc/generalData.properties
 
 ######## Open Hospital start
 
