@@ -55,22 +55,29 @@ REM #-> DB_CREATE_SQL default is set to create_all_en.sql - set to "create_all_d
 set LOG_FILE="startup.log"
 
 REM ######## MySQL Software
-REM # MariaDB
-REM MYSQL_URL=http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.36/winx64-packages/mariadb-10.2.36-winx64.zip
-REM http://ftp.kaist.ac.kr/mysql/Downloads/MySQL-5.7/mysql-5.7.31-winx64.zip
-REM 
-REM # MySQL
-REM #MYSQL_DIR="mysql-5.7.30-linux-glibc2.12-$ARCH"
-REM #MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
+REM # MariaDB 64bit
+REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.36/win32-packages/mariadb-10.2.36-winx64.zip
+REM # MySQL 64bit
+REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.31-winx64.zip
 
-set MYSQL_DIR=mariadb-10.2.36-winx64
-REM set MYSQL_DIR=mysql-5.7.31-winx64
+REM # MariaDB 32bit
+REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.36/winx64-packages/mariadb-10.2.36-win32.zip
+REM # MySQL 32bit
+REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.31-win32.zip
+
+REM set MYSQL_DIR=mariadb-10.2.36-win32
+set MYSQL_DIR=mysql-5.7.31-win32
 
 REM ####### JAVA Software
-REM ######## JAVA 64bit - default architecture
+REM ######## JAVA 64bit - experimental architecture
 REM ### JRE 11 - openjdk
 REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/"
 REM set JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.9.1_1"
+
+REM ######## JAVA 32bit - default architecture
+REM ### JRE 11 - openjdk
+REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/"
+REM set JAVA_DISTRO="OpenJDK11U-jre_x86-32_windows_hotspot_11.0.9.1_1"
 
 set JAVA_DIR="jdk-11.0.9.1+1-jre"
 set JAVA_BIN=%OH_PATH%\%JAVA_DIR%\bin\java.exe
