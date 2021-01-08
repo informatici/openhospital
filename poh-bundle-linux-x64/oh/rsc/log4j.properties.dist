@@ -1,5 +1,5 @@
 # global logging to RollingFile (logs/ folder), available levels INFO, DEBUG, FINEST (debug++)
-log4j.rootCategory=info,RollingFile
+log4j.rootCategory=INFO,RollingFile
 
 # Null appender (off)
 log4j.appender.null=org.apache.log4j.varia.NullAppender 	

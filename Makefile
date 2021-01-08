@@ -35,13 +35,13 @@ help:
 
 # Clean targets
 clean: clean-downloads
-	rm -rf release-files core gui doc poh-linux* poh-win* CHANGELOG CHANGELOG.md database.sql *.pdf
+	rm -rf release-files core gui doc poh-linux* poh-win* CHANGELOG CHANGELOG.md *.pdf
 clean-all:
 	git clean -xdff
 clean-downloads:
 	rm -rf *.zip *.tar.gz
 
-compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG database.sql
+compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG 
 
 # Assemble targets
 release-files: $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
@@ -72,9 +72,9 @@ $(WIN).zip: compile-all dw-all
 	unzip $(JRE_WIN) -d $(WIN)
 	unzip $(MYSQL_WIN) -d $(WIN) -x "*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(WIN)/oh
-	#cp -a ./core/mysql/db $(WIN)/sql
+	cp -a ./core/mysql/db $(WIN)/sql
 	rm -rf $(WIN)/oh/generate_changelog.sh
-	cp *.sql POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
+	cp POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
 	cp *.pdf $(WIN)/oh/doc
 	zip -r $(WIN).zip $(WIN)
 
@@ -124,15 +124,6 @@ oh-admin-manual.pdf: doc
 oh-user-manual.pdf: doc
 	asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o oh-user-manual.pdf
 
-# Create database dump
-database.sql: core
-	docker-compose -f core/docker-compose.yml up -d
-	echo -n "Waiting for MySQL to start."
-	until docker exec -i core_database_1 mysqldump --protocol tcp -h localhost -u isf -pisf123 --no-tablespaces oh > database.sql 2>dump_error.log;
-	do echo -n "."; sleep 2; done
-	docker-compose -f core/docker-compose.yml down
-	if grep Error dump_error.log; then exit 1; fi
-	
 # Create changelog file
 CHANGELOG: core
 	pushd core
@@ -154,7 +145,7 @@ $(JRE_LINUX32):
 $(JRE_LINUX64):
 	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9%2B11.1/OpenJDK11U-jre_x64_linux_hotspot_11.0.9_11.tar.gz -O $(JRE_LINUX64)
 $(JRE_WIN):
-	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9%2B11.1/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.9_11.zip -O $(JRE_WIN)
+	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.9.1_1.zip -O $(JRE_WIN)
 $(MYSQL_LINUX32):
 	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.31-linux-glibc2.12-i686.tar.gz -O $(MYSQL_LINUX32)
 $(MYSQL_LINUX64):
