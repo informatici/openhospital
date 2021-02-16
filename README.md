@@ -45,7 +45,7 @@ our [Slack workspace][slack] or by subscribing to our [mailing list][ml].
 <details><summary>:construction_worker: :package:</summary>
 To create the Open Hospital packages,
 make sure to have installed the following dependencies on a Linux machine:
-JDK 8+, Maven, asciidoctor-pdf, docker, docker-compose, zip, GNU make.
+JDK 8+, Maven, asciidoctor-pdf, zip, GNU make.
 
 Then follow these simple steps:
 
