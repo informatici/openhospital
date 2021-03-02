@@ -23,7 +23,7 @@ REM #
 REM ################### Configuration ###################
 set OH_PATH=%~dps0
 
-REM set OH_DISTRO="portable|client"
+REM set OH_DISTRO="PORTABLE|CLIENT"
 REM set DEMO_MODE="off"
 
 REM # Language setting - default set to en
@@ -33,11 +33,14 @@ set OH_LANGUAGE=en
 REM # set debug level to INFO | DEBUG - default set to INFO
 set DEBUG_LEVEL=INFO
 
+REM # enable / disable DICOM (true|false)
+set DICOM_ENABLE=false
+
 REM ### Software configuration - change at your own risk :-)
 REM # Database
 set MYSQL_SERVER=localhost
 set MYSQL_PORT=3306
-set MYSQL_ROOT_PW=root2020oh111
+set MYSQL_ROOT_PW=root2021oh915
 set DATABASE_NAME=oh
 set DATABASE_USER=isf
 set DATABASE_PASSWORD=isf123
@@ -49,7 +52,7 @@ set SQL_DIR=sql
 set DATA_DIR="data\db"
 set LOG_DIR="data\log"
 set DICOM_DIR="data\dicom_storage"
-set RUN_DIR=tmp
+set TMP_DIR=tmp
 set DB_CREATE_SQL="create_all_en.sql"
 REM #-> DB_CREATE_SQL default is set to create_all_en.sql - set to "create_all_demo.sql" for demo or create_all_[lang].sql for language
 set LOG_FILE="startup.log"
@@ -58,31 +61,34 @@ REM ######## MySQL Software
 REM # MariaDB 64bit
 REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.36/win32-packages/mariadb-10.2.36-winx64.zip
 REM # MySQL 64bit
-REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.31-winx64.zip
+REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.32-winx64.zip
 
 REM # MariaDB 32bit
-REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.36/winx64-packages/mariadb-10.2.36-win32.zip
+REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.36/win32-packages/mariadb-10.2.36-win32.zip
 REM # MySQL 32bit
-REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.31-win32.zip
+REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.32-win32.zip
 
-REM set MYSQL_DIR=mariadb-10.2.36-win32
-set MYSQL_DIR=mysql-5.7.31-win32
+REM set MYSQL_DIR=mysql-5.7.32-win32
+set MYSQL_DIR=mariadb-10.2.36-winx64
 
 REM ####### JAVA Software
 REM ######## JAVA 64bit - experimental architecture
 REM ### JRE 11 - openjdk
-REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/"
-REM set JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.9.1_1"
+REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/"
+REM set JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.10_9.zip"
 
 REM ######## JAVA 32bit - default architecture
 REM ### JRE 11 - openjdk
-REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/"
-REM set JAVA_DISTRO="OpenJDK11U-jre_x86-32_windows_hotspot_11.0.9.1_1"
+REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/"
+REM set JAVA_DISTRO="OpenJDK11U-jre_x86-32_windows_hotspot_11.0.10_9.zip"
 
-set JAVA_DIR="jdk-11.0.9.1+1-jre"
+set JAVA_DIR="jdk-11.0.10+9-jre"
 set JAVA_BIN=%OH_PATH%\%JAVA_DIR%\bin\java.exe
 
 set REPLACE_PATH=%OH_PATH%\%MYSQL_DIR%\bin
+
+REM ######## Script start
+echo Configuring Open Hospital...
 
 REM # Set mysql TCP port
 set startPort=%MYSQL_PORT%
@@ -102,7 +108,7 @@ echo Found TCP port %MYSQL_PORT% for MySQL !
 
 REM # Create log and tmp dir
 mkdir %OH_PATH%\%LOG_DIR%
-mkdir %OH_PATH%\%RUN_DIR%
+mkdir %OH_PATH%\%TMP_DIR%
 
 REM ### Setup MySQL configuration
 echo f | xcopy %OH_PATH%\etc\mysql\my.cnf.dist %OH_PATH%\etc\mysql\my.cnf /y > "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
@@ -111,7 +117,7 @@ echo f | xcopy %OH_PATH%\etc\mysql\my.cnf.dist %OH_PATH%\etc\mysql\my.cnf /y > "
 %REPLACE_PATH%\replace.exe MYSQL_PORT %MYSQL_PORT% -- %OH_PATH%\etc\mysql\my.cnf >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe MYSQL_DISTRO %MYSQL_DIR% -- %OH_PATH%\etc\mysql\my.cnf >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DICOM_SIZE %DICOM_MAX_SIZE% -- %OH_PATH%\etc\mysql\my.cnf >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
-%REPLACE_PATH%\replace.exe RUN_DIR %RUN_DIR% -- %OH_PATH%\etc\mysql\my.cnf >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
+%REPLACE_PATH%\replace.exe TMP_DIR %TMP_DIR% -- %OH_PATH%\etc\mysql\my.cnf >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DATA_DIR %DATA_DIR% -- %OH_PATH%\etc\mysql\my.cnf >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe LOG_DIR %LOG_DIR% -- %OH_PATH%\etc\mysql\my.cnf >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 
@@ -142,34 +148,33 @@ echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\log4j.properties.dist %OH_PATH%\%OH_DIR%\r
 %REPLACE_PATH%\replace.exe DEBUG_LEVEL %DEBUG_LEVEL% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 
 REM ### Setup database
-IF EXIST %OH_PATH%\%SQL_DIR%\%DB_CREATE_SQL% (
+if EXIST %OH_PATH%\%SQL_DIR%\%DB_CREATE_SQL% (
  	REM # Remove database files
 	echo Removing data...
  	rmdir /s /q %OH_PATH%\%DATA_DIR%
  	REM # recreate directory structure
- 	mkdir %OH_PATH%\%RUN_DIR%
+ 	mkdir %OH_PATH%\%TMP_DIR%
  	mkdir %OH_PATH%\%DATA_DIR%
 	mkdir %OH_PATH%\%DICOM_DIR%
- 	del /s /q %OH_PATH%\%RUN_DIR%\*
-	del /s /q %OH_PATH%\tmp
+ 	del /s /q %OH_PATH%\%TMP_DIR%\*
 	
-	IF  %MYSQL_DIR:~0,5% == maria (
+	if %MYSQL_DIR:~0,5% == maria (
 		echo Initializing MariaDB...
 		start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysql_install_db.exe --datadir=%OH_PATH%\%DATA_DIR% --password=%MYSQL_ROOT_PW%  >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 	)
-	IF  %MYSQL_DIR:~0,5% == mysql (
+	if %MYSQL_DIR:~0,5% == mysql (
 		echo Initializing MySQL...
 		start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysqld.exe --initialize-insecure --console --basedir="%OH_PATH%\%MYSQL_DIR%" --datadir="%OH_PATH%\%DATA_DIR%"
 	)
-	IF ERRORLEVEL 1 (goto END)
+	if ERRORLEVEL 1 (goto END)
 
 	echo Starting MySQL server on port %MYSQL_PORT%...
-	start /b /min %OH_PATH%\%MYSQL_DIR%\bin\mysqld.exe --defaults-file=%OH_PATH%\etc\mysql\my.cnf --tmpdir=%OH_PATH%\tmp --standalone --console
-	IF ERRORLEVEL 1 (goto END)
+	start /b /min %OH_PATH%\%MYSQL_DIR%\bin\mysqld.exe --defaults-file=%OH_PATH%\etc\mysql\my.cnf --tmpdir=%OH_PATH%\%TMP_DIR% --standalone --console
+	if ERRORLEVEL 1 (goto END)
 	timeout /t 2 /nobreak >nul
 	
 	REM # If using MySQL root password need to be set
-	IF  %MYSQL_DIR:~0,5% == mysql (
+	if %MYSQL_DIR:~0,5% == mysql (
 		echo Setting MySQL root password...
 		start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysql.exe -u root --skip-password --host=%MYSQL_SERVER% --port=%MYSQL_PORT% -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '%MYSQL_ROOT_PW%';" >> %OH_PATH%\%LOG_DIR%\%LOG_FILE% 2>&1
 	)
@@ -180,39 +185,48 @@ IF EXIST %OH_PATH%\%SQL_DIR%\%DB_CREATE_SQL% (
 	echo Importing database schema %DB_CREATE_SQL%...
 	cd /d %OH_PATH%\%SQL_DIR%
 	start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysql.exe --local-infile=1 -u root -p%MYSQL_ROOT_PW% --host=%MYSQL_SERVER% --port=%MYSQL_PORT% %DATABASE_NAME% < "%OH_PATH%\sql\%DB_CREATE_SQL%"  >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
-	IF ERRORLEVEL 1 (goto END)
+	if ERRORLEVEL 1 (goto END)
 	echo Database imported!
 	cd /d %OH_PATH%
 
+	echo Archiving database schema %DB_CREATE_SQL% to %DB_CREATE_SQL%.imported ...
 	rename "%OH_PATH%\%SQL_DIR%\%DB_CREATE_SQL%" "%DB_CREATE_SQL%.imported"
-) ELSE (
+) else (
 	echo Missing SQL creation script or database already initialized, trying to start...
 	echo Starting MySQL server on port %MYSQL_PORT%...
-	start /b /min %OH_PATH%\%MYSQL_DIR%\bin\mysqld.exe --defaults-file=%OH_PATH%\etc\mysql\my.cnf --tmpdir=%OH_PATH%\tmp --standalone --console
-	IF ERRORLEVEL 1 (goto END)
+	start /b /min %OH_PATH%\%MYSQL_DIR%\bin\mysqld.exe --defaults-file=%OH_PATH%\etc\mysql\my.cnf --tmpdir=%OH_PATH%\%TMP_DIR% --standalone --console
+	if ERRORLEVEL 1 (goto END)
 )
 
 REM ###### Setup CLASSPATH #####
-set CLASSPATH=%OH_PATH%\%OH_DIR%\lib
+REM set CLASSPATH=%OH_PATH%\%OH_DIR%\lib
+set CLASSPATH=%OH_PATH%\%OH_DIR%\bin\OH-gui.jar
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
+REM Include all jar files under lib\
 FOR %%A IN (%OH_PATH%\%OH_DIR%\lib\*.jar) DO (
 	set CLASSPATH=!CLASSPATH!;%%A
 )
-set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\bin\OH-gui.jar
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\bundle
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\rpt
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\rsc
+set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\lib
 
+echo %CLASSPATH%
 REM # Setup native_lib_path for current architecture
-if (%PROCESSOR_ARCHITECTURE%)==(AMD64) (
+REM # with DICOM workaround - force NATIVE_LIB to 32bit
+
+if %PROCESSOR_ARCHITECTURE%==AMD64 if not %DICOM_ENABLE%==true (
   set NATIVE_LIB_PATH=%OH_PATH%\%OH_DIR%\lib\native\Win64
 ) else (
   set NATIVE_LIB_PATH=%OH_PATH%\%OH_DIR%\lib\native\Windows
 )
 
 REM ###### Start Open Hospital #####
+
+echo Starting Open Hospital...
+
 cd /d %OH_PATH%\%OH_DIR%
 %JAVA_BIN% -Dsun.java2d.dpiaware=false -Djava.library.path=%NATIVE_LIB_PATH% -cp %CLASSPATH% org.isf.menu.gui.Menu
 
@@ -220,6 +234,7 @@ REM # Shutdown MySQL
 start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysqladmin --user=root --password=%MYSQL_ROOT_PW% --host=%MYSQL_SERVER% --port=%MYSQL_PORT% shutdown >> %OH_PATH%\%LOG_DIR%\%LOG_FILE% 2>&1
 
 REM # Exit
+echo Exiting Open Hospital...
 cd /d %OH_PATH%
 echo Done !
 

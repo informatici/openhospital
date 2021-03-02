@@ -1,14 +1,14 @@
 [client]
 port = MYSQL_PORT
-socket = "OH_PATH_SUBSTITUTE/RUN_DIR/mysql.sock"  
+socket = "OH_PATH_SUBSTITUTE/TMP_DIR/mysql.sock"  
 
 [mysqld] 
 port = MYSQL_PORT 
 bind-address = MYSQL_SERVER
-socket = "OH_PATH_SUBSTITUTE/RUN_DIR/mysql.sock"
-pid-file = "OH_PATH_SUBSTITUTE/RUN_DIR/mysql.pid"
+socket = "OH_PATH_SUBSTITUTE/TMP_DIR/mysql.sock"
+pid-file = "OH_PATH_SUBSTITUTE/TMP_DIR/mysql.pid"
 basedir = "OH_PATH_SUBSTITUTE/MYSQL_DISTRO"  
-tmpdir = "OH_PATH_SUBSTITUTE/RUN_DIR"  
+tmpdir = "OH_PATH_SUBSTITUTE/TMP_DIR"  
 datadir = "OH_PATH_SUBSTITUTE/DATA_DIR" 
 general_log_file = "OH_PATH_SUBSTITUTE/LOG_DIR/mysql.log"
 slow_query_log_file = "OH_PATH_SUBSTITUTE/LOG_DIR/mysql-slow-query.log"
