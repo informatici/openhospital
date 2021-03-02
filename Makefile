@@ -72,7 +72,7 @@ $(WIN).zip: compile-all dw-all
 	unzip $(JRE_WIN) -d $(WIN)
 	unzip $(MYSQL_WIN) -d $(WIN) -x "*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(WIN)/oh
-	cp -a ./core/mysql/db $(WIN)/sql
+	cp -a ./core/mysql/db/* $(WIN)/sql
 	rm -rf $(WIN)/oh/generate_changelog.sh
 	cp POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
 	cp *.pdf $(WIN)/oh/doc
@@ -84,7 +84,7 @@ $(LINUX32).tar.gz: compile-all dw-all
 	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(LINUX32)/oh
-	cp -a ./core/mysql/db $(LINUX32)/sql
+	cp -a ./core/mysql/db/* $(LINUX32)/sql
 	rm -rf $(LINUX32)/oh/generate_changelog.sh
 	cp POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
 	cp *.pdf $(LINUX32)/oh/doc
@@ -96,7 +96,7 @@ $(LINUX64).tar.gz: compile-all dw-all
 	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(LINUX64)/oh
-	cp -a ./core/mysql/db $(LINUX64)/sql
+	cp -a ./core/mysql/db/* $(LINUX64)/sql
 	rm -rf $(LINUX64)/oh/generate_changelog.sh
 	cp POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
 	cp *.pdf $(LINUX64)/oh/doc
