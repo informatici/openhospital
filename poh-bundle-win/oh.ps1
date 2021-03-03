@@ -73,7 +73,7 @@ $script:OH_DISTRO="PORTABLE"  # set distro to PORTABLE | CLIENT
 #$script:DEBUG_LEVEL=INFO
 
 # enable / disable DICOM (true|false)
-#set $script:DICOM_ENABLE=false
+#$script:DICOM_ENABLE="false"
 
 ######## Software configuration - change at your own risk :-)
 # Database
@@ -144,9 +144,8 @@ $script:JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.10_9"
 $script:JAVA_DIR="jdk-11.0.10+9-jre"
 
 ######## JAVA 32bit
-if ( $JAVA_ARCH -eq "32" ) {
+if ( $JAVA_ARCH -eq "32" -Or $DICOM_ENABLE -eq "true" ) {
 	# Setting JRE 32 bit
-	
 	### JRE 8 - zulu 32bit
 	#$script:JAVA_DISTRO="zulu8.52.0.23-ca-jre8.0.282-win_i686"
 	#$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
@@ -251,6 +250,11 @@ function java_lib_setup {
 	switch ( "$JAVA_ARCH" ) {
 		"64" { $script:NATIVE_LIB_PATH="$OH_PATH\$OH_DIR\lib\native\Win64" }
 		"32" { $script:NATIVE_LIB_PATH="$OH_PATH\$OH_DIR\lib\native\Windows" }
+	}
+
+	# Dicom workaround - force 32bit libs
+	if ( $DICOM_ENABLE="true" ) {
+		 $script:NATIVE_LIB_PATH="$OH_PATH\$OH_DIR\lib\native\Windows"
 	}
 
 	# CLASSPATH setup
