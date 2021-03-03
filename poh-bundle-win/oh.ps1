@@ -253,7 +253,7 @@ function java_lib_setup {
 	}
 
 	# Dicom workaround - force 32bit libs
-	if ( $DICOM_ENABLE="true" ) {
+	if ( $DICOM_ENABLE -eq "true" ) {
 		 $script:NATIVE_LIB_PATH="$OH_PATH\$OH_DIR\lib\native\Windows"
 	}
 
