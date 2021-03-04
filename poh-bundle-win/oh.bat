@@ -199,8 +199,7 @@ if EXIST %OH_PATH%\%SQL_DIR%\%DB_CREATE_SQL% (
 )
 
 REM ###### Setup CLASSPATH #####
-REM set CLASSPATH=%OH_PATH%\%OH_DIR%\lib
-set CLASSPATH=%OH_PATH%\%OH_DIR%\bin\OH-gui.jar
+set CLASSPATH=%OH_PATH%\%OH_DIR%\lib
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
@@ -211,6 +210,7 @@ FOR %%A IN (%OH_PATH%\%OH_DIR%\lib\*.jar) DO (
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\bundle
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\rpt
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\rsc
+set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\bin\OH-gui.jar
 
 REM # Setup native_lib_path for current architecture
 REM # with DICOM workaround - force NATIVE_LIB to 32bit
