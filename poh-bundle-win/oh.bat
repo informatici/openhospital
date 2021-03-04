@@ -211,9 +211,7 @@ FOR %%A IN (%OH_PATH%\%OH_DIR%\lib\*.jar) DO (
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\bundle
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\rpt
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\rsc
-set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\lib
 
-echo %CLASSPATH%
 REM # Setup native_lib_path for current architecture
 REM # with DICOM workaround - force NATIVE_LIB to 32bit
 
