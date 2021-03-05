@@ -1,6 +1,6 @@
 @echo off
 REM # Open Hospital (www.open-hospital.org)
-REM # Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+REM # Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
 REM #
 REM # Open Hospital is a free and open source software for healthcare data management.
 REM #
