@@ -21,6 +21,76 @@ REM # along with this program. If not, see <http://www.gnu.org/licenses/>.
 REM #
 
 REM ################### Configuration ###################
+REM
+REM set LEGACYMODE=on to start with legacy oh.bat script
+REM
+REM launch oh.bat -h to see available options
+REM 
+REM default start is powershell oh.ps1 script
+
+set LEGACYMODE="off"
+
+REM ##############################################
+REM check for legacy mode
+
+if %LEGACYMODE%=="on" goto legacy
+
+REM ###### Functions and script start
+goto :init
+
+:header
+	echo.
+	echo  Open Hospital startup script
+	echo  %__BAT_NAME% v%__SCRIPTVERSION%
+	echo.
+	goto :eof
+
+:usage
+	echo USAGE:
+	echo   %__BAT_NAME% [-option]
+	echo.
+	echo.  -h, -?, --help              shows this help
+	echo.  -legacymode, --legacymode   start OH with legacy oh.bat
+	goto :eof
+
+:init
+	set "__SCRIPTVERSION=1.0"
+	set "__BAT_FILE=%~0"
+	set "__BAT_PATH=%~dp0"
+	set "__BAT_NAME=%~nx0"
+
+:parse
+	if "%~1"=="" goto :main
+
+	if /i "%~1"=="/?"	call :header & call :usage & goto :end
+	if /i "%~1"=="-?"	call :header & call :usage & goto :end
+	if /i "%~1"=="-h"	call :header & call :usage & goto :end
+	if /i "%~1"=="--help"	call :header & call :usage & goto :end
+
+	if /i "%~1"=="/legacymode"	call :legacy & goto :end
+	if /i "%~1"=="-legacymode"	call :legacy & goto :end
+	if /i "%~1"=="--legacymode"	call :legacy & goto :end
+
+	shift
+	goto :parse
+
+:main
+	REM ################### oh.ps1 ###################
+	REM default start: oh.ps1
+
+	echo Starting OH with oh.ps1...
+
+	REM launch powershell script
+	powershell.exe  -ExecutionPolicy Bypass -File  ./oh.ps1
+
+	goto end
+
+:legacy
+REM ################### Legacy oh.bat ###################
+
+echo Legacy mode - Starting OH with oh.bat...
+
+REM ################### Configuration ###################
 set OH_PATH=%~dps0
 
 REM set OH_DISTRO="PORTABLE|CLIENT"
@@ -92,18 +162,19 @@ echo Configuring Open Hospital...
 
 REM # Set mysql TCP port
 set startPort=%MYSQL_PORT%
-:SEARCHPORT
+:searchport
 netstat -o -n -a | find "LISTENING" | find ":%startPort% " > NUL
 if "%ERRORLEVEL%" equ "0" (
 	echo TCP port %startPort% unavailable
 	set /a startPort +=1
-	GOTO :SEARCHPORT
+	goto :searchport
 ) ELSE (
 	echo TCP port %startPort% available
 	set MYSQL_PORT=%startPort%
-	GOTO :FOUNDPORT
+	goto :foundport
 )
-:FOUNDPORT
+
+:foundport
 echo Found TCP port %MYSQL_PORT% for MySQL !
 
 REM # Create log and tmp dir
@@ -148,7 +219,7 @@ echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\log4j.properties.dist %OH_PATH%\%OH_DIR%\r
 %REPLACE_PATH%\replace.exe DEBUG_LEVEL %DEBUG_LEVEL% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 
 REM ### Setup database
-if EXIST %OH_PATH%\%SQL_DIR%\%DB_CREATE_SQL% (
+if not EXIST %OH_PATH%\%DATA_DIR%\%DATABASE_NAME% (
  	REM # Remove database files
 	echo Removing data...
  	rmdir /s /q %OH_PATH%\%DATA_DIR%
@@ -166,11 +237,11 @@ if EXIST %OH_PATH%\%SQL_DIR%\%DB_CREATE_SQL% (
 		echo Initializing MySQL...
 		start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysqld.exe --initialize-insecure --console --basedir="%OH_PATH%\%MYSQL_DIR%" --datadir="%OH_PATH%\%DATA_DIR%"
 	)
-	if ERRORLEVEL 1 (goto END)
+	if ERRORLEVEL 1 (goto error)
 
 	echo Starting MySQL server on port %MYSQL_PORT%...
 	start /b /min %OH_PATH%\%MYSQL_DIR%\bin\mysqld.exe --defaults-file=%OH_PATH%\etc\mysql\my.cnf --tmpdir=%OH_PATH%\%TMP_DIR% --standalone --console
-	if ERRORLEVEL 1 (goto END)
+	if ERRORLEVEL 1 (goto error)
 	timeout /t 2 /nobreak >nul
 	
 	REM # If using MySQL root password need to be set
@@ -185,17 +256,15 @@ if EXIST %OH_PATH%\%SQL_DIR%\%DB_CREATE_SQL% (
 	echo Importing database schema %DB_CREATE_SQL%...
 	cd /d %OH_PATH%\%SQL_DIR%
 	start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysql.exe --local-infile=1 -u root -p%MYSQL_ROOT_PW% --host=%MYSQL_SERVER% --port=%MYSQL_PORT% %DATABASE_NAME% < "%OH_PATH%\sql\%DB_CREATE_SQL%"  >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
-	if ERRORLEVEL 1 (goto END)
+	if ERRORLEVEL 1 (goto error)
 	echo Database imported!
 	cd /d %OH_PATH%
 
-	echo Archiving database schema %DB_CREATE_SQL% to %DB_CREATE_SQL%.imported ...
-	rename "%OH_PATH%\%SQL_DIR%\%DB_CREATE_SQL%" "%DB_CREATE_SQL%.imported"
 ) else (
 	echo Missing SQL creation script or database already initialized, trying to start...
 	echo Starting MySQL server on port %MYSQL_PORT%...
 	start /b /min %OH_PATH%\%MYSQL_DIR%\bin\mysqld.exe --defaults-file=%OH_PATH%\etc\mysql\my.cnf --tmpdir=%OH_PATH%\%TMP_DIR% --standalone --console
-	if ERRORLEVEL 1 (goto END)
+	if ERRORLEVEL 1 (goto error)
 )
 
 REM ###### Setup CLASSPATH #####
@@ -204,7 +273,7 @@ set CLASSPATH=%OH_PATH%\%OH_DIR%\lib
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 REM Include all jar files under lib\
-FOR %%A IN (%OH_PATH%\%OH_DIR%\lib\*.jar) DO (
+for %%A IN (%OH_PATH%\%OH_DIR%\lib\*.jar) DO (
 	set CLASSPATH=!CLASSPATH!;%%A
 )
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\bundle
@@ -229,13 +298,32 @@ cd /d %OH_PATH%\%OH_DIR%
 %JAVA_BIN% -Dsun.java2d.dpiaware=false -Djava.library.path=%NATIVE_LIB_PATH% -cp %CLASSPATH% org.isf.menu.gui.Menu
 
 REM # Shutdown MySQL
+echo Shutting down MySQL...
 start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysqladmin --user=root --password=%MYSQL_ROOT_PW% --host=%MYSQL_SERVER% --port=%MYSQL_PORT% shutdown >> %OH_PATH%\%LOG_DIR%\%LOG_FILE% 2>&1
 
 REM # Exit
 echo Exiting Open Hospital...
 cd /d %OH_PATH%
 echo Done !
+goto end
 
-:END
-echo Error initializing the database, exiting.
-cd /d %OH_PATH%
+:error
+	echo Error starting Open Hospital, exiting.
+	cd /d %OH_PATH%
+	goto end
+
+:end
+	call :cleanup
+	exit /B
+
+:cleanup
+	REM The cleanup function is only really necessary if you
+	REM are _not_ using SETLOCAL.
+	set "__SCRIPTVERSION="
+	set "__BAT_FILE="
+	set "__BAT_PATH="
+	set "__BAT_NAME="
+	set "LEGACYMODE="
+
+	goto :eof
+
