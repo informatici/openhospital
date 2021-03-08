@@ -157,17 +157,17 @@ function script_usage {
 #        echo "               [ -distro PORTABLE|CLIENT ]"
 #        echo "               [ -debug INFO|DEBUG ] "
         echo ""
+        echo "   -C    start OH in CLIENT mode (Client / Server configuration)"
+        echo "   -d    start OH in DEBUG mode"
+        echo "   -D    start OH in DEMO mode"
+        echo "   -G    setup GSM"
+        echo "   -h    show this help"
+        echo "   -l    set language: en|fr|it|es|pt"
         echo "   -s    save OH database"
         echo "   -r    restore OH database"
-        echo "   -l    set language: en|fr|it|es|pt"
-        echo "   -C    start OH - CLIENT mode (Client / Server configuration)"
         echo "   -t    test database connection (CLIENT mode only)"
-        echo "   -D    start OH in DEMO mode"
-        echo "   -d    start OH in DEBUG mode"
-        echo "   -c    clean OH installation"
-        echo "   -G    setup GSM"
         echo "   -v    show OH software version and configuration"
-        echo "   -h    show this help"
+        echo "   -X    clean OH installation"
         echo ""
 	exit 0
 }
@@ -428,7 +428,10 @@ function shutdown_database {
 }
 
 function clean_database {
-	echo "Warning: do you want to remove all data and database ?"
+	echo "Warning: do you want to remove all data and databases ?"
+	get_confirmation;
+	echo "--->>> This operation cannot be undone"
+	echo "--->>> Are you sure ?"
 	get_confirmation;
 	echo "Removing data..."
 	# remove databases
@@ -490,39 +493,36 @@ set_language;
 
 # list of arguments expected in user the input
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
-OPTSTRING=":h?rcsdCtGDvl:"
+OPTSTRING=":CdDGh?lsrtvX"
 
 # function to parse input
 while getopts ${OPTSTRING} opt; do
 	case ${opt} in
-	h)	# help
-		script_usage;
-		;;
-	r)	# restore 
-        	echo "Restoring Open Hospital database...."
-		clean_database;
-		# ask user for database/sql script to restore
-		read -p "Enter SQL dump/backup file that you want to restore - (in sql/ subdirectory) -> " DB_CREATE_SQL
-		if [ -f $OH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
-		        echo "Found $SQL_DIR/$DB_CREATE_SQL, restoring it..."
-		else
-			echo "No SQL file found! Exiting."
-			exit 2
-		fi
-        	# normal startup from here
-		;;
-
-	c)	# clean
-        	echo "Cleaning Open Hospital installation..."
-		clean_files;
-		clean_database;
-        	echo "Done!"
-		exit 0
-		;;
 	d)	# debug
         	echo "Starting Open Hospital in debug mode..."
 		DEBUG_LEVEL=DEBUG
 		echo "Debug level set to $DEBUG_LEVEL"
+		;;
+	C)	# start in CLIENT mode
+		OH_DISTRO=CLIENT
+		;;
+	D)	# demo mode
+        	echo "Starting Open Hospital in demo mode..."
+		# exit if OH is configured in CLIENT mode
+		if [ $OH_DISTRO = "CLIENT" ]; then
+			echo "Error - OH_DISTRO set to CLIENT mode. Cannot run in DEMO mode, exiting."
+			exit 1;
+		else OH_DISTRO="PORTABLE"
+		fi
+		DEMO_MODE="on"
+		clean_database;
+		;;
+	h)	# help
+		script_usage;
+		;;
+	l)	# set language
+		OH_LANGUAGE=$OPTARG
+		set_language;
 		;;
 	s)	# save database
 		# checking if data exist
@@ -542,12 +542,18 @@ while getopts ${OPTSTRING} opt; do
 			exit 1
 		fi
 		;;
-	C)	# start in CLIENT mode
-		OH_DISTRO=CLIENT
-		;;
-	l)	# set language
-		OH_LANGUAGE=$OPTARG
-		set_language;
+	r)	# restore 
+        	echo "Restoring Open Hospital database...."
+		clean_database;
+		# ask user for database/sql script to restore
+		read -p "Enter SQL dump/backup file that you want to restore - (in sql/ subdirectory) -> " DB_CREATE_SQL
+		if [ -f $OH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
+		        echo "Found $SQL_DIR/$DB_CREATE_SQL, restoring it..."
+		else
+			echo "No SQL file found! Exiting."
+			exit 2
+		fi
+        	# normal startup from here
 		;;
 	t)	# test database connection
 		if [ $OH_DISTRO = PORTABLE ]; then
@@ -564,17 +570,6 @@ while getopts ${OPTSTRING} opt; do
 		cd $OH_PATH/$OH_DIR
 		$JAVA_BIN -Djava.library.path=${NATIVE_LIB_PATH} -classpath "$OH_CLASSPATH" org.isf.utils.sms.SetupGSM "$@"
 		exit 0;
-		;;
-	D)	# demo mode
-        	echo "Starting Open Hospital in demo mode..."
-		# exit if OH is configured in CLIENT mode
-		if [ $OH_DISTRO = "CLIENT" ]; then
-			echo "Error - OH_DISTRO set to CLIENT mode. Cannot run in DEMO mode, exiting."
-			exit 1;
-		else OH_DISTRO="PORTABLE"
-		fi
-		DEMO_MODE="on"
-		clean_database;
 		;;
 	v)	# show version
         	echo "--------- Software version ---------"
@@ -603,6 +598,13 @@ while getopts ${OPTSTRING} opt; do
 		echo "DATA_DIR=$DATA_DIR"
 		echo "LOG_DIR=$LOG_DIR"
         	echo ""
+		exit 0
+		;;
+	X)	# clean
+        	echo "Cleaning Open Hospital installation..."
+		clean_files;
+		clean_database;
+        	echo "Done!"
 		exit 0
 		;;
 	?)	# default

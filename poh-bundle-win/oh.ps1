@@ -184,16 +184,16 @@ function script_menu {
         Write-Host "               [ -distro PORTABLE|CLIENT ]"
         Write-Host "               [ -debug INFO|DEBUG ] "
 	Write-Host ""
+	Write-Host "   C    start OH - CLIENT mode (Client / Server configuration)"
+	Write-Host "   d    start OH in DEBUG mode"
+	Write-Host "   D    start OH in DEMO mode"
+	Write-Host "   G    setup GSM"
+	Write-Host "   l    set language: en|fr|it|es|pt"
 	Write-Host "   s    save OH database"
 	Write-Host "   r    restore OH database"
-	Write-Host "   l    set language: en|fr|it|es|pt"
-	Write-Host "   C    start OH - CLIENT mode (Client / Server configuration)"
 	Write-Host "   t    test database connection (Client mode only)"
-	Write-Host "   D    start OH in DEMO mode"
-	Write-Host "   d    start OH in DEBUG mode"
-	Write-Host "   c    clean OH installation"
-	Write-Host "   G    setup GSM"
 	Write-Host "   v    show OH software version and configuration"
+	Write-Host "   X    clean OH installation"
 	Write-Host "   q    quit"
 	Write-Host ""
 }
@@ -294,39 +294,39 @@ function download_file ($download_url,$download_file){
 }
 
 function java_check {
-    if ( !( $JAVA_BIN ) ) {
-	    $script:JAVA_BIN="$OH_PATH\$JAVA_DIR\bin\java.exe"
-    }
+	if ( !( $JAVA_BIN ) ) {
+		$script:JAVA_BIN="$OH_PATH\$JAVA_DIR\bin\java.exe"
+	}
 
-    if ( !( Test-Path $JAVA_BIN ) ) {
-        if ( !(Test-Path "$OH_PATH\$JAVA_DISTRO.$EXT") ) {
-    		Write-Host "Warning - JAVA not found. Do you want to download it?" -ForegroundColor Yellow
-		    get_confirmation;
-		    # Downloading openjdk binaries
-            download_file "$JAVA_URL" "$JAVA_DISTRO.$EXT"
-	    }
-	    Write-Host "Unpacking $JAVA_DISTRO..."
-        try {
-            Expand-Archive "$OH_PATH\$JAVA_DISTRO.$EXT" -DestinationPath $OH_PATH\ -Force
-        }
-        catch {
-            Write-Host "Error unpacking Java. Exiting." -ForegroundColor Red
-	    Read-Host;
-	    exit 1
-	    }
-        Write-Host "Java unpacked successfully!"
-    }
-    # check for java binary
-    if ( Test-Path "$OH_PATH\$JAVA_DIR\bin\java.exe" ) {
-        $script:JAVA_BIN="$OH_PATH\$JAVA_DIR\bin\java.exe"
-    }
-    else {
-        Write-Host "Error: JAVA not found. Exiting." -ForegroundColor Red
-	Read-Host;
-        exit 1
-    }
-    Write-Host "JAVA found!"
-    Write-Host "Using $JAVA_BIN"
+	if ( !( Test-Path $JAVA_BIN ) ) {
+        	if ( !(Test-Path "$OH_PATH\$JAVA_DISTRO.$EXT") ) {
+    			Write-Host "Warning - JAVA not found. Do you want to download it?" -ForegroundColor Yellow
+			get_confirmation;
+			# Downloading openjdk binaries
+			download_file "$JAVA_URL" "$JAVA_DISTRO.$EXT"
+		}
+		Write-Host "Unpacking $JAVA_DISTRO..."
+		try {
+			Expand-Archive "$OH_PATH\$JAVA_DISTRO.$EXT" -DestinationPath $OH_PATH\ -Force
+		}
+		catch {
+			Write-Host "Error unpacking Java. Exiting." -ForegroundColor Red
+			Read-Host;
+			exit 1
+		}
+	Write-Host "Java unpacked successfully!"
+	}
+	# check for java binary
+	if ( Test-Path "$OH_PATH\$JAVA_DIR\bin\java.exe" ) {
+		$script:JAVA_BIN="$OH_PATH\$JAVA_DIR\bin\java.exe"
+	}
+	else {
+		Write-Host "Error: JAVA not found. Exiting." -ForegroundColor Red
+		Read-Host;
+		exit 1
+	}
+	Write-Host "JAVA found!"
+	Write-Host "Using $JAVA_BIN"
 }
 
 function mysql_check {
@@ -335,18 +335,18 @@ function mysql_check {
 			Write-Host "Warning - MySQL not found. Do you want to download it?" -ForegroundColor Yellow
 			get_confirmation;
 			# Downloading mysql binary
-            download_file "$MYSQL_URL" "$MYSQL_DIR.$EXT" 
+			download_file "$MYSQL_URL" "$MYSQL_DIR.$EXT" 
 		}
 		Write-Host "Unpacking $MYSQL_DIR..."
-        try {
-            Expand-Archive "$OH_PATH\$MYSQL_DIR.$EXT" -DestinationPath $OH_PATH\ -Force
-        }
-        catch {
-	    Write-Host "Error unpacking MySQL. Exiting." -ForegroundColor Red
-	    Read-Host;
-	    exit 1
-	}
-        Write-Host "MySQL unpacked successfully!"
+		try {
+			Expand-Archive "$OH_PATH\$MYSQL_DIR.$EXT" -DestinationPath $OH_PATH\ -Force
+		}
+		catch {
+			Write-Host "Error unpacking MySQL. Exiting." -ForegroundColor Red
+			Read-Host;
+			exit 1
+		}
+	        Write-Host "MySQL unpacked successfully!"
 	}
 	# check for mysql binary
 	if (Test-Path "$OH_PATH\$MYSQL_DIR\bin\mysqld.exe") {
@@ -403,9 +403,11 @@ function inizialize_database {
         	}
 		"mysql" {
 		    Start-Process "$OH_PATH\$MYSQL_DIR\bin\mysqld.exe" -ArgumentList ("--initialize-insecure --basedir=$OH_PATH\$MYSQL_DIR --datadir=$OH_PATH\$DATA_DIR") -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"; break
-        }
+ 	       }
 	}
 
+#
+#	ERROR CONTROL TO BE IMPLEMENTED
 #	if ( $? -ne 0 ){
 #		Write-Host "Error: MySQL initialization failed! Exiting." -ForegroundColor Red
 #		Read-Host;
@@ -418,6 +420,8 @@ function start_database {
 	Start-Process -FilePath "$OH_PATH\$MYSQL_DIR\bin\mysqld.exe" -ArgumentList ("--defaults-file=$OH_PATH\etc\mysql\my.cnf --tmpdir=$OH_PATH\$TMP_DIR --standalone") -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
     sleep 2;
 
+#	ERROR CONTROL TO BE IMPLEMENTED
+#
 #	if ( $? -ne 0 ) {
 #		Write-Host "Error: Database not started! Exiting." -ForegroundColor Red
 #		Read-Host;
@@ -428,6 +432,7 @@ function start_database {
 	# while ( -e $OH_PATH/$MYSQL_SOCKET ); do sleep 1; done
 	# # Wait till the MySQL tcp port is open
 	# until nc -z $MYSQL_SERVER $MYSQL_PORT; do sleep 1; done
+
 	Write-Host "MySQL server started! "
 }
 
@@ -498,12 +503,15 @@ function dump_database {
 function shutdown_database {
 	Write-Host "Shutting down MySQL..."
 	Start-Process -FilePath "$OH_PATH\$MYSQL_DIR\bin\mysqladmin.exe" -ArgumentList ("-u root -p$MYSQL_ROOT_PW --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp shutdown") -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
-	# Wait till the MySQL socket file is removed
-#	while ( -e $OH_PATH/$MYSQL_SOCKET ); do sleep 1; done
+	# Wait till the MySQL socket file is removed -> to implement
+	# while ( -e $OH_PATH/$MYSQL_SOCKET ); do sleep 1; done
 }
 
 function clean_database {
-	Write-Host "Warning: do you want to remove all data and database ?" -ForegroundColor Red
+	Write-Host "Warning: do you want to remove all data and databases ?" -ForegroundColor Red
+	get_confirmation;
+	Write-Host "--->>> This operation cannot be undone" -ForegroundColor Red
+	Write-Host "--->>> Are you sure ?" -ForegroundColor Red
 	get_confirmation;
 	Write-Host "Killing mysql processes..."
 	# stop mysqld zombies
@@ -578,38 +586,40 @@ Write-Host ""
 # parse_input 
 
 switch -casesensitive( "$opt" ) {
-	"q"	{ # quit
-		exit 0; 
-		}
-	"r"	{ # restore
-	       	Write-Host "Restoring Open Hospital database...."
-		clean_database;
-		# ask user for database to restore
-		$DB_CREATE_SQL = Read-Host -Prompt "Enter SQL dump/backup file that you want to restore - (in $script:BACKUP_DIR subdirectory) -> "
-		if ( Test-Path "$OH_PATH\$SQL_DIR\$DB_CREATE_SQL" ) {
-		        Write-Host "Found $SQL_DIR\$DB_CREATE_SQL, restoring it..."
-			}
-		else {
-			Write-Host "No SQL file found! Exiting." -ForegroundColor Red
-			Read-Host;
-			exit 2
-		}
-        	# normal startup from here
-		}
-
-	"c"	{ # clean
-		Write-Host "Cleaning Open Hospital installation..."
-		clean_files;
-		clean_database;
-		Write-Host "Done!"
-		Read-Host;
-		exit 0
-		}
+	"C"	{ # start in client mode 
+		$script:OH_DISTRO="CLIENT"
+	}
 	"d"	{ # debug 
            	Write-Host "Starting Open Hospital in debug mode..."
 		$DEBUG_LEVEL="DEBUG"
 		Write-Host "Debug level set to $DEBUG_LEVEL"
+	}
+	"D"	{ # demo mode 
+		Write-Host "Starting Open Hospital in DEMO mode..."
+		# exit if OH is configured in CLIENT mode
+		if ( $OH_DISTRO -eq "CLIENT" ) {
+			Write-Host "Error - OH_DISTRO set to CLIENT mode. Cannot run in DEMO mode, exiting." -ForeGroundcolor Red
+			Read-Host;
+			exit 1;
+			else { $script:OH_DISTRO="PORTABLE" }
 		}
+		$DEMO_MODE="on"
+		clean_database;
+	}
+	"G"	{ # set up GSM 
+		Write-Host "Setting up GSM..."
+		java_check;
+		java_lib_setup;
+		cd $OH_PATH\$OH_DIR
+		Start-Process -FilePath "$JAVA_BIN" -ArgumentList ("-Djava.library.path=${NATIVE_LIB_PATH} -classpath $OH_CLASSPATH org.isf.utils.sms.SetupGSM $@ ") -Wait -NoNewWindow
+		cd $CURRENT_DIR
+		Read-Host;
+		exit 0;
+		}
+	"l"	{ # set language 
+		$script:OH_LANGUAGE = Read-Host "Select language: en|fr|es|it|pt (default is en)"
+		set_language;
+	}
 	"s"	{ # save database 
 		# checking if data exist
 	        Write-host "$OH_PATH\$DATA_DIR\$DATABASE_NAME"
@@ -631,14 +641,22 @@ switch -casesensitive( "$opt" ) {
 			Read-Host;
 			exit 1
 		}
+	}
+	"r"	{ # restore
+	       	Write-Host "Restoring Open Hospital database...."
+		clean_database;
+		# ask user for database to restore
+		$DB_CREATE_SQL = Read-Host -Prompt "Enter SQL dump/backup file that you want to restore - (in $script:BACKUP_DIR subdirectory) -> "
+		if ( Test-Path "$OH_PATH\$SQL_DIR\$DB_CREATE_SQL" ) {
+		        Write-Host "Found $SQL_DIR\$DB_CREATE_SQL, restoring it..."
+			}
+		else {
+			Write-Host "No SQL file found! Exiting." -ForegroundColor Red
+			Read-Host;
+			exit 2
 		}
-	"C"	{ # start in client mode 
-		$script:OH_DISTRO="CLIENT"
-		}
-	"l"	{ # set language 
-		$script:OH_LANGUAGE = Read-Host "Select language: en|fr|es|it|pt (default is en)"
-		set_language;
-		}
+        	# normal startup from here
+	}
 	"t"	{ # test database connection 
 		if ( !($OH_DISTRO -eq "CLIENT") ) {
 			Write-Host "Only for CLIENT mode. Exiting." -ForegroundColor Red
@@ -648,29 +666,7 @@ switch -casesensitive( "$opt" ) {
 		test_database_connection;
 		Read-Host;
 		exit 0
-		}
-	"G"	{ # set up GSM 
-		Write-Host "Setting up GSM..."
-		java_check;
-		java_lib_setup;
-		cd $OH_PATH\$OH_DIR
-		Start-Process -FilePath "$JAVA_BIN" -ArgumentList ("-Djava.library.path=${NATIVE_LIB_PATH} -classpath $OH_CLASSPATH org.isf.utils.sms.SetupGSM $@ ") -Wait -NoNewWindow
-		cd $CURRENT_DIR
-		Read-Host;
-		exit 0;
-		}
-	"D"	{ # demo mode 
-		Write-Host "Starting Open Hospital in DEMO mode..."
-		# exit if OH is configured in CLIENT mode
-		if ( $OH_DISTRO -eq "CLIENT" ) {
-			Write-Host "Error - OH_DISTRO set to CLIENT mode. Cannot run in DEMO mode, exiting." -ForeGroundcolor Red
-			Read-Host;
-			exit 1;
-			else { $script:OH_DISTRO="PORTABLE" }
-		}
-		$DEMO_MODE="on"
-		clean_database;
-		}
+	}
 	"v"	{ # show version
         	Write-Host "--------- Software version ---------"
         	
@@ -706,7 +702,18 @@ switch -casesensitive( "$opt" ) {
 	
 		Read-Host;
 		exit 0
-		}
+	}
+	"X"	{ # clean
+		Write-Host "Cleaning Open Hospital installation..."
+		clean_files;
+		clean_database;
+		Write-Host "Done!"
+		Read-Host;
+		exit 0
+	}
+	"q"	{ # quit
+		exit 0; 
+	}
 #		default { Write-Host "Invalid option: $opt. Exiting."; exit 1; }
 }
 
@@ -810,6 +817,7 @@ if ( Test-Path "$OH_PATH/$OH_DIR/rsc/database.properties" ) {
 (Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBUSER","$DATABASE_USER") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
 (Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBPASS","$DATABASE_PASSWORD") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
 
+# No need for this anymore
 #Set-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.url=jdbc:mysql://"$MYSQL_SERVER":$MYSQL_PORT/$DATABASE_NAME"
 #Add-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.username=$DATABASE_USER"
 #Add-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.password=$DATABASE_PASSWORD"
