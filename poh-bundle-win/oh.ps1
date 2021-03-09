@@ -124,8 +124,8 @@ switch ( "$ARCH" ) {
 
 ######## MySQL Software
 # MariaDB
-$script:MYSQL_URL="http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.36/winx64-packages/"
-$script:MYSQL_DIR="mariadb-10.2.36-win$script:MYSQL_ARCH"
+$script:MYSQL_URL="http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.37/winx64-packages/"
+$script:MYSQL_DIR="mariadb-10.2.37-win$script:MYSQL_ARCH"
 # MySQL
 #$script:MYSQL_DIR="mysql-5.7.32-win$script:MYSQL_ARCH"
 #$script:MYSQL_URL=" https://downloads.mysql.com/archives/get/p/23/file"
