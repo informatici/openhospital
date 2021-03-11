@@ -22,10 +22,6 @@ There are several ways in which you can contribute to Open Hospital:
 - improve the [documentation][doc]
 - contribute code patches to one of the components
 
-> NB: GitHub Issues are disabled on the repositories of individual components. 
-They are enabled on this repository to collect bug reports from end users and issues about this repository only. 
-Instead, Jira is used to collect issues and plan the development across all OH components.
-
 ## Documentation
 
 Read on about Open Hospital:
