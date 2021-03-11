@@ -57,9 +57,9 @@ release-files: $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
 	ls release-files
 
 $(FULL).zip: compile-all
-	mkdir -p $(FULL)/doc $(FULL)/mysql
+	mkdir -p $(FULL)/doc
 	cp -rf ./gui/target/OpenHospital20/* $(FULL)
-	cp -rf ./core/mysql/db/* $(FULL)/mysql
+	cp -rf ./core/sql $(FULL)/
 	rm -rf $(FULL)/generate_changelog.sh
 	cp LICENSE $(FULL)
 	cp CHANGELOG $(FULL)
@@ -72,7 +72,7 @@ $(WIN).zip: compile-all dw-all
 	unzip $(JRE_WIN) -d $(WIN)
 	unzip $(MYSQL_WIN) -d $(WIN) -x "*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(WIN)/oh
-	cp -a ./core/mysql/db/* $(WIN)/sql
+	cp -a ./core/sql $(WIN)/
 	rm -rf $(WIN)/oh/generate_changelog.sh
 	cp POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
 	cp *.pdf $(WIN)/oh/doc
@@ -84,7 +84,7 @@ $(LINUX32).tar.gz: compile-all dw-all
 	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(LINUX32)/oh
-	cp -a ./core/mysql/db/* $(LINUX32)/sql
+	cp -a ./core/sql $(LINUX32)/
 	rm -rf $(LINUX32)/oh/generate_changelog.sh
 	cp POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
 	cp *.pdf $(LINUX32)/oh/doc
@@ -96,7 +96,7 @@ $(LINUX64).tar.gz: compile-all dw-all
 	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
 	cp -rf ./gui/target/OpenHospital20/* $(LINUX64)/oh
-	cp -a ./core/mysql/db/* $(LINUX64)/sql
+	cp -a ./core/sql $(LINUX64)/
 	rm -rf $(LINUX64)/oh/generate_changelog.sh
 	cp POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
 	cp *.pdf $(LINUX64)/oh/doc
@@ -145,8 +145,8 @@ $(JRE_LINUX64):
 $(JRE_WIN):
 	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.10_9.zip -O $(JRE_WIN)
 $(MYSQL_LINUX32):
-	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.32-linux-glibc2.12-i686.tar.gz -O $(MYSQL_LINUX32)
+	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.37/bintar-linux-x86/mariadb-10.2.37-linux-i686.tar.gz -O $(MYSQL_LINUX32)
 $(MYSQL_LINUX64):
-	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.32-linux-glibc2.12-x86_64.tar.gz -O $(MYSQL_LINUX64)
+	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.37/bintar-linux-x86_64/mariadb-10.2.37-linux-x86_64.tar.gz -O $(MYSQL_LINUX64)
 $(MYSQL_WIN):
-	wget -q -nc https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.32-win32.zip -O $(MYSQL_WIN)
+	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.37/winx64-packages/mariadb-10.2.37-winx64.zip -O $(MYSQL_WIN)
