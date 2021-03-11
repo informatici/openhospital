@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Open Hospital (www.open-hospital.org)
-# Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+# Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
 #
 # Open Hospital is a free and open source software for healthcare data management.
 #
@@ -26,11 +26,11 @@
 # saner programming env: these switches turn some bugs into errors
 #set -o errexit -o pipefail -o noclobber -o nounset
 
-######## Open Hospital - Portable Open Hospital Configuration
-# OH_PATH is the directory where Portable OpenHospital files are located
-# OH_PATH=/usr/local/PortableOpenHospital
+######## Open Hospital Configuration
+# OH_PATH is the directory where Open Hospital files are located
+# OH_PATH=/usr/local/OpenHospital/oh-1.11
 
-OH_DISTRO=portable # set distro to portable | client
+OH_DISTRO=PORTABLE # set distro to PORTABLE | CLIENT
 DEMO_MODE=off
 
 # Language setting - default set to en
@@ -57,7 +57,7 @@ DICOM_DIR="data/dicom_storage"
 DATA_DIR="data/db"
 LOG_DIR="data/log"
 BACKUP_DIR=sql
-RUN_DIR=tmp
+TMP_DIR=tmp
 #DB_CREATE_SQL="create_all_en.sql" # default to create_all_en.sql
 DB_DEMO="create_all_demo.sql"
 DATE=`date +%Y-%m-%d_%H-%M-%S`
@@ -86,13 +86,13 @@ case $ARCH in
 esac
 
 ######## MySQL Software
-# MariaDB
-#MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-10.2.36/bintar-linux-x86_64"
-#MYSQL_DIR="mariadb-10.2.36-linux-$ARCH"
-# MySQL
-MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
-MYSQL_DIR="mysql-5.7.31-linux-glibc2.12-$ARCH"
 EXT="tar.gz"
+# MariaDB
+MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-10.2.37/bintar-linux-x86_64"
+MYSQL_DIR="mariadb-10.2.37-linux-$ARCH"
+# MySQL
+#MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
+#MYSQL_DIR="mysql-5.7.32-linux-glibc2.12-$ARCH"
 
 ######## JAVA Software
 ######## JAVA 64bit - default architecture
@@ -102,14 +102,14 @@ EXT="tar.gz"
 #JAVA_DIR="openlogic-openjdk-jre-8u262-b10-linux-64"
 
 ### JRE 11 - zulu
-#JAVA_DISTRO="zulu11.43.21-ca-jre11.0.9-linux_x64"
+#JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-linux_x64"
 #JAVA_URL="https://cdn.azul.com/zulu/bin"
-#JAVA_DIR="zulu11.43.21-ca-jre11.0.9-linux_x64"
+#JAVA_DIR="zulu11.45.27-ca-jre11.0.9-linux_x64"
 
 ### JRE 11 - openjdk
-JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9%2B11.1"
-JAVA_DISTRO="OpenJDK11U-jre_x64_linux_hotspot_11.0.9_11"
-JAVA_DIR="jdk-11.0.9+11-jre"
+JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9"
+JAVA_DISTRO="OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9"
+JAVA_DIR="jdk-11.0.10+9-jre"
 
 ######## JAVA 32bit
 if [ $JAVA_ARCH = 32 ]; then
@@ -118,17 +118,15 @@ if [ $JAVA_ARCH = 32 ]; then
 	### JRE 8 - openlogic 32bit
 	#JAVA_DISTRO="openlogic-openjdk-8u262-b10-linux-x32"
 	#JAVA_URL="https://builds.openlogic.com/downloadJDK/openlogic-openjdk/8u262-b10/"
-	#JAVA_DIR="openlogic-openjdk-8u262-b10-linux-32"
 
-	### JRE 8 - zulu 32bit
-	JAVA_DISTRO="zulu8.50.0.21-ca-jre8.0.272-linux_i686"
+	### JRE zulu distro
 	JAVA_URL="https://cdn.azul.com/zulu/bin/"
-	JAVA_DIR="zulu8.50.0.21-ca-jre8.0.272-linux_i686"
-
+	### JRE 8 32bit
+	#JAVA_DISTRO="zulu8.52.0.23-ca-jre8.0.282-linux_i686"
 	### JRE 11 32bit
-	#JAVA_DISTRO="zulu11.43.21-ca-jre11.0.9-linux_i686"
-	#JAVA_URL="https://cdn.azul.com/zulu/bin/"
-	#JAVA_DIR="zulu11.43.21-ca-jre11.0.9-linux_i686"
+	JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-linux_i686"
+
+	JAVA_DIR=$JAVA_DISTRO
 fi
 
 ######## set JAVA_BIN
@@ -144,24 +142,33 @@ SCRIPT_NAME=$(basename "$0")
 
 function script_usage {
 	# show help
-	echo ""
-	echo " Portable Open Hospital Client - OH"
-	echo ""
-	echo " Usage: $SCRIPT_NAME [-option]"
-	echo ""
-	echo "   -l    en|fr|it|es|pt   --> set language [default set to en]"
-	echo ""
-	echo "   -s    save OH database"
-	echo "   -r    restore OH database"
-	echo "   -c    clean POH installation"
-	echo "   -d    start POH in debug mode"
-	echo "   -C    start Open Hospital - Client / Server mode"
-	echo "   -t    test database connection (Client mode only)"
-	echo "   -v    show POH version information"
-	echo "   -D    start POH in Demo mode"
-	echo "   -G    Setup GSM"
-	echo "   -h    show this help"
-	echo ""
+
+
+        # show menu
+        # Clear-Host # clear console
+        echo " ---------------------------------------------------------"
+        echo "|                                                         |"
+        echo "|                   Open Hospital | OH                    |"
+        echo "|                                                         |"
+        echo " ---------------------------------------------------------"
+        echo " lang $OH_LANGUAGE | arch $ARCH"
+        echo ""
+        echo " Usage: $SCRIPT_NAME [ -lang en|fr|it|es|pt ] "
+#        echo "               [ -distro PORTABLE|CLIENT ]"
+#        echo "               [ -debug INFO|DEBUG ] "
+        echo ""
+        echo "   -C    start OH in CLIENT mode (Client / Server configuration)"
+        echo "   -d    start OH in DEBUG mode"
+        echo "   -D    start OH in DEMO mode"
+        echo "   -G    setup GSM"
+        echo "   -h    show this help"
+        echo "   -l    set language: en|fr|it|es|pt"
+        echo "   -s    save OH database"
+        echo "   -r    restore OH database"
+        echo "   -t    test database connection (CLIENT mode only)"
+        echo "   -v    show OH software version and configuration"
+        echo "   -X    clean OH installation"
+        echo ""
 	exit 0
 }
 
@@ -184,13 +191,13 @@ function set_path {
 #		echo "Warning: POH_PATH not found - using current directory"
 		OH_PATH=$CURRENT_DIR
 		if [ ! -f $OH_PATH/$SCRIPT_NAME ]; then
-			echo "Error - oh.sh not found in the current PATH. Please cd the directory where Open Hospital was unzipped or set up OH_PATH properly."
+			echo "Error - oh.sh not found in the current PATH. Please browse to the directory where Open Hospital was unzipped or set up OH_PATH properly."
 			exit 1
 		fi
 	fi
 	OH_PATH_ESCAPED=$(echo $OH_PATH | sed -e 's/\//\\\//g')
 	DATA_DIR_ESCAPED=$(echo $DATA_DIR | sed -e 's/\//\\\//g')
-	RUN_DIR_ESCAPED=$(echo $RUN_DIR | sed -e 's/\//\\\//g')
+	TMP_DIR_ESCAPED=$(echo $TMP_DIR | sed -e 's/\//\\\//g')
 	LOG_DIR_ESCAPED=$(echo $LOG_DIR | sed -e 's/\//\\\//g')
 	DICOM_DIR_ESCAPED=$(echo $DICOM_DIR | sed -e 's/\//\\\//g')
 }
@@ -224,11 +231,15 @@ function java_lib_setup {
 	esac
 
 	# CLASSPATH setup
+	
+	# include OH jar
 	OH_CLASSPATH=$OH_PATH/$OH_DIR/bin/OH-gui.jar
+	# include all needed directories
 	OH_CLASSPATH=$OH_CLASSPATH:$OH_PATH/$OH_DIR/bundle
 	OH_CLASSPATH=$OH_CLASSPATH:$OH_PATH/$OH_DIR/rpt
 	OH_CLASSPATH=$OH_CLASSPATH:$OH_PATH/$OH_DIR/rsc
 
+	# include all jar files under lib/
 	DIRLIBS=$OH_PATH/$OH_DIR/lib/*.jar
 	for i in ${DIRLIBS}
 	do
@@ -243,7 +254,7 @@ fi
 
 if [ ! -x $JAVA_BIN ]; then
 	if [ ! -f "$OH_PATH/$JAVA_DISTRO.$EXT" ]; then
-		echo "Warning - JAVA not found. Do you want to download it? (50 MB)"
+		echo "Warning - JAVA not found. Do you want to download it?"
 		get_confirmation;
 		# Downloading openjdk binaries
 		echo "Downloading $JAVA_DISTRO..."
@@ -274,7 +285,7 @@ fi
 function mysql_check {
 if [ ! -d "$OH_PATH/$MYSQL_DIR" ]; then
 	if [ ! -f "$OH_PATH/$MYSQL_DIR.$EXT" ]; then
-		echo "Warning - MySQL not found. Do you want to download it? (630 MB)"
+		echo "Warning - MariaDB/MySQL not found. Do you want to download it?"
 		get_confirmation;
 		# Downloading mysql binary
 		echo "Downloading $MYSQL_DIR..."
@@ -313,14 +324,14 @@ function config_database {
 	echo "Generating MySQL config file..."
 	[ -f $OH_PATH/etc/mysql/my.cnf ] && mv -f $OH_PATH/etc/mysql/my.cnf $OH_PATH/etc/mysql/my.cnf.old
 	sed -e "s/MYSQL_SERVER/$MYSQL_SERVER/g" -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$OH_PATH_ESCAPED/g" \
-	-e "s/RUN_DIR/$RUN_DIR_ESCAPED/g" -e "s/DATA_DIR/$DATA_DIR_ESCAPED/g" -e "s/LOG_DIR/$LOG_DIR_ESCAPED/g" \
+	-e "s/TMP_DIR/$TMP_DIR_ESCAPED/g" -e "s/DATA_DIR/$DATA_DIR_ESCAPED/g" -e "s/LOG_DIR/$LOG_DIR_ESCAPED/g" \
 	-e "s/MYSQL_PORT/$MYSQL_PORT/g" -e "s/MYSQL_DISTRO/$MYSQL_DIR/g" $OH_PATH/etc/mysql/my.cnf.dist > $OH_PATH/etc/mysql/my.cnf
 }
 
 function inizialize_database {
 	# Recreate directory structure
 	mkdir -p "$OH_PATH/$DATA_DIR"
-	mkdir -p "$OH_PATH/$RUN_DIR"
+	mkdir -p "$OH_PATH/$TMP_DIR"
 	mkdir -p "$OH_PATH/$LOG_DIR"
 	mkdir -p "$OH_PATH/$DICOM_DIR"
 	mkdir -p "$OH_PATH/$BACKUP_DIR"
@@ -417,12 +428,15 @@ function shutdown_database {
 }
 
 function clean_database {
-	echo "Warning: do you want to remove all data and database ?"
+	echo "Warning: do you want to remove all data and databases ?"
+	get_confirmation;
+	echo "--->>> This operation cannot be undone"
+	echo "--->>> Are you sure ?"
 	get_confirmation;
 	echo "Removing data..."
 	# remove databases
 	rm -rf $OH_PATH/$DATA_DIR/*
-	rm -rf $OH_PATH/$RUN_DIR/*
+	rm -rf $OH_PATH/$TMP_DIR/*
 }
 
 function test_database_connection {
@@ -479,39 +493,36 @@ set_language;
 
 # list of arguments expected in user the input
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
-OPTSTRING=":h?rcsdCtGDvl:"
+OPTSTRING=":CdDGh?lsrtvX"
 
 # function to parse input
 while getopts ${OPTSTRING} opt; do
 	case ${opt} in
+	d)	# debug
+        	echo "Starting Open Hospital in debug mode..."
+		DEBUG_LEVEL=DEBUG
+		echo "Debug level set to $DEBUG_LEVEL"
+		;;
+	C)	# start in CLIENT mode
+		OH_DISTRO=CLIENT
+		;;
+	D)	# demo mode
+        	echo "Starting Open Hospital in demo mode..."
+		# exit if OH is configured in CLIENT mode
+		if [ $OH_DISTRO = "CLIENT" ]; then
+			echo "Error - OH_DISTRO set to CLIENT mode. Cannot run in DEMO mode, exiting."
+			exit 1;
+		else OH_DISTRO="PORTABLE"
+		fi
+		DEMO_MODE="on"
+		clean_database;
+		;;
 	h)	# help
 		script_usage;
 		;;
-	r)	# restore 
-        	echo "Restoring Portable Open Hospital database...."
-		clean_database;
-		# ask user for database/sql script to restore
-		read -p "Enter SQL dump/backup file that you want to restore - (in sql/ subdirectory) -> " DB_CREATE_SQL
-		if [ -f $OH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
-		        echo "Found $SQL_DIR/$DB_CREATE_SQL, restoring it..."
-		else
-			echo "No SQL file found! Exiting."
-			exit 2
-		fi
-        	echo "Restore ready!"
-		;;
-
-	c)	# clean
-        	echo "Cleaning Portable Open Hospital installation..."
-		clean_files;
-		clean_database;
-        	echo "Done!"
-		exit 0
-		;;
-	d)	# debug
-        	echo "Starting Portable Open Hospital in debug mode..."
-		DEBUG_LEVEL=DEBUG
-		echo "Debug level set to $DEBUG_LEVEL"
+	l)	# set language
+		OH_LANGUAGE=$OPTARG
+		set_language;
 		;;
 	s)	# save database
 		# checking if data exist
@@ -521,7 +532,7 @@ while getopts ${OPTSTRING} opt; do
 				config_database;
 			fi
 			start_database;
-	        	echo "Saving Portable Open Hospital database..."
+	        	echo "Saving Open Hospital database..."
 			dump_database;
 			shutdown_database;
 	        	echo "Done!"
@@ -531,16 +542,22 @@ while getopts ${OPTSTRING} opt; do
 			exit 1
 		fi
 		;;
-	C)	# start in client mode
-		OH_DISTRO=client
-		;;
-	l)	# set language
-		OH_LANGUAGE=$OPTARG
-		set_language;
+	r)	# restore 
+        	echo "Restoring Open Hospital database...."
+		clean_database;
+		# ask user for database/sql script to restore
+		read -p "Enter SQL dump/backup file that you want to restore - (in sql/ subdirectory) -> " DB_CREATE_SQL
+		if [ -f $OH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
+		        echo "Found $SQL_DIR/$DB_CREATE_SQL, restoring it..."
+		else
+			echo "No SQL file found! Exiting."
+			exit 2
+		fi
+        	# normal startup from here
 		;;
 	t)	# test database connection
-		if [ $OH_DISTRO = portable ]; then
-			echo "Only for client mode. Exiting."
+		if [ $OH_DISTRO = PORTABLE ]; then
+			echo "Only for CLIENT mode. Exiting."
 			exit 1
 		fi
 		test_database_connection;
@@ -554,22 +571,40 @@ while getopts ${OPTSTRING} opt; do
 		$JAVA_BIN -Djava.library.path=${NATIVE_LIB_PATH} -classpath "$OH_CLASSPATH" org.isf.utils.sms.SetupGSM "$@"
 		exit 0;
 		;;
-	D)	# demo mode
-        	echo "Starting Portable Open Hospital in demo mode..."
-		OH_DISTRO=portable
-		DEMO_MODE="on"
-		;;
-	v)	# show versions
-        	echo "Architecture is $ARCH"
-		echo "Open Hospital is configured in $OH_DISTRO mode"
-		echo "Language is set to $OH_LANGUAGE"
-		echo "Demo mode is set to $DEMO_MODE"
-        	echo "Software versions:"
+	v)	# show version
+        	echo "--------- Software version ---------"
 		source $OH_PATH/$OH_DIR/rsc/version.properties
         	echo "Open Hospital version" $VER_MAJOR.$VER_MINOR.$VER_RELEASE
         	echo "MySQL version: $MYSQL_DIR"
         	echo "JAVA version:"
 		echo $JAVA_DISTRO
+        	echo ""
+		# show configuration
+        	echo "--------- Configuration ---------"
+        	echo "Architecture is $ARCH"
+		echo "Open Hospital is configured in $OH_DISTRO mode"
+		echo "Language is set to $OH_LANGUAGE"
+		echo "DEMO mode is set to $DEMO_MODE"
+        	echo ""
+		echo "MYSQL_SERVER=$MYSQL_SERVER"
+		echo "MYSQL_PORT=$MYSQL_PORT"
+		echo "DATABASE_NAME=$DATABASE_NAME"
+		echo "DATABASE_USER=$DATABASE_USER"
+		echo "DATABASE_PASSWORD=$DATABASE_PASSWORD"
+		echo "DICOM_MAX_SIZE=$DICOM_MAX_SIZE"
+		echo "OH_DIR=$OH_DIR"
+		echo "BACKUP_DIR=$BACKUP_DIR"
+		echo "DICOM_DIR=$DICOM_DIR"
+		echo "DATA_DIR=$DATA_DIR"
+		echo "LOG_DIR=$LOG_DIR"
+        	echo ""
+		exit 0
+		;;
+	X)	# clean
+        	echo "Cleaning Open Hospital installation..."
+		clean_files;
+		clean_database;
+        	echo "Done!"
 		exit 0
 		;;
 	?)	# default
@@ -583,12 +618,18 @@ done
 
 # check distro
 if [ -z ${OH_DISTRO+x} ]; then
-	echo "Error - OH_DISTRO not defined [client - portable]! Exiting."
+	echo "Error - OH_DISTRO not defined [CLIENT - PORTABLE]! Exiting."
 	exit 1
 fi
 
 # check for demo mode
 if [ $DEMO_MODE = "on" ]; then
+	# exit if OH is configured in CLIENT mode
+	if [ $OH_DISTRO = "CLIENT" ]; then
+		echo "Error - OH_DISTRO set to CLIENT mode. Cannot run in DEMO mode, exiting."
+		exit 1;
+	fi
+
 	if [ -f $OH_PATH/$SQL_DIR/$DB_DEMO ]; then
 	        echo "Found SQL demo database, starting OH in demo mode..."
 		DB_CREATE_SQL=$DB_DEMO
@@ -611,7 +652,7 @@ java_lib_setup;
 ######## Database setup
 
 # Start MySQL and create database
-if [ $OH_DISTRO = portable ]; then
+if [ $OH_DISTRO = PORTABLE ]; then
 	# Check for MySQL software
 	mysql_check;
 	# Config MySQL
@@ -634,12 +675,12 @@ if [ $OH_DISTRO = portable ]; then
 	fi
 fi
 
-# test database
+# test database connection
 test_database_connection;
 
-# set up configuration files
 if [ $MANUAL_CONFIG != "on" ]; then
 
+# set up configuration files
 echo "Setting up OH configuration files..."
 
 ######## DICOM setup
@@ -676,7 +717,7 @@ $JAVA_BIN -Dsun.java2d.dpiaware=false -Djava.library.path=${NATIVE_LIB_PATH} -cl
 
 echo "Exiting Open Hospital..."
 
-if [ $OH_DISTRO = portable ]; then
+if [ $OH_DISTRO = PORTABLE ]; then
 	shutdown_database;
 fi
 
