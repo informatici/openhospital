@@ -145,8 +145,8 @@ $(JRE_LINUX64):
 $(JRE_WIN):
 	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.10_9.zip -O $(JRE_WIN)
 $(MYSQL_LINUX32):
-        wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.37/bintar-linux-x86/mariadb-10.2.37-linux-i686.tar.gz" -O $(MYSQL_LINUX32)
+        wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.37/bintar-linux-x86/mariadb-10.2.37-linux-i686.tar.gz -O $(MYSQL_LINUX32)
 $(MYSQL_LINUX64):
-        wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.37/bintar-linux-x86_64/mariadb-10.2.37-linux-x86_64.tar.gz" -O $(MYSQL_LINUX64)
+        wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.37/bintar-linux-x86_64/mariadb-10.2.37-linux-x86_64.tar.gz -O $(MYSQL_LINUX64)
 $(MYSQL_WIN):
         wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.37/winx64-packages/mariadb-10.2.37-winx64.zip -O $(MYSQL_WIN)
