@@ -332,7 +332,7 @@ function java_check {
 function mysql_check {
 	if (  !( Test-Path "$OH_PATH\$MYSQL_DIR" ) ) {
 		if ( !( Test-Path "$OH_PATH\$MYSQL_DIR.$EXT" ) ) {
-			Write-Host "Warning - MySQL not found. Do you want to download it?" -ForegroundColor Yellow
+			Write-Host "Warning - MariaDB/MySQL not found. Do you want to download it?" -ForegroundColor Yellow
 			get_confirmation;
 			# Downloading mysql binary
 			download_file "$MYSQL_URL" "$MYSQL_DIR.$EXT" 

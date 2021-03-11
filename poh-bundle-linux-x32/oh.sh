@@ -285,7 +285,7 @@ fi
 function mysql_check {
 if [ ! -d "$OH_PATH/$MYSQL_DIR" ]; then
 	if [ ! -f "$OH_PATH/$MYSQL_DIR.$EXT" ]; then
-		echo "Warning - MySQL not found. Do you want to download it?"
+		echo "Warning - MariaDB/MySQL not found. Do you want to download it?"
 		get_confirmation;
 		# Downloading mysql binary
 		echo "Downloading $MYSQL_DIR..."
