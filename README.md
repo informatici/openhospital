@@ -3,7 +3,7 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/informatici/openhospital/total?label=GitHub)
 ![GitHub release (latest by date)](https://img.shields.io/github/downloads/informatici/openhospital/latest/total?label=latest)
 
-![SourceForge](https://img.shields.io/sourceforge/dt/openhospital?color=33ccff&label=SourceForge&style=plastic)
+![SourceForge](https://img.shields.io/sourceforge/dt/openhospital?color=33ccff&label=SourceForge)
 ![SourceForge](https://img.shields.io/sourceforge/dt/openhospital/v1.10.0?color=33ccff&label=latest&logoColor=33ccff)
 
 [Open Hospital][openhospital] (OH) is an electronic health record (EHR) application.
