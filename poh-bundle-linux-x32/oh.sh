@@ -213,7 +213,7 @@ function set_language {
 			DB_CREATE_SQL="create_all_$OH_LANGUAGE.sql"
 			;;
 		*)
-			echo "Invalid option: $OH_LANGUAGE. Exiting."
+			echo "Invalid language option: $OH_LANGUAGE. Exiting."
 			exit 1
 		;;
 	esac
@@ -493,7 +493,7 @@ set_language;
 
 # list of arguments expected in user the input
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
-OPTSTRING=":CdDGh?lsrtvX"
+OPTSTRING=":CdDGhl:srtvX?"
 
 # function to parse input
 while getopts ${OPTSTRING} opt; do
@@ -507,7 +507,7 @@ while getopts ${OPTSTRING} opt; do
 		OH_DISTRO=CLIENT
 		;;
 	D)	# demo mode
-        	echo "Starting Open Hospital in demo mode..."
+        	echo "Starting Open Hospital in DEMO mode..."
 		# exit if OH is configured in CLIENT mode
 		if [ $OH_DISTRO = "CLIENT" ]; then
 			echo "Error - OH_DISTRO set to CLIENT mode. Cannot run in DEMO mode, exiting."
@@ -606,6 +606,10 @@ while getopts ${OPTSTRING} opt; do
 		clean_database;
         	echo "Done!"
 		exit 0
+		;;
+	: )	# If no lang argument is given, shows error
+		echo "No language specified. See $SCRIPT_NAME -h for help"
+		exit 3
 		;;
 	?)	# default
 		echo "Invalid option: -${OPTARG}. See $SCRIPT_NAME -h for help"
