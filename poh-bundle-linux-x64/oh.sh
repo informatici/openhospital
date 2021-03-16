@@ -153,7 +153,7 @@ function script_usage {
         echo " ---------------------------------------------------------"
         echo " lang $OH_LANGUAGE | arch $ARCH"
         echo ""
-        echo " Usage: $SCRIPT_NAME [ -lang en|fr|it|es|pt ] "
+        echo " Usage: $SCRIPT_NAME [ -l en|fr|it|es|pt ] "
 #        echo "               [ -distro PORTABLE|CLIENT ]"
 #        echo "               [ -debug INFO|DEBUG ] "
         echo ""
