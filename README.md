@@ -66,7 +66,6 @@ Then follow these simple steps:
  [api]: https://github.com/informatici/openhospital-api
  [doc]: https://github.com/informatici/openhospital-doc
  [releases]: https://github.com/informatici/openhospital/releases
- [contributing]: https://github.com/informatici/openhospital/blob/master/CONTRIBUTING.md
  [jira]: https://openhospital.atlassian.net/browse/OP
  [good-first]: https://openhospital.atlassian.net/browse/OP-188?filter=10206
  [user-man]: https://github.com/informatici/openhospital-doc/blob/master/doc_user/UserManual.adoc
