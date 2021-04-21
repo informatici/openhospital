@@ -86,7 +86,7 @@ goto :init
 	goto end
 
 :legacy
-REM ################### Legacy oh.bat ###################
+REM ############################# Legacy oh.bat ############################
 
 echo Legacy mode - Starting OH with oh.bat...
 
@@ -119,13 +119,14 @@ set DICOM_MAX_SIZE="4M"
 
 set OH_DIR=oh
 set SQL_DIR=sql
-set DATA_DIR="data\db"
-set LOG_DIR="data\log"
-set DICOM_DIR="data\dicom_storage"
+set DATA_DIR=data\db
+set LOG_DIR=data\log
+set DICOM_DIR=data\dicom_storage
 set TMP_DIR=tmp
-set DB_CREATE_SQL="create_all_en.sql"
+set DB_CREATE_SQL=create_all_en.sql
 REM #-> DB_CREATE_SQL default is set to create_all_en.sql - set to "create_all_demo.sql" for demo or create_all_[lang].sql for language
-set LOG_FILE="startup.log"
+set LOG_FILE=startup.log
+set OH_LOG_FILE=openhospital.log
 
 REM ######## MySQL Software
 REM # MariaDB 64bit
@@ -152,7 +153,7 @@ REM ### JRE 11 - openjdk
 REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/"
 REM set JAVA_DISTRO="OpenJDK11U-jre_x86-32_windows_hotspot_11.0.10_9.zip"
 
-set JAVA_DIR="jdk-11.0.10+9-jre"
+set JAVA_DIR=jdk-11.0.10+9-jre
 set JAVA_BIN=%OH_PATH%\%JAVA_DIR%\bin\java.exe
 
 set REPLACE_PATH=%OH_PATH%\%MYSQL_DIR%\bin
@@ -181,6 +182,7 @@ REM # Create log and tmp dir
 mkdir %OH_PATH%\%LOG_DIR%
 mkdir %OH_PATH%\%TMP_DIR%
 
+echo Generating MySQL config file...
 REM ### Setup MySQL configuration
 echo f | xcopy %OH_PATH%\etc\mysql\my.cnf.dist %OH_PATH%\etc\mysql\my.cnf /y > "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe OH_PATH_SUBSTITUTE %OH_PATH% -- %OH_PATH%\etc\mysql\my.cnf  >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
@@ -192,6 +194,7 @@ echo f | xcopy %OH_PATH%\etc\mysql\my.cnf.dist %OH_PATH%\etc\mysql\my.cnf /y > "
 %REPLACE_PATH%\replace.exe DATA_DIR %DATA_DIR% -- %OH_PATH%\etc\mysql\my.cnf >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe LOG_DIR %LOG_DIR% -- %OH_PATH%\etc\mysql\my.cnf >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 
+echo Setting up OH configuration files...
 REM ### Setup dicom.properties
 echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\dicom.properties.dist %OH_PATH%\%OH_DIR%\rsc\dicom.properties /y >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe OH_PATH_SUBSTITUTE %OH_PATH% -- %OH_PATH%\%OH_DIR%\rsc\dicom.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
@@ -211,14 +214,18 @@ echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\generalData.properties.dist %OH_PATH%\%OH_
 %REPLACE_PATH%\replace.exe OH_SET_LANGUAGE %OH_LANGUAGE% -- %OH_PATH%\%OH_DIR%\rsc\generalData.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 
 REM ### Setup log4j.properties
+REM # double escape path
+set OH_LOG_DEST=%OH_PATH:\=\\%
+set OH_LOG_DEST=%OH_LOG_DEST%\\%LOG_DIR%\\%OH_LOG_FILE%
 echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\log4j.properties.dist %OH_PATH%\%OH_DIR%\rsc\log4j.properties /y >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBSERVER %MYSQL_SERVER% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBPORT %MYSQL_PORT% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBUSER %DATABASE_USER% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties  >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBPASS %DATABASE_PASSWORD% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DEBUG_LEVEL %DEBUG_LEVEL% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
+%REPLACE_PATH%\replace.exe LOG_DEST %OH_LOG_DEST% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 
-REM ### Setup database
+REM ### Setup database if not already existing
 if not EXIST %OH_PATH%\%DATA_DIR%\%DATABASE_NAME% (
  	REM # Remove database files
 	echo Removing data...
@@ -248,20 +255,20 @@ if not EXIST %OH_PATH%\%DATA_DIR%\%DATABASE_NAME% (
 	if %MYSQL_DIR:~0,5% == mysql (
 		echo Setting MySQL root password...
 		start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysql.exe -u root --skip-password --host=%MYSQL_SERVER% --port=%MYSQL_PORT% -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '%MYSQL_ROOT_PW%';" >> %OH_PATH%\%LOG_DIR%\%LOG_FILE% 2>&1
+		if ERRORLEVEL 1 (goto error)
 	)
 	
 	echo Creating database...
 	start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysql.exe -u root -p%MYSQL_ROOT_PW% --host=%MYSQL_SERVER% --port=%MYSQL_PORT% -e "CREATE DATABASE %DATABASE_NAME%; CREATE USER '%DATABASE_USER%'@'localhost' IDENTIFIED BY '%DATABASE_PASSWORD%'; GRANT ALL PRIVILEGES ON %DATABASE_NAME%.* TO '%DATABASE_USER%'@'localhost' IDENTIFIED BY '%DATABASE_PASSWORD%';" >> %OH_PATH%\%LOG_DIR%\%LOG_FILE% 2>&1
+	if ERRORLEVEL 1 (goto error)
 	
 	echo Importing database schema %DB_CREATE_SQL%...
 	cd /d %OH_PATH%\%SQL_DIR%
 	start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysql.exe --local-infile=1 -u root -p%MYSQL_ROOT_PW% --host=%MYSQL_SERVER% --port=%MYSQL_PORT% %DATABASE_NAME% < "%OH_PATH%\sql\%DB_CREATE_SQL%"  >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 	if ERRORLEVEL 1 (goto error)
 	echo Database imported!
-	cd /d %OH_PATH%
-
 ) else (
-	echo Missing SQL creation script or database already initialized, trying to start...
+	echo Database already initialized, trying to start...
 	echo Starting MySQL server on port %MYSQL_PORT%...
 	start /b /min %OH_PATH%\%MYSQL_DIR%\bin\mysqld.exe --defaults-file=%OH_PATH%\etc\mysql\my.cnf --tmpdir=%OH_PATH%\%TMP_DIR% --standalone --console
 	if ERRORLEVEL 1 (goto error)
@@ -279,15 +286,18 @@ for %%A IN (%OH_PATH%\%OH_DIR%\lib\*.jar) DO (
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\bundle
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\rpt
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\rsc
+set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\rsc\icons
+set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\rsc\images
+set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\rsc\SmsGateway
 set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\bin\OH-gui.jar
 
 REM # Setup native_lib_path for current architecture
 REM # with DICOM workaround - force NATIVE_LIB to 32bit
 
 if %PROCESSOR_ARCHITECTURE%==AMD64 if not %DICOM_ENABLE%==true (
-  set NATIVE_LIB_PATH=%OH_PATH%\%OH_DIR%\lib\native\Win64
+	set NATIVE_LIB_PATH=%OH_PATH%\%OH_DIR%\lib\native\Win64
 ) else (
-  set NATIVE_LIB_PATH=%OH_PATH%\%OH_DIR%\lib\native\Windows
+	set NATIVE_LIB_PATH=%OH_PATH%\%OH_DIR%\lib\native\Windows
 )
 
 REM ###### Start Open Hospital #####
@@ -305,6 +315,7 @@ REM # Exit
 echo Exiting Open Hospital...
 cd /d %OH_PATH%
 echo Done !
+
 goto end
 
 :error

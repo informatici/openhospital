@@ -12,7 +12,7 @@ log4j.appender.StdOut.layout.ConversionPattern=[%d{dd/MMM/yyyy HH:mm:ss}] [%X{OH
 # File Appender (with classes), daily rotation
 log4j.appender.RollingFile = org.apache.log4j.DailyRollingFileAppender
 log4j.appender.RollingFile.DatePattern='.'yyyy-MM-dd
-log4j.appender.RollingFile.File=logs/openhospital.log
+log4j.appender.RollingFile.File=LOG_DEST
 log4j.appender.RollingFile.layout=org.apache.log4j.PatternLayout
 log4j.appender.RollingFile.layout.ConversionPattern=[%d{dd/MMM/yyyy HH:mm:ss}] [%X{OHUserGroup}:%X{OHUser}] %-p - %m (%l)%n
 

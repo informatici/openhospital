@@ -22,6 +22,8 @@
 #
 #
 
+######################## Configuration ########################
+
 # SET DEBUG mode
 # saner programming env: these switches turn some bugs into errors
 #set -o errexit -o pipefail -o noclobber -o nounset
@@ -62,12 +64,17 @@ TMP_DIR=tmp
 DB_DEMO="create_all_demo.sql"
 DATE=`date +%Y-%m-%d_%H-%M-%S`
 LOG_FILE=startup.log
+OH_LOG_FILE=openhospital.log
 
 ######## Advanced options
 ## set MANUAL_CONFIG to "on" to setup configuration files manually
 # my.cnf and all oh/rsc/*.properties files will not be generated or
 # overwritten if already present
 MANUAL_CONFIG=off 
+
+######## set JAVA_BIN
+# Uncomment this if you want to use system wide JAVA
+#JAVA_BIN=`which java`
 
 ######## Define architecture
 
@@ -129,36 +136,28 @@ if [ $JAVA_ARCH = 32 ]; then
 	JAVA_DIR=$JAVA_DISTRO
 fi
 
-######## set JAVA_BIN
-# Uncomment this if you want to use system wide JAVA
-#JAVA_BIN=`which java`
-
-# name of this shell script
+######## get name of this shell script
 SCRIPT_NAME=$(basename "$0")
 
 ######################## DO NOT EDIT BELOW THIS LINE ########################
 
-######## User input / option parsing
+######################## Functions ########################
 
 function script_usage {
-	# show help
 
-
-        # show menu
-        # Clear-Host # clear console
+        # show help / user options
         echo " ---------------------------------------------------------"
         echo "|                                                         |"
         echo "|                   Open Hospital | OH                    |"
         echo "|                                                         |"
         echo " ---------------------------------------------------------"
-        echo " lang $OH_LANGUAGE | arch $ARCH"
+        echo " lang $OH_LANGUAGE | arch $ARCH | mode $OH_DISTRO        "
+        echo " ---------------------------------------------------------"
         echo ""
         echo " Usage: $SCRIPT_NAME [ -l en|fr|it|es|pt ] "
-#        echo "               [ -distro PORTABLE|CLIENT ]"
-#        echo "               [ -debug INFO|DEBUG ] "
         echo ""
         echo "   -C    start OH in CLIENT mode (Client / Server configuration)"
-        echo "   -d    start OH in DEBUG mode"
+        echo "   -d    start OH in debug mode"
         echo "   -D    start OH in DEMO mode"
         echo "   -G    setup GSM"
         echo "   -h    show this help"
@@ -172,15 +171,13 @@ function script_usage {
 	exit 0
 }
 
-######## Functions
-
 function get_confirmation {
-read -p "(y/n)? " choice
-case "$choice" in 
-	y|Y ) echo "yes";;
-	n|N ) echo "Exiting."; exit 0;;
-	* ) echo "Invalid choice. Exiting."; exit 1 ;;
-esac
+	read -p "(y/n)? " choice
+	case "$choice" in 
+		y|Y ) echo "yes";;
+		n|N ) echo "Exiting."; exit 0;;
+		* ) echo "Invalid choice. Exiting."; exit 1 ;;
+	esac
 }
 
 function set_path {
@@ -188,12 +185,15 @@ function set_path {
 	CURRENT_DIR=$PWD
 	# set OH_PATH if not defined
 	if [ -z ${OH_PATH+x} ]; then
-#		echo "Warning: POH_PATH not found - using current directory"
-		OH_PATH=$CURRENT_DIR
+		echo "Info: OH_PATH not set - using current directory"
+		# set OH_PATH to script path
+		OH_PATH=$(dirname $(realpath $0))
+		
 		if [ ! -f $OH_PATH/$SCRIPT_NAME ]; then
-			echo "Error - oh.sh not found in the current PATH. Please browse to the directory where Open Hospital was unzipped or set up OH_PATH properly."
+			echo "Error - $SCRIPT_NAME not found in the current PATH. Please browse to the directory where Open Hospital was unzipped or set up OH_PATH properly."
 			exit 1
 		fi
+		# echo "OH_PATH set to $OH_PATH"
 	fi
 	OH_PATH_ESCAPED=$(echo $OH_PATH | sed -e 's/\//\\\//g')
 	DATA_DIR_ESCAPED=$(echo $DATA_DIR | sed -e 's/\//\\\//g')
@@ -231,13 +231,17 @@ function java_lib_setup {
 	esac
 
 	# CLASSPATH setup
-	
-	# include OH jar
+	# include OH jar file
 	OH_CLASSPATH=$OH_PATH/$OH_DIR/bin/OH-gui.jar
+	
 	# include all needed directories
 	OH_CLASSPATH=$OH_CLASSPATH:$OH_PATH/$OH_DIR/bundle
 	OH_CLASSPATH=$OH_CLASSPATH:$OH_PATH/$OH_DIR/rpt
 	OH_CLASSPATH=$OH_CLASSPATH:$OH_PATH/$OH_DIR/rsc
+	OH_CLASSPATH=$OH_CLASSPATH:$OH_PATH/$OH_DIR/rsc/icons
+	OH_CLASSPATH=$OH_CLASSPATH:$OH_PATH/$OH_DIR/rsc/images
+	OH_CLASSPATH=$OH_CLASSPATH:$OH_PATH/$OH_DIR/rsc/SmsGateway
+	OH_CLASSPATH=$OH_CLASSPATH:$OH_PATH/$OH_DIR/lib
 
 	# include all jar files under lib/
 	DIRLIBS=$OH_PATH/$OH_DIR/lib/*.jar
@@ -245,6 +249,16 @@ function java_lib_setup {
 	do
 		OH_CLASSPATH="$i":$OH_CLASSPATH
 	done
+#	DIRLIBS=$OH_PATH/$OH_DIR/rsc/icons/*
+#	for i in ${DIRLIBS}
+#	do
+#		OH_CLASSPATH="$i":$OH_CLASSPATH
+#	done
+#	DIRLIBS=$OH_PATH/$OH_DIR/rsc/images/*
+#	for i in ${DIRLIBS}
+#	do
+#		OH_CLASSPATH="$i":$OH_CLASSPATH
+#	done
 }
 
 function java_check {
@@ -295,7 +309,7 @@ if [ ! -d "$OH_PATH/$MYSQL_DIR" ]; then
 	tar xf $OH_PATH/$MYSQL_DIR.$EXT -C $OH_PATH/
 	if [ $? -ne 0 ]; then
 		echo "Error unpacking MySQL. Exiting."
-		exit 2
+		exit 1
 	fi
 	echo "MySQL unpacked successfully!"
 	echo "Removing downloaded file..."
@@ -308,7 +322,7 @@ if [ -x $OH_PATH/$MYSQL_DIR/bin/mysqld_safe ]; then
 	echo "Using $MYSQL_DIR"
 else
 	echo "MySQL not found! Exiting."
-	exit 2
+	exit 1
 fi
 }
 
@@ -369,8 +383,13 @@ function set_database_root_pw {
 	# If using MySQL/MariaDB root password need to be set
 	echo "Setting MySQL root password..."
 	$OH_PATH/$MYSQL_DIR/bin/mysql -u root --skip-password --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PW';" >> $OH_PATH/$LOG_DIR/$LOG_FILE 2>&1
+	
+	if [ $? -ne 0 ]; then
+		echo "Error: MySQL root password not set! Exiting."
+		shutdown_database;
+		exit 2
+	fi
 }
-
 
 function import_database {
 	echo "Creating OH Database..."
@@ -379,12 +398,18 @@ function import_database {
 	-e "CREATE DATABASE $DATABASE_NAME; CREATE USER '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD'; \
 	CREATE USER '$DATABASE_USER'@'%' IDENTIFIED BY '$DATABASE_PASSWORD'; GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost'; \
 	GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'%' ; " >> $OH_PATH/$LOG_DIR/$LOG_FILE 2>&1
+	
+	if [ $? -ne 0 ]; then
+		echo "Error: Database creation failed! Exiting."
+		shutdown_database;
+		exit 2
+	fi
 
 	# Check for database creation script
 	if [ -f $OH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
 		echo "Using SQL file $SQL_DIR/$DB_CREATE_SQL..."
 	else
-		echo "No SQL file found! Exiting."
+		echo "Error: No SQL file found! Exiting."
 		shutdown_database;
 		exit 2
 	fi
@@ -396,6 +421,7 @@ function import_database {
 	if [ $? -ne 0 ]; then
 		echo "Error: Database not imported! Exiting."
 		shutdown_database;
+		cd $CURRENT_DIR
 		exit 2
 	fi
 	echo "Database imported!"
@@ -425,6 +451,7 @@ function shutdown_database {
 	$OH_PATH/$MYSQL_DIR/bin/mysqladmin -u root -p$MYSQL_ROOT_PW --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp shutdown >> $OH_PATH/$LOG_DIR/$LOG_FILE 2>&1
 	# Wait till the MySQL tcp port is closed
 	until !( nc -z $MYSQL_SERVER $MYSQL_PORT ); do sleep 1; done
+	echo "MySQL stopped!"
 }
 
 function clean_database {
@@ -471,6 +498,8 @@ function clean_files {
 }
 
 
+######################## Script start ########################
+
 ######## Pre-flight checks
 
 # check user running the script
@@ -491,9 +520,10 @@ set_language;
 
 ######## User input
 
-# list of arguments expected in user the input
-OPTIND=1 # Reset in case getopts has been used previously in the shell.
-OPTSTRING=":CdDGhl:srtvX?"
+# Reset in case getopts has been used previously in the shell
+OPTIND=1 
+# list of arguments expected in user input (- option)
+OPTSTRING=":CdDGhl:srtvX?" 
 
 # function to parse input
 while getopts ${OPTSTRING} opt; do
@@ -550,14 +580,14 @@ while getopts ${OPTSTRING} opt; do
 		if [ -f $OH_PATH/$SQL_DIR/$DB_CREATE_SQL ]; then
 		        echo "Found $SQL_DIR/$DB_CREATE_SQL, restoring it..."
 		else
-			echo "No SQL file found! Exiting."
+			echo "Error: No SQL file found! Exiting."
 			exit 2
 		fi
         	# normal startup from here
 		;;
 	t)	# test database connection
 		if [ $OH_DISTRO = PORTABLE ]; then
-			echo "Only for CLIENT mode. Exiting."
+			echo "Error: Only for CLIENT mode. Exiting."
 			exit 1
 		fi
 		test_database_connection;
@@ -567,7 +597,6 @@ while getopts ${OPTSTRING} opt; do
 		echo "Setting up GSM..."
 		java_check;
 		java_lib_setup;
-		cd $OH_PATH/$OH_DIR
 		$JAVA_BIN -Djava.library.path=${NATIVE_LIB_PATH} -classpath "$OH_CLASSPATH" org.isf.utils.sms.SetupGSM "$@"
 		exit 0;
 		;;
@@ -618,7 +647,7 @@ while getopts ${OPTSTRING} opt; do
 	esac
 done
 
-######################## Script start ########################
+######################## OH start ########################
 
 # check distro
 if [ -z ${OH_DISTRO+x} ]; then
@@ -679,34 +708,35 @@ if [ $OH_DISTRO = PORTABLE ]; then
 	fi
 fi
 
-# test database connection
+# test if database connection is working
 test_database_connection;
 
 if [ $MANUAL_CONFIG != "on" ]; then
 
-# set up configuration files
-echo "Setting up OH configuration files..."
+	# set up configuration files
+	echo "Setting up OH configuration files..."
 
-######## DICOM setup
-[ -f $OH_PATH/$OH_DIR/rsc/dicom.properties ] && mv -f $OH_PATH/$OH_DIR/rsc/dicom.properties $OH_PATH/$OH_DIR/rsc/dicom.properties.old
-sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$OH_PATH_ESCAPED/g" \
-    -e "s/DICOM_DIR/$DICOM_DIR_ESCAPED/g" $OH_PATH/$OH_DIR/rsc/dicom.properties.dist > $OH_PATH/$OH_DIR/rsc/dicom.properties
+	######## DICOM setup
+	[ -f $OH_PATH/$OH_DIR/rsc/dicom.properties ] && mv -f $OH_PATH/$OH_DIR/rsc/dicom.properties $OH_PATH/$OH_DIR/rsc/dicom.properties.old
+	sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$OH_PATH_ESCAPED/g" \
+	    -e "s/DICOM_DIR/$DICOM_DIR_ESCAPED/g" $OH_PATH/$OH_DIR/rsc/dicom.properties.dist > $OH_PATH/$OH_DIR/rsc/dicom.properties
 
-######## log4j.properties setup
-[ -f $OH_PATH/$OH_DIR/rsc/log4j.properties ] && mv -f $OH_PATH/$OH_DIR/rsc/log4j.properties $OH_PATH/$OH_DIR/rsc/log4j.properties.old
-sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
-    -e "s/DEBUG_LEVEL/$DEBUG_LEVEL/g" $OH_PATH/$OH_DIR/rsc/log4j.properties.dist > $OH_PATH/$OH_DIR/rsc/log4j.properties
+	######## log4j.properties setup
+	OH_LOG_DEST="$OH_PATH_ESCAPED/$LOG_DIR/$OH_LOG_FILE"
+	[ -f $OH_PATH/$OH_DIR/rsc/log4j.properties ] && mv -f $OH_PATH/$OH_DIR/rsc/log4j.properties $OH_PATH/$OH_DIR/rsc/log4j.properties.old
+	sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
+	    -e "s/DEBUG_LEVEL/$DEBUG_LEVEL/g" -e "s+LOG_DEST+$OH_LOG_DEST+g" $OH_PATH/$OH_DIR/rsc/log4j.properties.dist > $OH_PATH/$OH_DIR/rsc/log4j.properties
 
-######## database.properties setup 
-[ -f $OH_PATH/$OH_DIR/rsc/database.properties ] && mv -f $OH_PATH/$OH_DIR/rsc/database.properties $OH_PATH/$OH_DIR/rsc/database.properties.old
-sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/g" -e"s/DBNAME/$DATABASE_NAME/g" \
-    -e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
-$OH_PATH/$OH_DIR/rsc/database.properties.dist > $OH_PATH/$OH_DIR/rsc/database.properties
+	######## database.properties setup 
+	[ -f $OH_PATH/$OH_DIR/rsc/database.properties ] && mv -f $OH_PATH/$OH_DIR/rsc/database.properties $OH_PATH/$OH_DIR/rsc/database.properties.old
+	sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/g" -e"s/DBNAME/$DATABASE_NAME/g" \
+	    -e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
+	$OH_PATH/$OH_DIR/rsc/database.properties.dist > $OH_PATH/$OH_DIR/rsc/database.properties
 
-######## generalData.properties language setup 
-# set language in OH config file
-[ -f $OH_PATH/$OH_DIR/rsc/generalData.properties ] && mv -f $OH_PATH/$OH_DIR/rsc/generalData.properties $OH_PATH/$OH_DIR/rsc/generalData.properties.old
-sed -e "s/OH_SET_LANGUAGE/$OH_LANGUAGE/g" $OH_PATH/$OH_DIR/rsc/generalData.properties.dist > $OH_PATH/$OH_DIR/rsc/generalData.properties
+	######## generalData.properties language setup 
+	# set language in OH config file
+	[ -f $OH_PATH/$OH_DIR/rsc/generalData.properties ] && mv -f $OH_PATH/$OH_DIR/rsc/generalData.properties $OH_PATH/$OH_DIR/rsc/generalData.properties.old
+	sed -e "s/OH_SET_LANGUAGE/$OH_LANGUAGE/g" $OH_PATH/$OH_DIR/rsc/generalData.properties.dist > $OH_PATH/$OH_DIR/rsc/generalData.properties
 
 fi
 
@@ -714,10 +744,16 @@ fi
 
 echo "Starting Open Hospital..."
 
-cd $OH_PATH/$OH_DIR
-
 # OH GUI launch
+cd $OH_PATH/$OH_DIR # workaround for hard coded paths
 $JAVA_BIN -Dsun.java2d.dpiaware=false -Djava.library.path=${NATIVE_LIB_PATH} -classpath $OH_CLASSPATH org.isf.menu.gui.Menu >> $OH_PATH/$LOG_DIR/$LOG_FILE 2>&1
+
+if [ $? -ne 0 ]; then
+	echo "An error occurred while starting Open Hospital. Exiting."
+	shutdown_database;
+	cd $CURRENT_DIR
+	exit 4
+fi
 
 echo "Exiting Open Hospital..."
 
