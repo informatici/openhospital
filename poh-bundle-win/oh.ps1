@@ -251,7 +251,7 @@ function set_language {
 	        }
 		default {
 	        	Write-Host "Invalid language option: $OH_LANGUAGE. Exiting." -ForegroundColor Red
-			Read-Host; exit 1
+			      Read-Host; exit 1
 	        }
 	}
 }
