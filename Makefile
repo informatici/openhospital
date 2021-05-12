@@ -141,12 +141,12 @@ dw-mysql-all: $(MYSQL_LINUX32) $(MYSQL_LINUX64) $(MYSQL_WIN)
 $(JRE_LINUX32):
 	wget -q -nc https://cdn.azul.com/zulu/bin/zulu11.45.27-ca-jre11.0.10-linux_i686.tar.gz -O $(JRE_LINUX32)
 $(JRE_LINUX64):
-	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -O $(JRE_LINUX64)
+	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.11_9.tar.gz -O $(JRE_LINUX64)
 $(JRE_WIN):
-	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.10_9.zip -O $(JRE_WIN)
+	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip -O $(JRE_WIN)
 $(MYSQL_LINUX32):
-	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.37/bintar-linux-x86/mariadb-10.2.37-linux-i686.tar.gz -O $(MYSQL_LINUX32)
+	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.38/bintar-linux-x86/mariadb-10.2.38-linux-i686.tar.gz -O $(MYSQL_LINUX32)
 $(MYSQL_LINUX64):
-	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.37/bintar-linux-x86_64/mariadb-10.2.37-linux-x86_64.tar.gz -O $(MYSQL_LINUX64)
+	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.38/bintar-linux-x86_64/mariadb-10.2.38-linux-x86_64.tar.gz -O $(MYSQL_LINUX64)
 $(MYSQL_WIN):
-	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.37/winx64-packages/mariadb-10.2.37-winx64.zip -O $(MYSQL_WIN)
+	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.38/winx64-packages/mariadb-10.2.38-winx64.zip -O $(MYSQL_WIN)
