@@ -65,6 +65,7 @@ goto :init
 	if /i "%~1"=="/?"	call :header & call :usage & goto :end
 	if /i "%~1"=="-?"	call :header & call :usage & goto :end
 	if /i "%~1"=="-h"	call :header & call :usage & goto :end
+	if /i "%~1"=="-help"	call :header & call :usage & goto :end
 	if /i "%~1"=="--help"	call :header & call :usage & goto :end
 
 	if /i "%~1"=="/legacymode"	call :legacy & goto :end
@@ -100,7 +101,7 @@ REM # Language setting - default set to en
 REM set OH_LANGUAGE=en fr es it pt
 set OH_LANGUAGE=en
 
-REM # set debug level to INFO | DEBUG - default set to INFO
+REM # set log level to INFO | DEBUG - default set to INFO
 set DEBUG_LEVEL=INFO
 
 REM # enable / disable DICOM (true|false)
@@ -110,7 +111,7 @@ REM ### Software configuration - change at your own risk :-)
 REM # Database
 set MYSQL_SERVER=localhost
 set MYSQL_PORT=3306
-set MYSQL_ROOT_PW=root2021oh915
+set MYSQL_ROOT_PW=tmp2021oh111
 set DATABASE_NAME=oh
 set DATABASE_USER=isf
 set DATABASE_PASSWORD=isf123
@@ -130,30 +131,30 @@ set OH_LOG_FILE=openhospital.log
 
 REM ######## MySQL Software
 REM # MariaDB 64bit
-REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.37/win32-packages/mariadb-10.2.37-winx64.zip
+REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.39/win32-packages/mariadb-10.2.39-winx64.zip
 REM # MySQL 64bit
 REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.32-winx64.zip
 
 REM # MariaDB 32bit
-REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.37/win32-packages/mariadb-10.2.37-win32.zip
+REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.37/win32-packages/mariadb-10.2.39-win32.zip
 REM # MySQL 32bit
 REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.32-win32.zip
 
 REM set MYSQL_DIR=mysql-5.7.32-win32
-set MYSQL_DIR=mariadb-10.2.37-winx64
+set MYSQL_DIR=mariadb-10.2.39-winx64
 
 REM ####### JAVA Software
 REM ######## JAVA 64bit - experimental architecture
 REM ### JRE 11 - openjdk
-REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/"
-REM set JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.10_9.zip"
+REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
+REM set JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9.zip"
 
 REM ######## JAVA 32bit - default architecture
 REM ### JRE 11 - openjdk
-REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/"
-REM set JAVA_DISTRO="OpenJDK11U-jre_x86-32_windows_hotspot_11.0.10_9.zip"
+REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
+REM set JAVA_DISTRO="OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip"
 
-set JAVA_DIR=jdk-11.0.10+9-jre
+set JAVA_DIR=jdk-11.0.11+9-jre
 set JAVA_BIN=%OH_PATH%\%JAVA_DIR%\bin\java.exe
 
 set REPLACE_PATH=%OH_PATH%\%MYSQL_DIR%\bin
@@ -209,9 +210,9 @@ echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\database.properties.dist %OH_PATH%\%OH_DIR
 %REPLACE_PATH%\replace.exe DBUSER %DATABASE_USER% -- %OH_PATH%\%OH_DIR%\rsc\database.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBPASS %DATABASE_PASSWORD% -- %OH_PATH%\%OH_DIR%\rsc\database.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 
-REM ### Setup generalData.properties
-echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\generalData.properties.dist %OH_PATH%\%OH_DIR%\rsc\generalData.properties /y >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
-%REPLACE_PATH%\replace.exe OH_SET_LANGUAGE %OH_LANGUAGE% -- %OH_PATH%\%OH_DIR%\rsc\generalData.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
+REM ### Setup settings.properties
+echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\settings.properties.dist %OH_PATH%\%OH_DIR%\rsc\settings.properties /y >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
+%REPLACE_PATH%\replace.exe OH_SET_LANGUAGE %OH_LANGUAGE% -- %OH_PATH%\%OH_DIR%\rsc\settings.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 
 REM ### Setup log4j.properties
 REM # double escape path
@@ -305,7 +306,7 @@ REM ###### Start Open Hospital #####
 echo Starting Open Hospital...
 
 cd /d %OH_PATH%\%OH_DIR%
-%JAVA_BIN% -Dsun.java2d.dpiaware=false -Djava.library.path=%NATIVE_LIB_PATH% -cp %CLASSPATH% org.isf.menu.gui.Menu
+%JAVA_BIN% -client -Dsun.java2d.dpiaware=false -Djava.library.path=%NATIVE_LIB_PATH% -cp %CLASSPATH% org.isf.menu.gui.Menu
 
 REM # Shutdown MySQL
 echo Shutting down MySQL...

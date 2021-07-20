@@ -74,7 +74,7 @@ $script:OH_DISTRO="PORTABLE"  # set distro to PORTABLE | CLIENT
 # Language setting - default set to en
 #$script:OH_LANGUAGE=en # fr es it pt
 
-# set debug level to INFO | DEBUG - default set to INFO
+# set log level to INFO | DEBUG - default set to INFO
 #$script:DEBUG_LEVEL=INFO
 
 # enable / disable DICOM (true|false)
@@ -84,7 +84,7 @@ $script:OH_DISTRO="PORTABLE"  # set distro to PORTABLE | CLIENT
 # Database
 $script:MYSQL_SERVER="localhost"
 $script:MYSQL_PORT=3306
-$script:MYSQL_ROOT_PW="root123isfPS1"
+$script:MYSQL_ROOT_PW="tmp2021oh111"
 $script:DATABASE_NAME="oh"
 $script:DATABASE_USER="isf"
 $script:DATABASE_PASSWORD="isf123"
@@ -93,9 +93,9 @@ $script:DICOM_MAX_SIZE="4M"
 
 $script:OH_DIR="oh"
 $script:SQL_DIR="sql"
-$script:DATA_DIR="data\db"
+$script:DATA_DIR="data/db"
 $script:DICOM_DIR="data/dicom_storage"
-$script:LOG_DIR="data\log"
+$script:LOG_DIR="data/log"
 $script:LOG_FILE="startup.log"
 $script:LOG_FILE_ERR="startup.err"
 $script:OH_LOG_FILE="openhospital.log"
@@ -139,8 +139,9 @@ switch ( "$ARCH" ) {
 
 ######## MySQL Software
 # MariaDB
-$script:MYSQL_URL="http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.37/winx64-packages/"
-$script:MYSQL_DIR="mariadb-10.2.37-win$script:MYSQL_ARCH"
+$script:MYSQL_VERSION="10.2.39"
+$script:MYSQL_URL="http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-$script:MYSQL_VERSION/winx64-packages/"
+$script:MYSQL_DIR="mariadb-$script:MYSQL_VERSION-win$script:MYSQL_ARCH"
 # MySQL
 #$script:MYSQL_DIR="mysql-5.7.32-win$script:MYSQL_ARCH"
 #$script:MYSQL_URL=" https://downloads.mysql.com/archives/get/p/23/file"
@@ -154,9 +155,9 @@ $script:EXT="zip"
 #$script:JAVA_DIR="zulu11.45.27-ca-jre11.0.10-win_i686"
 
 ### JRE 11 - openjdk
-$script:JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/"
-$script:JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.10_9"
-$script:JAVA_DIR="jdk-11.0.10+9-jre"
+$script:JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
+$script:JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9"
+$script:JAVA_DIR="jdk-11.0.11+9-jre"
 
 ######## JAVA 32bit
 # DICOM workaround - force JAVA_ARCH to 32 bit
@@ -196,8 +197,8 @@ function script_menu {
 	Write-Host " ---------------------------------------------------------"
 	Write-Host ""
 	Write-Host " Usage: $SCRIPT_NAME [ -lang en|fr|it|es|pt ] "
-        Write-Host "               [ -distro PORTABLE|CLIENT ]"
-        Write-Host "               [ -debug INFO|DEBUG ] "
+	Write-Host "               [ -distro PORTABLE|CLIENT ]"
+	Write-Host "               [ -debug INFO|DEBUG ] "
 	Write-Host ""
 	Write-Host "   C    start OH - CLIENT mode (Client / Server configuration)"
 	Write-Host "   d    start OH in debug mode"
@@ -208,7 +209,7 @@ function script_menu {
 	Write-Host "   r    restore OH database"
 	Write-Host "   t    test database connection (Client mode only)"
 	Write-Host "   v    show OH software version and configuration"
-	Write-Host "   X    clean OH installation"
+	Write-Host "   X    clean/reset OH installation"
 	Write-Host "   q    quit"
 	Write-Host ""
 }
@@ -227,15 +228,14 @@ function set_path {
 	$script:CURRENT_DIR=Get-Location | select -ExpandProperty Path
 	# set OH_PATH if not defined
 	if ( ! $OH_PATH ) {
-		Write-Host "Info: OH_PATH not set - using current directory"
+		Write-Host "Info: OH_PATH not defined"
 		$script:OH_PATH=$CURRENT_DIR
 		if ( !(Test-Path "$OH_PATH\$SCRIPT_NAME") ) {
-			Write-Host "Error - $SCRIPT_NAME not found in the current PATH. Please browse to the directory where POH was unzipped or set up OH_PATH properly." -ForegroundColor Yellow
+			Write-Host "Error - $SCRIPT_NAME not found in the current PATH. Please browse to the directory where Open Hospital was unzipped or set up OH_PATH properly." -ForegroundColor Yellow
 			Read-Host; exit 1
 		}
 	}
-#	$OH_PATH_ESCAPED=$(Write-Host $OH_PATH | sed -e 's/\//\\\//g'")
-#	$OH_PATH_ESCAPED=$OH_PATH
+#	$OH_PATH_ESCAPED=$OH_PATH -replace ' ',`' '
 }
 
 function set_language {
@@ -251,7 +251,7 @@ function set_language {
 	        }
 		default {
 	        	Write-Host "Invalid language option: $OH_LANGUAGE. Exiting." -ForegroundColor Red
-			      Read-Host; exit 1
+			Read-Host; exit 1
 	        }
 	}
 }
@@ -311,14 +311,14 @@ function java_check {
 
 	if ( !(Test-Path $JAVA_BIN) ) {
         	if ( !(Test-Path "$OH_PATH\$JAVA_DISTRO.$EXT") ) {
-    			Write-Host "Warning - JAVA not found. Do you want to download it?" -ForegroundColor Yellow
+			Write-Host "Warning - JAVA not found. Do you want to download it?" -ForegroundColor Yellow
 			get_confirmation;
 			# Downloading openjdk binaries
 			download_file "$JAVA_URL" "$JAVA_DISTRO.$EXT"
 		}
 		Write-Host "Unpacking $JAVA_DISTRO..."
 		try {
-			Expand-Archive "$OH_PATH\$JAVA_DISTRO.$EXT" -DestinationPath $OH_PATH\ -Force
+			Expand-Archive "$OH_PATH\$JAVA_DISTRO.$EXT" -DestinationPath "$OH_PATH\" -Force
 		}
 		catch {
 			Write-Host "Error unpacking Java. Exiting." -ForegroundColor Red
@@ -348,7 +348,7 @@ function mysql_check {
 		}
 		Write-Host "Unpacking $MYSQL_DIR..."
 		try {
-			Expand-Archive "$OH_PATH\$MYSQL_DIR.$EXT" -DestinationPath $OH_PATH\ -Force
+			Expand-Archive "$OH_PATH\$MYSQL_DIR.$EXT" -DestinationPath "$OH_PATH\" -Force
 		}
 		catch {
 			Write-Host "Error unpacking MySQL. Exiting." -ForegroundColor Red
@@ -382,7 +382,7 @@ function config_database {
 	# Creating MySQL configuration
 	Write-Host "Generating MySQL config file..."
 	if ( Test-Path "$OH_PATH/etc/mysql/my.cnf" ) {
-		mv -Force $OH_PATH/etc/mysql/my.cnf $OH_PATH/etc/mysql/my.cnf.old
+		mv -Force "$OH_PATH/etc/mysql/my.cnf" "$OH_PATH/etc/mysql/my.cnf.old"
 	}
 	(Get-Content "$OH_PATH/etc/mysql/my.cnf.dist").replace("DICOM_SIZE","$DICOM_MAX_SIZE") | Set-Content "$OH_PATH/etc/mysql/my.cnf"
 	(Get-Content "$OH_PATH/etc/mysql/my.cnf").replace("OH_PATH_SUBSTITUTE","$OH_PATH") | Set-Content "$OH_PATH/etc/mysql/my.cnf"
@@ -394,7 +394,7 @@ function config_database {
 	(Get-Content "$OH_PATH/etc/mysql/my.cnf").replace("LOG_DIR","$LOG_DIR") | Set-Content "$OH_PATH/etc/mysql/my.cnf"
 }
 
-function inizialize_database {
+function initialize_database {
 	# Recreate directory structure
 	[System.IO.Directory]::CreateDirectory("$OH_PATH/$DATA_DIR") > $null
 	[System.IO.Directory]::CreateDirectory("$OH_PATH/$TMP_DIR") > $null
@@ -406,7 +406,7 @@ function inizialize_database {
 	switch -Regex ( $MYSQL_DIR ) {
 		"mariadb" {
 			try {
-			    	Start-Process -FilePath "$OH_PATH\$MYSQL_DIR\bin\mysql_install_db.exe" -ArgumentList ("--datadir=$OH_PATH\$DATA_DIR --password=$MYSQL_ROOT_PW") -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
+				Start-Process -FilePath "$OH_PATH\$MYSQL_DIR\bin\mysql_install_db.exe" -ArgumentList ("--datadir=`"$OH_PATH\$DATA_DIR`" --password=$MYSQL_ROOT_PW") -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
 	        	}
 			catch {
 				Write-Host "Error: MariaDB initialization failed! Exiting." -ForegroundColor Red
@@ -415,7 +415,7 @@ function inizialize_database {
 		}
 		"mysql" {
 			try {
-				Start-Process "$OH_PATH\$MYSQL_DIR\bin\mysqld.exe" -ArgumentList ("--initialize-insecure --basedir=$OH_PATH\$MYSQL_DIR --datadir=$OH_PATH\$DATA_DIR") -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"; break
+				Start-Process "$OH_PATH\$MYSQL_DIR\bin\mysqld.exe" -ArgumentList ("--initialize-insecure --basedir=`"$OH_PATH\$MYSQL_DIR`" --datadir=`"$OH_PATH\$DATA_DIR`" ") -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"; break
 			}
 			catch {
 				Write-Host "Error: MySQL initialization failed! Exiting." -ForegroundColor Red
@@ -428,11 +428,11 @@ function inizialize_database {
 function start_database {
 	Write-Host "Starting MySQL server... "
 	try {
-		Start-Process -FilePath "$OH_PATH\$MYSQL_DIR\bin\mysqld.exe" -ArgumentList ("--defaults-file=$OH_PATH\etc\mysql\my.cnf --tmpdir=$OH_PATH\$TMP_DIR --standalone") -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
-		sleep 2;
+		Start-Process -FilePath "$OH_PATH\$MYSQL_DIR\bin\mysqld.exe" -ArgumentList ("--defaults-file=`"$OH_PATH\etc\mysql\my.cnf`" --tmpdir=`"$OH_PATH\$TMP_DIR`" --standalone") -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
+		Start-Sleep -Seconds 2
 	}
 	catch {
-		Write-Host "Error: Database not started! Exiting." -ForegroundColor Red
+		Write-Host "Error: MySQL server not started! Exiting." -ForegroundColor Red
 		Read-Host; exit 2
 	}
 
@@ -492,7 +492,7 @@ function import_database {
 	# Create OH database structure
 	Write-Host "Importing database schema $DB_CREATE_SQL..."
 	
-	cd $OH_PATH\$SQL_DIR
+	cd "$OH_PATH\$SQL_DIR"
 
     $SQLCOMMAND=@"
    --local-infile=1 -u root -p$MYSQL_ROOT_PW -h $MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp $DATABASE_NAME -e "source $OH_PATH\$SQL_DIR\$DB_CREATE_SQL"
@@ -503,7 +503,7 @@ function import_database {
 	catch {
 		Write-Host "Error: Database not imported! Exiting." -ForeGroundColor Red
 		shutdown_database;
-		cd $CURRENT_DIR
+		cd "$CURRENT_DIR"
 		Read-Host; exit 2
 	}
 	Write-Host "Database imported!"
@@ -531,11 +531,12 @@ function shutdown_database {
 	Start-Process -FilePath "$OH_PATH\$MYSQL_DIR\bin\mysqladmin.exe" -ArgumentList ("-u root -p$MYSQL_ROOT_PW --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp shutdown") -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
 	# Wait till the MySQL socket file is removed -> TO BE IMPLEMENTED
 	# while ( -e $OH_PATH/$MYSQL_SOCKET ); do sleep 1; done
+	Start-Sleep -Seconds 3
 	Write-Host "MySQL stopped!"
 }
 
 function clean_database {
-	Write-Host "Warning: do you want to remove all data and databases ?" -ForegroundColor Red
+	Write-Host "Warning: do you want to remove all existing data and databases ?" -ForegroundColor Red
 	get_confirmation;
 	Write-Host "--->>> This operation cannot be undone" -ForegroundColor Red
 	Write-Host "--->>> Are you sure ?" -ForegroundColor Red
@@ -563,23 +564,23 @@ function test_database_connection {
 }
 
 function clean_files {
-	# clean all generated files - leave only .dist files
-	Write-Host "Warning: do you want to remove all configuration and log files ?" -ForegroundColor Red
+	# clean all configuration files - leave only .dist files
+	Write-Host "Warning: do you want to remove all existing configuration and log files ?" -ForegroundColor Red
 	get_confirmation;
 	Write-Host "Removing files..."
 
 	$filetodel="$OH_PATH\etc\mysql\my.cnf"; if (Test-Path $filetodel){ Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
 	$filetodel="$OH_PATH\etc\mysql\my.cnf.old"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
 	$filetodel="$OH_PATH\$LOG_DIR\*"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$OH_DIR\rsc\generalData.properties"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$OH_DIR\rsc\generalData.properties.old"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	$filetodel="$OH_PATH\$OH_DIR\rsc\settings.properties"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	$filetodel="$OH_PATH\$OH_DIR\rsc\settings.properties.old"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
 	$filetodel="$OH_PATH\$OH_DIR\rsc\database.properties"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
 	$filetodel="$OH_PATH\$OH_DIR\rsc\database.properties.old"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
 	$filetodel="$OH_PATH\$OH_DIR\rsc\log4j.properties"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
 	$filetodel="$OH_PATH\$OH_DIR\rsc\log4j.properties.old"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
 	$filetodel="$OH_PATH\$OH_DIR\rsc\dicom.properties"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
 	$filetodel="$OH_PATH\$OH_DIR\rsc\dicom.properties.old"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$OH_DIR\logs\*"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	$filetodel="$OH_PATH\$OH_DIR\$LOG_DIR\*"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
 }
 
 
@@ -595,7 +596,7 @@ function clean_files {
 #}
 # else { Write-Host "User ok — go on executing the script..." -ForegroundColor Green }
 
-# debug level - set default to INFO
+# log level - set default to INFO
 if ( [string]::IsNullOrEmpty($DEBUG_LEVEL) ) {
 	$script:DEBUG_LEVEL="INFO"
 }
@@ -633,7 +634,6 @@ if ( $INTERACTIVE_MODE -eq "on") {
 		}
 		else { $script:OH_DISTRO="PORTABLE" }
 		$DEMO_MODE="on"
-		clean_database;
 	}
 	"G"	{ # set up GSM 
 		Write-Host "Setting up GSM..."
@@ -648,7 +648,7 @@ if ( $INTERACTIVE_MODE -eq "on") {
 		set_language;
 	}
 	"s"	{ # save database 
-		# checking if data exist
+		# check if database already exists
 	        Write-host "$OH_PATH\$DATA_DIR\$DATABASE_NAME"
 		if ( Test-Path "$OH_PATH\$DATA_DIR\$DATABASE_NAME" ) {
 			mysql_check;
@@ -656,12 +656,12 @@ if ( $INTERACTIVE_MODE -eq "on") {
 				config_database;
 			}
 			start_database;
-        	Write-Host "Saving Open Hospital database..."
-		dump_database;
-		shutdown_database;
-        	Write-Host "Done!"
-		Read-Host;
-		exit 0
+			Write-Host "Saving Open Hospital database..."
+			dump_database;
+			shutdown_database;
+			Write-Host "Done!"
+			Read-Host;
+			exit 0
 		}
 		else {
 	        	Write-Host "Error: no data found! Exiting." -ForegroundColor Red
@@ -670,17 +670,29 @@ if ( $INTERACTIVE_MODE -eq "on") {
 	}
 	"r"	{ # restore
 	       	Write-Host "Restoring Open Hospital database...."
-		clean_database;
 		# ask user for database to restore
 		$DB_CREATE_SQL = Read-Host -Prompt "Enter SQL dump/backup file that you want to restore - (in $script:BACKUP_DIR subdirectory) -> "
 		if ( Test-Path "$OH_PATH\$SQL_DIR\$DB_CREATE_SQL" ) {
 			Write-Host "Found $SQL_DIR\$DB_CREATE_SQL, restoring it..."
+			# reset database if exists
+			clean_database;
+			mysql_check;
+			if ($MANUAL_CONFIG -eq "on" ) {
+				config_database;
+			}
+			initialize_database;
+			start_database;	
+			set_database_root_pw;
+			import_database;
+			shutdown_database;
+			echo "Done!"
+			exit 0
 		}
 		else {
 			Write-Host "Error: No SQL file found! Exiting." -ForegroundColor Red
 			Read-Host; exit 2
 		}
-        	# normal startup from here
+        	Read-Host; exit 0
 	}
 	"t"	{ # test database connection 
 		if ( !($OH_DISTRO -eq "CLIENT") ) {
@@ -762,6 +774,10 @@ if ( $DEMO_MODE -eq "on" ) {
 		exit 1
 		else { $script:OH_DISTRO="PORTABLE" }
 	}
+	
+	# reset database if exists
+	clean_database;
+
 	if ( Test-Path -Path "$OH_PATH\$SQL_DIR\$DB_DEMO" ) {
 	        Write-Host "Found SQL demo database, starting OH in DEMO mode..."
 		$DB_CREATE_SQL=$DB_DEMO
@@ -775,7 +791,7 @@ if ( $DEMO_MODE -eq "on" ) {
 
 Write-Host "Starting Open Hospital in $OH_DISTRO mode..."
 Write-Host "OH_PATH set to $OH_PATH"
-Write-Host "POH language is set to $OH_LANGUAGE"
+Write-Host "OH language is set to $OH_LANGUAGE"
 
 # check for java
 java_check;
@@ -793,16 +809,18 @@ if ( $OH_DISTRO -eq "PORTABLE" ) {
 	config_database;
 	# Check if OH database already exists
 	if ( !(Test-Path "$OH_PATH\$DATA_DIR\$DATABASE_NAME") ) {
+		Write-Host "OH database not found, starting from scratch..."
 		# Prepare MySQL
-		inizialize_database;
+		initialize_database;
 		# Start MySQL
-        start_database;	
-        # Set database root password
-        set_database_root_pw;
+		start_database;	
+		# Set database root password
+		set_database_root_pw;
 		# Create database and load data
 		import_database;
 	}
 	else {
+		Write-Host "OH database found!"
 		# Starting MySQL
 		start_database;
 	}
@@ -832,7 +850,7 @@ if ( Test-Path "$OH_PATH/$OH_DIR/rsc/log4j.properties" ) {
 (Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBUSER","$DATABASE_USER") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
 (Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBPASS","$DATABASE_PASSWORD") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
 (Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DEBUG_LEVEL","$DEBUG_LEVEL") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("LOG_DEST","$OH_PATH\$LOG_DIR\$OH_LOG_FILE") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
+(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("LOG_DEST","../$LOG_DIR/$OH_LOG_FILE") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
 
 ######## database.properties setup 
 if ( Test-Path "$OH_PATH/$OH_DIR/rsc/database.properties" ) {
@@ -849,12 +867,12 @@ if ( Test-Path "$OH_PATH/$OH_DIR/rsc/database.properties" ) {
 #Add-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.username=$DATABASE_USER"
 #Add-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.password=$DATABASE_PASSWORD"
 
-######## generalData.properties language setup 
+######## settings.properties language setup 
 # set language in OH config file
-if ( Test-Path "$OH_PATH/$OH_DIR/rsc/generalData.properties" ) {
-	mv -Force $OH_PATH/$OH_DIR/rsc/generalData.properties $OH_PATH/$OH_DIR/rsc/generalData.properties.old
+if ( Test-Path "$OH_PATH/$OH_DIR/rsc/settings.properties" ) {
+	mv -Force $OH_PATH/$OH_DIR/rsc/settings.properties $OH_PATH/$OH_DIR/rsc/settings.properties.old
 }
-(Get-Content "$OH_PATH/$OH_DIR/rsc/generalData.properties.dist").replace("OH_SET_LANGUAGE","$OH_LANGUAGE") | Set-Content "$OH_PATH/$OH_DIR/rsc/generalData.properties"
+(Get-Content "$OH_PATH/$OH_DIR/rsc/settings.properties.dist").replace("OH_SET_LANGUAGE","$OH_LANGUAGE") | Set-Content "$OH_PATH/$OH_DIR/rsc/settings.properties"
 }
 
 ######## Open Hospital start
@@ -862,8 +880,11 @@ if ( Test-Path "$OH_PATH/$OH_DIR/rsc/generalData.properties" ) {
 Write-Host "Starting Open Hospital..."
 
 # OH GUI launch
-cd $OH_PATH\$OH_DIR # workaround for hard coded paths
-Start-Process -FilePath "$JAVA_BIN" -ArgumentList ("-Dlog4j.configuration=$OH_PATH\oh\rsc\log4j.properties -Dsun.java2d.dpiaware=false -Djava.library.path='$NATIVE_LIB_PATH' -cp '$OH_CLASSPATH' org.isf.menu.gui.Menu") -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
+cd "$OH_PATH\$OH_DIR" # workaround for hard coded paths
+
+$JAVA_ARGS="-client -Dlog4j.configuration=`"`'$OH_PATH\oh\rsc\log4j.properties`'`" -Dsun.java2d.dpiaware=false -Djava.library.path=`"`'$NATIVE_LIB_PATH`'`" -cp `"`'$OH_CLASSPATH`'`" org.isf.menu.gui.Menu"
+
+Start-Process -FilePath "$JAVA_BIN" -ArgumentList $JAVA_ARGS -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
 
 Write-Host "Exiting Open Hospital..."
 
@@ -872,7 +893,7 @@ if ( $OH_DISTRO -eq "PORTABLE" ) {
 }
 
 # go back to starting directory
-cd $CURRENT_DIR
+cd "$CURRENT_DIR"
 
 # exiting
 Write-Host "Done!"
