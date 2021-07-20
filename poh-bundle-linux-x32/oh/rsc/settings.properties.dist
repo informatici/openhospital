@@ -1,4 +1,4 @@
-# This file contains OpenHospital settings
+# This file contains Open Hospital settings
 LANGUAGE=OH_SET_LANGUAGE
 SINGLEUSER=yes
 AUTOMATICLOT_IN=no
