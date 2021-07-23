@@ -11,10 +11,10 @@ SHELL := /bin/bash
 .ONESHELL: 			# single recipes are run in one bash session, instead of one per line
 .DELETE_ON_ERROR:		# delete the target if its recipe failed
 OH_VERSION ?= $(shell git describe --abbrev=0 --tags)
-CLIENT := OpenHospital-$(OH_VERSION)-client-multiarch
-WIN32 := OpenHospital-$(OH_VERSION)-full_win32
-LINUX32 := OpenHospital-$(OH_VERSION)-full_i686
-LINUX64 := OpenHospital-$(OH_VERSION)-full_x86_64
+CLIENT := OpenHospital-$(OH_VERSION)-multiarch-client
+WIN32 := OpenHospital-$(OH_VERSION)-win32-portable
+LINUX32 := OpenHospital-$(OH_VERSION)-linux_i686-portable
+LINUX64 := OpenHospital-$(OH_VERSION)-linux_x86_64-portable
 JRE_WIN := jre-win.zip
 JRE_LINUX32 := jre-linux32.tar.gz
 JRE_LINUX64 := jre-linux64.tar.gz
