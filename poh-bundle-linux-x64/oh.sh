@@ -100,7 +100,7 @@ MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-$MYSQL_VERSION/bintar-l
 MYSQL_DIR="mariadb-$MYSQL_VERSION-linux-$ARCH"
 # MySQL
 #MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
-#MYSQL_DIR="mysql-5.7.32-linux-glibc2.12-$ARCH"
+#MYSQL_DIR="mysql-5.7.34-linux-glibc2.12-$ARCH"
 
 ######## JAVA Software
 ######## JAVA 64bit - default architecture
@@ -745,11 +745,12 @@ if [ $MANUAL_CONFIG != "on" ]; then
 	OH_LOG_DEST="$OH_PATH_ESCAPED/$LOG_DIR/$OH_LOG_FILE"
 	[ -f ./$OH_DIR/rsc/log4j.properties ] && mv -f ./$OH_DIR/rsc/log4j.properties ./$OH_DIR/rsc/log4j.properties.old
 	sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
-	    -e "s/DEBUG_LEVEL/$DEBUG_LEVEL/g" -e "s+LOG_DEST+$OH_LOG_DEST+g" ./$OH_DIR/rsc/log4j.properties.dist > ./$OH_DIR/rsc/log4j.properties
+	    -e "s/DBNAME/$DATABASE_NAME/g" -e "s/DEBUG_LEVEL/$DEBUG_LEVEL/g" -e "s+LOG_DEST+$OH_LOG_DEST+g" \
+	    ./$OH_DIR/rsc/log4j.properties.dist > ./$OH_DIR/rsc/log4j.properties
 
 	######## database.properties setup 
 	[ -f ./$OH_DIR/rsc/database.properties ] && mv -f ./$OH_DIR/rsc/database.properties ./$OH_DIR/rsc/database.properties.old
-	sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/g" -e"s/DBNAME/$DATABASE_NAME/g" \
+	sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/g" -e "s/DBNAME/$DATABASE_NAME/g" \
 	    -e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
 	./$OH_DIR/rsc/database.properties.dist > ./$OH_DIR/rsc/database.properties
 
