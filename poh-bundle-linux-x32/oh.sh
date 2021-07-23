@@ -40,7 +40,7 @@ DEMO_MODE=off
 #OH_LANGUAGE=it
 
 # set log level to INFO | DEBUG - default set to INFO
-#DEBUG_LEVEL=INFO
+#LOG_LEVEL=INFO
 
 ######## Software configuration - change at your own risk :-)
 # Database
@@ -509,8 +509,8 @@ if [ $(id -u) -eq 0 ]; then
 fi
 
 # log level - set default to INFO
-if [ -z ${DEBUG_LEVEL+x} ]; then
-	DEBUG_LEVEL=INFO
+if [ -z ${LOG_LEVEL+x} ]; then
+	LOG_LEVEL=INFO
 fi	
 
 ######## Environment setup
@@ -534,8 +534,8 @@ while getopts ${OPTSTRING} opt; do
 	case ${opt} in
 	d)	# debug
         	echo "Starting Open Hospital in debug mode..."
-		DEBUG_LEVEL=DEBUG
-		echo "Debug level set to $DEBUG_LEVEL"
+		LOG_LEVEL=DEBUG
+		echo "Log level set to $LOG_LEVEL"
 		;;
 	C)	# start in CLIENT mode
 		OH_DISTRO=CLIENT
@@ -745,7 +745,7 @@ if [ $MANUAL_CONFIG != "on" ]; then
 	OH_LOG_DEST="$OH_PATH_ESCAPED/$LOG_DIR/$OH_LOG_FILE"
 	[ -f ./$OH_DIR/rsc/log4j.properties ] && mv -f ./$OH_DIR/rsc/log4j.properties ./$OH_DIR/rsc/log4j.properties.old
 	sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
-	    -e "s/DBNAME/$DATABASE_NAME/g" -e "s/DEBUG_LEVEL/$DEBUG_LEVEL/g" -e "s+LOG_DEST+$OH_LOG_DEST+g" \
+	    -e "s/DBNAME/$DATABASE_NAME/g" -e "s/LOG_LEVEL/$LOG_LEVEL/g" -e "s+LOG_DEST+$OH_LOG_DEST+g" \
 	    ./$OH_DIR/rsc/log4j.properties.dist > ./$OH_DIR/rsc/log4j.properties
 
 	######## database.properties setup 
