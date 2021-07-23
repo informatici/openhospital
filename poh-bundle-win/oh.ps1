@@ -57,7 +57,7 @@ https://www.open-hospital.org
 ######## Command line parameters
 param ($lang, $debuglevel, $distro)
 $script:OH_LANGUAGE=$lang
-$script:DEBUG_LEVEL=$debuglevel
+$script:LOG_LEVEL=$debuglevel
 $script:OH_DISTRO=$distro
 
 ######## Global preferences
@@ -75,7 +75,7 @@ $script:OH_DISTRO="PORTABLE"  # set distro to PORTABLE | CLIENT
 #$script:OH_LANGUAGE=en # fr es it pt
 
 # set log level to INFO | DEBUG - default set to INFO
-#$script:DEBUG_LEVEL=INFO
+#$script:LOG_LEVEL=INFO
 
 # enable / disable DICOM (true|false)
 #$script:DICOM_ENABLE="false"
@@ -143,7 +143,7 @@ $script:MYSQL_VERSION="10.2.39"
 $script:MYSQL_URL="http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-$script:MYSQL_VERSION/winx64-packages/"
 $script:MYSQL_DIR="mariadb-$script:MYSQL_VERSION-win$script:MYSQL_ARCH"
 # MySQL
-#$script:MYSQL_DIR="mysql-5.7.32-win$script:MYSQL_ARCH"
+#$script:MYSQL_DIR="mysql-5.7.34-win$script:MYSQL_ARCH"
 #$script:MYSQL_URL=" https://downloads.mysql.com/archives/get/p/23/file"
 $script:EXT="zip"
 
@@ -597,8 +597,8 @@ function clean_files {
 # else { Write-Host "User ok — go on executing the script..." -ForegroundColor Green }
 
 # log level - set default to INFO
-if ( [string]::IsNullOrEmpty($DEBUG_LEVEL) ) {
-	$script:DEBUG_LEVEL="INFO"
+if ( [string]::IsNullOrEmpty($LOG_LEVEL) ) {
+	$script:LOG_LEVEL="INFO"
 }
 
 ######## Environment setup
@@ -621,8 +621,8 @@ if ( $INTERACTIVE_MODE -eq "on") {
 	}
 	"d"	{ # debug 
            	Write-Host "Starting Open Hospital in debug mode..."
-		$DEBUG_LEVEL="DEBUG"
-		Write-Host "Debug level set to $DEBUG_LEVEL"
+		$LOG_LEVEL="DEBUG"
+		Write-Host "Log level set to $LOG_LEVEL"
 	}
 	"D"	{ # demo mode 
 		Write-Host "Starting Open Hospital in DEMO mode..."
@@ -849,7 +849,8 @@ if ( Test-Path "$OH_PATH/$OH_DIR/rsc/log4j.properties" ) {
 (Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBPORT","$MYSQL_PORT") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
 (Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBUSER","$DATABASE_USER") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
 (Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBPASS","$DATABASE_PASSWORD") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DEBUG_LEVEL","$DEBUG_LEVEL") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
+(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBNAME","$DATABASE_NAME") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
+(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("LOG_LEVEL","$LOG_LEVEL") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
 (Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("LOG_DEST","../$LOG_DIR/$OH_LOG_FILE") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
 
 ######## database.properties setup 
@@ -858,9 +859,9 @@ if ( Test-Path "$OH_PATH/$OH_DIR/rsc/database.properties" ) {
 }
 (Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties.dist").replace("DBSERVER","$MYSQL_SERVER") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
 (Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBPORT","$MYSQL_PORT") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBNAME","$DATABASE_NAME") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
 (Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBUSER","$DATABASE_USER") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
 (Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBPASS","$DATABASE_PASSWORD") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
+(Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBNAME","$DATABASE_NAME") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
 
 # Direct creation of database.properties - deprecated
 #Set-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.url=jdbc:mysql://"$MYSQL_SERVER":$MYSQL_PORT/$DATABASE_NAME"

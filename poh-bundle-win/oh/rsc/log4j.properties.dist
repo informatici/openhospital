@@ -18,19 +18,19 @@ log4j.appender.RollingFile.layout.ConversionPattern=[%d{dd/MMM/yyyy HH:mm:ss}] [
 
 # DB Appender (table columns)
 log4j.appender.DB=org.apache.log4j.jdbc.JDBCAppender
-log4j.appender.DB.URL=jdbc:mysql://DBSERVER:DBPORT/oh?autoReconnect=true
+log4j.appender.DB.URL=jdbc:mysql://DBSERVER:DBPORT/DBNAME?autoReconnect=true
 log4j.appender.DB.user=DBUSER
 log4j.appender.DB.password=DBPASS
 log4j.appender.DB.sql=INSERT INTO LOG (LOG_TYPE, LOG_CLASS, LOG_METHOD, LOG_TIME, LOG_MESS, LOG_USER) VALUES (1, '%C', '%M', '%d{yyyy-MM-dd HH:mm:ss}', LEFT('%m', 1024), '%X{OHUser}')
 log4j.appender.DB.layout=org.apache.log4j.PatternLayout
 
 # Assigning appenders to packages (application loggers)
-log4j.category.org.isf=DEBUG_LEVEL,RollingFile
+log4j.category.org.isf=LOG_LEVEL,RollingFile
 log4j.additivity.org.isf = false
 
 # Assigning appenders to Hibernate packages (DB loggers)
 # - hibernate.SQL to DEBUG for SQL queries to be logged
 # - hibernate.type to TRACE for queries parameters to be logged with "binding parameter [?]"
-log4j.logger.org.hibernate=DEBUG_LEVEL,RollingFile,StdOut
+log4j.logger.org.hibernate=LOG_LEVEL,RollingFile,StdOut
 #log4j.logger.org.hibernate.SQL=INFO,RollingFile,StdOut
 #log4j.logger.org.hibernate.type=INFO,RollingFile,StdOut

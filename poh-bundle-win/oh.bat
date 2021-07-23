@@ -102,7 +102,7 @@ REM set OH_LANGUAGE=en fr es it pt
 set OH_LANGUAGE=en
 
 REM # set log level to INFO | DEBUG - default set to INFO
-set DEBUG_LEVEL=INFO
+set LOG_LEVEL=INFO
 
 REM # enable / disable DICOM (true|false)
 set DICOM_ENABLE=false
@@ -133,14 +133,14 @@ REM ######## MySQL Software
 REM # MariaDB 64bit
 REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.39/win32-packages/mariadb-10.2.39-winx64.zip
 REM # MySQL 64bit
-REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.32-winx64.zip
+REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.34-winx64.zip
 
 REM # MariaDB 32bit
 REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.37/win32-packages/mariadb-10.2.39-win32.zip
 REM # MySQL 32bit
-REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.32-win32.zip
+REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.34-win32.zip
 
-REM set MYSQL_DIR=mysql-5.7.32-win32
+REM set MYSQL_DIR=mysql-5.7.34-win32
 set MYSQL_DIR=mariadb-10.2.39-winx64
 
 REM ####### JAVA Software
@@ -206,9 +206,9 @@ REM ### Setup database.properties
 echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\database.properties.dist %OH_PATH%\%OH_DIR%\rsc\database.properties /y >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBSERVER %MYSQL_SERVER% -- %OH_PATH%\%OH_DIR%\rsc\database.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBPORT %MYSQL_PORT% -- %OH_PATH%\%OH_DIR%\rsc\database.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
-%REPLACE_PATH%\replace.exe DBNAME %DATABASE_NAME% -- %OH_PATH%\%OH_DIR%\rsc\database.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBUSER %DATABASE_USER% -- %OH_PATH%\%OH_DIR%\rsc\database.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBPASS %DATABASE_PASSWORD% -- %OH_PATH%\%OH_DIR%\rsc\database.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
+%REPLACE_PATH%\replace.exe DBNAME %DATABASE_NAME% -- %OH_PATH%\%OH_DIR%\rsc\database.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 
 REM ### Setup settings.properties
 echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\settings.properties.dist %OH_PATH%\%OH_DIR%\rsc\settings.properties /y >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
@@ -223,7 +223,8 @@ echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\log4j.properties.dist %OH_PATH%\%OH_DIR%\r
 %REPLACE_PATH%\replace.exe DBPORT %MYSQL_PORT% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBUSER %DATABASE_USER% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties  >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBPASS %DATABASE_PASSWORD% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
-%REPLACE_PATH%\replace.exe DEBUG_LEVEL %DEBUG_LEVEL% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
+%REPLACE_PATH%\replace.exe DBNAME %DATABASE_NAME% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
+%REPLACE_PATH%\replace.exe LOG_LEVEL %LOG_LEVEL% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe LOG_DEST %OH_LOG_DEST% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 
 REM ### Setup database if not already existing
