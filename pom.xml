@@ -16,8 +16,8 @@
   <packaging>pom</packaging>
 
   <modules>
-      <module>core</module>
-      <module>gui</module>
+      <module>openhospital-core</module>
+      <module>openhospital-gui</module>
   </modules>
 
   <properties>
