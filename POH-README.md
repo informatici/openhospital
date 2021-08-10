@@ -18,7 +18,7 @@ The Linux version has been tested on different distributions and versions,
 including Ubuntu 16.04 i386 (32bit) and up to Ubuntu 20.04 x64 (64bit).
 The Windows version has been tested on Windows 10.
 
-# Running POH - Quickstart
+## Running POH - Quickstart
 
 **on Linux:**
 
@@ -76,7 +76,9 @@ Usage: oh.ps1 [ -lang en|fr|it|es|pt ]
  v    show OH software version and configuration
  X    clean/reset OH installation
  q    quit
+
 ```
+
 Note: The oh.bat launches the oh.ps1 startup file automatically.
 The script presents the interactive menu that can be used to setup and choose how to run Open Hospital.
 
@@ -95,7 +97,7 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 - open cmd.exe and run **.\oh.bat -legacymode**
 - to see available options, open a cmd.exe window and run **.\oh.bat -h**
 
-# Options 
+### Options 
 
 - **C**    start Open Hospital in CLIENT mode, usually when you have an external database server (Client / Server configuration)
 - **d**    start OH in DEBUG mode - useful to debug errors or bugs by logging more extended informations to log file
@@ -152,7 +154,6 @@ DATABASE_PASSWORD="xxxxxxx"
 DICOM_MAX_SIZE="4M"
 ```
 
-
 - File names and directory structure:
 ```
 OH_DIR=oh
@@ -180,20 +181,21 @@ MANUAL_CONFIG=off
 ```
 
 - Enable system wide JAVA:
+
 ```
 ######## set JAVA_BIN
 # Uncomment this if you want to use system wide JAVA
 #JAVA_BIN=`which java`
-
 ```
 
 - (Windows only) enable / disable DICOM features
+
 ```
 # enable / disable DICOM (true|false)
 #$script:DICOM_ENABLE="false"
 ```
 
-# Default directory structure
+## Default directory structure
 
 The scripts takes care of creating all the needed data directories and configuration files.
 Everything is also parametric and user adjustable in the scripts with variables (or via command line options).
@@ -204,7 +206,9 @@ The default is now clean, simple and **common to all distros:**
 /sql -> containing the SQL creation scripta
 /etc -> configuration files for database (MySQL)
 ```
+
 Created at runtime:
+
 ```
 /tmp 
 /data
@@ -212,6 +216,7 @@ data/db
 data/log
 data/dicom_storage
 ```
+
 External software package downloaded at first run:
 
 ```
@@ -219,7 +224,7 @@ Mariadb 10.2.x server
 OpenJDK JRE 11
 ```
 
-# Known issues
+## Known issues
 
 **Linux**
 
@@ -236,6 +241,7 @@ sudo apt-get install libncurses5
 ```
 
 - If you get this error:
+
 ```
 Error Initializing MySQL database on port 3306 error while loading shared libraries: libaio.so.1. I had to install it manually and re-launch the script.
 ```
@@ -262,9 +268,11 @@ If you get this error:
 
 - Start Windows PowerShell with the "Run as Administrator" option. Only members of the Administrators group on the computer can change the execution policy.
 Enable running unsigned scripts by entering:
+
 ```
 set-executionpolicy remotesigned
 ```
+
 - You might also be required to enable access to oh.ps1 on Windows Firewall.
 
 **Windows - legacy mode**
@@ -299,7 +307,7 @@ In order to download and unzip mysql (mariadb):
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
-# oh.sh / oh.ps1 - features and development
+## oh.sh / oh.ps1 - features and development
 
 In order to have a complete, easy to support and extensible solution to run Open Hospital on Linux, oh.sh has been rewritten, also adding a few possible useful user functions.
 For the same reason, a completely new powershell script has been writtend for Windows: oh.ps1 (run by oh.bat).

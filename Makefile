@@ -114,9 +114,9 @@ doc:
 	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git openhospital-doc
 
 # Compile documentation
-docs-all: openhospital-doc oh-admin-manual.pdf oh-user-manual.pdf
+docs-all: doc oh-admin-manual.pdf oh-user-manual.pdf
 oh-admin-manual.pdf: openhospital-doc
-	asciidoctor-pdf ./openhospital-doc/doc_admin/AdminManual.adoc -o oh-admin-manual.pdf
+	asciidoctor-pdf ./openhospital-doc/doc_admin/AdminManual.adoc -a allow-uri-read -o oh-admin-manual.pdf
 oh-user-manual.pdf: openhospital-doc
 	asciidoctor-pdf ./openhospital-doc/doc_user/UserManual.adoc -o oh-user-manual.pdf
 
