@@ -1,3 +1,7 @@
+0.0.x (11/2020)
+--------------
+- new powershell script has been written for Windows: oh.ps1 (run by oh.bat)
+
 0.0.6 (02/2020)
 --------------
 - added lower_case_table_names = 1 in [mysqld] to avoid cross-OS data transfer problems 
