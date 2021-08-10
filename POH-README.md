@@ -49,7 +49,6 @@ The Windows version has been tested on Windows 10.
 
 ```
 
---------------------
 **on Windows:**
 
 - double click on the **oh.bat** batch file and choose among available options:
