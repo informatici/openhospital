@@ -4,7 +4,6 @@
 #  To list the available targets issue: make help
 #  The following environment variables can be set before running make:
 #    OH_VERSION: Open Hospital version
-#    POH_VERSION: Portable Open Hospital version
 # 
 ##############################################################################
 SHELL := /bin/bash
@@ -12,11 +11,10 @@ SHELL := /bin/bash
 .ONESHELL: 			# single recipes are run in one bash session, instead of one per line
 .DELETE_ON_ERROR:		# delete the target if its recipe failed
 OH_VERSION ?= $(shell git describe --abbrev=0 --tags)
-POH_VERSION ?= 0.1
-FULL := openhospital-$(OH_VERSION)
-WIN := poh-win32-$(POH_VERSION)-core-$(OH_VERSION)
-LINUX32 := poh-linux-x32-$(POH_VERSION)-core-$(OH_VERSION)
-LINUX64 := poh-linux-x64-$(POH_VERSION)-core-$(OH_VERSION)
+CLIENT := OpenHospital-$(OH_VERSION)-multiarch-client
+WIN32 := OpenHospital-$(OH_VERSION)-win32-portable
+LINUX32 := OpenHospital-$(OH_VERSION)-linux_i686-portable
+LINUX64 := OpenHospital-$(OH_VERSION)-linux_x86_64-portable
 JRE_WIN := jre-win.zip
 JRE_LINUX32 := jre-linux32.tar.gz
 JRE_LINUX64 := jre-linux64.tar.gz
@@ -30,12 +28,12 @@ all: compile-all dw-all release-files
 
 help:
 	@echo -e "Main make targets available:\n\tall (default), clean, clone-all, dw-all, compile-all, docs-all, dw-jre-all, dw-mysql-all, oh-admin-manual.pdf, oh-user-manual.pdf, core, gui, doc"
-	@echo -e "\t$(WIN).zip, $(LINUX32).tar.gz, $(LINUX64).tar.gz, $(FULL).zip"
+	@echo -e "\t$(WIN32).zip, $(LINUX32).tar.gz, $(LINUX64).tar.gz, $(CLIENT).zip"
 	@echo -e "\t$(JRE_WIN), $(JRE_LINUX32), $(JRE_LINUX64), $(MYSQL_WIN), $(MYSQL_LINUX32), $(MYSQL_LINUX64)"
 
 # Clean targets
 clean: clean-downloads
-	rm -rf release-files core gui doc poh-linux* poh-win* CHANGELOG CHANGELOG.md *.pdf
+	rm -rf release-files openhospital-core openhospital-gui openhospital-doc poh-linux* poh-win* CHANGELOG CHANGELOG.md *.pdf
 clean-all:
 	git clean -xdff
 clean-downloads:
@@ -44,47 +42,47 @@ clean-downloads:
 compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG 
 
 # Assemble targets
-release-files: $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
+release-files: $(CLIENT).zip $(WIN32).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
 	echo "Checksum:" >> CHANGELOG.md
 	echo "\`\`\`" >> CHANGELOG.md
-	sha256sum $(FULL).zip >> CHANGELOG.md
-	sha256sum $(WIN).zip >> CHANGELOG.md
+	sha256sum $(CLIENT).zip >> CHANGELOG.md
+	sha256sum $(WIN32).zip >> CHANGELOG.md
 	sha256sum $(LINUX32).tar.gz >> CHANGELOG.md
 	sha256sum $(LINUX64).tar.gz >> CHANGELOG.md
 	echo "\`\`\`" >> CHANGELOG.md
 	mkdir -p release-files
-	mv $(FULL).zip $(WIN).zip $(LINUX32).tar.gz $(LINUX64).tar.gz release-files/
+	mv $(CLIENT).zip $(WIN32).zip $(LINUX32).tar.gz $(LINUX64).tar.gz release-files/
 	ls release-files
 
-$(FULL).zip: compile-all
-	mkdir -p $(FULL)/doc
-	cp -rf ./gui/target/OpenHospital20/* $(FULL)
-	cp -rf ./core/sql $(FULL)/
-	rm -rf $(FULL)/generate_changelog.sh
-	cp LICENSE $(FULL)
-	cp CHANGELOG $(FULL)
-	cp *.pdf $(FULL)/doc
-	zip -r $(FULL).zip $(FULL)
+$(CLIENT).zip: compile-all
+	mkdir -p $(CLIENT)/doc
+	cp -rf ./openhospital-gui/target/OpenHospital20/* $(CLIENT)
+	cp -rf ./openhospital-core/sql $(CLIENT)/
+	rm -rf $(CLIENT)/generate_changelog.sh
+	cp LICENSE $(CLIENT)
+	cp CHANGELOG $(CLIENT)
+	cp *.pdf $(CLIENT)/doc
+	zip -r $(CLIENT).zip $(CLIENT)
 
-$(WIN).zip: compile-all dw-all
-	mkdir -p $(WIN)/oh/doc
-	cp -rf ./poh-bundle-win/* $(WIN)
-	unzip $(JRE_WIN) -d $(WIN)
-	unzip $(MYSQL_WIN) -d $(WIN) -x "*/lib/*"
-	cp -rf ./gui/target/OpenHospital20/* $(WIN)/oh
-	cp -a ./core/sql $(WIN)/
-	rm -rf $(WIN)/oh/generate_changelog.sh
-	cp POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN)
-	cp *.pdf $(WIN)/oh/doc
-	zip -r $(WIN).zip $(WIN)
+$(WIN32).zip: compile-all dw-all
+	mkdir -p $(WIN32)/oh/doc
+	cp -rf ./poh-bundle-win/* $(WIN32)
+	unzip $(JRE_WIN) -d $(WIN32)
+	unzip $(MYSQL_WIN) -d $(WIN32) -x "*/lib/*"
+	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
+	cp -a ./openhospital-core/sql $(WIN32)/
+	rm -rf $(WIN32)/oh/generate_changelog.sh
+	cp POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN32)
+	cp *.pdf $(WIN32)/oh/doc
+	zip -r $(WIN32).zip $(WIN32)
 
 $(LINUX32).tar.gz: compile-all dw-all
 	mkdir -p $(LINUX32)/oh/doc
 	cp -rf ./poh-bundle-linux-x32/* $(LINUX32)
 	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
-	cp -rf ./gui/target/OpenHospital20/* $(LINUX32)/oh
-	cp -a ./core/sql $(LINUX32)/
+	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
+	cp -a ./openhospital-core/sql $(LINUX32)/
 	rm -rf $(LINUX32)/oh/generate_changelog.sh
 	cp POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
 	cp *.pdf $(LINUX32)/oh/doc
@@ -95,8 +93,8 @@ $(LINUX64).tar.gz: compile-all dw-all
 	cp -rf ./poh-bundle-linux-x64/* $(LINUX64)
 	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
-	cp -rf ./gui/target/OpenHospital20/* $(LINUX64)/oh
-	cp -a ./core/sql $(LINUX64)/
+	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
+	cp -a ./openhospital-core/sql $(LINUX64)/
 	rm -rf $(LINUX64)/oh/generate_changelog.sh
 	cp POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
 	cp *.pdf $(LINUX64)/oh/doc
@@ -109,22 +107,22 @@ gui/target/OpenHospital20/bin/OH-gui.jar: clone-all
 # Clone repositories of OH components
 clone-all: core gui doc
 core:
-	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git core
+	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
 gui:
-	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git gui
+	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
 doc:
-	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git doc
+	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git openhospital-doc
 
 # Compile documentation
 docs-all: doc oh-admin-manual.pdf oh-user-manual.pdf
-oh-admin-manual.pdf: doc
-	asciidoctor-pdf ./doc/doc_admin/AdminManual.adoc -o oh-admin-manual.pdf
-oh-user-manual.pdf: doc
-	asciidoctor-pdf ./doc/doc_user/UserManual.adoc -o oh-user-manual.pdf
+oh-admin-manual.pdf: openhospital-doc
+	asciidoctor-pdf ./openhospital-doc/doc_admin/AdminManual.adoc -a allow-uri-read -o AdminManual.pdf
+oh-user-manual.pdf: openhospital-doc
+	asciidoctor-pdf ./openhospital-doc/doc_user/UserManual.adoc -o UserManual.pdf
 
 # Create changelog file
 CHANGELOG: core
-	pushd core
+	pushd openhospital-core
 	lasttag=$(shell git tag -l --sort=-v:refname | head -1)
 	secondlasttag=$(shell git tag -l --sort=-v:refname | head -2 | tail -n 1)
 	popd
