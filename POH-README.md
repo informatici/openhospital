@@ -1,4 +1,4 @@
-# ![](./oh.ico) OH - Open Hospital Portable | Client 
+# ![](./poh-bundle-linux-x64/oh.ico) OH - Open Hospital Portable | Client 
 
 OH - Open Hospital (https://www.open-hospital.org/en/) is a free and open source
 software for healthcare data management. Its portable version allows you to take
@@ -16,8 +16,6 @@ installation directory. OH is released under the GNU GPL 3.0 License.
 The Linux version has been tested on different distributions and versions,
 including Ubuntu 16.04 i386 (32bit) and up to Ubuntu 21.04 x64 (64bit).
 The Windows version has been tested on Windows 10.
-
-**This repo is experimental and is used to test the latest Open Hospital releases and features. Use at your own risk !**
 
 # Running OH - Quickstart
 
