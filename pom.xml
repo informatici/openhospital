@@ -12,7 +12,7 @@
 
   <groupId>org.isf</groupId>
   <artifactId>OpenHospital</artifactId>
-  <version>1.11</version>
+  <version>1.11.0</version>
   <packaging>pom</packaging>
 
   <modules>
