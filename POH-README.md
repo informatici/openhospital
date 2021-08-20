@@ -1,24 +1,48 @@
-# Portable Open Hospital - POH
+# ![](./oh.ico) OH - Open Hospital Portable | Client 
 
-Open Hospital (https://www.open-hospital.org/en/) is a free and open source
-software for healthcare data management. Its portable version (Portable Open
-Hospital, POH) allows you to take along with you Open Hospital and run it on
-any computer, keeping the data you have saved. With POH, we also hope to
-reach the goal to make Open Hospital easily installable so that even somebody
-with no experience of Java or MySQL can try or use it.
+OH - Open Hospital (https://www.open-hospital.org/en/) is a free and open source
+software for healthcare data management. Its portable version allows you to take
+along with you Open Hospital and run it on any computer, keeping the data you have saved.
+With this distribution we also hope to reach the goal to make Open Hospital easily installable
+so that even somebody with no experience of Java or MySQL can try or use it.
 
-POH allows to use Open Hospital on a computer, easily move the installation on
+Open Hospital can run on any computer and it is easily possible to move the installation on
 another computer or even run it from a USB stick or drive. All you have to do
-is to copy the root installation directory of POH to your favourite path, where
-the program and the data will be kept. POH uses its own version of the Java Virtual
+is to copy the root installation directory of OH to your favourite path, where
+the program and the data will be kept. OH uses its own version of the Java Virtual
 Machine and the MySQL server and everything is contained in the root
-installation directory. POH is released under the GNU GPL 3.0 License.
+installation directory. OH is released under the GNU GPL 3.0 License.
 
 The Linux version has been tested on different distributions and versions,
-including Ubuntu 16.04 i386 (32bit) and up to Ubuntu 20.04 x64 (64bit).
+including Ubuntu 16.04 i386 (32bit) and up to Ubuntu 21.04 x64 (64bit).
 The Windows version has been tested on Windows 10.
 
-## Running POH - Quickstart
+**This repo is experimental and is used to test the latest Open Hospital releases and features. Use at your own risk !**
+
+# Running OH - Ultra-quickstart
+
+**on Linux:**
+
+To download and launch the Open Hospital package contained in this distribution open a shell and type (or copy and paste):
+
+```
+bash <(wget -qO- https://raw.githubusercontent.com/mizzioisf/openhospital-client/main/go.sh)
+```
+
+# Running OH - Quickstart
+
+**Common to all Operating Systems / architectures:**
+
+*(see OH downloads on sourceforce for full release packages)*
+
+- clone the repository with git:
+```
+git clone https://github.com/mizzioisf/openhospital-client
+```
+- browse to the directory:
+```
+cd openhospital-client
+```
 
 **on Linux:**
 
@@ -49,6 +73,7 @@ The Windows version has been tested on Windows 10.
 
 ```
 
+--------------------
 **on Windows:**
 
 - double click on the **oh.bat** batch file and choose among available options:
@@ -62,7 +87,7 @@ The Windows version has been tested on Windows 10.
 lang en | arch x86_64
 
 Usage: oh.ps1 [ -lang en|fr|it|es|pt ] 
-              [ -distro PORTABLE|CLIENT ]
+              [ -mode PORTABLE|CLIENT ]
               [ -debug INFO|DEBUG ] 
 
  C    start OH - CLIENT mode (Client / Server configuration)
@@ -76,9 +101,7 @@ Usage: oh.ps1 [ -lang en|fr|it|es|pt ]
  v    show OH software version and configuration
  X    clean/reset OH installation
  q    quit
-
 ```
-
 Note: The oh.bat launches the oh.ps1 startup file automatically.
 The script presents the interactive menu that can be used to setup and choose how to run Open Hospital.
 
@@ -97,7 +120,7 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 - open cmd.exe and run **.\oh.bat -legacymode**
 - to see available options, open a cmd.exe window and run **.\oh.bat -h**
 
-### Options 
+# Options 
 
 - **C**    start Open Hospital in CLIENT mode, usually when you have an external database server (Client / Server configuration)
 - **d**    start OH in DEBUG mode - useful to debug errors or bugs by logging more extended informations to log file
@@ -122,7 +145,7 @@ This might also be useful to set different combinations of options (language, de
 - Distribution type, language and debug level:
 
 ```
-OH_DISTRO=PORTABLE # set distro to PORTABLE | CLIENT
+OH_MODE=PORTABLE # set functioning mode to PORTABLE | CLIENT
 DEMO_MODE=off
 ```
 
@@ -154,6 +177,7 @@ DATABASE_PASSWORD="xxxxxxx"
 DICOM_MAX_SIZE="4M"
 ```
 
+
 - File names and directory structure:
 ```
 OH_DIR=oh
@@ -181,21 +205,20 @@ MANUAL_CONFIG=off
 ```
 
 - Enable system wide JAVA:
-
 ```
 ######## set JAVA_BIN
 # Uncomment this if you want to use system wide JAVA
 #JAVA_BIN=`which java`
+
 ```
 
 - (Windows only) enable / disable DICOM features
-
 ```
 # enable / disable DICOM (true|false)
 #$script:DICOM_ENABLE="false"
 ```
 
-## Default directory structure
+# Default directory structure
 
 The scripts takes care of creating all the needed data directories and configuration files.
 Everything is also parametric and user adjustable in the scripts with variables (or via command line options).
@@ -206,9 +229,7 @@ The default is now clean, simple and **common to all distros:**
 /sql -> containing the SQL creation scripta
 /etc -> configuration files for database (MySQL)
 ```
-
 Created at runtime:
-
 ```
 /tmp 
 /data
@@ -216,7 +237,6 @@ data/db
 data/log
 data/dicom_storage
 ```
-
 External software package downloaded at first run:
 
 ```
@@ -224,7 +244,9 @@ Mariadb 10.2.x server
 OpenJDK JRE 11
 ```
 
-## Known issues
+# Known issues
+
+If you experience problems in starting up the script, avoid long folder path and path with special characters / spaces in it.
 
 **Linux**
 
@@ -241,7 +263,6 @@ sudo apt-get install libncurses5
 ```
 
 - If you get this error:
-
 ```
 Error Initializing MySQL database on port 3306 error while loading shared libraries: libaio.so.1. I had to install it manually and re-launch the script.
 ```
@@ -268,11 +289,9 @@ If you get this error:
 
 - Start Windows PowerShell with the "Run as Administrator" option. Only members of the Administrators group on the computer can change the execution policy.
 Enable running unsigned scripts by entering:
-
 ```
 set-executionpolicy remotesigned
 ```
-
 - You might also be required to enable access to oh.ps1 on Windows Firewall.
 
 **Windows - legacy mode**
@@ -302,12 +321,12 @@ In order to download and unzip mysql (mariadb):
 - Download the zip file:
 
 
-**x86 - 32bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.39/win32-packages/mariadb-10.2.39-win32.zip
-**x64 - 64bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.39/winx64-packages/mariadb-10.2.39-winx64.zip
+**x86 - 32bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.40/win32-packages/mariadb-10.2.40-win32.zip
+**x64 - 64bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.40/winx64-packages/mariadb-10.2.40-winx64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
-## oh.sh / oh.ps1 - features and development
+# oh.sh / oh.ps1 - features and development
 
 In order to have a complete, easy to support and extensible solution to run Open Hospital on Linux, oh.sh has been rewritten, also adding a few possible useful user functions.
 For the same reason, a completely new powershell script has been writtend for Windows: oh.ps1 (run by oh.bat).
@@ -325,7 +344,7 @@ A short description of changes for the Linux version (mostly the same behavior a
 - **New**: Language support (both via variable in the script or user input option: **oh.sh -l fr**)
 - **New**: Demo database support (See oh.sh -D)
 - **New**: Client mode support (see oh.sh -C)
-- **New**: Save (see oh.sh -s) / Restore (oh.sh -r) database, available also for Portable mode !
+- **New**: Save (see oh.sh -s) / Restore (oh.sh -r) database, available both for CLIENT and PORTABLE mode !
 - **New**: GSM setup integrated via -G command line option - setupGSM.sh (https://github.com/informatici/openhospital-gui/blob/develop/SetupGSM.sh) is obsolete now
 - **New**: debug mode -> set log4.properties to DEBUG mode (default is INFO)
 - **New**: manual config mode (set MANUAL_CONFIG=on in script) -> mysql and oh configuration files are not generated automatically or overwritten, useful for testing
@@ -341,7 +360,29 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Added sql subdirectory to organize sql creation scripts
 - Added various checks about correct settings of parameters and startup of services
 - Added security controls (no more _rm -rf_ here and there :-)
-- Added support for **MariaDB** - (tested with version up to mariadb-10.2.39) (OH seems faster and more responsive)
+- Added support for **MariaDB** - (tested with version up to mariadb-10.2.40) (OH seems faster and more responsive)
 - Windows -> addedd support for path with spaces / special characters 
 - Updated MySQL db and user creation syntax (now compatible with MySQL 8 - unsupported)
 - Fixed _a_few_ bugs ;-)
+
+
+For more informations see:
+https://github.com/informatici/openhospital/pull/149
+
+https://github.com/informatici/openhospital/pull/143
+
+https://github.com/informatici/openhospital/pull/142
+
+And also:
+https://github.com/informatici/openhospital-core/pull/241
+
+
+Comments, suggestions and requests are welcome !
+
+
+
+Bugs, issues and feature requests should be reported on
+our repository on GitHub: https://github.com/informatici/openhospital
+
+*last updated: 2021.08.17*
+
