@@ -343,23 +343,5 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Fixed _a_few_ bugs ;-)
 
 
-For more informations see:
-https://github.com/informatici/openhospital/pull/149
-
-https://github.com/informatici/openhospital/pull/143
-
-https://github.com/informatici/openhospital/pull/142
-
-And also:
-https://github.com/informatici/openhospital-core/pull/241
-
-
-Comments, suggestions and requests are welcome !
-
-
-
-Bugs, issues and feature requests should be reported on
-our repository on GitHub: https://github.com/informatici/openhospital
-
-*last updated: 2021.08.17*
+*last updated: 2021.08.20*
 
