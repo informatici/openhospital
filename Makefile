@@ -116,9 +116,9 @@ doc:
 # Compile documentation
 docs-all: doc oh-admin-manual.pdf oh-user-manual.pdf
 oh-admin-manual.pdf: openhospital-doc
-	asciidoctor-pdf ./openhospital-doc/doc_admin/AdminManual.adoc -a allow-uri-read -o AdminManual.pdf
+	asciidoctor-pdf ./openhospital-doc/doc_admin/AdminManual.adoc -a allow-uri-read -o AdminManual.pdf -v
 oh-user-manual.pdf: openhospital-doc
-	asciidoctor-pdf ./openhospital-doc/doc_user/UserManual.adoc -o UserManual.pdf
+	asciidoctor-pdf ./openhospital-doc/doc_user/UserManual.adoc -o UserManual.pdf -v
 
 # Create changelog file
 CHANGELOG: core
