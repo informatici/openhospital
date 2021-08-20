@@ -19,30 +19,7 @@ The Windows version has been tested on Windows 10.
 
 **This repo is experimental and is used to test the latest Open Hospital releases and features. Use at your own risk !**
 
-# Running OH - Ultra-quickstart
-
-**on Linux:**
-
-To download and launch the Open Hospital package contained in this distribution open a shell and type (or copy and paste):
-
-```
-bash <(wget -qO- https://raw.githubusercontent.com/mizzioisf/openhospital-client/main/go.sh)
-```
-
 # Running OH - Quickstart
-
-**Common to all Operating Systems / architectures:**
-
-*(see OH downloads on sourceforce for full release packages)*
-
-- clone the repository with git:
-```
-git clone https://github.com/mizzioisf/openhospital-client
-```
-- browse to the directory:
-```
-cd openhospital-client
-```
 
 **on Linux:**
 
