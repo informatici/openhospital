@@ -32,7 +32,7 @@
 # OH_PATH is the directory where Open Hospital files are located
 # OH_PATH=/usr/local/OpenHospital/oh-1.11
 
-OH_DISTRO=PORTABLE # set distro to PORTABLE | CLIENT
+OH_MODE=PORTABLE # set functioning mode to PORTABLE | CLIENT
 DEMO_MODE=off
 
 # Language setting - default set to en
@@ -70,7 +70,7 @@ OH_LOG_FILE=openhospital.log
 ## set MANUAL_CONFIG to "on" to setup configuration files manually
 # my.cnf and all oh/rsc/*.properties files will not be generated or
 # overwritten if already present
-MANUAL_CONFIG=off 
+MANUAL_CONFIG=off
 
 ######## set JAVA_BIN
 # Uncomment this if you want to use system wide JAVA
@@ -95,12 +95,12 @@ esac
 ######## MySQL Software
 EXT="tar.gz"
 # MariaDB
-MYSQL_VERSION="10.2.39"
+MYSQL_VERSION="10.2.40"
 MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-$MYSQL_VERSION/bintar-linux-x86_64"
 MYSQL_DIR="mariadb-$MYSQL_VERSION-linux-$ARCH"
 # MySQL
 #MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
-#MYSQL_DIR="mysql-5.7.34-linux-glibc2.12-$ARCH"
+#MYSQL_DIR="mysql-5.7.35-linux-glibc2.12-$ARCH"
 
 ######## JAVA Software
 ######## JAVA 64bit - default architecture
@@ -109,12 +109,12 @@ MYSQL_DIR="mariadb-$MYSQL_VERSION-linux-$ARCH"
 #JAVA_URL="https://builds.openlogic.com/downloadJDK/openlogic-openjdk-jre/8u262-b10/"
 #JAVA_DIR="openlogic-openjdk-jre-8u262-b10-linux-64"
 
-### JRE 11 - zulu
+### JRE 11 - zulu distribution
 #JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-linux_x64"
 #JAVA_URL="https://cdn.azul.com/zulu/bin"
 #JAVA_DIR="zulu11.45.27-ca-jre11.0.9-linux_x64"
 
-### JRE 11 - openjdk
+### JRE 11 - openjdk distribution
 JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9"
 JAVA_DISTRO="OpenJDK11U-jre_x64_linux_hotspot_11.0.11_9"
 JAVA_DIR="jdk-11.0.11+9-jre"
@@ -152,7 +152,7 @@ function script_usage {
         echo "|                   Open Hospital | OH                    |"
         echo "|                                                         |"
         echo " ---------------------------------------------------------"
-        echo " lang $OH_LANGUAGE | arch $ARCH | mode $OH_DISTRO        "
+        echo " lang $OH_LANGUAGE | arch $ARCH | mode $OH_MODE           "
         echo " ---------------------------------------------------------"
         echo ""
         echo " Usage: $SCRIPT_NAME [ -l en|fr|it|es|pt ] "
@@ -182,9 +182,11 @@ function get_confirmation {
 }
 
 function set_path {
+	# get current directory
+	CURRENT_DIR=$PWD
 	# set OH_PATH if not defined
 	if [ -z ${OH_PATH+x} ]; then
-		echo "Info: OH_PATH not defined"
+		echo "Info: OH_PATH not defined - setting to script path"
 
 		# set OH_PATH to script path
 		OH_PATH=$(dirname "$(realpath "$0")")
@@ -193,7 +195,6 @@ function set_path {
 			echo "Error - $SCRIPT_NAME not found in the current PATH. Please browse to the directory where Open Hospital was unzipped or set up OH_PATH properly."
 			exit 1
 		fi
-		# echo "OH_PATH set to $OH_PATH"
 	fi
 	OH_PATH_ESCAPED=$(echo $OH_PATH | sed -e 's/\//\\\//g')
 	DATA_DIR_ESCAPED=$(echo $DATA_DIR | sed -e 's/\//\\\//g')
@@ -263,7 +264,7 @@ function java_lib_setup {
 
 function java_check {
 if [ -z ${JAVA_BIN+x} ]; then
-	JAVA_BIN=./$JAVA_DIR/bin/java
+	JAVA_BIN="$OH_PATH/$JAVA_DIR/bin/java"
 fi
 
 if [ ! -x $JAVA_BIN ]; then
@@ -286,8 +287,8 @@ if [ ! -x $JAVA_BIN ]; then
 		echo "Done!"
 	fi
 # check for java binary
-if [ -x ./$JAVA_DIR/bin/java ]; then
-	JAVA_BIN=./$JAVA_DIR/bin/java
+if [ -x "$OH_PATH/$JAVA_DIR/bin/java" ]; then
+	JAVA_BIN="$OH_PATH/$JAVA_DIR/bin/java"
 	echo "JAVA found!"
 	echo "Using $JAVA_DIR"
 else 
@@ -416,11 +417,12 @@ function import_database {
 
 	# Create OH database structure
 	echo "Importing database schema $DB_CREATE_SQL..."
-	cd ./$SQL_DIR
+	cd "./$SQL_DIR"
 	../$MYSQL_DIR/bin/mysql --local-infile=1 -u root -p$MYSQL_ROOT_PW --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp $DATABASE_NAME < ./$DB_CREATE_SQL >> ../$LOG_DIR/$LOG_FILE 2>&1
 	if [ $? -ne 0 ]; then
 		echo "Error: Database not imported! Exiting."
 		shutdown_database;
+		cd "$CURRENT_DIR"
 		exit 2
 	fi
 	echo "Database imported!"
@@ -429,18 +431,20 @@ function import_database {
 
 function dump_database {
 	# Save OH database if existing
-	if [ -x "./$MYSQL_DIR/bin/mysqldump" ]; then
+	if [ -x ./$MYSQL_DIR/bin/mysqldump ]; then
 		mkdir -p "$OH_PATH/$BACKUP_DIR"
 		echo "Dumping MySQL database..."
 		./$MYSQL_DIR/bin/mysqldump --skip-extended-insert -u root --password=$MYSQL_ROOT_PW --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp $DATABASE_NAME > ./$BACKUP_DIR/mysqldump_$DATE.sql
 		if [ $? -ne 0 ]; then
 			echo "Error: Database not dumped! Exiting."
+			cd "$CURRENT_DIR"
 			shutdown_database;
 			exit 2
 		fi
 	else
 		echo "Error: No mysqldump utility found! Exiting."
 		shutdown_database;
+		cd "$CURRENT_DIR"
 		exit 2
 	fi
 	echo "MySQL dump file $BACKUP_DIR/mysqldump_$DATE.sql completed!"
@@ -518,9 +522,8 @@ fi
 set_path;
 set_language;
 
-# set working dir to oh base dir
+# set working dir to OH base dir
 cd "$OH_PATH"
-
 
 ######## User input
 
@@ -538,15 +541,15 @@ while getopts ${OPTSTRING} opt; do
 		echo "Log level set to $LOG_LEVEL"
 		;;
 	C)	# start in CLIENT mode
-		OH_DISTRO=CLIENT
+		OH_MODE="CLIENT"
 		;;
 	D)	# demo mode
         	echo "Starting Open Hospital in DEMO mode..."
 		# exit if OH is configured in CLIENT mode
-		if [ $OH_DISTRO = "CLIENT" ]; then
-			echo "Error - OH_DISTRO set to CLIENT mode. Cannot run in DEMO mode, exiting."
+		if [ $OH_MODE = "CLIENT" ]; then
+			echo "Error - OH_MODE set to CLIENT mode. Cannot run in DEMO mode, exiting."
 			exit 1;
-		else OH_DISTRO="PORTABLE"
+		else OH_MODE="PORTABLE"
 		fi
 		DEMO_MODE="on"
 		;;
@@ -558,22 +561,31 @@ while getopts ${OPTSTRING} opt; do
 		set_language;
 		;;
 	s)	# save database
-		# check if database already exists
-		if [ -d ./"$DATA_DIR"/$DATABASE_NAME ]; then
-			mysql_check;
-			if [ $MANUAL_CONFIG != "on" ]; then
-				config_database;
+		# check if portable mode is on
+		if [ $OH_MODE = "PORTABLE" ]; then
+			# check if database already exists
+			if [ -d ./"$DATA_DIR"/$DATABASE_NAME ]; then
+				mysql_check;
+				if [ $MANUAL_CONFIG = "off" ]; then
+					config_database;
+				fi
+			else
+	        		echo "Error: no data found! Exiting."
+				exit 1
 			fi
 			start_database;
-	        	echo "Saving Open Hospital database..."
+			echo "Saving Open Hospital database..."
 			dump_database;
 			shutdown_database;
 	        	echo "Done!"
 			exit 0
-		else
-	        	echo "Error: no data found! Exiting."
-			exit 1
 		fi
+		# Dump remote database for CLIENT mode configuration
+		test_database_connection;
+		echo "Saving Open Hospital database..."
+		dump_database;
+        	echo "Done!"
+		exit 0
 		;;
 	r)	# restore 
         	echo "Restoring Open Hospital database...."
@@ -584,7 +596,7 @@ while getopts ${OPTSTRING} opt; do
 			# reset database if exists
 			clean_database;
 			mysql_check;
-			if [ $MANUAL_CONFIG != "on" ]; then
+			if [ $MANUAL_CONFIG = "off" ]; then
 				config_database;
 			fi
 			initialize_database;
@@ -601,7 +613,7 @@ while getopts ${OPTSTRING} opt; do
         	# normal startup from here
 		;;
 	t)	# test database connection
-		if [ $OH_DISTRO = PORTABLE ]; then
+		if [ $OH_MODE = "PORTABLE" ]; then
 			echo "Error: Only for CLIENT mode. Exiting."
 			exit 1
 		fi
@@ -626,7 +638,7 @@ while getopts ${OPTSTRING} opt; do
 		# show configuration
         	echo "--------- Configuration ---------"
         	echo "Architecture is $ARCH"
-		echo "Open Hospital is configured in $OH_DISTRO mode"
+		echo "Open Hospital is configured in $OH_MODE mode"
 		echo "Language is set to $OH_LANGUAGE"
 		echo "DEMO mode is set to $DEMO_MODE"
         	echo ""
@@ -664,17 +676,17 @@ done
 
 ######################## OH start ########################
 
-# check distro
-if [ -z ${OH_DISTRO+x} ]; then
-	echo "Error - OH_DISTRO not defined [CLIENT - PORTABLE]! Exiting."
+# check mode
+if [ -z ${OH_MODE+x} ]; then
+	echo "Error - OH_MODE not defined [CLIENT - PORTABLE]! Exiting."
 	exit 1
 fi
 
 # check for demo mode
 if [ $DEMO_MODE = "on" ]; then
 	# exit if OH is configured in CLIENT mode
-	if [ $OH_DISTRO = "CLIENT" ]; then
-		echo "Error - OH_DISTRO set to CLIENT mode. Cannot run in DEMO mode, exiting."
+	if [ $OH_MODE = "CLIENT" ]; then
+		echo "Error - OH_MODE set to CLIENT mode. Cannot run in DEMO mode, exiting."
 		exit 1;
 	fi
 
@@ -690,7 +702,7 @@ if [ $DEMO_MODE = "on" ]; then
 	fi
 fi
 
-echo "Starting Open Hospital in $OH_DISTRO mode..."
+echo "Starting Open Hospital in $OH_MODE mode..."
 echo "OH_PATH set to $OH_PATH"
 echo "OH language is set to $OH_LANGUAGE"
 
@@ -703,11 +715,11 @@ java_lib_setup;
 ######## Database setup
 
 # Start MySQL and create database
-if [ $OH_DISTRO = PORTABLE ]; then
+if [ $OH_MODE = "PORTABLE" ]; then
 	# Check for MySQL software
 	mysql_check;
 	# Config MySQL
-	if [ $MANUAL_CONFIG != "on" ]; then
+	if [ $MANUAL_CONFIG = "off" ]; then
 		config_database;
 	fi
 	# Check if OH database already exists
@@ -731,7 +743,7 @@ fi
 # test if database connection is working
 test_database_connection;
 
-if [ $MANUAL_CONFIG != "on" ]; then
+if [ $MANUAL_CONFIG = "off" ]; then
 
 	# set up configuration files
 	echo "Setting up OH configuration files..."
@@ -766,20 +778,25 @@ fi
 echo "Starting Open Hospital..."
 
 # OH GUI launch
-cd "$OH_DIR" # workaround for hard coded paths
-../$JAVA_BIN -client -Dsun.java2d.dpiaware=false -Djava.library.path=${NATIVE_LIB_PATH} -classpath $OH_CLASSPATH org.isf.menu.gui.Menu >> ../$LOG_DIR/$LOG_FILE 2>&1
+cd "$OH_PATH/$OH_DIR" # workaround for hard coded paths
+
+$JAVA_BIN -client -Dsun.java2d.dpiaware=false -Djava.library.path=${NATIVE_LIB_PATH} -classpath $OH_CLASSPATH org.isf.menu.gui.Menu >> ../$LOG_DIR/$LOG_FILE 2>&1
 
 if [ $? -ne 0 ]; then
 	echo "An error occurred while starting Open Hospital. Exiting."
 	shutdown_database;
+	cd "$CURRENT_DIR"
 	exit 4
 fi
 
 echo "Exiting Open Hospital..."
 
-if [ $OH_DISTRO = PORTABLE ]; then
+if [ $OH_MODE = "PORTABLE" ]; then
 	shutdown_database;
 fi
+
+# go back to starting directory
+cd "$CURRENT_DIR"
 
 # exiting
 echo "Done!"
