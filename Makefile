@@ -73,7 +73,7 @@ $(WIN32).zip: compile-all dw-all
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
 	cp -a ./openhospital-core/sql $(WIN32)/
 	rm -rf $(WIN32)/oh/generate_changelog.sh
-	cp POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN32)
+	cp OH-README.md OH-win-changelog.md LICENSE CHANGELOG $(WIN32)
 	cp *.pdf $(WIN32)/oh/doc
 	zip -r $(WIN32).zip $(WIN32)
 
@@ -85,7 +85,7 @@ $(LINUX32).tar.gz: compile-all dw-all
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
 	cp -a ./openhospital-core/sql $(LINUX32)/
 	rm -rf $(LINUX32)/oh/generate_changelog.sh
-	cp POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
+	cp OH-README.md OH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
 	cp *.pdf $(LINUX32)/oh/doc
 	tar -cvzf $(LINUX32).tar.gz $(LINUX32)
 
@@ -97,7 +97,7 @@ $(LINUX64).tar.gz: compile-all dw-all
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
 	cp -a ./openhospital-core/sql $(LINUX64)/
 	rm -rf $(LINUX64)/oh/generate_changelog.sh
-	cp POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
+	cp OH-README.md OH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
 	cp *.pdf $(LINUX64)/oh/doc
 	tar -cvzf $(LINUX64).tar.gz $(LINUX64)
 
