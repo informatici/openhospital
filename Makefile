@@ -59,6 +59,7 @@ $(CLIENT).zip: compile-all
 	mkdir -p $(CLIENT)/doc
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(CLIENT)
 	cp -rf ./openhospital-core/sql $(CLIENT)/
+	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
 	rm -rf $(CLIENT)/generate_changelog.sh
 	cp LICENSE $(CLIENT)
 	cp CHANGELOG $(CLIENT)
@@ -72,6 +73,7 @@ $(WIN32).zip: compile-all dw-all
 	unzip $(MYSQL_WIN) -d $(WIN32) -x "*/lib/*"
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
 	cp -a ./openhospital-core/sql $(WIN32)/
+	cp -f ./openhospital-gui/oh.ico $(WIN32)/
 	rm -rf $(WIN32)/oh/generate_changelog.sh
 	cp OH-README.md OH-win-changelog.md LICENSE CHANGELOG $(WIN32)
 	cp *.pdf $(WIN32)/oh/doc
@@ -84,6 +86,7 @@ $(LINUX32).tar.gz: compile-all dw-all
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
 	cp -a ./openhospital-core/sql $(LINUX32)/
+	cp -f ./openhospital-gui/oh.ico $(LINUX32)/
 	rm -rf $(LINUX32)/oh/generate_changelog.sh
 	cp OH-README.md OH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
 	cp *.pdf $(LINUX32)/oh/doc
@@ -96,6 +99,7 @@ $(LINUX64).tar.gz: compile-all dw-all
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
 	cp -a ./openhospital-core/sql $(LINUX64)/
+	cp -f ./openhospital-gui/oh.ico $(LINUX64)/
 	rm -rf $(LINUX64)/oh/generate_changelog.sh
 	cp OH-README.md OH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
 	cp *.pdf $(LINUX64)/oh/doc
