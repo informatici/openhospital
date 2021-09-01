@@ -21,6 +21,7 @@ JRE_LINUX64 := jre-linux64.tar.gz
 MYSQL_WIN := mysql-win.zip
 MYSQL_LINUX32 := mysql-linux32.tar.gz
 MYSQL_LINUX64 := mysql-linux64.tar.gz
+MYSQL_VERSION := 10.2.40
 
 .PHONY: clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile-all docs-all
 
@@ -143,8 +144,8 @@ $(JRE_LINUX64):
 $(JRE_WIN):
 	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip -O $(JRE_WIN)
 $(MYSQL_LINUX32):
-	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.39/bintar-linux-x86/mariadb-10.2.39-linux-i686.tar.gz -O $(MYSQL_LINUX32)
+	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-$(MYSQL_VERSION)/bintar-linux-x86/mariadb-$(MYSQL_VERSION)-linux-i686.tar.gz -O $(MYSQL_LINUX32)
 $(MYSQL_LINUX64):
-	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.39/bintar-linux-x86_64/mariadb-10.2.39-linux-x86_64.tar.gz -O $(MYSQL_LINUX64)
+	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-$(MYSQL_VERSION)/bintar-linux-x86_64/mariadb-$(MYSQL_VERSION)-linux-x86_64.tar.gz -O $(MYSQL_LINUX64)
 $(MYSQL_WIN):
-	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.39/winx64-packages/mariadb-10.2.39-winx64.zip -O $(MYSQL_WIN)
+	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-$(MYSQL_VERSION)/winx64-packages/mariadb-$(MYSQL_VERSION)-winx64.zip -O $(MYSQL_WIN)
