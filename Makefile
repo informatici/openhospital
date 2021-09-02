@@ -56,6 +56,7 @@ release-files: $(CLIENT).zip $(WIN32).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
 	ls release-files
 
 $(CLIENT).zip: compile-all
+	mkdir -p $(CLIENT)/oh
 	mkdir -p $(CLIENT)/doc
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(CLIENT)/oh
 	cp -rf ./openhospital-core/sql $(CLIENT)/
