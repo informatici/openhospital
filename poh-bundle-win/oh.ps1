@@ -33,7 +33,7 @@ It can also be used to perform some basic operation like saving or importing a d
 
 Open Hospital CLIENT | PORTABLE
 Usage: oh.ps1 [ -lang en|fr|it|es|pt ] [default set to en]
-              [ -distro PORTABLE|CLIENT ]
+              [ -mode PORTABLE|CLIENT ]
               [ -debug INFO|DEBUG ] [default set to INFO]
 
 .EXAMPLE
@@ -55,10 +55,10 @@ https://www.open-hospital.org
 
 
 ######## Command line parameters
-param ($lang, $debuglevel, $distro)
+param ($lang, $debuglevel, $mode)
 $script:OH_LANGUAGE=$lang
 $script:LOG_LEVEL=$debuglevel
-$script:OH_DISTRO=$distro
+$script:OH_MODE=$mode
 
 ######## Global preferences
 # disable progress bar
@@ -68,7 +68,7 @@ $global:ProgressPreference= 'SilentlyContinue'
 # OH_PATH is the directory where Open Hospital files are located
 # OH_PATH="c:\Users\OH\OpenHospital\oh-1.11"
 
-$script:OH_DISTRO="PORTABLE"  # set distro to PORTABLE | CLIENT
+$script:OH_MODE="PORTABLE"  # set functioning mode to PORTABLE | CLIENT
 #$script:DEMO_MODE="off"
 
 # Language setting - default set to en
@@ -100,7 +100,7 @@ $script:LOG_FILE="startup.log"
 $script:LOG_FILE_ERR="startup.err"
 $script:OH_LOG_FILE="openhospital.log"
 $script:TMP_DIR="tmp"
-$script:BACKUP_DIR="sql"
+$script:BACKUP_DIR="data/dump"
 
 $script:DB_DEMO="create_all_demo.sql"
 # date +%Y-%m-%d_%H-%M-%S
@@ -139,15 +139,19 @@ switch ( "$ARCH" ) {
 
 ######## MySQL Software
 # MariaDB
-$script:MYSQL_VERSION="10.2.39"
+$script:MYSQL_VERSION="10.2.40"
 $script:MYSQL_URL="http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-$script:MYSQL_VERSION/winx64-packages/"
 $script:MYSQL_DIR="mariadb-$script:MYSQL_VERSION-win$script:MYSQL_ARCH"
 # MySQL
-#$script:MYSQL_DIR="mysql-5.7.34-win$script:MYSQL_ARCH"
+#$script:MYSQL_DIR="mysql-5.7.35-win$script:MYSQL_ARCH"
 #$script:MYSQL_URL=" https://downloads.mysql.com/archives/get/p/23/file"
 $script:EXT="zip"
 
 ######## JAVA Software
+
+# Workaround to force 32bit JAVA in order to have DICOM working
+$script:JAVA_ARCH=32
+
 ######## JAVA 64bit - default architecture
 ### JRE 11 - zulu
 #$script:JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-win_i686"
@@ -163,15 +167,15 @@ $script:JAVA_DIR="jdk-11.0.11+9-jre"
 # DICOM workaround - force JAVA_ARCH to 32 bit
 if ( $JAVA_ARCH -eq "32" -Or $DICOM_ENABLE -eq "true" ) {
 	# Setting JRE 32 bit
-	### JRE 8 - zulu 32bit
-	#$script:JAVA_DISTRO="zulu8.52.0.23-ca-jre8.0.282-win_i686"
-	#$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
-	#$script:JAVA_DIR="zulu8.52.0.23-ca-jre8.0.282-win_i686"
-
-	### JRE 11 32bit
-	$script:JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-win_i686"
+	### JRE 8 32bit - zulu distribution
+	$script:JAVA_DISTRO="zulu8.56.0.21-ca-jre8.0.302-win_i686"
 	$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
-	$script:JAVA_DIR="zulu11.45.27-ca-jre11.0.10-win_i686"
+	$script:JAVA_DIR="$JAVA_DISTRO"
+
+	### JRE 11 32bit - zulu distribution
+	#$script:JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-win_i686"
+	#$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
+	#$script:JAVA_DIR="zulu11.45.27-ca-jre11.0.10-win_i686"
 }
 
 ######## get script info
@@ -193,11 +197,11 @@ function script_menu {
 	Write-Host "|                   Open Hospital | OH                    |"
 	Write-Host "|                                                         |"
 	Write-Host " ---------------------------------------------------------"
-	Write-Host " lang $script:OH_LANGUAGE | arch $ARCH | mode $OH_DISTRO"
+	Write-Host " lang $script:OH_LANGUAGE | arch $ARCH | mode $OH_MODE"
 	Write-Host " ---------------------------------------------------------"
 	Write-Host ""
 	Write-Host " Usage: $SCRIPT_NAME [ -lang en|fr|it|es|pt ] "
-	Write-Host "               [ -distro PORTABLE|CLIENT ]"
+	Write-Host "               [ -mode PORTABLE|CLIENT ]"
 	Write-Host "               [ -debug INFO|DEBUG ] "
 	Write-Host ""
 	Write-Host "   C    start OH - CLIENT mode (Client / Server configuration)"
@@ -224,18 +228,17 @@ function get_confirmation {
 }
 
 function set_path {
-	# set current dir
+	# get current directory
 	$script:CURRENT_DIR=Get-Location | select -ExpandProperty Path
 	# set OH_PATH if not defined
 	if ( ! $OH_PATH ) {
-		Write-Host "Info: OH_PATH not defined"
-		$script:OH_PATH=$CURRENT_DIR
+		Write-Host "Info: OH_PATH not defined - setting to script path"
+		$script:OH_PATH=$PSScriptRoot
 		if ( !(Test-Path "$OH_PATH\$SCRIPT_NAME") ) {
 			Write-Host "Error - $SCRIPT_NAME not found in the current PATH. Please browse to the directory where Open Hospital was unzipped or set up OH_PATH properly." -ForegroundColor Yellow
 			Read-Host; exit 1
 		}
 	}
-#	$OH_PATH_ESCAPED=$OH_PATH -replace ' ',`' '
 }
 
 function set_language {
@@ -490,12 +493,12 @@ function import_database {
 	}
 
 	# Create OH database structure
-	Write-Host "Importing database schema $DB_CREATE_SQL..."
+	Write-Host "Importing database schema..."
 	
-	cd "$OH_PATH\$SQL_DIR"
+	cd "./$SQL_DIR"
 
     $SQLCOMMAND=@"
-   --local-infile=1 -u root -p$MYSQL_ROOT_PW -h $MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp $DATABASE_NAME -e "source $OH_PATH\$SQL_DIR\$DB_CREATE_SQL"
+   --local-infile=1 -u root -p$MYSQL_ROOT_PW -h $MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp $DATABASE_NAME -e "source ./$DB_CREATE_SQL"
 "@
 	try {
 		Start-Process -FilePath "$OH_PATH\$MYSQL_DIR\bin\mysql.exe" -ArgumentList ("$SQLCOMMAND") -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
@@ -507,11 +510,13 @@ function import_database {
 		Read-Host; exit 2
 	}
 	Write-Host "Database imported!"
+	cd "$OH_PATH"
 }
 
 function dump_database {
 	# Save OH database if existing
 	if ( Test-Path "$OH_PATH\$MYSQL_DIR\bin\mysqldump.exe" ) {
+		[System.IO.Directory]::CreateDirectory("$OH_PATH/$BACKUP_DIR") > $null
 		Write-Host "Dumping MySQL database..."	
         $SQLCOMMAND=@"
     --skip-extended-insert -u root --password=$MYSQL_ROOT_PW -h $MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp $DATABASE_NAME
@@ -521,6 +526,7 @@ function dump_database {
 	else {
 		Write-Host "Error: No mysqldump utility found! Exiting." -ForegroundColor Red
 		shutdown_database;
+		cd "$CURRENT_DIR"
 		Read-Host; exit 2
 	}
 	Write-Host "MySQL dump file $BACKUP_DIR\mysqldump_$DATE.sql completed!" -ForegroundColor Green
@@ -606,18 +612,21 @@ if ( [string]::IsNullOrEmpty($LOG_LEVEL) ) {
 set_path;
 set_language;
 
+# set working dir to OH base dir
+cd "$OH_PATH" # workaround for hard coded paths
+
 ######## User input
 
 # If INTERACTIVE_MODE is set to "off" don't ask for user input
 if ( $INTERACTIVE_MODE -eq "on") {
 	script_menu;
-	$opt = Read-Host "Please make a selection or press any other key to start Open Hospital in $OH_DISTRO mode"
+	$opt = Read-Host "Please make a selection or press any other key to start Open Hospital in $OH_MODE mode"
 	Write-Host ""
 
 	# parse_input
 	switch -casesensitive( "$opt" ) {
 	"C"	{ # start in client mode 
-		$script:OH_DISTRO="CLIENT"
+		$script:OH_MODE="CLIENT"
 	}
 	"d"	{ # debug 
            	Write-Host "Starting Open Hospital in debug mode..."
@@ -627,12 +636,12 @@ if ( $INTERACTIVE_MODE -eq "on") {
 	"D"	{ # demo mode 
 		Write-Host "Starting Open Hospital in DEMO mode..."
 		# exit if OH is configured in CLIENT mode
-		if ( $OH_DISTRO -eq "CLIENT" ) {
-			Write-Host "Error - OH_DISTRO set to CLIENT mode. Cannot run in DEMO mode, exiting." -ForeGroundcolor Red
+		if ( $OH_MODE -eq "CLIENT" ) {
+			Write-Host "Error - OH_MODE set to CLIENT mode. Cannot run in DEMO mode, exiting." -ForeGroundcolor Red
 			Read-Host;
 			exit 1;
 		}
-		else { $script:OH_DISTRO="PORTABLE" }
+		else { $script:OH_MODE="PORTABLE" }
 		$DEMO_MODE="on"
 	}
 	"G"	{ # set up GSM 
@@ -648,12 +657,19 @@ if ( $INTERACTIVE_MODE -eq "on") {
 		set_language;
 	}
 	"s"	{ # save database 
-		# check if database already exists
-	        Write-host "$OH_PATH\$DATA_DIR\$DATABASE_NAME"
-		if ( Test-Path "$OH_PATH\$DATA_DIR\$DATABASE_NAME" ) {
-			mysql_check;
-			if ($MANUAL_CONFIG -eq "on" ) {
-				config_database;
+		# check if portable mode is on
+
+		if ( $OH_MODE -eq "PORTABLE" ) {
+			# check if database already exists
+			if ( Test-Path "$OH_PATH\$DATA_DIR\$DATABASE_NAME" ) {
+				mysql_check;
+				if ($MANUAL_CONFIG -eq "off" ) {
+					config_database;
+				}
+			}
+			else {
+		        	Write-Host "Error: no data found! Exiting." -ForegroundColor Red
+				Read-Host; exit 1
 			}
 			start_database;
 			Write-Host "Saving Open Hospital database..."
@@ -663,10 +679,12 @@ if ( $INTERACTIVE_MODE -eq "on") {
 			Read-Host;
 			exit 0
 		}
-		else {
-	        	Write-Host "Error: no data found! Exiting." -ForegroundColor Red
-			Read-Host; exit 1
-		}
+		# Dump remote database for CLIENT mode configuration
+		test_database_connection;
+		echo "Saving Open Hospital database..."
+		dump_database;
+		Write-Host "Done!"
+                exit 0
 	}
 	"r"	{ # restore
 	       	Write-Host "Restoring Open Hospital database...."
@@ -677,7 +695,7 @@ if ( $INTERACTIVE_MODE -eq "on") {
 			# reset database if exists
 			clean_database;
 			mysql_check;
-			if ($MANUAL_CONFIG -eq "on" ) {
+			if ($MANUAL_CONFIG -eq "off" ) {
 				config_database;
 			}
 			initialize_database;
@@ -695,7 +713,7 @@ if ( $INTERACTIVE_MODE -eq "on") {
         	Read-Host; exit 0
 	}
 	"t"	{ # test database connection 
-		if ( !($OH_DISTRO -eq "CLIENT") ) {
+		if ( !($OH_MODE -eq "CLIENT") ) {
 			Write-Host "Error: Only for CLIENT mode. Exiting." -ForegroundColor Red
 			Read-Host; exit 1
 		}
@@ -718,7 +736,7 @@ if ( $INTERACTIVE_MODE -eq "on") {
 		# show configuration
  		Write-Host "--------- Configuration ---------"
  		Write-Host "Architecture is $ARCH"
- 		Write-Host "Open Hospital is configured in $OH_DISTRO mode"
+ 		Write-Host "Open Hospital is configured in $OH_MODE mode"
 		Write-Host "Language is set to $OH_LANGUAGE"
 		Write-Host "DEMO mode is set to $DEMO_MODE"
 		Write-Host ""
@@ -758,9 +776,9 @@ if ( $INTERACTIVE_MODE -eq "on") {
 
 Write-Host "Interactive mode set to $script:INTERACTIVE_MODE"
 
-# check distro
-if ( !( $OH_DISTRO -eq "PORTABLE" ) -And !( $OH_DISTRO -eq "CLIENT" ) ) {
-	Write-Host "Error - OH_DISTRO not defined [CLIENT - PORTABLE]! Exiting." -ForegroundColor Red
+# check mode 
+if ( !( $OH_MODE -eq "PORTABLE" ) -And !( $OH_MODE -eq "CLIENT" ) ) {
+	Write-Host "Error - OH_MODE not defined [CLIENT - PORTABLE]! Exiting." -ForegroundColor Red
 	Read-Host;
 	exit 1
 }
@@ -768,11 +786,11 @@ if ( !( $OH_DISTRO -eq "PORTABLE" ) -And !( $OH_DISTRO -eq "CLIENT" ) ) {
 # check demo mode
 if ( $DEMO_MODE -eq "on" ) {
 	# exit if OH is configured in Client mode
-	if (( $OH_DISTRO -eq "CLIENT" )) {
-		Write-Host "Error - OH_DISTRO set to CLIENT mode. Cannot run in DEMO mode, exiting." -ForeGroundcolor Red
+	if (( $OH_MODE -eq "CLIENT" )) {
+		Write-Host "Error - OH_MODE set to CLIENT mode. Cannot run in DEMO mode, exiting." -ForeGroundcolor Red
 		Read-Host; 
 		exit 1
-		else { $script:OH_DISTRO="PORTABLE" }
+		else { $script:OH_MODE="PORTABLE" }
 	}
 	
 	# reset database if exists
@@ -789,7 +807,7 @@ if ( $DEMO_MODE -eq "on" ) {
 	}
 }
 
-Write-Host "Starting Open Hospital in $OH_DISTRO mode..."
+Write-Host "Starting Open Hospital in $OH_MODE mode..."
 Write-Host "OH_PATH set to $OH_PATH"
 Write-Host "OH language is set to $OH_LANGUAGE"
 
@@ -802,7 +820,7 @@ java_lib_setup;
 ######## Database setup
 
 # Start MySQL and create database
-if ( $OH_DISTRO -eq "PORTABLE" ) {
+if ( $OH_MODE -eq "PORTABLE" ) {
 	# Check for MySQL software
 	mysql_check;
 	# Config MySQL
@@ -889,7 +907,7 @@ Start-Process -FilePath "$JAVA_BIN" -ArgumentList $JAVA_ARGS -Wait -NoNewWindow 
 
 Write-Host "Exiting Open Hospital..."
 
-if ( $OH_DISTRO -eq "PORTABLE" ) {
+if ( $OH_MODE -eq "PORTABLE" ) {
 	shutdown_database;
 }
 

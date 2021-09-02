@@ -94,9 +94,6 @@ echo Legacy mode - Starting OH with oh.bat...
 REM ################### Configuration ###################
 set OH_PATH=%~dps0
 
-REM set OH_DISTRO="PORTABLE|CLIENT"
-REM set DEMO_MODE="off"
-
 REM # Language setting - default set to en
 REM set OH_LANGUAGE=en fr es it pt
 set OH_LANGUAGE=en
@@ -131,30 +128,30 @@ set OH_LOG_FILE=openhospital.log
 
 REM ######## MySQL Software
 REM # MariaDB 64bit
-REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.39/win32-packages/mariadb-10.2.39-winx64.zip
+REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.40/win32-packages/mariadb-10.2.40-winx64.zip
 REM # MySQL 64bit
-REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.34-winx64.zip
+REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.35-winx64.zip
 
 REM # MariaDB 32bit
-REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.37/win32-packages/mariadb-10.2.39-win32.zip
+REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.40/win32-packages/mariadb-10.2.40-win32.zip
 REM # MySQL 32bit
-REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.34-win32.zip
+REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.35-win32.zip
 
-REM set MYSQL_DIR=mysql-5.7.34-win32
-set MYSQL_DIR=mariadb-10.2.39-winx64
+REM set MYSQL_DIR=mysql-5.7.35-win32
+set MYSQL_DIR=mariadb-10.2.40-winx64
 
 REM ####### JAVA Software
 REM ######## JAVA 64bit - experimental architecture
-REM ### JRE 11 - openjdk
+REM ### JRE 11 - openjdk distribution
 REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
 REM set JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9.zip"
 
 REM ######## JAVA 32bit - default architecture
-REM ### JRE 11 - openjdk
+REM ### JRE 11 - openjdk distribution
 REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
 REM set JAVA_DISTRO="OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip"
 
-set JAVA_DIR=jdk-11.0.11+9-jre
+set JAVA_DIR=jdk-11.0.12+7-jre
 set JAVA_BIN=%OH_PATH%\%JAVA_DIR%\bin\java.exe
 
 set REPLACE_PATH=%OH_PATH%\%MYSQL_DIR%\bin
