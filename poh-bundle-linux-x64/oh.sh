@@ -416,7 +416,7 @@ function import_database {
 	fi
 
 	# Create OH database structure
-	echo "Importing database schema $DB_CREATE_SQL..."
+	echo "Importing database schema..."
 	cd "./$SQL_DIR"
 	../$MYSQL_DIR/bin/mysql --local-infile=1 -u root -p$MYSQL_ROOT_PW --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp $DATABASE_NAME < ./$DB_CREATE_SQL >> ../$LOG_DIR/$LOG_FILE 2>&1
 	if [ $? -ne 0 ]; then
