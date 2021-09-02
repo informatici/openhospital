@@ -57,17 +57,17 @@ release-files: $(CLIENT).zip $(WIN32).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
 
 $(CLIENT).zip: compile-all
 	mkdir -p $(CLIENT)/doc
-	cp -rf ./openhospital-gui/target/OpenHospital20/* $(CLIENT)
+	cp -rf ./openhospital-gui/target/OpenHospital20/* $(CLIENT)/oh
 	cp -rf ./openhospital-core/sql $(CLIENT)/
 	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
 	rm -rf $(CLIENT)/generate_changelog.sh
-	cp LICENSE $(CLIENT)
-	cp CHANGELOG $(CLIENT)
+	rm -rf $(CLIENT)/oh/README.md
+	cp OH-README.md LICENSE CHANGELOG $(CLIENT)
 	cp *.pdf $(CLIENT)/doc
 	zip -r $(CLIENT).zip $(CLIENT)
 
 $(WIN32).zip: compile-all dw-all
-	mkdir -p $(WIN32)/oh/doc
+	mkdir -p $(WIN32)/doc
 	cp -rf ./poh-bundle-win/* $(WIN32)
 	unzip $(JRE_WIN) -d $(WIN32)
 	unzip $(MYSQL_WIN) -d $(WIN32) -x "*/lib/*"
@@ -76,11 +76,11 @@ $(WIN32).zip: compile-all dw-all
 	cp -f ./openhospital-gui/oh.ico $(WIN32)/
 	rm -rf $(WIN32)/oh/generate_changelog.sh
 	cp OH-README.md OH-win-changelog.md LICENSE CHANGELOG $(WIN32)
-	cp *.pdf $(WIN32)/oh/doc
+	cp *.pdf $(WIN32)/doc
 	zip -r $(WIN32).zip $(WIN32)
 
 $(LINUX32).tar.gz: compile-all dw-all
-	mkdir -p $(LINUX32)/oh/doc
+	mkdir -p $(LINUX32)/doc
 	cp -rf ./poh-bundle-linux-x32/* $(LINUX32)
 	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
@@ -89,11 +89,11 @@ $(LINUX32).tar.gz: compile-all dw-all
 	cp -f ./openhospital-gui/oh.ico $(LINUX32)/
 	rm -rf $(LINUX32)/oh/generate_changelog.sh
 	cp OH-README.md OH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
-	cp *.pdf $(LINUX32)/oh/doc
+	cp *.pdf $(LINUX32)/doc
 	tar -cvzf $(LINUX32).tar.gz $(LINUX32)
 
 $(LINUX64).tar.gz: compile-all dw-all
-	mkdir -p $(LINUX64)/oh/doc
+	mkdir -p $(LINUX64)/doc
 	cp -rf ./poh-bundle-linux-x64/* $(LINUX64)
 	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
@@ -102,7 +102,7 @@ $(LINUX64).tar.gz: compile-all dw-all
 	cp -f ./openhospital-gui/oh.ico $(LINUX64)/
 	rm -rf $(LINUX64)/oh/generate_changelog.sh
 	cp OH-README.md OH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
-	cp *.pdf $(LINUX64)/oh/doc
+	cp *.pdf $(LINUX64)/doc
 	tar -cvzf $(LINUX64).tar.gz $(LINUX64)
 
 # Compile application binaries
