@@ -1,4 +1,4 @@
-0.0.x (11/2020)
+1.0.0 (09/2021)
 --------------
 - reworked entirely oh.sh startup script
 - unified for x32, x64, Portable and Client version of Open Hospital

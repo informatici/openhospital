@@ -21,6 +21,7 @@ JRE_LINUX64 := jre-linux64.tar.gz
 MYSQL_WIN := mysql-win.zip
 MYSQL_LINUX32 := mysql-linux32.tar.gz
 MYSQL_LINUX64 := mysql-linux64.tar.gz
+MYSQL_VERSION := 10.2.40
 
 .PHONY: clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile-all docs-all
 
@@ -58,6 +59,7 @@ $(CLIENT).zip: compile-all
 	mkdir -p $(CLIENT)/doc
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(CLIENT)
 	cp -rf ./openhospital-core/sql $(CLIENT)/
+	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
 	rm -rf $(CLIENT)/generate_changelog.sh
 	cp LICENSE $(CLIENT)
 	cp CHANGELOG $(CLIENT)
@@ -71,8 +73,9 @@ $(WIN32).zip: compile-all dw-all
 	unzip $(MYSQL_WIN) -d $(WIN32) -x "*/lib/*"
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
 	cp -a ./openhospital-core/sql $(WIN32)/
+	cp -f ./openhospital-gui/oh.ico $(WIN32)/
 	rm -rf $(WIN32)/oh/generate_changelog.sh
-	cp POH-README.md POH-win-changelog.md LICENSE CHANGELOG $(WIN32)
+	cp OH-README.md OH-win-changelog.md LICENSE CHANGELOG $(WIN32)
 	cp *.pdf $(WIN32)/oh/doc
 	zip -r $(WIN32).zip $(WIN32)
 
@@ -83,8 +86,9 @@ $(LINUX32).tar.gz: compile-all dw-all
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
 	cp -a ./openhospital-core/sql $(LINUX32)/
+	cp -f ./openhospital-gui/oh.ico $(LINUX32)/
 	rm -rf $(LINUX32)/oh/generate_changelog.sh
-	cp POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
+	cp OH-README.md OH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
 	cp *.pdf $(LINUX32)/oh/doc
 	tar -cvzf $(LINUX32).tar.gz $(LINUX32)
 
@@ -95,8 +99,9 @@ $(LINUX64).tar.gz: compile-all dw-all
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
 	cp -a ./openhospital-core/sql $(LINUX64)/
+	cp -f ./openhospital-gui/oh.ico $(LINUX64)/
 	rm -rf $(LINUX64)/oh/generate_changelog.sh
-	cp POH-README.md POH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
+	cp OH-README.md OH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
 	cp *.pdf $(LINUX64)/oh/doc
 	tar -cvzf $(LINUX64).tar.gz $(LINUX64)
 
@@ -143,8 +148,8 @@ $(JRE_LINUX64):
 $(JRE_WIN):
 	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip -O $(JRE_WIN)
 $(MYSQL_LINUX32):
-	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.39/bintar-linux-x86/mariadb-10.2.39-linux-i686.tar.gz -O $(MYSQL_LINUX32)
+	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-$(MYSQL_VERSION)/bintar-linux-x86/mariadb-$(MYSQL_VERSION)-linux-i686.tar.gz -O $(MYSQL_LINUX32)
 $(MYSQL_LINUX64):
-	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.39/bintar-linux-x86_64/mariadb-10.2.39-linux-x86_64.tar.gz -O $(MYSQL_LINUX64)
+	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-$(MYSQL_VERSION)/bintar-linux-x86_64/mariadb-$(MYSQL_VERSION)-linux-x86_64.tar.gz -O $(MYSQL_LINUX64)
 $(MYSQL_WIN):
-	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-10.2.39/winx64-packages/mariadb-10.2.39-winx64.zip -O $(MYSQL_WIN)
+	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-$(MYSQL_VERSION)/winx64-packages/mariadb-$(MYSQL_VERSION)-winx64.zip -O $(MYSQL_WIN)

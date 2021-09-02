@@ -1,4 +1,4 @@
-0.0.x (11/2020)
+1.0.0 (09/2021)
 --------------
 - new powershell script has been written for Windows: oh.ps1 (run by oh.bat)
 

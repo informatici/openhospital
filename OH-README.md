@@ -1,4 +1,4 @@
-# ![](./poh-bundle-linux-x64/oh.ico) OH - Open Hospital Portable | Client 
+# OH - Open Hospital Portable | Client 
 
 OH - Open Hospital (https://www.open-hospital.org/en/) is a free and open source
 software for healthcare data management. Its portable version allows you to take
