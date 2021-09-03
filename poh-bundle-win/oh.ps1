@@ -77,8 +77,8 @@ $script:OH_MODE="PORTABLE"  # set functioning mode to PORTABLE | CLIENT
 # set log level to INFO | DEBUG - default set to INFO
 #$script:LOG_LEVEL=INFO
 
-# enable / disable DICOM (true|false)
-#$script:DICOM_ENABLE="false"
+# enable / disable DICOM (on|off)
+#$script:DICOM_ENABLE="off"
 
 ######## Software configuration - change at your own risk :-)
 # Database
@@ -135,6 +135,11 @@ switch ( "$ARCH" ) {
 		Write-Host "Unknown architecture: $ARCH. Exiting." -ForegroundColor Red
 		Read-Host; exit 1
 	}
+
+	# Workaround to force 32bit JAVA in order to have DICOM working
+	if ( $DICOM_ENABLE -eq "on" ) {
+		$script:JAVA_ARCH=32
+	}
 }
 
 ######## MySQL Software
@@ -161,7 +166,7 @@ $script:JAVA_DIR="jdk-11.0.11+9-jre"
 
 ######## JAVA 32bit
 # DICOM workaround - force JAVA_ARCH to 32 bit
-if ( $JAVA_ARCH -eq "32" -Or $DICOM_ENABLE -eq "true" ) {
+if ( $JAVA_ARCH -eq "32" ) {
 	# Setting JRE 32 bit
 	### JRE 8 32bit - openjdk distribution
 	# https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10.zip
@@ -262,11 +267,6 @@ function java_lib_setup {
 	switch ( "$JAVA_ARCH" ) {
 		"64" { $script:NATIVE_LIB_PATH="$OH_PATH\$OH_DIR\lib\native\Win64" }
 		"32" { $script:NATIVE_LIB_PATH="$OH_PATH\$OH_DIR\lib\native\Windows" }
-	}
-
-	# Dicom workaround - force 32bit libs
-	if ( $DICOM_ENABLE -eq "true" ) {
-		 $script:NATIVE_LIB_PATH="$OH_PATH\$OH_DIR\lib\native\Windows"
 	}
 
 	# CLASSPATH setup
