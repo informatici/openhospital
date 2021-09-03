@@ -81,6 +81,8 @@ $(WIN32).zip: compile-all dw-all
 	cp -f ./openhospital-gui/oh.ico $(WIN32)/
 	rm -rf $(WIN32)/oh/generate_changelog.sh
 	cp OH-README.md OH-win-changelog.md LICENSE CHANGELOG $(WIN32)
+	# Workaround to force JAVA to 32bit to have DICOM working
+	sed -i '/script:JAVA_ARCH=32/s/^#//g' $(WIN32)/oh.ps1
 	cp *.pdf $(WIN32)/doc
 	zip -r $(WIN32).zip $(WIN32)
 
@@ -95,8 +97,6 @@ $(WIN64).zip: compile-all dw-all
 	rm -rf $(WIN64)/oh/generate_changelog.sh
 	cp OH-README.md OH-win-changelog.md LICENSE CHANGELOG $(WIN64)
 	cp *.pdf $(WIN64)/doc
-	# Workaround to disable DICOM on JAVA 64bit (uncomment configuration line)
-	sed -i '/script:DICOM_ENABLE=/s/^#//g' $(WIN64)/oh.ps1
 	zip -r $(WIN64).zip $(WIN64)
 
 $(LINUX32).tar.gz: compile-all dw-all
@@ -162,7 +162,7 @@ dw-all: dw-jre-all dw-mysql-all
 dw-jre-all: $(JRE_LINUX32) $(JRE_LINUX64) $(JRE_WIN32) $(JRE_WIN64)
 dw-mysql-all: $(MYSQL_LINUX32) $(MYSQL_LINUX64) $(MYSQL_WIN32) $(MYSQL_WIN64)
 $(JRE_LINUX32):
-	wget -q -nc https://cdn.azul.com/zulu/bin/zulu11.45.27-ca-jre11.0.10-linux_i686.tar.gz -O $(JRE_LINUX32)
+	wget -q -nc https://cdn.azul.com/zulu/bin/zulu11.50.19-ca-jre11.0.12-linux_i686.tar.gz -O $(JRE_LINUX32)
 $(JRE_LINUX64):
 	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.11_9.tar.gz -O $(JRE_LINUX64)
 $(JRE_WIN32):

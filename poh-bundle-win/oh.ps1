@@ -136,14 +136,14 @@ switch ( "$ARCH" ) {
 		Read-Host; exit 1
 	}
 
-#	# Workaround to force 32bit JAVA in order to have DICOM working
-#	if ( $DICOM_ENABLE -eq "on" ) {
-#		$script:JAVA_ARCH=32
-#	}
+	# Workaround to force 32bit JAVA in order to have DICOM working on 64bit arch
+	if ( $DICOM_ENABLE -eq "on" ) {
+		$script:JAVA_ARCH=32
+	}
 }
 	
 # Workaround to force 32bit JAVA in order to have DICOM working
-$script:JAVA_ARCH=32
+#$script:JAVA_ARCH=32
 
 ######## MySQL Software
 # MariaDB
@@ -168,15 +168,17 @@ $script:JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9"
 $script:JAVA_DIR="jdk-11.0.11+9-jre"
 
 ######## JAVA 32bit
-# DICOM workaround - force JAVA_ARCH to 32 bit
 if ( $JAVA_ARCH -eq "32" ) {
 	# Setting JRE 32 bit
 	### JRE 8 32bit - openjdk distribution
 	# https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10.zip
+	$script:JAVA_DISTRO="OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10"
+	$script:JAVA_URL="https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/"
+	$script:JAVA_DIR="jdk8u292-b10-jre"
 	### JRE 8 32bit - zulu distribution
-	$script:JAVA_DISTRO="zulu8.56.0.21-ca-jre8.0.302-win_i686"
-	$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
-	$script:JAVA_DIR="$JAVA_DISTRO"
+	#$script:JAVA_DISTRO="zulu8.56.0.21-ca-jre8.0.302-win_i686"
+	#$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
+	#$script:JAVA_DIR="$JAVA_DISTRO"
 
 	### JRE 11 32bit - zulu distribution
 	#$script:JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-win_i686"
