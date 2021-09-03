@@ -148,10 +148,6 @@ $script:MYSQL_DIR="mariadb-$script:MYSQL_VERSION-win$script:MYSQL_ARCH"
 $script:EXT="zip"
 
 ######## JAVA Software
-
-# Workaround to force 32bit JAVA in order to have DICOM working
-$script:JAVA_ARCH=32
-
 ######## JAVA 64bit - default architecture
 ### JRE 11 - zulu
 #$script:JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-win_i686"
