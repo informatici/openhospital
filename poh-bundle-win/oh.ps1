@@ -130,17 +130,20 @@ switch ( "$ARCH" ) {
 	"amd64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64" }
 	"AMD64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64" }
 	"x86_64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64" }
-	("486","586","686","x86","i86pc") { $script:JAVA_ARCH=64; $script:MYSQL_ARCH=32 }
+	("486","586","686","x86","i86pc") { $script:JAVA_ARCH=32; $script:MYSQL_ARCH=32 }
 	default {
 		Write-Host "Unknown architecture: $ARCH. Exiting." -ForegroundColor Red
 		Read-Host; exit 1
 	}
 
-	# Workaround to force 32bit JAVA in order to have DICOM working
-	if ( $DICOM_ENABLE -eq "on" ) {
-		$script:JAVA_ARCH=32
-	}
+#	# Workaround to force 32bit JAVA in order to have DICOM working
+#	if ( $DICOM_ENABLE -eq "on" ) {
+#		$script:JAVA_ARCH=32
+#	}
 }
+	
+# Workaround to force 32bit JAVA in order to have DICOM working
+$script:JAVA_ARCH=32
 
 ######## MySQL Software
 # MariaDB
