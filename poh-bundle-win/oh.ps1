@@ -327,7 +327,7 @@ function java_check {
         	if ( !(Test-Path "$OH_PATH\$JAVA_DISTRO.$EXT") ) {
 			Write-Host "Warning - JAVA not found. Do you want to download it?" -ForegroundColor Yellow
 			get_confirmation;
-			# Downloading openjdk binaries
+			# Download java binaries
 			download_file "$JAVA_URL" "$JAVA_DISTRO.$EXT"
 		}
 		Write-Host "Unpacking $JAVA_DISTRO..."

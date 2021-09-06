@@ -273,8 +273,8 @@ if [ ! -x $JAVA_BIN ]; then
 	if [ ! -f "./$JAVA_DISTRO.$EXT" ]; then
 		echo "Warning - JAVA not found. Do you want to download it?"
 		get_confirmation;
-		# download openjdk binaries
-		echo "Downloading $JAVA_DISTRO..."
+		# download java binaries
+		echo "Download $JAVA_DISTRO..."
 		wget -P ./ $JAVA_URL/$JAVA_DISTRO.$EXT
 	fi
 	echo "Unpacking $JAVA_DISTRO..."
