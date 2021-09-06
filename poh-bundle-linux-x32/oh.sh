@@ -110,9 +110,9 @@ MYSQL_DIR="mariadb-$MYSQL_VERSION-linux-$ARCH"
 #JAVA_DIR="openlogic-openjdk-jre-8u262-b10-linux-64"
 
 ### JRE 11 - zulu distribution
-#JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-linux_x64"
+#JAVA_DISTRO="zulu11.50.19-ca-jre11.0.12-linux_x64"
 #JAVA_URL="https://cdn.azul.com/zulu/bin"
-#JAVA_DIR="zulu11.45.27-ca-jre11.0.9-linux_x64"
+#JAVA_DIR="zulu11.50.19-ca-jre11.0.12-linux_x64"
 
 ### JRE 11 - openjdk distribution
 JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9"
@@ -130,10 +130,10 @@ if [ $JAVA_ARCH = 32 ]; then
 	### JRE zulu distro
 	JAVA_URL="https://cdn.azul.com/zulu/bin/"
 	### JRE 8 32bit
-	#JAVA_DISTRO="zulu8.52.0.23-ca-jre8.0.282-linux_i686"
+	#JAVA_DISTRO="zulu8.56.0.21-ca-jre8.0.302-linux_i686"
 	### JRE 11 32bit
-	JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-linux_i686"
-
+	JAVA_DISTRO="zulu11.50.19-ca-jre11.0.12-linux_i686"
+	
 	JAVA_DIR=$JAVA_DISTRO
 fi
 

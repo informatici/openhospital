@@ -77,8 +77,8 @@ $script:OH_MODE="PORTABLE"  # set functioning mode to PORTABLE | CLIENT
 # set log level to INFO | DEBUG - default set to INFO
 #$script:LOG_LEVEL=INFO
 
-# enable / disable DICOM (true|false)
-#$script:DICOM_ENABLE="false"
+# enable / disable DICOM (on|off)
+#$script:DICOM_ENABLE="off"
 
 ######## Software configuration - change at your own risk :-)
 # Database
@@ -130,12 +130,20 @@ switch ( "$ARCH" ) {
 	"amd64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64" }
 	"AMD64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64" }
 	"x86_64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64" }
-	("486","586","686","x86","i86pc") { $script:JAVA_ARCH=64; $script:MYSQL_ARCH=32 }
+	("486","586","686","x86","i86pc") { $script:JAVA_ARCH=32; $script:MYSQL_ARCH=32 }
 	default {
 		Write-Host "Unknown architecture: $ARCH. Exiting." -ForegroundColor Red
 		Read-Host; exit 1
 	}
+
+	# Workaround to force 32bit JAVA in order to have DICOM working on 64bit arch
+	if ( $DICOM_ENABLE -eq "on" ) {
+		$script:JAVA_ARCH=32
+	}
 }
+	
+# Workaround to force 32bit JAVA in order to have DICOM working
+#$script:JAVA_ARCH=32
 
 ######## MySQL Software
 # MariaDB
@@ -148,10 +156,6 @@ $script:MYSQL_DIR="mariadb-$script:MYSQL_VERSION-win$script:MYSQL_ARCH"
 $script:EXT="zip"
 
 ######## JAVA Software
-
-# Workaround to force 32bit JAVA in order to have DICOM working
-$script:JAVA_ARCH=32
-
 ######## JAVA 64bit - default architecture
 ### JRE 11 - zulu
 #$script:JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-win_i686"
@@ -164,15 +168,17 @@ $script:JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9"
 $script:JAVA_DIR="jdk-11.0.11+9-jre"
 
 ######## JAVA 32bit
-# DICOM workaround - force JAVA_ARCH to 32 bit
-if ( $JAVA_ARCH -eq "32" -Or $DICOM_ENABLE -eq "true" ) {
+if ( $JAVA_ARCH -eq "32" ) {
 	# Setting JRE 32 bit
 	### JRE 8 32bit - openjdk distribution
 	# https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10.zip
+	$script:JAVA_DISTRO="OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10"
+	$script:JAVA_URL="https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/"
+	$script:JAVA_DIR="jdk8u292-b10-jre"
 	### JRE 8 32bit - zulu distribution
-	$script:JAVA_DISTRO="zulu8.56.0.21-ca-jre8.0.302-win_i686"
-	$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
-	$script:JAVA_DIR="$JAVA_DISTRO"
+	#$script:JAVA_DISTRO="zulu8.56.0.21-ca-jre8.0.302-win_i686"
+	#$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
+	#$script:JAVA_DIR="$JAVA_DISTRO"
 
 	### JRE 11 32bit - zulu distribution
 	#$script:JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-win_i686"
@@ -266,11 +272,6 @@ function java_lib_setup {
 	switch ( "$JAVA_ARCH" ) {
 		"64" { $script:NATIVE_LIB_PATH="$OH_PATH\$OH_DIR\lib\native\Win64" }
 		"32" { $script:NATIVE_LIB_PATH="$OH_PATH\$OH_DIR\lib\native\Windows" }
-	}
-
-	# Dicom workaround - force 32bit libs
-	if ( $DICOM_ENABLE -eq "true" ) {
-		 $script:NATIVE_LIB_PATH="$OH_PATH\$OH_DIR\lib\native\Windows"
 	}
 
 	# CLASSPATH setup
