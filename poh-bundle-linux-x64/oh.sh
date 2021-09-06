@@ -220,6 +220,14 @@ function set_language {
 	esac
 }
 
+function initialize_dir_structure {
+	# Create directory structure
+	mkdir -p "./$TMP_DIR"
+	mkdir -p "./$LOG_DIR"
+	mkdir -p "./$DICOM_DIR"
+	mkdir -p "./$BACKUP_DIR"
+}
+
 function java_lib_setup {
 	# NATIVE LIB setup
 	case $JAVA_ARCH in
@@ -250,16 +258,6 @@ function java_lib_setup {
 	do
 		OH_CLASSPATH="$i":$OH_CLASSPATH
 	done
-#	DIRLIBS="$OH_PATH"/$OH_DIR/rsc/icons/*
-#	for i in ${DIRLIBS}
-#	do
-#		OH_CLASSPATH="$i":$OH_CLASSPATH
-#	done
-#	DIRLIBS="$OH_PATH"/$OH_DIR/rsc/images/*
-#	for i in ${DIRLIBS}
-#	do
-#		OH_CLASSPATH="$i":$OH_CLASSPATH
-#	done
 }
 
 function java_check {
@@ -344,12 +342,8 @@ function config_database {
 }
 
 function initialize_database {
-	# Recreate directory structure
+	# create data directory
 	mkdir -p "./$DATA_DIR"
-	mkdir -p "./$TMP_DIR"
-	mkdir -p "./$LOG_DIR"
-	mkdir -p "./$DICOM_DIR"
-	mkdir -p "./$BACKUP_DIR"
 	# Inizialize MySQL
 	echo "Initializing MySQL database on port $MYSQL_PORT..."
 	case "$MYSQL_DIR" in 
@@ -580,7 +574,7 @@ while getopts ${OPTSTRING} opt; do
 	        	echo "Done!"
 			exit 0
 		fi
-		# Dump remote database for CLIENT mode configuration
+		# dump remote database for CLIENT mode configuration
 		test_database_connection;
 		echo "Saving Open Hospital database..."
 		dump_database;
@@ -599,6 +593,7 @@ while getopts ${OPTSTRING} opt; do
 			if [ $MANUAL_CONFIG = "off" ]; then
 				config_database;
 			fi
+			initialize_dir_structure;
 			initialize_database;
 			start_database;	
 			set_database_root_pw;
@@ -711,6 +706,9 @@ java_check;
 
 # setup java lib
 java_lib_setup;
+
+# create directories
+initialize_dir_structure;
 
 ######## Database setup
 

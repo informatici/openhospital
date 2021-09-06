@@ -127,19 +127,19 @@ $script:INTERACTIVE_MODE="on"
 $script:ARCH=$env:PROCESSOR_ARCHITECTURE
 
 switch ( "$ARCH" ) {	
-	"amd64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64" }
-	"AMD64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64" }
-	"x86_64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64" }
-	("486","586","686","x86","i86pc") { $script:JAVA_ARCH=32; $script:MYSQL_ARCH=32 }
+	"amd64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64"; Break }
+	"AMD64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64"; Break }
+	"x86_64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64"; Break }
+	("486","586","686","x86","i86pc") { $script:JAVA_ARCH=32; $script:MYSQL_ARCH=32; Break }
 	default {
 		Write-Host "Unknown architecture: $ARCH. Exiting." -ForegroundColor Red
 		Read-Host; exit 1
 	}
 
-	# Workaround to force 32bit JAVA in order to have DICOM working on 64bit arch
-	if ( $DICOM_ENABLE -eq "on" ) {
-		$script:JAVA_ARCH=32
-	}
+}
+# Workaround to force 32bit JAVA in order to have DICOM working on 64bit arch
+if ( $DICOM_ENABLE -eq "on" ) {
+	$script:JAVA_ARCH=32
 }
 	
 # Workaround to force 32bit JAVA in order to have DICOM working
@@ -265,6 +265,14 @@ function set_language {
 			Read-Host; exit 1
 	        }
 	}
+}
+
+function initialize_dir_structure {
+	# Create directory structure
+	[System.IO.Directory]::CreateDirectory("$OH_PATH/$TMP_DIR") > $null
+	[System.IO.Directory]::CreateDirectory("$OH_PATH/$LOG_DIR") > $null
+	[System.IO.Directory]::CreateDirectory("$OH_PATH/$DICOM_DIR") > $null
+	[System.IO.Directory]::CreateDirectory("$OH_PATH/$BACKUP_DIR") > $null
 }
 
 function java_lib_setup {
@@ -401,12 +409,8 @@ function config_database {
 }
 
 function initialize_database {
-	# Recreate directory structure
+	# Create data dir
 	[System.IO.Directory]::CreateDirectory("$OH_PATH/$DATA_DIR") > $null
-	[System.IO.Directory]::CreateDirectory("$OH_PATH/$TMP_DIR") > $null
-	[System.IO.Directory]::CreateDirectory("$OH_PATH/$LOG_DIR") > $null
-	[System.IO.Directory]::CreateDirectory("$OH_PATH/$DICOM_DIR") > $null
-	[System.IO.Directory]::CreateDirectory("$OH_PATH/$BACKUP_DIR") > $null
 	# Inizialize MySQL
 	Write-Host "Initializing MySQL database on port $MYSQL_PORT..."
 	switch -Regex ( $MYSQL_DIR ) {
@@ -682,7 +686,7 @@ if ( $INTERACTIVE_MODE -eq "on") {
 			Read-Host;
 			exit 0
 		}
-		# Dump remote database for CLIENT mode configuration
+		# dump remote database for CLIENT mode configuration
 		test_database_connection;
 		echo "Saving Open Hospital database..."
 		dump_database;
@@ -701,6 +705,7 @@ if ( $INTERACTIVE_MODE -eq "on") {
 			if ($MANUAL_CONFIG -eq "off" ) {
 				config_database;
 			}
+			initialize_dir_structure;
 			initialize_database;
 			start_database;	
 			set_database_root_pw;
@@ -819,6 +824,9 @@ java_check;
 
 # setup java lib
 java_lib_setup;
+
+# create directories
+initialize_dir_structure;
 
 ######## Database setup
 
