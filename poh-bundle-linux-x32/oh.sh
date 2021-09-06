@@ -82,9 +82,13 @@ ARCH=`uname -m`
 case $ARCH in
 	x86_64|amd64|AMD64)
 		JAVA_ARCH=64
+		MYSQL_ARCH=x86_64
+		MYSQL_PACKAGE_ARCH=x86_64
 		;;
 	i[3456789]86|x86|i86pc)
 		JAVA_ARCH=32
+		MYSQL_ARCH=x86
+		MYSQL_PACKAGE_ARCH=i686
 		;;
 	*)
 		echo "Unknown architecture: $ARCH. Exiting."
@@ -96,8 +100,8 @@ esac
 EXT="tar.gz"
 # MariaDB
 MYSQL_VERSION="10.2.40"
-MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-$MYSQL_VERSION/bintar-linux-x86_64"
-MYSQL_DIR="mariadb-$MYSQL_VERSION-linux-$ARCH"
+MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-$MYSQL_VERSION/bintar-linux-$MYSQL_ARCH"
+MYSQL_DIR="mariadb-$MYSQL_VERSION-linux-$MYSQL_PACKAGE_ARCH"
 # MySQL
 #MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
 #MYSQL_DIR="mysql-5.7.35-linux-glibc2.12-$ARCH"
