@@ -135,8 +135,8 @@ switch ( "$ARCH" ) {
 		Write-Host "Unknown architecture: $ARCH. Exiting." -ForegroundColor Red
 		Read-Host; exit 1
 	}
-
 }
+
 # workaround to force 32bit JAVA in order to have DICOM working on 64bit arch
 if ( $DICOM_ENABLE -eq "on" ) {
 	$script:JAVA_ARCH=32
