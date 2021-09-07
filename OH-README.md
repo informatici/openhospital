@@ -190,7 +190,7 @@ MANUAL_CONFIG=off
 - (Windows only) enable / disable DICOM features
 ```
 # enable / disable DICOM (on|off)
-#$script:DICOM_ENABLE="false"
+#$script:DICOM_ENABLE="off"
 ```
 
 # Default directory structure
