@@ -253,7 +253,7 @@ function set_path {
 }
 
 function set_language {
-	# Set OH interface languange - set default to en
+	# Set OH interface language - set default to en
 	if ( ! $OH_LANGUAGE ) {
 		$script:OH_LANGUAGE="en"
 	}	

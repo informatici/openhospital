@@ -208,7 +208,7 @@ function set_path {
 }
 
 function set_language {
-	# set OH interface languange - set default to en
+	# set OH interface language - set default to en
 	if [ -z ${OH_LANGUAGE+x} ]; then
 		OH_LANGUAGE=en
 	fi
