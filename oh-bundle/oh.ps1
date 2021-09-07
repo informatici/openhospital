@@ -145,8 +145,8 @@ if ( $DICOM_ENABLE -eq "on" ) {
 	$script:JAVA_ARCH=32
 }
 	
-# workaround to force 32bit JAVA in order to have DICOM working
-#$script:JAVA_ARCH=32
+# workaround to force 32bit JAVA and MySQL in order to have DICOM working
+#$script:JAVA_ARCH=32; $script:MYSQL_ARCH=32
 
 ######## MySQL Software
 # MariaDB
