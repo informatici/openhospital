@@ -126,6 +126,11 @@ REM #-> DB_CREATE_SQL default is set to create_all_en.sql - set to "create_all_d
 set LOG_FILE=startup.log
 set OH_LOG_FILE=openhospital.log
 
+REM ######## Architecture
+REM # ARCH can be set to 32 or x64
+REM force ARCH to 32
+set ARCH=32
+
 REM ######## MySQL Software
 REM # MariaDB 64bit
 REM http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-10.2.40/win32-packages/mariadb-10.2.40-winx64.zip
@@ -138,20 +143,23 @@ REM # MySQL 32bit
 REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.35-win32.zip
 
 REM set MYSQL_DIR=mysql-5.7.35-win32
-set MYSQL_DIR=mariadb-10.2.40-winx64
+set MYSQL_DIR=mariadb-10.2.40-win%ARCH%
 
 REM ####### JAVA Software
-REM ######## JAVA 64bit - experimental architecture
-REM ### JRE 11 - openjdk distribution
+REM # JRE 11 64bit - x86_64
 REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
 REM set JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9.zip"
 
-REM ######## JAVA 32bit - default architecture
-REM ### JRE 11 - openjdk distribution
+REM # JRE 11 32bit - i686
 REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
 REM set JAVA_DISTRO="OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip"
 
-set JAVA_DIR=jdk-11.0.12+7-jre
+REM # JRE 8 32bit - i686 - default
+REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/"
+REM set JAVA_DISTRO="OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10.zip"
+
+REM set JAVA_DIR=jdk-11.0.12+7-jre
+set JAVA_DIR=jdk8u292-b10-jre
 set JAVA_BIN=%OH_PATH%\%JAVA_DIR%\bin\java.exe
 
 set REPLACE_PATH=%OH_PATH%\%MYSQL_DIR%\bin
@@ -294,7 +302,7 @@ set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\bin\OH-gui.jar
 REM # Setup native_lib_path for current architecture
 REM # with DICOM workaround - force NATIVE_LIB to 32bit
 
-if %PROCESSOR_ARCHITECTURE%==AMD64 if not %DICOM_ENABLE%==true (
+if %PROCESSOR_ARCHITECTURE%==AMD64 if not %DICOM_ENABLE%==true if not %ARCH%==32 (
 	set NATIVE_LIB_PATH=%OH_PATH%\%OH_DIR%\lib\native\Win64
 ) else (
 	set NATIVE_LIB_PATH=%OH_PATH%\%OH_DIR%\lib\native\Windows
