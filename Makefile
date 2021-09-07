@@ -66,7 +66,7 @@ $(CLIENT).zip: compile-all
 	cp -rf ./openhospital-core/sql $(CLIENT)/
 	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
 	rm -f $(CLIENT)/generate_changelog.sh
-	cp OH-README.md LICENSE CHANGELOG $(CLIENT)
+	cp LICENSE CHANGELOG $(CLIENT)
 	# Set client mode in startup scripts
 	sed -i 's/^\$script\:OH_MODE\=\"PORTABLE\"/script\:OH_MODE\=\"CLIENT\"/g' $(CLIENT)/oh.ps1
 	sed -i 's/^\OH_MODE\=PORTABLE/OH_MODE\=CLIENT/g' $(CLIENT)/oh.sh
@@ -80,8 +80,9 @@ $(WIN32).zip: compile-all dw-all
 	cp -a ./openhospital-core/sql $(WIN32)/
 	cp -f ./openhospital-gui/oh.ico $(WIN32)/
 	rm -f $(WIN32)/oh/generate_changelog.sh
+	rm -f $(WIN32)/OH-linux-changelog.md
 	rm -f $(WIN32)/oh.sh
-	cp OH-README.md OH-win-changelog.md LICENSE CHANGELOG $(WIN32)
+	cp LICENSE CHANGELOG $(WIN32)
 	# Workaround to force JAVA to 32bit to have DICOM working
 	sed -i '/script:JAVA_ARCH=32/s/^#//g' $(WIN32)/oh.ps1
 	cp *.pdf $(WIN32)/doc
@@ -96,8 +97,9 @@ $(WIN64).zip: compile-all dw-all
 	cp -a ./openhospital-core/sql $(WIN64)/
 	cp -f ./openhospital-gui/oh.ico $(WIN64)/
 	rm -f $(WIN64)/oh/generate_changelog.sh
+	rm -f $(WIN64)/OH-linux-changelog.md
 	rm -f $(WIN64)/oh.sh
-	cp OH-README.md OH-win-changelog.md LICENSE CHANGELOG $(WIN64)
+	cp LICENSE CHANGELOG $(WIN64)
 	cp *.pdf $(WIN64)/doc
 	unzip $(JRE_WIN64) -d $(WIN64)
 	unzip $(MYSQL_WIN64) -d $(WIN64) -x "*/lib/*"
@@ -110,9 +112,10 @@ $(LINUX32).tar.gz: compile-all dw-all
 	cp -a ./openhospital-core/sql $(LINUX32)/
 	cp -f ./openhospital-gui/oh.ico $(LINUX32)/
 	rm -f $(LINUX32)/oh/generate_changelog.sh
+	rm -f $(LINUX32)/OH-win-changelog.md
 	rm -f $(LINUX32)/oh.bat
 	rm -f $(LINUX32)/oh.ps1
-	cp OH-README.md OH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
+	cp LICENSE CHANGELOG $(LINUX32)
 	cp *.pdf $(LINUX32)/doc
 	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
@@ -125,9 +128,10 @@ $(LINUX64).tar.gz: compile-all dw-all
 	cp -a ./openhospital-core/sql $(LINUX64)/
 	cp -f ./openhospital-gui/oh.ico $(LINUX64)/
 	rm -f $(LINUX64)/oh/generate_changelog.sh
+	rm -f $(LINUX64)/OH-win-changelog.md
 	rm -f $(LINUX64)/oh.bat
 	rm -f $(LINUX64)/oh.ps1
-	cp OH-README.md OH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
+	cp LICENSE CHANGELOG $(LINUX64)
 	cp *.pdf $(LINUX64)/doc
 	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
