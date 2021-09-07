@@ -176,9 +176,9 @@ if "%ERRORLEVEL%" equ "0" (
 :foundport
 echo Found TCP port %MYSQL_PORT% for MySQL !
 
-REM # Create log and tmp dir
-mkdir %OH_PATH%\%LOG_DIR%
+REM # Create tmp and log dir
 mkdir %OH_PATH%\%TMP_DIR%
+mkdir %OH_PATH%\%LOG_DIR%
 
 echo Generating MySQL config file...
 REM ### Setup MySQL configuration
@@ -228,13 +228,14 @@ REM ### Setup database if not already existing
 if not EXIST %OH_PATH%\%DATA_DIR%\%DATABASE_NAME% (
  	REM # Remove database files
 	echo Removing data...
- 	rmdir /s /q %OH_PATH%\%DATA_DIR%
- 	REM # recreate directory structure
- 	mkdir %OH_PATH%\%TMP_DIR%
- 	mkdir %OH_PATH%\%DATA_DIR%
+	rmdir /s /q %OH_PATH%\%DATA_DIR%
+	REM # Create directories
+	mkdir %OH_PATH%\%DATA_DIR%
+	mkdir %OH_PATH%\%TMP_DIR%
+	mkdir %OH_PATH%\%LOG_DIR%
 	mkdir %OH_PATH%\%DICOM_DIR%
- 	del /s /q %OH_PATH%\%TMP_DIR%\*
-	
+	del /s /q %OH_PATH%\%TMP_DIR%\*
+
 	if %MYSQL_DIR:~0,5% == maria (
 		echo Initializing MariaDB...
 		start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysql_install_db.exe --datadir=%OH_PATH%\%DATA_DIR% --password=%MYSQL_ROOT_PW%  >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1

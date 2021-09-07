@@ -71,7 +71,7 @@ $global:ProgressPreference= 'SilentlyContinue'
 $script:OH_MODE="PORTABLE"  # set functioning mode to PORTABLE | CLIENT
 #$script:DEMO_MODE="off"
 
-# Language setting - default set to en
+# language setting - default set to en
 #$script:OH_LANGUAGE=en # fr es it pt
 
 # set log level to INFO | DEBUG - default set to INFO
@@ -107,19 +107,22 @@ $script:DB_DEMO="create_all_demo.sql"
 $script:DATE= Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
 
 ######## Advanced options
-
-## set MANUAL_CONFIG to "on" to setup configuration files manually
+#
+# Manual config
+# set MANUAL_CONFIG to "on" to setup configuration files manually
 # my.cnf and all oh/rsc/*.properties files will not be generated or
 # overwritten if already present
 $script:MANUAL_CONFIG="off"
 
-## set INTERACTIVE_MODE to "off" to launch oh.ps1 without calling the user
+# Interactive mode
+# set INTERACTIVE_MODE to "off" to launch oh.ps1 without calling the user
 # interaction meno (script_menu). Useful if automatic startup of OH is needed.
 # In order to use this mode, setup all the OH configuration variables in the script
 # or pass arguments via command line.
 $script:INTERACTIVE_MODE="on"
 
-# set JAVA_BIN # Uncomment this if you want to use system wide JAVA
+# Set JAVA_BIN 
+# Uncomment this if you want to use system wide JAVA
 #$script:JAVA_BIN="C:\Program Files\JAVA\bin\java.exe"
 
 ######## Define architecture
@@ -127,28 +130,28 @@ $script:INTERACTIVE_MODE="on"
 $script:ARCH=$env:PROCESSOR_ARCHITECTURE
 
 switch ( "$ARCH" ) {	
-	"amd64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64" }
-	"AMD64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64" }
-	"x86_64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64" }
-	("486","586","686","x86","i86pc") { $script:JAVA_ARCH=32; $script:MYSQL_ARCH=32 }
+	"amd64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64"; Break }
+	"AMD64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64"; Break }
+	"x86_64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64"; Break }
+	("486","586","686","x86","i86pc") { $script:JAVA_ARCH=32; $script:MYSQL_ARCH=32; Break }
 	default {
 		Write-Host "Unknown architecture: $ARCH. Exiting." -ForegroundColor Red
 		Read-Host; exit 1
 	}
+}
 
-	# Workaround to force 32bit JAVA in order to have DICOM working on 64bit arch
-	if ( $DICOM_ENABLE -eq "on" ) {
-		$script:JAVA_ARCH=32
-	}
+# workaround to force 32bit JAVA in order to have DICOM working on 64bit arch
+if ( $DICOM_ENABLE -eq "on" ) {
+	$script:JAVA_ARCH=32
 }
 	
-# Workaround to force 32bit JAVA in order to have DICOM working
+# workaround to force 32bit JAVA in order to have DICOM working
 #$script:JAVA_ARCH=32
 
 ######## MySQL Software
 # MariaDB
 $script:MYSQL_VERSION="10.2.40"
-$script:MYSQL_URL="http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-$script:MYSQL_VERSION/winx64-packages/"
+$script:MYSQL_URL="http://ftp.bme.hu/pub/mirrors/mariadb/mariadb-$script:MYSQL_VERSION/win$script:MYSQL_ARCH-packages/"
 $script:MYSQL_DIR="mariadb-$script:MYSQL_VERSION-win$script:MYSQL_ARCH"
 # MySQL
 #$script:MYSQL_DIR="mysql-5.7.35-win$script:MYSQL_ARCH"
@@ -169,7 +172,7 @@ $script:JAVA_DIR="jdk-11.0.11+9-jre"
 
 ######## JAVA 32bit
 if ( $JAVA_ARCH -eq "32" ) {
-	# Setting JRE 32 bit
+	# set JRE 32 bit
 	### JRE 8 32bit - openjdk distribution
 	# https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10.zip
 	$script:JAVA_DISTRO="OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10"
@@ -187,7 +190,7 @@ if ( $JAVA_ARCH -eq "32" ) {
 }
 
 ######## get script info
-# Determine script name and location for PowerShell
+# determine script name and location for PowerShell
 $script:SCRIPT_DIR = Split-Path $script:MyInvocation.MyCommand.Path
 $script:SCRIPT_NAME = $MyInvocation.MyCommand.Name
 
@@ -250,7 +253,7 @@ function set_path {
 }
 
 function set_language {
-	# Set OH interface languange - set default to en
+	# Set OH interface language - set default to en
 	if ( ! $OH_LANGUAGE ) {
 		$script:OH_LANGUAGE="en"
 	}	
@@ -265,6 +268,14 @@ function set_language {
 			Read-Host; exit 1
 	        }
 	}
+}
+
+function initialize_dir_structure {
+	# create directory structure
+	[System.IO.Directory]::CreateDirectory("$OH_PATH/$TMP_DIR") > $null
+	[System.IO.Directory]::CreateDirectory("$OH_PATH/$LOG_DIR") > $null
+	[System.IO.Directory]::CreateDirectory("$OH_PATH/$DICOM_DIR") > $null
+	[System.IO.Directory]::CreateDirectory("$OH_PATH/$BACKUP_DIR") > $null
 }
 
 function java_lib_setup {
@@ -319,7 +330,7 @@ function java_check {
         	if ( !(Test-Path "$OH_PATH\$JAVA_DISTRO.$EXT") ) {
 			Write-Host "Warning - JAVA not found. Do you want to download it?" -ForegroundColor Yellow
 			get_confirmation;
-			# Downloading openjdk binaries
+			# Download java binaries
 			download_file "$JAVA_URL" "$JAVA_DISTRO.$EXT"
 		}
 		Write-Host "Unpacking $JAVA_DISTRO..."
@@ -374,7 +385,7 @@ function mysql_check {
 }
 
 function config_database {
-	# Find a free TCP port to run MySQL starting from the default port
+	# find a free TCP port to run MySQL starting from the default port
 	Write-Host "Looking for a free TCP port for MySQL database..."
 
 	$ProgressPreference = 'SilentlyContinue'
@@ -385,7 +396,7 @@ function config_database {
 
 	Write-Host "Found TCP port $MYSQL_PORT!"
 
-	# Creating MySQL configuration
+	# create MySQL configuration
 	Write-Host "Generating MySQL config file..."
 	if ( Test-Path "$OH_PATH/etc/mysql/my.cnf" ) {
 		mv -Force "$OH_PATH/etc/mysql/my.cnf" "$OH_PATH/etc/mysql/my.cnf.old"
@@ -401,13 +412,9 @@ function config_database {
 }
 
 function initialize_database {
-	# Recreate directory structure
+	# create data directory
 	[System.IO.Directory]::CreateDirectory("$OH_PATH/$DATA_DIR") > $null
-	[System.IO.Directory]::CreateDirectory("$OH_PATH/$TMP_DIR") > $null
-	[System.IO.Directory]::CreateDirectory("$OH_PATH/$LOG_DIR") > $null
-	[System.IO.Directory]::CreateDirectory("$OH_PATH/$DICOM_DIR") > $null
-	[System.IO.Directory]::CreateDirectory("$OH_PATH/$BACKUP_DIR") > $null
-	# Inizialize MySQL
+	# inizialize MySQL
 	Write-Host "Initializing MySQL database on port $MYSQL_PORT..."
 	switch -Regex ( $MYSQL_DIR ) {
 		"mariadb" {
@@ -442,7 +449,7 @@ function start_database {
 		Read-Host; exit 2
 	}
 
-	# Wait till the MySQL socket file is created -> TO BE IMPLEMENTED
+	# wait till the MySQL socket file is created -> TO BE IMPLEMENTED
 	# while ( -e $OH_PATH/$MYSQL_SOCKET ); do sleep 1; done
 	# # Wait till the MySQL tcp port is open
 	# until nc -z $MYSQL_SERVER $MYSQL_PORT; do sleep 1; done
@@ -451,7 +458,7 @@ function start_database {
 }
 
 function set_database_root_pw {
-	# If using MySQL root password need to be set
+	# if using MySQL root password need to be set
 	switch -Regex ( $MYSQL_DIR ) {
 		"mysql" {
 		echo "Setting MySQL root password..."
@@ -472,7 +479,7 @@ function set_database_root_pw {
 
 function import_database {
 	Write-Host "Creating OH Database..."
-	# Create OH database and user
+	# create OH database and user
 	
     $SQLCOMMAND=@"
     -u root -p$MYSQL_ROOT_PW -h $MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp -e "CREATE DATABASE $DATABASE_NAME; CREATE USER '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD'; CREATE USER '$DATABASE_USER'@'%' IDENTIFIED BY '$DATABASE_PASSWORD'; GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost'; GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'%';"
@@ -485,7 +492,7 @@ function import_database {
 		shutdown_database;
 		Read-Host; exit 2
 	}
-	# Check for database creation script
+	# check for database creation script
 	if ( Test-Path "$OH_PATH\$SQL_DIR\$DB_CREATE_SQL" ) {
  		Write-Host "Using SQL file $SQL_DIR\$DB_CREATE_SQL..."
 	}
@@ -495,7 +502,7 @@ function import_database {
 		Read-Host; exit 2
 	}
 
-	# Create OH database structure
+	# create OH database structure
 	Write-Host "Importing database schema..."
 	
 	cd "./$SQL_DIR"
@@ -517,7 +524,7 @@ function import_database {
 }
 
 function dump_database {
-	# Save OH database if existing
+	# save OH database if existing
 	if ( Test-Path "$OH_PATH\$MYSQL_DIR\bin\mysqldump.exe" ) {
 		[System.IO.Directory]::CreateDirectory("$OH_PATH/$BACKUP_DIR") > $null
 		Write-Host "Dumping MySQL database..."	
@@ -538,7 +545,7 @@ function dump_database {
 function shutdown_database {
 	Write-Host "Shutting down MySQL..."
 	Start-Process -FilePath "$OH_PATH\$MYSQL_DIR\bin\mysqladmin.exe" -ArgumentList ("-u root -p$MYSQL_ROOT_PW --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp shutdown") -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
-	# Wait till the MySQL socket file is removed -> TO BE IMPLEMENTED
+	# wait till the MySQL socket file is removed -> TO BE IMPLEMENTED
 	# while ( -e $OH_PATH/$MYSQL_SOCKET ); do sleep 1; done
 	Start-Sleep -Seconds 3
 	Write-Host "MySQL stopped!"
@@ -560,7 +567,7 @@ function clean_database {
 }
 
 function test_database_connection {
-	# Test connection to the OH MySQL database
+	# test connection to the OH MySQL database
 	Write-Host "Testing database connection..."
 	try {
 		Start-Process -FilePath ("$OH_PATH\$MYSQL_DIR\bin\mysql.exe") -ArgumentList ("--user=$DATABASE_USER --password=$DATABASE_PASSWORD --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp -e $([char]34)USE $DATABASE_NAME$([char]34) " ) -Wait -NoNewWindow
@@ -682,7 +689,7 @@ if ( $INTERACTIVE_MODE -eq "on") {
 			Read-Host;
 			exit 0
 		}
-		# Dump remote database for CLIENT mode configuration
+		# dump remote database for CLIENT mode configuration
 		test_database_connection;
 		echo "Saving Open Hospital database..."
 		dump_database;
@@ -701,6 +708,7 @@ if ( $INTERACTIVE_MODE -eq "on") {
 			if ($MANUAL_CONFIG -eq "off" ) {
 				config_database;
 			}
+			initialize_dir_structure;
 			initialize_database;
 			start_database;	
 			set_database_root_pw;
@@ -820,29 +828,32 @@ java_check;
 # setup java lib
 java_lib_setup;
 
+# create directories
+initialize_dir_structure;
+
 ######## Database setup
 
-# Start MySQL and create database
+# start MySQL and create database
 if ( $OH_MODE -eq "PORTABLE" ) {
-	# Check for MySQL software
+	# check for MySQL software
 	mysql_check;
-	# Config MySQL
+	# config MySQL
 	config_database;
-	# Check if OH database already exists
+	# check if OH database already exists
 	if ( !(Test-Path "$OH_PATH\$DATA_DIR\$DATABASE_NAME") ) {
 		Write-Host "OH database not found, starting from scratch..."
-		# Prepare MySQL
+		# prepare MySQL
 		initialize_database;
-		# Start MySQL
+		# start MySQL
 		start_database;	
-		# Set database root password
+		# set database root password
 		set_database_root_pw;
-		# Create database and load data
+		# create database and load data
 		import_database;
 	}
 	else {
 		Write-Host "OH database found!"
-		# Starting MySQL
+		# start MySQL
 		start_database;
 	}
 }
@@ -884,7 +895,7 @@ if ( Test-Path "$OH_PATH/$OH_DIR/rsc/database.properties" ) {
 (Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBPASS","$DATABASE_PASSWORD") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
 (Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBNAME","$DATABASE_NAME") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
 
-# Direct creation of database.properties - deprecated
+# direct creation of database.properties - deprecated
 #Set-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.url=jdbc:mysql://"$MYSQL_SERVER":$MYSQL_PORT/$DATABASE_NAME"
 #Add-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.username=$DATABASE_USER"
 #Add-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.password=$DATABASE_PASSWORD"
@@ -917,7 +928,7 @@ if ( $OH_MODE -eq "PORTABLE" ) {
 # go back to starting directory
 cd "$CURRENT_DIR"
 
-# exiting
+# exit
 Write-Host "Done!"
 Read-Host
 exit 0

@@ -67,12 +67,12 @@ LOG_FILE=startup.log
 OH_LOG_FILE=openhospital.log
 
 ######## Advanced options
-## set MANUAL_CONFIG to "on" to setup configuration files manually
+# set MANUAL_CONFIG to "on" to setup configuration files manually
 # my.cnf and all oh/rsc/*.properties files will not be generated or
 # overwritten if already present
 MANUAL_CONFIG=off
 
-######## set JAVA_BIN
+# Set JAVA_BIN
 # Uncomment this if you want to use system wide JAVA
 #JAVA_BIN=`which java`
 
@@ -82,9 +82,13 @@ ARCH=`uname -m`
 case $ARCH in
 	x86_64|amd64|AMD64)
 		JAVA_ARCH=64
+		MYSQL_ARCH=x86_64
+		MYSQL_PACKAGE_ARCH=x86_64
 		;;
 	i[3456789]86|x86|i86pc)
 		JAVA_ARCH=32
+		MYSQL_ARCH=x86
+		MYSQL_PACKAGE_ARCH=i686
 		;;
 	*)
 		echo "Unknown architecture: $ARCH. Exiting."
@@ -96,8 +100,8 @@ esac
 EXT="tar.gz"
 # MariaDB
 MYSQL_VERSION="10.2.40"
-MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-$MYSQL_VERSION/bintar-linux-x86_64"
-MYSQL_DIR="mariadb-$MYSQL_VERSION-linux-$ARCH"
+MYSQL_URL="https://downloads.mariadb.com/MariaDB/mariadb-$MYSQL_VERSION/bintar-linux-$MYSQL_ARCH"
+MYSQL_DIR="mariadb-$MYSQL_VERSION-linux-$MYSQL_PACKAGE_ARCH"
 # MySQL
 #MYSQL_URL="https://downloads.mysql.com/archives/get/p/23/file"
 #MYSQL_DIR="mysql-5.7.35-linux-glibc2.12-$ARCH"
@@ -204,7 +208,7 @@ function set_path {
 }
 
 function set_language {
-	# Set OH interface languange - set default to en
+	# set OH interface language - set default to en
 	if [ -z ${OH_LANGUAGE+x} ]; then
 		OH_LANGUAGE=en
 	fi
@@ -218,6 +222,14 @@ function set_language {
 			exit 1
 		;;
 	esac
+}
+
+function initialize_dir_structure {
+	# create directory structure
+	mkdir -p "./$TMP_DIR"
+	mkdir -p "./$LOG_DIR"
+	mkdir -p "./$DICOM_DIR"
+	mkdir -p "./$BACKUP_DIR"
 }
 
 function java_lib_setup {
@@ -250,16 +262,6 @@ function java_lib_setup {
 	do
 		OH_CLASSPATH="$i":$OH_CLASSPATH
 	done
-#	DIRLIBS="$OH_PATH"/$OH_DIR/rsc/icons/*
-#	for i in ${DIRLIBS}
-#	do
-#		OH_CLASSPATH="$i":$OH_CLASSPATH
-#	done
-#	DIRLIBS="$OH_PATH"/$OH_DIR/rsc/images/*
-#	for i in ${DIRLIBS}
-#	do
-#		OH_CLASSPATH="$i":$OH_CLASSPATH
-#	done
 }
 
 function java_check {
@@ -271,8 +273,8 @@ if [ ! -x $JAVA_BIN ]; then
 	if [ ! -f "./$JAVA_DISTRO.$EXT" ]; then
 		echo "Warning - JAVA not found. Do you want to download it?"
 		get_confirmation;
-		# Downloading openjdk binaries
-		echo "Downloading $JAVA_DISTRO..."
+		# download java binaries
+		echo "Download $JAVA_DISTRO..."
 		wget -P ./ $JAVA_URL/$JAVA_DISTRO.$EXT
 	fi
 	echo "Unpacking $JAVA_DISTRO..."
@@ -302,7 +304,7 @@ if [ ! -d "./$MYSQL_DIR" ]; then
 	if [ ! -f "./$MYSQL_DIR.$EXT" ]; then
 		echo "Warning - MariaDB/MySQL not found. Do you want to download it?"
 		get_confirmation;
-		# Downloading mysql binary
+		# download mysql binary
 		echo "Downloading $MYSQL_DIR..."
 		wget -P ./ $MYSQL_URL/$MYSQL_DIR.$EXT
 	fi
@@ -328,14 +330,14 @@ fi
 }
 
 function config_database {
-	# Find a free TCP port to run MySQL starting from the default port
+	# find a free TCP port to run MySQL starting from the default port
 	echo "Looking for a free TCP port for MySQL database..."
 	while [[ $(ss -tl4  sport = :$MYSQL_PORT | grep LISTEN) ]]; do
 		MYSQL_PORT=$(expr $MYSQL_PORT + 1)
 	done
 	echo "Found TCP port $MYSQL_PORT!"
 
-	# Creating MySQL configuration
+	# create MySQL configuration
 	echo "Generating MySQL config file..."
 	[ -f ./etc/mysql/my.cnf ] && mv -f ./etc/mysql/my.cnf ./etc/mysql/my.cnf.old
 	sed -e "s/MYSQL_SERVER/$MYSQL_SERVER/g" -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$OH_PATH_ESCAPED/g" \
@@ -344,13 +346,9 @@ function config_database {
 }
 
 function initialize_database {
-	# Recreate directory structure
+	# create data directory
 	mkdir -p "./$DATA_DIR"
-	mkdir -p "./$TMP_DIR"
-	mkdir -p "./$LOG_DIR"
-	mkdir -p "./$DICOM_DIR"
-	mkdir -p "./$BACKUP_DIR"
-	# Inizialize MySQL
+	# inizialize MySQL
 	echo "Initializing MySQL database on port $MYSQL_PORT..."
 	case "$MYSQL_DIR" in 
 	*mariadb*)
@@ -375,13 +373,13 @@ function start_database {
 		echo "Error: MySQL server not started! Exiting."
 		exit 2
 	fi
-	# Wait till the MySQL tcp port is open
+	# wait till the MySQL tcp port is open
 	until nc -z $MYSQL_SERVER $MYSQL_PORT; do sleep 1; done
 	echo "MySQL server started! "
 }
 
 function set_database_root_pw {
-	# If using MySQL/MariaDB root password need to be set
+	# if using MySQL/MariaDB root password need to be set
 	echo "Setting MySQL root password..."
 	./$MYSQL_DIR/bin/mysql -u root --skip-password --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PW';" >> ./$LOG_DIR/$LOG_FILE 2>&1
 	
@@ -394,7 +392,7 @@ function set_database_root_pw {
 
 function import_database {
 	echo "Creating OH Database..."
-	# Create OH database and user
+	# create OH database and user
 	./$MYSQL_DIR/bin/mysql -u root -p$MYSQL_ROOT_PW --protocol=tcp --host=$MYSQL_SERVER --port=$MYSQL_PORT \
 	-e "CREATE DATABASE $DATABASE_NAME; CREATE USER '$DATABASE_USER'@'localhost' IDENTIFIED BY '$DATABASE_PASSWORD'; \
 	CREATE USER '$DATABASE_USER'@'%' IDENTIFIED BY '$DATABASE_PASSWORD'; GRANT ALL PRIVILEGES ON $DATABASE_NAME.* TO '$DATABASE_USER'@'localhost'; \
@@ -406,7 +404,7 @@ function import_database {
 		exit 2
 	fi
 
-	# Check for database creation script
+	# check for database creation script
 	if [ -f ./$SQL_DIR/$DB_CREATE_SQL ]; then
 		echo "Using SQL file $SQL_DIR/$DB_CREATE_SQL..."
 	else
@@ -415,7 +413,7 @@ function import_database {
 		exit 2
 	fi
 
-	# Create OH database structure
+	# create OH database structure
 	echo "Importing database schema..."
 	cd "./$SQL_DIR"
 	../$MYSQL_DIR/bin/mysql --local-infile=1 -u root -p$MYSQL_ROOT_PW --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp $DATABASE_NAME < ./$DB_CREATE_SQL >> ../$LOG_DIR/$LOG_FILE 2>&1
@@ -430,7 +428,7 @@ function import_database {
 }
 
 function dump_database {
-	# Save OH database if existing
+	# save OH database if existing
 	if [ -x ./$MYSQL_DIR/bin/mysqldump ]; then
 		mkdir -p "$OH_PATH/$BACKUP_DIR"
 		echo "Dumping MySQL database..."
@@ -454,7 +452,7 @@ function shutdown_database {
 	echo "Shutting down MySQL..."
 	cd "$OH_PATH"
 	./$MYSQL_DIR/bin/mysqladmin -u root -p$MYSQL_ROOT_PW --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp shutdown >> ./$LOG_DIR/$LOG_FILE 2>&1
-	# Wait till the MySQL tcp port is closed
+	# wait till the MySQL tcp port is closed
 	until !( nc -z $MYSQL_SERVER $MYSQL_PORT ); do sleep 1; done
 	echo "MySQL stopped!"
 }
@@ -472,7 +470,7 @@ function clean_database {
 }
 
 function test_database_connection {
-	# Test connection to the OH MySQL database
+	# test connection to the OH MySQL database
 	echo "Testing database connection..."
 	DBTEST=$(./$MYSQL_DIR/bin/mysql --user=$DATABASE_USER --password=$DATABASE_PASSWORD --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp -e "USE $DATABASE_NAME" >> ./$LOG_DIR/$LOG_FILE 2>&1; echo "$?" )
 	if [ $DBTEST -eq 0 ];then
@@ -527,7 +525,7 @@ cd "$OH_PATH"
 
 ######## User input
 
-# Reset in case getopts has been used previously in the shell
+# reset in case getopts has been used previously in the shell
 OPTIND=1 
 # list of arguments expected in user input (- option)
 OPTSTRING=":CdDGhl:srtvX?" 
@@ -580,7 +578,7 @@ while getopts ${OPTSTRING} opt; do
 	        	echo "Done!"
 			exit 0
 		fi
-		# Dump remote database for CLIENT mode configuration
+		# dump remote database for CLIENT mode configuration
 		test_database_connection;
 		echo "Saving Open Hospital database..."
 		dump_database;
@@ -599,6 +597,7 @@ while getopts ${OPTSTRING} opt; do
 			if [ $MANUAL_CONFIG = "off" ]; then
 				config_database;
 			fi
+			initialize_dir_structure;
 			initialize_database;
 			start_database;	
 			set_database_root_pw;
@@ -663,7 +662,7 @@ while getopts ${OPTSTRING} opt; do
         	echo "Done!"
 		exit 0
 		;;
-	: )	# If no lang argument is given, shows error
+	: )	# if no lang argument is given, shows error
 		echo "No language specified. See $SCRIPT_NAME -h for help"
 		exit 3
 		;;
@@ -712,30 +711,33 @@ java_check;
 # setup java lib
 java_lib_setup;
 
+# create directories
+initialize_dir_structure;
+
 ######## Database setup
 
-# Start MySQL and create database
+# start MySQL and create database
 if [ $OH_MODE = "PORTABLE" ]; then
-	# Check for MySQL software
+	# check for MySQL software
 	mysql_check;
-	# Config MySQL
+	# config MySQL
 	if [ $MANUAL_CONFIG = "off" ]; then
 		config_database;
 	fi
-	# Check if OH database already exists
+	# check if OH database already exists
 	if [ ! -d ./"$DATA_DIR"/$DATABASE_NAME ]; then
 		echo "OH database not found, starting from scratch..."
-		# Prepare MySQL
+		# prepare MySQL
 		initialize_database;
-		# Start MySQL
+		# start MySQL
 		start_database;	
-		# Set database root password
+		# set database root password
 		set_database_root_pw;
-		# Create database and load data
+		# create database and load data
 		import_database;
 	else
 	        echo "OH database found!"
-		# Starting MySQL
+		# start MySQL
 		start_database;
 	fi
 fi
@@ -798,6 +800,6 @@ fi
 # go back to starting directory
 cd "$CURRENT_DIR"
 
-# exiting
+# exit
 echo "Done!"
 exit 0
