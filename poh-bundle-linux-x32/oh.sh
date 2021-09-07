@@ -67,13 +67,13 @@ LOG_FILE=startup.log
 OH_LOG_FILE=openhospital.log
 
 ######## Advanced options
-## set MANUAL_CONFIG to "on" to setup configuration files manually
+# set MANUAL_CONFIG to "on" to setup configuration files manually
 # my.cnf and all oh/rsc/*.properties files will not be generated or
 # overwritten if already present
 MANUAL_CONFIG=off
 
-######## set JAVA_BIN
-# uncomment this if you want to use system wide JAVA
+# Set JAVA_BIN
+# Uncomment this if you want to use system wide JAVA
 #JAVA_BIN=`which java`
 
 ######## Define architecture

@@ -107,19 +107,22 @@ $script:DB_DEMO="create_all_demo.sql"
 $script:DATE= Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
 
 ######## Advanced options
-
-## set MANUAL_CONFIG to "on" to setup configuration files manually
+#
+# Manual config
+# set MANUAL_CONFIG to "on" to setup configuration files manually
 # my.cnf and all oh/rsc/*.properties files will not be generated or
 # overwritten if already present
 $script:MANUAL_CONFIG="off"
 
-## set INTERACTIVE_MODE to "off" to launch oh.ps1 without calling the user
+# Interactive mode
+# set INTERACTIVE_MODE to "off" to launch oh.ps1 without calling the user
 # interaction meno (script_menu). Useful if automatic startup of OH is needed.
 # In order to use this mode, setup all the OH configuration variables in the script
 # or pass arguments via command line.
 $script:INTERACTIVE_MODE="on"
 
-# set JAVA_BIN # Uncomment this if you want to use system wide JAVA
+# Set JAVA_BIN 
+# Uncomment this if you want to use system wide JAVA
 #$script:JAVA_BIN="C:\Program Files\JAVA\bin\java.exe"
 
 ######## Define architecture
