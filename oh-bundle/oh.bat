@@ -92,6 +92,14 @@ REM ############################# Legacy oh.bat ############################
 echo Legacy mode - Starting OH with oh.bat...
 
 REM ################### Configuration ###################
+REM #                                                   
+REM #                   ___Warning___                   
+REM #
+REM # __this configuration parameters work ONLY for legacy mode__
+REM #                                                   
+REM # _for normal startup, please edit oh.ps1__
+REM #
+REM ###################
 set OH_PATH=%~dps0
 
 REM # Language setting - default set to en
@@ -117,9 +125,9 @@ set DICOM_MAX_SIZE="4M"
 
 set OH_DIR=oh
 set SQL_DIR=sql
-set DATA_DIR=data\db
-set LOG_DIR=data\log
-set DICOM_DIR=data\dicom_storage
+set DATA_DIR="data\db"
+set LOG_DIR="data\log"
+set DICOM_DIR="data\dicom_storage"
 set TMP_DIR=tmp
 set DB_CREATE_SQL=create_all_en.sql
 REM #-> DB_CREATE_SQL default is set to create_all_en.sql - set to "create_all_demo.sql" for demo or create_all_[lang].sql for language
@@ -155,11 +163,10 @@ REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/do
 REM set JAVA_DISTRO="OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip"
 
 REM # JRE 8 32bit - i686 - default
-REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/"
-REM set JAVA_DISTRO="OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10.zip"
+REM set JAVA_URL="https://cdn.azul.com/zulu/bin/zulu11.50.19-ca-jre11.0.12-win_i686.zip"
+REM set JAVA_DISTRO="zulu11.50.19-ca-jre11.0.12-win_i686"
 
-REM set JAVA_DIR=jdk-11.0.12+7-jre
-set JAVA_DIR=jdk8u292-b10-jre
+set JAVA_DIR=zulu11.50.19-ca-jre11.0.12-win_i686
 set JAVA_BIN=%OH_PATH%\%JAVA_DIR%\bin\java.exe
 
 set REPLACE_PATH=%OH_PATH%\%MYSQL_DIR%\bin
@@ -185,8 +192,8 @@ if "%ERRORLEVEL%" equ "0" (
 echo Found TCP port %MYSQL_PORT% for MySQL !
 
 REM # Create tmp and log dir
-mkdir %OH_PATH%\%TMP_DIR%
-mkdir %OH_PATH%\%LOG_DIR%
+mkdir "%OH_PATH%\%TMP_DIR%"
+mkdir "%OH_PATH%\%LOG_DIR%"
 
 echo Generating MySQL config file...
 REM ### Setup MySQL configuration
@@ -221,8 +228,9 @@ echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\settings.properties.dist %OH_PATH%\%OH_DIR
 
 REM ### Setup log4j.properties
 REM # double escape path
+set OH_LOG_DIR=%LOG_DIR:\=\\%
 set OH_LOG_DEST=%OH_PATH:\=\\%
-set OH_LOG_DEST=%OH_LOG_DEST%\\%LOG_DIR%\\%OH_LOG_FILE%
+set OH_LOG_DEST=%OH_LOG_DEST%\\%OH_LOG_DIR%\\%OH_LOG_FILE%
 echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\log4j.properties.dist %OH_PATH%\%OH_DIR%\rsc\log4j.properties /y >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBSERVER %MYSQL_SERVER% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBPORT %MYSQL_PORT% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
@@ -238,10 +246,10 @@ if not EXIST %OH_PATH%\%DATA_DIR%\%DATABASE_NAME% (
 	echo Removing data...
 	rmdir /s /q %OH_PATH%\%DATA_DIR%
 	REM # Create directories
-	mkdir %OH_PATH%\%DATA_DIR%
-	mkdir %OH_PATH%\%TMP_DIR%
-	mkdir %OH_PATH%\%LOG_DIR%
-	mkdir %OH_PATH%\%DICOM_DIR%
+	mkdir "%OH_PATH%\%DATA_DIR%"
+	mkdir "%OH_PATH%\%TMP_DIR%"
+	mkdir "%OH_PATH%\%LOG_DIR%"
+	mkdir "%OH_PATH%\%DICOM_DIR%"
 	del /s /q %OH_PATH%\%TMP_DIR%\*
 
 	if %MYSQL_DIR:~0,5% == maria (
