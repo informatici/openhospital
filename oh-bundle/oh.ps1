@@ -175,13 +175,11 @@ $script:MYSQL_DIR="mariadb-$script:MYSQL_VERSION-win$script:MYSQL_ARCH"
 #$script:JAVA_DIR="jdk-11.0.11+9-jre"
 
 ### JRE 11 - zulu
-#$script:JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-win_i686"
+#$script:JAVA_DISTRO="zulu11.50.19-ca-fx-jre11.0.12-win_i686.zip"
 #$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
-#$script:JAVA_DIR="zulu11.45.27-ca-jre11.0.10-win_i686"
 
 ### JRE 8 - zulu
-#$script:JAVA_DISTRO="zulu8.56.0.21-ca-jre8.0.302-win_x64"
-$script:JAVA_DISTRO="zulu8.56.0.21-ca-jre8.0.302-win_$JAVA_PACKAGE_ARCH"
+$script:JAVA_DISTRO="zulu8.56.0.23-ca-fx-jre8.0.302-win_$JAVA_PACKAGE_ARCH"
 $script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
 $script:JAVA_DIR=$JAVA_DISTRO
 
@@ -880,8 +878,7 @@ if ( Test-Path "$OH_PATH/$OH_DIR/rsc/log4j.properties" ) {
 (Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBPASS","$DATABASE_PASSWORD") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
 (Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBNAME","$DATABASE_NAME") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
 (Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("LOG_LEVEL","$LOG_LEVEL") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
-# (Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("LOG_DEST","../$LOG_DIR/$OH_LOG_FILE") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("LOG_DEST","$OH_PATH/$LOG_DIR/$OH_LOG_FILE") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
+(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("LOG_DEST","../$LOG_DIR/$OH_LOG_FILE") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
 
 ######## database.properties setup 
 if ( Test-Path "$OH_PATH/$OH_DIR/rsc/database.properties" ) {
@@ -913,7 +910,10 @@ Write-Host "Starting Open Hospital..."
 # OH GUI launch
 cd "$OH_PATH\$OH_DIR" # workaround for hard coded paths
 
-$JAVA_ARGS="-client -Dlog4j.configuration=`"`'$OH_PATH\$OH_DIR\rsc\log4j.properties`'`" -Dsun.java2d.dpiaware=false -Djava.library.path=`"`'$NATIVE_LIB_PATH`'`" -cp `"`'$OH_CLASSPATH`'`" org.isf.menu.gui.Menu"
+#$JAVA_ARGS="-client -Dlog4j.configuration=`"`'$OH_PATH\$OH_DIR\rsc\log4j.properties`'`" -Dsun.java2d.dpiaware=false -Djava.library.path=`"`'$NATIVE_LIB_PATH`'`" -cp `"`'$OH_CLASSPATH`'`" org.isf.menu.gui.Menu"
+
+# log4j configuration is now read directly
+$JAVA_ARGS="-client -Dsun.java2d.dpiaware=false -Djava.library.path=`"`'$NATIVE_LIB_PATH`'`" -cp `"`'$OH_CLASSPATH`'`" org.isf.menu.gui.Menu"
 
 Start-Process -FilePath "$JAVA_BIN" -ArgumentList $JAVA_ARGS -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
 

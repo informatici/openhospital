@@ -109,8 +109,8 @@ set OH_LANGUAGE=en
 REM # set log level to INFO | DEBUG - default set to INFO
 set LOG_LEVEL=INFO
 
-REM # enable / disable DICOM (true|false)
-set DICOM_ENABLE=false
+REM # enable / disable DICOM (on|off)
+set DICOM_ENABLE=on
 
 REM ### Software configuration - change at your own risk :-)
 REM # Database
@@ -158,15 +158,16 @@ REM # JRE 11 64bit - x86_64
 REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
 REM set JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9.zip"
 
-REM # JRE 11 32bit - i686
+REM # JRE 11 32bit - i686 - openjdk
 REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
 REM set JAVA_DISTRO="OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip"
 
-REM # JRE 8 32bit - i686 - default
-REM set JAVA_URL="https://cdn.azul.com/zulu/bin/zulu11.50.19-ca-jre11.0.12-win_i686.zip"
-REM set JAVA_DISTRO="zulu11.50.19-ca-jre11.0.12-win_i686"
+REM # JRE 11 32bit - i686 - zulu
+REM set JAVA_URL="https://cdn.azul.com/zulu/bin/zulu11.50.19-ca-fx-jre11.0.12-win_i686.zip"
+REM set JAVA_DISTRO=zulu11.50.19-ca-fx-jre11.0.12-win_i686.zip
 
-set JAVA_DIR=zulu11.50.19-ca-jre11.0.12-win_i686
+REM # JRE 8 32bit - i686 - zulu - default
+set JAVA_DIR=zulu8.56.0.23-ca-fx-jre8.0.302-win_i686
 set JAVA_BIN=%OH_PATH%\%JAVA_DIR%\bin\java.exe
 
 set REPLACE_PATH=%OH_PATH%\%MYSQL_DIR%\bin
@@ -227,10 +228,9 @@ echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\settings.properties.dist %OH_PATH%\%OH_DIR
 %REPLACE_PATH%\replace.exe OH_SET_LANGUAGE %OH_LANGUAGE% -- %OH_PATH%\%OH_DIR%\rsc\settings.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 
 REM ### Setup log4j.properties
-REM # double escape path
-set OH_LOG_DIR=%LOG_DIR:\=\\%
-set OH_LOG_DEST=%OH_PATH:\=\\%
-set OH_LOG_DEST=%OH_LOG_DEST%\\%OH_LOG_DIR%\\%OH_LOG_FILE%
+REM # replace backslash with slash
+set OH_LOG_DIR=%LOG_DIR:\=/%
+set OH_LOG_DEST=../%OH_LOG_DIR%/%OH_LOG_FILE%
 echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\log4j.properties.dist %OH_PATH%\%OH_DIR%\rsc\log4j.properties /y >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBSERVER %MYSQL_SERVER% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBPORT %MYSQL_PORT% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
@@ -282,6 +282,7 @@ if not EXIST %OH_PATH%\%DATA_DIR%\%DATABASE_NAME% (
 	cd /d %OH_PATH%\%SQL_DIR%
 	start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysql.exe --local-infile=1 -u root -p%MYSQL_ROOT_PW% --host=%MYSQL_SERVER% --port=%MYSQL_PORT% %DATABASE_NAME% < "%OH_PATH%\sql\%DB_CREATE_SQL%"  >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 	if ERRORLEVEL 1 (goto error)
+	cd /d %OH_PATH%
 	echo Database imported!
 ) else (
 	echo Database already initialized, trying to start...
@@ -310,7 +311,7 @@ set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\bin\OH-gui.jar
 REM # Setup native_lib_path for current architecture
 REM # with DICOM workaround - force NATIVE_LIB to 32bit
 
-if %PROCESSOR_ARCHITECTURE%==AMD64 if not %DICOM_ENABLE%==true if not %ARCH%==32 (
+if %PROCESSOR_ARCHITECTURE%==AMD64 if not %DICOM_ENABLE%==on if not %ARCH%==32 (
 	set NATIVE_LIB_PATH=%OH_PATH%\%OH_DIR%\lib\native\Win64
 ) else (
 	set NATIVE_LIB_PATH=%OH_PATH%\%OH_DIR%\lib\native\Windows
