@@ -336,15 +336,15 @@ function java_check {
 			Write-Host "Error unpacking Java. Exiting." -ForegroundColor Red
 			Read-Host; exit 1
 		}
-	Write-Host "Java unpacked successfully!"
-	}
-	# check for java binary
-	if ( Test-Path "$OH_PATH\$JAVA_DIR\bin\java.exe" ) {
-		$script:JAVA_BIN="$OH_PATH\$JAVA_DIR\bin\java.exe"
-	}
-	else {
-		Write-Host "Error: JAVA not found. Exiting." -ForegroundColor Red
-		Read-Host; exit 1
+		Write-Host "Java unpacked successfully!"
+		# check for java binary
+		if ( Test-Path "$OH_PATH\$JAVA_DIR\bin\java.exe" ) {
+			$script:JAVA_BIN="$OH_PATH\$JAVA_DIR\bin\java.exe"
+		}
+		else {
+			Write-Host "Error: JAVA not found. Exiting." -ForegroundColor Red
+			Read-Host; exit 1
+		}
 	}
 	Write-Host "JAVA found!"
 	Write-Host "Using $JAVA_BIN"
