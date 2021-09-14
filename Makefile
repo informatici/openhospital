@@ -61,6 +61,7 @@ release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX
 
 $(CLIENT).zip: compile-all
 	mkdir -p $(CLIENT)/doc
+	mkdir -p $(CLIENT)/oh
 	cp -rf ./oh-bundle/* $(CLIENT)/
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(CLIENT)/oh
 	cp -rf ./openhospital-core/sql $(CLIENT)/
@@ -76,6 +77,7 @@ $(CLIENT).zip: compile-all
 
 $(WIN32).zip: compile-all dw-all
 	mkdir -p $(WIN32)/doc
+	mkdir -p $(WIN32)/oh
 	cp -rf ./oh-bundle/* $(WIN32)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
 	cp -a ./openhospital-core/sql $(WIN32)/
@@ -93,6 +95,7 @@ $(WIN32).zip: compile-all dw-all
 
 $(WIN64).zip: compile-all dw-all
 	mkdir -p $(WIN64)/doc
+	mkdir -p $(WIN64)/oh
 	cp -rf ./oh-bundle/* $(WIN64)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN64)/oh
 	cp -a ./openhospital-core/sql $(WIN64)/
@@ -108,6 +111,7 @@ $(WIN64).zip: compile-all dw-all
 
 $(LINUX32).tar.gz: compile-all dw-all
 	mkdir -p $(LINUX32)/doc
+	mkdir -p $(LINUX32)/oh
 	cp -rf ./oh-bundle/* $(LINUX32)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
 	cp -a ./openhospital-core/sql $(LINUX32)/
@@ -124,6 +128,7 @@ $(LINUX32).tar.gz: compile-all dw-all
 
 $(LINUX64).tar.gz: compile-all dw-all
 	mkdir -p $(LINUX64)/doc
+	mkdir -p $(LINUX64)/oh
 	cp -rf ./oh-bundle/* $(LINUX64)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
 	cp -a ./openhospital-core/sql $(LINUX64)/
