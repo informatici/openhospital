@@ -175,7 +175,7 @@ $script:MYSQL_DIR="mariadb-$script:MYSQL_VERSION-win$script:MYSQL_ARCH"
 #$script:JAVA_DIR="jdk-11.0.11+9-jre"
 
 ### JRE 11 - zulu
-#$script:JAVA_DISTRO="zulu11.50.19-ca-fx-jre11.0.12-win_i686.zip"
+#$script:JAVA_DISTRO="zulu11.50.19-ca-fx-jre11.0.12-win_$JAVA_PACKAGE_ARCH"
 #$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
 
 ### JRE 8 - zulu
