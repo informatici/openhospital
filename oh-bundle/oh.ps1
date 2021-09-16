@@ -129,11 +129,17 @@ $script:INTERACTIVE_MODE="on"
 
 $script:ARCH=$env:PROCESSOR_ARCHITECTURE
 
-switch ( "$ARCH" ) {	
-	"amd64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64"; Break }
-	"AMD64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64"; Break }
-	"x86_64" { $script:JAVA_ARCH=64; $script:MYSQL_ARCH="x64"; Break }
-	("486","586","686","x86","i86pc") { $script:JAVA_ARCH=32; $script:MYSQL_ARCH=32; Break }
+switch ( "$ARCH" ){	
+	{"amd64","AMD64","x86_64"} {
+		$script:JAVA_ARCH=64;
+		$script:MYSQL_ARCH="x64";
+		$script:JAVA_PACKAGE_ARCH="x64";
+		Break }
+	{"486","586","686","x86","i86pc"} {
+		$script:JAVA_ARCH=32;
+		$script:MYSQL_ARCH=32;
+		$script:JAVA_PACKAGE_ARCH="i686";
+		Break }
 	default {
 		Write-Host "Unknown architecture: $ARCH. Exiting." -ForegroundColor Red
 		Read-Host; exit 1
@@ -142,11 +148,15 @@ switch ( "$ARCH" ) {
 
 # workaround to force 32bit JAVA in order to have DICOM working on 64bit arch
 if ( $DICOM_ENABLE -eq "on" ) {
-	$script:JAVA_ARCH=32
+	$script:JAVA_ARCH=32;
+	$script:JAVA_PACKAGE_ARCH="i686";
 }
 	
-# workaround to force 32bit JAVA in order to have DICOM working
-#$script:JAVA_ARCH=32
+# workaround to force 32bit JAVA and MySQL in order to have DICOM working
+#$script:JAVA_ARCH=32; $script:MYSQL_ARCH=32; $script:JAVA_PACKAGE_ARCH="i686";
+
+# archive file extension
+$script:EXT="zip"
 
 ######## MySQL Software
 # MariaDB
@@ -156,38 +166,23 @@ $script:MYSQL_DIR="mariadb-$script:MYSQL_VERSION-win$script:MYSQL_ARCH"
 # MySQL
 #$script:MYSQL_DIR="mysql-5.7.35-win$script:MYSQL_ARCH"
 #$script:MYSQL_URL=" https://downloads.mysql.com/archives/get/p/23/file"
-$script:EXT="zip"
 
 ######## JAVA Software
 ######## JAVA 64bit - default architecture
-### JRE 11 - zulu
-#$script:JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-win_i686"
-#$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
-#$script:JAVA_DIR="zulu11.45.27-ca-jre11.0.10-win_i686"
-
 ### JRE 11 - openjdk
-$script:JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
-$script:JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9"
-$script:JAVA_DIR="jdk-11.0.11+9-jre"
+#$script:JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
+#$script:JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9"
+#$script:JAVA_DIR="jdk-11.0.11+9-jre"
 
-######## JAVA 32bit
-if ( $JAVA_ARCH -eq "32" ) {
-	# set JRE 32 bit
-	### JRE 8 32bit - openjdk distribution
-	# https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10.zip
-	$script:JAVA_DISTRO="OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10"
-	$script:JAVA_URL="https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/"
-	$script:JAVA_DIR="jdk8u292-b10-jre"
-	### JRE 8 32bit - zulu distribution
-	#$script:JAVA_DISTRO="zulu8.56.0.21-ca-jre8.0.302-win_i686"
-	#$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
-	#$script:JAVA_DIR="$JAVA_DISTRO"
+### JRE 11 - zulu
+#$script:JAVA_DISTRO="zulu11.50.19-ca-fx-jre11.0.12-win_$JAVA_PACKAGE_ARCH"
+#$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
 
-	### JRE 11 32bit - zulu distribution
-	#$script:JAVA_DISTRO="zulu11.45.27-ca-jre11.0.10-win_i686"
-	#$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
-	#$script:JAVA_DIR="zulu11.45.27-ca-jre11.0.10-win_i686"
-}
+### JRE 8 - zulu
+$script:JAVA_DISTRO="zulu8.56.0.23-ca-fx-jre8.0.302-win_$JAVA_PACKAGE_ARCH"
+$script:JAVA_URL="https://cdn.azul.com/zulu/bin/"
+$script:JAVA_DIR=$JAVA_DISTRO
+
 
 ######## get script info
 # determine script name and location for PowerShell
@@ -341,15 +336,15 @@ function java_check {
 			Write-Host "Error unpacking Java. Exiting." -ForegroundColor Red
 			Read-Host; exit 1
 		}
-	Write-Host "Java unpacked successfully!"
-	}
-	# check for java binary
-	if ( Test-Path "$OH_PATH\$JAVA_DIR\bin\java.exe" ) {
-		$script:JAVA_BIN="$OH_PATH\$JAVA_DIR\bin\java.exe"
-	}
-	else {
-		Write-Host "Error: JAVA not found. Exiting." -ForegroundColor Red
-		Read-Host; exit 1
+		Write-Host "Java unpacked successfully!"
+		# check for java binary
+		if ( Test-Path "$OH_PATH\$JAVA_DIR\bin\java.exe" ) {
+			$script:JAVA_BIN="$OH_PATH\$JAVA_DIR\bin\java.exe"
+		}
+		else {
+			Write-Host "Error: JAVA not found. Exiting." -ForegroundColor Red
+			Read-Host; exit 1
+		}
 	}
 	Write-Host "JAVA found!"
 	Write-Host "Using $JAVA_BIN"
@@ -915,7 +910,10 @@ Write-Host "Starting Open Hospital..."
 # OH GUI launch
 cd "$OH_PATH\$OH_DIR" # workaround for hard coded paths
 
-$JAVA_ARGS="-client -Dlog4j.configuration=`"`'$OH_PATH\oh\rsc\log4j.properties`'`" -Dsun.java2d.dpiaware=false -Djava.library.path=`"`'$NATIVE_LIB_PATH`'`" -cp `"`'$OH_CLASSPATH`'`" org.isf.menu.gui.Menu"
+#$JAVA_ARGS="-client -Dlog4j.configuration=`"`'$OH_PATH\$OH_DIR\rsc\log4j.properties`'`" -Dsun.java2d.dpiaware=false -Djava.library.path=`"`'$NATIVE_LIB_PATH`'`" -cp `"`'$OH_CLASSPATH`'`" org.isf.menu.gui.Menu"
+
+# log4j configuration is now read directly
+$JAVA_ARGS="-client -Dsun.java2d.dpiaware=false -Djava.library.path=`"$NATIVE_LIB_PATH`" -cp `"`'$OH_CLASSPATH`'`" org.isf.menu.gui.Menu"
 
 Start-Process -FilePath "$JAVA_BIN" -ArgumentList $JAVA_ARGS -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
 

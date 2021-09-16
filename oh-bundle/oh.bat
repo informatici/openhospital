@@ -92,6 +92,14 @@ REM ############################# Legacy oh.bat ############################
 echo Legacy mode - Starting OH with oh.bat...
 
 REM ################### Configuration ###################
+REM #                                                   
+REM #                   ___Warning___                   
+REM #
+REM # __this configuration parameters work ONLY for legacy mode__
+REM #                                                   
+REM # _for normal startup, please edit oh.ps1__
+REM #
+REM ###################
 set OH_PATH=%~dps0
 
 REM # Language setting - default set to en
@@ -101,8 +109,8 @@ set OH_LANGUAGE=en
 REM # set log level to INFO | DEBUG - default set to INFO
 set LOG_LEVEL=INFO
 
-REM # enable / disable DICOM (true|false)
-set DICOM_ENABLE=false
+REM # enable / disable DICOM (on|off)
+set DICOM_ENABLE=on
 
 REM ### Software configuration - change at your own risk :-)
 REM # Database
@@ -117,14 +125,19 @@ set DICOM_MAX_SIZE="4M"
 
 set OH_DIR=oh
 set SQL_DIR=sql
-set DATA_DIR=data\db
-set LOG_DIR=data\log
-set DICOM_DIR=data\dicom_storage
+set DATA_DIR="data\db"
+set LOG_DIR="data\log"
+set DICOM_DIR="data\dicom_storage"
 set TMP_DIR=tmp
 set DB_CREATE_SQL=create_all_en.sql
 REM #-> DB_CREATE_SQL default is set to create_all_en.sql - set to "create_all_demo.sql" for demo or create_all_[lang].sql for language
 set LOG_FILE=startup.log
 set OH_LOG_FILE=openhospital.log
+
+REM ######## Architecture
+REM # ARCH can be set to 32 or x64
+REM force ARCH to 32
+set ARCH=32
 
 REM ######## MySQL Software
 REM # MariaDB 64bit
@@ -138,20 +151,23 @@ REM # MySQL 32bit
 REM https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.35-win32.zip
 
 REM set MYSQL_DIR=mysql-5.7.35-win32
-set MYSQL_DIR=mariadb-10.2.40-winx64
+set MYSQL_DIR=mariadb-10.2.40-win%ARCH%
 
 REM ####### JAVA Software
-REM ######## JAVA 64bit - experimental architecture
-REM ### JRE 11 - openjdk distribution
+REM # JRE 11 64bit - x86_64
 REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
 REM set JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9.zip"
 
-REM ######## JAVA 32bit - default architecture
-REM ### JRE 11 - openjdk distribution
+REM # JRE 11 32bit - i686 - openjdk
 REM set JAVA_URL="https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/"
 REM set JAVA_DISTRO="OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip"
 
-set JAVA_DIR=jdk-11.0.12+7-jre
+REM # JRE 11 32bit - i686 - zulu
+REM set JAVA_URL="https://cdn.azul.com/zulu/bin/zulu11.50.19-ca-fx-jre11.0.12-win_i686.zip"
+REM set JAVA_DISTRO=zulu11.50.19-ca-fx-jre11.0.12-win_i686.zip
+
+REM # JRE 8 32bit - i686 - zulu - default
+set JAVA_DIR=zulu8.56.0.23-ca-fx-jre8.0.302-win_i686
 set JAVA_BIN=%OH_PATH%\%JAVA_DIR%\bin\java.exe
 
 set REPLACE_PATH=%OH_PATH%\%MYSQL_DIR%\bin
@@ -177,8 +193,8 @@ if "%ERRORLEVEL%" equ "0" (
 echo Found TCP port %MYSQL_PORT% for MySQL !
 
 REM # Create tmp and log dir
-mkdir %OH_PATH%\%TMP_DIR%
-mkdir %OH_PATH%\%LOG_DIR%
+mkdir "%OH_PATH%\%TMP_DIR%"
+mkdir "%OH_PATH%\%LOG_DIR%"
 
 echo Generating MySQL config file...
 REM ### Setup MySQL configuration
@@ -212,9 +228,9 @@ echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\settings.properties.dist %OH_PATH%\%OH_DIR
 %REPLACE_PATH%\replace.exe OH_SET_LANGUAGE %OH_LANGUAGE% -- %OH_PATH%\%OH_DIR%\rsc\settings.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 
 REM ### Setup log4j.properties
-REM # double escape path
-set OH_LOG_DEST=%OH_PATH:\=\\%
-set OH_LOG_DEST=%OH_LOG_DEST%\\%LOG_DIR%\\%OH_LOG_FILE%
+REM # replace backslash with slash
+set OH_LOG_DIR=%LOG_DIR:\=/%
+set OH_LOG_DEST=../%OH_LOG_DIR%/%OH_LOG_FILE%
 echo f | xcopy %OH_PATH%\%OH_DIR%\rsc\log4j.properties.dist %OH_PATH%\%OH_DIR%\rsc\log4j.properties /y >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBSERVER %MYSQL_SERVER% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 %REPLACE_PATH%\replace.exe DBPORT %MYSQL_PORT% -- %OH_PATH%\%OH_DIR%\rsc\log4j.properties >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
@@ -230,10 +246,10 @@ if not EXIST %OH_PATH%\%DATA_DIR%\%DATABASE_NAME% (
 	echo Removing data...
 	rmdir /s /q %OH_PATH%\%DATA_DIR%
 	REM # Create directories
-	mkdir %OH_PATH%\%DATA_DIR%
-	mkdir %OH_PATH%\%TMP_DIR%
-	mkdir %OH_PATH%\%LOG_DIR%
-	mkdir %OH_PATH%\%DICOM_DIR%
+	mkdir "%OH_PATH%\%DATA_DIR%"
+	mkdir "%OH_PATH%\%TMP_DIR%"
+	mkdir "%OH_PATH%\%LOG_DIR%"
+	mkdir "%OH_PATH%\%DICOM_DIR%"
 	del /s /q %OH_PATH%\%TMP_DIR%\*
 
 	if %MYSQL_DIR:~0,5% == maria (
@@ -266,6 +282,7 @@ if not EXIST %OH_PATH%\%DATA_DIR%\%DATABASE_NAME% (
 	cd /d %OH_PATH%\%SQL_DIR%
 	start /b /min /wait %OH_PATH%\%MYSQL_DIR%\bin\mysql.exe --local-infile=1 -u root -p%MYSQL_ROOT_PW% --host=%MYSQL_SERVER% --port=%MYSQL_PORT% %DATABASE_NAME% < "%OH_PATH%\sql\%DB_CREATE_SQL%"  >> "%OH_PATH%\%LOG_DIR%\%LOG_FILE%" 2>&1
 	if ERRORLEVEL 1 (goto error)
+	cd /d %OH_PATH%
 	echo Database imported!
 ) else (
 	echo Database already initialized, trying to start...
@@ -294,7 +311,7 @@ set CLASSPATH=%CLASSPATH%;%OH_PATH%\%OH_DIR%\bin\OH-gui.jar
 REM # Setup native_lib_path for current architecture
 REM # with DICOM workaround - force NATIVE_LIB to 32bit
 
-if %PROCESSOR_ARCHITECTURE%==AMD64 if not %DICOM_ENABLE%==true (
+if %PROCESSOR_ARCHITECTURE%==AMD64 if not %DICOM_ENABLE%==on if not %ARCH%==32 (
 	set NATIVE_LIB_PATH=%OH_PATH%\%OH_DIR%\lib\native\Win64
 ) else (
 	set NATIVE_LIB_PATH=%OH_PATH%\%OH_DIR%\lib\native\Windows

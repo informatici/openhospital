@@ -62,67 +62,85 @@ release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX
 $(CLIENT).zip: compile-all
 	mkdir -p $(CLIENT)/doc
 	mkdir -p $(CLIENT)/oh
+	cp -rf ./oh-bundle/* $(CLIENT)/
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(CLIENT)/oh
 	cp -rf ./openhospital-core/sql $(CLIENT)/
 	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
-	rm -rf $(CLIENT)/generate_changelog.sh
-	rm -rf $(CLIENT)/oh/README.md
-	cp OH-README.md LICENSE CHANGELOG $(CLIENT)
+	rm -f $(CLIENT)/generate_changelog.sh
+	cp LICENSE CHANGELOG $(CLIENT)
+	# Set client mode in startup scripts
+	sed -i 's/^\$$script\:OH_MODE\=\"PORTABLE\"/\$$script\:OH_MODE\=\"CLIENT\"/g' $(CLIENT)/oh.ps1
+	sed -i 's/^\OH_MODE\=PORTABLE/OH_MODE\=CLIENT/g' $(CLIENT)/oh.sh
+	sed -i '/script:JAVA_ARCH=32/s/^#//g' $(CLIENT)/oh.ps1
 	cp *.pdf $(CLIENT)/doc
 	zip -r $(CLIENT).zip $(CLIENT)
 
 $(WIN32).zip: compile-all dw-all
 	mkdir -p $(WIN32)/doc
-	cp -rf ./poh-bundle-win/* $(WIN32)
-	unzip $(JRE_WIN32) -d $(WIN32)
-	unzip $(MYSQL_WIN32) -d $(WIN32) -x "*/lib/*"
+	mkdir -p $(WIN32)/oh
+	cp -rf ./oh-bundle/* $(WIN32)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
 	cp -a ./openhospital-core/sql $(WIN32)/
 	cp -f ./openhospital-gui/oh.ico $(WIN32)/
-	rm -rf $(WIN32)/oh/generate_changelog.sh
-	cp OH-README.md OH-win-changelog.md LICENSE CHANGELOG $(WIN32)
+	rm -f $(WIN32)/oh/generate_changelog.sh
+	rm -f $(WIN32)/OH-linux-changelog.md
+	rm -f $(WIN32)/oh.sh
+	cp LICENSE CHANGELOG $(WIN32)
 	# Workaround to force JAVA to 32bit to have DICOM working
 	sed -i '/script:JAVA_ARCH=32/s/^#//g' $(WIN32)/oh.ps1
 	cp *.pdf $(WIN32)/doc
+	unzip $(JRE_WIN32) -d $(WIN32)
+	unzip $(MYSQL_WIN32) -d $(WIN32) -x "*/lib/*"
 	zip -r $(WIN32).zip $(WIN32)
 
 $(WIN64).zip: compile-all dw-all
 	mkdir -p $(WIN64)/doc
-	cp -rf ./poh-bundle-win/* $(WIN64)
-	unzip $(JRE_WIN64) -d $(WIN64)
-	unzip $(MYSQL_WIN64) -d $(WIN64) -x "*/lib/*"
+	mkdir -p $(WIN64)/oh
+	cp -rf ./oh-bundle/* $(WIN64)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN64)/oh
 	cp -a ./openhospital-core/sql $(WIN64)/
 	cp -f ./openhospital-gui/oh.ico $(WIN64)/
-	rm -rf $(WIN64)/oh/generate_changelog.sh
-	cp OH-README.md OH-win-changelog.md LICENSE CHANGELOG $(WIN64)
+	rm -f $(WIN64)/oh/generate_changelog.sh
+	rm -f $(WIN64)/OH-linux-changelog.md
+	rm -f $(WIN64)/oh.sh
+	cp LICENSE CHANGELOG $(WIN64)
 	cp *.pdf $(WIN64)/doc
+	unzip $(JRE_WIN64) -d $(WIN64)
+	unzip $(MYSQL_WIN64) -d $(WIN64) -x "*/lib/*"
 	zip -r $(WIN64).zip $(WIN64)
 
 $(LINUX32).tar.gz: compile-all dw-all
 	mkdir -p $(LINUX32)/doc
-	cp -rf ./poh-bundle-linux-x32/* $(LINUX32)
-	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
-	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
+	mkdir -p $(LINUX32)/oh
+	cp -rf ./oh-bundle/* $(LINUX32)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
 	cp -a ./openhospital-core/sql $(LINUX32)/
 	cp -f ./openhospital-gui/oh.ico $(LINUX32)/
-	rm -rf $(LINUX32)/oh/generate_changelog.sh
-	cp OH-README.md OH-linux-changelog.md LICENSE CHANGELOG $(LINUX32)
+	rm -f $(LINUX32)/oh/generate_changelog.sh
+	rm -f $(LINUX32)/OH-win-changelog.md
+	rm -f $(LINUX32)/oh.bat
+	rm -f $(LINUX32)/oh.ps1
+	cp LICENSE CHANGELOG $(LINUX32)
 	cp *.pdf $(LINUX32)/doc
+	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
+	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
 	tar -cvzf $(LINUX32).tar.gz $(LINUX32)
 
 $(LINUX64).tar.gz: compile-all dw-all
 	mkdir -p $(LINUX64)/doc
-	cp -rf ./poh-bundle-linux-x64/* $(LINUX64)
-	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
-	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
+	mkdir -p $(LINUX64)/oh
+	cp -rf ./oh-bundle/* $(LINUX64)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
 	cp -a ./openhospital-core/sql $(LINUX64)/
 	cp -f ./openhospital-gui/oh.ico $(LINUX64)/
-	rm -rf $(LINUX64)/oh/generate_changelog.sh
-	cp OH-README.md OH-linux-changelog.md LICENSE CHANGELOG $(LINUX64)
+	rm -f $(LINUX64)/oh/generate_changelog.sh
+	rm -f $(LINUX64)/OH-win-changelog.md
+	rm -f $(LINUX64)/oh.bat
+	rm -f $(LINUX64)/oh.ps1
+	cp LICENSE CHANGELOG $(LINUX64)
 	cp *.pdf $(LINUX64)/doc
+	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
+	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
 	tar -cvzf $(LINUX64).tar.gz $(LINUX64)
 
 # Compile application binaries
@@ -162,13 +180,22 @@ dw-all: dw-jre-all dw-mysql-all
 dw-jre-all: $(JRE_LINUX32) $(JRE_LINUX64) $(JRE_WIN32) $(JRE_WIN64)
 dw-mysql-all: $(MYSQL_LINUX32) $(MYSQL_LINUX64) $(MYSQL_WIN32) $(MYSQL_WIN64)
 $(JRE_LINUX32):
-	wget -q -nc https://cdn.azul.com/zulu/bin/zulu11.50.19-ca-jre11.0.12-linux_i686.tar.gz -O $(JRE_LINUX32)
+	wget -q -nc https://cdn.azul.com/zulu/bin/zulu8.56.0.21-ca-fx-jre8.0.302-linux_i686.tar.gz -O $(JRE_LINUX32)
 $(JRE_LINUX64):
-	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.11_9.tar.gz -O $(JRE_LINUX64)
+	# openjdk11
+	# # wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.11_9.tar.gz -O $(JRE_LINUX64)
+	# jre 8 - zulu
+	wget -q -nc https://cdn.azul.com/zulu/bin/zulu8.56.0.21-ca-fx-jre8.0.302-linux_x64.tar.gz -O $(JRE_LINUX64)
 $(JRE_WIN32):
-	wget -q -nc https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10.zip -O $(JRE_WIN32)
+	# openjdk 11
+	# # wget -q -nc https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10.zip -O $(JRE_WIN32)
+	# jre 8 - zulu
+	wget -q -nc https://cdn.azul.com/zulu/bin/zulu8.56.0.23-ca-fx-jre8.0.302-win_i686.zip -O $(JRE_WIN32)
 $(JRE_WIN64):
-	wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip -O $(JRE_WIN64)
+	# openjdk 11
+	# # wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip -O $(JRE_WIN64)
+	# jre 8 - zulu
+	wget -q -nc https://cdn.azul.com/zulu/bin/zulu8.56.0.23-ca-fx-jre8.0.302-win_x64.zip -O $(JRE_WIN64)
 $(MYSQL_LINUX32):
 	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-$(MYSQL_VERSION)/bintar-linux-x86/mariadb-$(MYSQL_VERSION)-linux-i686.tar.gz -O $(MYSQL_LINUX32)
 $(MYSQL_LINUX64):
