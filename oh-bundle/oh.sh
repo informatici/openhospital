@@ -455,15 +455,19 @@ function clean_database {
 }
 
 function test_database_connection {
-	# test connection to the OH MySQL database
-	echo "Testing database connection..."
-	DBTEST=$(./$MYSQL_DIR/bin/mysql --user=$DATABASE_USER --password=$DATABASE_PASSWORD --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp -e "USE $DATABASE_NAME" >> ./$LOG_DIR/$LOG_FILE 2>&1; echo "$?" )
-	if [ $DBTEST -eq 0 ];then
-		echo "Database connection successfully established!"
-	else
-		echo "Error: can't connect to database! Exiting."
-		exit 2
+        # test if mysql client is available
+	if [ -x ./$MYSQL_DIR/bin/mysql ]; then
+		# test connection to the OH MySQL database
+		echo "Testing database connection..."
+		DBTEST=$(./$MYSQL_DIR/bin/mysql --user=$DATABASE_USER --password=$DATABASE_PASSWORD --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp -e "USE $DATABASE_NAME" >> ./$LOG_DIR/$LOG_FILE 2>&1; echo "$?" )
+		if [ $DBTEST -eq 0 ];then
+			echo "Database connection successfully established!"
+		else
+			echo "Error: can't connect to database! Exiting."
+			exit 2
+		fi
 	fi
+	echo "Can't test database connection..."
 }
 
 function clean_files {

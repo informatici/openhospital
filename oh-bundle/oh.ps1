@@ -562,16 +562,21 @@ function clean_database {
 }
 
 function test_database_connection {
-	# test connection to the OH MySQL database
-	Write-Host "Testing database connection..."
-	try {
-		Start-Process -FilePath ("$OH_PATH\$MYSQL_DIR\bin\mysql.exe") -ArgumentList ("--user=$DATABASE_USER --password=$DATABASE_PASSWORD --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp -e $([char]34)USE $DATABASE_NAME$([char]34) " ) -Wait -NoNewWindow
-		Write-Host "Database connection successfully established!"
+	# test if mysql client is available
+	if ( Test-Path "$OH_PATH\$MYSQL_DIR\bin\mysql.exe" ) {
+
+		# test connection to the OH MySQL database
+		Write-Host "Testing database connection..."
+		try {
+			Start-Process -FilePath ("$OH_PATH\$MYSQL_DIR\bin\mysql.exe") -ArgumentList ("--user=$DATABASE_USER --password=$DATABASE_PASSWORD --host=$MYSQL_SERVER --port=$MYSQL_PORT --protocol=tcp -e $([char]34)USE $DATABASE_NAME$([char]34) " ) -Wait -NoNewWindow
+			Write-Host "Database connection successfully established!"
+		}
+		catch {
+			Write-Host "Error: can't connect to database! Exiting." -ForegroundColor Red
+			Read-Host; exit 2
+		}
 	}
-	catch {
-		Write-Host "Error: can't connect to database! Exiting." -ForegroundColor Red
-		Read-Host; exit 2
-	}
+	Write-Host "Can't test database connection..." 
 }
 
 function clean_files {

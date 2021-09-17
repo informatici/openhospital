@@ -4,7 +4,7 @@ OH - Open Hospital (https://www.open-hospital.org/) is a free and open-source El
 Open Hospital is deployed as a desktop application that can be used in a standalone, single user mode (PORTABLE mode)
 or in a client / server network configuration (CLIENT mode), where multiple clients and users connect to the same database server.
 
-OH is developed in Java and it is based on open-source tools and libraries; OH can run on any computer, requires low resources and is designed to work without an internet connection.
+OH is developed in Java and it is based on open-source tools and libraries; it runs on any computer, requires low resources and is designed to work without an internet connection.
 
 Open Hospital is the first of a set of software products that ISF - Informatici Senza Frontiere (https://www.informaticisenzafrontiere.org) has developed to support the information management and the activities of hospitals and health centers in the simplest manner possible, by providing tools for the hospital administrative operations (like registering patients, manage laboratory analysis and pharmaceutical stocks) and to produce detailed statistics and reports.
 It was first deployed in 2006 at the St. Luke Hospital in Angal (Uganda) and it is now used in dozens of different locations around the world.
