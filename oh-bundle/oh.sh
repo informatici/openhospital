@@ -455,7 +455,7 @@ function clean_database {
 }
 
 function test_database_connection {
-        # test if mysql client is available
+	# test if mysql client is available
 	if [ -x ./$MYSQL_DIR/bin/mysql ]; then
 		# test connection to the OH MySQL database
 		echo "Testing database connection..."
