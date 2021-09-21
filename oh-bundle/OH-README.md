@@ -153,7 +153,6 @@ DATABASE_PASSWORD="xxxxxxx"
 DICOM_MAX_SIZE="4M"
 ```
 
-
 - File names and directory structure:
 ```
 OH_DIR=oh
@@ -185,7 +184,6 @@ MANUAL_CONFIG=off
 ######## set JAVA_BIN
 # Uncomment this if you want to use system wide JAVA
 #JAVA_BIN=`which java`
-
 ```
 
 - **(Windows only)** enable / disable DICOM features
