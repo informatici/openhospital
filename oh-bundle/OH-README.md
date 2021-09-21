@@ -31,7 +31,7 @@ The Windows version has been tested on Windows 10 (32/64bit).
 |                   Open Hospital | OH                    |
 |                                                         |
  ---------------------------------------------------------
- lang en | arch x86_64
+ lang en | arch x86_64 | mode PORTABLE/CLIENT
 
  Usage: oh.sh [ -lang en|fr|it|es|pt ] 
 
@@ -78,7 +78,7 @@ Usage: oh.ps1 [ -lang en|fr|it|es|pt ]
  X    clean/reset OH installation
  q    quit
 ```
-Note: The oh.bat launches the oh.ps1 startup file automatically.
+Note: The **oh.bat** launches the **oh.ps1** startup file automatically.
 The script presents the interactive menu that can be used to setup and choose how to run Open Hospital.
 
 On Windows, to manually run oh.ps1 (powershell script):
@@ -135,7 +135,7 @@ DEMO_MODE=off
 
 ```
 # set log level to INFO | DEBUG - default set to INFO
-#DEBUG_LEVEL=INFO
+#LOG_LEVEL=INFO
 ```
 
 - Database and software configuration. If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a Client/Server / LAN environment
@@ -188,17 +188,27 @@ MANUAL_CONFIG=off
 
 ```
 
-- (Windows only) enable / disable DICOM features
+- **(Windows only)** enable / disable DICOM features
 ```
 # enable / disable DICOM (on|off)
 #$script:DICOM_ENABLE="off"
+```
+
+- **(Windows only)** enable / disable DICOM features
+```
+# Interactive mode
+# set INTERACTIVE_MODE to "off" to launch oh.ps1 without calling the user
+# interaction meno (script_menu). Useful if automatic startup of OH is needed.
+# In order to use this mode, setup all the OH configuration variables in the script
+# or pass arguments via command line.
+$script:INTERACTIVE_MODE="on"
 ```
 
 # Default directory structure
 
 The scripts takes care of creating all the needed data directories and configuration files.
 Everything is also parametric and user adjustable in the scripts with variables (or via command line options).
-The default is now clean, simple and **common to all distros:**
+The default folder structure is now clean, simple and **common to all distros:**
 
 ```
 /oh -> Open Hospital distribution
@@ -217,7 +227,7 @@ External software package downloaded at first run:
 
 ```
 Mariadb 10.2.x server
-OpenJDK JRE 11
+Java JRE, Zulu or OpenJDK distribution
 ```
 
 # Known issues
