@@ -285,20 +285,16 @@ set-executionpolicy remotesigned
 (*) If you are using the legacy version, you might have to download and unzip java ad mysql manually.
 In order to download and unzip Java:
 
-- Visit https://adoptopenjdk.net/
-- select "Other Platforms"
-- choose a Version: **OpenJDK 11 (LTS)**
-- choose a JVM type: **HotSpot**
-- choose operating system: **Windows** and architecture (x86 or x64)
+- Visit  https://cdn.azul.com/zulu/bin/
 - download the **JRE - .zip version**
 
-**x86 - 32bit:** https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip
+**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu8.56.0.23-ca-fx-jre8.0.302-win_i686.zip
 
-**x64 - 64bit:** https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9.zip
+**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu8.56.0.23-ca-fx-jre8.0.302-win_x64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
-In order to download and unzip mysql (mariadb):
+In order to download and unzip mariadb:
 
 - Visit https://downloads.mariadb.org/mariadb/10.2/
 - Select the Operating System: **Windows**
