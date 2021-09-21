@@ -194,7 +194,7 @@ MANUAL_CONFIG=off
 #$script:DICOM_ENABLE="off"
 ```
 
-- **(Windows only)** enable / disable DICOM features
+- **(Windows only)** set interactive mode
 ```
 # Interactive mode
 # set INTERACTIVE_MODE to "off" to launch oh.ps1 without calling the user
