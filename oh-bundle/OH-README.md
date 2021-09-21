@@ -329,7 +329,7 @@ A short description of changes for the Linux version (mostly the same behavior a
 - **New**: debug mode -> set log4.properties to DEBUG mode (default is INFO)
 - **New**: manual config mode (set MANUAL_CONFIG=on in script) -> mysql and oh configuration files are not generated automatically or overwritten, useful for testing
 - **New**: test database connection option (see oh.sh -t)
-- **New**: displayes software versions and current configuration (see oh.sh -v)
+- **New**: displays software versions and current configuration (see oh.sh -v)
 - Centralized variable managing (see related config file changes applied): now all (well, almost all, still some "isf" reference in SQL creation script...that will be removed ;-) references to database password, mysql host, etc. etc. are in the script and can be easily adapted / modified for any need
 - More flexible execution and configuration options
 - Automatic configuration files generation
@@ -346,5 +346,5 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Fixed _a_few_ bugs ;-)
 
 
-*last updated: 2021.08.20*
+*last updated: 2021.09.21*
 
