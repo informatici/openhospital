@@ -1,6 +1,6 @@
 # OH - Open Hospital Portable | Client 
 
-OH - Open Hospital (https://www.open-hospital.org) is a free and open-source Electronic Health Record (EHR) software application.
+OH - Open Hospital (https://www.open-hospital.org/) is a free and open-source Electronic Health Record (EHR) software application.
 Open Hospital is deployed as a desktop application that can be used in a standalone, single user mode (PORTABLE mode)
 or in a client / server network configuration (CLIENT mode), where multiple clients and users connect to the same database server.
 
