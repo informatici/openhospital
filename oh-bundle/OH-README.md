@@ -144,10 +144,10 @@ DEMO_DATA=off
 #LOG_LEVEL=INFO
 ```
 
-- Database and software configuration. If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a Client/Server / LAN environment
+- Database and software configuration. If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a client/server / LAN environment.
 
 ```
-######## Software configuration - change at your own risk :-)
+######## Software configuration - change at your own risk :-) (linux version - windows version requires "$script:" in front of any variable)
 # Database
 MYSQL_SERVER=localhost
 MYSQL_PORT=3306
@@ -170,7 +170,7 @@ BACKUP_DIR="data/dump"
 TMP_DIR=tmp
 #DB_CREATE_SQL="create_all_en.sql" # default to create_all_en.sql
 DB_DEMO="create_all_demo.sql"
-DATE=`date +%Y-%m-%d_%H-%M-%S`
+DATE=`date +%Y-%m-%d_%H-%M-%S` # linux
 LOG_FILE=startup.log
 OH_LOG_FILE=openhospital.log
 ```
@@ -182,14 +182,16 @@ OH_LOG_FILE=openhospital.log
 ## set MANUAL_CONFIG to "on" to setup configuration files manually
 # my.cnf and all oh/rsc/*.properties files will not be generated or
 # overwritten if already present
-MANUAL_CONFIG=off
+MANUAL_CONFIG=off # linux
+$script:MANUAL_CONFIG="off" # windows
 ```
 
 - Enable system wide JAVA:
 ```
 ######## set JAVA_BIN
 # Uncomment this if you want to use system wide JAVA
-#JAVA_BIN=`which java`
+#JAVA_BIN=`which java` # linux
+#$script:JAVA_BIN="C:\Program Files\JAVA\bin\java.exe" # windows
 ```
 
 - **(Windows only)** enable / disable DICOM features
