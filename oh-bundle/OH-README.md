@@ -38,6 +38,7 @@ The Windows version has been tested on Windows 10 (32/64bit).
    -C    start OH in CLIENT mode (Client / Server configuration)
    -d    start OH in DEBUG mode
    -D    start OH in DEMO mode
+   -g    generate configuration files
    -G    setup GSM
    -h    show this help
    -l    set language: en|fr|it|es|pt
@@ -60,15 +61,16 @@ The Windows version has been tested on Windows 10 (32/64bit).
 |                   Open Hospital | OH                    |
 |                                                         |
  ---------------------------------------------------------
-lang en | arch x86_64
+ lang en | arch x86_64 | mode PORTABLE/CLIENT
 
 Usage: oh.ps1 [ -lang en|fr|it|es|pt ] 
               [ -mode PORTABLE|CLIENT ]
-              [ -debug INFO|DEBUG ] 
+              [ -loglevel INFO|DEBUG ] 
 
- C    start OH - CLIENT mode (Client / Server configuration)
- d    start OH in DEBUG mode
- D    start OH in DEMO mode
+ C    start OH - CLIENT mode (client / server configuration)
+ d    start OH in debug mode
+ D    start OH in Demo mode
+ g    generate configuration files
  G    setup GSM
  l    set language: en|fr|it|es|pt
  s    save OH database
@@ -101,6 +103,7 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 - **C**    start Open Hospital in CLIENT mode, usually when you have an external database server (Client / Server configuration)
 - **d**    start OH in DEBUG mode - useful to debug errors or bugs by logging more extended informations to log file
 - **D**    start OH in DEMO mode - loads demo data in order to test the software 
+- **g**    generate OH configuration files (oh/rsc/\*.properties) and exit
 - **G**    setup GSM modem to enable sms interaction
 - **l**    set local language: en|fr|it|es|pt
 - **s**    save / dump the Open Hospital database in sql format
