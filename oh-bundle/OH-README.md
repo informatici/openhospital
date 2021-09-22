@@ -22,6 +22,9 @@ The Windows version has been tested on Windows 10 (32/64bit).
 
 **on Linux:**
 
+- download the OH distribution
+- unpack the archive: (tar zxvf OpenHospital-v1.11.0-linux_x86_64-portable.tar.gz)
+- browse to the OpenHospital directory
 - start OH by running **./oh.sh**
 - to see available options, run **./oh.sh -h**
 
@@ -53,6 +56,9 @@ The Windows version has been tested on Windows 10 (32/64bit).
 --------------------
 **on Windows:**
 
+- download the OH distribution
+- unpack the zip archive (OpenHospital-v1.11.0-windows_x86_64-portable.zip)
+- browse to the unzipped directory
 - double click on the **oh.bat** batch file and choose among available options:
 
 ```
