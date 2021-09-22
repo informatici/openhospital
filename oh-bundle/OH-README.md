@@ -1,6 +1,6 @@
 # OH - Open Hospital Portable | Client 
 
-OH - Open Hospital (https://www.open-hospital.org/) is a free and open-source Electronic Health Record (EHR) software application.
+OH - Open Hospital (https://www.open-hospital.org) is a free and open-source Electronic Health Record (EHR) software application.
 Open Hospital is deployed as a desktop application that can be used in a standalone, single user mode (PORTABLE mode)
 or in a client / server network configuration (CLIENT mode), where multiple clients and users connect to the same database server.
 
@@ -37,7 +37,7 @@ The Windows version has been tested on Windows 10 (32/64bit).
 
    -C    start OH in CLIENT mode (Client / Server configuration)
    -d    start OH in DEBUG mode
-   -D    start OH in DEMO mode
+   -D    start OH with Demo data
    -g    generate configuration files
    -G    setup GSM
    -h    show this help
@@ -102,7 +102,7 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 
 - **C**    start Open Hospital in CLIENT mode, usually when you have an external database server (Client / Server configuration)
 - **d**    start OH in DEBUG mode - useful to debug errors or bugs by logging more extended informations to log file
-- **D**    start OH in DEMO mode - loads demo data in order to test the software 
+- **D**    start OH with Demo data - loads a demo database in order to test the software 
 - **g**    generate OH configuration files (oh/rsc/\*.properties) and exit
 - **G**    setup GSM modem to enable sms interaction
 - **l**    set local language: en|fr|it|es|pt
@@ -125,7 +125,10 @@ This might also be useful to set different combinations of options (language, de
 
 ```
 OH_MODE=PORTABLE # set functioning mode to PORTABLE | CLIENT
-DEMO_MODE=off
+
+# set DEMO_DATA to on to enable Demo data loading
+# Warning -> __requires deletion of all portable data__
+DEMO_DATA=off
 ```
 
 - Interface and software language:
