@@ -259,7 +259,7 @@ fi
 
 if [ ! -x $JAVA_BIN ]; then
 	if [ ! -f "./$JAVA_DISTRO.$EXT" ]; then
-		echo "Warning - JAVA not found. Do you want to download it?"
+		echo "Warning - JAVA_BIN not set or JAVA not found. Do you want to download it?"
 		get_confirmation;
 		# download java binaries
 		echo "Download $JAVA_DISTRO..."
@@ -282,7 +282,7 @@ if [ -x "$OH_PATH/$JAVA_DIR/bin/java" ]; then
 	echo "JAVA found!"
 	echo "Using $JAVA_DIR"
 else 
-	echo "JAVA not found! Exiting."
+	echo "Error: JAVA not found! Please download it or set JAVA_BIN in the script. Exiting."
 	exit 1
 fi
 }
@@ -572,6 +572,8 @@ while getopts ${OPTSTRING} opt; do
 		DEMO_DATA="on"
 		;;
 	g)	# generate config files and exit
+		# setting $OH_DIR
+		[ -f ./rsc/settings.properties.dist ] && OH_DIR=".";
 		generate_config_files;
 		echo "Done!"
 		exit 0;

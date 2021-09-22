@@ -327,7 +327,7 @@ function java_check {
 
 	if ( !(Test-Path $JAVA_BIN) ) {
         	if ( !(Test-Path "$OH_PATH\$JAVA_DISTRO.$EXT") ) {
-			Write-Host "Warning - JAVA not found. Do you want to download it?" -ForegroundColor Yellow
+			Write-Host "Warning - JAVA_BIN not set or JAVA not found. Do you want to download it?" -ForegroundColor Yellow
 			get_confirmation;
 			# Download java binaries
 			download_file "$JAVA_URL" "$JAVA_DISTRO.$EXT"
@@ -346,7 +346,7 @@ function java_check {
 			$script:JAVA_BIN="$OH_PATH\$JAVA_DIR\bin\java.exe"
 		}
 		else {
-			Write-Host "Error: JAVA not found. Exiting." -ForegroundColor Red
+			Write-Host "Error: JAVA not found! Please download it or set JAVA_BIN in the script. Exiting." -ForegroundColor Red
 			Read-Host; exit 1
 		}
 	}
@@ -707,6 +707,9 @@ if ( $INTERACTIVE_MODE -eq "on") {
 		$DEMO_DATA="on"
 	}
 	"g"	{ # generate config files and exit
+		if ( Test-Path "$OH_PATH/rsc/dicom.properties.dist" ) {
+			$script:OH_DIR="."
+		}
 		generate_config_files;
 		Write-Host "Done!"
 		Read-Host;
