@@ -91,7 +91,7 @@ On Windows, to manually run oh.ps1 (powershell script):
 - if asked for permission to execute the script select "Allow"
 - choose among available options
 
-It might be necessary to set the correct permissions / exclusions also in the Windows Security Center, for example allowing OH to communicate on
+It might be necessary to set the correct permissions / exclusions also in the Windows Security Center, to allow OH to communicate on
 the MySQL / MariaDB local TCP port.
 
 It's also possible to start Open Hospital with the legacy batch file (old oh.bat):
@@ -124,30 +124,37 @@ This might also be useful to set different combinations of options (language, de
 - Distribution type, language and debug level:
 
 ```
-OH_MODE=PORTABLE # set functioning mode to PORTABLE | CLIENT
+OH_MODE=PORTABLE # set functioning mode to PORTABLE | CLIENT # linux
+$script:OH_MODE="PORTABLE" # windows
 
 # set DEMO_DATA to on to enable Demo data loading
 # Warning -> __requires deletion of all portable data__
-DEMO_DATA=off
+DEMO_DATA=off # linux
+#$script:DEMO_DATA="off" # windows
 ```
 
 - Interface and software language:
 
 ```
 # Language setting - default set to en
-#OH_LANGUAGE=en fr es it pt
+#OH_LANGUAGE=en fr es it pt # linux
+#$script:OH_LANGUAGE=en # fr es it pt # windows
 ```
 - Set software logging level
 
 ```
 # set log level to INFO | DEBUG - default set to INFO
-#LOG_LEVEL=INFO
+#LOG_LEVEL=INFO # linux
+#$script:LOG_LEVEL=INFO # windows
 ```
 
 - Database and software configuration. If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a client/server / LAN environment.
 
 ```
-######## Software configuration - change at your own risk :-) (linux version - windows version requires "$script:" in front of any variable)
+######## Software configuration - change at your own risk :-)
+#
+# linux version - windows version requires "$script:" in front of any variable)
+#
 # Database
 MYSQL_SERVER=localhost
 MYSQL_PORT=3306
