@@ -33,7 +33,10 @@
 # OH_PATH=/usr/local/OpenHospital/oh-1.11
 
 OH_MODE=PORTABLE # set functioning mode to PORTABLE | CLIENT
-DEMO_MODE=off
+
+# set DEMO_DATA to on to enable Demo data loading
+# Warning -> __requires deletion of all portable data__
+DEMO_DATA=off
 
 # Language setting - default set to en
 #OH_LANGUAGE=en fr es it pt
@@ -147,7 +150,7 @@ function script_usage {
         echo ""
         echo "   -C    start OH in CLIENT mode (client / server configuration)"
         echo "   -d    start OH in debug mode"
-        echo "   -D    start OH in Demo mode"
+        echo "   -D    start OH with Demo data"
         echo "   -g    generate configuration files"
         echo "   -G    setup GSM"
         echo "   -h    show this help"
@@ -559,14 +562,14 @@ while getopts ${OPTSTRING} opt; do
 		echo "Log level set to $LOG_LEVEL"
 		;;
 	D)	# demo mode
-        	echo "Starting Open Hospital in DEMO mode..."
+        	echo "Starting Open Hospital with Demo data..."
 		# exit if OH is configured in CLIENT mode
 		if [ $OH_MODE = "CLIENT" ]; then
-			echo "Error - OH_MODE set to CLIENT mode. Cannot run in DEMO mode, exiting."
+			echo "Error - OH_MODE set to CLIENT mode. Cannot run with Demo data, exiting."
 			exit 1;
 		else OH_MODE="PORTABLE"
 		fi
-		DEMO_MODE="on"
+		DEMO_DATA="on"
 		;;
 	g)	# generate config files and exit
 		generate_config_files;
@@ -661,7 +664,7 @@ while getopts ${OPTSTRING} opt; do
         	echo "Architecture is $ARCH"
 		echo "Open Hospital is configured in $OH_MODE mode"
 		echo "Language is set to $OH_LANGUAGE"
-		echo "DEMO mode is set to $DEMO_MODE"
+		echo "Demo data is set to $DEMO_DATA"
         	echo ""
 		echo "MYSQL_SERVER=$MYSQL_SERVER"
 		echo "MYSQL_PORT=$MYSQL_PORT"
@@ -704,13 +707,12 @@ if [ -z ${OH_MODE+x} ]; then
 fi
 
 # check for demo mode
-if [ $DEMO_MODE = "on" ]; then
+if [ $DEMO_DATA = "on" ]; then
 	# exit if OH is configured in CLIENT mode
 	if [ $OH_MODE = "CLIENT" ]; then
-		echo "Error - OH_MODE set to CLIENT mode. Cannot run in DEMO mode, exiting."
+		echo "Error - OH_MODE set to CLIENT mode. Cannot run with Demo data, exiting."
 		exit 1;
 	fi
-
 
 	if [ -f ./$SQL_DIR/$DB_DEMO ]; then
 	        echo "Found SQL demo database, starting OH in demo mode..."

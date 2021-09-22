@@ -28,7 +28,7 @@
 Open Hospital startup script - oh.ps1
 
 .DESCRIPTION
-The script is used to setup and launch Open Hospital in PORTABLE, CLIENT or DEMO mode.
+The script is used to setup and launch Open Hospital in PORTABLE, CLIENT  mode or with Demo data.
 It can also be used to perform some basic operation like saving or importing a database.
 
 Open Hospital CLIENT | PORTABLE
@@ -69,7 +69,10 @@ $global:ProgressPreference= 'SilentlyContinue'
 # OH_PATH="c:\Users\OH\OpenHospital\oh-1.11"
 
 $script:OH_MODE="PORTABLE"  # set functioning mode to PORTABLE | CLIENT
-#$script:DEMO_MODE="off"
+
+# set DEMO_DATA to on to enable Demo data loading
+# Warning -> __requires deletion of all portable data__
+#$script:DEMO_DATA="off"
 
 # language setting - default set to en
 #$script:OH_LANGUAGE=en # fr es it pt
@@ -212,7 +215,7 @@ function script_menu {
 	Write-Host ""
 	Write-Host "   C    start OH - CLIENT mode (client / server configuration)"
 	Write-Host "   d    start OH in debug mode"
-	Write-Host "   D    start OH in Demo mode"
+	Write-Host "   D    start OH with Demo data"
 	Write-Host "   g    generate configuration files"
 	Write-Host "   G    setup GSM"
 	Write-Host "   l    set language: en|fr|it|es|pt"
@@ -693,15 +696,15 @@ if ( $INTERACTIVE_MODE -eq "on") {
 		Write-Host "Log level set to $LOG_LEVEL"
 	}
 	"D"	{ # demo mode 
-		Write-Host "Starting Open Hospital in DEMO mode..."
+		Write-Host "Starting Open Hospital with Demo data..."
 		# exit if OH is configured in CLIENT mode
 		if ( $OH_MODE -eq "CLIENT" ) {
-			Write-Host "Error - OH_MODE set to CLIENT mode. Cannot run in DEMO mode, exiting." -ForeGroundcolor Red
+			Write-Host "Error - OH_MODE set to CLIENT mode. Cannot run with Demo data, exiting." -ForeGroundcolor Red
 			Read-Host;
 			exit 1;
 		}
 		else { $script:OH_MODE="PORTABLE" }
-		$DEMO_MODE="on"
+		$DEMO_DATA="on"
 	}
 	"g"	{ # generate config files and exit
 		generate_config_files;
@@ -804,7 +807,7 @@ if ( $INTERACTIVE_MODE -eq "on") {
  		Write-Host "Architecture is $ARCH"
  		Write-Host "Open Hospital is configured in $OH_MODE mode"
 		Write-Host "Language is set to $OH_LANGUAGE"
-		Write-Host "DEMO mode is set to $DEMO_MODE"
+		Write-Host "Demo data is set to $DEMO_DATA"
 		Write-Host ""
 		Write-Host "MYSQL_SERVER=$MYSQL_SERVER"
 		Write-Host "MYSQL_PORT=$MYSQL_PORT"
@@ -850,10 +853,10 @@ if ( !( $OH_MODE -eq "PORTABLE" ) -And !( $OH_MODE -eq "CLIENT" ) ) {
 }
 
 # check demo mode
-if ( $DEMO_MODE -eq "on" ) {
+if ( $DEMO_DATA -eq "on" ) {
 	# exit if OH is configured in Client mode
 	if (( $OH_MODE -eq "CLIENT" )) {
-		Write-Host "Error - OH_MODE set to CLIENT mode. Cannot run in DEMO mode, exiting." -ForeGroundcolor Red
+		Write-Host "Error - OH_MODE set to CLIENT mode. Cannot run with Demo data, exiting." -ForeGroundcolor Red
 		Read-Host; 
 		exit 1
 		else { $script:OH_MODE="PORTABLE" }
@@ -863,7 +866,7 @@ if ( $DEMO_MODE -eq "on" ) {
 	clean_database;
 
 	if ( Test-Path -Path "$OH_PATH\$SQL_DIR\$DB_DEMO" ) {
-	        Write-Host "Found SQL demo database, starting OH in DEMO mode..."
+	        Write-Host "Found SQL demo database, starting OH with Demo data..."
 		$DB_CREATE_SQL=$DB_DEMO
 	}
 	else {
