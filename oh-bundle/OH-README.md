@@ -50,7 +50,6 @@ The Windows version has been tested on Windows 10 (32/64bit).
 
 ```
 
---------------------
 **on Windows:**
 
 - double click on the **oh.bat** batch file and choose among available options:
