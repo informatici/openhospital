@@ -6,7 +6,7 @@ or in a client / server network configuration (CLIENT mode), where multiple clie
 
 OH is developed in Java and it is based on open-source tools and libraries; it runs on any computer, requires low resources and is designed to work without an internet connection.
 
-Open Hospital is the first of a set of software products that ISF - Informatici Senza Frontiere (https://www.informaticisenzafrontiere.org) has developed to support the information management and the activities of hospitals and health centers in the simplest manner possible, by providing tools for the administrative operations (like registering patients, manage laboratory analysis and pharmaceutical stocks) and to produce detailed statistics and reports.
+Open Hospital is the first of a set of software applications that ISF - Informatici Senza Frontiere (https://www.informaticisenzafrontiere.org/) has developed to support the information management and the activities of hospitals and health centers in the simplest manner possible, by providing tools for the administrative operations (like registering patients, manage laboratory analysis and pharmaceutical stocks) and to produce detailed statistics and reports.
 It was first deployed in 2006 at the St. Luke Hospital in Angal (Uganda) and it is now used in dozens of different locations around the world.
 
 When OH is used in PORTABLE mode, it is easily possible to move the installation on another computer or even run it from a USB stick or drive.
@@ -37,7 +37,8 @@ The Windows version has been tested on Windows 10 (32/64bit).
 
    -C    start OH in CLIENT mode (Client / Server configuration)
    -d    start OH in DEBUG mode
-   -D    start OH in DEMO mode
+   -D    start OH with Demo data
+   -g    generate configuration files
    -G    setup GSM
    -h    show this help
    -l    set language: en|fr|it|es|pt
@@ -60,15 +61,16 @@ The Windows version has been tested on Windows 10 (32/64bit).
 |                   Open Hospital | OH                    |
 |                                                         |
  ---------------------------------------------------------
-lang en | arch x86_64
+ lang en | arch x86_64 | mode PORTABLE/CLIENT
 
 Usage: oh.ps1 [ -lang en|fr|it|es|pt ] 
               [ -mode PORTABLE|CLIENT ]
-              [ -debug INFO|DEBUG ] 
+              [ -loglevel INFO|DEBUG ] 
 
- C    start OH - CLIENT mode (Client / Server configuration)
- d    start OH in DEBUG mode
- D    start OH in DEMO mode
+ C    start OH - CLIENT mode (client / server configuration)
+ d    start OH in debug mode
+ D    start OH in Demo mode
+ g    generate configuration files
  G    setup GSM
  l    set language: en|fr|it|es|pt
  s    save OH database
@@ -89,7 +91,7 @@ On Windows, to manually run oh.ps1 (powershell script):
 - if asked for permission to execute the script select "Allow"
 - choose among available options
 
-It might be necessary to set the correct permissions / exclusions also in the Windows Security Center, for example allowing OH to communicate on
+It might be necessary to set the correct permissions / exclusions also in the Windows Security Center, to allow OH to communicate on
 the MySQL / MariaDB local TCP port.
 
 It's also possible to start Open Hospital with the legacy batch file (old oh.bat):
@@ -100,7 +102,8 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 
 - **C**    start Open Hospital in CLIENT mode, usually when you have an external database server (Client / Server configuration)
 - **d**    start OH in DEBUG mode - useful to debug errors or bugs by logging more extended informations to log file
-- **D**    start OH in DEMO mode - loads demo data in order to test the software 
+- **D**    start OH with Demo data - loads a demo database in order to test the software 
+- **g**    generate OH configuration files (oh/rsc/\*.properties) and exit
 - **G**    setup GSM modem to enable sms interaction
 - **l**    set local language: en|fr|it|es|pt
 - **s**    save / dump the Open Hospital database in sql format
@@ -121,27 +124,37 @@ This might also be useful to set different combinations of options (language, de
 - Distribution type, language and debug level:
 
 ```
-OH_MODE=PORTABLE # set functioning mode to PORTABLE | CLIENT
-DEMO_MODE=off
+OH_MODE=PORTABLE # set functioning mode to PORTABLE | CLIENT # linux
+$script:OH_MODE="PORTABLE" # windows
+
+# set DEMO_DATA to on to enable Demo data loading
+# Warning -> __requires deletion of all portable data__
+DEMO_DATA=off # linux
+#$script:DEMO_DATA="off" # windows
 ```
 
 - Interface and software language:
 
 ```
 # Language setting - default set to en
-#OH_LANGUAGE=en fr es it pt
+#OH_LANGUAGE=en fr es it pt # linux
+#$script:OH_LANGUAGE=en # fr es it pt # windows
 ```
 - Set software logging level
 
 ```
 # set log level to INFO | DEBUG - default set to INFO
-#LOG_LEVEL=INFO
+#LOG_LEVEL=INFO # linux
+#$script:LOG_LEVEL=INFO # windows
 ```
 
-- Database and software configuration. If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a Client/Server / LAN environment
+- Database and software configuration. If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a client/server / LAN environment.
 
 ```
 ######## Software configuration - change at your own risk :-)
+#
+# linux version - windows version requires "$script:" in front of any variable)
+#
 # Database
 MYSQL_SERVER=localhost
 MYSQL_PORT=3306
@@ -164,7 +177,7 @@ BACKUP_DIR="data/dump"
 TMP_DIR=tmp
 #DB_CREATE_SQL="create_all_en.sql" # default to create_all_en.sql
 DB_DEMO="create_all_demo.sql"
-DATE=`date +%Y-%m-%d_%H-%M-%S`
+DATE=`date +%Y-%m-%d_%H-%M-%S` # linux
 LOG_FILE=startup.log
 OH_LOG_FILE=openhospital.log
 ```
@@ -176,14 +189,16 @@ OH_LOG_FILE=openhospital.log
 ## set MANUAL_CONFIG to "on" to setup configuration files manually
 # my.cnf and all oh/rsc/*.properties files will not be generated or
 # overwritten if already present
-MANUAL_CONFIG=off
+MANUAL_CONFIG=off # linux
+$script:MANUAL_CONFIG="off" # windows
 ```
 
 - Enable system wide JAVA:
 ```
 ######## set JAVA_BIN
 # Uncomment this if you want to use system wide JAVA
-#JAVA_BIN=`which java`
+#JAVA_BIN=`which java` # linux
+#$script:JAVA_BIN="C:\Program Files\JAVA\bin\java.exe" # windows
 ```
 
 - **(Windows only)** enable / disable DICOM features

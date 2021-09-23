@@ -28,13 +28,13 @@
 Open Hospital startup script - oh.ps1
 
 .DESCRIPTION
-The script is used to setup and launch Open Hospital in PORTABLE, CLIENT or DEMO mode.
+The script is used to setup and launch Open Hospital in PORTABLE, CLIENT  mode or with Demo data.
 It can also be used to perform some basic operation like saving or importing a database.
 
 Open Hospital CLIENT | PORTABLE
 Usage: oh.ps1 [ -lang en|fr|it|es|pt ] [default set to en]
               [ -mode PORTABLE|CLIENT ]
-              [ -debug INFO|DEBUG ] [default set to INFO]
+              [ -loglevel INFO|DEBUG ] [default set to INFO]
 
 .EXAMPLE
 ./oh.ps1 -lang en
@@ -55,9 +55,9 @@ https://www.open-hospital.org
 
 
 ######## Command line parameters
-param ($lang, $debuglevel, $mode)
+param ($lang, $loglevel, $mode)
 $script:OH_LANGUAGE=$lang
-$script:LOG_LEVEL=$debuglevel
+$script:LOG_LEVEL=$loglevel
 $script:OH_MODE=$mode
 
 ######## Global preferences
@@ -69,7 +69,10 @@ $global:ProgressPreference= 'SilentlyContinue'
 # OH_PATH="c:\Users\OH\OpenHospital\oh-1.11"
 
 $script:OH_MODE="PORTABLE"  # set functioning mode to PORTABLE | CLIENT
-#$script:DEMO_MODE="off"
+
+# set DEMO_DATA to on to enable Demo data loading
+# Warning -> __requires deletion of all portable data__
+#$script:DEMO_DATA="off"
 
 # language setting - default set to en
 #$script:OH_LANGUAGE=en # fr es it pt
@@ -208,16 +211,17 @@ function script_menu {
 	Write-Host ""
 	Write-Host " Usage: $SCRIPT_NAME [ -lang en|fr|it|es|pt ] "
 	Write-Host "               [ -mode PORTABLE|CLIENT ]"
-	Write-Host "               [ -debug INFO|DEBUG ] "
+	Write-Host "               [ -loglevel INFO|DEBUG ] "
 	Write-Host ""
-	Write-Host "   C    start OH - CLIENT mode (Client / Server configuration)"
+	Write-Host "   C    start OH - CLIENT mode (client / server configuration)"
 	Write-Host "   d    start OH in debug mode"
-	Write-Host "   D    start OH in DEMO mode"
+	Write-Host "   D    start OH with Demo data"
+	Write-Host "   g    generate configuration files"
 	Write-Host "   G    setup GSM"
 	Write-Host "   l    set language: en|fr|it|es|pt"
 	Write-Host "   s    save OH database"
 	Write-Host "   r    restore OH database"
-	Write-Host "   t    test database connection (Client mode only)"
+	Write-Host "   t    test database connection (CLIENT mode only)"
 	Write-Host "   v    show OH software version and configuration"
 	Write-Host "   X    clean/reset OH installation"
 	Write-Host "   q    quit"
@@ -323,7 +327,7 @@ function java_check {
 
 	if ( !(Test-Path $JAVA_BIN) ) {
         	if ( !(Test-Path "$OH_PATH\$JAVA_DISTRO.$EXT") ) {
-			Write-Host "Warning - JAVA not found. Do you want to download it?" -ForegroundColor Yellow
+			Write-Host "Warning - JAVA_BIN not set or JAVA not found. Do you want to download it?" -ForegroundColor Yellow
 			get_confirmation;
 			# Download java binaries
 			download_file "$JAVA_URL" "$JAVA_DISTRO.$EXT"
@@ -342,7 +346,7 @@ function java_check {
 			$script:JAVA_BIN="$OH_PATH\$JAVA_DIR\bin\java.exe"
 		}
 		else {
-			Write-Host "Error: JAVA not found. Exiting." -ForegroundColor Red
+			Write-Host "Error: JAVA not found! Please download it or set JAVA_BIN in the script. Exiting." -ForegroundColor Red
 			Read-Host; exit 1
 		}
 	}
@@ -564,7 +568,6 @@ function clean_database {
 function test_database_connection {
 	# test if mysql client is available
 	if ( Test-Path "$OH_PATH\$MYSQL_DIR\bin\mysql.exe" ) {
-
 		# test connection to the OH MySQL database
 		Write-Host "Testing database connection..."
 		try {
@@ -576,7 +579,56 @@ function test_database_connection {
 			Read-Host; exit 2
 		}
 	}
-	Write-Host "Can't test database connection..." 
+	else {
+		Write-Host "Can't test database connection..." 
+	}
+}
+
+function generate_config_files {
+	# set up configuration files
+	Write-Host "Generating OH configuration files..."
+
+	######## DICOM setup
+	if ( Test-Path "$OH_PATH/$OH_DIR/rsc/dicom.properties" ) {
+		mv -Force $OH_PATH/$OH_DIR/rsc/dicom.properties $OH_PATH/$OH_DIR/rsc/dicom.properties.old
+	}
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/dicom.properties.dist").replace("OH_PATH_SUBSTITUTE","$OH_PATH") | Set-Content "$OH_PATH/$OH_DIR/rsc/dicom.properties"
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/dicom.properties").replace("DICOM_DIR","$DICOM_DIR") | Set-Content "$OH_PATH/$OH_DIR/rsc/dicom.properties"
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/dicom.properties").replace("DICOM_SIZE","$DICOM_MAX_SIZE") | Set-Content "$OH_PATH/$OH_DIR/rsc/dicom.properties"
+
+	######## log4j.properties setup
+	if ( Test-Path "$OH_PATH/$OH_DIR/rsc/log4j.properties" ) {
+		mv -Force $OH_PATH/$OH_DIR/rsc/log4j.properties $OH_PATH/$OH_DIR/rsc/log4j.properties.old
+	}
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties.dist").replace("DBSERVER","$MYSQL_SERVER") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBPORT","$MYSQL_PORT") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBUSER","$DATABASE_USER") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBPASS","$DATABASE_PASSWORD") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBNAME","$DATABASE_NAME") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("LOG_LEVEL","$LOG_LEVEL") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("LOG_DEST","../$LOG_DIR/$OH_LOG_FILE") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
+
+	######## database.properties setup 
+	if ( Test-Path "$OH_PATH/$OH_DIR/rsc/database.properties" ) {
+		mv -Force $OH_PATH/$OH_DIR/rsc/database.properties $OH_PATH/$OH_DIR/rsc/database.properties.old
+	}
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties.dist").replace("DBSERVER","$MYSQL_SERVER") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBPORT","$MYSQL_PORT") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBUSER","$DATABASE_USER") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBPASS","$DATABASE_PASSWORD") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBNAME","$DATABASE_NAME") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
+
+	# direct creation of database.properties - deprecated
+	#Set-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.url=jdbc:mysql://"$MYSQL_SERVER":$MYSQL_PORT/$DATABASE_NAME"
+	#Add-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.username=$DATABASE_USER"
+	#Add-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.password=$DATABASE_PASSWORD"
+
+	######## settings.properties language setup 
+	# set language in OH config file
+	if ( Test-Path "$OH_PATH/$OH_DIR/rsc/settings.properties" ) {
+		mv -Force $OH_PATH/$OH_DIR/rsc/settings.properties $OH_PATH/$OH_DIR/rsc/settings.properties.old
+	}
+	(Get-Content "$OH_PATH/$OH_DIR/rsc/settings.properties.dist").replace("OH_SET_LANGUAGE","$OH_LANGUAGE") | Set-Content "$OH_PATH/$OH_DIR/rsc/settings.properties"
 }
 
 function clean_files {
@@ -644,15 +696,24 @@ if ( $INTERACTIVE_MODE -eq "on") {
 		Write-Host "Log level set to $LOG_LEVEL"
 	}
 	"D"	{ # demo mode 
-		Write-Host "Starting Open Hospital in DEMO mode..."
+		Write-Host "Starting Open Hospital with Demo data..."
 		# exit if OH is configured in CLIENT mode
 		if ( $OH_MODE -eq "CLIENT" ) {
-			Write-Host "Error - OH_MODE set to CLIENT mode. Cannot run in DEMO mode, exiting." -ForeGroundcolor Red
+			Write-Host "Error - OH_MODE set to CLIENT mode. Cannot run with Demo data, exiting." -ForeGroundcolor Red
 			Read-Host;
 			exit 1;
 		}
 		else { $script:OH_MODE="PORTABLE" }
-		$DEMO_MODE="on"
+		$DEMO_DATA="on"
+	}
+	"g"	{ # generate config files and exit
+		if ( Test-Path "$OH_PATH/rsc/dicom.properties.dist" ) {
+			$script:OH_DIR="."
+		}
+		generate_config_files;
+		Write-Host "Done!"
+		Read-Host;
+		exit 0;
 	}
 	"G"	{ # set up GSM 
 		Write-Host "Setting up GSM..."
@@ -749,7 +810,7 @@ if ( $INTERACTIVE_MODE -eq "on") {
  		Write-Host "Architecture is $ARCH"
  		Write-Host "Open Hospital is configured in $OH_MODE mode"
 		Write-Host "Language is set to $OH_LANGUAGE"
-		Write-Host "DEMO mode is set to $DEMO_MODE"
+		Write-Host "Demo data is set to $DEMO_DATA"
 		Write-Host ""
 		Write-Host "MYSQL_SERVER=$MYSQL_SERVER"
 		Write-Host "MYSQL_PORT=$MYSQL_PORT"
@@ -795,10 +856,10 @@ if ( !( $OH_MODE -eq "PORTABLE" ) -And !( $OH_MODE -eq "CLIENT" ) ) {
 }
 
 # check demo mode
-if ( $DEMO_MODE -eq "on" ) {
+if ( $DEMO_DATA -eq "on" ) {
 	# exit if OH is configured in Client mode
 	if (( $OH_MODE -eq "CLIENT" )) {
-		Write-Host "Error - OH_MODE set to CLIENT mode. Cannot run in DEMO mode, exiting." -ForeGroundcolor Red
+		Write-Host "Error - OH_MODE set to CLIENT mode. Cannot run with Demo data, exiting." -ForeGroundcolor Red
 		Read-Host; 
 		exit 1
 		else { $script:OH_MODE="PORTABLE" }
@@ -808,7 +869,7 @@ if ( $DEMO_MODE -eq "on" ) {
 	clean_database;
 
 	if ( Test-Path -Path "$OH_PATH\$SQL_DIR\$DB_DEMO" ) {
-	        Write-Host "Found SQL demo database, starting OH in DEMO mode..."
+	        Write-Host "Found SQL demo database, starting OH with Demo data..."
 		$DB_CREATE_SQL=$DB_DEMO
 	}
 	else {
@@ -861,52 +922,11 @@ if ( $OH_MODE -eq "PORTABLE" ) {
 # test if database connection is working
 test_database_connection;
 
+# generate config files
 if ($MANUAL_CONFIG -eq "off" ) {
-# set up configuration files
-Write-Host "Setting up OH configuration files..."
-
-######## DICOM setup
-if ( Test-Path "$OH_PATH/$OH_DIR/rsc/dicom.properties" ) {
-	mv -Force $OH_PATH/$OH_DIR/rsc/dicom.properties $OH_PATH/$OH_DIR/rsc/dicom.properties.old
+	generate_config_files;
 }
-(Get-Content "$OH_PATH/$OH_DIR/rsc/dicom.properties.dist").replace("OH_PATH_SUBSTITUTE","$OH_PATH") | Set-Content "$OH_PATH/$OH_DIR/rsc/dicom.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/dicom.properties").replace("DICOM_DIR","$DICOM_DIR") | Set-Content "$OH_PATH/$OH_DIR/rsc/dicom.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/dicom.properties").replace("DICOM_SIZE","$DICOM_MAX_SIZE") | Set-Content "$OH_PATH/$OH_DIR/rsc/dicom.properties"
 
-######## log4j.properties setup
-if ( Test-Path "$OH_PATH/$OH_DIR/rsc/log4j.properties" ) {
-	mv -Force $OH_PATH/$OH_DIR/rsc/log4j.properties $OH_PATH/$OH_DIR/rsc/log4j.properties.old
-}
-(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties.dist").replace("DBSERVER","$MYSQL_SERVER") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBPORT","$MYSQL_PORT") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBUSER","$DATABASE_USER") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBPASS","$DATABASE_PASSWORD") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("DBNAME","$DATABASE_NAME") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("LOG_LEVEL","$LOG_LEVEL") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties").replace("LOG_DEST","../$LOG_DIR/$OH_LOG_FILE") | Set-Content "$OH_PATH/$OH_DIR/rsc/log4j.properties"
-
-######## database.properties setup 
-if ( Test-Path "$OH_PATH/$OH_DIR/rsc/database.properties" ) {
-	mv -Force $OH_PATH/$OH_DIR/rsc/database.properties $OH_PATH/$OH_DIR/rsc/database.properties.old
-}
-(Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties.dist").replace("DBSERVER","$MYSQL_SERVER") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBPORT","$MYSQL_PORT") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBUSER","$DATABASE_USER") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBPASS","$DATABASE_PASSWORD") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
-(Get-Content "$OH_PATH/$OH_DIR/rsc/database.properties").replace("DBNAME","$DATABASE_NAME") | Set-Content "$OH_PATH/$OH_DIR/rsc/database.properties"
-
-# direct creation of database.properties - deprecated
-#Set-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.url=jdbc:mysql://"$MYSQL_SERVER":$MYSQL_PORT/$DATABASE_NAME"
-#Add-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.username=$DATABASE_USER"
-#Add-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.password=$DATABASE_PASSWORD"
-
-######## settings.properties language setup 
-# set language in OH config file
-if ( Test-Path "$OH_PATH/$OH_DIR/rsc/settings.properties" ) {
-	mv -Force $OH_PATH/$OH_DIR/rsc/settings.properties $OH_PATH/$OH_DIR/rsc/settings.properties.old
-}
-(Get-Content "$OH_PATH/$OH_DIR/rsc/settings.properties.dist").replace("OH_SET_LANGUAGE","$OH_LANGUAGE") | Set-Content "$OH_PATH/$OH_DIR/rsc/settings.properties"
-}
 
 ######## Open Hospital start
 

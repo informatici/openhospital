@@ -33,7 +33,10 @@
 # OH_PATH=/usr/local/OpenHospital/oh-1.11
 
 OH_MODE=PORTABLE # set functioning mode to PORTABLE | CLIENT
-DEMO_MODE=off
+
+# set DEMO_DATA to on to enable Demo data loading
+# Warning -> __requires deletion of all portable data__
+DEMO_DATA=off
 
 # Language setting - default set to en
 #OH_LANGUAGE=en fr es it pt
@@ -134,7 +137,6 @@ SCRIPT_NAME=$(basename "$0")
 ######################## Functions ########################
 
 function script_usage {
-
         # show help / user options
         echo " ---------------------------------------------------------"
         echo "|                                                         |"
@@ -146,9 +148,10 @@ function script_usage {
         echo ""
         echo " Usage: $SCRIPT_NAME [ -l en|fr|it|es|pt ] "
         echo ""
-        echo "   -C    start OH in CLIENT mode (Client / Server configuration)"
+        echo "   -C    start OH in CLIENT mode (client / server configuration)"
         echo "   -d    start OH in debug mode"
-        echo "   -D    start OH in DEMO mode"
+        echo "   -D    start OH with Demo data"
+        echo "   -g    generate configuration files"
         echo "   -G    setup GSM"
         echo "   -h    show this help"
         echo "   -l    set language: en|fr|it|es|pt"
@@ -256,7 +259,7 @@ fi
 
 if [ ! -x $JAVA_BIN ]; then
 	if [ ! -f "./$JAVA_DISTRO.$EXT" ]; then
-		echo "Warning - JAVA not found. Do you want to download it?"
+		echo "Warning - JAVA_BIN not set or JAVA not found. Do you want to download it?"
 		get_confirmation;
 		# download java binaries
 		echo "Download $JAVA_DISTRO..."
@@ -279,7 +282,7 @@ if [ -x "$OH_PATH/$JAVA_DIR/bin/java" ]; then
 	echo "JAVA found!"
 	echo "Using $JAVA_DIR"
 else 
-	echo "JAVA not found! Exiting."
+	echo "Error: JAVA not found! Please download it or set JAVA_BIN in the script. Exiting."
 	exit 1
 fi
 }
@@ -455,7 +458,7 @@ function clean_database {
 }
 
 function test_database_connection {
-	# test if mysql client is available
+        # test if mysql client is available
 	if [ -x ./$MYSQL_DIR/bin/mysql ]; then
 		# test connection to the OH MySQL database
 		echo "Testing database connection..."
@@ -466,8 +469,9 @@ function test_database_connection {
 			echo "Error: can't connect to database! Exiting."
 			exit 2
 		fi
+	else
+		echo "Can't test database connection..."
 	fi
-	echo "Can't test database connection..."
 }
 
 function clean_files {
@@ -486,6 +490,33 @@ function clean_files {
 	rm -f ./$OH_DIR/rsc/log4j.properties.old
 	rm -f ./$OH_DIR/rsc/dicom.properties
 	rm -f ./$OH_DIR/rsc/dicom.properties.old
+}
+
+function generate_config_files {
+	# set up configuration files
+	echo "Generating OH configuration files..."
+	######## DICOM setup
+	[ -f ./$OH_DIR/rsc/dicom.properties ] && mv -f ./$OH_DIR/rsc/dicom.properties ./$OH_DIR/rsc/dicom.properties.old
+	sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$OH_PATH_ESCAPED/g" \
+	-e "s/DICOM_DIR/$DICOM_DIR_ESCAPED/g" ./$OH_DIR/rsc/dicom.properties.dist > ./$OH_DIR/rsc/dicom.properties
+
+	######## log4j.properties setup
+	OH_LOG_DEST="$OH_PATH_ESCAPED/$LOG_DIR/$OH_LOG_FILE"
+	[ -f ./$OH_DIR/rsc/log4j.properties ] && mv -f ./$OH_DIR/rsc/log4j.properties ./$OH_DIR/rsc/log4j.properties.old
+	sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
+	-e "s/DBNAME/$DATABASE_NAME/g" -e "s/LOG_LEVEL/$LOG_LEVEL/g" -e "s+LOG_DEST+$OH_LOG_DEST+g" \
+	./$OH_DIR/rsc/log4j.properties.dist > ./$OH_DIR/rsc/log4j.properties
+
+	######## database.properties setup 
+	[ -f ./$OH_DIR/rsc/database.properties ] && mv -f ./$OH_DIR/rsc/database.properties ./$OH_DIR/rsc/database.properties.old
+	sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/g" -e "s/DBNAME/$DATABASE_NAME/g" \
+	-e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
+	./$OH_DIR/rsc/database.properties.dist > ./$OH_DIR/rsc/database.properties
+
+	######## settings.properties language setup 
+	# set language in OH config file
+	[ -f ./$OH_DIR/rsc/settings.properties ] && mv -f ./$OH_DIR/rsc/settings.properties ./$OH_DIR/rsc/settings.properties.old
+	sed -e "s/OH_SET_LANGUAGE/$OH_LANGUAGE/g" ./$OH_DIR/rsc/settings.properties.dist > ./$OH_DIR/rsc/settings.properties
 }
 
 
@@ -517,28 +548,42 @@ cd "$OH_PATH"
 # reset in case getopts has been used previously in the shell
 OPTIND=1 
 # list of arguments expected in user input (- option)
-OPTSTRING=":CdDGhl:srtvX?" 
+OPTSTRING=":CdDgGhl:srtvX?" 
 
 # function to parse input
 while getopts ${OPTSTRING} opt; do
 	case ${opt} in
+	C)	# start in CLIENT mode
+		OH_MODE="CLIENT"
+		;;
 	d)	# debug
         	echo "Starting Open Hospital in debug mode..."
 		LOG_LEVEL=DEBUG
 		echo "Log level set to $LOG_LEVEL"
 		;;
-	C)	# start in CLIENT mode
-		OH_MODE="CLIENT"
-		;;
 	D)	# demo mode
-        	echo "Starting Open Hospital in DEMO mode..."
+        	echo "Starting Open Hospital with Demo data..."
 		# exit if OH is configured in CLIENT mode
 		if [ $OH_MODE = "CLIENT" ]; then
-			echo "Error - OH_MODE set to CLIENT mode. Cannot run in DEMO mode, exiting."
+			echo "Error - OH_MODE set to CLIENT mode. Cannot run with Demo data, exiting."
 			exit 1;
 		else OH_MODE="PORTABLE"
 		fi
-		DEMO_MODE="on"
+		DEMO_DATA="on"
+		;;
+	g)	# generate config files and exit
+		# setting $OH_DIR
+		[ -f ./rsc/settings.properties.dist ] && OH_DIR=".";
+		generate_config_files;
+		echo "Done!"
+		exit 0;
+		;;
+	G)	# set up GSM
+		echo "Setting up GSM..."
+		java_check;
+		java_lib_setup;
+		$JAVA_BIN -Djava.library.path=${NATIVE_LIB_PATH} -classpath "$OH_CLASSPATH" org.isf.utils.sms.SetupGSM "$@"
+		exit 0;
 		;;
 	h)	# help
 		script_usage;
@@ -564,7 +609,7 @@ while getopts ${OPTSTRING} opt; do
 			echo "Saving Open Hospital database..."
 			dump_database;
 			shutdown_database;
-	        	echo "Done!"
+			echo "Done!"
 			exit 0
 		fi
 		# dump remote database for CLIENT mode configuration
@@ -608,13 +653,6 @@ while getopts ${OPTSTRING} opt; do
 		test_database_connection;
 		exit 0
 		;;
-	G)	# set up GSM
-		echo "Setting up GSM..."
-		java_check;
-		java_lib_setup;
-		$JAVA_BIN -Djava.library.path=${NATIVE_LIB_PATH} -classpath "$OH_CLASSPATH" org.isf.utils.sms.SetupGSM "$@"
-		exit 0;
-		;;
 	v)	# show version
         	echo "--------- Software version ---------"
 		source "./$OH_DIR/rsc/version.properties"
@@ -628,7 +666,7 @@ while getopts ${OPTSTRING} opt; do
         	echo "Architecture is $ARCH"
 		echo "Open Hospital is configured in $OH_MODE mode"
 		echo "Language is set to $OH_LANGUAGE"
-		echo "DEMO mode is set to $DEMO_MODE"
+		echo "Demo data is set to $DEMO_DATA"
         	echo ""
 		echo "MYSQL_SERVER=$MYSQL_SERVER"
 		echo "MYSQL_PORT=$MYSQL_PORT"
@@ -671,13 +709,12 @@ if [ -z ${OH_MODE+x} ]; then
 fi
 
 # check for demo mode
-if [ $DEMO_MODE = "on" ]; then
+if [ $DEMO_DATA = "on" ]; then
 	# exit if OH is configured in CLIENT mode
 	if [ $OH_MODE = "CLIENT" ]; then
-		echo "Error - OH_MODE set to CLIENT mode. Cannot run in DEMO mode, exiting."
+		echo "Error - OH_MODE set to CLIENT mode. Cannot run with Demo data, exiting."
 		exit 1;
 	fi
-
 
 	if [ -f ./$SQL_DIR/$DB_DEMO ]; then
 	        echo "Found SQL demo database, starting OH in demo mode..."
@@ -734,34 +771,9 @@ fi
 # test if database connection is working
 test_database_connection;
 
+# generate config files
 if [ $MANUAL_CONFIG = "off" ]; then
-
-	# set up configuration files
-	echo "Setting up OH configuration files..."
-
-	######## DICOM setup
-	[ -f ./$OH_DIR/rsc/dicom.properties ] && mv -f ./$OH_DIR/rsc/dicom.properties ./$OH_DIR/rsc/dicom.properties.old
-	sed -e "s/DICOM_SIZE/$DICOM_MAX_SIZE/g" -e "s/OH_PATH_SUBSTITUTE/$OH_PATH_ESCAPED/g" \
-	    -e "s/DICOM_DIR/$DICOM_DIR_ESCAPED/g" ./$OH_DIR/rsc/dicom.properties.dist > ./$OH_DIR/rsc/dicom.properties
-
-	######## log4j.properties setup
-	OH_LOG_DEST="$OH_PATH_ESCAPED/$LOG_DIR/$OH_LOG_FILE"
-	[ -f ./$OH_DIR/rsc/log4j.properties ] && mv -f ./$OH_DIR/rsc/log4j.properties ./$OH_DIR/rsc/log4j.properties.old
-	sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/" -e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
-	    -e "s/DBNAME/$DATABASE_NAME/g" -e "s/LOG_LEVEL/$LOG_LEVEL/g" -e "s+LOG_DEST+$OH_LOG_DEST+g" \
-	    ./$OH_DIR/rsc/log4j.properties.dist > ./$OH_DIR/rsc/log4j.properties
-
-	######## database.properties setup 
-	[ -f ./$OH_DIR/rsc/database.properties ] && mv -f ./$OH_DIR/rsc/database.properties ./$OH_DIR/rsc/database.properties.old
-	sed -e "s/DBSERVER/$MYSQL_SERVER/g" -e "s/DBPORT/$MYSQL_PORT/g" -e "s/DBNAME/$DATABASE_NAME/g" \
-	    -e "s/DBUSER/$DATABASE_USER/g" -e "s/DBPASS/$DATABASE_PASSWORD/g" \
-	./$OH_DIR/rsc/database.properties.dist > ./$OH_DIR/rsc/database.properties
-
-	######## settings.properties language setup 
-	# set language in OH config file
-	[ -f ./$OH_DIR/rsc/settings.properties ] && mv -f ./$OH_DIR/rsc/settings.properties ./$OH_DIR/rsc/settings.properties.old
-	sed -e "s/OH_SET_LANGUAGE/$OH_LANGUAGE/g" ./$OH_DIR/rsc/settings.properties.dist > ./$OH_DIR/rsc/settings.properties
-
+	generate_config_files;
 fi
 
 ######## Open Hospital start
