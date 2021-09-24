@@ -49,11 +49,11 @@ compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG
 release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
 	echo "Checksum:" >> CHANGELOG.md
 	echo "\`\`\`" >> CHANGELOG.md
-	sha256sum $(CLIENT).zip >> CHANGELOG.md
-	sha256sum $(WIN32).zip >> CHANGELOG.md
-	sha256sum $(WIN64).zip >> CHANGELOG.md
-	sha256sum $(LINUX32).tar.gz >> CHANGELOG.md
-	sha256sum $(LINUX64).tar.gz >> CHANGELOG.md
+	sha256sum $(CLIENT).zip | tee -a "CHANGELOG.md" 
+	sha256sum $(WIN32).zip | tee -a "CHANGELOG.md" 
+	sha256sum $(WIN64).zip | tee -a "CHANGELOG.md" 
+	sha256sum $(LINUX32).tar.gz | tee -a "CHANGELOG.md" 
+	sha256sum $(LINUX64).tar.gz | tee -a "CHANGELOG.md" 
 	echo "\`\`\`" >> CHANGELOG.md
 	mkdir -p release-files
 	mv $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz release-files/
