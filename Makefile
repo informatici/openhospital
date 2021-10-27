@@ -67,7 +67,6 @@ $(CLIENT).zip: compile-all
 	mv $(CLIENT)/oh/oh.* $(CLIENT)
 	cp -rf ./openhospital-core/sql $(CLIENT)/
 	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
-	rm -f $(CLIENT)/generate_changelog.sh
 	cp LICENSE CHANGELOG $(CLIENT)
 	# Set new root folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(CLIENT)/oh.ps1
@@ -87,7 +86,6 @@ $(WIN32).zip: compile-all dw-all
 	mv $(WIN32)/oh/oh.* $(WIN32)
 	cp -a ./openhospital-core/sql $(WIN32)/
 	cp -f ./openhospital-gui/oh.ico $(WIN32)/
-	rm -f $(WIN32)/oh/generate_changelog.sh
 	rm -f $(WIN32)/OH-linux-changelog.md
 	rm -f $(WIN32)/oh.sh
 	cp LICENSE CHANGELOG $(WIN32)
@@ -108,7 +106,6 @@ $(WIN64).zip: compile-all dw-all
 	mv $(WIN64)/oh/oh.* $(WIN64)
 	cp -a ./openhospital-core/sql $(WIN64)/
 	cp -f ./openhospital-gui/oh.ico $(WIN64)/
-	rm -f $(WIN64)/oh/generate_changelog.sh
 	rm -f $(WIN64)/OH-linux-changelog.md
 	rm -f $(WIN64)/oh.sh
 	cp LICENSE CHANGELOG $(WIN64)
@@ -127,7 +124,6 @@ $(LINUX32).tar.gz: compile-all dw-all
 	mv $(LINUX32)/oh/oh.* $(LINUX32)
 	cp -a ./openhospital-core/sql $(LINUX32)/
 	cp -f ./openhospital-gui/oh.ico $(LINUX32)/
-	rm -f $(LINUX32)/oh/generate_changelog.sh
 	rm -f $(LINUX32)/OH-win-changelog.md
 	rm -f $(LINUX32)/oh.bat
 	rm -f $(LINUX32)/oh.ps1
@@ -147,7 +143,6 @@ $(LINUX64).tar.gz: compile-all dw-all
 	mv $(LINUX64)/oh/oh.* $(LINUX64)
 	cp -a ./openhospital-core/sql $(LINUX64)/
 	cp -f ./openhospital-gui/oh.ico $(LINUX64)/
-	rm -f $(LINUX64)/oh/generate_changelog.sh
 	rm -f $(LINUX64)/OH-win-changelog.md
 	rm -f $(LINUX64)/oh.bat
 	rm -f $(LINUX64)/oh.ps1
