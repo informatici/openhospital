@@ -6,7 +6,7 @@ or in a client / server network configuration (CLIENT mode), where multiple clie
 
 OH is developed in Java and it is based on open-source tools and libraries; it runs on any computer, requires low resources and is designed to work without an internet connection.
 
-Open Hospital is the first of a set of software applications that ISF - Informatici Senza Frontiere (https://www.informaticisenzafrontiere.org/) has developed to support the information management and the activities of hospitals and health centers in the simplest manner possible, by providing tools for the administrative operations (like registering patients, manage laboratory analysis and pharmaceutical stocks) and to produce detailed statistics and reports.
+Open Hospital is the first of a set of software applications that ISF - Informatici Senza Frontiere (https://www.informaticisenzafrontiere.org/) has developed to support the information management and the activities of hospitals and health centers in the simplest manner possible, by providing tools for administrative operations (like registering patients, manage laboratory analysis and pharmaceutical stocks) and to produce detailed statistics and reports.
 It was first deployed in 2006 at the St. Luke Hospital in Angal (Uganda) and it is now used in dozens of different locations around the world.
 
 When OH is used in PORTABLE mode, it is easily possible to move the installation on another computer or even run it from a USB stick or drive.
@@ -16,10 +16,15 @@ OH is released under the GNU GPL 3.0 License.
 
 The Linux version has been tested on different distributions and versions,
 including Ubuntu 16.04 i386 (32bit) and up to Ubuntu 21.04 x64 (64bit).
-The Windows version has been tested on Windows 10 (32/64bit).
+The Windows version has been tested on Windows 10/11 (64/bit)
+
+# Dowloading OH - Releases
+
+[**Download latest release from github**](https://github.com/informatici/openhospital/releases/latest) 
 
 # Running OH - Quickstart
 
+**Common to all Operating Systems / architectures:**
 **on Linux:**
 
 - start OH by running **./oh.sh**
@@ -31,25 +36,27 @@ The Windows version has been tested on Windows 10 (32/64bit).
 |                   Open Hospital | OH                    |
 |                                                         |
  ---------------------------------------------------------
- lang en | arch x86_64 | mode PORTABLE/CLIENT
+ lang en | arch x86_64 | mode PORTABLE | log level INFO 
+ ---------------------------------------------------------
 
- Usage: oh.sh [ -lang en|fr|it|es|pt ] 
+ Usage: oh.sh [ -l en|fr|it|es|pt ] 
 
-   -C    start OH in CLIENT mode (Client / Server configuration)
-   -d    start OH in DEBUG mode
+   -C    start OH in CLIENT mode (client / server configuration)
+   -d    start OH in debug mode
    -D    start OH with Demo data
    -g    generate configuration files
    -G    setup GSM
    -h    show this help
+   -i    initialize/install OH database
    -l    set language: en|fr|it|es|pt
    -s    save OH database
    -r    restore OH database
    -t    test database connection (CLIENT mode only)
    -v    show OH software version and configuration
    -X    clean/reset OH installation
-
 ```
 
+--------------------
 **on Windows:**
 
 - double click on the **oh.bat** batch file and choose among available options:
@@ -60,17 +67,22 @@ The Windows version has been tested on Windows 10 (32/64bit).
 |                   Open Hospital | OH                    |
 |                                                         |
  ---------------------------------------------------------
- lang en | arch x86_64 | mode PORTABLE/CLIENT
+ lang en | arch x86_64 | mode PORTABLE/CLIENT | log level INFO
 
 Usage: oh.ps1 [ -lang en|fr|it|es|pt ] 
               [ -mode PORTABLE|CLIENT ]
               [ -loglevel INFO|DEBUG ] 
+              [ -dicom on|off ]
+              [ -interactive on|off ]
+              [ -manual_config on|off ]
+
 
  C    start OH - CLIENT mode (client / server configuration)
  d    start OH in debug mode
  D    start OH in Demo mode
  g    generate configuration files
  G    setup GSM
+ i    initialize / install OH database
  l    set language: en|fr|it|es|pt
  s    save OH database
  r    restore OH database
@@ -82,7 +94,7 @@ Usage: oh.ps1 [ -lang en|fr|it|es|pt ]
 Note: The **oh.bat** launches the **oh.ps1** startup file automatically.
 The script presents the interactive menu that can be used to setup and choose how to run Open Hospital.
 
-On Windows, to manually run oh.ps1 (powershell script):
+-> To manually run oh.ps1 (powershell script):
 
 - right-click on **oh.ps1** -> Properties -> General -> Security
 - select "Unblock"
@@ -92,6 +104,18 @@ On Windows, to manually run oh.ps1 (powershell script):
 
 It might be necessary to set the correct permissions / exclusions also in the Windows Security Center, to allow OH to communicate on
 the MySQL / MariaDB local TCP port.
+
+-> To run oh.ps1 directly from command line:
+
+```
+powershell.exe -ExecutionPolicy Bypass -File  ./oh.ps1 [options]
+```
+
+-> To run oh.ps1 with command line options (example):
+
+```
+./oh.ps1 -lang it -mode PORTABLE -loglevel DEBUG -dicom off -interactive off -manual_config on
+```
 
 It's also possible to start Open Hospital with the legacy batch file (old oh.bat):
 - open cmd.exe and run **.\oh.bat -legacymode**
@@ -104,6 +128,7 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 - **D**    start OH with Demo data - loads a demo database in order to test the software 
 - **g**    generate OH configuration files (oh/rsc/\*.properties) and exit
 - **G**    setup GSM modem to enable sms interaction
+- **i**    initialize / install OH database
 - **l**    set local language: en|fr|it|es|pt
 - **s**    save / dump the Open Hospital database in sql format
 - **r**    restore Open Hospital database from backup or external sql file: user will be prompted for input sql file
@@ -137,14 +162,14 @@ DEMO_DATA=off # linux
 ```
 # Language setting - default set to en
 #OH_LANGUAGE=en fr es it pt # linux
-#$script:OH_LANGUAGE=en # fr es it pt # windows
+#$script:OH_LANGUAGE="en" # fr es it pt # windows
 ```
 - Set software logging level
 
 ```
 # set log level to INFO | DEBUG - default set to INFO
 #LOG_LEVEL=INFO # linux
-#$script:LOG_LEVEL=INFO # windows
+#$script:LOG_LEVEL="INFO" # windows
 ```
 
 - Database and software configuration. If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a client/server / LAN environment.
@@ -290,7 +315,7 @@ Enable running unsigned scripts by entering:
 ```
 set-executionpolicy remotesigned
 ```
-- You might also be required to enable access to oh.ps1 on Windows Firewall.
+- You might also be required to enable access on Windows Firewall to oh.ps1 and/or to the TCP port used for the local database (PORTABLE mode).
 
 **Windows - legacy mode**
 
@@ -325,7 +350,7 @@ In order to download and unzip mariadb:
 In order to have a complete, easy to support and extensible solution to run Open Hospital on Linux, oh.sh has been rewritten, also adding a few possible useful user functions.
 For the same reason, a completely new powershell script has been writtend for Windows: oh.ps1 (run by oh.bat).
 
-I have widely tested and they seems to be working well (Ubuntu 20.04 64bit /  Windows 10 64bit), solving also a few old outstanding bugs (mysql not always starting or shutting down, wrong socket references, hard coded values, etc. etc.)
+I have widely tested and they seems to be working well (Ubuntu 20.04 64bit /  Windows 11/10 64bit), solving also a few old outstanding bugs (mysql not always starting or shutting down, wrong socket references, hard coded values, etc. etc.)
 
 A short description of changes for the Linux version (mostly the same behavior and options are applicable to the windows oh.ps1 version):
 
@@ -344,6 +369,8 @@ A short description of changes for the Linux version (mostly the same behavior a
 - **New**: manual config mode (set MANUAL_CONFIG=on in script) -> mysql and oh configuration files are not generated automatically or overwritten, useful for testing
 - **New**: test database connection option (see oh.sh -t)
 - **New**: displays software versions and current configuration (see oh.sh -v)
+- **New**: generate config files (see oh.sh -g)
+- **New**: install database (see oh.sh -i)
 - Centralized variable managing (see related config file changes applied): now all (well, almost all, still some "isf" reference in SQL creation script...that will be removed ;-) references to database password, mysql host, etc. etc. are in the script and can be easily adapted / modified for any need
 - More flexible execution and configuration options
 - Automatic configuration files generation
@@ -360,5 +387,5 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Fixed _a_few_ bugs ;-)
 
 
-*last updated: 2021.09.21*
+*last updated: 2021.11.03*
 
