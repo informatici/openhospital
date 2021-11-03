@@ -24,7 +24,6 @@ The Windows version has been tested on Windows 10/11 (64/bit)
 
 # Running OH - Quickstart
 
-**Common to all Operating Systems / architectures:**
 **on Linux:**
 
 - start OH by running **./oh.sh**
