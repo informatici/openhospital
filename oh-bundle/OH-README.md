@@ -6,7 +6,7 @@ or in a client / server network configuration (CLIENT mode), where multiple clie
 
 OH is developed in Java and it is based on open-source tools and libraries; it runs on any computer, requires low resources and is designed to work without an internet connection.
 
-Open Hospital is the first of a set of software applications that ISF - Informatici Senza Frontiere (https://www.informaticisenzafrontiere.org/) has developed to support the information management and the activities of hospitals and health centers in the simplest manner possible, by providing tools for administrative operations (like registering patients, manage laboratory analysis and pharmaceutical stocks) and to produce detailed statistics and reports.
+Open Hospital is the first of a set of software applications that ISF - Informatici Senza Frontiere (https://www.informaticisenzafrontiere.org/) has developed to support the information management and the activities of hospitals and health centers in the simplest manner possible, by providing tools for the administrative operations (like registering patients, manage laboratory analysis and pharmaceutical stocks) and to produce detailed statistics and reports.
 It was first deployed in 2006 at the St. Luke Hospital in Angal (Uganda) and it is now used in dozens of different locations around the world.
 
 When OH is used in PORTABLE mode, it is easily possible to move the installation on another computer or even run it from a USB stick or drive.
