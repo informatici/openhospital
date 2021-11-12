@@ -237,7 +237,7 @@ $script:MANUAL_CONFIG="off" # windows
 ```
 # Interactive mode
 # set INTERACTIVE_MODE to "off" to launch oh.ps1 without calling the user
-# interaction meno (script_menu). Useful if automatic startup of OH is needed.
+# interaction menu (script_menu). Useful if automatic startup of OH is needed.
 # In order to use this mode, setup all the OH configuration variables in the script
 # or pass arguments via command line.
 $script:INTERACTIVE_MODE="on"
