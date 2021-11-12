@@ -24,7 +24,13 @@ The Windows version has been tested on Windows 7/10/11 (64/bit)
 
 # Running OH - Quickstart
 
-**on Linux:**
+## Common to all Operating Systems / architectures
+
+- Download Open Hospital package for the desired architecture
+- Unzip/untar the package
+- Browse to the extracted folder
+
+## Linux
 
 - start OH by running **./oh.sh**
 - to see available options, run **./oh.sh -h**
@@ -55,9 +61,8 @@ The Windows version has been tested on Windows 7/10/11 (64/bit)
    -v    show OH software version and configuration
    -X    clean/reset OH installation
 ```
-
 --------------------
-**on Windows:**
+## Windows
 
 - double click on the **oh.bat** batch file and choose among available options:
 
@@ -92,10 +97,11 @@ Usage: oh.ps1 [ -lang en|fr|it|es|pt ]
  X    clean/reset OH installation
  q    quit
 ```
+--------------------
 Note: The **oh.bat** launches the **oh.ps1** startup file automatically.
 The script presents the interactive menu that can be used to setup and choose how to run Open Hospital.
 
--> To manually run oh.ps1 (powershell script):
+-> To manually run **oh.ps1** (powershell script):
 
 - right-click on **oh.ps1** -> Properties -> General -> Security
 - select "Unblock"
@@ -140,42 +146,39 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 - **q**    quit (windows only)
 - **h**    help (linux only)
 
-Note: The oh.bat launches the oh.ps1 startup file automatically.
+# Configuration
 
-**Advanced options - common to all architecture**
-
-Some options can also be setup manually by editing the scripts (oh.sh and oh.ps1 - do not modify oh.bat unless legacymode is used) and setting the specific script variables.
+Some advanced options can be configured manually by editing the scripts (oh.sh and oh.ps1 - do not modify oh.bat unless legacymode is used) and setting the specific script variables.
 This might also be useful to set different combinations of options (language, debug level, ...) for specific needs.
 
-- Distribution type, language and debug level:
+### Distribution type - CLIENT | PORTABLE
 
 ```
 OH_MODE=PORTABLE # set functioning mode to PORTABLE | CLIENT # linux
 $script:OH_MODE="PORTABLE" # windows
-
+```
+### Demo mode
+```
 # set DEMO_DATA to on to enable Demo data loading
 # Warning -> __requires deletion of all portable data__
 DEMO_DATA=off # linux
 #$script:DEMO_DATA="off" # windows
 ```
-
-- Interface and software language:
-
+### Interface and software language:
 ```
 # Language setting - default set to en
 #OH_LANGUAGE=en fr es it pt # linux
 #$script:OH_LANGUAGE="en" # fr es it pt # windows
 ```
-- Set software logging level
-
+### Log level / debug mode
 ```
 # set log level to INFO | DEBUG - default set to INFO
 #LOG_LEVEL=INFO # linux
 #$script:LOG_LEVEL="INFO" # windows
 ```
+### Database and software configuration
 
-- Database and software configuration. If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a client/server / LAN environment.
-
+If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a client/server / LAN environment.
 ```
 ######## Software configuration - change at your own risk :-)
 #
@@ -191,8 +194,7 @@ DATABASE_PASSWORD="xxxxxxx"
 
 DICOM_MAX_SIZE="4M"
 ```
-
-- File names and directory structure:
+### File names and directory structure
 ```
 OH_DIR=oh
 SQL_DIR=sql
@@ -207,8 +209,9 @@ DATE=`date +%Y-%m-%d_%H-%M-%S` # linux
 LOG_FILE=startup.log
 OH_LOG_FILE=openhospital.log
 ```
+### Manual config
 
-- Manual config: it is also possibile to manually adapt the configuration files and set the script so they are not regenerated and overwritten:
+It is also possibile to manually adapt the configuration files and set the script so they are not regenerated and overwritten:
 
 ```
 ######## Advanced options
@@ -218,22 +221,19 @@ OH_LOG_FILE=openhospital.log
 MANUAL_CONFIG=off # linux
 $script:MANUAL_CONFIG="off" # windows
 ```
-
-- Enable system wide JAVA:
+### Enable system wide JAVA
 ```
 ######## set JAVA_BIN
 # Uncomment this if you want to use system wide JAVA
 #JAVA_BIN=`which java` # linux
 #$script:JAVA_BIN="C:\Program Files\JAVA\bin\java.exe" # windows
 ```
-
-- **(Windows only)** enable / disable DICOM features
+### (Windows only) Enable / disable DICOM features
 ```
 # enable / disable DICOM (on|off)
 #$script:DICOM_ENABLE="off"
 ```
-
-- **(Windows only)** set interactive mode
+### (Windows only) Enable interactive mode
 ```
 # Interactive mode
 # set INTERACTIVE_MODE to "off" to launch oh.ps1 without calling the user
@@ -269,11 +269,15 @@ Mariadb 10.2.x server
 Java JRE, Zulu or OpenJDK distribution
 ```
 
+# Documentation
+
+Administrator and User manuals are available in the **doc** folder.
+
 # Known issues
 
 If you experience problems in starting up the script, avoid long folder path and path with special characters / spaces in it.
 
-**Linux**
+## Linux
 
 - If you get this error:
 
@@ -300,7 +304,7 @@ sudo apt-get install libaio1
 
 - If you select languages en-fr-it, a ICD10 patologies subset is loaded at startup, languages es-pt don't.
 
-**Windows**
+## Windows
 
 Powershell minimun version 5.1 is required to run oh.ps1.
 
@@ -321,7 +325,8 @@ set-executionpolicy remotesigned
 ```
 - You might also be required to enable access on Windows Firewall to oh.ps1 and/or to the TCP port used for the local database (PORTABLE mode).
 
-**Windows - legacy mode**
+
+## Windows - legacy mode
 
 (*) If you are using oh.bat in legacy mode, you might have to download and unzip java ad mysql manually.
 In order to download and unzip Java:
@@ -345,6 +350,7 @@ In order to download and unzip mariadb:
 
 
 **x86 - 32bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/win32-packages/mariadb-10.2.41-win32.zip
+
 **x64 - 64bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/winx64-packages/mariadb-10.2.41-winx64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
