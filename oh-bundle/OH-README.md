@@ -302,6 +302,8 @@ sudo apt-get install libaio1
 
 **Windows**
 
+Powershell minimun version 5.1 is required to run oh.ps1.
+
 Dicom functionalities are only available on 32bit JAVA environment. If DICOM is needed, 32bit jre is mandatory.
 If you need DICOM on Windows 64 bit set **DICOM_ENABLE="on"** in the script.
 
