@@ -151,16 +151,26 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 Some advanced options can be configured manually by editing the scripts (oh.sh and oh.ps1 - do not modify oh.bat unless legacymode is used) and setting the specific script variables.
 This might also be useful to set different combinations of options (language, debug level, ...) for specific needs.
 
+### OH directory path
+```
+############## OH general configuration - change at your own risk :-) ##############
+# -> OH_PATH is the directory where Open Hospital files are located
+# OH_PATH="c:\Users\OH\OpenHospital\oh-1.11"
+```
+
 ### Distribution type - CLIENT | PORTABLE
 
 ```
+############## OH general configuration - change at your own risk :-) ##############
 OH_MODE=PORTABLE # set functioning mode to PORTABLE | CLIENT # linux
 $script:OH_MODE="PORTABLE" # windows
 ```
 ### Demo mode
 ```
-# set DEMO_DATA to on to enable Demo data loading
-# Warning -> __requires deletion of all portable data__
+# set DEMO_DATA to on to enable demo database loading - default set to off
+#
+# -> Warning -> __requires deletion of all portable data__
+#
 DEMO_DATA=off # linux
 #$script:DEMO_DATA="off" # windows
 ```
@@ -170,68 +180,67 @@ DEMO_DATA=off # linux
 #OH_LANGUAGE=en fr es it pt # linux
 #$script:OH_LANGUAGE="en" # fr es it pt # windows
 ```
+### (Windows only) Enable / disable DICOM features
+```
+# enable / disable DICOM (on|off)
+#$script:DICOM_ENABLE="off"
+```
 ### Log level / debug mode
 ```
 # set log level to INFO | DEBUG - default set to INFO
 #LOG_LEVEL=INFO # linux
 #$script:LOG_LEVEL="INFO" # windows
 ```
+### Enable system wide JAVA
+```
+# set JAVA_BIN 
+# Uncomment this if you want to use system wide JAVA
+#JAVA_BIN=`which java` # linux
+#$script:JAVA_BIN="C:\Program Files\JAVA\bin\java.exe" # windows
+```
 ### Database and software configuration
 
 If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a client/server / LAN environment.
 ```
-######## Software configuration - change at your own risk :-)
-#
-# linux version - windows version requires "$script:" in front of any variable)
-#
+############## OH local configuration - change at your own risk :-) ##############
 # Database
 MYSQL_SERVER=localhost
 MYSQL_PORT=3306
-MYSQL_ROOT_PW="xxxxxxx"
+MYSQL_ROOT_PW="xxxxxxxxxx"
 DATABASE_NAME=oh
 DATABASE_USER=isf
-DATABASE_PASSWORD="xxxxxxx"
+DATABASE_PASSWORD="xxxxx"
 
 DICOM_MAX_SIZE="4M"
-```
-### File names and directory structure
-```
-OH_DIR=oh
-SQL_DIR=sql
-DICOM_DIR="data/dicom_storage"
+
+OH_DIR="oh"
+OH_DOC_DIR="../doc"
+CONF_DIR="data/conf"
 DATA_DIR="data/db"
-LOG_DIR="data/log"
+DICOM_DIR="data/dicom_storage"
 BACKUP_DIR="data/dump"
-TMP_DIR=tmp
-#DB_CREATE_SQL="create_all_en.sql" # default to create_all_en.sql
+LOG_DIR="data/log"
+SQL_DIR="sql"
+TMP_DIR="tmp"
+
+LOG_FILE=startup.log
+
 DB_DEMO="create_all_demo.sql"
-DATE=`date +%Y-%m-%d_%H-%M-%S` # linux
 LOG_FILE=startup.log
 OH_LOG_FILE=openhospital.log
+
 ```
 ### Manual config
 
 It is also possibile to manually adapt the configuration files and set the script so they are not regenerated and overwritten:
 
 ```
-######## Advanced options
+############## Script startup configuration - change at your own risk :-) ##############
 ## set MANUAL_CONFIG to "on" to setup configuration files manually
 # my.cnf and all oh/rsc/*.properties files will not be generated or
 # overwritten if already present
 MANUAL_CONFIG=off # linux
 $script:MANUAL_CONFIG="off" # windows
-```
-### Enable system wide JAVA
-```
-######## set JAVA_BIN
-# Uncomment this if you want to use system wide JAVA
-#JAVA_BIN=`which java` # linux
-#$script:JAVA_BIN="C:\Program Files\JAVA\bin\java.exe" # windows
-```
-### (Windows only) Enable / disable DICOM features
-```
-# enable / disable DICOM (on|off)
-#$script:DICOM_ENABLE="off"
 ```
 ### (Windows only) Enable interactive mode
 ```
@@ -252,12 +261,11 @@ The default folder structure is now clean, simple and **common to all distros:**
 ```
 /oh -> Open Hospital distribution
 /sql -> containing the SQL creation scripts
-/etc -> configuration files for database (MySQL)
+/data/conf -> configuration files for database (MariaDB / MySQL)
 ```
 Created at runtime:
 ```
 /tmp 
-/data
 data/db
 data/log
 data/dicom_storage
@@ -395,5 +403,5 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Fixed _a_few_ bugs ;-)
 
 
-*last updated: 2021.11.12*
+*last updated: 2021.11.16*
 
