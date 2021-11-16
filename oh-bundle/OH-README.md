@@ -126,9 +126,9 @@ powershell.exe -ExecutionPolicy Bypass -File  ./oh.ps1 [options]
 
 ### Windows - legacy mode
 
-It's also possible to start Open Hospital with the legacy batch file (old oh.bat):
-- open cmd.exe and run **.\oh.bat -legacymode**
-- to see available options, open a cmd.exe window and run **.\oh.bat -h**
+It's also possible to start Open Hospital with the legacy batch file (old oh.bat behaviour):
+- open cmd.exe, browse to the OH installation directory and run **.\oh.bat -legacymode**
+- to see available options in legacymode, run **.\oh.bat -h**
 
 # Options 
 
