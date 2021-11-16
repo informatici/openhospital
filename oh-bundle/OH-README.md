@@ -124,6 +124,8 @@ powershell.exe -ExecutionPolicy Bypass -File  ./oh.ps1 [options]
 ./oh.ps1 -lang it -mode PORTABLE -loglevel DEBUG -dicom off -interactive off -manual_config on
 ```
 
+### Windows - legacy mode
+
 It's also possible to start Open Hospital with the legacy batch file (old oh.bat):
 - open cmd.exe and run **.\oh.bat -legacymode**
 - to see available options, open a cmd.exe window and run **.\oh.bat -h**
@@ -332,7 +334,6 @@ Enable running unsigned scripts by entering:
 set-executionpolicy remotesigned
 ```
 - You might also be required to enable access on Windows Firewall to oh.ps1 and/or to the TCP port used for the local database (PORTABLE mode).
-
 
 ## Windows - legacy mode
 
