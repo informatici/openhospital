@@ -16,11 +16,21 @@ OH is released under the GNU GPL 3.0 License.
 
 The Linux version has been tested on different distributions and versions,
 including Ubuntu 16.04 i386 (32bit) and up to Ubuntu 21.04 x64 (64bit).
-The Windows version has been tested on Windows 10 (32/64bit).
+The Windows version has been tested on Windows 7/10/11 (64/bit)
+
+# Dowloading OH - Releases
+
+[**Download latest release from github**](https://github.com/informatici/openhospital/releases/latest) 
 
 # Running OH - Quickstart
 
-**on Linux:**
+## Common to all Operating Systems / architectures
+
+- Download Open Hospital package for the desired architecture
+- Unzip/untar the package
+- Browse to the extracted folder
+
+## Linux
 
 - start OH by running **./oh.sh**
 - to see available options, run **./oh.sh -h**
@@ -31,26 +41,28 @@ The Windows version has been tested on Windows 10 (32/64bit).
 |                   Open Hospital | OH                    |
 |                                                         |
  ---------------------------------------------------------
- lang en | arch x86_64 | mode PORTABLE/CLIENT
+ lang en | arch x86_64 | mode PORTABLE | log level INFO 
+ ---------------------------------------------------------
 
- Usage: oh.sh [ -lang en|fr|it|es|pt ] 
+ Usage: oh.sh [ -l en|fr|it|es|pt ] 
 
-   -C    start OH in CLIENT mode (Client / Server configuration)
-   -d    start OH in DEBUG mode
+   -C    start OH in CLIENT mode (client / server configuration)
+   -P    start OH in PORTABLE mode
+   -d    start OH in debug mode
    -D    start OH with Demo data
    -g    generate configuration files
    -G    setup GSM
    -h    show this help
+   -i    initialize/install OH database
    -l    set language: en|fr|it|es|pt
    -s    save OH database
    -r    restore OH database
    -t    test database connection (CLIENT mode only)
    -v    show OH software version and configuration
    -X    clean/reset OH installation
-
 ```
-
-**on Windows:**
+--------------------
+## Windows
 
 - double click on the **oh.bat** batch file and choose among available options:
 
@@ -60,17 +72,23 @@ The Windows version has been tested on Windows 10 (32/64bit).
 |                   Open Hospital | OH                    |
 |                                                         |
  ---------------------------------------------------------
- lang en | arch x86_64 | mode PORTABLE/CLIENT
+ lang en | arch x86_64 | mode PORTABLE/CLIENT | log level INFO
 
 Usage: oh.ps1 [ -lang en|fr|it|es|pt ] 
               [ -mode PORTABLE|CLIENT ]
               [ -loglevel INFO|DEBUG ] 
+              [ -dicom on|off ]
+              [ -interactive on|off ]
+              [ -manual_config on|off ]
 
- C    start OH - CLIENT mode (client / server configuration)
+
+ C    start OH in CLIENT mode (client / server configuration)
+ P    start OH in PORTABLE mode
  d    start OH in debug mode
  D    start OH in Demo mode
  g    generate configuration files
  G    setup GSM
+ i    initialize / install OH database
  l    set language: en|fr|it|es|pt
  s    save OH database
  r    restore OH database
@@ -79,10 +97,11 @@ Usage: oh.ps1 [ -lang en|fr|it|es|pt ]
  X    clean/reset OH installation
  q    quit
 ```
+--------------------
 Note: The **oh.bat** launches the **oh.ps1** startup file automatically.
 The script presents the interactive menu that can be used to setup and choose how to run Open Hospital.
 
-On Windows, to manually run oh.ps1 (powershell script):
+-> To manually run **oh.ps1** (powershell script):
 
 - right-click on **oh.ps1** -> Properties -> General -> Security
 - select "Unblock"
@@ -93,17 +112,33 @@ On Windows, to manually run oh.ps1 (powershell script):
 It might be necessary to set the correct permissions / exclusions also in the Windows Security Center, to allow OH to communicate on
 the MySQL / MariaDB local TCP port.
 
-It's also possible to start Open Hospital with the legacy batch file (old oh.bat):
-- open cmd.exe and run **.\oh.bat -legacymode**
-- to see available options, open a cmd.exe window and run **.\oh.bat -h**
+-> To run oh.ps1 directly from command line:
+
+```
+powershell.exe -ExecutionPolicy Bypass -File  ./oh.ps1 [options]
+```
+
+-> To run oh.ps1 with command line options (example):
+
+```
+./oh.ps1 -lang it -mode PORTABLE -loglevel DEBUG -dicom off -interactive off -manual_config on
+```
+
+### Windows - legacy mode
+
+It's also possible to start Open Hospital with the legacy batch file (old oh.bat behaviour):
+- open cmd.exe, browse to the OH installation directory and run **.\oh.bat -legacymode**
+- to see available options in legacymode, run **.\oh.bat -h**
 
 # Options 
 
-- **C**    start Open Hospital in CLIENT mode, usually when you have an external database server (Client / Server configuration)
+- **C**    start Open Hospital in CLIENT mode, usually when an external database server is used (Client / Server configuration)
+- **P**    start Open Hospital in PORTABLE mode, where data is saved locally
 - **d**    start OH in DEBUG mode - useful to debug errors or bugs by logging more extended informations to log file
 - **D**    start OH with Demo data - loads a demo database in order to test the software 
 - **g**    generate OH configuration files (oh/rsc/\*.properties) and exit
 - **G**    setup GSM modem to enable sms interaction
+- **i**    initialize / install OH database
 - **l**    set local language: en|fr|it|es|pt
 - **s**    save / dump the Open Hospital database in sql format
 - **r**    restore Open Hospital database from backup or external sql file: user will be prompted for input sql file
@@ -113,104 +148,107 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 - **q**    quit (windows only)
 - **h**    help (linux only)
 
-Note: The oh.bat launches the oh.ps1 startup file automatically.
+# Configuration
 
-**Advanced options - common to all architecture**
-
-Some options can also be setup manually by editing the scripts (oh.sh and oh.ps1 - do not modify oh.bat unless legacymode is used) and setting the specific script variables.
+Some advanced options can be configured manually by editing the scripts (oh.sh and oh.ps1 - do not modify oh.bat unless legacymode is used) and setting the specific script variables.
 This might also be useful to set different combinations of options (language, debug level, ...) for specific needs.
 
-- Distribution type, language and debug level:
+### OH directory path
+```
+############## OH general configuration - change at your own risk :-) ##############
+# -> OH_PATH is the directory where Open Hospital files are located
+# OH_PATH="c:\Users\OH\OpenHospital\oh-1.11"
+```
+
+### Distribution type - CLIENT | PORTABLE
 
 ```
+############## OH general configuration - change at your own risk :-) ##############
 OH_MODE=PORTABLE # set functioning mode to PORTABLE | CLIENT # linux
 $script:OH_MODE="PORTABLE" # windows
-
-# set DEMO_DATA to on to enable Demo data loading
-# Warning -> __requires deletion of all portable data__
+```
+### Demo mode
+```
+# set DEMO_DATA to on to enable demo database loading - default set to off
+#
+# -> Warning -> __requires deletion of all portable data__
+#
 DEMO_DATA=off # linux
 #$script:DEMO_DATA="off" # windows
 ```
-
-- Interface and software language:
-
+### Interface and software language:
 ```
 # Language setting - default set to en
 #OH_LANGUAGE=en fr es it pt # linux
-#$script:OH_LANGUAGE=en # fr es it pt # windows
+#$script:OH_LANGUAGE="en" # fr es it pt # windows
 ```
-- Set software logging level
-
+### (Windows only) Enable / disable DICOM features
+```
+# enable / disable DICOM (on|off)
+#$script:DICOM_ENABLE="off"
+```
+### Log level / debug mode
 ```
 # set log level to INFO | DEBUG - default set to INFO
 #LOG_LEVEL=INFO # linux
-#$script:LOG_LEVEL=INFO # windows
+#$script:LOG_LEVEL="INFO" # windows
 ```
-
-- Database and software configuration. If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a client/server / LAN environment.
-
+### Enable system wide JAVA
 ```
-######## Software configuration - change at your own risk :-)
-#
-# linux version - windows version requires "$script:" in front of any variable)
-#
+# set JAVA_BIN 
+# Uncomment this if you want to use system wide JAVA
+#JAVA_BIN=`which java` # linux
+#$script:JAVA_BIN="C:\Program Files\JAVA\bin\java.exe" # windows
+```
+### Database and software configuration
+
+If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a client/server / LAN environment.
+```
+############## OH local configuration - change at your own risk :-) ##############
 # Database
 MYSQL_SERVER=localhost
 MYSQL_PORT=3306
-MYSQL_ROOT_PW="xxxxxxx"
+MYSQL_ROOT_PW="xxxxxxxxxx"
 DATABASE_NAME=oh
 DATABASE_USER=isf
-DATABASE_PASSWORD="xxxxxxx"
+DATABASE_PASSWORD="xxxxx"
 
 DICOM_MAX_SIZE="4M"
-```
 
-- File names and directory structure:
-```
-OH_DIR=oh
-SQL_DIR=sql
-DICOM_DIR="data/dicom_storage"
+OH_DIR="oh"
+OH_DOC_DIR="../doc"
+CONF_DIR="data/conf"
 DATA_DIR="data/db"
-LOG_DIR="data/log"
+DICOM_DIR="data/dicom_storage"
 BACKUP_DIR="data/dump"
-TMP_DIR=tmp
-#DB_CREATE_SQL="create_all_en.sql" # default to create_all_en.sql
+LOG_DIR="data/log"
+SQL_DIR="sql"
+TMP_DIR="tmp"
+
+LOG_FILE=startup.log
+
 DB_DEMO="create_all_demo.sql"
-DATE=`date +%Y-%m-%d_%H-%M-%S` # linux
 LOG_FILE=startup.log
 OH_LOG_FILE=openhospital.log
-```
-
-- Manual config: it is also possibile to manually adapt the configuration files and set the script so they are not regenerated and overwritten:
 
 ```
-######## Advanced options
+### Manual config
+
+It is also possibile to manually adapt the configuration files and set the script so they are not regenerated and overwritten:
+
+```
+############## Script startup configuration - change at your own risk :-) ##############
 ## set MANUAL_CONFIG to "on" to setup configuration files manually
 # my.cnf and all oh/rsc/*.properties files will not be generated or
 # overwritten if already present
 MANUAL_CONFIG=off # linux
 $script:MANUAL_CONFIG="off" # windows
 ```
-
-- Enable system wide JAVA:
-```
-######## set JAVA_BIN
-# Uncomment this if you want to use system wide JAVA
-#JAVA_BIN=`which java` # linux
-#$script:JAVA_BIN="C:\Program Files\JAVA\bin\java.exe" # windows
-```
-
-- **(Windows only)** enable / disable DICOM features
-```
-# enable / disable DICOM (on|off)
-#$script:DICOM_ENABLE="off"
-```
-
-- **(Windows only)** set interactive mode
+### (Windows only) Enable interactive mode
 ```
 # Interactive mode
 # set INTERACTIVE_MODE to "off" to launch oh.ps1 without calling the user
-# interaction meno (script_menu). Useful if automatic startup of OH is needed.
+# interaction menu (script_menu). Useful if automatic startup of OH is needed.
 # In order to use this mode, setup all the OH configuration variables in the script
 # or pass arguments via command line.
 $script:INTERACTIVE_MODE="on"
@@ -224,13 +262,12 @@ The default folder structure is now clean, simple and **common to all distros:**
 
 ```
 /oh -> Open Hospital distribution
-/sql -> containing the SQL creation scripta
-/etc -> configuration files for database (MySQL)
+/sql -> containing the SQL creation scripts
+/data/conf -> configuration files for database (MariaDB / MySQL)
 ```
 Created at runtime:
 ```
 /tmp 
-/data
 data/db
 data/log
 data/dicom_storage
@@ -242,11 +279,15 @@ Mariadb 10.2.x server
 Java JRE, Zulu or OpenJDK distribution
 ```
 
+# Documentation
+
+Administrator and User manuals are available in the **doc** folder.
+
 # Known issues
 
 If you experience problems in starting up the script, avoid long folder path and path with special characters / spaces in it.
 
-**Linux**
+## Linux
 
 - If you get this error:
 
@@ -273,7 +314,9 @@ sudo apt-get install libaio1
 
 - If you select languages en-fr-it, a ICD10 patologies subset is loaded at startup, languages es-pt don't.
 
-**Windows**
+## Windows
+
+Powershell minimun version 5.1 is required to run oh.ps1.
 
 Dicom functionalities are only available on 32bit JAVA environment. If DICOM is needed, 32bit jre is mandatory.
 If you need DICOM on Windows 64 bit set **DICOM_ENABLE="on"** in the script.
@@ -290,19 +333,19 @@ Enable running unsigned scripts by entering:
 ```
 set-executionpolicy remotesigned
 ```
-- You might also be required to enable access to oh.ps1 on Windows Firewall.
+- You might also be required to enable access on Windows Firewall to oh.ps1 and/or to the TCP port used for the local database (PORTABLE mode).
 
-**Windows - legacy mode**
+## Windows - legacy mode
 
-(*) If you are using the legacy version, you might have to download and unzip java ad mysql manually.
+(*) If you are using oh.bat in legacy mode, you might have to download and unzip java ad mysql manually.
 In order to download and unzip Java:
 
 - Visit  https://cdn.azul.com/zulu/bin/
 - download the **JRE - .zip version**
 
-**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu8.56.0.23-ca-fx-jre8.0.302-win_i686.zip
+**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jre8.0.312-win_i686.zip
 
-**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu8.56.0.23-ca-fx-jre8.0.302-win_x64.zip
+**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jre8.0.312-win_x64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -315,8 +358,9 @@ In order to download and unzip mariadb:
 - Download the zip file:
 
 
-**x86 - 32bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.40/win32-packages/mariadb-10.2.40-win32.zip
-**x64 - 64bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.40/winx64-packages/mariadb-10.2.40-winx64.zip
+**x86 - 32bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/win32-packages/mariadb-10.2.41-win32.zip
+
+**x64 - 64bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/winx64-packages/mariadb-10.2.41-winx64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -324,8 +368,6 @@ In order to download and unzip mariadb:
 
 In order to have a complete, easy to support and extensible solution to run Open Hospital on Linux, oh.sh has been rewritten, also adding a few possible useful user functions.
 For the same reason, a completely new powershell script has been writtend for Windows: oh.ps1 (run by oh.bat).
-
-I have widely tested and they seems to be working well (Ubuntu 20.04 64bit /  Windows 10 64bit), solving also a few old outstanding bugs (mysql not always starting or shutting down, wrong socket references, hard coded values, etc. etc.)
 
 A short description of changes for the Linux version (mostly the same behavior and options are applicable to the windows oh.ps1 version):
 
@@ -344,6 +386,8 @@ A short description of changes for the Linux version (mostly the same behavior a
 - **New**: manual config mode (set MANUAL_CONFIG=on in script) -> mysql and oh configuration files are not generated automatically or overwritten, useful for testing
 - **New**: test database connection option (see oh.sh -t)
 - **New**: displays software versions and current configuration (see oh.sh -v)
+- **New**: generate config files (see oh.sh -g)
+- **New**: install / initialize database (see oh.sh -i)
 - Centralized variable managing (see related config file changes applied): now all (well, almost all, still some "isf" reference in SQL creation script...that will be removed ;-) references to database password, mysql host, etc. etc. are in the script and can be easily adapted / modified for any need
 - More flexible execution and configuration options
 - Automatic configuration files generation
@@ -354,11 +398,11 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Added sql subdirectory to organize sql creation scripts
 - Added various checks about correct settings of parameters and startup of services
 - Added security controls (no more _rm -rf_ here and there :-)
-- Added support for **MariaDB** - (tested with version up to mariadb-10.2.40) (OH seems faster and more responsive)
+- Added support for **MariaDB** - (tested with version up to mariadb-10.2.41) (OH seems faster and more responsive)
 - Windows -> addedd support for path with spaces / special characters 
 - Updated MySQL db and user creation syntax (now compatible with MySQL 8 - unsupported)
 - Fixed _a_few_ bugs ;-)
 
 
-*last updated: 2021.09.21*
+*last updated: 2021.11.16*
 
