@@ -68,9 +68,10 @@ $(CLIENT).zip: compile-all
 	cp -rf ./openhospital-core/sql $(CLIENT)/
 	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
 	cp LICENSE CHANGELOG $(CLIENT)
-	# Set new root folder
+	# Set oh folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(CLIENT)/oh.ps1
-	sed -i 's/^\OH_DIR\=./OH_DIR\=oh/g' $(CLIENT)/oh.sh
+	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(WIN64)/oh.bat
+	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(CLIENT)/oh.sh
 	# Set client mode in startup scripts
 	sed -i 's/^\$$script\:OH_MODE\=\"PORTABLE\"/\$$script\:OH_MODE\=\"CLIENT\"/g' $(CLIENT)/oh.ps1
 	sed -i 's/^\OH_MODE\=PORTABLE/OH_MODE\=CLIENT/g' $(CLIENT)/oh.sh
@@ -89,8 +90,9 @@ $(WIN32).zip: compile-all dw-all
 	rm -f $(WIN32)/OH-linux-changelog.md
 	rm -f $(WIN32)/oh.sh
 	cp LICENSE CHANGELOG $(WIN32)
-	# Set new root folder
+	# Set oh folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(WIN32)/oh.ps1
+	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(WIN32)/oh.bat
 	# Workaround to force JAVA to 32bit to have DICOM working
 	sed -i '/script:JAVA_ARCH=32/s/^#//g' $(WIN32)/oh.ps1
 	cp *.pdf $(WIN32)/doc
@@ -111,6 +113,7 @@ $(WIN64).zip: compile-all dw-all
 	cp LICENSE CHANGELOG $(WIN64)
 	# Set new root folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(WIN64)/oh.ps1
+	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(WIN64)/oh.bat
 	cp *.pdf $(WIN64)/doc
 	unzip $(JRE_WIN64) -d $(WIN64)
 	unzip $(MYSQL_WIN64) -d $(WIN64) -x "*/lib/*"
@@ -128,8 +131,8 @@ $(LINUX32).tar.gz: compile-all dw-all
 	rm -f $(LINUX32)/oh.bat
 	rm -f $(LINUX32)/oh.ps1
 	cp LICENSE CHANGELOG $(LINUX32)
-	# Set new root folder
-	sed -i 's/^\OH_DIR\=./OH_DIR\=oh/g' $(LINUX32)/oh.sh
+	# Set oh folder
+	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(LINUX32)/oh.sh
 	cp *.pdf $(LINUX32)/doc
 	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
@@ -147,8 +150,8 @@ $(LINUX64).tar.gz: compile-all dw-all
 	rm -f $(LINUX64)/oh.bat
 	rm -f $(LINUX64)/oh.ps1
 	cp LICENSE CHANGELOG $(LINUX64)
-	# Set new root folder
-	sed -i 's/^\OH_DIR\=./OH_DIR\=oh/g' $(LINUX64)/oh.sh
+	# Set oh folder
+	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(LINUX64)/oh.sh
 	cp *.pdf $(LINUX64)/doc
 	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
