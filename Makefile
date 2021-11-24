@@ -136,7 +136,7 @@ $(LINUX32).tar.gz: compile-all dw-all
 	cp *.pdf $(LINUX32)/doc
 	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
-	tar -cvzf $(LINUX32).tar.gz $(LINUX32)
+	tar -czf $(LINUX32).tar.gz $(LINUX32)
 
 $(LINUX64).tar.gz: compile-all dw-all
 	mkdir -p $(LINUX64)/doc
@@ -155,7 +155,7 @@ $(LINUX64).tar.gz: compile-all dw-all
 	cp *.pdf $(LINUX64)/doc
 	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
-	tar -cvzf $(LINUX64).tar.gz $(LINUX64)
+	tar -czf $(LINUX64).tar.gz $(LINUX64)
 
 # Compile application binaries
 gui/target/OpenHospital20/bin/OH-gui.jar: clone-all
