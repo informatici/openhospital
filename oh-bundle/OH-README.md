@@ -360,7 +360,6 @@ In order to download and unzip mariadb:
 - Select CPU (architecture) **32 / 64**
 - Download the zip file:
 
-
 **x86 - 32bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/win32-packages/mariadb-10.2.41-win32.zip
 
 **x64 - 64bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/winx64-packages/mariadb-10.2.41-winx64.zip
