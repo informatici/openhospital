@@ -235,7 +235,8 @@ OH_LOG_FILE=openhospital.log
 ```
 ### Manual config
 
-It is also possibile to manually adapt the configuration files and set the script so they are not regenerated and overwritten:
+It is possibile to set the MANUAL_CONFIG option to "on" to keep the OH configuration files, so they are not regenerated and overwritten at every startup.
+This is useful for production environment where the configuration is fixed.
 
 ```
 ############## Script startup configuration - change at your own risk :-) ##############
