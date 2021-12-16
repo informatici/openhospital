@@ -61,7 +61,7 @@ The Windows version has been tested on Windows 7/10/11 (64/bit)
    -v    show OH software version and configuration
    -X    clean/reset OH installation
 ```
---------------------
+
 ## Windows
 
 - double click on the **oh.bat** batch file and choose among available options:
@@ -97,7 +97,7 @@ Usage: oh.ps1 [ -lang en|fr|it|es|pt ]
  X    clean/reset OH installation
  q    quit
 ```
---------------------
+
 Note: The **oh.bat** launches the **oh.ps1** startup file automatically.
 The script presents the interactive menu that can be used to setup and choose how to run Open Hospital.
 
@@ -214,12 +214,13 @@ DATABASE_USER=isf
 DATABASE_PASSWORD="xxxxx"
 
 DICOM_MAX_SIZE="4M"
+DICOM_STORAGE="FileSystemDicomManager" # SqlDicomManager
+DICOM_DIR="data/dicom_storage"
 
 OH_DIR="oh"
 OH_DOC_DIR="../doc"
 CONF_DIR="data/conf"
 DATA_DIR="data/db"
-DICOM_DIR="data/dicom_storage"
 BACKUP_DIR="data/dump"
 LOG_DIR="data/log"
 SQL_DIR="sql"
@@ -317,6 +318,7 @@ sudo apt-get install libaio1
 ## Windows
 
 Powershell minimun version 5.1 is required to run oh.ps1.
+To install Powershell 5.1 go to https://www.microsoft.com/en-us/download/details.aspx?id=54616
 
 Dicom functionalities are only available on 32bit JAVA environment. If DICOM is needed, 32bit jre is mandatory.
 If you need DICOM on Windows 64 bit set **DICOM_ENABLE="on"** in the script.
@@ -383,7 +385,7 @@ A short description of changes for the Linux version (mostly the same behavior a
 - **New**: Save (see oh.sh -s) / Restore (oh.sh -r) database, available both for CLIENT and PORTABLE mode !
 - **New**: GSM setup integrated via -G command line option - setupGSM.sh (https://github.com/informatici/openhospital-gui/blob/develop/SetupGSM.sh) is obsolete now
 - **New**: debug mode -> set log4.properties to DEBUG mode (default is INFO)
-- **New**: manual config mode (set MANUAL_CONFIG=on in script) -> mysql and oh configuration files are not generated automatically or overwritten, useful for testing
+- **New**: manual config mode (set MANUAL_CONFIG=on in script) -> mysql and oh configuration files are not generated automatically or overwritten, useful for production environment
 - **New**: test database connection option (see oh.sh -t)
 - **New**: displays software versions and current configuration (see oh.sh -v)
 - **New**: generate config files (see oh.sh -g)
@@ -404,5 +406,5 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Fixed _a_few_ bugs ;-)
 
 
-*last updated: 2021.11.16*
+*last updated: 2021.12.12*
 
