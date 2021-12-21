@@ -130,7 +130,7 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 - open cmd.exe, browse to the OH installation directory and run **.\oh.bat -legacymode**
 - to see available options in legacymode, run **.\oh.bat -h**
 
-# Options 
+## Startup options
 
 - **C**    start Open Hospital in CLIENT mode, usually when an external database server is used (Client / Server configuration)
 - **P**    start Open Hospital in PORTABLE mode, where data is saved locally
@@ -148,7 +148,7 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 - **q**    quit (windows only)
 - **h**    help (linux only)
 
-# Configuration
+## Script configuration
 
 Some advanced options can be configured manually by editing the scripts (oh.sh and oh.ps1 - do not modify oh.bat unless legacymode is used) and setting the specific script variables.
 This might also be useful to set different combinations of options (language, debug level, ...) for specific needs.
@@ -256,7 +256,7 @@ $script:MANUAL_CONFIG="off" # windows
 $script:INTERACTIVE_MODE="on"
 ```
 
-# Default directory structure
+## Default directory structure
 
 The scripts takes care of creating all the needed data directories and configuration files.
 Everything is also parametric and user adjustable in the scripts with variables (or via command line options).
@@ -281,15 +281,15 @@ Mariadb 10.2.x server
 Java JRE, Zulu or OpenJDK distribution
 ```
 
-# Documentation
+## Documentation
 
 Administrator and User manuals are available in the **doc** folder.
 
-# Known issues
+## Known issues
 
 If you experience problems in starting up the script, avoid long folder path and path with special characters / spaces in it.
 
-## Linux
+### Linux
 
 - If you get this error:
 
@@ -316,7 +316,7 @@ sudo apt-get install libaio1
 
 - If you select languages en-fr-it, a ICD10 patologies subset is loaded at startup, languages es-pt don't.
 
-## Windows
+### Windows
 
 Powershell minimun version 5.1 is required to run oh.ps1.
 To install Powershell 5.1 go to https://www.microsoft.com/en-us/download/details.aspx?id=54616
@@ -338,7 +338,7 @@ set-executionpolicy remotesigned
 ```
 - You might also be required to enable access on Windows Firewall to oh.ps1 and/or to the TCP port used for the local database (PORTABLE mode).
 
-## Windows - legacy mode
+### Windows - legacy mode
 
 (*) If you are using oh.bat in legacy mode, you might have to download and unzip java ad mysql manually.
 In order to download and unzip Java:
@@ -366,7 +366,7 @@ In order to download and unzip mariadb:
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
-# oh.sh / oh.ps1 - features and development
+## oh.sh / oh.ps1 - features and development
 
 In order to have a complete, easy to support and extensible solution to run Open Hospital on Linux, oh.sh has been rewritten, also adding a few possible useful user functions.
 For the same reason, a completely new powershell script has been writtend for Windows: oh.ps1 (run by oh.bat).
