@@ -76,7 +76,11 @@ $(CLIENT).zip: compile-all
 	sed -i 's/^\$$script\:OH_MODE\=\"PORTABLE\"/\$$script\:OH_MODE\=\"CLIENT\"/g' $(CLIENT)/oh.ps1
 	sed -i 's/^\OH_MODE\=PORTABLE/OH_MODE\=CLIENT/g' $(CLIENT)/oh.sh
 	sed -i '/script:JAVA_ARCH=32/s/^#//g' $(CLIENT)/oh.ps1
+	# give exec permissions to startup script
+	chmod 755 $(CLIENT)/oh.sh
+	# copy manuals
 	cp *.pdf $(CLIENT)/doc
+	# compress package
 	zip -r $(CLIENT).zip $(CLIENT)
 
 $(WIN32).zip: compile-all dw-all
@@ -95,7 +99,9 @@ $(WIN32).zip: compile-all dw-all
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(WIN32)/oh.bat
 	# Workaround to force JAVA to 32bit to have DICOM working
 	sed -i '/script:JAVA_ARCH=32/s/^#//g' $(WIN32)/oh.ps1
+	# copy manuals
 	cp *.pdf $(WIN32)/doc
+	# create package
 	unzip $(JRE_WIN32) -d $(WIN32)
 	unzip $(MYSQL_WIN32) -d $(WIN32) -x "*/lib/*"
 	zip -r $(WIN32).zip $(WIN32)
@@ -114,7 +120,9 @@ $(WIN64).zip: compile-all dw-all
 	# Set new root folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(WIN64)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(WIN64)/oh.bat
+	# copy manuals
 	cp *.pdf $(WIN64)/doc
+	# create archive
 	unzip $(JRE_WIN64) -d $(WIN64)
 	unzip $(MYSQL_WIN64) -d $(WIN64) -x "*/lib/*"
 	zip -r $(WIN64).zip $(WIN64)
@@ -133,7 +141,11 @@ $(LINUX32).tar.gz: compile-all dw-all
 	cp LICENSE CHANGELOG $(LINUX32)
 	# Set oh folder
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(LINUX32)/oh.sh
+	# give exec permissions to startup script
+	chmod 755 $(LINUX32)/oh.sh
+	# copy manuals
 	cp *.pdf $(LINUX32)/doc
+	# create package
 	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
 	tar -czf $(LINUX32).tar.gz $(LINUX32)
@@ -152,7 +164,11 @@ $(LINUX64).tar.gz: compile-all dw-all
 	cp LICENSE CHANGELOG $(LINUX64)
 	# Set oh folder
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(LINUX64)/oh.sh
+	# give exec permissions to startup script
+	chmod 755 $(LINUX64)/oh.sh
+	# copy manuals
 	cp *.pdf $(LINUX64)/doc
+	# create package
 	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
 	tar -czf $(LINUX64).tar.gz $(LINUX64)
