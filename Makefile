@@ -80,7 +80,7 @@ $(CLIENT).zip: compile-all
 	chmod 755 $(CLIENT)/oh.sh
 	# copy manuals
 	cp *.pdf $(CLIENT)/doc
-	# compress package
+	# create package
 	zip -r $(CLIENT).zip $(CLIENT)
 
 $(WIN32).zip: compile-all dw-all
@@ -122,7 +122,7 @@ $(WIN64).zip: compile-all dw-all
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(WIN64)/oh.bat
 	# copy manuals
 	cp *.pdf $(WIN64)/doc
-	# create archive
+	# create package
 	unzip $(JRE_WIN64) -d $(WIN64)
 	unzip $(MYSQL_WIN64) -d $(WIN64) -x "*/lib/*"
 	zip -r $(WIN64).zip $(WIN64)
