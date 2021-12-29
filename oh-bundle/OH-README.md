@@ -161,7 +161,7 @@ This might also be useful to set different combinations of options (language, de
 
 ### Config file generation
 
-It is possibile to set the GENERATE_CONFIG_FILES option to "on" to regenerate the OH configuration files at startup (also possibile with using the *g* script option),
+It is possibile to set the GENERATE_CONFIG_FILES option to "on" to regenerate the OH configuration files at startup (this is also possibile by selecting the *g* script option),
 The default is set to off, so the configuration files are not regenerated and overwritten at every startup. This is useful for production environment where the configuration is fixed.
 
 ```
