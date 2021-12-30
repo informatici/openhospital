@@ -1,4 +1,4 @@
-# OH - Open Hospital Portable | Client 
+# OH - Open Hospital Portable | Client
 
 OH - Open Hospital (https://www.open-hospital.org/) is a free and open-source Electronic Health Record (EHR) software application.
 Open Hospital is deployed as a desktop application that can be used in a standalone, single user mode (PORTABLE mode)
@@ -123,7 +123,6 @@ powershell.exe -ExecutionPolicy Bypass -File  ./oh.ps1 [options]
 ```
 ./oh.ps1 -lang it -mode PORTABLE -loglevel DEBUG -dicom off -interactive off -manual_config on
 ```
-
 ### Windows - legacy mode
 
 It's also possible to start Open Hospital with the legacy batch file (old oh.bat behaviour):
@@ -148,7 +147,7 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 - **q**    quit (windows only)
 - **h**    help (linux only)
 
-# Configuration
+## Script configuration
 
 Some advanced options can be configured manually by editing the scripts (oh.sh and oh.ps1 - do not modify oh.bat unless legacymode is used) and setting the specific script variables.
 This might also be useful to set different combinations of options (language, debug level, ...) for specific needs.
@@ -158,6 +157,23 @@ This might also be useful to set different combinations of options (language, de
 ############## OH general configuration - change at your own risk :-) ##############
 # -> OH_PATH is the directory where Open Hospital files are located
 # OH_PATH="c:\Users\OH\OpenHospital\oh-1.11"
+```
+
+### Config file generation
+
+It is possibile to set the GENERATE_CONFIG_FILES option to "on" to regenerate the OH configuration files at startup (this is also possibile by selecting the *g* script option).
+The default is set to off, so the configuration files are not regenerated and overwritten at every startup. This is useful for production environment where the configuration is fixed.
+
+```
+# set GENERATE_CONFIG_FILES=on "on" to force generation / overwriting of configuration files:
+# data/conf/my.cnf and oh/rsc/*.properties files will be regenerated from the original .dist files
+# with the settings defined in this script.
+#
+# Default is set to "off": configuration files will not be generated or overwritten if already present.
+#
+#GENERATE_CONFIG_FILES="off" # linux
+#$script:GENERATE_CONFIG_FILES="off" # windows
+
 ```
 
 ### Distribution type - CLIENT | PORTABLE
@@ -219,6 +235,7 @@ DICOM_DIR="data/dicom_storage"
 
 OH_DIR="oh"
 OH_DOC_DIR="../doc"
+OH_SINGLE_USER="yes" # set "no" for multiuser
 CONF_DIR="data/conf"
 DATA_DIR="data/db"
 BACKUP_DIR="data/dump"
@@ -233,19 +250,7 @@ LOG_FILE=startup.log
 OH_LOG_FILE=openhospital.log
 
 ```
-### Manual config
 
-It is possibile to set the MANUAL_CONFIG option to "on" to keep the OH configuration files, so they are not regenerated and overwritten at every startup.
-This is useful for production environment where the configuration is fixed.
-
-```
-############## Script startup configuration - change at your own risk :-) ##############
-## set MANUAL_CONFIG to "on" to setup configuration files manually
-# my.cnf and all oh/rsc/*.properties files will not be generated or
-# overwritten if already present
-MANUAL_CONFIG=off # linux
-$script:MANUAL_CONFIG="off" # windows
-```
 ### (Windows only) Enable interactive mode
 ```
 # Interactive mode
@@ -285,7 +290,7 @@ Java JRE, Zulu or OpenJDK distribution
 
 Administrator and User manuals are available in the **doc** folder.
 
-# Known issues
+## Known issues
 
 If you experience problems in starting up the script, avoid long folder path and path with special characters / spaces in it.
 
@@ -360,6 +365,7 @@ In order to download and unzip mariadb:
 - Select CPU (architecture) **32 / 64**
 - Download the zip file:
 
+
 **x86 - 32bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/win32-packages/mariadb-10.2.41-win32.zip
 
 **x64 - 64bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/winx64-packages/mariadb-10.2.41-winx64.zip
@@ -385,7 +391,7 @@ A short description of changes for the Linux version (mostly the same behavior a
 - **New**: Save (see oh.sh -s) / Restore (oh.sh -r) database, available both for CLIENT and PORTABLE mode !
 - **New**: GSM setup integrated via -G command line option - setupGSM.sh (https://github.com/informatici/openhospital-gui/blob/develop/SetupGSM.sh) is obsolete now
 - **New**: debug mode -> set log4.properties to DEBUG mode (default is INFO)
-- **New**: manual config mode (set MANUAL_CONFIG=on in script) -> mysql and oh configuration files are not generated automatically or overwritten, useful for production environment
+- **New**: configuration file generation (set GENERATE_CONFIG_FILES=on in script) -> mysql and oh configuration files are not generated automatically or overwritten, useful for production environment
 - **New**: test database connection option (see oh.sh -t)
 - **New**: displays software versions and current configuration (see oh.sh -v)
 - **New**: generate config files (see oh.sh -g)
@@ -406,5 +412,5 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Fixed _a_few_ bugs ;-)
 
 
-*last updated: 2021.12.12*
+*last updated: 2021.12.29*
 
