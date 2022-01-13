@@ -175,7 +175,7 @@ $(LINUX64).tar.gz: compile-all dw-all
 
 # Compile application binaries
 gui/target/OpenHospital20/bin/OH-gui.jar: clone-all
-	mvn -T 1.5C package
+	mvn --quiet -T 1.5C package
 
 # Clone repositories of OH components
 clone-all: core gui doc
