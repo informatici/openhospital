@@ -210,22 +210,22 @@ dw-all: dw-jre-all dw-mysql-all
 dw-jre-all: $(JRE_LINUX32) $(JRE_LINUX64) $(JRE_WIN32) $(JRE_WIN64)
 dw-mysql-all: $(MYSQL_LINUX32) $(MYSQL_LINUX64) $(MYSQL_WIN32) $(MYSQL_WIN64)
 $(JRE_LINUX32):
-	wget -q -nc https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jdk8.0.312-linux_i686.tar.gz -O $(JRE_LINUX32)
+	wget -q -nc https://cdn.azul.com/zulu/bin/zulu11.52.13-ca-jre11.0.13-linux_i686.tar.gz -O $(JRE_LINUX32)
 $(JRE_LINUX64):
 	# openjdk11
 	# # wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.11_9.tar.gz -O $(JRE_LINUX64)
-	# jre 8 - zulu
-	wget -q -nc https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jdk8.0.312-linux_x64.tar.gz -O $(JRE_LINUX64)
+	# jre 11 - zulu
+	wget -q -nc https://cdn.azul.com/zulu/bin/zulu11.52.13-ca-jre11.0.13-linux_x64.tar.gz -O $(JRE_LINUX64)
 $(JRE_WIN32):
 	# openjdk 11
 	# # wget -q -nc https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u292-b10/OpenJDK8U-jre_x86-32_windows_hotspot_8u292b10.zip -O $(JRE_WIN32)
-	# jre 8 - zulu
-	wget -q -nc https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jdk8.0.312-win_i686.zip -O $(JRE_WIN32)
+	# jre 11 - zulu
+	wget -q -nc https://cdn.azul.com/zulu/bin/zulu11.52.13-ca-fx-jre11.0.13-win_i686.zip -O $(JRE_WIN32)
 $(JRE_WIN64):
 	# openjdk 11
 	# # wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip -O $(JRE_WIN64)
-	# jre 8 - zulu
-	wget -q -nc https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jdk8.0.312-win_x64.zip -O $(JRE_WIN64)
+	# jre 11 - zulu
+	wget -q -nc https://cdn.azul.com/zulu/bin/zulu11.52.13-ca-fx-jre11.0.13-win_x64.zip -O $(JRE_WIN64)
 $(MYSQL_LINUX32):
 	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-$(MYSQL_VERSION)/bintar-linux-x86/mariadb-$(MYSQL_VERSION)-linux-i686.tar.gz -O $(MYSQL_LINUX32)
 $(MYSQL_LINUX64):
