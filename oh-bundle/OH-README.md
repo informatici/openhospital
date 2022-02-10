@@ -79,7 +79,7 @@ Usage: oh.ps1 [ -lang en|fr|it|es|pt ]
               [ -loglevel INFO|DEBUG ] 
               [ -dicom on|off ]
               [ -interactive on|off ]
-              [ -manual_config on|off ]
+              [ -generate_config on|off ]
 
 
  C    start OH in CLIENT mode (client / server configuration)
@@ -121,7 +121,7 @@ powershell.exe -ExecutionPolicy Bypass -File  ./oh.ps1 [options]
 -> To run oh.ps1 with command line options (example):
 
 ```
-./oh.ps1 -lang it -mode PORTABLE -loglevel DEBUG -dicom off -interactive off -manual_config on
+./oh.ps1 -lang it -mode PORTABLE -loglevel DEBUG -dicom off -interactive off -generate_config on
 ```
 ### Windows - legacy mode
 
@@ -310,7 +310,7 @@ sudo apt-get install libncurses5
 
 - If you get this error:
 ```
-Error Initializing MySQL database on port 3306 error while loading shared libraries: libaio.so.1. I had to install it manually and re-launch the script.
+Error Initializing MySQL database on port 3306 error while loading shared libraries: libaio.so.1.
 ```
 
 You have to install the libaio libraries, on Ubuntu:
@@ -351,9 +351,9 @@ In order to download and unzip Java:
 - Visit  https://cdn.azul.com/zulu/bin/
 - download the **JRE - .zip version**
 
-**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jre8.0.312-win_i686.zip
+**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu8.60.0.21-ca-jre8.0.322-win_i686.zip
 
-**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jre8.0.312-win_x64.zip
+**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu8.60.0.21-ca-jre8.0.322-win_x64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -366,9 +366,9 @@ In order to download and unzip mariadb:
 - Download the zip file:
 
 
-**x86 - 32bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/win32-packages/mariadb-10.2.41-win32.zip
+**x86 - 32bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.42/win32-packages/mariadb-10.2.42-win32.zip
 
-**x64 - 64bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/winx64-packages/mariadb-10.2.41-winx64.zip
+**x64 - 64bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.42/winx64-packages/mariadb-10.2.42-winx64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -412,5 +412,5 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Fixed _a_few_ bugs ;-)
 
 
-*last updated: 2021.12.29*
+*last updated: 2022.02.10*
 
