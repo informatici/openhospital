@@ -25,7 +25,7 @@ MYSQL_WIN64 := mysql-win64.zip
 MYSQL_LINUX32 := mysql-linux32.tar.gz
 MYSQL_LINUX64 := mysql-linux64.tar.gz
 JAVA_VERSION := zulu8.60.0.21-ca-jre8.0.322
-MYSQL_VERSION := 10.2.41
+MYSQL_VERSION := 10.2.42
 
 .PHONY: clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile-all docs-all
 
