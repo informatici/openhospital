@@ -61,14 +61,15 @@ release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX
 	ls release-files
 
 $(CLIENT).zip: compile-all
+	# create directories and copy files
 	mkdir -p $(CLIENT)/doc
 	mkdir -p $(CLIENT)/oh
+	cp LICENSE CHANGELOG $(CLIENT)
 	cp -rf ./oh-bundle/* $(CLIENT)/
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(CLIENT)/oh
 	mv $(CLIENT)/oh/oh.* $(CLIENT)
 	cp -rf ./openhospital-core/sql $(CLIENT)/
 	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
-	cp LICENSE CHANGELOG $(CLIENT)
 	# Set oh folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(CLIENT)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(CLIENT)/oh.bat
@@ -76,7 +77,6 @@ $(CLIENT).zip: compile-all
 	# Set client mode in startup scripts
 	sed -i 's/^\#$$script\:OH_MODE\=\"PORTABLE\"/\$$script\:OH_MODE\=\"CLIENT\"/g' $(CLIENT)/oh.ps1
 	sed -i 's/^\#OH_MODE\=PORTABLE/OH_MODE\=CLIENT/g' $(CLIENT)/oh.sh
-	sed -i '/script:JAVA_ARCH=32/s/^#//g' $(CLIENT)/oh.ps1
 	# give exec permissions to startup script
 	chmod 755 $(CLIENT)/oh.sh
 	# copy manuals
@@ -85,21 +85,21 @@ $(CLIENT).zip: compile-all
 	zip -r $(CLIENT).zip $(CLIENT)
 
 $(WIN32).zip: compile-all dw-all
+	# create directories and copy files
 	mkdir -p $(WIN32)/doc
 	mkdir -p $(WIN32)/oh
+	cp LICENSE CHANGELOG $(WIN32)
 	cp -rf ./oh-bundle/* $(WIN32)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
 	mv $(WIN32)/oh/oh.* $(WIN32)
 	cp -a ./openhospital-core/sql $(WIN32)/
 	cp -f ./openhospital-gui/oh.ico $(WIN32)/
+	# remove unnecessary files
 	rm -f $(WIN32)/OH-linux-changelog.md
 	rm -f $(WIN32)/oh.sh
-	cp LICENSE CHANGELOG $(WIN32)
 	# Set oh folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(WIN32)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(WIN32)/oh.bat
-	# Workaround to force JAVA to 32bit to have DICOM working
-	sed -i '/script:JAVA_ARCH=32/s/^#//g' $(WIN32)/oh.ps1
 	# copy manuals
 	cp *.pdf $(WIN32)/doc
 	# create package
@@ -108,38 +108,44 @@ $(WIN32).zip: compile-all dw-all
 	zip -r $(WIN32).zip $(WIN32)
 
 $(WIN64).zip: compile-all dw-all
+	# create directories and copy files
 	mkdir -p $(WIN64)/doc
 	mkdir -p $(WIN64)/oh
+	cp LICENSE CHANGELOG $(WIN64)
 	cp -rf ./oh-bundle/* $(WIN64)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN64)/oh
 	mv $(WIN64)/oh/oh.* $(WIN64)
 	cp -a ./openhospital-core/sql $(WIN64)/
 	cp -f ./openhospital-gui/oh.ico $(WIN64)/
+	# remove unnecessary files
 	rm -f $(WIN64)/OH-linux-changelog.md
 	rm -f $(WIN64)/oh.sh
-	cp LICENSE CHANGELOG $(WIN64)
 	# Set new root folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(WIN64)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(WIN64)/oh.bat
 	# copy manuals
 	cp *.pdf $(WIN64)/doc
 	# create package
+	# include 32bit JRE for DICOM
+	unzip $(JRE_WIN32) -d $(WIN64)
 	unzip $(JRE_WIN64) -d $(WIN64)
 	unzip $(MYSQL_WIN64) -d $(WIN64) -x "*/lib/*"
 	zip -r $(WIN64).zip $(WIN64)
 
 $(LINUX32).tar.gz: compile-all dw-all
+	# create directories and copy files
 	mkdir -p $(LINUX32)/doc
 	mkdir -p $(LINUX32)/oh
+	cp LICENSE CHANGELOG $(LINUX32)
 	cp -rf ./oh-bundle/* $(LINUX32)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
 	mv $(LINUX32)/oh/oh.* $(LINUX32)
 	cp -a ./openhospital-core/sql $(LINUX32)/
 	cp -f ./openhospital-gui/oh.ico $(LINUX32)/
+	# remove unnecessary files
 	rm -f $(LINUX32)/OH-win-changelog.md
 	rm -f $(LINUX32)/oh.bat
 	rm -f $(LINUX32)/oh.ps1
-	cp LICENSE CHANGELOG $(LINUX32)
 	# Set oh folder
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(LINUX32)/oh.sh
 	# give exec permissions to startup script
@@ -152,17 +158,19 @@ $(LINUX32).tar.gz: compile-all dw-all
 	tar -czf $(LINUX32).tar.gz $(LINUX32)
 
 $(LINUX64).tar.gz: compile-all dw-all
+	# create directories and copy files
 	mkdir -p $(LINUX64)/doc
 	mkdir -p $(LINUX64)/oh
+	cp LICENSE CHANGELOG $(LINUX64)
 	cp -rf ./oh-bundle/* $(LINUX64)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
 	mv $(LINUX64)/oh/oh.* $(LINUX64)
 	cp -a ./openhospital-core/sql $(LINUX64)/
 	cp -f ./openhospital-gui/oh.ico $(LINUX64)/
+	# remove unnecessary files
 	rm -f $(LINUX64)/OH-win-changelog.md
 	rm -f $(LINUX64)/oh.bat
 	rm -f $(LINUX64)/oh.ps1
-	cp LICENSE CHANGELOG $(LINUX64)
 	# Set oh folder
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(LINUX64)/oh.sh
 	# give exec permissions to startup script
@@ -227,6 +235,7 @@ $(JRE_WIN64):
 	# # wget -q -nc https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.11%2B9/OpenJDK11U-jre_x86-32_windows_hotspot_11.0.11_9.zip -O $(JRE_WIN64)
 	# jre 8 - zulu
 	wget -q -nc https://cdn.azul.com/zulu/bin/$(JAVA_VERSION)-win_x64.zip -O $(JRE_WIN64)
+
 $(MYSQL_LINUX32):
 	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-$(MYSQL_VERSION)/bintar-linux-x86/mariadb-$(MYSQL_VERSION)-linux-i686.tar.gz -O $(MYSQL_LINUX32)
 $(MYSQL_LINUX64):
