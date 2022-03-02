@@ -296,13 +296,12 @@ If you experience problems in starting up the script, avoid long folder path and
 
 ## Linux
 
-- If you get this errors:
+- If you get one of these errors:
 
 ```
 Error on creating OH Database error while loading shared libraries: libncurses.so.5.
 
 Error: MySQL root password not set! Exiting
-
 ```
 
 You have to install the ncurses librares, on Ubuntu:
