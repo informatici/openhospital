@@ -26,6 +26,7 @@ MYSQL_LINUX32 := mysql-linux32.tar.gz
 MYSQL_LINUX64 := mysql-linux64.tar.gz
 JAVA_VERSION := zulu8.60.0.21-ca-jre8.0.322
 MYSQL_VERSION := 10.2.43
+MYSQL32_VERSION := 10.2.41
 
 .PHONY: clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile-all docs-all
 
@@ -242,7 +243,7 @@ $(MYSQL_LINUX64):
 	wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-$(MYSQL_VERSION)/bintar-linux-x86_64/mariadb-$(MYSQL_VERSION)-linux-x86_64.tar.gz -O $(MYSQL_LINUX64)
 $(MYSQL_WIN32):
 	#wget -q -nc https://downloads.mariadb.org/f/mariadb-$(MYSQL_VERSION)/win32-packages/mariadb-$(MYSQL_VERSION)-win32.zip -O $(MYSQL_WIN32)
-	wget -q -nc https://archive.mariadb.org/mariadb-$(MYSQL_VERSION)/win32-packages/mariadb-$(MYSQL_VERSION)-win32.zip -O $(MYSQL_WIN32)
+	wget -q -nc https://archive.mariadb.org/mariadb-$(MYSQL32_VERSION)/win32-packages/mariadb-$(MYSQL32_VERSION)-win32.zip -O $(MYSQL_WIN32)
 $(MYSQL_WIN64):
 	#wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-$(MYSQL_VERSION)/winx64-packages/mariadb-$(MYSQL_VERSION)-winx64.zip -O $(MYSQL_WIN64)
 	wget -q -nc https://archive.mariadb.org/mariadb-$(MYSQL_VERSION)/winx64-packages/mariadb-$(MYSQL_VERSION)-winx64.zip -O $(MYSQL_WIN64)
