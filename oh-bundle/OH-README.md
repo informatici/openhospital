@@ -16,7 +16,7 @@ OH is released under the GNU GPL 3.0 License.
 
 The Linux version has been tested on different distributions and versions,
 including Ubuntu 16.04 i386 (32bit) and up to Ubuntu 21.04 x64 (64bit).
-The Windows version has been tested on Windows 7/10/11 (64/bit)
+The Windows version has been tested on Windows 7/10/11 (64bit)
 
 # Dowloading OH - Releases
 
@@ -79,7 +79,7 @@ Usage: oh.ps1 [ -lang en|fr|it|es|pt ]
               [ -loglevel INFO|DEBUG ] 
               [ -dicom on|off ]
               [ -interactive on|off ]
-              [ -manual_config on|off ]
+              [ -generate_config on|off ]
 
 
  C    start OH in CLIENT mode (client / server configuration)
@@ -121,8 +121,45 @@ powershell.exe -ExecutionPolicy Bypass -File  ./oh.ps1 [options]
 -> To run oh.ps1 with command line options (example):
 
 ```
-./oh.ps1 -lang it -mode PORTABLE -loglevel DEBUG -dicom off -interactive off -manual_config on
+./oh.ps1 -lang it -mode PORTABLE -loglevel DEBUG -dicom off -interactive off -generate_config on
 ```
+### Windows - create startup shortcut
+
+Follow these instruction to create a Windows OH launch icon on desktop:
+
+**Method 1 (with launch parameters configured in oh.ps1)**
+- Rigth click on Desktop
+- New Shortcut
+- Browse to OH folder location and select oh.bat
+- Assign a name to the shortcut
+- Right click on the shortcut and select Properties
+- Change icon
+- Specify a different file
+- Browse to OH folder location and select oh.ico
+- Apply
+
+**Method 2 (with launch parameters stored on execution command)**
+- Rigth click on Desktop
+- New Shortcut
+- Browse to OH folder location and select oh.ps1
+- Assign a name to the shortcut
+- Right click on the shortcut and select Properties
+- Change icon
+- Specify a different file
+- Browse to OH folder location and select oh.ico
+- Modify Target with
+
+```
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File ./oh.ps1
+```
+- Apply
+ 
+Option parameters can be added at the end of Target string separated by spaces, example:
+
+```
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File ./oh.ps1 -loglevel DEBUG
+```
+
 ### Windows - legacy mode
 
 It's also possible to start Open Hospital with the legacy batch file (old oh.bat behaviour):
@@ -296,10 +333,12 @@ If you experience problems in starting up the script, avoid long folder path and
 
 ## Linux
 
-- If you get this error:
+- If you get one of these errors:
 
 ```
 Error on creating OH Database error while loading shared libraries: libncurses.so.5.
+
+Error: MySQL root password not set! Exiting
 ```
 
 You have to install the ncurses librares, on Ubuntu:
@@ -310,7 +349,7 @@ sudo apt-get install libncurses5
 
 - If you get this error:
 ```
-Error Initializing MySQL database on port 3306 error while loading shared libraries: libaio.so.1. I had to install it manually and re-launch the script.
+Error Initializing MySQL database on port 3306 error while loading shared libraries: libaio.so.1.
 ```
 
 You have to install the libaio libraries, on Ubuntu:
@@ -351,9 +390,9 @@ In order to download and unzip Java:
 - Visit  https://cdn.azul.com/zulu/bin/
 - download the **JRE - .zip version**
 
-**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jre8.0.312-win_i686.zip
+**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu8.60.0.21-ca-jre8.0.322-win_i686.zip
 
-**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu8.58.0.13-ca-fx-jre8.0.312-win_x64.zip
+**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu8.60.0.21-ca-jre8.0.322-win_x64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -368,7 +407,7 @@ In order to download and unzip mariadb:
 
 **x86 - 32bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/win32-packages/mariadb-10.2.41-win32.zip
 
-**x64 - 64bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/winx64-packages/mariadb-10.2.41-winx64.zip
+**x64 - 64bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.43/winx64-packages/mariadb-10.2.43-winx64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -406,11 +445,11 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Added sql subdirectory to organize sql creation scripts
 - Added various checks about correct settings of parameters and startup of services
 - Added security controls (no more _rm -rf_ here and there :-)
-- Added support for **MariaDB** - (tested with version up to mariadb-10.2.41) (OH seems faster and more responsive)
+- Added support for **MariaDB** - (tested with version up to mariadb-10.2) (OH seems faster and more responsive)
 - Windows -> addedd support for path with spaces / special characters 
 - Updated MySQL db and user creation syntax (now compatible with MySQL 8 - unsupported)
 - Fixed _a_few_ bugs ;-)
 
 
-*last updated: 2021.12.29*
+*last updated: 2022.03.03*
 
