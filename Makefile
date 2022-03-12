@@ -190,11 +190,11 @@ gui/target/OpenHospital20/bin/OH-gui.jar: clone-all
 # Clone repositories of OH components
 clone-all: core gui doc
 core:
-	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
+	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
 gui:
-	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
+	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
 doc:
-	git clone -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git openhospital-doc
+	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git openhospital-doc
 
 # Compile documentation
 docs-all: doc oh-admin-manual.pdf oh-user-manual.pdf
