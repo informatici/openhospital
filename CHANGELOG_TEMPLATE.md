@@ -1,7 +1,7 @@
 OpenHospital VERSION
 ---------------------
 
-Changelog:
+Components changelogs:
 
  - [Core component changelog](https://github.com/informatici/openhospital-core/compare/SECONDLASTTAG...LASTTAG)
  - [Gui component changelog](https://github.com/informatici/openhospital-gui/compare/SECONDLASTTAG...LASTTAG)
@@ -15,3 +15,8 @@ Brought to you by:
 
 **Languages**: French, Italian, English, Portuguese, Swahili, German, Spanish, Arabic
 *Brought to you by Transifex community*
+
+<details>
+<summary> Release notes details (click to expand) </summary>
+
+</details>
