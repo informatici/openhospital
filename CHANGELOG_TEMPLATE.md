@@ -17,6 +17,6 @@ Brought to you by:
 *Brought to you by Transifex community*
 
 <details>
-<summary> Release notes details (click to expand) </summary>
+<summary> Release notes VERSION details (click to expand) </summary>
 
 </details>
