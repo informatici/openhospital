@@ -243,4 +243,9 @@ $(MYSQL_LINUX64):
 $(MYSQL_WIN32):
 	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL32_VERSION)/win32-packages/mariadb-$(MYSQL32_VERSION)-win32.zip -O $(MYSQL_WIN32)
 $(MYSQL_WIN64):
+<<<<<<< HEAD
 	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_VERSION)/winx64-packages/mariadb-$(MYSQL_VERSION)-winx64.zip -O $(MYSQL_WIN64)
+=======
+	#wget -q -nc https://downloads.mariadb.com/MariaDB/mariadb-$(MYSQL_VERSION)/winx64-packages/mariadb-$(MYSQL_VERSION)-winx64.zip -O $(MYSQL_WIN64)
+	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_VERSION)/winx64-packages/mariadb-$(MYSQL_VERSION)-winx64.zip -O $(MYSQL_WIN64)
+>>>>>>> 65fb7ae68baf80ddd9074c98504d7c10536057f3
