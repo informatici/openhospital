@@ -229,13 +229,13 @@ dw-mysql-all: $(MYSQL_LINUX32) $(MYSQL_LINUX64) $(MYSQL_WIN32) $(MYSQL_WIN64)
 
 # Java
 $(JRE_LINUX32):
-	wget -q -nc $(JAVA_URL)/$(JRE_VER32)-linux_i686.tar.gz -O $(JRE_LINUX32)
+	wget -q -nc $(JAVA_URL)/$(JRE_32_VER)-linux_i686.tar.gz -O $(JRE_LINUX32)
 $(JRE_LINUX64):
-	wget -q -nc $(JAVA_URL)/$(JRE_VER64)-linux_x64.tar.gz -O $(JRE_LINUX64)
+	wget -q -nc $(JAVA_URL)/$(JRE_64_VER)-linux_x64.tar.gz -O $(JRE_LINUX64)
 $(JRE_WIN32):
-	wget -q -nc $(JAVA_URL)/$(JRE_VER32)-win_i686.zip -O $(JRE_WIN32)
+	wget -q -nc $(JAVA_URL)/$(JRE_32_VER)-win_i686.zip -O $(JRE_WIN32)
 $(JRE_WIN64):
-	wget -q -nc $(JAVA_URL)/$(JRE_VER64)-win_x64.zip -O $(JRE_WIN64)
+	wget -q -nc $(JAVA_URL)/$(JRE_64_VER)-win_x64.zip -O $(JRE_WIN64)
 
 # MySQL / MariaDB
 $(MYSQL_LINUX32):
