@@ -28,10 +28,10 @@ MYSQL_LINUX64 := mysql-linux64.tar.gz
 JAVA_URL := https://cdn.azul.com/zulu/bin/
 MYSQL_URL := https://downloads.mariadb.com/MariaDB/
 # software versions
-JAVA_VERSION32 := zulu11.58.25-ca-jre11.0.16.1
-JAVA_VERSION64 := zulu11.58.23-ca-jre11.0.16.1
-MYSQL_VERSION := 10.2.44
-MYSQL32_VERSION := 10.2.41
+JAVA_VERSION32 := zulu11.60.19-ca-fx-jre11.0.17
+JAVA_VERSION64 := zulu11.60.19-ca-fx-jre11.0.17
+MYSQL_VERSION := 10.6.11
+MYSQL32_VERSION := 10.6.9
 
 .PHONY: clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile-all docs-all
 
