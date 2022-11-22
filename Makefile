@@ -26,7 +26,8 @@ MYSQL_LINUX32 := mysql-linux32.tar.gz
 MYSQL_LINUX64 := mysql-linux64.tar.gz
 # download url
 JAVA_URL := https://cdn.azul.com/zulu/bin/
-MYSQL_URL := https://downloads.mariadb.com/MariaDB/
+#MYSQL_URL := https://downloads.mariadb.com/MariaDB/
+MYSQL_URL := https://archive.mariadb.org/
 # software versions
 JRE_32_VER := zulu11.60.19-ca-fx-jre11.0.17
 JRE_64_VER := zulu11.60.19-ca-fx-jre11.0.17
@@ -241,7 +242,7 @@ $(JRE_WIN64):
 $(MYSQL_LINUX32):
 	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX32_VER)/bintar-linux-x86/mariadb-$(MYSQL_LINUX32_VER)-linux-i686.tar.gz -O $(MYSQL_LINUX32)
 $(MYSQL_LINUX64):
-	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX64_VER)/bintar-linux-x86_64/mariadb-$(MYSQL_LINUX64_VER)-linux-x86_64.tar.gz -O $(MYSQL_LINUX64)
+	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX64_VER)/bintar-linux-systemd-x86_64/mariadb-$(MYSQL_LINUX64_VER)-linux-systemd-x86_64.tar.gz -O $(MYSQL_LINUX64)
 $(MYSQL_WIN32):
 	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN32_VER)/win32-packages/mariadb-$(MYSQL_WIN32_VER)-win32.zip -O $(MYSQL_WIN32)
 $(MYSQL_WIN64):
