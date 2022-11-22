@@ -28,10 +28,12 @@ MYSQL_LINUX64 := mysql-linux64.tar.gz
 JAVA_URL := https://cdn.azul.com/zulu/bin/
 MYSQL_URL := https://downloads.mariadb.com/MariaDB/
 # software versions
-JAVA_VERSION32 := zulu11.60.19-ca-fx-jre11.0.17
-JAVA_VERSION64 := zulu11.60.19-ca-fx-jre11.0.17
-MYSQL_VERSION := 10.6.11
-MYSQL32_VERSION := 10.6.9
+JRE_32_VER := zulu11.60.19-ca-fx-jre11.0.17
+JRE_64_VER := zulu11.60.19-ca-fx-jre11.0.17
+MYSQL_WIN32_VER := 10.5.13
+MYSQL_WIN64_VER := 10.6.11
+MYSQL_LINUX32_VER := 10.5.18
+MYSQL_LINUX64_VER := 10.6.11
 
 .PHONY: clone-all clean clean-downloads dw-all dw-jre-all dw-mysql-all compile-all docs-all
 
@@ -227,20 +229,20 @@ dw-mysql-all: $(MYSQL_LINUX32) $(MYSQL_LINUX64) $(MYSQL_WIN32) $(MYSQL_WIN64)
 
 # Java
 $(JRE_LINUX32):
-	wget -q -nc $(JAVA_URL)/$(JAVA_VERSION32)-linux_i686.tar.gz -O $(JRE_LINUX32)
+	wget -q -nc $(JAVA_URL)/$(JRE_VER32)-linux_i686.tar.gz -O $(JRE_LINUX32)
 $(JRE_LINUX64):
-	wget -q -nc $(JAVA_URL)/$(JAVA_VERSION64)-linux_x64.tar.gz -O $(JRE_LINUX64)
+	wget -q -nc $(JAVA_URL)/$(JRE_VER64)-linux_x64.tar.gz -O $(JRE_LINUX64)
 $(JRE_WIN32):
-	wget -q -nc $(JAVA_URL)/$(JAVA_VERSION32)-win_i686.zip -O $(JRE_WIN32)
+	wget -q -nc $(JAVA_URL)/$(JRE_VER32)-win_i686.zip -O $(JRE_WIN32)
 $(JRE_WIN64):
-	wget -q -nc $(JAVA_URL)/$(JAVA_VERSION64)-win_x64.zip -O $(JRE_WIN64)
+	wget -q -nc $(JAVA_URL)/$(JRE_VER64)-win_x64.zip -O $(JRE_WIN64)
 
 # MySQL / MariaDB
 $(MYSQL_LINUX32):
-	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_VERSION)/bintar-linux-x86/mariadb-$(MYSQL_VERSION)-linux-i686.tar.gz -O $(MYSQL_LINUX32)
+	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX32_VER)/bintar-linux-x86/mariadb-$(MYSQL_LINUX32_VER)-linux-i686.tar.gz -O $(MYSQL_LINUX32)
 $(MYSQL_LINUX64):
-	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_VERSION)/bintar-linux-x86_64/mariadb-$(MYSQL_VERSION)-linux-x86_64.tar.gz -O $(MYSQL_LINUX64)
+	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX64_VER)/bintar-linux-x86_64/mariadb-$(MYSQL_LINUX64_VER)-linux-x86_64.tar.gz -O $(MYSQL_LINUX64)
 $(MYSQL_WIN32):
-	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL32_VERSION)/win32-packages/mariadb-$(MYSQL32_VERSION)-win32.zip -O $(MYSQL_WIN32)
+	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN32_VER)/win32-packages/mariadb-$(MYSQL_WIN32_VER)-win32.zip -O $(MYSQL_WIN32)
 $(MYSQL_WIN64):
-	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_VERSION)/winx64-packages/mariadb-$(MYSQL_VERSION)-winx64.zip -O $(MYSQL_WIN64)
+	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN64_VER)/winx64-packages/mariadb-$(MYSQL_WIN64_VER)-winx64.zip -O $(MYSQL_WIN64)
