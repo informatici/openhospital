@@ -170,6 +170,7 @@ It's also possible to start Open Hospital with the legacy batch file (old oh.bat
 
 - **C**    start Open Hospital in CLIENT mode, usually when an external database server is used (Client / Server configuration)
 - **P**    start Open Hospital in PORTABLE mode, where data is saved locally
+- **S**    start Open Hospital in SERVER mode: the local portable instance of MariaDB is launched
 - **d**    start OH in DEBUG mode - useful to debug errors or bugs by logging more extended informations to log file
 - **D**    start OH with Demo data - loads a demo database in order to test the software 
 - **g**    generate OH configuration files (oh/rsc/\*.properties) and exit
@@ -259,9 +260,9 @@ If a database server hostname/address is specified (other then localhost), OH ca
 ```
 ############## OH local configuration - change at your own risk :-) ##############
 # Database
-MYSQL_SERVER=localhost
-MYSQL_PORT=3306
-MYSQL_ROOT_PW="xxxxxxxxxx"
+DATABASE_SERVER=localhost
+DATABASE_PORT=3306
+DATABASE_ROOT_PW="xxxxxxxxxx"
 DATABASE_NAME=oh
 DATABASE_USER=isf
 DATABASE_PASSWORD="xxxxx"
@@ -319,7 +320,7 @@ data/dicom_storage
 External software package downloaded at first run:
 
 ```
-Mariadb 10.2.x server
+Mariadb 10.x.x server
 Java JRE, Zulu or OpenJDK distribution
 ```
 
@@ -398,16 +399,16 @@ In order to download and unzip Java:
 
 In order to download and unzip mariadb:
 
-- Visit https://downloads.mariadb.org/mariadb/10.2/
+- Visit https://mariadb.org/download/
 - Select the Operating System: **Windows**
 - Select package type: **ZIP file**
 - Select CPU (architecture) **32 / 64**
 - Download the zip file:
 
 
-**x86 - 32bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.41/win32-packages/mariadb-10.2.41-win32.zip
+**x86 - 32bit:** https://archive.mariadb.org/mariadb-10.6.5/win32-packages/mariadb-10.6.5-win32.zip
 
-**x64 - 64bit:** https://downloads.mariadb.com/MariaDB/mariadb-10.2.44/winx64-packages/mariadb-10.2.44-winx64.zip
+**x64 - 64bit:** https://archive.mariadb.org/mariadb-10.6.11/winx64-packages/mariadb-10.6.11-winx64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -424,6 +425,10 @@ A short description of changes for the Linux version (mostly the same behavior a
 - **Unified script** for:
     Portable 64bit (default) and 32bit (with automatic architecture detection)
     Open Hospital client (no more separated startup.sh is needed ;-) (**it is now possible to package every linux distro, client/portable/32 or 64 bit with a single package**)
+- **New**: SERVER mode support
+- **New**: Arabic Language support **oh.sh -l ar**
+- **New**: Full 64bit support on Windows, also for DICOM !
+-
 - **New**: Language support (both via variable in the script or user input option: **oh.sh -l fr**)
 - **New**: Demo database support (See oh.sh -D)
 - **New**: Client mode support (see oh.sh -C)
@@ -445,11 +450,11 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Added sql subdirectory to organize sql creation scripts
 - Added various checks about correct settings of parameters and startup of services
 - Added security controls (no more _rm -rf_ here and there :-)
-- Added support for **MariaDB** - (tested with version up to mariadb-10.2) (OH seems faster and more responsive)
+- Added support for **MariaDB** for better security and performance
 - Windows -> addedd support for path with spaces / special characters 
 - Updated MySQL db and user creation syntax (now compatible with MySQL 8 - unsupported)
 - Fixed _a_few_ bugs ;-)
 
 
-*last updated: 2022.03.03*
+*last updated: 2022.11.22*
 
