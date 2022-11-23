@@ -31,7 +31,7 @@ MYSQL_URL := https://archive.mariadb.org/
 # software versions
 JRE_32_VER := zulu11.60.19-ca-fx-jre11.0.17
 JRE_64_VER := zulu11.60.19-ca-fx-jre11.0.17
-MYSQL_WIN32_VER := 10.5.13
+MYSQL_WIN32_VER := 10.6.5
 MYSQL_WIN64_VER := 10.6.11
 MYSQL_LINUX32_VER := 10.5.18
 MYSQL_LINUX64_VER := 10.6.11
