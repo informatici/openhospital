@@ -136,7 +136,6 @@ $(WIN64).zip: compile-all dw-all
 	cp *.pdf $(WIN64)/doc
 	# create package
 	# include 32bit JRE for DICOM
-	unzip $(JRE_WIN32) -d $(WIN64)
 	unzip $(JRE_WIN64) -d $(WIN64)
 	unzip $(MYSQL_WIN64) -d $(WIN64) -x "*/lib/*"
 	zip -r $(WIN64).zip $(WIN64)
