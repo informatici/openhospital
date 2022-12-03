@@ -55,6 +55,7 @@ compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG
 # Assemble targets
 release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
 	echo "Checksum:" >> CHANGELOG.md
+	echo "" >> CHANGELOG.md
 	echo "\`\`\`" >> CHANGELOG.md
 	sha256sum $(CLIENT).zip | tee -a "CHANGELOG.md" 
 	sha256sum $(WIN32).zip | tee -a "CHANGELOG.md" 
