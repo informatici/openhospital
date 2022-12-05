@@ -1,10 +1,10 @@
 [client]
-port = MYSQL_PORT
+port = DATABASE_PORT
 socket = "OH_PATH_SUBSTITUTE/TMP_DIR/mysql.sock"  
 
 [mysqld] 
-port = MYSQL_PORT 
-bind-address = MYSQL_SERVER
+port = DATABASE_PORT 
+bind-address = DATABASE_SERVER
 socket = "OH_PATH_SUBSTITUTE/TMP_DIR/mysql.sock"
 pid-file = "OH_PATH_SUBSTITUTE/TMP_DIR/mysql.pid"
 basedir = "OH_PATH_SUBSTITUTE/MYSQL_DISTRO"  
