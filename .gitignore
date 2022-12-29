@@ -3,9 +3,8 @@
 *.pdf
 *.txt
 *.sql
-poh-win*
-poh-linux*
 openhospital-*
+Openhospital-*
 core
 gui
 doc
