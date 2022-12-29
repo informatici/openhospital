@@ -1,3 +1,9 @@
+2.0.0 (12/2022)
+--------------
+- interactive menu
+- new features
+- see help for documentation and updates
+
 1.0.0 (09/2021)
 --------------
 - new powershell script has been written for Windows: oh.ps1 (run by oh.bat)
