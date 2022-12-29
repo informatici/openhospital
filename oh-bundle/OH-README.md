@@ -190,8 +190,8 @@ The default is set to off, so the configuration files are not regenerated and ov
 #
 # Default is set to "off": configuration files will not be generated or overwritten if already present.
 #
-#WRITE_CONFIG_FILES="off" # linux
-#$script:WRITE_CONFIG_FILES="off" # windows
+WRITE_CONFIG_FILES="off" # linux
+$script:WRITE_CONFIG_FILES="off" # windows
 ```
 
 ### Distribution type - CLIENT | PORTABLE | SERVER
@@ -204,21 +204,21 @@ $script:OH_MODE="PORTABLE" # windows
 ### Interface and software language:
 ```
 # Language setting - default set to en
-OH_LANGUAGE=en fr es it pt ar # linux
+OH_LANGUAGE=en # fr es it pt ar # linux
 $script:OH_LANGUAGE="en" # fr es it pt ar # windows
 ```
 ### Log level / debug mode
 ```
 # set log level to INFO | DEBUG - default set to INFO
 LOG_LEVEL=INFO # linux
-#$script:LOG_LEVEL="INFO" # windows
+$script:LOG_LEVEL="INFO" # windows
 ```
 ### Demo mode
 ```
 # set DEMO_DATA to on to enable demo database loading - default set to off
 # -> Warning -> __requires deletion of all portable data__
 DEMO_DATA=off # linux
-#$script:DEMO_DATA="off" # windows
+$script:DEMO_DATA="off" # windows
 ```
 ### Enable system wide JAVA
 ```
