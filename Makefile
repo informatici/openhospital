@@ -39,11 +39,11 @@ MYSQL_LINUX64_VER := 10.6.11
 TXTFILE := OH-readme.txt
 
 # internal variables
-JRE_WIN32 := jre-win32.zip
+JRE_WIN29qq2 := jre-win32.zip
 JRE_WIN64 := jre-win64.zip
 JRE_LINUX32 := jre-linux32.tar.gz
 JRE_LINUX64 := jre-linux64.tar.gz
-MYSQL_WIN32 := mysql-win32.zip
+YSQL_WIN32 := mysql-win32.zip
 MYSQL_WIN64 := mysql-win64.zip
 MYSQL_LINUX32 := mysql-linux32.tar.gz
 MYSQL_LINUX64 := mysql-linux64.tar.gz
