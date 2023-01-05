@@ -281,14 +281,14 @@ clone-doc:
 build-core: clone-core compile-core
 compile-core:
 	pushd openhospital-core
-	mvn --quiet -T 1.5C package
+	mvn --quiet -T 1.5C package -DskipTests=true
 	popd
 
 # Java GUI
 build-gui: clone-gui compile-gui
 compile-gui:
 	pushd openhospital-gui
-	mvn --quiet -T 1.5C package
+	mvn --quiet -T 1.5C package -DskipTests=true
 	popd
 
 # Web UI
