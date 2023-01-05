@@ -66,13 +66,13 @@ help:
 	@echo -e "\tall (default), clean, clone-all, compile-all, build-all, release-files"
 	@echo -e ""
 	@echo -e "Clone targets:"
-	@echo -e "\tclone-core, clone-gui, clone-ui, clone-api, clone-doc"
+	@echo -e "\tclone-[core|gui|ui|api|doc]"
 	@echo -e ""
 	@echo -e "Compile targets:"
-	@echo -e "\tcompile-core, compile-gui, compile-ui, compile-api"
+	@echo -e "\tcompile-[core|gui|ui|api|doc]"
 	@echo -e ""
 	@echo -e "Build (clone + compile) targets:"
-	@echo -e "\tbuild-core, build-gui, build-ui, build-api"
+	@echo -e "\tbuild-[core|gui|ui|api|doc]"
 	@echo -e ""
 	@echo -e "Documentation targets:"
 	@echo -e "\tcompile-doc, admin-manual, user-manual, readme"
@@ -107,21 +107,36 @@ compile-all: compile-core compile-ui compile-api compile-doc
 
 ####################################################################
 # Build targets
-build-all: build-core build-ui build-api
+build-all: build-core build-ui build-api build-doc
 
 ####################################################################
 # Clone repositories of OH components
 clone-core:
-	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
+	if [ -d "openhospital-core" ]; then cd openhospital-core; git pull;
+	else
+		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
+	fi
 clone-gui:
-	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
+	if [ -d "openhospital-gui" ]; then cd openhospital-gui; git pull;
+	else
+		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
+	fi
 clone-ui:
-	# git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
-	git clone --depth=1 https://github.com/informatici/openhospital-ui.git openhospital-ui
+	if [ -d "openhospital-ui" ]; then cd openhospital-ui; git pull;
+	else
+		# git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
+		git clone --depth=1 https://github.com/informatici/openhospital-ui.git openhospital-ui
+	fi
 clone-api:
-	git clone --depth=1 https://github.com/informatici/openhospital-api.git openhospital-api
+	if [ -d "openhospital-api" ]; then cd openhospital-api; git pull;
+	else
+		git clone --depth=1 https://github.com/informatici/openhospital-api.git openhospital-api
+	fi
 clone-doc:
-	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git
+	if [ -d "openhospital-doc" ]; then cd openhospital-doc; git pull;
+	else
+		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git
+	fi
 ####################################################################
 # Compile application binaries
 
@@ -155,7 +170,8 @@ compile-api:
 build-core: clone-core compile-core
 build-gui: clone-gui build-core
 build-ui: clone-ui compile-ui
-build-api: build-core clone-api compile-api
+build-api: clone-api build-core compile-api
+build-doc: clone-doc compile-doc
 
 ####################################################################
 # Generate documentation
