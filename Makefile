@@ -101,11 +101,13 @@ clone-all: clone-core clone-gui clone-ui clone-api clone-doc
 
 ####################################################################
 # Compile targets
-compile-all: compile-core compile-gui compile-ui compile-api compile-doc 
+#compile-all: compile-core compile-gui compile-ui compile-api compile-doc 
+compile-all: compile-core compile-ui compile-api compile-doc 
 
 ####################################################################
 # Build targets
-build-all: build-core build-gui build-ui build-api
+#build-all: build-core build-gui build-ui build-api
+build-all: build-core build-ui build-api
 
 ####################################################################
 # Assemble targets
@@ -283,14 +285,16 @@ clone-doc:
 # Java Core
 build-core: clone-core compile-core
 compile-core:
-	pushd openhospital-core
-	mvn --quiet -T 1.5C -DskipTests=true install
-	popd
+#	pushd openhospital-core
+	mvn --quiet -T 1.5C -DskipTests=true package
+#	popd
 
 # Java GUI
-build-gui: build-core clone-gui compile-gui
+build-gui: clone-gui build-core
 compile-gui:
+#	pushd openhospital-gui
 	mvn --quiet -T 1.5C -DskipTests=true package
+#	popd
 
 # Web UI
 build-ui: clone-ui compile-ui
