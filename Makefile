@@ -307,7 +307,7 @@ compile-api:
 	popd
 
 ####################################################################
-# Compile documentation
+# Generate documentation
 compile-doc: admin-manual user-manual readme 
 admin-manual: 
 	asciidoctor-pdf ./openhospital-doc/doc_admin/AdminManual.adoc -a allow-uri-read -o AdminManual.pdf -v
