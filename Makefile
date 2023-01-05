@@ -297,7 +297,7 @@ compile-ui:
 	popd
 
 # Web API
-build-api: clone-api compile-api
+build-api: build-core clone-api compile-api
 compile-api:
 	pushd openhospital-api
 	mvn --quiet -T 1.5C package
