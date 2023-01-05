@@ -285,9 +285,9 @@ clone-doc:
 # Java Core
 build-core: clone-core compile-core
 compile-core:
-#	pushd openhospital-core
-	mvn --quiet -T 1.5C -DskipTests=true package
-#	popd
+	# pushd openhospital-core
+	mvn --quiet -T 1.5C -DskipTests=true install
+	# popd
 
 # Java GUI
 build-gui: clone-gui build-core
@@ -307,7 +307,8 @@ compile-ui:
 build-api: build-core clone-api compile-api
 compile-api:
 	pushd openhospital-api
-	mvn --quiet -T 1.5C -DskipTests=true package
+	# mvn --quiet -T 1.5C -DskipTests=true package
+	mvn -T 1.5C -DskipTests=true package
 	popd
 
 ####################################################################
