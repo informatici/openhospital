@@ -24,9 +24,10 @@ LINUX64 := OpenHospital-$(OH_VERSION)-linux_x86_64-portable
 
 # JAVA and MySQL / MariaDB
 # download url
-JAVA_URL := https://cdn.azul.com/zulu/bin/
+JAVA_URL := https://cdn.azul.com/zulu/bin
 #MYSQL_URL := https://downloads.mariadb.com/MariaDB/
-MYSQL_URL := https://archive.mariadb.org/
+MYSQL_URL := https://archive.mariadb.org
+
 # software versions
 JRE_32_VER := zulu11.60.19-ca-fx-jre11.0.17
 JRE_64_VER := zulu11.60.19-ca-fx-jre11.0.17
@@ -39,19 +40,18 @@ MYSQL_LINUX64_VER := 10.6.11
 TXTFILE := OH-readme.txt
 
 # internal variables
-JRE_WIN32 := jre-win32.zip
-JRE_WIN64 := jre-win64.zip
-JRE_LINUX32 := jre-linux32.tar.gz
-JRE_LINUX64 := jre-linux64.tar.gz
-MYSQL_WIN32 := mysql-win32.zip
-MYSQL_WIN64 := mysql-win64.zip
-MYSQL_LINUX32 := mysql-linux32.tar.gz
-MYSQL_LINUX64 := mysql-linux64.tar.gz
+JRE_WIN32 := $(JRE_32_VER)-win_i686.zip
+JRE_WIN64 := $(JRE_64_VER)-win_x64.zip
+JRE_LINUX32 := $(JRE_32_VER)-linux_i686.tar.gz
+JRE_LINUX64 := $(JRE_64_VER)-linux_x64.tar.gz
+MYSQL_WIN32 := mariadb-$(MYSQL_WIN32_VER)-win32.zip
+MYSQL_WIN64 := mariadb-$(MYSQL_WIN64_VER)-winx64.zip
+MYSQL_LINUX32 := mariadb-$(MYSQL_LINUX32_VER)-linux-i686.tar.gz
+MYSQL_LINUX64 := mariadb-$(MYSQL_LINUX64_VER)-linux-systemd-x86_64.tar.gz
 
 ####################################################################
 # targets
-
-.PHONY: clone-all clean clean-downloads compile-all docs-all
+.PHONY: clean clean-releases clone-all compile-all build-all
 
 ####################################################################
 # default target - all
@@ -59,53 +59,75 @@ all: clone-all compile-all release-files
 
 ####################################################################
 help:
-	@echo -e "Usage: make [target]"
+	@echo -e "----------------------------"
+	@echo -e "--->  Usage: make [target]"
 	@echo -e ""
-	@echo -e "Main make targets available:\n\tall (default), clean, clone-all, compile-all, docs-all, release-files, oh-admin-manual.pdf, oh-user-manual.pdf, core, gui, doc"
+	@echo -e "Main targets available:"
+	@echo -e "\tall (default), clean, clone-all, compile-all, build-all, release-files"
 	@echo -e ""
-	@echo -e "Release targets:"
+	@echo -e "Clone targets:"
+	@echo -e "\tclone-core, clone-gui, clone-ui, clone-api, clone-doc"
+	@echo -e ""
+	@echo -e "Compile targets:"
+	@echo -e "\tcompile-core, compile-gui, compile-ui, compile-api"
+	@echo -e ""
+	@echo -e "Build targets:"
+	@echo -e "\tbuild-core, build-gui, build-ui, build-api"
+	@echo -e ""
+	@echo -e "Documentation targets:"
+	@echo -e "\tcompile-doc, admin-manual, user-manual, readme"
+	@echo -e ""
+	@echo -e "OH release-files targets:"
 	@echo -e "\t$(WIN32).zip"
 	@echo -e "\t$(WIN64).zip"
 	@echo -e "\t$(LINUX32).tar.gz"
 	@echo -e "\t$(LINUX64).tar.gz"
 	@echo -e "\t$(CLIENT).zip"
+	@echo -e ""
 
 ####################################################################
 # Clean targets
-clean: clean-downloads
-	rm -rf release-files openhospital-core openhospital-gui openhospital-doc OpenHospital-$(OH_VERSION)-* CHANGELOG CHANGELOG.md *.pdf
+clean: clean-repos clean-releases
+clean-repos:
+	rm -rf openhospital-core openhospital-gui openhospital-ui openhospital-api openhospital-doc
+clean-releases:
+	rm -rf *.zip *.tar.gz OpenHospital-$(OH_VERSION)-* CHANGELOG.*
 clean-all:
 	git clean -xdff
-clean-downloads:
-	rm -rf *.zip *.tar.gz
 
 ####################################################################
-# Compile target
-compile-all: gui/target/OpenHospital20/bin/OH-gui.jar docs-all CHANGELOG 
+# Compile targets
+compile-all: compile-core compile-gui compile-ui compile-api compile-doc 
+
+####################################################################
+# Build targets
+build-all: build-core build-gui build-ui build-api
 
 ####################################################################
 # Assemble targets
-release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz
-	echo "Checksum:" >> CHANGELOG.md
+release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz CHANGELOG
+	# generate changelog 
+	echo "SHA256 Checksum:" >> CHANGELOG.md
 	echo "" >> CHANGELOG.md
 	echo "\`\`\`" >> CHANGELOG.md
+	# generate SHA256SUM
 	sha256sum $(CLIENT).zip | tee -a "CHANGELOG.md" 
 	sha256sum $(WIN32).zip | tee -a "CHANGELOG.md" 
 	sha256sum $(WIN64).zip | tee -a "CHANGELOG.md" 
 	sha256sum $(LINUX32).tar.gz | tee -a "CHANGELOG.md" 
 	sha256sum $(LINUX64).tar.gz | tee -a "CHANGELOG.md" 
 	echo "\`\`\`" >> CHANGELOG.md
-	mkdir -p release-files
-	mv $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz release-files/
-	ls release-files
+	# mkdir -p release-files
+	# mv /$(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz release-files/
 
 ####################################################################
 # Create OH distros
+
 $(CLIENT).zip: 
 	# create directories and copy files
 	mkdir -p $(CLIENT)/doc
 	mkdir -p $(CLIENT)/oh
-	cp LICENSE CHANGELOG $(CLIENT)
+	cp LICENSE $(CLIENT)
 	cp -rf ./oh-bundle/* $(CLIENT)/
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(CLIENT)/oh
 	mv $(CLIENT)/oh/oh.* $(CLIENT)
@@ -123,13 +145,13 @@ $(CLIENT).zip:
 	# copy manuals
 	cp *.pdf $(CLIENT)/doc
 	# create package
-	zip -r $(CLIENT).zip $(CLIENT)
+	zip -r -q $(CLIENT).zip $(CLIENT)
 
 $(WIN32).zip:
 	# create directories and copy files
 	mkdir -p $(WIN32)/doc
 	mkdir -p $(WIN32)/oh
-	cp LICENSE CHANGELOG $(WIN32)
+	cp LICENSE $(WIN32)
 	cp -rf ./oh-bundle/* $(WIN32)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
 	mv $(WIN32)/oh/oh.* $(WIN32)
@@ -144,19 +166,19 @@ $(WIN32).zip:
 	# copy manuals
 	cp *.pdf $(WIN32)/doc
 	# download JAVA JRE
-	wget -q -nc $(JAVA_URL)/$(JRE_32_VER)-win_i686.zip -O $(JRE_WIN32)
+	wget -q -nc $(JAVA_URL)/$(JRE_WIN32)
 	# download MariaDB / MySQL
-	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN32_VER)/win32-packages/mariadb-$(MYSQL_WIN32_VER)-win32.zip -O $(MYSQL_WIN32)
+	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN32_VER)/win32-packages/$(MYSQL_WIN32)
 	# create package
-	unzip $(JRE_WIN32) -d $(WIN32)
-	unzip $(MYSQL_WIN32) -d $(WIN32) -x "*/lib/*"
-	zip -r $(WIN32).zip $(WIN32)
+	unzip -u $(JRE_WIN32) -d $(WIN32)
+	unzip -u $(MYSQL_WIN32) -d $(WIN32)
+	zip -r -q $(WIN32).zip $(WIN32)
 
 $(WIN64).zip:
 	# create directories and copy files
 	mkdir -p $(WIN64)/doc
 	mkdir -p $(WIN64)/oh
-	cp LICENSE CHANGELOG $(WIN64)
+	cp LICENSE $(WIN64)
 	cp -rf ./oh-bundle/* $(WIN64)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN64)/oh
 	mv $(WIN64)/oh/oh.* $(WIN64)
@@ -171,19 +193,19 @@ $(WIN64).zip:
 	# copy manuals
 	cp *.pdf $(WIN64)/doc
 	# download JAVA JRE
-	wget -q -nc $(JAVA_URL)/$(JRE_64_VER)-win_x64.zip -O $(JRE_WIN64)
+	wget -q -nc $(JAVA_URL)/$(JRE_WIN64)
 	# download MariaDB / MySQL
-	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN64_VER)/winx64-packages/mariadb-$(MYSQL_WIN64_VER)-winx64.zip -O $(MYSQL_WIN64)
+	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN64_VER)/winx64-packages/$(MYSQL_WIN64)
 	# create package
-	unzip $(JRE_WIN64) -d $(WIN64)
-	unzip $(MYSQL_WIN64) -d $(WIN64) -x "*/lib/*"
-	zip -r $(WIN64).zip $(WIN64)
+	unzip -u $(JRE_WIN64) -d $(WIN64)
+	unzip -u $(MYSQL_WIN64) -d $(WIN64)
+	zip -r -q $(WIN64).zip $(WIN64)
 
 $(LINUX32).tar.gz:
 	# create directories and copy files
 	mkdir -p $(LINUX32)/doc
 	mkdir -p $(LINUX32)/oh
-	cp LICENSE CHANGELOG $(LINUX32)
+	cp LICENSE $(LINUX32)
 	cp -rf ./oh-bundle/* $(LINUX32)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
 	mv $(LINUX32)/oh/oh.* $(LINUX32)
@@ -200,12 +222,11 @@ $(LINUX32).tar.gz:
 	# copy manuals
 	cp *.pdf $(LINUX32)/doc
 	# download JAVA JRE
-	wget -q -nc $(JAVA_URL)/$(JRE_32_VER)-linux_i686.tar.gz -O $(JRE_LINUX32)
+	wget -q -nc $(JAVA_URL)/$(JRE_LINUX32)
 	# download MariaDB / MySQL
-	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX32_VER)/bintar-linux-x86/mariadb-$(MYSQL_LINUX32_VER)-linux-i686.tar.gz -O $(MYSQL_LINUX32)
+	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX32_VER)/bintar-linux-x86/$(MYSQL_LINUX32)
 	# create package
 	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
-#	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32) --exclude="*/lib/*"
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32)
 	tar -czf $(LINUX32).tar.gz $(LINUX32)
 
@@ -213,7 +234,7 @@ $(LINUX64).tar.gz:
 	# create directories and copy files
 	mkdir -p $(LINUX64)/doc
 	mkdir -p $(LINUX64)/oh
-	cp LICENSE CHANGELOG $(LINUX64)
+	cp LICENSE $(LINUX64)
 	cp -rf ./oh-bundle/* $(LINUX64)
 	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
 	mv $(LINUX64)/oh/oh.* $(LINUX64)
@@ -230,46 +251,76 @@ $(LINUX64).tar.gz:
 	# copy manuals
 	cp *.pdf $(LINUX64)/doc
 	# download JAVA JRE
-	wget -q -nc $(JAVA_URL)/$(JRE_64_VER)-linux_x64.tar.gz -O $(JRE_LINUX64)
+	wget -q -nc $(JAVA_URL)/$(JRE_LINUX64)
 	# download MariaDB / MySQL
-	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX64_VER)/bintar-linux-systemd-x86_64/mariadb-$(MYSQL_LINUX64_VER)-linux-systemd-x86_64.tar.gz -O $(MYSQL_LINUX64)
+	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX64_VER)/bintar-linux-systemd-x86_64/$(MYSQL_LINUX64)
 	# create package
 	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
-#	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64) --exclude="*/lib/*"
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64)
 	tar -czf $(LINUX64).tar.gz $(LINUX64)
 
 ####################################################################
-# Compile application binaries
-gui/target/OpenHospital20/bin/OH-gui.jar: 
-	mvn --quiet -T 1.5C package
-
-####################################################################
 # Clone repositories of OH components
-clone-all: core gui doc
-core:
+clone-all: clone-core clone-gui clone-ui clone-api clone-doc
+clone-core:
 	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
-gui:
+clone-gui:
 	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
-doc:
+clone-ui:
+#	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
+	git clone --depth=1 https://github.com/informatici/openhospital-ui.git openhospital-ui
+clone-api:
+	git clone --depth=1 https://github.com/informatici/openhospital-api.git openhospital-api
+clone-doc:
 	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git openhospital-doc
 
 ####################################################################
+# Compile application binaries
+
+# Java Core
+build-core: clone-core compile-core
+compile-core:
+	pushd openhospital-core
+	mvn --quiet -T 1.5C package
+	popd
+
+# Java GUI
+build-gui: clone-gui compile-gui
+compile-gui:
+	pushd openhospital-gui
+	mvn --quiet -T 1.5C package
+	popd
+
+# Web UI
+build-ui: clone-ui compile-ui
+compile-ui:
+	pushd openhospital-ui
+	npm -f install
+	popd
+
+# Web API
+build-api: clone-api compile-api
+compile-api:
+	pushd openhospital-api
+	mvn --quiet -T 1.5C package
+	popd
+
+####################################################################
 # Compile documentation
-docs-all: oh-admin-manual.pdf oh-user-manual.pdf
-oh-admin-manual.pdf: openhospital-doc
+compile-doc: admin-manual user-manual readme 
+admin-manual: 
 	asciidoctor-pdf ./openhospital-doc/doc_admin/AdminManual.adoc -a allow-uri-read -o AdminManual.pdf -v
-	# create oh-readme file
+user-manual:
+	asciidoctor-pdf ./openhospital-doc/doc_user/UserManual.adoc -o UserManual.pdf -v
+readme: 
 	pushd oh-bundle
 	echo "OH - Open Hospital Client | Portable " > $(TXTFILE)
 	tail -n+2 OH-README.md >> $(TXTFILE)
 	sed /\`\`/d -i $(TXTFILE)
 	popd
-oh-user-manual.pdf: openhospital-doc
-	asciidoctor-pdf ./openhospital-doc/doc_user/UserManual.adoc -o UserManual.pdf -v
 
 ####################################################################
-# Create changelog file
+# Generate version changelog
 CHANGELOG: 
 	pushd openhospital-core
 	lasttag=$(shell git tag -l --sort=-v:refname | head -1)
@@ -279,4 +330,3 @@ CHANGELOG:
 	sed -i "s/VERSION/$(OH_VERSION)/g" CHANGELOG.md
 	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" CHANGELOG.md
 	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" CHANGELOG.md
-	cp CHANGELOG.md CHANGELOG
