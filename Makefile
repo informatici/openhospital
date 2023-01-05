@@ -302,7 +302,7 @@ compile-ui:
 build-api: clone-api compile-api
 compile-api:
 	pushd openhospital-api
-	mvn --quiet -T 1.5C package
+	mvn --quiet -T 1.5C package -DskipTests=true
 	popd
 
 ####################################################################
