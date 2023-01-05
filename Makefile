@@ -71,27 +71,29 @@ help:
 	@echo -e "Compile targets:"
 	@echo -e "\tcompile-core, compile-gui, compile-ui, compile-api"
 	@echo -e ""
-	@echo -e "Build targets:"
+	@echo -e "Build (clone + compile) targets:"
 	@echo -e "\tbuild-core, build-gui, build-ui, build-api"
 	@echo -e ""
 	@echo -e "Documentation targets:"
 	@echo -e "\tcompile-doc, admin-manual, user-manual, readme"
 	@echo -e ""
 	@echo -e "OH release-files targets:"
+	@echo -e "\t$(CLIENT).zip"
 	@echo -e "\t$(WIN32).zip"
 	@echo -e "\t$(WIN64).zip"
 	@echo -e "\t$(LINUX32).tar.gz"
 	@echo -e "\t$(LINUX64).tar.gz"
-	@echo -e "\t$(CLIENT).zip"
 	@echo -e ""
 
 ####################################################################
 # Clean targets
-clean: clean-repos clean-releases
+clean: clean-repos clean-downloads clean-releases
 clean-repos:
 	rm -rf openhospital-core openhospital-gui openhospital-ui openhospital-api openhospital-doc
+clean-downloads:
+	rm -rf zulu*.zip zulu*.tar.gz mariadb*.zip mariadb*.tar.gz
 clean-releases:
-	rm -rf *.zip *.tar.gz OpenHospital-$(OH_VERSION)-* CHANGELOG.*
+	rm -rf OpenHospital-$(OH_VERSION)-* CHANGELOG.* *.pdf
 clean-all:
 	git clean -xdff
 
@@ -101,13 +103,85 @@ clone-all: clone-core clone-gui clone-ui clone-api clone-doc
 
 ####################################################################
 # Compile targets
-#compile-all: compile-core compile-gui compile-ui compile-api compile-doc 
 compile-all: compile-core compile-ui compile-api compile-doc 
 
 ####################################################################
 # Build targets
-#build-all: build-core build-gui build-ui build-api
 build-all: build-core build-ui build-api
+
+####################################################################
+# Clone repositories of OH components
+clone-core:
+	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
+clone-gui:
+	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
+clone-ui:
+	# git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
+	git clone --depth=1 https://github.com/informatici/openhospital-ui.git openhospital-ui
+clone-api:
+	git clone --depth=1 https://github.com/informatici/openhospital-api.git openhospital-api
+clone-doc:
+	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git
+####################################################################
+# Compile application binaries
+
+# Java Core
+compile-core:
+	# pushd openhospital-core
+	mvn --quiet -T 1.5C install
+	# popd
+
+# Java GUI
+compile-gui:
+	# pushd openhospital-gui
+	mvn --quiet -T 1.5C package
+	# popd
+
+# Web UI
+compile-ui:
+	pushd openhospital-ui
+	npm install -f
+	popd
+
+# Web API
+compile-api:
+	pushd openhospital-api
+	mvn -T 1.5C package
+	popd
+
+####################################################################
+# Build (clone + compile) targets
+
+build-core: clone-core compile-core
+build-gui: clone-gui build-core
+build-ui: clone-ui compile-ui
+build-api: build-core clone-api compile-api
+
+####################################################################
+# Generate documentation
+compile-doc: admin-manual user-manual readme 
+admin-manual: 
+	asciidoctor-pdf ./openhospital-doc/doc_admin/AdminManual.adoc -a allow-uri-read -o AdminManual.pdf -v
+user-manual:
+	asciidoctor-pdf ./openhospital-doc/doc_user/UserManual.adoc -o UserManual.pdf -v
+readme: 
+	pushd oh-bundle
+	echo "OH - Open Hospital Client | Portable " > $(TXTFILE)
+	tail -n+2 OH-README.md >> $(TXTFILE)
+	sed /\`\`/d -i $(TXTFILE)
+	popd
+
+####################################################################
+# Generate version changelog
+CHANGELOG: 
+	pushd openhospital-core
+	lasttag=$(shell git tag -l --sort=-v:refname | head -1)
+	secondlasttag=$(shell git tag -l --sort=-v:refname | head -2 | tail -n 1)
+	popd
+	cp CHANGELOG_TEMPLATE.md CHANGELOG.md
+	sed -i "s/VERSION/$(OH_VERSION)/g" CHANGELOG.md
+	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" CHANGELOG.md
+	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" CHANGELOG.md
 
 ####################################################################
 # Assemble targets
@@ -127,7 +201,7 @@ release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX
 	# mv /$(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz release-files/
 
 ####################################################################
-# Create OH distros
+# Create OH release packages
 
 $(CLIENT).zip: 
 	# create directories and copy files
@@ -265,74 +339,3 @@ $(LINUX64).tar.gz:
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64)
 	tar -czf $(LINUX64).tar.gz $(LINUX64)
 
-####################################################################
-# Clone repositories of OH components
-clone-core:
-	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
-clone-gui:
-	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
-clone-ui:
-	# git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
-	git clone --depth=1 https://github.com/informatici/openhospital-ui.git openhospital-ui
-clone-api:
-	git clone --depth=1 https://github.com/informatici/openhospital-api.git openhospital-api
-clone-doc:
-	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git openhospital-doc
-
-####################################################################
-# Compile / build application binaries
-
-# Java Core
-build-core: clone-core compile-core
-compile-core:
-	# pushd openhospital-core
-	mvn --quiet -T 1.5C -DskipTests=true install
-	# popd
-
-# Java GUI
-build-gui: clone-gui build-core
-compile-gui:
-#	pushd openhospital-gui
-	mvn --quiet -T 1.5C -DskipTests=true package
-#	popd
-
-# Web UI
-build-ui: clone-ui compile-ui
-compile-ui:
-	pushd openhospital-ui
-	npm install
-	popd
-
-# Web API
-build-api: build-core clone-api compile-api
-compile-api:
-	pushd openhospital-api
-	# mvn --quiet -T 1.5C -DskipTests=true package
-	mvn -T 1.5C -DskipTests=true package
-	popd
-
-####################################################################
-# Generate documentation
-compile-doc: admin-manual user-manual readme 
-admin-manual: 
-	asciidoctor-pdf ./openhospital-doc/doc_admin/AdminManual.adoc -a allow-uri-read -o AdminManual.pdf -v
-user-manual:
-	asciidoctor-pdf ./openhospital-doc/doc_user/UserManual.adoc -o UserManual.pdf -v
-readme: 
-	pushd oh-bundle
-	echo "OH - Open Hospital Client | Portable " > $(TXTFILE)
-	tail -n+2 OH-README.md >> $(TXTFILE)
-	sed /\`\`/d -i $(TXTFILE)
-	popd
-
-####################################################################
-# Generate version changelog
-CHANGELOG: 
-	pushd openhospital-core
-	lasttag=$(shell git tag -l --sort=-v:refname | head -1)
-	secondlasttag=$(shell git tag -l --sort=-v:refname | head -2 | tail -n 1)
-	popd
-	cp CHANGELOG_TEMPLATE.md CHANGELOG.md
-	sed -i "s/VERSION/$(OH_VERSION)/g" CHANGELOG.md
-	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" CHANGELOG.md
-	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" CHANGELOG.md
