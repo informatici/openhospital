@@ -281,7 +281,7 @@ clone-doc:
 build-core: clone-core compile-core
 compile-core:
 	pushd openhospital-core
-	mvn --quiet -T 1.5C install -DskipTests=true
+	mvn --quiet -T 1.5C -DskipTests=true install
 	popd
 
 # Java GUI
