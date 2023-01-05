@@ -54,7 +54,7 @@ MYSQL_LINUX64 := mariadb-$(MYSQL_LINUX64_VER)-linux-systemd-x86_64.tar.gz
 .PHONY: clean clean-releases clone-all compile-all build-all
 
 ####################################################################
-# default target - all
+# default target -> all
 all: clone-all compile-all release-files
 
 ####################################################################
@@ -96,8 +96,12 @@ clean-all:
 	git clean -xdff
 
 ####################################################################
+# Clone targets
+clone-all: clone-core clone-gui clone-ui clone-api clone-doc
+
+####################################################################
 # Compile targets
-compile-all: compile-core compile-ui compile-api compile-doc 
+compile-all: compile-core compile-gui compile-ui compile-api compile-doc 
 
 ####################################################################
 # Build targets
@@ -261,7 +265,6 @@ $(LINUX64).tar.gz:
 
 ####################################################################
 # Clone repositories of OH components
-clone-all: clone-core clone-gui clone-ui clone-api clone-doc
 clone-core:
 	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
 clone-gui:
@@ -281,13 +284,13 @@ clone-doc:
 build-core: clone-core compile-core
 compile-core:
 	pushd openhospital-core
-	mvn --quiet -T 1.5C -DskipTests=true install
+	mvn --quiet -T 1.5C -DskipTests=true package
 	popd
 
 # Java GUI
 build-gui: build-core clone-gui compile-gui
 compile-gui:
-	mvn --quiet -T 1.5C package -DskipTests=true
+	mvn --quiet -T 1.5C -DskipTests=true package
 
 # Web UI
 build-ui: clone-ui compile-ui
@@ -300,7 +303,7 @@ compile-ui:
 build-api: build-core clone-api compile-api
 compile-api:
 	pushd openhospital-api
-	mvn --quiet -T 1.5C package -DskipTests=true
+	mvn --quiet -T 1.5C -DskipTests=true package
 	popd
 
 ####################################################################
