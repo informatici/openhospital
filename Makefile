@@ -275,27 +275,25 @@ clone-doc:
 	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git openhospital-doc
 
 ####################################################################
-# Compile application binaries
+# Compile / build application binaries
 
 # Java Core
 build-core: clone-core compile-core
+compile-core:
+	pushd openhospital-core
+	mvn --quiet -T 1.5C package
+	popd
 
 # Java GUI
-build-gui: clone-gui compile-gui
-
+build-gui: build-core clone-gui compile-gui
 compile-gui:
-	# pushd openhospital-gui
 	mvn --quiet -T 1.5C package
-	# popd
-
-compile-core:
-	mvn --quiet -T 1.5C install
 
 # Web UI
 build-ui: clone-ui compile-ui
 compile-ui:
 	pushd openhospital-ui
-	npm -f install
+	npm install
 	popd
 
 # Web API
