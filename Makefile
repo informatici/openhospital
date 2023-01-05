@@ -267,7 +267,7 @@ clone-core:
 clone-gui:
 	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
 clone-ui:
-#	git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
+	# git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
 	git clone --depth=1 https://github.com/informatici/openhospital-ui.git openhospital-ui
 clone-api:
 	git clone --depth=1 https://github.com/informatici/openhospital-api.git openhospital-api
@@ -281,15 +281,15 @@ clone-doc:
 build-core: clone-core compile-core
 
 # Java GUI
-build-gui: clone-gui compile-core
+build-gui: clone-gui compile-gui
 
-#compile-gui:
-#	pushd openhospital-gui
-#	mvn --quiet -T 1.5C package
-#	popd
+compile-gui:
+	# pushd openhospital-gui
+	mvn --quiet -T 1.5C package
+	# popd
 
 compile-core:
-	mvn --quiet -T 1.5C package
+	mvn --quiet -T 1.5C install
 
 # Web UI
 build-ui: clone-ui compile-ui
