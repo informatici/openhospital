@@ -156,6 +156,7 @@ compile-gui:
 compile-ui:
 	pushd openhospital-ui 
 	npm install
+	npm run build
 	popd
 
 # Web API
