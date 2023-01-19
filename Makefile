@@ -103,7 +103,7 @@ clone-all: clone-core clone-gui clone-ui clone-api clone-doc
 
 ####################################################################
 # Compile targets
-compile-all: compile-core compile-ui compile-api compile-doc 
+compile-all: compile-core compile-gui compile-ui compile-api compile-doc 
 
 ####################################################################
 # Build targets
@@ -142,33 +142,33 @@ clone-doc:
 
 # Java Core
 compile-core:
-	# pushd openhospital-core
+	pushd openhospital-core
 	mvn --quiet -T 1.5C install
-	# popd
+	popd
 
 # Java GUI
 compile-gui:
-	# pushd openhospital-gui
-	mvn --quiet -T 1.5C package
-	# popd
+	pushd openhospital-gui
+	mvn --quiet -T 1.5C install
+	popd
 
 # Web UI
 compile-ui:
-	pushd openhospital-ui
-	npm install -f
+	pushd openhospital-ui 
+	npm install
 	popd
 
 # Web API
 compile-api:
 	pushd openhospital-api
-	mvn -T 1.5C package
+	mvn --quiet -T 1.5C install
 	popd
 
 ####################################################################
 # Build (clone + compile) targets
 
 build-core: clone-core compile-core
-build-gui: clone-gui build-core
+build-gui: clone-gui compile-gui
 build-ui: clone-ui compile-ui
 build-api: clone-api build-core compile-api
 build-doc: clone-doc compile-doc
