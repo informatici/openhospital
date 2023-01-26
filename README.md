@@ -10,9 +10,11 @@
 
 # Open Hospital
 
-[Open Hospital][openhospital] (OH) is an electronic health record (EHR) application.
-Open Hospital is currently provided as a desktop application written in Java
-and it's designed to work without an internet connection.
+[Open Hospital][openhospital]OH - Open Hospital (https://www.open-hospital.org/) is a free and open-source Electronic Health Record (EHR) software application.
+Open Hospital is deployed as a desktop application that can be used in a standalone, single user mode (PORTABLE mode)
+or in a client / server network configuration (CLIENT mode), where multiple clients and users connect to the same database server.
+
+OH is developed in Java and it is based on open-source tools and libraries; it runs on any computer, requires low resources and is designed to work without an internet connection.
 
 Open Hospital is composed by the following components, hosted in separated repositories:
  - [OH Core][core], a library that contains the business logic and the data abstraction layer
@@ -36,6 +38,7 @@ There are several ways in which you can contribute to Open Hospital:
 
 Read on about Open Hospital:
 
+ - on the official [website][openhospital]
  - [user][user-man] and [admin][admin-man] manuals
  - [wiki]
  - [FAQ][faq]
