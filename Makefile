@@ -21,6 +21,7 @@ WIN32 := OpenHospital-$(OH_VERSION)-windows_i686-portable
 WIN64 := OpenHospital-$(OH_VERSION)-windows_x86_64-portable
 LINUX32 := OpenHospital-$(OH_VERSION)-linux_i686-portable
 LINUX64 := OpenHospital-$(OH_VERSION)-linux_x86_64-portable
+FULLDISTRO := OpenHospital-$(OH_VERSION)-x86_64-full
 
 # JAVA and MySQL / MariaDB
 # download url
@@ -112,28 +113,29 @@ build-all: build-core build-ui build-api build-doc
 ####################################################################
 # Clone repositories of OH components
 clone-core:
-	if [ -d "openhospital-core" ]; then cd openhospital-core; git pull;
+	if [ -d "openhospital-core" ]; then cd openhospital-core; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
 	fi
 clone-gui:
-	if [ -d "openhospital-gui" ]; then cd openhospital-gui; git pull;
+	if [ -d "openhospital-gui" ]; then cd openhospital-gui; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
 	fi
 clone-ui:
-	if [ -d "openhospital-ui" ]; then cd openhospital-ui; git pull;
+	if [ -d "openhospital-ui" ]; then cd openhospital-ui; git checkout -B $(OH_VERSION); git pull;
 	else
-		# git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
-		git clone --depth=1 https://github.com/informatici/openhospital-ui.git openhospital-ui
+		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
+		# git clone --depth=1 https://github.com/informatici/openhospital-ui.git openhospital-ui
 	fi
 clone-api:
-	if [ -d "openhospital-api" ]; then cd openhospital-api; git pull;
+	if [ -d "openhospital-api" ]; then cd openhospital-api; git checkout -B $(OH_VERSION); git pull;
 	else
-		git clone --depth=1 https://github.com/informatici/openhospital-api.git openhospital-api
+		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-api.git openhospital-api
+	#	git clone --depth=1 https://github.com/informatici/openhospital-api.git openhospital-api
 	fi
 clone-doc:
-	if [ -d "openhospital-doc" ]; then cd openhospital-doc; git pull;
+	if [ -d "openhospital-doc" ]; then cd openhospital-doc; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-doc.git
 	fi
@@ -156,6 +158,10 @@ compile-gui:
 compile-ui:
 	pushd openhospital-ui 
 	npm install
+	# workaround to replace hardcode URL
+	sed -i "s/https\:\/\/oh2.open-hospital.org\/oh-api/http:\/\/localhost\:8080/g" ./src/generated/runtime.ts
+	#/ openhospital-ui/src/generated
+	# export const BASE_PATH = 'https://oh2.open-hospital.org/oh-api'.replace(/\/+$/, '');
 	npm run build
 	popd
 
@@ -356,3 +362,43 @@ $(LINUX64).tar.gz:
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64)
 	tar -czf $(LINUX64).tar.gz $(LINUX64)
 
+$(FULLDISTRO).zip:
+	# create directories and copy files
+	mkdir -p $(FULLDISTRO)/doc
+	mkdir -p $(FULLDISTRO)/oh
+	cp LICENSE $(FULLDISTRO)
+	cp -rf ./oh-bundle/* $(FULLDISTRO)
+	cp -rf ./openhospital-gui/target/OpenHospital20/* $(FULLDISTRO)/oh
+	mv $(FULLDISTRO)/oh/oh.* $(FULLDISTRO)
+	cp -a ./openhospital-core/sql $(FULLDISTRO)/
+	cp -f ./openhospital-gui/oh.ico $(FULLDISTRO)/
+	# remove unnecessary files
+	rm -f $(FULLDISTRO)/OH-linux-changelog.md
+	# Set new root folder
+	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(FULLDISTRO)/oh.ps1
+	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(FULLDISTRO)/oh.bat
+	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(FULLDISTRO)/oh.sh
+	# give exec permissions to startup script
+	chmod 755 $(FULLDISTRO)/oh.sh
+	# copy manuals
+	cp *.pdf $(FULLDISTRO)/doc
+	# download JAVA JRE
+	wget -q -nc $(JAVA_URL)/$(JRE_WIN64)
+	# download MariaDB / MySQL
+	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN64_VER)/winx64-packages/$(MYSQL_WIN64)
+	# copy API jar
+	cp -a ./openhospital-api/target/openhospital-api-0.0.2.jar $(FULLDISTRO)/oh/bin
+	# copy API configuration file
+	cp ./openhospital-api/rsc/application.properties.dist $(FULLDISTRO)/oh/rsc/application.properties
+	# copy API content
+	cp -a ./openhospital-api/static $(FULLDISTRO)/oh/
+	# copy UI content
+	cp -a ./openhospital-ui/build/* $(FULLDISTRO)/oh/static/
+	# add external software
+	unzip -u $(JRE_WIN64) -d $(FULLDISTRO)
+	unzip -u $(MYSQL_WIN64) -d $(FULLDISTRO)
+	tar xz -C $(FULLDISTRO) -f $(JRE_LINUX64)
+	tar xz -C $(FULLDISTRO) -f $(MYSQL_LINUX64)
+	# create package
+	#zip -r -q $(FULLDISTRO).zip $(FULLDISTRO)
+	# final tasks to enable / uncomment
