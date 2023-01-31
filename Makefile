@@ -75,6 +75,9 @@ help:
 	@echo -e "Build (clone + compile) targets:"
 	@echo -e "\tbuild-[core|gui|ui|api|doc]"
 	@echo -e ""
+	@echo -e "EXPERIMENTAL - Build full distro (full release core+gui+ui+api for Linux and Windows"
+	@echo -e "\trelease-full-distro"
+	@echo -e ""
 	@echo -e "Documentation targets:"
 	@echo -e "\tcompile-doc, admin-manual, user-manual, readme"
 	@echo -e ""
@@ -94,7 +97,7 @@ clean-repos:
 clean-downloads:
 	rm -rf zulu*.zip zulu*.tar.gz mariadb*.zip mariadb*.tar.gz
 clean-releases:
-	rm -rf OpenHospital-$(OH_VERSION)-* CHANGELOG.* *.pdf
+	rm -rf OpenHospital-$(OH_VERSION)* CHANGELOG.* *.pdf
 clean-all:
 	git clean -xdff
 
@@ -109,6 +112,9 @@ compile-all: compile-core compile-gui compile-ui compile-api compile-doc
 ####################################################################
 # Build targets
 build-all: build-core build-ui build-api build-doc
+
+# EXPERIMENTAL - release full distro
+release-full-distro: build-core build-ui build-api build-gui build-doc $(FULLDISTRO).zip
 
 ####################################################################
 # Clone repositories of OH components
@@ -160,7 +166,7 @@ compile-ui:
 	npm install
 	# workaround to replace hardcode URL
 	sed -i "s/https\:\/\/oh2.open-hospital.org\/oh-api/http:\/\/localhost\:8080/g" ./src/generated/runtime.ts
-	# workaround to replace Hospital name
+	# workaround to replace default hospital name
 	sed -i "s/Princeton-Plainsboro\ Teaching\ Hospital/St\.\ Luke\ Hospital\ Angal/g" ./src/components/accessories/appHeader/AppHeader.tsx
 	sed -i "s/Princeton-Plainsboro\ Teaching\ Hospital/St\.\ Luke\ Hospital\ Angal/g" ./src/components/activities/loginActivity/LoginActivity.tsx
 	# build
@@ -384,10 +390,16 @@ $(FULLDISTRO).zip:
 	chmod 755 $(FULLDISTRO)/oh.sh
 	# copy manuals
 	cp *.pdf $(FULLDISTRO)/doc
+	#### windows
 	# download JAVA JRE
 	wget -q -nc $(JAVA_URL)/$(JRE_WIN64)
 	# download MariaDB / MySQL
 	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN64_VER)/winx64-packages/$(MYSQL_WIN64)
+	#### linux
+	# download JAVA JRE
+	wget -q -nc $(JAVA_URL)/$(JRE_LINUX64)
+	# download MariaDB / MySQL
+	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX64_VER)/bintar-linux-systemd-x86_64/$(MYSQL_LINUX64)
 	# copy API jar
 	cp -a ./openhospital-api/target/openhospital-api-0.0.2.jar $(FULLDISTRO)/oh/bin
 	# copy API configuration file
@@ -402,5 +414,5 @@ $(FULLDISTRO).zip:
 	tar xz -C $(FULLDISTRO) -f $(JRE_LINUX64)
 	tar xz -C $(FULLDISTRO) -f $(MYSQL_LINUX64)
 	# create package
-	#zip -r -q $(FULLDISTRO).zip $(FULLDISTRO)
+	zip -r -q $(FULLDISTRO).zip $(FULLDISTRO)
 	# final tasks to enable / uncomment
