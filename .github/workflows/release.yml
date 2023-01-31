@@ -34,7 +34,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         draft: true
-        files: ./release-files/*
+        files: ./OpenHospital-*.tar.gz ./OpenHospital-*.zip
         body_path: CHANGELOG.md
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
