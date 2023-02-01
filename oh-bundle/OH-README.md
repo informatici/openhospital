@@ -42,24 +42,25 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
 
    -C    set OH in CLIENT mode
    -P    set OH in PORTABLE mode
-   -S    set OH in SERVER (Portable)
+   -S    set OH in SERVER (portable) mode
    -l    set language: en|fr|es|it|pt|ar
-   -w    save OH configuration
-   -v    show configuration
+   -s    save OH configuration
    -X    clean/reset OH installation
+   -v    show configuration
    -q    quit
 
    --------------------- 
     advanced options
 
+   -e    export/save OH database
+   -r    restore OH database
    -d    toggle log level INFO/DEBUG
    -G    setup GSM
    -D    initialize OH with Demo data
    -i    initialize/install OH database
-   -s    save OH database
-   -r    restore OH database
-   -m    configure OH manually
+   -m    configure database connection manually
    -t    test database connection (CLIENT mode only)
+   -u    create Desktop shortcut
 
    -h    show help
 ```
@@ -83,28 +84,29 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
                [ -interactive on|off ]
                [ -generate_config on|off ]
 
-   C    set OH in CLIENT mode
-   P    set OH in PORTABLE mode
-   S    set OH in SERVER (Portable)
-   l    set language: en|fr|es|it|pt|ar
-   w    save OH configuration
-   v    show configuration
-   X    clean/reset OH installation
-   q    quit
+    C    set OH in CLIENT mode
+    P    set OH in PORTABLE mode
+    S    set OH in SERVER (portable) mode
+    l    set language: en|fr|es|it|pt|ar
+    s    save OH configuration
+    X    clean/reset OH installation
+    v    show configuration
+    q    quit
 
    --------------------- 
     advanced options
 
-   d    toggle log level INFO/DEBUG
-   G    setup GSM
-   D    initialize OH with Demo data
-   i    initialize/install OH database
-   s    save OH database
-   r    restore OH database
-   m    configure OH manually
-   t    test database connection (CLIENT mode only)
+    e    export/save OH database
+    r    restore OH database
+    d    toggle log level INFO/DEBUG
+    G    setup GSM
+    D    initialize OH with Demo data
+    i    initialize/install OH database
+    m    configure database connection manually
+    t    test database connection (CLIENT mode only)
+    u    create Desktop shortcut with current params
 
-   h    show help
+    h    show help
 ```
 
 Note: The **oh.bat** launches the **oh.ps1** startup file automatically.
@@ -124,7 +126,7 @@ the MySQL / MariaDB local TCP port.
 -> To run oh.ps1 directly from command line:
 
 ```
-powershell.exe -ExecutionPolicy Bypass -File  ./oh.ps1 [options]
+powershell.exe -ExecutionPolicy Bypass -File ./oh.ps1 [options]
 ```
 
 -> To run oh.ps1 with command line options (example):
@@ -139,22 +141,22 @@ powershell.exe -ExecutionPolicy Bypass -File  ./oh.ps1 [options]
 - **P**    set Open Hospital to start in PORTABLE mode, where data is saved locally
 - **S**    set Open Hospital to start in SERVER mode: the local portable instance of MariaDB is launched to act as a portable database server
 - **l**    set local language: en|fr|it|es|pt|ar
-- **w**    save / write / reenerate OH configuration files (oh/rsc/\*.properties) and exit
-- **v**    show Open Hospital external software version and configuration
+- **s**    save / write / generate OH configuration files (oh/rsc/\*.properties) and exit
 - **X**    clean/reset OH installation by deleting all data and configuration files -> **use with caution** <-
+- **v**    show Open Hospital external software version and configuration
 - **q**    quit (windows only)
 
 ### Advanced options
 
+- **e**    export / save / dump the Open Hospital database in sql format
+- **r**    restore Open Hospital database from backup or external sql file: user will be prompted for input sql file
 - **d**    toggle log level between INFo and DEBUG - useful to execute OH in debug mode in order to log errors or bugs with more extended informations to log file
 - **G**    setup GSM modem to enable sms interaction
 - **D**    initialize OH database with Demo data - loads a demo database in order to test the software 
-- **h**    show help
 - **i**    initialize / install OH database
-- **s**    save / dump the Open Hospital database in sql format
-- **r**    restore Open Hospital database from backup or external sql file: user will be prompted for input sql file
-- **m**    configure OH manually
+- **m**    configure OH database connection settings manually
 - **t**    test database connection to the configured database server (Client mode only)
+- **u**    create Desktop shortcut with current params (Windows / Linux)
 - **h**    show help 
 
 # Script configuration
@@ -404,9 +406,9 @@ In order to download and unzip Java:
 - Visit  https://cdn.azul.com/zulu/bin/
 - download the latest **JRE** for your architecture:
 
-**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu11.60.19-ca-fx-jre11.0.17-win_i686.zip
+**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu11.62.17-ca-jre11.0.18-win_x64.zip
 
-**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu11.60.19-ca-fx-jre11.0.17-win_x64.zip
+**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu11.62.17-ca-jre11.0.18-win_i686.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -440,9 +442,10 @@ A short description of changes for the Linux version (mostly the same behavior a
     Open Hospital client (no more separated startup.sh is needed ;-) (**it is now possible to package every linux distro, client/portable/32 or 64 bit with a single package**)
 
 - **New** **Interactive menu**: it is possible to navigate through menu options
-- **New**: Direct modification of OH settings files for language and debug mode
+- **New**: Direct reading/writing of OH settings files for language and debug mode
+- **New**: Desktop shortcut creation with icon (Windows and Linux)
 - **New**: SERVER mode support (see oh.sh -S)
-- **New**: Added "-m" option to configure OH manually
+- **New**: Added "-m" option to configure OH database settings manually
 - **New**: Arabic Language support: **oh.sh -l ar**
 - **New**: Full 64bit support on Windows, also for DICOM !
 - **New**: Set default to MULTIUSER environment, so login mask is presented at startup
@@ -456,7 +459,7 @@ A short description of changes for the Linux version (mostly the same behavior a
 - configuration file generation (set WRITE_CONFIG_FILES=on in script) -> mysql and oh configuration files are not generated automatically or overwritten, useful for production environment
 - test database connection option (see oh.sh -t)
 - displays software versions and current configuration (see oh.sh -v)
-- write / generate config files (see oh.sh -w)
+- save / write / generate config files (see oh.sh -s)
 - install / initialize database (see oh.sh -i)
 - Centralized variable managing (see related config file changes applied): now all (well, almost all, still some "isf" reference in SQL creation script...that will be removed ;-) references to database password, mysql host, etc. etc. are in the script and can be easily adapted / modified for any need
 - More flexible execution and configuration options
@@ -473,5 +476,5 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Updated MySQL db and user creation syntax (now compatible with MySQL 8 - unsupported)
 - Fixed _a_few_ bugs ;-)
 
-*last updated: 2022.12.21*
+*last updated: 2023.02.01*
 
