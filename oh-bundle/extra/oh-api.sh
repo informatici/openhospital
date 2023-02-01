@@ -180,7 +180,7 @@ function script_menu {
 	echo ""
 	echo "   -C    set OH in CLIENT mode"
 	echo "   -P    set OH in PORTABLE mode"
-	echo "   -S    set OH in SERVER (Portable) mode"
+	echo "   -S    set OH in SERVER (portable) mode with API server"
 	echo "   -l    set language: $OH_LANGUAGE_LIST"
 	echo "   -s    save OH configuration"
 	echo "   -X    clean/reset OH installation"
@@ -811,6 +811,7 @@ function parse_user_input {
 	S)	# start in SERVER mode
 		OH_MODE="SERVER"
 		set_oh_mode;
+		WRITE_CONFIG_FILES="on"
 		echo ""
 		echo "OH_MODE set to SERVER mode."
 		if (( $2==0 )); then opt="Z"; else echo "Press any key to continue"; read; fi
@@ -839,8 +840,10 @@ function parse_user_input {
 			echo "Error - OH_MODE set to CLIENT mode. Cannot run with Demo data, exiting."
 			exit 1;
 		else
-			OH_MODE="PORTABLE"
+			#OH_MODE="PORTABLE"
 			DEMO_DATA="on"
+			# set DATABASE_NAME
+			DATABASE_NAME="ohdemo"
 			echo "Demo data set to on."
 		fi
 
@@ -1193,8 +1196,6 @@ if [ "$DEMO_DATA" = "on" ]; then
 		DB_CREATE_SQL=$DB_DEMO
 		# reset database if exists
 		# clean_database;  
-		# set DATABASE_NAME
-		DATABASE_NAME="ohdemo"
 	else
 		echo "Error: no $DB_DEMO found! Exiting."
 		exit 1
@@ -1260,6 +1261,9 @@ if [ "$OH_MODE" = "SERVER" ]; then
 
 	# Start API server
 	# check for database.properties - TBD
+	# needed for database.properties
+	# generate config files if not existent
+	write_config_files;
 	start_api;
 	
 	while true; do
