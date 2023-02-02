@@ -28,7 +28,7 @@ jobs:
 
     - name: Build OH distributions
       run: make
-        env:
+      env:
         CI: false
 
     - name: Create draft release
