@@ -163,6 +163,7 @@ compile-gui:
 # Web UI
 compile-ui:
 	pushd openhospital-ui 
+	npm -v
 	npm install
 	# workaround to replace hardcode URL
 	sed -i "s/https\:\/\/oh2.open-hospital.org\/oh-api/http:\/\/localhost\:8080/g" ./src/generated/runtime.ts
