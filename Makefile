@@ -269,7 +269,6 @@ $(WIN32).zip:
 	cp -a ./openhospital-core/sql $(WIN32)/
 	cp -f ./openhospital-gui/oh.ico $(WIN32)/
 	# remove unnecessary files
-	rm -f $(WIN32)/OH-linux-changelog.md
 	rm -f $(WIN32)/oh.sh
 	# Set oh folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(WIN32)/oh.ps1
@@ -296,7 +295,6 @@ $(WIN64).zip:
 	cp -a ./openhospital-core/sql $(WIN64)/
 	cp -f ./openhospital-gui/oh.ico $(WIN64)/
 	# remove unnecessary files
-	rm -f $(WIN64)/OH-linux-changelog.md
 	rm -f $(WIN64)/oh.sh
 	# Set new root folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(WIN64)/oh.ps1
@@ -323,7 +321,6 @@ $(LINUX32).tar.gz:
 	cp -a ./openhospital-core/sql $(LINUX32)/
 	cp -f ./openhospital-gui/oh.ico $(LINUX32)/
 	# remove unnecessary files
-	rm -f $(LINUX32)/OH-win-changelog.md
 	rm -f $(LINUX32)/oh.bat
 	rm -f $(LINUX32)/oh.ps1
 	# Set oh folder
@@ -352,7 +349,6 @@ $(LINUX64).tar.gz:
 	cp -a ./openhospital-core/sql $(LINUX64)/
 	cp -f ./openhospital-gui/oh.ico $(LINUX64)/
 	# remove unnecessary files
-	rm -f $(LINUX64)/OH-win-changelog.md
 	rm -f $(LINUX64)/oh.bat
 	rm -f $(LINUX64)/oh.ps1
 	# Set oh folder
