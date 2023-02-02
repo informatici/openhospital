@@ -37,4 +37,5 @@ jobs:
         files: ./OpenHospital-*.tar.gz ./OpenHospital-*.zip
         body_path: CHANGELOG.md
       env:
+        CI: ""
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
