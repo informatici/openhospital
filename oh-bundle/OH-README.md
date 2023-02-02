@@ -42,7 +42,7 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
 
    -C    set OH in CLIENT mode
    -P    set OH in PORTABLE mode
-   -S    set OH in SERVER (portable) mode
+   -S    set OH in SERVER mode (portable)
    -l    set language: en|fr|es|it|pt|ar
    -s    save OH configuration
    -X    clean/reset OH installation
@@ -86,7 +86,7 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
 
     C    set OH in CLIENT mode
     P    set OH in PORTABLE mode
-    S    set OH in SERVER (portable) mode
+    S    set OH in SERVER mode (portable)
     l    set language: en|fr|es|it|pt|ar
     s    save OH configuration
     X    clean/reset OH installation
