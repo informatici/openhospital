@@ -28,6 +28,8 @@ jobs:
 
     - name: Build OH distributions
       run: make
+        env:
+        CI: false
 
     - name: Create draft release
       if: startsWith(github.ref, 'refs/tags/v')
@@ -37,5 +39,4 @@ jobs:
         files: ./OpenHospital-*.tar.gz ./OpenHospital-*.zip
         body_path: CHANGELOG.md
       env:
-        CI: ""
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
