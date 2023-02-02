@@ -239,10 +239,10 @@ $(CLIENT).zip:
 	mkdir -p $(CLIENT)/doc
 	mkdir -p $(CLIENT)/oh
 	cp LICENSE $(CLIENT)
-	cp -rf ./oh-bundle/OH-* $(CLIENT)/
-	cp -rf ./openhospital-gui/target/OpenHospital20/* $(CLIENT)/oh
+	cp -a ./oh-bundle/* $(CLIENT)/
+	cp -a ./openhospital-gui/target/OpenHospital20/* $(CLIENT)/oh
 	mv $(CLIENT)/oh/oh.* $(CLIENT)
-	cp -rf ./openhospital-core/sql $(CLIENT)/
+	cp -a ./openhospital-core/sql $(CLIENT)/
 	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
 	# Set oh folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(CLIENT)/oh.ps1
@@ -263,8 +263,8 @@ $(WIN32).zip:
 	mkdir -p $(WIN32)/doc
 	mkdir -p $(WIN32)/oh
 	cp LICENSE $(WIN32)
-	cp -rf ./oh-bundle/OH-* $(WIN32)
-	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
+	cp -a ./oh-bundle/* $(WIN32)
+	cp -a ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
 	mv $(WIN32)/oh/oh.* $(WIN32)
 	cp -a ./openhospital-core/sql $(WIN32)/
 	cp -f ./openhospital-gui/oh.ico $(WIN32)/
@@ -290,8 +290,8 @@ $(WIN64).zip:
 	mkdir -p $(WIN64)/doc
 	mkdir -p $(WIN64)/oh
 	cp LICENSE $(WIN64)
-	cp -rf ./oh-bundle/OH-* $(WIN64)
-	cp -rf ./openhospital-gui/target/OpenHospital20/* $(WIN64)/oh
+	cp -a ./oh-bundle/* $(WIN64)
+	cp -a ./openhospital-gui/target/OpenHospital20/* $(WIN64)/oh
 	mv $(WIN64)/oh/oh.* $(WIN64)
 	cp -a ./openhospital-core/sql $(WIN64)/
 	cp -f ./openhospital-gui/oh.ico $(WIN64)/
@@ -317,8 +317,8 @@ $(LINUX32).tar.gz:
 	mkdir -p $(LINUX32)/doc
 	mkdir -p $(LINUX32)/oh
 	cp LICENSE $(LINUX32)
-	cp -rf ./oh-bundle/OH-* $(LINUX32)
-	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
+	cp -a ./oh-bundle/* $(LINUX32)
+	cp -a ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
 	mv $(LINUX32)/oh/oh.* $(LINUX32)
 	cp -a ./openhospital-core/sql $(LINUX32)/
 	cp -f ./openhospital-gui/oh.ico $(LINUX32)/
@@ -346,8 +346,8 @@ $(LINUX64).tar.gz:
 	mkdir -p $(LINUX64)/doc
 	mkdir -p $(LINUX64)/oh
 	cp LICENSE $(LINUX64)
-	cp -rf ./oh-bundle/OH-* $(LINUX64)
-	cp -rf ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
+	cp -a ./oh-bundle/* $(LINUX64)
+	cp -a ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
 	mv $(LINUX64)/oh/oh.* $(LINUX64)
 	cp -a ./openhospital-core/sql $(LINUX64)/
 	cp -f ./openhospital-gui/oh.ico $(LINUX64)/
@@ -370,18 +370,22 @@ $(LINUX64).tar.gz:
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64)
 	tar -czf $(LINUX64).tar.gz $(LINUX64)
 
+#
+# EXPERIMENTAL - full distro with api server
+#
+
 $(FULLDISTRO).zip:
 	# create directories and copy files
 	mkdir -p $(FULLDISTRO)/doc
 	mkdir -p $(FULLDISTRO)/oh
 	cp LICENSE $(FULLDISTRO)
-	cp -rf ./oh-bundle/OH-* $(FULLDISTRO)
-	cp -rf ./openhospital-gui/target/OpenHospital20/* $(FULLDISTRO)/oh
+	cp -a ./oh-bundle/* $(FULLDISTRO)
+	cp -a ./openhospital-gui/target/OpenHospital20/* $(FULLDISTRO)/oh
 	mv $(FULLDISTRO)/oh/oh.* $(FULLDISTRO)
 	cp -a ./openhospital-core/sql $(FULLDISTRO)/
 	cp -f ./openhospital-gui/oh.ico $(FULLDISTRO)/
 	# copy API EXPERIMENTAL scripts
-	cp -rf ./oh-bundle/extra/oh-api* $(FULLDISTRO)
+	cp -a ./oh-extra/* $(FULLDISTRO)
 	# Set new root folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(FULLDISTRO)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(FULLDISTRO)/oh.bat
