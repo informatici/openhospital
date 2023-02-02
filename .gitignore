@@ -1,7 +1,6 @@
 *.zip
 *.tar.gz
 *.pdf
-*.txt
 *.sql
 openhospital-*
 Openhospital-*
