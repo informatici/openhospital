@@ -166,8 +166,8 @@ compile-ui:
 	# show npm version
 	npm -v
 	npm install
-	npm audit fix
-	npx update-browserslist-db@latest
+	#npm audit fix
+	#npx update-browserslist-db@latest
 	# workaround to replace hardcode URL
 	sed -i "s/https\:\/\/oh2.open-hospital.org\/oh-api/http:\/\/localhost\:8080/g" ./src/generated/runtime.ts
 	# workaround to replace default hospital name
