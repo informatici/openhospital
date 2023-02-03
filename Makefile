@@ -113,8 +113,18 @@ compile-all: compile-core compile-gui compile-ui compile-api compile-doc
 # Build targets
 build-all: build-core build-ui build-api build-doc
 
+####################################################################
+# Build (clone + compile) targets
+
+build-core: clone-core compile-core
+build-gui: clone-gui compile-gui
+build-ui: clone-ui compile-ui
+build-api: clone-api build-core compile-api
+build-doc: clone-doc compile-doc
+
 # EXPERIMENTAL - release full distro
 release-full-distro: build-core build-ui build-api build-gui build-doc $(FULLDISTRO).zip
+
 
 ####################################################################
 # Clone repositories of OH components
@@ -184,15 +194,6 @@ compile-api:
 	popd
 
 ####################################################################
-# Build (clone + compile) targets
-
-build-core: clone-core compile-core
-build-gui: clone-gui compile-gui
-build-ui: clone-ui compile-ui
-build-api: clone-api build-core compile-api
-build-doc: clone-doc compile-doc
-
-####################################################################
 # Generate documentation
 compile-doc: admin-manual user-manual readme 
 admin-manual: 
@@ -220,7 +221,7 @@ CHANGELOG:
 
 ####################################################################
 # Assemble targets
-release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz CHANGELOG
+release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz $(FULLDISTRO).zip CHANGELOG
 	# generate changelog 
 	echo "SHA256 Checksum:" >> CHANGELOG.md
 	echo "" >> CHANGELOG.md
@@ -238,6 +239,7 @@ release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX
 ####################################################################
 # Create OH release packages
 
+# Client distribution package
 $(CLIENT).zip: 
 	# create directories and copy files
 	mkdir -p $(CLIENT)/doc
@@ -262,6 +264,7 @@ $(CLIENT).zip:
 	# create package
 	zip -r -q $(CLIENT).zip $(CLIENT)
 
+# Windows 32bit package
 $(WIN32).zip:
 	# create directories and copy files
 	mkdir -p $(WIN32)/doc
@@ -288,6 +291,7 @@ $(WIN32).zip:
 	unzip -u $(MYSQL_WIN32) -d $(WIN32)
 	zip -r -q $(WIN32).zip $(WIN32)
 
+# Windows 64bit package
 $(WIN64).zip:
 	# create directories and copy files
 	mkdir -p $(WIN64)/doc
@@ -314,6 +318,7 @@ $(WIN64).zip:
 	unzip -u $(MYSQL_WIN64) -d $(WIN64)
 	zip -r -q $(WIN64).zip $(WIN64)
 
+# Linux 32bit package
 $(LINUX32).tar.gz:
 	# create directories and copy files
 	mkdir -p $(LINUX32)/doc
@@ -342,6 +347,7 @@ $(LINUX32).tar.gz:
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32)
 	tar -czf $(LINUX32).tar.gz $(LINUX32)
 
+# Linux 64bit package
 $(LINUX64).tar.gz:
 	# create directories and copy files
 	mkdir -p $(LINUX64)/doc
@@ -371,9 +377,8 @@ $(LINUX64).tar.gz:
 	tar -czf $(LINUX64).tar.gz $(LINUX64)
 
 #
-# EXPERIMENTAL - full distro with api server
+# EXPERIMENTAL - full distro with API server
 #
-
 $(FULLDISTRO).zip:
 	# create directories and copy files
 	mkdir -p $(FULLDISTRO)/doc
