@@ -21,7 +21,7 @@ WIN32 := OpenHospital-$(OH_VERSION)-windows_i686-portable
 WIN64 := OpenHospital-$(OH_VERSION)-windows_x86_64-portable
 LINUX32 := OpenHospital-$(OH_VERSION)-linux_i686-portable
 LINUX64 := OpenHospital-$(OH_VERSION)-linux_x86_64-portable
-FULLDISTRO := OpenHospital-$(OH_VERSION)-x86_64-full
+FULLDISTRO := OpenHospital-$(OH_VERSION)-x86_64-EXPERIMENTAL
 
 # JAVA and MySQL / MariaDB
 # download url
@@ -252,7 +252,7 @@ $(CLIENT).zip:
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(CLIENT)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(CLIENT)/oh.bat
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(CLIENT)/oh.sh
-	# Set client mode in startup scripts
+	# Set OH mode to CLIENT in startup scripts
 	sed -i 's/^\#$$script\:OH_MODE\=\"PORTABLE\"/\$$script\:OH_MODE\=\"CLIENT\"/g' $(CLIENT)/oh.ps1
 	sed -i 's/^\#OH_MODE\=PORTABLE/OH_MODE\=CLIENT/g' $(CLIENT)/oh.sh
 	# give exec permissions to startup script
@@ -383,15 +383,16 @@ $(FULLDISTRO).zip:
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(FULLDISTRO)/oh
 	mv $(FULLDISTRO)/oh/oh.* $(FULLDISTRO)
 	cp -a ./openhospital-core/sql $(FULLDISTRO)/
+	# reset admin password
+	echo  "source extra/reset_admin_password_strong.sql" >> $(FULLDISTRO)/sql/step_04_all_following_steps.sql
 	cp -f ./openhospital-gui/oh.ico $(FULLDISTRO)/
 	# copy API EXPERIMENTAL scripts
-	cp -a ./oh-extra/* $(FULLDISTRO)
-	# Set new root folder
-	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(FULLDISTRO)/oh.ps1
-	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(FULLDISTRO)/oh.bat
-	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(FULLDISTRO)/oh.sh
+	cp -a ./oh-extra/*api* $(FULLDISTRO)
+	# remove standard scripts
+	rm $(FULLDISTRO)/oh.bat
+	rm $(FULLDISTRO)/oh.sh
+	rm $(FULLDISTRO)/oh.ps1
 	# give exec permissions to startup script
-	chmod 755 $(FULLDISTRO)/oh.sh
 	chmod 755 $(FULLDISTRO)/oh-api.sh
 	# copy manuals
 	cp *.pdf $(FULLDISTRO)/doc

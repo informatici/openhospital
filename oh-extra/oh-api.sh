@@ -46,7 +46,7 @@ WRITE_CONFIG_FILES="off"
 # OH_PATH=/usr/local/OpenHospital/oh-1.12
 
 # set OH mode to PORTABLE | CLIENT | SERVER - default set to PORTABLE
-#OH_MODE="PORTABLE" 
+OH_MODE="SERVER" 
 
 # language setting - default set to en
 OH_LANGUAGE_LIST="en|fr|es|it|pt|ar"
@@ -756,6 +756,9 @@ function start_api {
 	echo "---- EXPERIMENTAL ------"
 	echo "------------------------"
 	echo "Starting API server..."
+	echo ""
+	echo "Connect to http://localhost:8080 for dashboard"
+	echo ""
 	
 	#$JAVA_BIN -Djava.library.path=${NATIVE_LIB_PATH} -classpath "$OH_CLASSPATH" org.isf.utils.sms.SetupGSM "$@"
 	#$JAVA_BIN -client -Xms64m -Xmx1024m -cp "bin/openhospital-api-0.0.2.jar:rsc:static" org.springframework.boot.loader.JarLauncher >> ../$LOG_DIR/$LOG_FILE 2>&1

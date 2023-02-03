@@ -101,7 +101,7 @@ $global:ProgressPreference= 'SilentlyContinue'
 # OH_PATH="c:\Users\OH\OpenHospital\oh-1.12"
 
 # set OH mode to PORTABLE | CLIENT | SERVER - default set to PORTABLE
-#$script:OH_MODE="PORTABLE"
+$script:OH_MODE="SERVER"
 
 # language setting - default set to en
 $script:OH_LANGUAGE_LIST="en|fr|es|it|pt|ar"
@@ -891,11 +891,14 @@ function clean_files {
 
 
 function start_api {
-        # set up configuration files
+	# set up configuration files
 	Write-Host "------------------------"
 	Write-Host "---- EXPERIMENTAL ------"
 	Write-Host "------------------------"
-        Write-Host "Starting API server..."
+	Write-Host "Starting API server..."
+	Write-Host ""
+	Write-Host "Connect to http://localhost:8080 for dashboard"
+	Write-Host ""
 
         cd "$OH_PATH/$OH_DIR" # workaround for hard coded paths
 
