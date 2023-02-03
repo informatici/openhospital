@@ -24,17 +24,19 @@ jobs:
       
     - uses: actions/checkout@v2
       with:
-        fetch-depth: 0
+       fetch-depth: 0
 
     - name: Build OH distributions
       run: make
+      env:
+        CI: false
 
     - name: Create draft release
       if: startsWith(github.ref, 'refs/tags/v')
       uses: softprops/action-gh-release@v1
       with:
         draft: true
-        files: ./release-files/*
+        files: ./OpenHospital-*.tar.gz ./OpenHospital-*.zip
         body_path: CHANGELOG.md
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
