@@ -115,16 +115,18 @@ build-all: build-core build-ui build-api build-doc
 
 ####################################################################
 # Build (clone + compile) targets
-
 build-core: clone-core compile-core
 build-gui: clone-gui compile-gui
 build-ui: clone-ui compile-ui
 build-api: clone-api build-core compile-api
 build-doc: clone-doc compile-doc
 
+####################################################################
+# Assemble release targets
+release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz $(FULLDISTRO).zip CHANGELOG
+
 # EXPERIMENTAL - release full distro
 release-full-distro: build-core build-ui build-api build-gui build-doc $(FULLDISTRO).zip
-
 
 ####################################################################
 # Clone repositories of OH components
@@ -210,6 +212,7 @@ readme:
 ####################################################################
 # Generate version changelog
 CHANGELOG: 
+	# generate changelog 
 	pushd openhospital-core
 	lasttag=$(shell git tag -l --sort=-v:refname | head -1)
 	secondlasttag=$(shell git tag -l --sort=-v:refname | head -2 | tail -n 1)
@@ -218,11 +221,7 @@ CHANGELOG:
 	sed -i "s/VERSION/$(OH_VERSION)/g" CHANGELOG.md
 	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" CHANGELOG.md
 	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" CHANGELOG.md
-
-####################################################################
-# Assemble targets
-release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz $(FULLDISTRO).zip CHANGELOG
-	# generate changelog 
+	# add SHA256 signatures
 	echo "SHA256 Checksum:" >> CHANGELOG.md
 	echo "" >> CHANGELOG.md
 	echo "\`\`\`" >> CHANGELOG.md
@@ -232,14 +231,13 @@ release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX
 	sha256sum $(WIN64).zip | tee -a "CHANGELOG.md" 
 	sha256sum $(LINUX32).tar.gz | tee -a "CHANGELOG.md" 
 	sha256sum $(LINUX64).tar.gz | tee -a "CHANGELOG.md" 
+	sha256sum $(FULLDISTRO).zip | tee -a "CHANGELOG.md" 
 	echo "\`\`\`" >> CHANGELOG.md
-	# mkdir -p release-files
-	# mv /$(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz release-files/
 
 ####################################################################
 # Create OH release packages
 
-# Client distribution package
+# Client package
 $(CLIENT).zip: 
 	# create directories and copy files
 	mkdir -p $(CLIENT)/doc
@@ -287,8 +285,8 @@ $(WIN32).zip:
 	# download MariaDB / MySQL
 	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN32_VER)/win32-packages/$(MYSQL_WIN32)
 	# create package
-	unzip -u $(JRE_WIN32) -d $(WIN32)
-	unzip -u $(MYSQL_WIN32) -d $(WIN32)
+	unzip -u -q $(JRE_WIN32) -d $(WIN32)
+	unzip -u -q $(MYSQL_WIN32) -d $(WIN32)
 	zip -r -q $(WIN32).zip $(WIN32)
 
 # Windows 64bit package
@@ -314,8 +312,8 @@ $(WIN64).zip:
 	# download MariaDB / MySQL
 	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN64_VER)/winx64-packages/$(MYSQL_WIN64)
 	# create package
-	unzip -u $(JRE_WIN64) -d $(WIN64)
-	unzip -u $(MYSQL_WIN64) -d $(WIN64)
+	unzip -u -q $(JRE_WIN64) -d $(WIN64)
+	unzip -u -q $(MYSQL_WIN64) -d $(WIN64)
 	zip -r -q $(WIN64).zip $(WIN64)
 
 # Linux 32bit package
@@ -420,8 +418,8 @@ $(FULLDISTRO).zip:
 	# copy UI content
 	cp -a ./openhospital-ui/build/* $(FULLDISTRO)/oh/static/
 	# add external software
-	unzip -u $(JRE_WIN64) -d $(FULLDISTRO)
-	unzip -u $(MYSQL_WIN64) -d $(FULLDISTRO)
+	unzip -u -q $(JRE_WIN64) -d $(FULLDISTRO)
+	unzip -u -q $(MYSQL_WIN64) -d $(FULLDISTRO)
 	tar xz -C $(FULLDISTRO) -f $(JRE_LINUX64)
 	tar xz -C $(FULLDISTRO) -f $(MYSQL_LINUX64)
 	# create package
