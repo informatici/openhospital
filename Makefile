@@ -248,6 +248,8 @@ $(CLIENT).zip:
 	mv $(CLIENT)/oh/oh.* $(CLIENT)
 	cp -a ./openhospital-core/sql $(CLIENT)/
 	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
+	# remove unnecessary files
+	rm -f $(CLIENT)/oh/README.md
 	# Set oh folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(CLIENT)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(CLIENT)/oh.bat
@@ -275,6 +277,7 @@ $(WIN32).zip:
 	cp -f ./openhospital-gui/oh.ico $(WIN32)/
 	# remove unnecessary files
 	rm -f $(WIN32)/oh.sh
+	rm -f $(WIN32)/oh/README.md
 	# Set oh folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(WIN32)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(WIN32)/oh.bat
@@ -302,6 +305,7 @@ $(WIN64).zip:
 	cp -f ./openhospital-gui/oh.ico $(WIN64)/
 	# remove unnecessary files
 	rm -f $(WIN64)/oh.sh
+	rm -f $(WIN64)/oh/README.md
 	# Set new root folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(WIN64)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(WIN64)/oh.bat
@@ -330,6 +334,7 @@ $(LINUX32).tar.gz:
 	# remove unnecessary files
 	rm -f $(LINUX32)/oh.bat
 	rm -f $(LINUX32)/oh.ps1
+	rm -f $(LINUX32)/oh/README.md
 	# Set oh folder
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(LINUX32)/oh.sh
 	# give exec permissions to startup script
@@ -359,6 +364,7 @@ $(LINUX64).tar.gz:
 	# remove unnecessary files
 	rm -f $(LINUX64)/oh.bat
 	rm -f $(LINUX64)/oh.ps1
+	rm -f $(LINUX64)/oh/README.md
 	# Set oh folder
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(LINUX64)/oh.sh
 	# give exec permissions to startup script
@@ -395,6 +401,7 @@ $(FULLDISTRO).zip:
 	rm $(FULLDISTRO)/oh.bat
 	rm $(FULLDISTRO)/oh.sh
 	rm $(FULLDISTRO)/oh.ps1
+	rm $(FULLDISTRO)/oh/README.md
 	# give exec permissions to startup script
 	chmod 755 $(FULLDISTRO)/oh-api.sh
 	# copy manuals
