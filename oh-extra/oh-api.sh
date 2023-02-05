@@ -750,8 +750,25 @@ function write_config_files {
 	fi
 }
 
+function write_api_config_file {
+	######## application.properties setup - OH API
+	if [ "$WRITE_CONFIG_FILES" = "on" ] || [ ! -f ./$OH_DIR/rsc/application.properties ]; then
+		[ -f ./$OH_DIR/rsc/application.properties ] && mv -f ./$OH_DIR/rsc/application.properties ./$OH_DIR/rsc/application.properties.old
+		# set OH API token
+		# JWT_TOKEN_SECRET=`openssl rand -base64 64 | xargs`
+		JWT_TOKEN_SECRET=`LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 64`
+		echo "Writing OH API configuration file -> application.properties..."
+		sed -e "s/JWT_TOKEN_SECRET/"$JWT_TOKEN_SECRET"/g" ./$OH_DIR/rsc/application.properties.dist > ./$OH_DIR/rsc/application.properties
+	fi
+}
+
 function start_api {
-	# set up configuration files
+	# check for configuration files
+	if [ ! -f ./$OH_DIR/rsc/application.properties ]; then
+		echo "Error: missing application.properties settings file. Exiting"
+		exit 1;
+	fi
+
 	echo "------------------------"
 	echo "---- EXPERIMENTAL ------"
 	echo "------------------------"
@@ -779,8 +796,8 @@ function start_api {
 function parse_user_input {
 	case $1 in
 	###################################################
-	a)	# start in APU mode
-#		OH_MODE="API"
+	a)	# start API server
+		OH_MODE="SERVER"
 #		DEMO_DATA="off"
 #		set_oh_mode;
 		echo ""
@@ -790,6 +807,7 @@ function parse_user_input {
 		echo "OH_MODE set to API mode."
 		java_check;
 		java_lib_setup;
+		write_api_config_file;
 		start_api;
 		if (( $2==0 )); then opt="Z"; else echo "Press any key to continue"; read; fi
 		;;
@@ -1267,6 +1285,7 @@ if [ "$OH_MODE" = "SERVER" ]; then
 	# needed for database.properties
 	# generate config files if not existent
 	write_config_files;
+	write_api_config_files;
 	start_api;
 	
 	while true; do
