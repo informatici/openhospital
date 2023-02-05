@@ -245,7 +245,7 @@ function script_menu {
 	Write-Host ""
 	Write-Host "   C    set OH in CLIENT mode"
 	Write-Host "   P    set OH in PORTABLE mode"
-	Write-Host "   S    set OH in SERVER (portable) mode with API server"
+	Write-Host "  -S    set OH in SERVER mode (portable) with API server"
 	Write-Host "   l    set language: $OH_LANGUAGE_LIST"
 	Write-Host "   s    save OH configuration"
 	Write-Host "   X    clean/reset OH installation"
@@ -367,11 +367,11 @@ function set_oh_mode {
 	        ######## settings.properties language configuration
 		Write-Host "Setting OH mode to $OH_MODE in OH configuration files-> settings.properties..."
 		(Get-Content "$OH_PATH/$OH_DIR/rsc/settings.properties") -replace('^(MODE.+)',"MODE=$OH_MODE") | Set-Content "$OH_PATH/$OH_DIR/rsc/settings.properties"
-		Write-Host "OH mode set to $OH_MODE."
 	}
 	else {
 		Write-Host "Warning: settings.properties file not found." -ForegroundColor Yellow
 	}
+	Write-Host "OH mode set to $OH_MODE." -ForeGroundcolor Green
 }
 
 ###################################################################
@@ -448,7 +448,7 @@ function create_desktop_shortcut {
 	$Shortcut.TargetPath = "$POWERSHELL_EXE" # $SCRIPT_DIR\$SCRIPT_NAME"
 	$Shortcut.Arguments = "$SCRIPT_DIR\$SCRIPT_NAME -interactive off -mode $OH_MODE -lang $OH_LANGUAGE"
 	$Shortcut.WorkingDirectory = "$OH_PATH"
-	$ShortCut.IconLocation = "$OH_PATH\$OH_DIR\rsc\icons\oh.ico"
+	$ShortCut.IconLocation = "$OH_PATH\oh.ico"
 	$Shortcut.Save()
 	Write-Host "Done!"
 }
@@ -969,8 +969,8 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 			Write-Host "------------------------"
 			Write-Host "---- EXPERIMENTAL ------"
 			Write-Host "------------------------"
-			Write-Host "OH_MODE set to API mode."
-			#set_oh_mode;
+			Write-Host ""
+			Write-Host "-   SERVER mode + API  -"
 			java_check;
 			java_lib_setup;
 			write_api_config_file;
@@ -981,22 +981,19 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 		"C"	{ # start in CLIENT mode
 			$script:OH_MODE="CLIENT"
 			set_oh_mode;
-			Write-Host "OH_MODE set to CLIENT mode." -ForeGroundcolor Green
 			Read-Host "Press any key to continue";
 		}
 		###################################################
 		"P"	{ # start in PORTABLE mode
 			$script:OH_MODE="PORTABLE"
 			set_oh_mode;
-			Write-Host "OH_MODE set to PORTABLE mode." -ForeGroundcolor Green
 			Read-Host "Press any key to continue";
 		}
 		###################################################
-		"S"	{ # start in SERVER (Portable) mode
+		"S"	{ # start in SERVER (portable) mode
 			$script:OH_MODE="SERVER"
 			set_oh_mode;
-			$script:WRITE_CONFIG_FILES="on"
-			Write-Host "OH_MODE set to SERVER mode." -ForeGroundcolor Green
+			#$script:WRITE_CONFIG_FILES="on"
 			Read-Host "Press any key to continue";
 		}
 		###################################################
@@ -1363,6 +1360,8 @@ if ( $OH_MODE -eq "SERVER" ) {
 	# generate config files if not existent
 	write_config_files;
 	write_api_config_file;
+	Write-Host "***************************************"
+	Write-Host "Starting EXPERIMEMTAL API server ..."
 	start_api;
 	
 	while ($true) {

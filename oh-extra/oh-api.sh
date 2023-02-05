@@ -180,7 +180,7 @@ function script_menu {
 	echo ""
 	echo "   -C    set OH in CLIENT mode"
 	echo "   -P    set OH in PORTABLE mode"
-	echo "   -S    set OH in SERVER (portable) mode with API server"
+	echo "   -S    set OH in SERVER mode (portable) with API server"
 	echo "   -l    set language: $OH_LANGUAGE_LIST"
 	echo "   -s    save OH configuration"
 	echo "   -X    clean/reset OH installation"
@@ -304,11 +304,11 @@ function set_oh_mode {
 		######## settings.properties language configuration
 		echo "Setting OH mode to $OH_MODE in OH configuration file -> settings.properties..."
 		sed -e "/^"MODE="/c"MODE=$OH_MODE"" -i ./$OH_DIR/rsc/settings.properties
-		echo "OH mode set to $OH_MODE"
 	else 
 		echo ""
 		echo "Warning: settings.properties file not found."
 	fi
+	echo "OH mode set to $OH_MODE"
 }
 
 ###################################################################
@@ -390,7 +390,7 @@ echo "[Desktop Entry]
 	# The executable of the application, possibly with arguments
 	Exec=$OH_PATH/$SCRIPT_NAME -Z
 	# The icon to display
-	Icon=$OH_PATH/$OH_DIR/rsc/icons/oh.ico
+	Icon=$OH_PATH/oh.ico
 	# Describes whether this application needs to be run in a terminal or not
 	Terminal=true
 	# Describes the categories in which this entry should be shown
@@ -798,13 +798,13 @@ function parse_user_input {
 	###################################################
 	a)	# start API server
 		OH_MODE="SERVER"
-#		DEMO_DATA="off"
-#		set_oh_mode;
 		echo ""
 		echo "------------------------"
 		echo "---- EXPERIMENTAL ------"
 		echo "------------------------"
-		echo "OH_MODE set to API mode."
+		echo ""
+		echo "-   SERVER mode + API  -"
+		echo ""
 		java_check;
 		java_lib_setup;
 		write_api_config_file;
@@ -817,7 +817,6 @@ function parse_user_input {
 		DEMO_DATA="off"
 		set_oh_mode;
 		echo ""
-		echo "OH_MODE set to CLIENT mode."
 		if (( $2==0 )); then opt="Z"; else echo "Press any key to continue"; read; fi
 		;;
 	###################################################
@@ -825,16 +824,14 @@ function parse_user_input {
 		OH_MODE="PORTABLE"
 		set_oh_mode;
 		echo ""
-		echo "OH_MODE set to PORTABLE mode."
 		if (( $2==0 )); then opt="Z"; else read; fi
 		;;
 	###################################################
 	S)	# start in SERVER mode
 		OH_MODE="SERVER"
 		set_oh_mode;
-		WRITE_CONFIG_FILES="on"
+		#WRITE_CONFIG_FILES="on"
 		echo ""
-		echo "OH_MODE set to SERVER mode."
 		if (( $2==0 )); then opt="Z"; else echo "Press any key to continue"; read; fi
 		;;
 	###################################################
@@ -1285,7 +1282,9 @@ if [ "$OH_MODE" = "SERVER" ]; then
 	# needed for database.properties
 	# generate config files if not existent
 	write_config_files;
-	write_api_config_files;
+	write_api_config_file;
+	echo "***************************************"
+	echo "Starting EXPERIMEMTAL API server ..."
 	start_api;
 	
 	while true; do
