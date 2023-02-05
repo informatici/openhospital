@@ -180,7 +180,7 @@ function script_menu {
 	echo ""
 	echo "   -C    set OH in CLIENT mode"
 	echo "   -P    set OH in PORTABLE mode"
-	echo "   -S    set OH in SERVER (portable) mode with API server"
+	echo "   -S    set OH in SERVER mode (portable) with API server"
 	echo "   -l    set language: $OH_LANGUAGE_LIST"
 	echo "   -s    save OH configuration"
 	echo "   -X    clean/reset OH installation"
@@ -304,11 +304,11 @@ function set_oh_mode {
 		######## settings.properties language configuration
 		echo "Setting OH mode to $OH_MODE in OH configuration file -> settings.properties..."
 		sed -e "/^"MODE="/c"MODE=$OH_MODE"" -i ./$OH_DIR/rsc/settings.properties
-		echo "OH mode set to $OH_MODE"
 	else 
 		echo ""
 		echo "Warning: settings.properties file not found."
 	fi
+	echo "OH mode set to $OH_MODE"
 }
 
 ###################################################################
@@ -390,7 +390,7 @@ echo "[Desktop Entry]
 	# The executable of the application, possibly with arguments
 	Exec=$OH_PATH/$SCRIPT_NAME -Z
 	# The icon to display
-	Icon=$OH_PATH/$OH_DIR/rsc/icons/oh.ico
+	Icon=$OH_PATH/oh.ico
 	# Describes whether this application needs to be run in a terminal or not
 	Terminal=true
 	# Describes the categories in which this entry should be shown
@@ -750,8 +750,25 @@ function write_config_files {
 	fi
 }
 
+function write_api_config_file {
+	######## application.properties setup - OH API
+	if [ "$WRITE_CONFIG_FILES" = "on" ] || [ ! -f ./$OH_DIR/rsc/application.properties ]; then
+		[ -f ./$OH_DIR/rsc/application.properties ] && mv -f ./$OH_DIR/rsc/application.properties ./$OH_DIR/rsc/application.properties.old
+		# set OH API token
+		# JWT_TOKEN_SECRET=`openssl rand -base64 64 | xargs`
+		JWT_TOKEN_SECRET=`LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 64`
+		echo "Writing OH API configuration file -> application.properties..."
+		sed -e "s/JWT_TOKEN_SECRET/"$JWT_TOKEN_SECRET"/g" ./$OH_DIR/rsc/application.properties.dist > ./$OH_DIR/rsc/application.properties
+	fi
+}
+
 function start_api {
-	# set up configuration files
+	# check for configuration files
+	if [ ! -f ./$OH_DIR/rsc/application.properties ]; then
+		echo "Error: missing application.properties settings file. Exiting"
+		exit 1;
+	fi
+
 	echo "------------------------"
 	echo "---- EXPERIMENTAL ------"
 	echo "------------------------"
@@ -779,17 +796,18 @@ function start_api {
 function parse_user_input {
 	case $1 in
 	###################################################
-	a)	# start in APU mode
-#		OH_MODE="API"
-#		DEMO_DATA="off"
-#		set_oh_mode;
+	a)	# start API server
+		OH_MODE="SERVER"
 		echo ""
 		echo "------------------------"
 		echo "---- EXPERIMENTAL ------"
 		echo "------------------------"
-		echo "OH_MODE set to API mode."
+		echo ""
+		echo "-   SERVER mode + API  -"
+		echo ""
 		java_check;
 		java_lib_setup;
+		write_api_config_file;
 		start_api;
 		if (( $2==0 )); then opt="Z"; else echo "Press any key to continue"; read; fi
 		;;
@@ -799,7 +817,6 @@ function parse_user_input {
 		DEMO_DATA="off"
 		set_oh_mode;
 		echo ""
-		echo "OH_MODE set to CLIENT mode."
 		if (( $2==0 )); then opt="Z"; else echo "Press any key to continue"; read; fi
 		;;
 	###################################################
@@ -807,16 +824,14 @@ function parse_user_input {
 		OH_MODE="PORTABLE"
 		set_oh_mode;
 		echo ""
-		echo "OH_MODE set to PORTABLE mode."
 		if (( $2==0 )); then opt="Z"; else read; fi
 		;;
 	###################################################
 	S)	# start in SERVER mode
 		OH_MODE="SERVER"
 		set_oh_mode;
-		WRITE_CONFIG_FILES="on"
+		#WRITE_CONFIG_FILES="on"
 		echo ""
-		echo "OH_MODE set to SERVER mode."
 		if (( $2==0 )); then opt="Z"; else echo "Press any key to continue"; read; fi
 		;;
 	###################################################
@@ -1267,6 +1282,9 @@ if [ "$OH_MODE" = "SERVER" ]; then
 	# needed for database.properties
 	# generate config files if not existent
 	write_config_files;
+	write_api_config_file;
+	echo "***************************************"
+	echo "Starting EXPERIMEMTAL API server ..."
 	start_api;
 	
 	while true; do

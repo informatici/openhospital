@@ -419,7 +419,7 @@ $(FULLDISTRO).zip:
 	# copy API jar
 	cp -a ./openhospital-api/target/openhospital-api-0.0.2.jar $(FULLDISTRO)/oh/bin
 	# copy API configuration file
-	cp ./openhospital-api/rsc/application.properties.dist $(FULLDISTRO)/oh/rsc/application.properties
+	cp ./openhospital-api/rsc/application.properties.dist $(FULLDISTRO)/oh/rsc/
 	# copy API content
 	cp -a ./openhospital-api/static $(FULLDISTRO)/oh/
 	# copy UI content
