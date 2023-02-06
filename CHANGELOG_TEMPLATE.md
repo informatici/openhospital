@@ -1,4 +1,4 @@
-OpenHospital VERSION
+Open Hospital VERSION
 ---------------------
 
 Components changelogs:
