@@ -392,8 +392,9 @@ $(FULLDISTRO).zip:
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(FULLDISTRO)/oh
 	mv $(FULLDISTRO)/oh/oh.* $(FULLDISTRO)
 	cp -a ./openhospital-core/sql $(FULLDISTRO)/
-	# reset admin password
+	# add reset admin password step
 	echo  "source extra/reset_admin_password_strong.sql" >> $(FULLDISTRO)/sql/step_04_all_following_steps.sql
+	echo  "source extra/reset_admin_password_strong.sql" >> $(FULLDISTRO)/sql/create_all_demo.sql
 	cp -f ./openhospital-gui/oh.ico $(FULLDISTRO)/
 	# copy API EXPERIMENTAL scripts
 	cp -a ./oh-extra/*api* $(FULLDISTRO)
