@@ -871,7 +871,7 @@ function write_api_config_file {
 		# set OH API token
 		$JWT_TOKEN_SECRET=(-join ((65..90) + (97..122) | Get-Random -Count 64 | % {[char]$_}))
 		Write-Host "Writing OH API configuration file -> application.properties..."
-		(Get-Content "$OH_PATH/$OH_DIR/rsc/application.properties.dist").replace("JWT_SECRET_TOKEN","$JWT_SECRET_TOKEN") | Set-Content "$OH_PATH/$OH_DIR/rsc/application.properties"
+		(Get-Content "$OH_PATH/$OH_DIR/rsc/application.properties.dist").replace("JWT_TOKEN_SECRET","$JWT_TOKEN_SECRET") | Set-Content "$OH_PATH/$OH_DIR/rsc/application.properties"
 	}
 }
 
