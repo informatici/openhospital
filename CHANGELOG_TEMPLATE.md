@@ -13,10 +13,10 @@ _Released on 07 February 2023_
 - Improved overall security settings and configuration
 - Improved stability and performance
 - Improved [website](https://www.open-hospital.org/) and [documentation](https://www.open-hospital.org/documentation) 
-- EXPERIMENTAL: First full distribution (Core + GUI + API + UI)
+- EXPERIMENTAL: First full distribution (core + gui + api + ui)
 - a lot of bug fixes 🙂
 
-**Credits**: [Andrei Dodu](@goto-eof), [Intesys](https://github.com/intesys), [David Malkovksy](@dbmalkovsky), [Nicole Lazzeri](https://github.com/nlazzer1), [mizzio](@mizzioisf), [Paolo Viotti](@pviotti), [Uni2grow](https://github.com/orgs/informatici/teams/uni2grow-cameroun), the open-source community
+**Credits**: [Alessandro Domanico](@mwthi), [Andrei Dodu](@goto-eof), [David Malkovksy](@dbmalkovsky), [Intesys](https://github.com/intesys), [Nicole Lazzeri](https://github.com/nlazzer1), [mizzio](@mizzioisf), [Paolo Viotti](@pviotti), [Uni2grow](https://github.com/orgs/informatici/teams/uni2grow-cameroun) (see the complete list below)
 **Special thanks to**: Antonio Jurado, Stefania Bergo
 _Brought to you by [Informatici Senza Frontiere](https://github.com/informatici)_
 
@@ -158,4 +158,9 @@ a6eacac74322faef65282883588e115dcfd7e8247ff4b1f13ff787d4cf945b2b  OpenHospital-v
 8f91050989ba02b0288a879f23f29d2f213506f31ad60bc123fdee9a82882394  OpenHospital-v1.12.0-x86_64-EXPERIMENTAL.zip
 ```
 
+</details>
+
+<details>
+<summary> Contributors (click to expand) </summary>
+@AceGentile, @AndreiDodu, @AndreiDoduISF, @GraninNikita, @MartinezX21, @MrQwenty, @SilverD3, @SteveGT96, @alefalezza, @alekseykashytsa, @alexwibowo, @almeida1492, @andreafalco1991, @averni, @axelpezzo, @brian-heumann, @dbmalkovsky, @dependabot-preview[bot], @dependabot[bot], @dnlebgwa, @dumisani-ln, @elvisciuffetelli, @emecas, @estromsnes, @fstorz, @geco17, @gildasdongmo, @giuseppesorge, @goto-eof, @larsgrefer, @marcellintabou, @mizzioisf, @mwithi, @nicolaburetta, @nicopunzi, @nlazzer1, @npasquetto, @pranik, @pviotti, @simobasso, @tomek39856, @tommasomoroni, @torrespro, @transifex-integration[bot], @tsognong, @vir8wh47, @xrmx, Aleksey, Antonio Fin, Antonio Fin (afin), Damiano Stanzial, Fernando Espinosa, SilGraz, SteveGT96, gildas, mpelosi, riccardo_costa, uni2grow
 </details>
