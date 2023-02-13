@@ -39,6 +39,6 @@ jobs:
         files: |
           OpenHospital-*.tar.gz 
           OpenHospital-*.zip
-        body_path: CHANGELOG.md
+        body_path: RELEASE_NOTES.md
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -79,7 +79,7 @@ help:
 	@echo -e "\trelease-full-distro"
 	@echo -e ""
 	@echo -e "Documentation targets:"
-	@echo -e "\tcompile-doc, admin-manual, user-manual, readme"
+	@echo -e "\tcompile-doc, admin-manual, user-manual, readme, release-notes"
 	@echo -e ""
 	@echo -e "OH release-files targets:"
 	@echo -e "\t$(CLIENT).zip"
@@ -97,7 +97,7 @@ clean-repos:
 clean-downloads:
 	rm -rf zulu*.zip zulu*.tar.gz mariadb*.zip mariadb*.tar.gz
 clean-releases:
-	rm -rf OpenHospital-$(OH_VERSION)* CHANGELOG.* *.pdf
+	rm -rf OpenHospital-$(OH_VERSION)* RELEASE_NOTES.* *.pdf
 clean-all:
 	git clean -xdff
 
@@ -123,7 +123,7 @@ build-doc: clone-doc compile-doc
 
 ####################################################################
 # Assemble release targets
-release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz $(FULLDISTRO).zip CHANGELOG
+release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz $(FULLDISTRO).zip release_notes
 
 # EXPERIMENTAL - release full distro
 release-full-distro: build-core build-ui build-api build-gui build-doc $(FULLDISTRO).zip
@@ -210,29 +210,28 @@ readme:
 	popd
 
 ####################################################################
-# Generate version changelog
-CHANGELOG: 
-	# generate changelog 
+# Generate release notes file
+release-notes: 
 	pushd openhospital-core
 	lasttag=$(shell git tag -l --sort=-v:refname | head -1)
 	secondlasttag=$(shell git tag -l --sort=-v:refname | head -2 | tail -n 1)
 	popd
-	cp CHANGELOG_TEMPLATE.md CHANGELOG.md
-	sed -i "s/VERSION/$(OH_VERSION)/g" CHANGELOG.md
-	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" CHANGELOG.md
-	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" CHANGELOG.md
+	cp RELEASE_NOTES_TEMPLATE.md RELEASE_NOTES.md
+	sed -i "s/VERSION/$(OH_VERSION)/g" RELEASE_NOTES.md
+	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
+	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
 	# add SHA256 signatures
-	echo "SHA256 Checksum:" >> CHANGELOG.md
-	echo "" >> CHANGELOG.md
-	echo "\`\`\`" >> CHANGELOG.md
+	echo "SHA256 Checksum:" >> RELEASE_NOTES.md
+	echo "" >> RELEASE_NOTES.md
+	echo "\`\`\`" >> RELEASE_NOTES.md
 	# generate SHA256SUM
-	sha256sum $(CLIENT).zip | tee -a "CHANGELOG.md" 
-	sha256sum $(WIN32).zip | tee -a "CHANGELOG.md" 
-	sha256sum $(WIN64).zip | tee -a "CHANGELOG.md" 
-	sha256sum $(LINUX32).tar.gz | tee -a "CHANGELOG.md" 
-	sha256sum $(LINUX64).tar.gz | tee -a "CHANGELOG.md" 
-	sha256sum $(FULLDISTRO).zip | tee -a "CHANGELOG.md" 
-	echo "\`\`\`" >> CHANGELOG.md
+	sha256sum $(CLIENT).zip | tee -a "RELEASE_NOTES.md" 
+	sha256sum $(WIN32).zip | tee -a "RELEASE_NOTES.md" 
+	sha256sum $(WIN64).zip | tee -a "RELEASE_NOTES.md" 
+	sha256sum $(LINUX32).tar.gz | tee -a "RELEASE_NOTES.md" 
+	sha256sum $(LINUX64).tar.gz | tee -a "RELEASE_NOTES.md" 
+	sha256sum $(FULLDISTRO).zip | tee -a "RELEASE_NOTES.md" 
+	echo "\`\`\`" >> RELEASE_NOTES.md
 
 ####################################################################
 # Create OH release packages
