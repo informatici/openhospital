@@ -3,24 +3,31 @@ Open Hospital VERSION
 
 Open Hospital (https://www.open-hospital.org/) is a free and open-source Health Information Management System (HIMS) software application.
 
-Components changelogs:
+## Release Highlights
 
- - [Core component changelog](https://github.com/informatici/openhospital-core/compare/SECONDLASTTAG...LASTTAG)
- - [Gui component changelog](https://github.com/informatici/openhospital-gui/compare/SECONDLASTTAG...LASTTAG)
- - [Doc component changelog](https://github.com/informatici/openhospital-doc/compare/SECONDLASTTAG...LASTTAG)
+## Credits:
+(see the complete list below)
 
-Brought to you by:
-- Informatici Senza Frontiere
-- Open source community
-- Uni2grow Camerun
-- Intesys s.r.l.
+Special thanks to:
+_Brought to you by Informatici Senza Frontiere - https://github.com/informatici_
 
-**Languages**: Languages: English, Arabic, French, German, Italian, Portuguese, Spanish 
-Beta: Chinese (simplified), Swahili
-*Brought to you by Transifex community*
+## Languages: English, Arabic, Chinese (simplified), French, German, Italian, Portuguese, Spanish, Swahili
+_Brought to you by Transifex community_https://www.transifex.com/informatici-senza-frontiere-onlus/openhospital/dashboard/
 
 <details>
 <summary> Release notes VERSION details (click to expand) </summary>
-
 </details>
+
+<details>
+<summary> Code changelogs (click to expand) </summary>
+</details>
+
+<details>
+<summary> Contributors (click to expand) </summary>
+</details>
+
+<details>
+<summary> SHA256SUM checksum (click to expand) </summary>
+</details>
+
 
