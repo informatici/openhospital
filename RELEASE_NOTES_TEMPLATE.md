@@ -19,7 +19,7 @@ English, Arabic, Chinese (simplified), French, German, Italian, Portuguese, Span
 
 
 <details>
-<summary> **Release notes** VERSION details (click to expand) </summary>
+<summary> Release notes VERSION details (click to expand) </summary>
 
 ## Release notes - Open Hospital - VERSION
 
