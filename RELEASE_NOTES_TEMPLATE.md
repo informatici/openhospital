@@ -18,7 +18,7 @@ _Brought to you by Transifex community - https://www.transifex.com/informatici-s
 
 
 <details>
-<summary> *Release notes* VERSION details (click to expand) </summary>
+<summary> **Release notes** VERSION details (click to expand) </summary>
 
 ## Release notes - Open Hospital - VERSION
 
@@ -33,7 +33,7 @@ _Brought to you by Transifex community - https://www.transifex.com/informatici-s
 
 
 <details>
-<summary> *Code changelogs* (click to expand) </summary>
+<summary> **Code changelogs** (click to expand) </summary>
 
  - [Core component changelog](https://github.com/informatici/openhospital-core/compare/v1.12.0...v1.12.1)
  - [Gui component changelog](https://github.com/informatici/openhospital-gui/compare/v1.12.0...v1.12.1)
@@ -42,14 +42,14 @@ _Brought to you by Transifex community - https://www.transifex.com/informatici-s
 </details>
 
 <details>
-<summary> *Contributors* (click to expand) </summary>
+<summary> **Contributors** (click to expand) </summary>
 
 
 
 </details>
 
 <details>
-<summary> *SHA256SUM checksum* (click to expand) </summary>
+<summary> **SHA256SUM checksum** (click to expand) </summary>
 
 
 
