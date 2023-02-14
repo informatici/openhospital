@@ -10,11 +10,11 @@ Released on _date_
 (see the complete list below)
 
 ### Special thanks to:
-_Brought to you by Informatici Senza Frontiere - https://github.com/informatici_
+_Brought to you by [Informatici Senza Frontiere](https://github.com/informatici)_
 
 ### Languages
 English, Arabic, Chinese (simplified), French, German, Italian, Portuguese, Spanish, Swahili
-_Brought to you by Transifex community - https://www.transifex.com/informatici-senza-frontiere-onlus/openhospital/dashboard/_
+*Brought to you by [Transifex community](https://www.transifex.com/informatici-senza-frontiere-onlus/openhospital/dashboard/)*
 
 
 <details>
