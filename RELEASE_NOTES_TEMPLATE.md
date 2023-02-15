@@ -49,11 +49,3 @@ English, Arabic, Chinese (simplified), French, German, Italian, Portuguese, Span
 
 </details>
 
-<details>
-<summary> SHA256SUM checksum (click to expand) </summary>
-
-
-
-</details>
-
-

@@ -220,7 +220,9 @@ release-notes:
 	sed -i "s/VERSION/$(OH_VERSION)/g" RELEASE_NOTES.md
 	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
 	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
-	# add SHA256 signatures
+	# add SHA256 checksum section
+	echo "<details>" >> RELEASE_NOTES.md
+	#
 	echo "SHA256 Checksum:" >> RELEASE_NOTES.md
 	echo "" >> RELEASE_NOTES.md
 	echo "\`\`\`" >> RELEASE_NOTES.md
@@ -232,6 +234,7 @@ release-notes:
 	sha256sum $(LINUX64).tar.gz | tee -a "RELEASE_NOTES.md" 
 	sha256sum $(FULLDISTRO).zip | tee -a "RELEASE_NOTES.md" 
 	echo "\`\`\`" >> RELEASE_NOTES.md
+	echo "</details>" >> RELEASE_NOTES.md
 
 ####################################################################
 # Create OH release packages
