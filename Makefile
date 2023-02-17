@@ -255,27 +255,27 @@ release-notes: contributors
 contributors:
 	pushd openhospital-core
 	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq > ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=1 | grep -e name -e login > ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=0 | grep -e name -e login > ../CONTRIBUTORS.tmp
 	popd
 # OH GUI
 	pushd openhospital-gui 
 	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=1 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
 	popd
 # Web UI
 	pushd openhospital-gui 
 	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-ui/contributors?anon=1 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-ui/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
 	popd
 # Web API
 	pushd openhospital-api
 	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=1 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
 	popd
 # OH doc
 	pushd openhospital-doc
 	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-doc/contributors?anon=1 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-doc/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
 	popd
 # generate final file
 # # cat CONTRIBUTORS | sed -e s/^[^@]*//g
