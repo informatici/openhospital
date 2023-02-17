@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    # ubuntu-latest is still 18.04 as of 6/2020
+    # ubuntu-latest is 22.04 - Feb 2023
     runs-on: ubuntu-latest
 
     steps:
