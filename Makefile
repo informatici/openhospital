@@ -97,7 +97,7 @@ clean-repos:
 clean-downloads:
 	rm -rf zulu*.zip zulu*.tar.gz mariadb*.zip mariadb*.tar.gz
 clean-releases:
-	rm -rf OpenHospital-$(OH_VERSION)* RELEASE_NOTES.* *.pdf
+	rm -rf OpenHospital-$(OH_VERSION)* RELEASE_NOTES.* CONTRIBUTORS* *.pdf
 clean-all:
 	git clean -xdff
 
@@ -162,14 +162,14 @@ clone-doc:
 ####################################################################
 # Compile application binaries
 
-# Java Core
+# OH Core
 compile-core:
 	pushd openhospital-core
 	#git checkout $(OH_VERSION) -b $(OH_VERSION)
 	mvn --quiet -T 1.5C install
 	popd
 
-# Java GUI
+# OH GUI
 compile-gui:
 	pushd openhospital-gui
 	mvn --quiet -T 1.5C install
@@ -251,13 +251,13 @@ release-notes: contributors
 ####################################################################
 # Generate contributors file
 
-# Java Core
+# OH Core
 contributors:
 	pushd openhospital-core
 	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq > ../CONTRIBUTORS.tmp
 	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=1 | grep -e name -e login > ../CONTRIBUTORS.tmp
 	popd
-# Java GUI
+# OH GUI
 	pushd openhospital-gui 
 	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
 	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=1 | grep -e name -e login >> ../CONTRIBUTORS.tmp
@@ -272,9 +272,13 @@ contributors:
 	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
 	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=1 | grep -e name -e login >> ../CONTRIBUTORS.tmp
 	popd
+# OH doc
+	pushd openhospital-doc
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-doc/contributors?anon=1 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	popd
 # generate final file
 # # cat CONTRIBUTORS | sed -e s/^[^@]*//g
-	#cp CONTRIBUTORS.tmp CONTRIBUTORS.full
 	# sed -e -e s/^.*\"name\"\:\ \"//g -e s/^.*\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp # working alternative
 	sed -e s/^.*\"name\"\:\ \"//g -e s/^.*\"login\"\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp
 	cat ./CONTRIBUTORS.tmp | sort -u > CONTRIBUTORS
