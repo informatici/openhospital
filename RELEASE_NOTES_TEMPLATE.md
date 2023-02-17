@@ -5,11 +5,13 @@ Open Hospital (https://www.open-hospital.org/) is a free and open-source Health 
 Released on _date_
 
 ### Release Highlights
-
+-->
 ### Credits:
+-->
 (see the complete list below)
 
 ### Special thanks to:
+-->
 _Brought to you by [Informatici Senza Frontiere](https://github.com/informatici)_
 
 ### Languages
@@ -22,12 +24,16 @@ English, Arabic, Chinese (simplified), French, German, Italian, Portuguese, Span
 <summary> Release notes VERSION details (click to expand) </summary>
 
 ### Release notes - Open Hospital - VERSION
+-->
 
 #### New Features
+-->
 
 #### Improvements
+-->
 
 #### Bug Fixes
+-->
 
 
 </details>
