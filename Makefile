@@ -123,7 +123,7 @@ build-doc: clone-doc compile-doc
 
 ####################################################################
 # Assemble release targets
-release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz $(FULLDISTRO).zip release_notes
+release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz $(FULLDISTRO).zip release-notes
 
 # EXPERIMENTAL - release full distro
 release-full-distro: build-core build-ui build-api build-gui build-doc $(FULLDISTRO).zip
@@ -133,26 +133,26 @@ release-full-distro: build-core build-ui build-api build-gui build-doc $(FULLDIS
 clone-core:
 	if [ -d "openhospital-core" ]; then cd openhospital-core; git checkout -B $(OH_VERSION); git pull;
 	else
-		#git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
-		git clone https://github.com/informatici/openhospital-core.git openhospital-core
+		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
+		#git clone https://github.com/informatici/openhospital-core.git openhospital-core
 	fi
 clone-gui:
 	if [ -d "openhospital-gui" ]; then cd openhospital-gui; git checkout -B $(OH_VERSION); git pull;
 	else
-		#git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
-		git clone https://github.com/informatici/openhospital-gui.git openhospital-gui
+		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
+		#git clone https://github.com/informatici/openhospital-gui.git openhospital-gui
 	fi
 clone-ui:
 	if [ -d "openhospital-ui" ]; then cd openhospital-ui; git checkout -B $(OH_VERSION); git pull;
 	else
-		#git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
-		git clone https://github.com/informatici/openhospital-ui.git openhospital-ui
+		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
+		#git clone https://github.com/informatici/openhospital-ui.git openhospital-ui
 	fi
 clone-api:
 	if [ -d "openhospital-api" ]; then cd openhospital-api; git checkout -B $(OH_VERSION); git pull;
 	else
-		#git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-api.git openhospital-api
-		git clone https://github.com/informatici/openhospital-api.git openhospital-api
+		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-api.git openhospital-api
+		#git clone https://github.com/informatici/openhospital-api.git openhospital-api
 	fi
 clone-doc:
 	if [ -d "openhospital-doc" ]; then cd openhospital-doc; git checkout -B $(OH_VERSION); git pull;
@@ -165,7 +165,7 @@ clone-doc:
 # Java Core
 compile-core:
 	pushd openhospital-core
-	git checkout $(OH_VERSION) -b $(OH_VERSION)
+	#git checkout $(OH_VERSION) -b $(OH_VERSION)
 	mvn --quiet -T 1.5C install
 	popd
 
@@ -214,7 +214,7 @@ readme:
 
 ####################################################################
 # Generate release notes file
-release-notes: 
+release-notes: contributors
 	pushd openhospital-core
 	lasttag=$(shell git tag -l --sort=-v:refname | head -1)
 	secondlasttag=$(shell git tag -l --sort=-v:refname | head -2 | tail -n 1)
@@ -223,9 +223,11 @@ release-notes:
 	sed -i "s/VERSION/$(OH_VERSION)/g" RELEASE_NOTES.md
 	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
 	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
+	
 	# add SHA256 checksum section
 	echo "<details>" >> RELEASE_NOTES.md
 	#
+	echo "<summary> SHA256 checksum (click to expand) </summary>" >> RELEASE_NOTES.md
 	echo "SHA256 Checksum:" >> RELEASE_NOTES.md
 	echo "" >> RELEASE_NOTES.md
 	echo "\`\`\`" >> RELEASE_NOTES.md
@@ -238,6 +240,14 @@ release-notes:
 	sha256sum $(FULLDISTRO).zip | tee -a "RELEASE_NOTES.md" 
 	echo "\`\`\`" >> RELEASE_NOTES.md
 	echo "</details>" >> RELEASE_NOTES.md
+	echo "" >> RELEASE_NOTES.md
+	
+	# add contributors section
+	echo "<details>" >> RELEASE_NOTES.md
+	echo "<summary> Contributors (click to expand) </summary>" >> RELEASE_NOTES.md
+		cat CONTRIBUTORS >> RELEASE_NOTES.md
+	echo "</details>" >> RELEASE_NOTES.md
+	echo "" >> RELEASE_NOTES.md
 
 ####################################################################
 # Generate contributors file
@@ -265,12 +275,10 @@ contributors:
 	popd
 # generate final file
 # # cat CONTRIBUTORS | sed -e s/^[^@]*//g
-	sed -e s/^.*\:\ \"/@/g -e s/\"\,//g -e s/\"name\"\:\ \"//g -i CONTRIBUTORS.tmp
-	cat ./CONTRIBUTORS.tmp | sort | uniq > CONTRIBUTORS
-
-####################################################################
-# Generate documentation
-
+	#cp CONTRIBUTORS.tmp CONTRIBUTORS.full
+	# sed -e -e s/^.*\"name\"\:\ \"//g -e s/^.*\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp # working alternative
+	sed -e s/^.*\"name\"\:\ \"//g -e s/^.*\"login\"\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp
+	cat ./CONTRIBUTORS.tmp | sort -u > CONTRIBUTORS
 
 ####################################################################
 # Create OH release packages
@@ -419,7 +427,7 @@ $(LINUX64).tar.gz:
 	tar -czf $(LINUX64).tar.gz $(LINUX64)
 
 #
-# EXPERIMENTAL - full distro with API server
+# EXPERIMENTAL - full distro with UI+API server
 #
 $(FULLDISTRO).zip:
 	# create directories and copy files

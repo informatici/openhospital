@@ -42,10 +42,3 @@ English, Arabic, Chinese (simplified), French, German, Italian, Portuguese, Span
 
 </details>
 
-<details>
-<summary> Contributors (click to expand) </summary>
-
-
-
-</details>
-
