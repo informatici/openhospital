@@ -21,13 +21,13 @@ English, Arabic, Chinese (simplified), French, German, Italian, Portuguese, Span
 <details>
 <summary> Release notes VERSION details (click to expand) </summary>
 
-## Release notes - Open Hospital - VERSION
+### Release notes - Open Hospital - VERSION
 
-### New Features
+#### New Features
 
-### Improvements
+#### Improvements
 
-### Bug Fixes
+#### Bug Fixes
 
 
 </details>

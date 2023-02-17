@@ -228,7 +228,6 @@ release-notes: contributors
 	echo "<details>" >> RELEASE_NOTES.md
 	#
 	echo "<summary> SHA256 checksum (click to expand) </summary>" >> RELEASE_NOTES.md
-	echo "SHA256 Checksum:" >> RELEASE_NOTES.md
 	echo "" >> RELEASE_NOTES.md
 	echo "\`\`\`" >> RELEASE_NOTES.md
 	# generate SHA256SUM
