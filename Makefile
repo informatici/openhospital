@@ -33,9 +33,9 @@ MYSQL_URL := https://archive.mariadb.org
 JRE_32_VER := zulu11.62.17-ca-jre11.0.18
 JRE_64_VER := zulu11.62.17-ca-jre11.0.18
 MYSQL_WIN32_VER := 10.6.5
-MYSQL_WIN64_VER := 10.6.11
-MYSQL_LINUX32_VER := 10.5.18
-MYSQL_LINUX64_VER := 10.6.11
+MYSQL_WIN64_VER := 10.6.12
+MYSQL_LINUX32_VER := 10.5.19
+MYSQL_LINUX64_VER := 10.6.12
 
 # help file
 TXTFILE := OH-readme.txt
@@ -79,7 +79,7 @@ help:
 	@echo -e "\trelease-full-distro"
 	@echo -e ""
 	@echo -e "Documentation targets:"
-	@echo -e "\tcompile-doc, admin-manual, user-manual, readme, release-notes"
+	@echo -e "\tcompile-doc, admin-manual, user-manual, readme, release-notes, contributors"
 	@echo -e ""
 	@echo -e "OH release-files targets:"
 	@echo -e "\t$(CLIENT).zip"
@@ -133,24 +133,26 @@ release-full-distro: build-core build-ui build-api build-gui build-doc $(FULLDIS
 clone-core:
 	if [ -d "openhospital-core" ]; then cd openhospital-core; git checkout -B $(OH_VERSION); git pull;
 	else
-		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
+		#git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
+		git clone https://github.com/informatici/openhospital-core.git openhospital-core
 	fi
 clone-gui:
 	if [ -d "openhospital-gui" ]; then cd openhospital-gui; git checkout -B $(OH_VERSION); git pull;
 	else
-		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
+		#git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
+		git clone https://github.com/informatici/openhospital-gui.git openhospital-gui
 	fi
 clone-ui:
 	if [ -d "openhospital-ui" ]; then cd openhospital-ui; git checkout -B $(OH_VERSION); git pull;
 	else
-		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
-		# git clone --depth=1 https://github.com/informatici/openhospital-ui.git openhospital-ui
+		#git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
+		git clone https://github.com/informatici/openhospital-ui.git openhospital-ui
 	fi
 clone-api:
 	if [ -d "openhospital-api" ]; then cd openhospital-api; git checkout -B $(OH_VERSION); git pull;
 	else
-		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-api.git openhospital-api
-	#	git clone --depth=1 https://github.com/informatici/openhospital-api.git openhospital-api
+		#git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-api.git openhospital-api
+		git clone https://github.com/informatici/openhospital-api.git openhospital-api
 	fi
 clone-doc:
 	if [ -d "openhospital-doc" ]; then cd openhospital-doc; git checkout -B $(OH_VERSION); git pull;
@@ -163,6 +165,7 @@ clone-doc:
 # Java Core
 compile-core:
 	pushd openhospital-core
+	git checkout $(OH_VERSION) -b $(OH_VERSION)
 	mvn --quiet -T 1.5C install
 	popd
 
@@ -235,6 +238,39 @@ release-notes:
 	sha256sum $(FULLDISTRO).zip | tee -a "RELEASE_NOTES.md" 
 	echo "\`\`\`" >> RELEASE_NOTES.md
 	echo "</details>" >> RELEASE_NOTES.md
+
+####################################################################
+# Generate contributors file
+
+# Java Core
+contributors:
+	pushd openhospital-core
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq > ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=1 | grep -e name -e login > ../CONTRIBUTORS.tmp
+	popd
+# Java GUI
+	pushd openhospital-gui 
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=1 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	popd
+# Web UI
+	pushd openhospital-gui 
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-ui/contributors?anon=1 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	popd
+# Web API
+	pushd openhospital-api
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=1 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	popd
+# generate final file
+# # cat CONTRIBUTORS | sed -e s/^[^@]*//g
+	sed -e s/^.*\:\ \"/@/g -e s/\"\,//g -e s/\"name\"\:\ \"//g -i CONTRIBUTORS.tmp
+	cat ./CONTRIBUTORS.tmp | sort | uniq > CONTRIBUTORS
+
+####################################################################
+# Generate documentation
+
 
 ####################################################################
 # Create OH release packages
