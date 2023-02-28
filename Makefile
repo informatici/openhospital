@@ -33,9 +33,9 @@ MYSQL_URL := https://archive.mariadb.org
 JRE_32_VER := zulu11.62.17-ca-jre11.0.18
 JRE_64_VER := zulu11.62.17-ca-jre11.0.18
 MYSQL_WIN32_VER := 10.6.5
-MYSQL_WIN64_VER := 10.6.11
-MYSQL_LINUX32_VER := 10.5.18
-MYSQL_LINUX64_VER := 10.6.11
+MYSQL_WIN64_VER := 10.6.12
+MYSQL_LINUX32_VER := 10.5.19
+MYSQL_LINUX64_VER := 10.6.12
 
 # help file
 TXTFILE := OH-readme.txt
@@ -79,7 +79,7 @@ help:
 	@echo -e "\trelease-full-distro"
 	@echo -e ""
 	@echo -e "Documentation targets:"
-	@echo -e "\tcompile-doc, admin-manual, user-manual, readme"
+	@echo -e "\tcompile-doc, admin-manual, user-manual, readme, release-notes, contributors"
 	@echo -e ""
 	@echo -e "OH release-files targets:"
 	@echo -e "\t$(CLIENT).zip"
@@ -97,7 +97,7 @@ clean-repos:
 clean-downloads:
 	rm -rf zulu*.zip zulu*.tar.gz mariadb*.zip mariadb*.tar.gz
 clean-releases:
-	rm -rf OpenHospital-$(OH_VERSION)* CHANGELOG.* *.pdf
+	rm -rf OpenHospital-$(OH_VERSION)* RELEASE_NOTES.* CONTRIBUTORS* *.pdf
 clean-all:
 	git clean -xdff
 
@@ -123,7 +123,7 @@ build-doc: clone-doc compile-doc
 
 ####################################################################
 # Assemble release targets
-release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz $(FULLDISTRO).zip CHANGELOG
+release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz $(FULLDISTRO).zip release-notes
 
 # EXPERIMENTAL - release full distro
 release-full-distro: build-core build-ui build-api build-gui build-doc $(FULLDISTRO).zip
@@ -134,23 +134,25 @@ clone-core:
 	if [ -d "openhospital-core" ]; then cd openhospital-core; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
+		#git clone https://github.com/informatici/openhospital-core.git openhospital-core
 	fi
 clone-gui:
 	if [ -d "openhospital-gui" ]; then cd openhospital-gui; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
+		#git clone https://github.com/informatici/openhospital-gui.git openhospital-gui
 	fi
 clone-ui:
 	if [ -d "openhospital-ui" ]; then cd openhospital-ui; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
-		# git clone --depth=1 https://github.com/informatici/openhospital-ui.git openhospital-ui
+		#git clone https://github.com/informatici/openhospital-ui.git openhospital-ui
 	fi
 clone-api:
 	if [ -d "openhospital-api" ]; then cd openhospital-api; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-api.git openhospital-api
-	#	git clone --depth=1 https://github.com/informatici/openhospital-api.git openhospital-api
+		#git clone https://github.com/informatici/openhospital-api.git openhospital-api
 	fi
 clone-doc:
 	if [ -d "openhospital-doc" ]; then cd openhospital-doc; git checkout -B $(OH_VERSION); git pull;
@@ -160,13 +162,14 @@ clone-doc:
 ####################################################################
 # Compile application binaries
 
-# Java Core
+# OH Core
 compile-core:
 	pushd openhospital-core
+	#git checkout $(OH_VERSION) -b $(OH_VERSION)
 	mvn --quiet -T 1.5C install
 	popd
 
-# Java GUI
+# OH GUI
 compile-gui:
 	pushd openhospital-gui
 	mvn --quiet -T 1.5C install
@@ -210,29 +213,75 @@ readme:
 	popd
 
 ####################################################################
-# Generate version changelog
-CHANGELOG: 
-	# generate changelog 
+# Generate release notes file
+release-notes: contributors
 	pushd openhospital-core
 	lasttag=$(shell git tag -l --sort=-v:refname | head -1)
 	secondlasttag=$(shell git tag -l --sort=-v:refname | head -2 | tail -n 1)
 	popd
-	cp CHANGELOG_TEMPLATE.md CHANGELOG.md
-	sed -i "s/VERSION/$(OH_VERSION)/g" CHANGELOG.md
-	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" CHANGELOG.md
-	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" CHANGELOG.md
-	# add SHA256 signatures
-	echo "SHA256 Checksum:" >> CHANGELOG.md
-	echo "" >> CHANGELOG.md
-	echo "\`\`\`" >> CHANGELOG.md
+	cp RELEASE_NOTES_TEMPLATE.md RELEASE_NOTES.md
+	sed -i "s/VERSION/$(OH_VERSION)/g" RELEASE_NOTES.md
+	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
+	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
+	
+	# add SHA256 checksum section
+	echo "<details>" >> RELEASE_NOTES.md
+	#
+	echo "<summary> SHA256 checksum (click to expand) </summary>" >> RELEASE_NOTES.md
+	echo "" >> RELEASE_NOTES.md
+	echo "\`\`\`" >> RELEASE_NOTES.md
 	# generate SHA256SUM
-	sha256sum $(CLIENT).zip | tee -a "CHANGELOG.md" 
-	sha256sum $(WIN32).zip | tee -a "CHANGELOG.md" 
-	sha256sum $(WIN64).zip | tee -a "CHANGELOG.md" 
-	sha256sum $(LINUX32).tar.gz | tee -a "CHANGELOG.md" 
-	sha256sum $(LINUX64).tar.gz | tee -a "CHANGELOG.md" 
-	sha256sum $(FULLDISTRO).zip | tee -a "CHANGELOG.md" 
-	echo "\`\`\`" >> CHANGELOG.md
+	sha256sum $(CLIENT).zip | tee -a "RELEASE_NOTES.md" 
+	sha256sum $(WIN32).zip | tee -a "RELEASE_NOTES.md" 
+	sha256sum $(WIN64).zip | tee -a "RELEASE_NOTES.md" 
+	sha256sum $(LINUX32).tar.gz | tee -a "RELEASE_NOTES.md" 
+	sha256sum $(LINUX64).tar.gz | tee -a "RELEASE_NOTES.md" 
+	sha256sum $(FULLDISTRO).zip | tee -a "RELEASE_NOTES.md" 
+	echo "\`\`\`" >> RELEASE_NOTES.md
+	echo "</details>" >> RELEASE_NOTES.md
+	echo "" >> RELEASE_NOTES.md
+	
+	# add contributors section
+	echo "<details>" >> RELEASE_NOTES.md
+	echo "<summary> Contributors (click to expand) </summary>" >> RELEASE_NOTES.md
+		cat CONTRIBUTORS >> RELEASE_NOTES.md
+	echo "</details>" >> RELEASE_NOTES.md
+	echo "" >> RELEASE_NOTES.md
+
+####################################################################
+# Generate contributors file
+
+# OH Core
+contributors:
+	pushd openhospital-core
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq > ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=0 | grep -e name -e login > ../CONTRIBUTORS.tmp
+	popd
+# OH GUI
+	pushd openhospital-gui 
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	popd
+# Web UI
+	pushd openhospital-gui 
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-ui/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	popd
+# Web API
+	pushd openhospital-api
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	popd
+# OH doc
+	pushd openhospital-doc
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-doc/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	popd
+# generate final file
+# # cat CONTRIBUTORS | sed -e s/^[^@]*//g
+	# sed -e -e s/^.*\"name\"\:\ \"//g -e s/^.*\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp # working alternative
+	sed -e s/^.*\"name\"\:\ \"//g -e s/^.*\"login\"\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp
+	cat ./CONTRIBUTORS.tmp | sort -u > CONTRIBUTORS
 
 ####################################################################
 # Create OH release packages
@@ -381,7 +430,7 @@ $(LINUX64).tar.gz:
 	tar -czf $(LINUX64).tar.gz $(LINUX64)
 
 #
-# EXPERIMENTAL - full distro with API server
+# EXPERIMENTAL - full distro with UI+API server
 #
 $(FULLDISTRO).zip:
 	# create directories and copy files
