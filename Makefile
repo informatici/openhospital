@@ -200,7 +200,8 @@ compile-api:
 
 ####################################################################
 # Generate documentation
-compile-doc: admin-manual user-manual readme 
+compile-doc: admin-manual user-manual readme contributors
+# manuals
 admin-manual: 
 	asciidoctor-pdf ./openhospital-doc/doc_admin/AdminManual.adoc -a allow-uri-read -o AdminManual.pdf -v
 user-manual:
@@ -211,6 +212,39 @@ readme:
 	tail -n+2 OH-README.md >> $(TXTFILE)
 	sed /\`\`/d -i $(TXTFILE)
 	popd
+####################################################################
+# Generate contributors file
+contributors:
+	# OH Core
+	pushd openhospital-core
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq > ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=0 | grep -e name -e login > ../CONTRIBUTORS.tmp
+	popd
+	# OH GUI
+	pushd openhospital-gui 
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	popd
+	# Web UI
+	pushd openhospital-gui 
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-ui/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	popd
+	# Web API
+	pushd openhospital-api
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	popd
+	# OH doc
+	pushd openhospital-doc
+	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
+	curl -s https://api.github.com/repos/informatici/openhospital-doc/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
+	popd
+	# generate final file
+	# # cat CONTRIBUTORS | sed -e s/^[^@]*//g
+	# sed -e -e s/^.*\"name\"\:\ \"//g -e s/^.*\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp # working alternative
+	sed -e s/^.*\"name\"\:\ \"//g -e s/^.*\"login\"\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp
+	cat ./CONTRIBUTORS.tmp | sort -u > CONTRIBUTORS
 
 ####################################################################
 # Generate release notes file
@@ -248,40 +282,6 @@ release-notes: contributors
 	echo "</details>" >> RELEASE_NOTES.md
 	echo "" >> RELEASE_NOTES.md
 
-####################################################################
-# Generate contributors file
-
-# OH Core
-contributors:
-	pushd openhospital-core
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq > ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=0 | grep -e name -e login > ../CONTRIBUTORS.tmp
-	popd
-# OH GUI
-	pushd openhospital-gui 
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
-	popd
-# Web UI
-	pushd openhospital-gui 
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-ui/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
-	popd
-# Web API
-	pushd openhospital-api
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
-	popd
-# OH doc
-	pushd openhospital-doc
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-doc/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
-	popd
-# generate final file
-# # cat CONTRIBUTORS | sed -e s/^[^@]*//g
-	# sed -e -e s/^.*\"name\"\:\ \"//g -e s/^.*\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp # working alternative
-	sed -e s/^.*\"name\"\:\ \"//g -e s/^.*\"login\"\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp
-	cat ./CONTRIBUTORS.tmp | sort -u > CONTRIBUTORS
 
 ####################################################################
 # Create OH release packages
@@ -292,6 +292,7 @@ $(CLIENT).zip:
 	mkdir -p $(CLIENT)/doc
 	mkdir -p $(CLIENT)/oh
 	cp LICENSE $(CLIENT)
+	cp CONTRIBUTORS $(CLIENT)
 	cp -a ./oh-bundle/* $(CLIENT)/
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(CLIENT)/oh
 	mv $(CLIENT)/oh/oh.* $(CLIENT)
@@ -319,6 +320,7 @@ $(WIN32).zip:
 	mkdir -p $(WIN32)/doc
 	mkdir -p $(WIN32)/oh
 	cp LICENSE $(WIN32)
+	cp CONTRIBUTORS $(WIN32)
 	cp -a ./oh-bundle/* $(WIN32)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
 	mv $(WIN32)/oh/oh.* $(WIN32)
@@ -347,6 +349,7 @@ $(WIN64).zip:
 	mkdir -p $(WIN64)/doc
 	mkdir -p $(WIN64)/oh
 	cp LICENSE $(WIN64)
+	cp CONTRIBUTORS $(WIN64)
 	cp -a ./oh-bundle/* $(WIN64)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(WIN64)/oh
 	mv $(WIN64)/oh/oh.* $(WIN64)
@@ -375,6 +378,7 @@ $(LINUX32).tar.gz:
 	mkdir -p $(LINUX32)/doc
 	mkdir -p $(LINUX32)/oh
 	cp LICENSE $(LINUX32)
+	cp CONTRIBUTORS $(LINUX32)
 	cp -a ./oh-bundle/* $(LINUX32)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
 	mv $(LINUX32)/oh/oh.* $(LINUX32)
@@ -405,6 +409,7 @@ $(LINUX64).tar.gz:
 	mkdir -p $(LINUX64)/doc
 	mkdir -p $(LINUX64)/oh
 	cp LICENSE $(LINUX64)
+	cp CONTRIBUTORS $(LINUX64)
 	cp -a ./oh-bundle/* $(LINUX64)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
 	mv $(LINUX64)/oh/oh.* $(LINUX64)
@@ -437,6 +442,7 @@ $(FULLDISTRO).zip:
 	mkdir -p $(FULLDISTRO)/doc
 	mkdir -p $(FULLDISTRO)/oh
 	cp LICENSE $(FULLDISTRO)
+	cp CONTRIBUTORS $(FULLDISTRO)
 	cp -a ./oh-bundle/* $(FULLDISTRO)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(FULLDISTRO)/oh
 	mv $(FULLDISTRO)/oh/oh.* $(FULLDISTRO)
