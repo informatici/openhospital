@@ -117,8 +117,8 @@ HELP_FILE="OH-readme.txt"
 
 ######## MariaDB/MySQL Software
 # MariaDB version
-MYSQL_VERSION="10.6.11"
-MYSQL32_VERSION="10.5.18"
+MYSQL_VERSION="10.6.12"
+MYSQL32_VERSION="10.5.19"
 PACKAGE_TYPE="systemd" 
 
 ######## define system and software architecture

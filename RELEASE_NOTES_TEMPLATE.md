@@ -1,7 +1,8 @@
 # Open Hospital VERSION
----------------------
+-----------------------
 
-Open Hospital (https://www.open-hospital.org/) is a free and open-source Health Information Management System (HIMS) software application.
+Open Hospital is a free and open-source Health Information Management System (HIMS) software application.
+Please visit the Open Hospital website https://www.open-hospital.org/ for more information.
 Released on _date_
 
 ### Release Highlights
