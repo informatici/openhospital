@@ -1,6 +1,6 @@
 # OH - Open Hospital Client | Portable 
 
-OH - Open Hospital (https://www.open-hospital.org/) is a free and open-source Electronic Health Record (EHR) software application.
+OH - Open Hospital (https://www.open-hospital.org/) is a free and open-source Health Information Management System (HIMS) software application.
 Open Hospital is deployed as a desktop application that can be used in a standalone, single user mode (PORTABLE mode)
 or in a client / server network configuration (CLIENT mode), where multiple clients and users connect to the same database server.
 
@@ -476,5 +476,5 @@ A short description of changes for the Linux version (mostly the same behavior a
 - Updated MySQL db and user creation syntax (now compatible with MySQL 8 - unsupported)
 - Fixed _a_few_ bugs ;-)
 
-*last updated: 2023.02.01*
+*last updated: 2023.03.10*
 

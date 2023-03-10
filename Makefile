@@ -50,6 +50,7 @@ MYSQL_WIN64 := mariadb-$(MYSQL_WIN64_VER)-winx64.zip
 MYSQL_LINUX32 := mariadb-$(MYSQL_LINUX32_VER)-linux-i686.tar.gz
 MYSQL_LINUX64 := mariadb-$(MYSQL_LINUX64_VER)-linux-systemd-x86_64.tar.gz
 
+
 ####################################################################
 # targets
 .PHONY: clean clean-releases clone-all compile-all build-all
@@ -97,7 +98,7 @@ clean-repos:
 clean-downloads:
 	rm -rf zulu*.zip zulu*.tar.gz mariadb*.zip mariadb*.tar.gz
 clean-releases:
-	rm -rf OpenHospital-$(OH_VERSION)* RELEASE_NOTES.* CONTRIBUTORS* *.pdf
+	rm -rf OpenHospital-$(OH_VERSION)* RELEASE_NOTES RELEASE_NOTES.md CONTRIBUTORS* *.pdf
 clean-all:
 	git clean -xdff
 
@@ -123,10 +124,11 @@ build-doc: clone-doc compile-doc
 
 ####################################################################
 # Assemble release targets
-release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz $(FULLDISTRO).zip release-notes
+release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX64).tar.gz $(FULLDISTRO).zip release-contributors
 
 # EXPERIMENTAL - release full distro
 release-full-distro: build-core build-ui build-api build-gui build-doc $(FULLDISTRO).zip
+
 
 ####################################################################
 # Clone repositories of OH components
@@ -161,20 +163,17 @@ clone-doc:
 	fi
 ####################################################################
 # Compile application binaries
-
 # OH Core
 compile-core:
 	pushd openhospital-core
 	#git checkout $(OH_VERSION) -b $(OH_VERSION)
 	mvn --quiet -T 1.5C install
 	popd
-
 # OH GUI
 compile-gui:
 	pushd openhospital-gui
 	mvn --quiet -T 1.5C install
 	popd
-
 # Web UI
 compile-ui:
 	pushd openhospital-ui 
@@ -191,7 +190,6 @@ compile-ui:
 	# build
 	npm run build
 	popd
-
 # Web API
 compile-api:
 	pushd openhospital-api
@@ -200,7 +198,7 @@ compile-api:
 
 ####################################################################
 # Generate documentation
-compile-doc: admin-manual user-manual readme contributors
+compile-doc: admin-manual user-manual readme contributors release-notes
 # manuals
 admin-manual: 
 	asciidoctor-pdf ./openhospital-doc/doc_admin/AdminManual.adoc -a allow-uri-read -o AdminManual.pdf -v
@@ -248,7 +246,8 @@ contributors:
 
 ####################################################################
 # Generate release notes file
-release-notes: contributors
+release-notes:
+	# add OH version
 	pushd openhospital-core
 	lasttag=$(shell git tag -l --sort=-v:refname | head -1)
 	secondlasttag=$(shell git tag -l --sort=-v:refname | head -2 | tail -n 1)
@@ -257,11 +256,14 @@ release-notes: contributors
 	sed -i "s/VERSION/$(OH_VERSION)/g" RELEASE_NOTES.md
 	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
 	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
-	
+	head -6 RELEASE_NOTES.md > RELEASE_NOTES
+
+####################################################################
+# Generate final release notes file with cheksums and contributors
+release-checksums: release-notes
 	# add SHA256 checksum section
 	echo "<details>" >> RELEASE_NOTES.md
-	#
-	echo "<summary> SHA256 checksum (click to expand) </summary>" >> RELEASE_NOTES.md
+	echo "<summary> SHA256 release packages checksums (click to expand) </summary>" >> RELEASE_NOTES.md
 	echo "" >> RELEASE_NOTES.md
 	echo "\`\`\`" >> RELEASE_NOTES.md
 	# generate SHA256SUM
@@ -274,7 +276,7 @@ release-notes: contributors
 	echo "\`\`\`" >> RELEASE_NOTES.md
 	echo "</details>" >> RELEASE_NOTES.md
 	echo "" >> RELEASE_NOTES.md
-	
+release-contributors: contributors release-notes release-checksums
 	# add contributors section
 	echo "<details>" >> RELEASE_NOTES.md
 	echo "<summary> Contributors (click to expand) </summary>" >> RELEASE_NOTES.md
@@ -282,17 +284,15 @@ release-notes: contributors
 	echo "</details>" >> RELEASE_NOTES.md
 	echo "" >> RELEASE_NOTES.md
 
-
 ####################################################################
 # Create OH release packages
-
+################
 # Client package
 $(CLIENT).zip: 
 	# create directories and copy files
 	mkdir -p $(CLIENT)/doc
 	mkdir -p $(CLIENT)/oh
-	cp LICENSE $(CLIENT)
-	cp CONTRIBUTORS $(CLIENT)
+	cp CONTRIBUTORS LICENSE RELEASE_NOTES $(CLIENT)
 	cp -a ./oh-bundle/* $(CLIENT)/
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(CLIENT)/oh
 	mv $(CLIENT)/oh/oh.* $(CLIENT)
@@ -314,13 +314,13 @@ $(CLIENT).zip:
 	# create package
 	zip -r -q $(CLIENT).zip $(CLIENT)
 
+#######################
 # Windows 32bit package
 $(WIN32).zip:
 	# create directories and copy files
 	mkdir -p $(WIN32)/doc
 	mkdir -p $(WIN32)/oh
-	cp LICENSE $(WIN32)
-	cp CONTRIBUTORS $(WIN32)
+	cp CONTRIBUTORS LICENSE RELEASE_NOTES $(WIN32)
 	cp -a ./oh-bundle/* $(WIN32)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
 	mv $(WIN32)/oh/oh.* $(WIN32)
@@ -343,13 +343,13 @@ $(WIN32).zip:
 	unzip -u -q $(MYSQL_WIN32) -d $(WIN32)
 	zip -r -q $(WIN32).zip $(WIN32)
 
+#######################
 # Windows 64bit package
 $(WIN64).zip:
 	# create directories and copy files
 	mkdir -p $(WIN64)/doc
 	mkdir -p $(WIN64)/oh
-	cp LICENSE $(WIN64)
-	cp CONTRIBUTORS $(WIN64)
+	cp CONTRIBUTORS LICENSE RELEASE_NOTES $(WIN64)
 	cp -a ./oh-bundle/* $(WIN64)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(WIN64)/oh
 	mv $(WIN64)/oh/oh.* $(WIN64)
@@ -372,13 +372,13 @@ $(WIN64).zip:
 	unzip -u -q $(MYSQL_WIN64) -d $(WIN64)
 	zip -r -q $(WIN64).zip $(WIN64)
 
+#######################
 # Linux 32bit package
 $(LINUX32).tar.gz:
 	# create directories and copy files
 	mkdir -p $(LINUX32)/doc
 	mkdir -p $(LINUX32)/oh
-	cp LICENSE $(LINUX32)
-	cp CONTRIBUTORS $(LINUX32)
+	cp CONTRIBUTORS LICENSE RELEASE_NOTES $(LINUX32)
 	cp -a ./oh-bundle/* $(LINUX32)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
 	mv $(LINUX32)/oh/oh.* $(LINUX32)
@@ -403,13 +403,13 @@ $(LINUX32).tar.gz:
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32)
 	tar -czf $(LINUX32).tar.gz $(LINUX32)
 
+#######################
 # Linux 64bit package
 $(LINUX64).tar.gz:
 	# create directories and copy files
 	mkdir -p $(LINUX64)/doc
 	mkdir -p $(LINUX64)/oh
-	cp LICENSE $(LINUX64)
-	cp CONTRIBUTORS $(LINUX64)
+	cp CONTRIBUTORS LICENSE RELEASE_NOTES $(LINUX64)
 	cp -a ./oh-bundle/* $(LINUX64)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
 	mv $(LINUX64)/oh/oh.* $(LINUX64)
@@ -434,15 +434,16 @@ $(LINUX64).tar.gz:
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64)
 	tar -czf $(LINUX64).tar.gz $(LINUX64)
 
+####################################################################
 #
 # EXPERIMENTAL - full distro with UI+API server
 #
+####################################################################
 $(FULLDISTRO).zip:
 	# create directories and copy files
 	mkdir -p $(FULLDISTRO)/doc
 	mkdir -p $(FULLDISTRO)/oh
-	cp LICENSE $(FULLDISTRO)
-	cp CONTRIBUTORS $(FULLDISTRO)
+	cp CONTRIBUTORS LICENSE RELEASE_NOTES $(FULLDISTRO)
 	cp -a ./oh-bundle/* $(FULLDISTRO)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(FULLDISTRO)/oh
 	mv $(FULLDISTRO)/oh/oh.* $(FULLDISTRO)
@@ -487,4 +488,4 @@ $(FULLDISTRO).zip:
 	tar xz -C $(FULLDISTRO) -f $(MYSQL_LINUX64)
 	# create package
 	zip -r -q $(FULLDISTRO).zip $(FULLDISTRO)
-	# final tasks to enable / uncomment
+####################################################################
