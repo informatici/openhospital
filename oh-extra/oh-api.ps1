@@ -101,7 +101,7 @@ $global:ProgressPreference= 'SilentlyContinue'
 # OH_PATH="c:\Users\OH\OpenHospital\oh-1.12"
 
 # set OH mode to PORTABLE | CLIENT | SERVER - default set to PORTABLE
-$script:OH_MODE="SERVER"
+#$script:OH_MODE="PORTABLE"
 
 # language setting - default set to en
 $script:OH_LANGUAGE_LIST="en|fr|es|it|pt|ar"
@@ -116,6 +116,7 @@ $script:OH_SINGLE_USER="no"
 # set DEMO_DATA to on to enable demo database loading - default set to off
 # ---> Warning <--- __requires deletion of all portable data__
 $script:DEMO_DATA="off"
+$script:DEMO_DATABASE="ohdemo"
 
 # set JAVA_BIN 
 # Uncomment this if you want to use system wide JAVA
@@ -170,6 +171,9 @@ $script:EXT="zip"
 # mysql configuration file
 $script:MYSQL_CONF_FILE="my.cnf"
 
+# settings file
+$script:SETTINGS_FILE="settings.properties"
+
 # help file
 $script:HELP_FILE="OH-readme.txt"
 
@@ -215,7 +219,7 @@ $script:MYSQL_NAME="MariaDB" # For console output - MariaDB/MYSQL_NAME
 #$script:JAVA_DISTRO="OpenJDK11U-jre_x64_windows_hotspot_11.0.11_9"
 #$script:JAVA_DIR="jdk-11.0.11+9-jre"
 
-### JRE 11 - zulu
+### JRE 11 - zulu distribution
 $script:JAVA_URL="https://cdn.azul.com/zulu/bin"
 $script:JAVA_DISTRO="zulu11.62.17-ca-jre11.0.18-win_$JAVA_PACKAGE_ARCH"
 
@@ -237,15 +241,17 @@ function script_menu {
 	# Clear-Host # clear console
 	Write-Host " -----------------------------------------------------------------"
 	Write-Host "|                                                                 |"
-	Write-Host "|                       Open Hospital | OH                        |"
+	Write-Host "|                    Open Hospital - $OH_VERSION                       |"
 	Write-Host "|                                                                 |"
 	Write-Host " -----------------------------------------------------------------"
 	Write-Host " arch $ARCH | lang $OH_LANGUAGE | mode $OH_MODE | log level $LOG_LEVEL | Demo $DEMO_DATA"
 	Write-Host " -----------------------------------------------------------------"
-	Write-Host ""
+	Write-Host " API server set to $API_SERVER"
+	Write-Host " -----------------------------------------------------------------"
+	Write-Host "   A    activate API server - EXPERIMENTAL"
 	Write-Host "   C    set OH in CLIENT mode"
 	Write-Host "   P    set OH in PORTABLE mode"
-	Write-Host "   S    set OH in SERVER mode (portable) with API server"
+	Write-Host "   S    set OH in SERVER mode (portable)"
 	Write-Host "   l    set language: $OH_LANGUAGE_LIST"
 	Write-Host "   s    save OH configuration"
 	Write-Host "   X    clean/reset OH installation"
@@ -270,12 +276,71 @@ function script_menu {
 }
 
 ###################################################################
-function get_confirmation {
-	$choice = Read-Host -Prompt "(y/n) ? "
+function get_confirmation ($arg) {
+	$choice = Read-Host -Prompt "(y/n)? "
 	switch ("$choice") {
 		"y"  { "yes"; break }
-		"n"  { "Exiting."; Read-Host; exit 0 }
-		default { "Invalid choice. Exiting."; Read-Host; exit 1; }
+		"n"  { "Exiting.";
+			Read-Host;
+			if ( $arg -eq 1 ) {
+				parse_user_input;
+			}
+			
+			exit 0;
+			}
+		default { "Invalid choice. Exiting.";
+			Read-Host;
+			if ( $arg -eq 1 ) {
+				parse_user_input;
+			}
+			exit 1;
+			}
+	}
+}
+
+###################################################################
+function set_path {
+	# get current directory
+	$script:CURRENT_DIR=Get-Location | select -ExpandProperty Path
+	# set OH_PATH if not defined
+	if ( ! $OH_PATH ) {
+		Write-Host "Info: OH_PATH not defined - setting to script path"
+		$script:OH_PATH=$PSScriptRoot
+		if ( !(Test-Path "$OH_PATH/$SCRIPT_NAME" -PathType leaf) ) {
+			Write-Host "Error - $SCRIPT_NAME not found in the current PATH. Please browse to the directory where Open Hospital was unzipped or set up OH_PATH properly." -ForegroundColor Yellow
+			Read-Host; exit 1
+		}
+	}
+	
+}
+
+###################################################################
+function read_settings {
+	# check and read OH version file
+	if ( Test-Path "$OH_PATH/$OH_DIR/rsc/version.properties" -PathType leaf ) {
+		# read Open Hospital Version
+		Get-Content $OH_PATH\$OH_DIR\rsc\version.properties | Where-Object {$_.length -gt 0} | Where-Object {!$_.StartsWith("#")} | ForEach-Object {
+			$var = $_.Split('=',2).Trim()
+			New-Variable -Force -Scope Private -Name $var[0] -Value $var[1] 
+		}
+		$script:OH_VERSION="$VER_MAJOR.$VER_MINOR.$VER_RELEASE"
+	}
+	else {
+		Write-Host "Error: Open Hospital not found. Exiting" -ForegroundColor Red
+		Read-Host; exit 1
+	}
+
+	# read values for script variables from existing settings file
+	if ( Test-Path "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE" -PathType leaf ) {
+		Write-Host "Reading OH settings file..."
+		$oh_settings = [pscustomobject](Get-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE" -Raw | ConvertFrom-StringData)
+		##############   saved settings   ##############
+		$script:OH_MODE=$oh_settings.MODE
+		$script:OH_LANGUAGE=$oh_settings.LANGUAGE
+		$script:OH_SINGLE_USER=$oh_settings.SINGLE_USER
+		$script:OH_DOC_DIR=$oh_settings.OH_DOC_DIR
+		$script:DEMO_DATA=$oh_settings.DEMODATA
+		################################################
 	}
 }
 
@@ -321,57 +386,66 @@ function set_defaults {
 	if ( [string]::IsNullOrEmpty($DEMO_DATA) ) {
 		$script:DEMO_DATA="off"
 	}
-}
-
-###################################################################
-function read_settings {
-	# read values for script variables from existing settings file
-	if ( Test-Path "$OH_PATH/$OH_DIR/rsc/settings.properties" -PathType leaf ) {
-		Write-Host "Reading OH settings file..."
-		$oh_settings = [pscustomobject](Get-Content "$OH_PATH/$OH_DIR/rsc/settings.properties" -Raw | ConvertFrom-StringData)
-		##############   saved settings   ##############
-		$script:OH_MODE=$oh_settings.MODE
-		$script:OH_LANGUAGE=$oh_settings.LANGUAGE
-		$script:OH_SINGLE_USER=$oh_settings.SINGLE_USER
-		################################################
+	# api server - set default to off
+	if ( [string]::IsNullOrEmpty($API_SERVER) ) {
+		$script:API_SERVER="off"
 	}
+
+	# set original database name
+	$script:ORIG_DATABASE_NAME="$DATABASE_NAME"
+	# set original data base_dir
+	$script:ORIG_DATADIR="$DATA_DIR"
+	# set escaped values (/ in place of \)
+	$script:OH_PATH_SUBSTITUTE=$OH_PATH -replace "\\", "/"
 }
 
 ###################################################################
-function set_path {
-	# get current directory
-	$script:CURRENT_DIR=Get-Location | select -ExpandProperty Path
-	# set OH_PATH if not defined
-	if ( ! $OH_PATH ) {
-		Write-Host "Info: OH_PATH not defined - setting to script path"
-		$script:OH_PATH=$PSScriptRoot
-		if ( !(Test-Path "$OH_PATH/$SCRIPT_NAME" -PathType leaf) ) {
-			Write-Host "Error - $SCRIPT_NAME not found in the current PATH. Please browse to the directory where Open Hospital was unzipped or set up OH_PATH properly." -ForegroundColor Yellow
-			Read-Host; exit 1
+function set_values {
+	# set database name for demo data
+	switch -CaseSensitive( $script:DEMO_DATA ) {
+	"on"	{ # 
+		$script:DATABASE_NAME=$DEMO_DATABASE
 		}
-		# set path variable with / in place of \ for configuration files
-		$script:OH_PATH_SUBSTITUTE=$OH_PATH -replace "\\", "/"
+	"off"	{ # 
+		$script:DATABASE_NAME="$script:ORIG_DATABASE_NAME"
+		}
 	}
+	
+	# set DATA_DIR with db name
+	$script:DATA_DIR="$ORIG_DATADIR/$DATABASE_NAME"
+	#
+	# set escaped values (/ in place of \)
+	$script:DATA_DIR=$DATA_DIR -replace "\\", "/"
 }
 
 ###################################################################
 function set_oh_mode {
-	#if ( !( $OH_MODE -eq "PORTABLE" ) -And !( $OH_MODE -eq "CLIENT" ) -And !( $OH_MODE -eq "SERVER" ) ) {
-	#	Write-Host "Error - OH_MODE not defined [CLIENT - PORTABLE - SERVER]! Exiting." -ForegroundColor Red
-	#	Read-Host;
-	#	exit 1
-	#}
-	# if settings.properties is present set OH mode
-	if ( Test-Path "$OH_PATH/$OH_DIR/rsc/settings.properties" -PathType leaf ) {
+	# if $SETTINGS_FILE is present set OH mode
+	if ( Test-Path "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE" -PathType leaf ) {
 		Write-Host "Configuring OH mode..."
-	        ######## settings.properties language configuration
-		Write-Host "Setting OH mode to $OH_MODE in OH configuration files-> settings.properties..."
-		(Get-Content "$OH_PATH/$OH_DIR/rsc/settings.properties") -replace('^(MODE.+)',"MODE=$OH_MODE") | Set-Content "$OH_PATH/$OH_DIR/rsc/settings.properties"
+	        ######## $SETTINGS_FILE language configuration
+		Write-Host "Setting OH mode to $OH_MODE in OH configuration files-> $SETTINGS_FILE..."
+		(Get-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE") -replace('^(MODE.+)',"MODE=$OH_MODE") | Set-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE"
 	}
 	else {
-		Write-Host "Warning: settings.properties file not found." -ForegroundColor Yellow
+		Write-Host "Warning: $SETTINGS_FILE file not found." -ForegroundColor Yellow
 	}
 	Write-Host "OH mode set to $OH_MODE." -ForeGroundcolor Green
+}
+
+###################################################################
+function set_demo_data {
+	# if $SETTINGS_FILE is present set DEMO mode
+	if ( Test-Path "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE" -PathType leaf ) {
+		Write-Host "Configuring DEMO data..."
+	        ######## $SETTINGS_FILE DEMO data configuration
+		Write-Host "Setting DEMO data to $DEMO_DATA in OH configuration files-> $SETTINGS_FILE..."
+		(Get-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE") -replace('^(DEMODATA.+)',"DEMODATA=$DEMO_DATA") | Set-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE"
+	}
+	else {
+		Write-Host "Warning: $SETTINGS_FILE file not found." -ForegroundColor Yellow
+	}
+	Write-Host "DEMO data set to $DEMO_DATA." -ForeGroundcolor Green
 }
 
 ###################################################################
@@ -388,16 +462,16 @@ function set_language {
 	# set database creation script in chosen language
 	$script:DB_CREATE_SQL="create_all_$OH_LANGUAGE.sql"
 
-	# if settings.properties is present set language
-	if ( Test-Path "$OH_PATH/$OH_DIR/rsc/settings.properties" -PathType leaf ) {
+	# if $SETTINGS_FILE is present set language
+	if ( Test-Path "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE" -PathType leaf ) {
 		Write-Host "Configuring OH language..."
-	        ######## settings.properties language configuration
-		Write-Host "Setting language to $OH_LANGUAGE in OH configuration files-> settings.properties..."
-		(Get-Content "$OH_PATH/$OH_DIR/rsc/settings.properties") -replace('^(LANGUAGE.+)',"LANGUAGE=$OH_LANGUAGE") | Set-Content "$OH_PATH/$OH_DIR/rsc/settings.properties"
+	        ######## $SETTINGS_FILE language configuration
+		Write-Host "Setting language to $OH_LANGUAGE in OH configuration files-> $SETTINGS_FILE..."
+		(Get-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE") -replace('^(LANGUAGE.+)',"LANGUAGE=$OH_LANGUAGE") | Set-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE"
 		Write-Host "Language set to $OH_LANGUAGE."
 	}
 	else {
-		Write-Host "Warning: settings.properties file not found." -ForegroundColor Yellow
+		Write-Host "Warning: $SETTINGS_FILE file not found." -ForegroundColor Yellow
 	}
 }
 
@@ -426,6 +500,7 @@ function set_log_level {
 		Write-Host "Warning: log4j.properties file not found." -ForegroundColor Yellow
 	}
 }
+
 ###################################################################
 function initialize_dir_structure {
 	# create directory structure
@@ -446,13 +521,12 @@ function create_desktop_shortcut {
 
 	$Shortcut = $WshShell.CreateShortcut("$Home\Desktop\OpenHospital.lnk")
 	$Shortcut.TargetPath = "$POWERSHELL_EXE" # $SCRIPT_DIR\$SCRIPT_NAME"
-	$Shortcut.Arguments = "$SCRIPT_DIR\$SCRIPT_NAME -interactive off -mode $OH_MODE -lang $OH_LANGUAGE"
+	$Shortcut.Arguments = "-ExecutionPolicy Bypass $SCRIPT_DIR\$SCRIPT_NAME -interactive off -mode $OH_MODE -lang $OH_LANGUAGE"
 	$Shortcut.WorkingDirectory = "$OH_PATH"
 	$ShortCut.IconLocation = "$OH_PATH\oh.ico"
 	$Shortcut.Save()
 	Write-Host "Done!"
 }
-
 
 ###################################################################
 function java_lib_setup {
@@ -512,7 +586,7 @@ function java_check {
 	# if JAVA_BIN is not found download JRE
 	if ( !(Test-Path $JAVA_BIN  -PathType leaf ) ) {
         	if ( !(Test-Path "$OH_PATH/$JAVA_DISTRO.$EXT" -PathType leaf ) ) {
-			Write-Host "Warning - JAVA not found. Do you want to download it ?" -ForegroundColor Yellow
+			Write-Host "Warning - JAVA not found. Do you want to download it?" -ForegroundColor Yellow
 			get_confirmation;
 			# Download java binaries
 			download_file "$JAVA_URL" "$JAVA_DISTRO.$EXT"
@@ -534,10 +608,11 @@ function java_check {
 	Write-Host "Using $JAVA_BIN"
 }
 
+###################################################################
 function mysql_check {
 	if (  !(Test-Path "$OH_PATH/$MYSQL_DIR") ) {
 		if ( !(Test-Path "$OH_PATH/$MYSQL_DIR.$EXT" -PathType leaf) ) {
-			Write-Host "Warning - $MYSQL_NAME not found. Do you want to download it ?" -ForegroundColor Yellow
+			Write-Host "Warning - $MYSQL_NAME not found. Do you want to download it?" -ForegroundColor Yellow
 			get_confirmation;
 			# Downloading mysql binary
 			download_file "$MYSQL_URL" "$MYSQL_DIR.$EXT" 
@@ -569,7 +644,6 @@ function mysql_check {
 ###################################################################
 function config_database {
 	Write-Host "Checking for $MYSQL_NAME config file..."
-
 	if ( ($script:WRITE_CONFIG_FILES -eq "on") -or !(Test-Path "$OH_PATH/$CONF_DIR/$MYSQL_CONF_FILE" -PathType leaf) ) {
 	if (Test-Path "$OH_PATH/$CONF_DIR/$MYSQL_CONF_FILE" -PathType leaf) { mv -Force "$OH_PATH/$CONF_DIR/$MYSQL_CONF_FILE" "$OH_PATH/$CONF_DIR/$MYSQL_CONF_FILE.old" }
 
@@ -676,7 +750,7 @@ function set_database_root_pw {
 				Start-Process -FilePath "$OH_PATH/$MYSQL_DIR/bin/mysql.exe" -ArgumentList ("$SQLCOMMAND") -Wait -NoNewWindow -RedirectStandardOutput "$LOG_DIR/$LOG_FILE" -RedirectStandardError "$LOG_DIR/$LOG_FILE_ERR"
 			}
 			catch {
-				Write-Host "Error: MySQL root password not set! Exiting." -ForegroundColor Red
+				Write-Host "Error: MySQL root password not set! Try resetting installation with option [X]. Exiting." -ForegroundColor Red
 				shutdown_database;
 				Read-Host; exit 2
 			}
@@ -751,6 +825,7 @@ function dump_database {
 	Write-Host "$MYSQL_NAME dump file $BACKUP_DIR/mysqldump_$DATE.sql completed!" -ForegroundColor Green
 }
 
+###################################################################
 function shutdown_database {
 	if ( !( $OH_MODE -eq "CLIENT" ) ) {
 		Write-Host "Shutting down $MYSQL_NAME..."
@@ -763,23 +838,6 @@ function shutdown_database {
 
 	else { # do nothing
 	}
-}
-
-###################################################################
-function clean_database {
-	Write-Host "Warning: do you want to remove all existing data and databases ?" -ForegroundColor Red
-	get_confirmation;
-	Write-Host "--->>> This operation cannot be undone" -ForegroundColor Red
-	Write-Host "--->>> Are you sure ?" -ForegroundColor Red
-	get_confirmation;
-	Write-Host "Killing mysql processes..."
-	# stop mysqld zombies
-	Get-Process mysqld -ErrorAction SilentlyContinue | Stop-Process -PassThru
-	Write-Host "Removing data..."
-	# remove database files
-	$filetodel="$OH_PATH\$DATA_DIR\*"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	# remove socket and pid file
-	$filetodel="$OH_PATH\$TMP_DIR\*"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
 }
 
 ###################################################################
@@ -802,6 +860,54 @@ function test_database_connection {
 		Write-Host "Can't test database connection..." 
 	}
 }
+
+###################################################################
+function write_api_config_file {
+	######## application.properties setup
+	if ( ($script:WRITE_CONFIG_FILES -eq "on") -or !(Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf) ) {
+		if (Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf) { mv -Force $OH_PATH/$OH_DIR/rsc/settings.properties $OH_PATH/$OH_DIR/rsc/application.properties.old }
+		# set OH API token
+		$JWT_TOKEN_SECRET=(-join ((65..90) + (97..122) | Get-Random -Count 64 | % {[char]$_}))
+		Write-Host "Writing OH API configuration file -> application.properties..."
+		(Get-Content "$OH_PATH/$OH_DIR/rsc/application.properties.dist").replace("JWT_TOKEN_SECRET","$JWT_TOKEN_SECRET") | Set-Content "$OH_PATH/$OH_DIR/rsc/application.properties"
+	}
+}
+
+
+###################################################################
+function start_api_server {
+	# check for configuration files
+	if ( !( Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf )) {
+		Write-Host "Error: missing application.properties settings file. Exiting" -ForeGround Red
+		exit 1;
+	}
+	Write-Host "------------------------"
+	Write-Host "---- EXPERIMENTAL ------"
+	Write-Host "------------------------"
+	Write-Host "Starting API server..."
+	Write-Host ""
+	Write-Host "Connect to http://localhost:8080 for dashboard"
+	Write-Host ""
+
+        cd "$OH_PATH/$OH_DIR" # workaround for hard coded paths
+
+	$JAVA_ARGS="-client -Xms64m -Xmx1024m -cp ./bin/openhospital-api-0.0.2.jar;./rsc;./static org.springframework.boot.loader.JarLauncher"
+
+#	Start-Process -FilePath "$JAVA_BIN" -ArgumentList $JAVA_ARGS -Wait -NoNewWindow -RedirectStandardOutput "$OH_PATH/$LOG_DIR/$API_LOG_FILE" -RedirectStandardError "$OH_PATH/$LOG_DIR/$API_ERR_LOG_FILE"
+	Start-Process -FilePath "$JAVA_BIN" -ArgumentList $JAVA_ARGS -Wait -WindowStyle Hidden -RedirectStandardOutput "$OH_PATH/$LOG_DIR/$API_LOG_FILE" -RedirectStandardError "$OH_PATH/$LOG_DIR/$API_ERR_LOG_FILE"
+
+        # $JAVA_BIN -client -Xms64m -Xmx1024m -cp "./bin/openhospital-api-0.0.2.jar:./rsc::./static" org.springframework.boot.loader.JarLauncher
+
+#        if [ $? -ne 0 ]; then
+#                echo "An error occurred while starting Open Hospital API. Exiting."
+#                shutdown_database;
+#                cd "$CURRENT_DIR"
+#                exit 4
+#        fi
+        cd "$OH_PATH"
+}
+
+
 
 ###################################################################
 function write_config_files {
@@ -847,136 +953,83 @@ function write_config_files {
 		#Add-Content -Path $OH_PATH/$OH_DIR/rsc/database.properties -Value "jdbc.password=$DATABASE_PASSWORD"
 	}
 
-	######## settings.properties setup
-	if ( ($script:WRITE_CONFIG_FILES -eq "on") -or !(Test-Path "$OH_PATH/$OH_DIR/rsc/settings.properties" -PathType leaf) ) {
-		if (Test-Path "$OH_PATH/$OH_DIR/rsc/settings.properties" -PathType leaf) { mv -Force $OH_PATH/$OH_DIR/rsc/settings.properties $OH_PATH/$OH_DIR/rsc/settings.properties.old }
-		Write-Host "Writing OH configuration file -> settings.properties..."
+	######## $SETTINGS_FILE setup
+	if ( ($script:WRITE_CONFIG_FILES -eq "on") -or !(Test-Path "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE" -PathType leaf) ) {
+		if (Test-Path "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE" -PathType leaf) { mv -Force $OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE $OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE.old }
+		Write-Host "Writing OH configuration file -> $SETTINGS_FILE..."
 		# set OH mode
-		(Get-Content "$OH_PATH/$OH_DIR/rsc/settings.properties.dist").replace("OH_MODE","$OH_MODE") | Set-Content "$OH_PATH/$OH_DIR/rsc/settings.properties"
+		(Get-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE.dist").replace("OH_MODE","$OH_MODE") | Set-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE"
 		# set LANGUAGE
-		(Get-Content "$OH_PATH/$OH_DIR/rsc/settings.properties").replace("OH_LANGUAGE","$OH_LANGUAGE") | Set-Content "$OH_PATH/$OH_DIR/rsc/settings.properties"
+		(Get-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE").replace("OH_LANGUAGE","$OH_LANGUAGE") | Set-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE"
 		# set DOC_DIR
-		(Get-Content "$OH_PATH/$OH_DIR/rsc/settings.properties").replace("OH_DOC_DIR","$OH_DOC_DIR") | Set-Content "$OH_PATH/$OH_DIR/rsc/settings.properties"
+		(Get-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE").replace("OH_DOC_DIR","$OH_DOC_DIR") | Set-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE"
 		# set PHOTO_DIR
-		(Get-Content "$OH_PATH/$OH_DIR/rsc/settings.properties").replace("PHOTO_DIR","$PHOTO_DIR") | Set-Content "$OH_PATH/$OH_DIR/rsc/settings.properties"
+		(Get-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE").replace("PHOTO_DIR","$PHOTO_DIR") | Set-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE"
 		# set singleuser = yes / no
-		(Get-Content "$OH_PATH/$OH_DIR/rsc/settings.properties").replace("YES_OR_NO","$OH_SINGLE_USER") | Set-Content "$OH_PATH/$OH_DIR/rsc/settings.properties"
-	}
-}
-
-function write_api_config_file {
-	######## application.properties setup
-	if ( ($script:WRITE_CONFIG_FILES -eq "on") -or !(Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf) ) {
-		if (Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf) { mv -Force $OH_PATH/$OH_DIR/rsc/settings.properties $OH_PATH/$OH_DIR/rsc/application.properties.old }
-		# set OH API token
-		$JWT_TOKEN_SECRET=(-join (1..128 | ForEach {[char]((97..122) + (48..57) | Get-Random)}))
-		Write-Host "Writing OH API configuration file -> application.properties..."
-		(Get-Content "$OH_PATH/$OH_DIR/rsc/application.properties.dist").replace("JWT_TOKEN_SECRET","$JWT_TOKEN_SECRET") | Set-Content "$OH_PATH/$OH_DIR/rsc/application.properties"
+		(Get-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE").replace("YES_OR_NO","$OH_SINGLE_USER") | Set-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE"
+		# set DEMO DATA
+		(Get-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE").replace("DEMODATA=off","DEMODATA=$DEMO_DATA") | Set-Content "$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE"
 	}
 }
 
 ###################################################################
-function clean_files {
-	# remove all log files
-	Write-Host "Warning: do you want to remove all existing log files ?" -ForegroundColor Red
-	get_confirmation;
-	Write-Host "Removing log files..."
-	$filetodel="$OH_PATH\$LOG_DIR\*"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	
-	# remove all configuration files - leave only .dist files
-	Write-Host "Warning: do you want to remove all existing configuration files ?" -ForegroundColor Red
-	get_confirmation;
+function clean_database {
+	# kill mariadb/mysqld processes
+	Write-Host "Killing mariadb/mysql processes..."
+	Get-Process mysqld -ErrorAction SilentlyContinue | Stop-Process -PassThru
+	# remove socket and pid file
+	Write-Host "Removing socket and pid file..."
+	$filetodel="$OH_PATH/$TMP_DIR/*"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	# remove database files
+	Write-Host "Removing databases..."
+	$filetodel="$OH_PATH/$DATA_DIR"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+}
+
+###################################################################
+function clean_conf_files {
+	# remove configuration files - leave only .dist files
 	Write-Host "Removing configuration files..."
-	$filetodel="$OH_PATH\$CONF_DIR\$MYSQL_CONF_FILE"; if (Test-Path $filetodel -PathType leaf){ Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$CONF_DIR\$MYSQL_CONF_FILE"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$OH_DIR\rsc\settings.properties"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$OH_DIR\rsc\settings.properties.old"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$OH_DIR\rsc\database.properties"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$OH_DIR\rsc\database.properties.old"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$OH_DIR\rsc\log4j.properties"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$OH_DIR\rsc\log4j.properties.old"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$OH_DIR\rsc\dicom.properties"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$OH_DIR\rsc\dicom.properties.old"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
-	$filetodel="$OH_PATH\$OH_DIR\$LOG_DIR\*"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	$filetodel="$OH_PATH/$CONF_DIR/$MYSQL_CONF_FILE"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	$filetodel="$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	$filetodel="$OH_PATH/$OH_DIR/rsc/$SETTINGS_FILE.old"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	$filetodel="$OH_PATH/$OH_DIR/rsc/database.properties"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	$filetodel="$OH_PATH/$OH_DIR/rsc/database.properties.old"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	$filetodel="$OH_PATH/$OH_DIR/rsc/log4j.properties"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	$filetodel="$OH_PATH/$OH_DIR/rsc/log4j.properties.old"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	$filetodel="$OH_PATH/$OH_DIR/rsc/dicom.properties"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+	$filetodel="$OH_PATH/$OH_DIR/rsc/dicom.properties.old"; if (Test-Path $filetodel -PathType leaf) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
+}
+
+###################################################################
+function clean_log_files {
+	# remove all log files
+	Write-Host "Removing log files..."
+	$filetodel="$OH_PATH/$LOG_DIR/*.log"; if (Test-Path $filetodel) { Remove-Item $filetodel -Recurse -Confirm:$false -ErrorAction Ignore }
 }
 
 
-function start_api {
-	# check for configuration files
-	if ( !( Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf )) {
-		Write-Host "Error: missing application.properties settings file. Exiting" -ForeGround Red
-		exit 1;
-	}
-	Write-Host "------------------------"
-	Write-Host "---- EXPERIMENTAL ------"
-	Write-Host "------------------------"
-	Write-Host "Starting API server..."
-	Write-Host ""
-	Write-Host "Connect to http://localhost:8080 for dashboard"
-	Write-Host ""
-
-        cd "$OH_PATH/$OH_DIR" # workaround for hard coded paths
-
-	$JAVA_ARGS="-client -Xms64m -Xmx1024m -cp ./bin/openhospital-api-0.0.2.jar;./rsc;./static org.springframework.boot.loader.JarLauncher"
-
-	Start-Process -FilePath "$JAVA_BIN" -ArgumentList $JAVA_ARGS -Wait -NoNewWindow -RedirectStandardOutput "$OH_PATH/$LOG_DIR/$API_LOG_FILE" -RedirectStandardError "$OH_PATH/$LOG_DIR/$API_ERR_LOG_FILE"
-
-        # $JAVA_BIN -client -Xms64m -Xmx1024m -cp "./bin/openhospital-api-0.0.2.jar:./rsc::./static" org.springframework.boot.loader.JarLauncher
-
-#        if [ $? -ne 0 ]; then
-#                echo "An error occurred while starting Open Hospital API. Exiting."
-#                shutdown_database;
-#                cd "$CURRENT_DIR"
-#                exit 4
-#        fi
-        cd "$OH_PATH"
-}
-
-
-######################## Script start ########################
-
-######## Pre-flight checks
-
-# check user running the script
-#Write-Host "Checking for elevated permissions..."
-#	if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(`[Security.Principal.WindowsBuiltInRole] "Administrator")) {
-#	Write-Host "Error: Cannot run as Administrator user. Exiting" -ForegroundColor Red
-#	exit 1
-#}
-# else { Write-Host "User ok — go on executing the script..." -ForegroundColor Green }
-
-
-######## Environment setup
-
-set_path;
-read_settings;
-set_defaults;
-
-# set working dir to OH base dir
-cd "$OH_PATH" # workaround for hard coded paths
-
-######## Parse user input
-
-# If INTERACTIVE_MODE is set to "off" don't show menu for user input
+###################################################################
+function parse_user_input {
+# If INTERACTIVE_MODE is set to "off" don't show menu
 if ( $INTERACTIVE_MODE -eq "on" ) {
 	do {
 		script_menu;
-		$opt = Read-Host "Please select an option or press enter to start OH"
-		switch -CaseSensitive ( "$opt" ) {
+		$option = Read-Host "Please select an option or press enter to start OH"
+		switch -CaseSensitive ( "$option" ) {
 		###################################################
-		"a"	{ # start API server
-			$script:OH_MODE="SERVER"
-			Write-Host "------------------------"
-			Write-Host "---- EXPERIMENTAL ------"
-			Write-Host "------------------------"
-			Write-Host ""
-			Write-Host "-   SERVER mode + API  -"
-			java_check;
-			java_lib_setup;
+		"A"	{ # toggle API server
+			switch -CaseSensitive( $script:API_SERVER ) {
+			"on"	{ # 
+				$script:API_SERVER="off"
+				}
+			"off"	{ # 
+				$script:API_SERVEr="on"
+				}
+			}
 			write_api_config_file;
-			start_api;
-			Read-Host "Press any key to continue";
+			#Read-Host "Press any key to continue";
 		}
+		###################################################
 		###################################################
 		"C"	{ # start in CLIENT mode
 			$script:OH_MODE="CLIENT"
@@ -993,7 +1046,6 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 		"S"	{ # start in SERVER (portable) mode
 			$script:OH_MODE="SERVER"
 			set_oh_mode;
-			#$script:WRITE_CONFIG_FILES="on"
 			Read-Host "Press any key to continue";
 		}
 		###################################################
@@ -1017,11 +1069,23 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 		"D"	{ # demo mode 
 			# exit if OH is configured in CLIENT mode
 			if ( $OH_MODE -eq "CLIENT" ) {
-				Write-Host "Error - OH_MODE set to CLIENT mode. Cannot run with Demo data." -ForeGroundcolor Red
-				Read-Host;
+				Write-Host "Error - OH_MODE set to CLIENT mode. Cannot run with Demo data. Exiting" -ForeGroundcolor Red
+				Read-Host; exit 1;
 			}
-			$DEMO_DATA="on"
-			Write-Host "Demo data set to on."
+			# invert values if D is pressed
+			switch -CaseSensitive( $script:DEMO_DATA ) {
+			"on"	{ # 
+				$script:DEMO_DATA="off"
+				}
+			"off"	{ # 
+				$script:DEMO_DATA="on"
+				}
+			}
+			# update confuration settings
+			set_values;
+
+			$script:WRITE_CONFIG_FILES="on"; write_config_files;
+			
 			Read-Host "Press any key to continue";
 		}
 		###################################################
@@ -1042,7 +1106,7 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 			Write-Host " Database Server -> $DATABASE_SERVER"
 			Write-Host " TCP port -> $DATABASE_PORT"
 			Write-Host ""
-			get_confirmation;
+			get_confirmation 1;
 			initialize_dir_structure;
 			set_language;
 			mysql_check;
@@ -1067,10 +1131,7 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 		###################################################
 		"l"	{ # set language 
 			$script:OH_LANGUAGE = Read-Host "Select language: $OH_LANGUAGE_LIST (default is en)"
-			# create config files if not present
-			#write_config_files;
 			set_language;
-			#$script:WRITE_CONFIG_FILES="on"
 			Read-Host "Press any key to continue";
 		}
 		###################################################
@@ -1088,11 +1149,9 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 			$script:DATABASE_USER=Read-Host		"Enter database user name [DATABASE_USER]"
 			$script:DATABASE_PASSWORD=Read-Host	"Enter database password [DATABASE_PASSWORD]"
 			Write-Host				"Do you want to save entered settings to OH configuration files?"
-			get_confirmation;
-			$script:WRITE_CONFIG_FILES="on"
-			write_config_files;
-			#set_log_level;
-			#set_language;
+			get_confirmation 1;
+			set_values;
+			$script:WRITE_CONFIG_FILES="on"; write_config_files;
 			Write-Host "Done!"
 			Read-Host "Press any key to continue";
 		}
@@ -1103,7 +1162,7 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 			# check if portable mode is on
 			if ( !($OH_MODE -eq "CLIENT" )) {
 				# check if database already exists
-				if ( !(Test-Path "$OH_PATH/$DATA_DIR/$DATABASE_NAME")) {
+				if ( !(Test-Path "$OH_PATH/$DATA_DIR")) {
 			        	Write-Host "Error: no data found! Exiting." -ForegroundColor Red
 					exit 2;
 				}
@@ -1124,36 +1183,45 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 		}
 		###################################################
 		"r"	{ # restore database
-		       	Write-Host "Restoring Open Hospital database...."
-			# ask user for database to restore
-			$DB_CREATE_SQL = Read-Host -Prompt "Enter SQL dump/backup file that you want to restore - (in $script:SQL_DIR subdirectory) -> "
-			if ( !(Test-Path "$OH_PATH/$SQL_DIR/$DB_CREATE_SQL" -PathType leaf)) {
-				Write-Host "Error: No SQL file found!" -ForegroundColor Red
+			# check if database exists
+			if ( (Test-Path "$OH_PATH/$DATA_DIR" )) {
+				Write-Host "Error: Database already present. Remove existing database before restoring. Exiting." -ForegroundColor Red
 			}
 			else {
-				Write-Host "Found $SQL_DIR/$DB_CREATE_SQL, restoring it..."
-				# check if mysql utilities exist
-				mysql_check;
-				if ( !($OH_MODE -eq "CLIENT" )) {
-					# reset database if exists
-					clean_database;
-					config_database;
-					initialize_dir_structure;
-					initialize_database;
-					start_database;	
-					set_database_root_pw;
-					import_database; # TBD for CLIENT mode
-					shutdown_database;
+				Write-Host "Restoring Open Hospital database...."
+				# ask user for database to restore
+				$DB_CREATE_SQL = Read-Host -Prompt "Enter SQL dump/backup file that you want to restore - (in $script:SQL_DIR subdirectory) -> "
+				if ( !(Test-Path "$OH_PATH/$SQL_DIR/$DB_CREATE_SQL" -PathType leaf)) {
+					Write-Host "Error: No SQL file found!" -ForegroundColor Red
+				}
+				else {
+					Write-Host "Found $SQL_DIR/$DB_CREATE_SQL, restoring it..."
+					# check if mysql utilities exist
+					mysql_check;
+					if ( !($OH_MODE -eq "CLIENT" )) {
+						set_values;
+						config_database;
+						initialize_dir_structure;
+						initialize_database;
+						start_database;	
+						set_database_root_pw;
+					}
+					import_database;
+					if ( !($OH_MODE -eq "CLIENT" )) {
+						shutdown_database;
+					}
 					Write-Host "Done!"
 				}
 			}
 			Read-Host "Press any key to continue";
-		}
+			}
 		###################################################
 		"s"	{ # save / write config files
 			Write-Host "Do you want to save current settings to OH configuration files?"
-			get_confirmation;
-			write_config_files;
+			
+			get_confirmation 1;
+			# overwrite configuration files if existing
+			$script:WRITE_CONFIG_FILES="on"; write_config_files;
 			set_oh_mode;
 			set_language;
 			set_log_level;
@@ -1181,13 +1249,11 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 		}
 		###################################################
 		"v"	{ # display software version and configuration
-	        	Write-Host "--------- Software version ---------"
-			Get-Content $OH_PATH\$OH_DIR\rsc\version.properties | Where-Object {$_.length -gt 0} | Where-Object {!$_.StartsWith("#")} | ForEach-Object {
-			$var = $_.Split('=',2).Trim()
-			New-Variable -Force -Scope Private -Name $var[0] -Value $var[1] 
-			}
+	        	Write-Host "--------- OH version ---------"
 			# show configuration
-			Write-Host "Open Hospital version:" $VER_MAJOR $VER_MINOR $VER_RELEASE
+			Write-Host "Open Hospital version:" $OH_VERSION
+			Write-Host ""
+	        	Write-Host "--------- Software versions ---------"
 			Write-Host "$MYSQL_NAME version: $MYSQL_DIR"
 			Write-Host "JAVA version: $JAVA_DISTRO"
 			Write-Host ""
@@ -1201,11 +1267,11 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 			Write-Host ""
 			Write-Host "--- Database ---"
 			Write-Host "DATABASE_SERVER=$DATABASE_SERVER"
-			Write-Host "DATABASE_PORT=$DATABASE_PORT"
+			Write-Host "DATABASE_PORT=$DATABASE_PORT (default)"
 			Write-Host "DATABASE_NAME=$DATABASE_NAME"
 			Write-Host "DATABASE_USER=$DATABASE_USER"
 			Write-Host ""
-			Write-Host "--- Dicom ---"
+			Write-Host "--- Imaging / Dicom ---"
 			Write-Host "DICOM_MAX_SIZE=$DICOM_MAX_SIZE"
 			Write-Host "DICOM_STORAGE=$DICOM_STORAGE"
 			Write-Host "DICOM_DIR=$DICOM_DIR"
@@ -1216,10 +1282,10 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 			Write-Host "OH_SINGLE_USER=$OH_SINGLE_USER"
 			Write-Host "CONF_DIR=$CONF_DIR"
 			Write-Host "DATA_DIR=$DATA_DIR"
+			Write-Host "PHOTO_DIR=$PHOTO_DIR"
 			Write-Host "BACKUP_DIR=$BACKUP_DIR"
 			Write-Host "LOG_DIR=$LOG_DIR"
 			Write-Host "SQL_DIR=$SQL_DIR"
-			Write-Host "SQL_EXTRA_DIR=$SQL_EXTRA_DIR"
 			Write-Host "TMP_DIR=$TMP_DIR"
 			Write-Host ""
 			Write-Host "--- Logging ---"
@@ -1234,9 +1300,34 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 		###################################################
 		"X"	{ # clean
 			Write-Host "Cleaning Open Hospital installation..."
-			clean_files;
-			clean_database;
-			Write-Host "Done!"
+			Write-Host "Warning: do you want to remove all existing log files?" -ForegroundColor Red
+			$choice = Read-Host -Prompt "Press [y] to confirm: "
+			if (( "$choice" -eq "y" )) {
+				clean_log_files;
+			}
+			# remove all configuration files - leave only .dist files
+			Write-Host "Warning: do you want to remove all existing configuration files?" -ForegroundColor Red
+			$choice = Read-Host -Prompt "Press [y] to confirm: "
+			if (( "$choice" -eq "y" )) {
+				clean_conf_files;
+			}
+			Write-Host "Warning: do you want to remove all existing data and databases?" -ForegroundColor Red
+			$choice = Read-Host -Prompt "Press [y] to confirm: "
+			if (( "$choice" -eq "y" )) {
+				Write-Host "--->>> This operation cannot be undone" -ForegroundColor Red
+				Write-Host "--->>> Are you sure?" -ForegroundColor Red
+				$choice = Read-Host -Prompt "Press [y] to confirm: "
+				if (( "$choice" -eq "y" )) {
+					clean_database;
+					Write-Host "Done!"
+				}
+			}
+			# unset variables
+			#Clear-Variable -name OH_MODE
+			#Clear-Variable -name OH_LANGUAGE
+			#Clear-Variable -name OH_SINGLE_USER
+			#Clear-Variable -name LOG_LEVEL
+			#Clear-Variable -name DEMO_DATA
 			Read-Host "Press any key to continue";
 		}
 		###################################################
@@ -1252,10 +1343,10 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 		###################################################
 		""	{ # Start
 			Write-Host "Starting Open Hospital...";
-			$opt="Z";
+			$option="Z";
 		}
 		###################################################
-		default { Write-Host "Invalid option: $opt."; 
+		default { Write-Host "Invalid option: $option."; 
 			Read-Host "Press any key to continue";
 			break;
 		}
@@ -1263,27 +1354,51 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 	Clear-Host;
 	}
 	# execute until quit is pressed or CLIENT/PORTABLE/SERVER mode is select (Z option)
-	until ( ($opt -ieq 'q') -Or ($opt -ceq 'Z') )
+	until ( ($option -ieq 'q') -Or ($option -ceq 'Z') )
+}
 }
 
-######################### OH start ############################
+######################## Script start ########################
 
+######## Pre-flight checks
+
+# check user running the script
+#Write-Host "Checking for elevated permissions..."
+#	if (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(`[Security.Principal.WindowsBuiltInRole] "Administrator")) {
+#	Write-Host "Error: Cannot run as Administrator user. Exiting" -ForegroundColor Red
+#	exit 1
+#}
+# else { Write-Host "User ok — go on executing the script..." -ForegroundColor Green }
+
+
+######## Environment setup
+
+set_path;
+read_settings;
+set_defaults;
+set_values;
+
+# set working dir to OH base dir
+cd "$OH_PATH" # workaround for hard coded paths
 Write-Host "Interactive mode is set to $script:INTERACTIVE_MODE"
+
+######## Parse user input and show interactive menu
+parse_user_input;
+
+######################### OH start ############################
 
 # check demo mode
 if ( $DEMO_DATA -eq "on" ) {
 	# exit if OH is configured in CLIENT mode
 	if ( $OH_MODE -eq "CLIENT" ) {
-		Write-Host "Error - OH_MODE is set to $OH_MODE mode. Cannot run with Demo data, exiting." -ForeGroundcolor Red
+		Write-Host "Error - OH_MODE is set to $OH_MODE mode. Cannot run with Demo data. Exiting." -ForeGroundcolor Red
 		Read-Host; 
 		exit 1
 	}
 	
-	# reset database if exists
-	# clean_database;
-	# set DATABASE_NAME
-	$script:DATABASE_NAME="ohdemo" # TBD
-
+	# set database name
+	$script:DATABASE_NAME=$DEMO_DATABASE
+	
 	if (Test-Path -Path "$OH_PATH/$SQL_DIR/$DB_DEMO" -PathType leaf) {
 	        Write-Host "Found SQL demo database, starting OH with Demo data..."
 		$DB_CREATE_SQL=$DB_DEMO
@@ -1321,7 +1436,7 @@ if ( ($OH_MODE -eq "PORTABLE") -Or ($OH_MODE -eq "SERVER") ){
 	# config database
 	config_database;
 	# check if OH database already exists
-	if ( !(Test-Path "$OH_PATH/$DATA_DIR/$DATABASE_NAME") ) {
+	if ( !(Test-Path "$OH_PATH/$DATA_DIR") ) {
 		Write-Host "OH database not found, starting from scratch..."
 		# prepare database
 		initialize_database;
@@ -1336,13 +1451,16 @@ if ( ($OH_MODE -eq "PORTABLE") -Or ($OH_MODE -eq "SERVER") ){
 		Write-Host "OH database found!"
 		# start database
 		start_database;
+		if ( $API_SERVER -eq "on" ) {
+			start_api_server;
+		}
 	}
 }
 
+######## OH startup
 
 # if SERVER mode is selected, wait for CTRL-C input to exit
 if ( $OH_MODE -eq "SERVER" ) {
-
 	Write-Host "Open Hospital - SERVER mode started"
 	# show MariaDB/MySQL server running configuration
 	Write-Host "*******************************"
@@ -1353,21 +1471,12 @@ if ( $OH_MODE -eq "SERVER" ) {
 	Write-Host ""
 	Write-Host "*******************************"
 	Write-Host "Database server ready for connections..."
-
-	# Start API server
-	#
-	# needed for database.properties
-	# generate config files if not existent
-	write_config_files;
-	write_api_config_file;
-	Write-Host "***************************************"
-	Write-Host "Starting EXPERIMEMTAL API server ..."
-	start_api;
 	
 	while ($true) {
 		$choice = Read-Host -Prompt "Press Q to exit"
 
-		switch -CaseSensitive ("$choice") {
+		# switch -CaseSensitive ("$choice") {
+		switch ("$choice") {
 			"Q" {
 				Write-Host "Exiting Open Hospital..."
 				shutdown_database;		
@@ -1397,6 +1506,9 @@ else {
 
 	# generate config files if not existent
 	write_config_files;
+
+	# check / set demo data if enabled
+	#set_demo_data;
 
 	Write-Host "Starting Open Hospital GUI..."
 
