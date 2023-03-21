@@ -1,6 +1,6 @@
 #%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe
 #
-#!/snap/bin/pwsh
+#!/usr/bin/pwsh
 # Open Hospital (www.open-hospital.org)
 # Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
 #
@@ -171,8 +171,10 @@ $script:EXT="zip"
 # mysql configuration file
 $script:MYSQL_CONF_FILE="my.cnf"
 
-# settings file
+# OH files
 $script:SETTINGS_FILE="settings.properties"
+$script:DATABASE_SETTINGS="database.properties"
+$script:OH_GUI="OH-gui.jar"
 
 # help file
 $script:HELP_FILE="OH-readme.txt"
@@ -248,7 +250,7 @@ function script_menu {
 	Write-Host " -----------------------------------------------------------------"
 	Write-Host " API server set to $API_SERVER"
 	Write-Host " -----------------------------------------------------------------"
-	Write-Host "   A    activate API server - EXPERIMENTAL"
+	Write-Host "   A    toggle API server - EXPERIMENTAL"
 	Write-Host "   C    set OH in CLIENT mode"
 	Write-Host "   P    set OH in PORTABLE mode"
 	Write-Host "   S    set OH in SERVER mode (portable)"
@@ -538,7 +540,7 @@ function java_lib_setup {
 
 	# CLASSPATH setup
 	# include OH jar file
-	$script:OH_CLASSPATH="$OH_PATH\$OH_DIR\bin\OH-gui.jar"
+	$script:OH_CLASSPATH="$OH_PATH\$OH_DIR\bin\$OH_GUI"
 
 	# include all jar files under lib\
 	$script:jarlist= Get-ChildItem "$OH_PATH\$OH_DIR\lib" -Filter *.jar |  % { $_.FullName }
@@ -865,7 +867,7 @@ function test_database_connection {
 function write_api_config_file {
 	######## application.properties setup
 	if ( ($script:WRITE_CONFIG_FILES -eq "on") -or !(Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf) ) {
-		if (Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf) { mv -Force $OH_PATH/$OH_DIR/rsc/settings.properties $OH_PATH/$OH_DIR/rsc/application.properties.old }
+		if (Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf) { mv -Force $OH_PATH/$OH_DIR/rsc/application.properties $OH_PATH/$OH_DIR/rsc/application.properties.old }
 		# set OH API token
 		$JWT_TOKEN_SECRET=(-join ((65..90) + (97..122) | Get-Random -Count 64 | % {[char]$_}))
 		Write-Host "Writing OH API configuration file -> application.properties..."
@@ -1268,8 +1270,8 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 			Write-Host "--- Database ---"
 			Write-Host "DATABASE_SERVER=$DATABASE_SERVER"
 			Write-Host "DATABASE_PORT=$DATABASE_PORT (default)"
-			Write-Host "DATABASE_NAME=$DATABASE_NAME"
 			Write-Host "DATABASE_USER=$DATABASE_USER"
+			Write-Host "DATABASE_NAME=$DATABASE_NAME"
 			Write-Host ""
 			Write-Host "--- Imaging / Dicom ---"
 			Write-Host "DICOM_MAX_SIZE=$DICOM_MAX_SIZE"

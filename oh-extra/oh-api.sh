@@ -111,8 +111,10 @@ EXT="tar.gz"
 # mysql configuration file
 MYSQL_CONF_FILE="my.cnf"
 
-# settings file
+# OH files
 SETTINGS_FILE="settings.properties"
+DATABASE_SETTINGS="database.properties"
+OH_GUI="OH-gui.jar"
 
 # help file
 HELP_FILE="OH-readme.txt"
@@ -184,7 +186,7 @@ function script_menu {
 	echo ""
 	echo " Usage: $SCRIPT_NAME [ -l $OH_LANGUAGE_LIST ] "
 	echo ""
-	echo "   -A    activate API server - EXPERIMENTAL"
+	echo "   -A    toggle API server - EXPERIMENTAL"
 	echo "   -C    set OH in CLIENT mode"
 	echo "   -P    set OH in PORTABLE mode"
 	echo "   -S    set OH in SERVER mode (portable)"
@@ -1166,8 +1168,8 @@ function parse_user_input {
 		echo "--- Database ---"
 		echo "DATABASE_SERVER=$DATABASE_SERVER"
 		echo "DATABASE_PORT=$DATABASE_PORT (default)"
-		echo "DATABASE_NAME=$DATABASE_NAME"
 		echo "DATABASE_USER=$DATABASE_USER"
+		echo "DATABASE_NAME=$DATABASE_NAME"
 		echo ""
 		echo "--- Imaging / Dicom ---"
 		echo "DICOM_MAX_SIZE=$DICOM_MAX_SIZE"
