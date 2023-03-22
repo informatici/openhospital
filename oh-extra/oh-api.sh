@@ -794,22 +794,22 @@ function test_database_connection {
 
 ###################################################################
 function write_api_config_file {
-	######## application.properties setup - OH API
-	if [ "$WRITE_CONFIG_FILES" = "on" ] || [ ! -f ./$OH_DIR/rsc/application.properties ]; then
-		[ -f ./$OH_DIR/rsc/application.properties ] && mv -f ./$OH_DIR/rsc/application.properties ./$OH_DIR/rsc/application.properties.old
-		# set OH API token
+	######## application.properties setup - OH API server
+	if [ "$WRITE_CONFIG_FILES" = "on" ] || [ ! -f ./$OH_DIR/rsc/$API_SETTINGS ]; then
+		[ -f ./$OH_DIR/rsc/$API_SETTINGS ] && mv -f ./$OH_DIR/rsc/$API_SETTINGS ./$OH_DIR/rsc/$API_SETTINGS.old
+		# generate OH API token and save to settings file
 		# JWT_TOKEN_SECRET=`openssl rand -base64 64 | xargs`
 		JWT_TOKEN_SECRET=`LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 66`
-		echo "Writing OH API configuration file -> application.properties..."
-		sed -e "s/JWT_TOKEN_SECRET/"$JWT_TOKEN_SECRET"/g" ./$OH_DIR/rsc/application.properties.dist > ./$OH_DIR/rsc/application.properties
+		echo "Writing OH API configuration file -> $API_SETTINGS..."
+		sed -e "s/JWT_TOKEN_SECRET/"$JWT_TOKEN_SECRET"/g" ./$OH_DIR/rsc/$API_SETTINGS.dist > ./$OH_DIR/rsc/$API_SETTINGS
 	fi
 }
 
 ###################################################################
 function start_api_server {
 	# check for configuration files
-	if [ ! -f ./$OH_DIR/rsc/application.properties ]; then
-		echo "Error: missing application.properties settings file. Exiting"
+	if [ ! -f ./$OH_DIR/rsc/$API_SETTINGS ]; then
+		echo "Error: missing $API_SETTINGS settings file. Exiting"
 		exit 1;
 	fi
 

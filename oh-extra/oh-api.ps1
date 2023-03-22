@@ -884,23 +884,22 @@ function test_database_connection {
 
 ###################################################################
 function write_api_config_file {
-	######## application.properties setup
-	if ( ($script:WRITE_CONFIG_FILES -eq "on") -or !(Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf) ) {
-		if (Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf) { mv -Force $OH_PATH/$OH_DIR/rsc/application.properties $OH_PATH/$OH_DIR/rsc/application.properties.old }
-		# set OH API token
-#		$JWT_TOKEN_SECRET=(-join ((0x30..0x39) + (0x41..0x5A) + (0x61..0x7A) | Get-Random -Count 64 | % {[char]$_}))
-		$JWT_TOKEN_SECRET=( -join ($(for($i=0; $i -lt 66; $i++) { ((0x30..0x39) + ( 0x41..0x5A) + ( 0x61..0x7A) | Get-Random | % {[char]$_}) })) )
-		Write-Host "Writing OH API configuration file -> application.properties..."
-		(Get-Content "$OH_PATH/$OH_DIR/rsc/application.properties.dist").replace("JWT_TOKEN_SECRET","$JWT_TOKEN_SECRET") | Set-Content "$OH_PATH/$OH_DIR/rsc/application.properties"
+	######## application.properties setup - OH API server
+	if ( ($script:WRITE_CONFIG_FILES -eq "on") -or !(Test-Path "$OH_PATH/$OH_DIR/rsc/$API_SETTINGS" -PathType leaf) ) {
+		if (Test-Path "$OH_PATH/$OH_DIR/rsc/$API_SETTINGS" -PathType leaf) { mv -Force $OH_PATH/$OH_DIR/rsc/$API_SETTINGS $OH_PATH/$OH_DIR/rsc/$API_SETTINGS.old }
+		# generate OH API token and save to settings file
+		$JWT_TOKEN_SECRET=( -join ($(for($i=0; $i -lt 64; $i++) { ((65..90)+(97..122)+(".")+("!")+("?")+("&") | Get-Random | % {[char]$_}) })) )
+		Write-Host "Writing OH API configuration file -> $API_SETTINGS..."
+		(Get-Content "$OH_PATH/$OH_DIR/rsc/$API_SETTINGS.dist").replace("JWT_TOKEN_SECRET","$JWT_TOKEN_SECRET") | Set-Content "$OH_PATH/$OH_DIR/rsc/$API_SETTINGS"
+		Read-Host;
 	}
 }
-
 
 ###################################################################
 function start_api_server {
 	# check for configuration files
-	if ( !( Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf )) {
-		Write-Host "Error: missing application.properties settings file. Exiting" -ForeGround Red
+	if ( !( Test-Path "$OH_PATH/$OH_DIR/rsc/$API_SETTINGS" -PathType leaf )) {
+		Write-Host "Error: missing $API_SETTINGS settings file. Exiting" -ForeGround Red
 		exit 1;
 	}
 	Write-Host "------------------------"
