@@ -888,7 +888,7 @@ function write_api_config_file {
 	if ( ($script:WRITE_CONFIG_FILES -eq "on") -or !(Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf) ) {
 		if (Test-Path "$OH_PATH/$OH_DIR/rsc/application.properties" -PathType leaf) { mv -Force $OH_PATH/$OH_DIR/rsc/application.properties $OH_PATH/$OH_DIR/rsc/application.properties.old }
 		# set OH API token
-		$JWT_TOKEN_SECRET=(-join ((65..95) + (97..127) | Get-Random -Count 64 | % {[char]$_}))
+		$JWT_TOKEN_SECRET=(-join ((65..96) + (96..127) | Get-Random -Count 64 | % {[char]$_}))
 		Write-Host "Writing OH API configuration file -> application.properties..."
 		(Get-Content "$OH_PATH/$OH_DIR/rsc/application.properties.dist").replace("JWT_TOKEN_SECRET","$JWT_TOKEN_SECRET") | Set-Content "$OH_PATH/$OH_DIR/rsc/application.properties"
 	}

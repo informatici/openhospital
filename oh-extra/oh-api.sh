@@ -799,7 +799,7 @@ function write_api_config_file {
 		[ -f ./$OH_DIR/rsc/application.properties ] && mv -f ./$OH_DIR/rsc/application.properties ./$OH_DIR/rsc/application.properties.old
 		# set OH API token
 		# JWT_TOKEN_SECRET=`openssl rand -base64 64 | xargs`
-		JWT_TOKEN_SECRET=`LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 64`
+		JWT_TOKEN_SECRET=`LC_ALL=C tr -dc A-Za-z0-9 </dev/urandom | head -c 66`
 		echo "Writing OH API configuration file -> application.properties..."
 		sed -e "s/JWT_TOKEN_SECRET/"$JWT_TOKEN_SECRET"/g" ./$OH_DIR/rsc/application.properties.dist > ./$OH_DIR/rsc/application.properties
 	fi
