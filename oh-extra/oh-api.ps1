@@ -523,7 +523,7 @@ function initialize_dir_structure {
 }
 
 ###################################################################
-function download_file ($download_url,$download_file){
+function download_file ($download_url,$download_file) {
 	Write-Host "Downloading $download_file from $download_url..."
 	try {
         	$wc = new-object System.Net.WebClient
@@ -580,7 +580,7 @@ function java_lib_setup {
 	
 	# include all jar files under lib\
 	$script:jarlist= Get-ChildItem "$OH_PATH\$OH_DIR\lib" -Filter *.jar |  % { $_.FullName }
-	ForEach( $n in $jarlist ){
+	ForEach( $n in $jarlist ) {
 		$script:OH_CLASSPATH="$n;$OH_CLASSPATH"
 	}
 	
