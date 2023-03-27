@@ -1051,7 +1051,7 @@ if ( $INTERACTIVE_MODE -eq "on" ) {
 				$script:API_SERVER="off"
 				}
 			"off"	{ # 
-				$script:API_SERVEr="on"
+				$script:API_SERVER="on"
 				}
 			}
 			write_api_config_file;
