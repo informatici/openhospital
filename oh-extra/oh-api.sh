@@ -1409,10 +1409,10 @@ if [ "$OH_MODE" = "PORTABLE" ] || [ "$OH_MODE" = "SERVER" ] ; then
 	        echo "OH database found!"
 		# start database
 		start_database;
-		# check for API server
-		if [ "$API_SERVER" = "on" ]; then
-			start_api_server;
-		fi
+	fi
+	# check for API server
+	if [ "$API_SERVER" = "on" ]; then
+		start_api_server;
 	fi
 fi
 

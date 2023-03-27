@@ -1479,10 +1479,10 @@ if ( ($OH_MODE -eq "PORTABLE") -Or ($OH_MODE -eq "SERVER") ){
 		Write-Host "OH database found!"
 		# start database
 		start_database;
-		# check for API server
-		if ( $API_SERVER -eq "on" ) {
-			start_api_server;
-		}
+	}
+	# check for API server
+	if ( $API_SERVER -eq "on" ) {
+		start_api_server;
 	}
 }
 
