@@ -5,7 +5,7 @@
 [ [Download latest](https://github.com/informatici/openhospital/releases/latest) ] [ [All releases](https://github.com/informatici/openhospital/releases) ]
 
 ![SourceForge](https://img.shields.io/sourceforge/dt/openhospital?color=33ccff&label=SourceForge%20Downloads)
-![SourceForge](https://img.shields.io/sourceforge/dt/openhospital/v1.10.0?color=33ccff&label=latest&logoColor=33ccff)
+![SourceForge](https://img.shields.io/sourceforge/dt/openhospital/v1.12.1?color=33ccff&label=latest&logoColor=33ccff)
 [ [Download latest (mirror)](https://sourceforge.net/projects/openhospital/) ] [ [All releases (mirror)](https://sourceforge.net/projects/openhospital/files/) ]
 
 # Open Hospital
