@@ -1,0 +1,6 @@
+To update an existing Open Hospital installation, please refer to the the Administrator Manual or consult the online documentation at 
+
+https://www.open-hospital.org/documentation
+
+If you are looking for the SQL scripts to update the OH database structure, refer to the [sql/update] directory.
+For more information check the OH website at https://www.open-hospital.org/.

@@ -292,7 +292,7 @@ $(CLIENT).zip:
 	# create directories and copy files
 	mkdir -p $(CLIENT)/doc
 	mkdir -p $(CLIENT)/oh
-	cp CONTRIBUTORS LICENSE RELEASE_NOTES $(CLIENT)
+	cp CONTRIBUTORS LICENSE RELEASE_NOTES UPDATING $(CLIENT)
 	cp -a ./oh-bundle/* $(CLIENT)/
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(CLIENT)/oh
 	mv $(CLIENT)/oh/oh.* $(CLIENT)
@@ -320,7 +320,7 @@ $(WIN32).zip:
 	# create directories and copy files
 	mkdir -p $(WIN32)/doc
 	mkdir -p $(WIN32)/oh
-	cp CONTRIBUTORS LICENSE RELEASE_NOTES $(WIN32)
+	cp CONTRIBUTORS LICENSE RELEASE_NOTES UPDATING $(WIN32)
 	cp -a ./oh-bundle/* $(WIN32)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(WIN32)/oh
 	mv $(WIN32)/oh/oh.* $(WIN32)
@@ -349,7 +349,7 @@ $(WIN64).zip:
 	# create directories and copy files
 	mkdir -p $(WIN64)/doc
 	mkdir -p $(WIN64)/oh
-	cp CONTRIBUTORS LICENSE RELEASE_NOTES $(WIN64)
+	cp CONTRIBUTORS LICENSE RELEASE_NOTES UPDATING $(WIN64)
 	cp -a ./oh-bundle/* $(WIN64)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(WIN64)/oh
 	mv $(WIN64)/oh/oh.* $(WIN64)
@@ -378,7 +378,7 @@ $(LINUX32).tar.gz:
 	# create directories and copy files
 	mkdir -p $(LINUX32)/doc
 	mkdir -p $(LINUX32)/oh
-	cp CONTRIBUTORS LICENSE RELEASE_NOTES $(LINUX32)
+	cp CONTRIBUTORS LICENSE RELEASE_NOTES UPDATING $(LINUX32)
 	cp -a ./oh-bundle/* $(LINUX32)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(LINUX32)/oh
 	mv $(LINUX32)/oh/oh.* $(LINUX32)
@@ -409,7 +409,7 @@ $(LINUX64).tar.gz:
 	# create directories and copy files
 	mkdir -p $(LINUX64)/doc
 	mkdir -p $(LINUX64)/oh
-	cp CONTRIBUTORS LICENSE RELEASE_NOTES $(LINUX64)
+	cp CONTRIBUTORS LICENSE RELEASE_NOTES UPDATING $(LINUX64)
 	cp -a ./oh-bundle/* $(LINUX64)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(LINUX64)/oh
 	mv $(LINUX64)/oh/oh.* $(LINUX64)
@@ -443,7 +443,7 @@ $(FULLDISTRO).zip:
 	# create directories and copy files
 	mkdir -p $(FULLDISTRO)/doc
 	mkdir -p $(FULLDISTRO)/oh
-	cp CONTRIBUTORS LICENSE RELEASE_NOTES $(FULLDISTRO)
+	cp CONTRIBUTORS LICENSE RELEASE_NOTES UPDATING $(FULLDISTRO)
 	cp -a ./oh-bundle/* $(FULLDISTRO)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(FULLDISTRO)/oh
 	mv $(FULLDISTRO)/oh/oh.* $(FULLDISTRO)
@@ -454,13 +454,8 @@ $(FULLDISTRO).zip:
 	cp -f ./openhospital-gui/oh.ico $(FULLDISTRO)/
 	# copy API EXPERIMENTAL scripts
 	cp -a ./oh-extra/*api* $(FULLDISTRO)
-	# remove standard scripts
-	rm $(FULLDISTRO)/oh.bat
-	rm $(FULLDISTRO)/oh.sh
-	rm $(FULLDISTRO)/oh.ps1
-	rm $(FULLDISTRO)/oh/README.md
 	# give exec permissions to startup script
-	chmod 755 $(FULLDISTRO)/oh-api.sh
+	chmod 755 $(FULLDISTRO)/oh.sh
 	# copy manuals
 	cp *.pdf $(FULLDISTRO)/doc
 	#### windows
