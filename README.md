@@ -1,3 +1,13 @@
+# Open Hospital
+
+[Open Hospital][openhospital] (https://www.open-hospital.org/) is a free and open-source Health Information Management System (HIMS) software application.
+
+This repository is used to assemble the portable (or all-in-one) packages of Open Hospital, which you can download [here][download].
+
+Open Hospital is deployed as a desktop application that can be used in a standalone, single user mode (PORTABLE mode)
+or in a client / server network configuration (CLIENT mode), where multiple clients and users connect to the same database server.
+For more information check the online documentation [here][documentation].
+
 ## Download
 
 ![GitHub all releases](https://img.shields.io/github/downloads/informatici/openhospital/total?label=GitHub%20Downloads)
@@ -8,11 +18,6 @@
 ![SourceForge](https://img.shields.io/sourceforge/dt/openhospital/v1.12.1?color=33ccff&label=latest&logoColor=33ccff)
 [ [Download latest (mirror)](https://sourceforge.net/projects/openhospital/) ] [ [All releases (mirror)](https://sourceforge.net/projects/openhospital/files/) ]
 
-# Open Hospital
-
-[Open Hospital][openhospital] (https://www.open-hospital.org/) is a free and open-source Health Information Management System (HIMS) software application.
-Open Hospital is deployed as a desktop application that can be used in a standalone, single user mode (PORTABLE mode)
-or in a client / server network configuration (CLIENT mode), where multiple clients and users connect to the same database server.
 
 OH is developed in Java and it is based on open-source tools and libraries; it runs on any computer, requires low resources and is designed to work without an internet connection.
 
@@ -22,8 +27,6 @@ Open Hospital is composed by the following components, hosted in separated repos
  - [OH Doc][doc], which contains the user and admin documentation in Asciidoc format
  - [OH UI][ui], a web user interface that consists of a React SPA (single page application) [*WIP*]
  - [OH API][api], a web server that exposes REST APIs over the Core component, and it's used by the UI component [*WIP*]. 
-
-This repository is used to assemble the portable (or all-in-one) packages of Open Hospital, which you can download [here][releases].
 
 ## How to contribute
 
@@ -73,6 +76,8 @@ Then follow these simple steps:
 </details>
 
  [openhospital]: https://www.open-hospital.org/
+ [documentation]: https://www.open-hospital.org/documentation
+ [download]: https://www.open-hospital.org/download
  [core]: https://github.com/informatici/openhospital-core
  [gui]: https://github.com/informatici/openhospital-gui
  [ui]: https://github.com/informatici/openhospital-ui
