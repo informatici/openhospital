@@ -2,11 +2,7 @@
 
 [Open Hospital][openhospital] (https://www.open-hospital.org/) is a free and open-source Health Information Management System (HIMS) software application.
 
-This repository is used to assemble the portable (or all-in-one) packages of Open Hospital, which you can download [here][download].
-
-Open Hospital is deployed as a desktop application that can be used in a standalone, single user mode (PORTABLE mode)
-or in a client / server network configuration (CLIENT mode), where multiple clients and users connect to the same database server.
-For more information check the online documentation [here][documentation].
+**This repository is used to assemble the portable (or all-in-one) packages of Open Hospital, which you can download [here][download].**
 
 ## Download
 
@@ -18,8 +14,12 @@ For more information check the online documentation [here][documentation].
 ![SourceForge](https://img.shields.io/sourceforge/dt/openhospital/v1.12.1?color=33ccff&label=latest&logoColor=33ccff)
 [ [Download latest (mirror)](https://sourceforge.net/projects/openhospital/) ] [ [All releases (mirror)](https://sourceforge.net/projects/openhospital/files/) ]
 
+## Software
 
+Open Hospital (OH) is deployed as a desktop application that can be used in a standalone, single user mode (PORTABLE mode)
+or in a client / server network configuration (CLIENT mode), where multiple clients and users connect to the same database server.
 OH is developed in Java and it is based on open-source tools and libraries; it runs on any computer, requires low resources and is designed to work without an internet connection.
+For more information check the online documentation [here][documentation].
 
 Open Hospital is composed by the following components, hosted in separated repositories:
  - [OH Core][core], a library that contains the business logic and the data abstraction layer
