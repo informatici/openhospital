@@ -303,6 +303,8 @@ $(CLIENT).zip:
 	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
 	# remove unnecessary files
 	rm -f $(CLIENT)/oh/README.md
+	# copy manuals
+	cp *.pdf $(CLIENT)/doc
 	# Set oh folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(CLIENT)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(CLIENT)/oh.bat
@@ -312,8 +314,6 @@ $(CLIENT).zip:
 	sed -i 's/^\#OH_MODE\=PORTABLE/OH_MODE\=CLIENT/g' $(CLIENT)/oh.sh
 	# give exec permissions to startup script
 	chmod 755 $(CLIENT)/oh.sh
-	# copy manuals
-	cp *.pdf $(CLIENT)/doc
 	# create package
 	zip -r -q $(CLIENT).zip $(CLIENT)
 
@@ -332,11 +332,11 @@ $(WIN32).zip:
 	# remove unnecessary files
 	rm -f $(WIN32)/oh.sh
 	rm -f $(WIN32)/oh/README.md
+	# copy manuals
+	cp *.pdf $(WIN32)/doc
 	# Set oh folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(WIN32)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(WIN32)/oh.bat
-	# copy manuals
-	cp *.pdf $(WIN32)/doc
 	# download JAVA JRE
 	wget -q -nc $(JAVA_URL)/$(JRE_WIN32)
 	# download MariaDB / MySQL
@@ -361,11 +361,11 @@ $(WIN64).zip:
 	# remove unnecessary files
 	rm -f $(WIN64)/oh.sh
 	rm -f $(WIN64)/oh/README.md
+	# copy manuals
+	cp *.pdf $(WIN64)/doc
 	# Set new root folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(WIN64)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(WIN64)/oh.bat
-	# copy manuals
-	cp *.pdf $(WIN64)/doc
 	# download JAVA JRE
 	wget -q -nc $(JAVA_URL)/$(JRE_WIN64)
 	# download MariaDB / MySQL
@@ -391,12 +391,12 @@ $(LINUX32).tar.gz:
 	rm -f $(LINUX32)/oh.bat
 	rm -f $(LINUX32)/oh.ps1
 	rm -f $(LINUX32)/oh/README.md
+	# copy manuals
+	cp *.pdf $(LINUX32)/doc
 	# Set oh folder
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(LINUX32)/oh.sh
 	# give exec permissions to startup script
 	chmod 755 $(LINUX32)/oh.sh
-	# copy manuals
-	cp *.pdf $(LINUX32)/doc
 	# download JAVA JRE
 	wget -q -nc $(JAVA_URL)/$(JRE_LINUX32)
 	# download MariaDB / MySQL
@@ -422,12 +422,12 @@ $(LINUX64).tar.gz:
 	rm -f $(LINUX64)/oh.bat
 	rm -f $(LINUX64)/oh.ps1
 	rm -f $(LINUX64)/oh/README.md
+	# copy manuals
+	cp *.pdf $(LINUX64)/doc
 	# Set oh folder
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(LINUX64)/oh.sh
 	# give exec permissions to startup script
 	chmod 755 $(LINUX64)/oh.sh
-	# copy manuals
-	cp *.pdf $(LINUX64)/doc
 	# download JAVA JRE
 	wget -q -nc $(JAVA_URL)/$(JRE_LINUX64)
 	# download MariaDB / MySQL
@@ -452,10 +452,12 @@ $(FULLDISTRO).zip:
 	mv $(FULLDISTRO)/oh/oh.* $(FULLDISTRO)
 	cp -a ./openhospital-core/sql $(FULLDISTRO)/
 	cp -f ./openhospital-gui/oh.ico $(FULLDISTRO)/
-	# give exec permissions to startup script
-	chmod 755 $(FULLDISTRO)/oh.sh
+	# copy EXTRA files
+	cp ./oh-extra/oh-api-readme.txt $(FULLDISTRO)/
 	# copy manuals
 	cp *.pdf $(FULLDISTRO)/doc
+	# give exec permissions to startup script
+	chmod 755 $(FULLDISTRO)/oh.sh
 	#### windows
 	# download JAVA JRE
 	wget -q -nc $(JAVA_URL)/$(JRE_WIN64)
