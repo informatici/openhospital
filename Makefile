@@ -40,6 +40,9 @@ MYSQL_LINUX64_VER := 10.6.12
 # help file
 TXTFILE := OH-readme.txt
 
+# oh api jar
+OH_API_JAR := openhospital-api-0.0.2.jar
+
 # internal variables
 JRE_WIN32 := $(JRE_32_VER)-win_i686.zip
 JRE_WIN64 := $(JRE_64_VER)-win_x64.zip
@@ -448,12 +451,7 @@ $(FULLDISTRO).zip:
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(FULLDISTRO)/oh
 	mv $(FULLDISTRO)/oh/oh.* $(FULLDISTRO)
 	cp -a ./openhospital-core/sql $(FULLDISTRO)/
-	# add reset admin password step
-	echo  "source extra/reset_admin_password_strong.sql" >> $(FULLDISTRO)/sql/step_04_all_following_steps.sql
-	echo  "source extra/reset_admin_password_strong.sql" >> $(FULLDISTRO)/sql/create_all_demo.sql
 	cp -f ./openhospital-gui/oh.ico $(FULLDISTRO)/
-	# copy API EXPERIMENTAL scripts
-	cp -a ./oh-extra/*api* $(FULLDISTRO)
 	# give exec permissions to startup script
 	chmod 755 $(FULLDISTRO)/oh.sh
 	# copy manuals
@@ -469,7 +467,7 @@ $(FULLDISTRO).zip:
 	# download MariaDB / MySQL
 	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX64_VER)/bintar-linux-systemd-x86_64/$(MYSQL_LINUX64)
 	# copy API jar
-	cp -a ./openhospital-api/target/openhospital-api-0.0.2.jar $(FULLDISTRO)/oh/bin
+	cp -a ./openhospital-api/target/$(OH_API_JAR) $(FULLDISTRO)/oh/bin
 	# copy API configuration file
 	cp ./openhospital-api/rsc/application.properties.dist $(FULLDISTRO)/oh/rsc/
 	# copy API content
