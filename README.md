@@ -11,7 +11,9 @@
 
 ![GitHub all releases](https://img.shields.io/github/downloads/informatici/openhospital/total?label=GitHub%20Downloads)
 ![GitHub release (latest by date)](https://img.shields.io/github/downloads/informatici/openhospital/latest/total?label=latest)
-[ [Download latest](https://github.com/informatici/openhospital/releases/latest) ] [ [All releases](https://github.com/informatici/openhospital/releases) ]
+![Download latest](https://img.shields.io/github/v/gitlab/v/release/informatici+?date_order_by=created_at&sort=date)
+
+[ [All releases](https://github.com/informatici/openhospital/releases) ]
 
 ![SourceForge](https://img.shields.io/sourceforge/dt/openhospital?color=33ccff&label=SourceForge%20Downloads)
 ![SourceForge](https://img.shields.io/sourceforge/dt/openhospital/v1.12.1?color=33ccff&label=latest&logoColor=33ccff)
