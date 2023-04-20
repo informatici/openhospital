@@ -11,15 +11,15 @@
 
 [![GitHub release](https://img.shields.io/github/v/release/informatici/openhospital?color=orange&label=download%20latest)](https://github.com/informatici/openhospital/releases/latest)
 
-stats: ![GitHub all releases](https://img.shields.io/github/downloads/informatici/openhospital/total?label=GitHub%20Downloads)
+![GitHub all releases](https://img.shields.io/github/downloads/informatici/openhospital/total?label=GitHub%20Downloads)
 ![GitHub release (latest by date)](https://img.shields.io/github/downloads/informatici/openhospital/latest/total?label=latest)
 
 [ [All releases](https://github.com/informatici/openhospital/releases) ]
 
 
+[ [Download latest release from sourceforge (mirror)](https://sourceforge.net/projects/openhospital/) ] [ [All releases (mirror)](https://sourceforge.net/projects/openhospital/files/) ]
 ![SourceForge](https://img.shields.io/sourceforge/downloads/dt/openhospital?color=33ccff&label=SourceForge%20Downloads)
 ![SourceForge](https://img.shields.io/sourceforge/downloads/dt/openhospital/v1.12.1?color=33ccff&label=latest&logoColor=33ccff)
-[ [Download latest (mirror)](https://sourceforge.net/projects/openhospital/) ] [ [All releases (mirror)](https://sourceforge.net/projects/openhospital/files/) ]
 
 ## Software
 
