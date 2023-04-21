@@ -22,8 +22,8 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/downloads/informatici/openhospital/latest/total?label=latest)
 
 ![SourceForge](https://img.shields.io/sourceforge/dt/openhospital?label=Sourceforge%20downloads)
-![SourceForge](https://img.shields.io/sourceforge/dt/openhospital/v1.12.1?color=33ccff&label=latest&logoColor=33ccff)
 ![SourceForge](https://img.shields.io/sourceforge/dm/openhospital?label=this%20month)
+![SourceForge](https://img.shields.io/sourceforge/dt/openhospital/v1.12.1?color=33ccff&label=latest&logoColor=33ccff)
 
 ## Software
 
