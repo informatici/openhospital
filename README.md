@@ -4,9 +4,9 @@
 [![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/informatici/openhospital/blob/master/LICENSE)
 ![Release Date](https://img.shields.io/github/release-date/informatici/openhospital?label=Released)
 
-**[Open Hospital][openhospital]** - https://www.open-hospital.org/ - is a free and open-source Health Information Management System (HIMS) software application.
+**[Open Hospital][openhospital]** is a free and open-source Health Information Management System (HIMS) software application.
 
-**This repository is used to assemble the portable (or all-in-one) packages of Open Hospital, which you can download also [here][download].** or
+**This repository is used to assemble the portable (or all-in-one) packages of Open Hospital, which you can download also [here][download].**
 
 ## Download
 
