@@ -2,7 +2,7 @@
 
 [![GitHub release](https://img.shields.io/github/v/release/informatici/openhospital?color=orange&label=latest%20release)](https://github.com/informatici/openhospital/releases/latest)
 [![license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/informatici/openhospital/blob/master/LICENSE)
-[![released on](https://img.shields.io/github/release-date/informatici/openhospital?label=Released)
+[released on](https://img.shields.io/github/release-date/informatici/openhospital?label=Released)
 
 **[Open Hospital][openhospital]** - https://www.open-hospital.org/ - is a free and open-source Health Information Management System (HIMS) software application.
 
@@ -12,7 +12,7 @@
 
 [![Latest release](https://img.shields.io/github/v/release/informatici/openhospital?color=orange&label=download%20latest)](https://github.com/informatici/openhospital/releases/latest)
 
-[[Download latest release from github](https://github.com//openhospital/releases/latest)] ] [All releases](https://github.com/openhospital/releases) ]
+[[Download latest release from github](https://github.com//openhospital/releases/latest)] [ [All releases](https://github.com/openhospital/releases) ]
 
 [[Download latest release from sourceforge](https://sourceforge.net/projects/openhospital/files/latest/download)] [ [All releases](https://sourceforge.net/projects/openhospital/files/) ]
 
