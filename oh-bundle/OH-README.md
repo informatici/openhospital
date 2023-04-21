@@ -422,9 +422,9 @@ In order to download and unzip Java:
 - Visit  https://cdn.azul.com/zulu/bin/
 - download the latest **JRE** for your architecture:
 
-**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu11.62.17-ca-jre11.0.18-win_x64.zip
+**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu11.64.19-ca-jre11.0.19-win_x64.zip
 
-**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu11.62.17-ca-jre11.0.18-win_i686.zip
+**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu11.64.19-ca-jre11.0.19-win_i686.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -439,7 +439,7 @@ In order to download and unzip MariaDB:
 
 **x86 - 32bit:** https://archive.mariadb.org/mariadb-10.6.5/win32-packages/mariadb-10.6.5-win32.zip
 
-**x64 - 64bit:** https://archive.mariadb.org/mariadb-10.6.11/winx64-packages/mariadb-10.6.11-winx64.zip
+**x64 - 64bit:** https://archive.mariadb.org/mariadb-10.6.12/winx64-packages/mariadb-10.6.12-winx64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -447,4 +447,4 @@ In order to download and unzip MariaDB:
 
 Check online documentation.
 
-*last updated: 2023.04.18*
+*last updated: 2023.04.21*
