@@ -6,7 +6,7 @@
 
 **[Open Hospital][openhospital]** - https://www.open-hospital.org/ - is a free and open-source Health Information Management System (HIMS) software application.
 
-**This repository is used to assemble the portable (or all-in-one) packages of Open Hospital, which you can download [here][download].**
+**This repository is used to assemble the portable (or all-in-one) packages of Open Hospital, which you can download also [here][download].** or
 
 ## Download
 
