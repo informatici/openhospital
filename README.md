@@ -2,6 +2,7 @@
 
 [![GitHub release](https://img.shields.io/github/v/release/informatici/openhospital?color=orange&label=latest%20release)](https://github.com/informatici/openhospital/releases/latest)
 [![license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/informatici/openhospital/blob/master/LICENSE)
+[![released on](https://img.shields.io/gthub/release-date/informatici/openhospital)]
 
 **[Open Hospital][openhospital]** - https://www.open-hospital.org/ - is a free and open-source Health Information Management System (HIMS) software application.
 
@@ -10,11 +11,10 @@
 ## Download
 
 [![Latest release](https://img.shields.io/github/v/release/informatici/openhospital?color=orange&label=download%20latest)](https://github.com/informatici/openhospital/releases/latest)
-[![All releases](https://img.shields.io/github/v/release/informatici/openhospital?color=yellow&label=all%20releases)](https://github.com/informatici/openhospital/releases)
 
-[ [Download latest release from sourceforge](https://sourceforge.net/projects/openhospital/files/latest/download) ] [ [All releases](https://sourceforge.net/projects/openhospital/files/) ]
+[[Download latest release from github](https://github.com//openhospital/releases/latest)]  [All releases](https://github.com/openhospital/releases) ]
 
-SourceForge Downloads badge	/sourceforge/:interval/:project
+[[Download latest release from sourceforge](https://sourceforge.net/projects/openhospital/files/latest/download)] [ [All releases](https://sourceforge.net/projects/openhospital/files/) ]
 
 ### Download stats
 
@@ -22,6 +22,7 @@ SourceForge Downloads badge	/sourceforge/:interval/:project
 ![GitHub release (latest by date)](https://img.shields.io/github/downloads/informatici/openhospital/latest/total?label=latest)
 
 ![SourceForge](https://img.shields.io/sourceforge/dt/openhospital?label=Sourceforge%20downloads)
+![SourceForge](https://img.shields.io/sourceforge/dm/openhospital?label=this%20month)
 
 ## Software
 
