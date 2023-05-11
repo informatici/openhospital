@@ -11,6 +11,5 @@ CHANGELOG.md
 CHANGELOG
 .project
 *.log
-release-files
 .idea
 *.iml
