@@ -58,6 +58,8 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/develop')
       uses: dev-drprasad/delete-older-releases@v0.2.1
       with:
+        repo: informatici/openhospital
+        keep_latest: 0
         delete_tag_pattern: develop
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
