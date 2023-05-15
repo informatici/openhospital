@@ -25,6 +25,10 @@ Open Hospital is composed by the following components, hosted in separated repos
 
 This repository is used to assemble the portable (or all-in-one) packages of Open Hospital, which you can download [here][releases].
 
+## Feedback
+
+Do you already use Open Hospital and you want to **share with us** your feedback in order to improve / extend the software? Please fill in the [Feedback Form][assessment-forms]
+
 ## How to contribute
 
 There are several ways in which you can contribute to Open Hospital:
@@ -87,3 +91,4 @@ Then follow these simple steps:
  [wiki]: https://openhospital.atlassian.net/wiki/spaces/OH/overview
  [slack]: https://join.slack.com/t/openhospitalworkspace/shared_invite/enQtOTc1Nzc0MzE2NjQ0LWIyMzRlZTU5NmNlMjE2MDcwM2FhMjRkNmM4YzI0MTAzYTA0YTI3NjZiOTVhMDZlNWUwNWEzMjE5ZDgzNWQ1YzE
  [ml]: https://sourceforge.net/projects/openhospital/lists/openhospital-devel
+ [assessment-forms]: https://www.open-hospital.org/oh-assessment-forms/
