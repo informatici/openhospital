@@ -7,6 +7,7 @@ on:
       - '**.md'
     tags:
       - 'v*'
+      - 'develop*'      
 
 jobs:
   build:
