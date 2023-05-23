@@ -50,7 +50,7 @@ jobs:
         
     - name: Rename artifact
       if: startsWith(github.ref, 'refs/tags/develop')
-      run: mv OpenHospital-develop-multiarch-client.zip OpenHospital-develop-multiarch-${{ steps.date.outputs.date }}.zip 
+      run: mv OpenHospital-develop-multiarch-client.zip OpenHospital-dev${{ steps.date.outputs.date }}-multiarch-client.zip 
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
  
