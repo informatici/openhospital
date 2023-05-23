@@ -71,7 +71,7 @@ jobs:
         name: Develop Release ${{ steps.date.outputs.date }}
         prerelease: true
         files: |
-          OpenHospital-develop-multiarch-${{ steps.date.outputs.date }}.zip
+          OpenHospital-dev${{ steps.date.outputs.date }}-multiarch-client.zip
           # OpenHospital-*.tar.gz 
           # OpenHospital-*.zip
         body: Development pre-release for testers
