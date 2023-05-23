@@ -7,6 +7,7 @@ on:
       - '**.md'
     tags:
       - 'v*'
+      - 'develop*'      
 
 jobs:
   build:
@@ -40,5 +41,39 @@ jobs:
           OpenHospital-*.tar.gz 
           OpenHospital-*.zip
         body_path: RELEASE_NOTES.md
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y%m%d')"
+        
+    - name: Rename artifact
+      if: startsWith(github.ref, 'refs/tags/develop')
+      run: mv OpenHospital-develop-multiarch-client.zip OpenHospital-dev${{ steps.date.outputs.date }}-multiarch-client.zip 
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 
+    - name: Delete last dev release
+      if: startsWith(github.ref, 'refs/tags/develop')
+      uses: dev-drprasad/delete-older-releases@v0.2.1
+      with:
+        repo: informatici/openhospital
+        keep_latest: 0
+        delete_tag_pattern: develop
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              
+    - name: Create dev release
+      if: startsWith(github.ref, 'refs/tags/develop')
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Develop Release ${{ steps.date.outputs.date }}
+        prerelease: true
+        files: |
+          OpenHospital-dev${{ steps.date.outputs.date }}-multiarch-client.zip
+          # OpenHospital-*.tar.gz 
+          # OpenHospital-*.zip
+        body: Development pre-release for testers
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
