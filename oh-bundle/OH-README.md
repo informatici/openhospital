@@ -33,25 +33,29 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
 ```
  -----------------------------------------------------------------
 |                                                                 |
-|                       Open Hospital | OH                        |
+|                       Open Hospital - 1.12.1                    |
 |                                                                 |
  -----------------------------------------------------------------
  arch x86_64 | lang en | mode PORTABLE | log level INFO | Demo off
+ ------------------------------------------------------------------
+ EXPERT MODE activated
+ API server set to off
  -----------------------------------------------------------------
- Usage: oh.sh [ -l en|fr|es|it|pt|ar ] 
+
+ Usage: oh.sh -[OPTION] 
 
    -C    set OH in CLIENT mode
    -P    set OH in PORTABLE mode
    -S    set OH in SERVER mode (portable)
-   -l    set language: en|fr|es|it|pt|ar
-   -s    save OH configuration
-   -X    clean/reset OH installation
-   -v    show configuration
+   -l    [ en|fr|es|it|pt|ar ] -> set language
+   -E    toggle EXPERT MODE - show advanced options
+   -h    show help
    -q    quit
 
-   --------------------- 
-    advanced options
+   -------------------------------- 
+    EXPERT MODE - advanced options
 
+   -A    toggle API server - EXPERIMENTAL
    -e    export/save OH database
    -r    restore OH database
    -d    toggle log level INFO/DEBUG
@@ -59,10 +63,12 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
    -D    initialize OH with Demo data
    -i    initialize/install OH database
    -m    configure database connection manually
+   -s    save OH configuration
    -t    test database connection (CLIENT mode only)
    -u    create Desktop shortcut
-
-   -h    show help
+   -v    show configuration
+   -V    check for latest OH version
+   -X    clean/reset OH installation
 ```
 
 ## Windows
@@ -72,12 +78,14 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
 ```
  -----------------------------------------------------------------
 |                                                                 |
-|                       Open Hospital | OH                        |
+|                     Open Hospital - 1.12.1                      |
 |                                                                 |
  -----------------------------------------------------------------
  arch x86_64 | lang en | mode PORTABLE | log level INFO | Demo off
  -----------------------------------------------------------------
-
+ EXPERT MODE activated
+ API server set to off
+ -----------------------------------------------------------------
  Usage: oh.ps1 [ -lang en|fr|it|es|pt|ar ] 
                [ -mode PORTABLE|CLIENT ]
                [ -loglevel INFO|DEBUG ] 
@@ -87,15 +95,15 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
     C    set OH in CLIENT mode
     P    set OH in PORTABLE mode
     S    set OH in SERVER mode (portable)
-    l    set language: en|fr|es|it|pt|ar
-    s    save OH configuration
-    X    clean/reset OH installation
-    v    show configuration
+    l    [ en|fr|es|it|pt|ar ] -> set language
+    E    toggle EXPERT MODE - show advanced options
+    h    show help
     q    quit
 
-   --------------------- 
-    advanced options
+   -------------------------------- 
+    EXPERT MODE - advanced options
 
+    A    toggle API server - EXPERIMENTAL
     e    export/save OH database
     r    restore OH database
     d    toggle log level INFO/DEBUG
@@ -103,10 +111,12 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
     D    initialize OH with Demo data
     i    initialize/install OH database
     m    configure database connection manually
+    s    save OH configuration
     t    test database connection (CLIENT mode only)
-    u    create Desktop shortcut with current params
-
-    h    show help
+    u    create Desktop shortcut
+    v    show configuration
+    V    check for latest OH version
+    X    clean/reset OH installation
 ```
 
 Note: The **oh.bat** launches the **oh.ps1** startup file automatically.
@@ -141,13 +151,13 @@ powershell.exe -ExecutionPolicy Bypass -File ./oh.ps1 [options]
 - **P**    set Open Hospital to start in PORTABLE mode, where data is saved locally
 - **S**    set Open Hospital to start in SERVER mode: the local portable instance of MariaDB is launched to act as a portable database server
 - **l**    set local language: en|fr|it|es|pt|ar
-- **s**    save / write / generate OH configuration files (oh/rsc/\*.properties) and exit
-- **X**    clean/reset OH installation by deleting all data and configuration files -> **use with caution** <-
-- **v**    show Open Hospital external software version and configuration
+- **E**    toggle EXPERT MODE: used to show advanced options and features. Use at your own risk!
+- **h**    show help
 - **q**    quit (windows only)
 
 ### Advanced options
 
+- **A**    toggle API server: activate and start openhospital api jetty server - EXPERIMENTAL
 - **e**    export / save / dump the Open Hospital database in sql format
 - **r**    restore Open Hospital database from backup or external sql file: user will be prompted for input sql file
 - **d**    toggle log level between INFo and DEBUG - useful to execute OH in debug mode in order to log errors or bugs with more extended informations to log file
@@ -155,9 +165,12 @@ powershell.exe -ExecutionPolicy Bypass -File ./oh.ps1 [options]
 - **D**    initialize OH database with Demo data - loads a demo database in order to test the software 
 - **i**    initialize / install OH database
 - **m**    configure OH database connection settings manually
+- **s**    save / write / generate OH configuration files (oh/rsc/\*.properties) and exit
 - **t**    test database connection to the configured database server (Client mode only)
 - **u**    create Desktop shortcut with current params (Windows / Linux)
-- **h**    show help 
+- **v**    show Open Hospital external software version and configuration
+- **V**    create online for latest OH version released
+- **X**    clean/reset OH installation by deleting all data and configuration files -> **use with caution** <-
 
 # Script configuration
 
@@ -243,10 +256,6 @@ DATABASE_PASSWORD="xxxxx"
 ```
 ### OH configuration
 ```
-DICOM_MAX_SIZE="4M"
-DICOM_STORAGE="FileSystemDicomManager" # SqlDicomManager
-DICOM_DIR="data/dicom_storage"
-
 # path and directories
 OH_DIR="oh"
 OH_DOC_DIR="../doc"
@@ -260,9 +269,15 @@ SQL_DIR="sql"
 SQL_EXTRA_DIR="sql/extra"
 TMP_DIR="tmp"
 
+# imaging / dicom
+DICOM_MAX_SIZE="4M"
+DICOM_STORAGE="FileSystemDicomManager" # SqlDicomManager
+DICOM_DIR="data/dicom_storage"
+
 # logging
 LOG_FILE=startup.log
 OH_LOG_FILE=openhospital.log
+API_LOG_FILE="api.log"
 
 # SQL creation files
 DB_CREATE_SQL="create_all_en.sql" # default to en
@@ -338,7 +353,8 @@ sudo apt-get install libaio1
 
 ### Windows - create startup shortcut
 
-Follow these instruction to create a Windows OH launch icon on desktop:
+Suggested method is to use the "u" script option to create a Windows Desktop shortcut for OH.
+Follow these instruction to create it manually:
 
 **Method 1 (with launch parameters configured in oh.ps1)**
 - Rigth click on Desktop
@@ -406,9 +422,9 @@ In order to download and unzip Java:
 - Visit  https://cdn.azul.com/zulu/bin/
 - download the latest **JRE** for your architecture:
 
-**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu11.62.17-ca-jre11.0.18-win_x64.zip
+**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu11.64.19-ca-jre11.0.19-win_x64.zip
 
-**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu11.62.17-ca-jre11.0.18-win_i686.zip
+**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu11.64.19-ca-jre11.0.19-win_i686.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -423,58 +439,12 @@ In order to download and unzip MariaDB:
 
 **x86 - 32bit:** https://archive.mariadb.org/mariadb-10.6.5/win32-packages/mariadb-10.6.5-win32.zip
 
-**x64 - 64bit:** https://archive.mariadb.org/mariadb-10.6.11/winx64-packages/mariadb-10.6.11-winx64.zip
+**x64 - 64bit:** https://archive.mariadb.org/mariadb-10.6.12/winx64-packages/mariadb-10.6.12-winx64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
-# oh.sh / oh.ps1 - features and development
+## oh.sh / oh.ps1 - features and development
 
-In order to have a complete, easy to support and extensible solution to run Open Hospital on Linux, oh.sh has been rewritten, also adding a few possible useful user functions.
-For the same reason, a completely new powershell script has been writtend for Windows: oh.ps1 (run by oh.bat).
+Check online documentation.
 
-A short description of changes for the Linux version (mostly the same behavior and options are applicable to the windows oh.ps1 version):
-
-- Complete overhaul of the code, reworked the entire scripts
-- Everything is now based on functions and parametric variables
-- Menu based, interactive options for many operations: see **./oh.sh -h** (or see below for short description)
-- **Unified script** for:
-    Portable 64bit (default) and 32bit (with automatic architecture detection)
-    Open Hospital client (no more separated startup.sh is needed ;-) (**it is now possible to package every linux distro, client/portable/32 or 64 bit with a single package**)
-
-- **New** **Interactive menu**: it is possible to navigate through menu options
-- **New**: Direct reading/writing of OH settings files for language and debug mode
-- **New**: Desktop shortcut creation with icon (Windows and Linux)
-- **New**: SERVER mode support (see oh.sh -S)
-- **New**: Added "-m" option to configure OH database settings manually
-- **New**: Arabic Language support: **oh.sh -l ar**
-- **New**: Full 64bit support on Windows, also for DICOM !
-- **New**: Set default to MULTIUSER environment, so login mask is presented at startup
------
-- Language support (both via variable in the script or user input option: **oh.sh -l fr**)
-- Demo database support (See oh.sh -D)
-- Client mode support (see oh.sh -C)
-- Save (see oh.sh -s) / Restore (oh.sh -r) database, available both for CLIENT and PORTABLE mode !
-- GSM setup integrated via -G command line option - setupGSM.sh (https://github.com/informatici/openhospital-gui/blob/develop/SetupGSM.sh) is obsolete now
-- debug mode -> set log4.properties to DEBUG mode (default is INFO)
-- configuration file generation (set WRITE_CONFIG_FILES=on in script) -> mysql and oh configuration files are not generated automatically or overwritten, useful for production environment
-- test database connection option (see oh.sh -t)
-- displays software versions and current configuration (see oh.sh -v)
-- save / write / generate config files (see oh.sh -s)
-- install / initialize database (see oh.sh -i)
-- Centralized variable managing (see related config file changes applied): now all (well, almost all, still some "isf" reference in SQL creation script...that will be removed ;-) references to database password, mysql host, etc. etc. are in the script and can be easily adapted / modified for any need
-- More flexible execution and configuration options
-- Automatic configuration files generation
-- Everything is commented in the code and a brief output all operations is shown in console
-- Startup, database and OH operations are logged to configurable output file
-- Backward compatible with old versions and installations, no default behaviour change
-- Unified and simplified subdirectories structure
-- Added sql subdirectory to organize sql creation scripts
-- Added various checks about correct settings of parameters and startup of services
-- Added security controls (no more _rm -rf_ here and there :-)
-- Added support for **MariaDB** for better security and performance
-- Windows -> addedd support for path with spaces / special characters 
-- Updated MySQL db and user creation syntax (now compatible with MySQL 8 - unsupported)
-- Fixed _a_few_ bugs ;-)
-
-*last updated: 2023.03.10*
-
+*last updated: 2023.04.21*
