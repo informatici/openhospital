@@ -46,9 +46,9 @@ English, Arabic, Chinese (simplified), French, German, Italian, Portuguese, Span
 <details>
 <summary> Code changelogs (click to expand) </summary>
 
- - [Core component changelog](https://github.com/informatici/openhospital-core/compare/v1.12.0...v1.12.1)
- - [Gui component changelog](https://github.com/informatici/openhospital-gui/compare/v1.12.0...v1.12.1)
- - [Doc component changelog](https://github.com/informatici/openhospital-doc/compare/v1.12.0...v1.12.1)
+ - [Core component changelog](https://github.com/informatici/openhospital-core/compare/SECONDLASTTAG...LASTTAG)
+ - [Gui component changelog](https://github.com/informatici/openhospital-gui/compare/SECONDLASTTAG...LASTTAG)
+ - [Doc component changelog](https://github.com/informatici/openhospital-doc/compare/SECONDLASTTAG...LASTTAG)
 
 </details>
 
