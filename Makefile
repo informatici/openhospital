@@ -456,6 +456,10 @@ $(FULLDISTRO).zip:
 	cp ./oh-extra/oh-api-readme.txt $(FULLDISTRO)/
 	# copy manuals
 	cp *.pdf $(FULLDISTRO)/doc
+	# Set oh folder
+	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(CLIENT)/oh.ps1
+	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(CLIENT)/oh.bat
+	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(CLIENT)/oh.sh
 	# give exec permissions to startup script
 	chmod 755 $(FULLDISTRO)/oh.sh
 	#### windows
