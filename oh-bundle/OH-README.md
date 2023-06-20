@@ -33,7 +33,7 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
 ```
  -----------------------------------------------------------------
 |                                                                 |
-|                       Open Hospital - 1.12.1                    |
+|                       Open Hospital - 1.13.0                    |
 |                                                                 |
  -----------------------------------------------------------------
  arch x86_64 | lang en | mode PORTABLE | log level INFO | Demo off
@@ -78,45 +78,40 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
 ```
  -----------------------------------------------------------------
 |                                                                 |
-|                     Open Hospital - 1.12.1                      |
+|                     Open Hospital - 1.13.0                      |
 |                                                                 |
  -----------------------------------------------------------------
- arch x86_64 | lang en | mode PORTABLE | log level INFO | Demo off
+ arch AMD64 | lang en | mode PORTABLE | log level INFO | Demo off
  -----------------------------------------------------------------
  EXPERT MODE activated
  API server set to off
  -----------------------------------------------------------------
- Usage: oh.ps1 [ -lang en|fr|it|es|pt|ar ] 
-               [ -mode PORTABLE|CLIENT ]
-               [ -loglevel INFO|DEBUG ] 
-               [ -interactive on|off ]
-               [ -generate_config on|off ]
 
-    C    set OH in CLIENT mode
-    P    set OH in PORTABLE mode
-    S    set OH in SERVER mode (portable)
-    l    [ en|fr|es|it|pt|ar ] -> set language
-    E    toggle EXPERT MODE - show advanced options
-    h    show help
-    q    quit
+   C    set OH in CLIENT mode
+   P    set OH in PORTABLE mode
+   S    set OH in SERVER mode (portable)
+   l    en|fr|es|it|pt|ar -> set language
+   E    toggle EXPERT MODE - show advanced options
+   h    show help
+   q    quit
 
-   -------------------------------- 
+   --------------------------------
     EXPERT MODE - advanced options
 
-    A    toggle API server - EXPERIMENTAL
-    e    export/save OH database
-    r    restore OH database
-    d    toggle log level INFO/DEBUG
-    G    setup GSM
-    D    initialize OH with Demo data
-    i    initialize/install OH database
-    m    configure database connection manually
-    s    save OH configuration
-    t    test database connection (CLIENT mode only)
-    u    create Desktop shortcut
-    v    show configuration
-    V    check for latest OH version
-    X    clean/reset OH installation
+   A    toggle API server - EXPERT_MODE
+   e    export/save OH database
+   r    restore OH database
+   d    toggle log level INFO/DEBUG
+   D    initialize OH with Demo data
+   G    setup GSM
+   i    initialize/install OH database
+   m    configure database connection manually
+   s    save OH configuration
+   t    test database connection (CLIENT mode only)
+   u    create Desktop shortcut with current params
+   v    show configuration
+   V    check for latest OH version
+   X    clean/reset OH installation
 ```
 
 Note: The **oh.bat** launches the **oh.ps1** startup file automatically.
