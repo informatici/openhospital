@@ -41,7 +41,7 @@ MYSQL_LINUX64_VER := 10.6.14
 TXTFILE := OH-readme.txt
 
 # oh api jar
-OH_API_JAR := openhospital-api-0.0.2.jar
+OH_API_JAR := openhospital-api-0.1.0.jar
 
 # internal variables
 JRE_WIN32 := $(JRE_32_VER)-win_i686.zip
