@@ -50,7 +50,9 @@ jobs:
         
     - name: Rename artifact
       if: startsWith(github.ref, 'refs/tags/develop')
-      run: mv OpenHospital-develop-multiarch-client.zip OpenHospital-dev${{ steps.date.outputs.date }}-multiarch-client.zip 
+      run: |
+        mv OpenHospital-develop-multiarch-client.zip OpenHospital-dev${{ steps.date.outputs.date }}-multiarch-client.zip
+        mv OpenHospital-v1.13.0-x86_64-EXPERIMENTAL.zip OpenHospital-dev${{ steps.date.outputs.date }}-x86_64-EXPERIMENTAL.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
  
@@ -72,6 +74,7 @@ jobs:
         prerelease: true
         files: |
           OpenHospital-dev${{ steps.date.outputs.date }}-multiarch-client.zip
+          OpenHospital-dev${{ steps.date.outputs.date }}-x86_64-EXPERIMENTAL.zip
           # OpenHospital-*.tar.gz 
           # OpenHospital-*.zip
         body: Development pre-release for testers
