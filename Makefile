@@ -186,7 +186,7 @@ compile-ui:
 	#npm audit fix
 	#npx update-browserslist-db@latest
 	# workaround to replace hardcode URL
-	sed -i "s/https\:\/\/oh2.open-hospital.org\/oh-api/http:\/\/localhost\:8080/g" ./src/generated/runtime.ts
+	sed -i "s/https\:\/\/oh2.open-hospital.org/http:\/\/localhost\:8080/g" ./src/generated/runtime.ts
 	# workaround to replace default hospital name
 	sed -i "s/Princeton-Plainsboro\ Teaching\ Hospital/St\.\ Luke\ Hospital\ Angal/g" ./src/components/accessories/appHeader/AppHeader.tsx
 	sed -i "s/Princeton-Plainsboro\ Teaching\ Hospital/St\.\ Luke\ Hospital\ Angal/g" ./src/components/activities/loginActivity/LoginActivity.tsx
