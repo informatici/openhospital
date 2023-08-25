@@ -52,7 +52,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/develop')
       run: |
         mv OpenHospital-develop-multiarch-client.zip OpenHospital-dev${{ steps.date.outputs.date }}-multiarch-client.zip
-        mv OpenHospital-v1.13.0-x86_64-EXPERIMENTAL.zip OpenHospital-dev${{ steps.date.outputs.date }}-x86_64-EXPERIMENTAL.zip
+        mv OpenHospital-develop-x86_64-EXPERIMENTAL.zip OpenHospital-dev${{ steps.date.outputs.date }}-x86_64-EXPERIMENTAL.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
  
