@@ -30,8 +30,8 @@ JAVA_URL := https://cdn.azul.com/zulu/bin
 MYSQL_URL := https://archive.mariadb.org
 
 # software versions
-JRE_32_VER := zulu11.68.17-ca-jre11.0.21
-JRE_64_VER := zulu11.68.17-ca-jre11.0.21
+JRE_32_VER := zulu17.46.19-ca-jre17.0.9
+JRE_64_VER := zulu17.46.19-ca-jre17.0.9
 MYSQL_WIN32_VER := 10.6.5
 MYSQL_WIN64_VER := 10.6.16
 MYSQL_LINUX32_VER := 10.5.23
