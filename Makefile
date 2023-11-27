@@ -138,13 +138,13 @@ release-full-distro: build-core build-ui build-api build-gui build-doc $(FULLDIS
 clone-core:
 	if [ -d "openhospital-core" ]; then cd openhospital-core; git checkout -B $(OH_VERSION); git pull;
 	else
-		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
+		git clone --depth=1 -b OP-312-telemetry-module https://github.com/informatici/openhospital-core.git openhospital-core
 		#git clone https://github.com/informatici/openhospital-core.git openhospital-core
 	fi
 clone-gui:
 	if [ -d "openhospital-gui" ]; then cd openhospital-gui; git checkout -B $(OH_VERSION); git pull;
 	else
-		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
+		git clone --depth=1 -b OP-312-telemetry-module https://github.com/informatici/openhospital-gui.git openhospital-gui
 		#git clone https://github.com/informatici/openhospital-gui.git openhospital-gui
 	fi
 clone-ui:
