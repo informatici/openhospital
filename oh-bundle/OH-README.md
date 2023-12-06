@@ -33,7 +33,7 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
 ```
  -----------------------------------------------------------------
 |                                                                 |
-|                       Open Hospital - 1.13.0                    |
+|                       Open Hospital - 1.14.0                    |
 |                                                                 |
  -----------------------------------------------------------------
  arch x86_64 | lang en | mode PORTABLE | log level INFO | Demo off
@@ -78,7 +78,7 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
 ```
  -----------------------------------------------------------------
 |                                                                 |
-|                     Open Hospital - 1.13.0                      |
+|                     Open Hospital - 1.14.0                      |
 |                                                                 |
  -----------------------------------------------------------------
  arch AMD64 | lang en | mode PORTABLE | log level INFO | Demo off
