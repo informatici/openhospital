@@ -33,7 +33,7 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
 ```
  -----------------------------------------------------------------
 |                                                                 |
-|                       Open Hospital - 1.13.0                    |
+|                       Open Hospital - 1.14.0                    |
 |                                                                 |
  -----------------------------------------------------------------
  arch x86_64 | lang en | mode PORTABLE | log level INFO | Demo off
@@ -78,40 +78,45 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
 ```
  -----------------------------------------------------------------
 |                                                                 |
-|                     Open Hospital - 1.13.0                      |
+|                     Open Hospital - 1.14.0                      |
 |                                                                 |
  -----------------------------------------------------------------
- arch AMD64 | lang en | mode PORTABLE | log level INFO | Demo off
+ arch x86_64 | lang en | mode PORTABLE | log level INFO | Demo off
  -----------------------------------------------------------------
  EXPERT MODE activated
  API server set to off
  -----------------------------------------------------------------
+ Usage: oh.ps1 [ -lang en|fr|it|es|pt|ar ] 
+               [ -mode PORTABLE|CLIENT ]
+               [ -loglevel INFO|DEBUG ] 
+               [ -interactive on|off ]
+               [ -generate_config on|off ]
 
-   C    set OH in CLIENT mode
-   P    set OH in PORTABLE mode
-   S    set OH in SERVER mode (portable)
-   l    en|fr|es|it|pt|ar -> set language
-   E    toggle EXPERT MODE - show advanced options
-   h    show help
-   q    quit
+    C    set OH in CLIENT mode
+    P    set OH in PORTABLE mode
+    S    set OH in SERVER mode (portable)
+    l    [ en|fr|es|it|pt|ar ] -> set language
+    E    toggle EXPERT MODE - show advanced options
+    h    show help
+    q    quit
 
-   --------------------------------
+   -------------------------------- 
     EXPERT MODE - advanced options
 
-   A    toggle API server - EXPERT_MODE
-   e    export/save OH database
-   r    restore OH database
-   d    toggle log level INFO/DEBUG
-   D    initialize OH with Demo data
-   G    setup GSM
-   i    initialize/install OH database
-   m    configure database connection manually
-   s    save OH configuration
-   t    test database connection (CLIENT mode only)
-   u    create Desktop shortcut with current params
-   v    show configuration
-   V    check for latest OH version
-   X    clean/reset OH installation
+    A    toggle API server - EXPERIMENTAL
+    e    export/save OH database
+    r    restore OH database
+    d    toggle log level INFO/DEBUG
+    G    setup GSM
+    D    initialize OH with Demo data
+    i    initialize/install OH database
+    m    configure database connection manually
+    s    save OH configuration
+    t    test database connection (CLIENT mode only)
+    u    create Desktop shortcut
+    v    show configuration
+    V    check for latest OH version
+    X    clean/reset OH installation
 ```
 
 Note: The **oh.bat** launches the **oh.ps1** startup file automatically.
@@ -177,7 +182,7 @@ This might also be useful to set different combinations of options (language, de
 ############## OH general configuration - change at your own risk :-) ##############
 #
 # -> OH_PATH is the directory where Open Hospital files are located
-# OH_PATH="c:\Users\OH\OpenHospital\oh-1.11"
+# OH_PATH="c:\Users\OH\OpenHospital\oh-1.14"
 ```
 ### (Windows only) Enable interactive mode
 ```
@@ -417,9 +422,9 @@ In order to download and unzip Java:
 - Visit  https://cdn.azul.com/zulu/bin/
 - download the latest **JRE** for your architecture:
 
-**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu11.64.19-ca-jre11.0.19-win_x64.zip
+**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu17.48.15-ca-jre17.0.10-win_x64.zip
 
-**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu11.64.19-ca-jre11.0.19-win_i686.zip
+**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu17.48.15-ca-jre17.0.10-win_i686.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -434,7 +439,7 @@ In order to download and unzip MariaDB:
 
 **x86 - 32bit:** https://archive.mariadb.org/mariadb-10.6.5/win32-packages/mariadb-10.6.5-win32.zip
 
-**x64 - 64bit:** https://archive.mariadb.org/mariadb-10.6.12/winx64-packages/mariadb-10.6.12-winx64.zip
+**x64 - 64bit:** https://archive.mariadb.org/mariadb-10.6.16/winx64-packages/mariadb-10.6.16-winx64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -442,4 +447,4 @@ In order to download and unzip MariaDB:
 
 Check online documentation.
 
-*last updated: 2023.04.21*
+*last updated: 2024.02.01*
