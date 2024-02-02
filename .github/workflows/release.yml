@@ -18,7 +18,8 @@ jobs:
     - name: Setup Java JDK
       uses: actions/setup-java@v1.4.3
       with:
-        java-version: 11
+        distribution: 'zulu'
+        java-version: 17
     
     - name: Install asciidoctor
       run: sudo gem install asciidoctor-pdf --pre
