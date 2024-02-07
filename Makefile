@@ -1,6 +1,7 @@
 ##############################################################################
 #
-#  Makefile for building Open Hospital releases.
+#  Makefile for building Open Hospital release packages.
+#
 #  To list the available targets issue: make help
 #  The following environment variables can be set before running make:
 #  -> OH_VERSION: Open Hospital version
@@ -303,6 +304,7 @@ $(CLIENT).zip:
 	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
 	# remove unnecessary files
 	rm -f $(CLIENT)/oh/README.md
+	rm -f $(CLIENT)/ohmac.sh
 	# copy manuals
 	cp *.pdf $(CLIENT)/doc
 	# Set oh folder
@@ -331,6 +333,7 @@ $(WIN32).zip:
 	cp -f ./openhospital-gui/oh.ico $(WIN32)/
 	# remove unnecessary files
 	rm -f $(WIN32)/oh.sh
+	rm -f $(WIN32)/ohmac.sh
 	rm -f $(WIN32)/oh/README.md
 	# copy manuals
 	cp *.pdf $(WIN32)/doc
@@ -360,6 +363,7 @@ $(WIN64).zip:
 	cp -f ./openhospital-gui/oh.ico $(WIN64)/
 	# remove unnecessary files
 	rm -f $(WIN64)/oh.sh
+	rm -f $(WIN64)/ohmac.sh
 	rm -f $(WIN64)/oh/README.md
 	# copy manuals
 	cp *.pdf $(WIN64)/doc
@@ -390,6 +394,7 @@ $(LINUX32).tar.gz:
 	# remove unnecessary files
 	rm -f $(LINUX32)/oh.bat
 	rm -f $(LINUX32)/oh.ps1
+	rm -f $(LINUX32)/ohmac.sh
 	rm -f $(LINUX32)/oh/README.md
 	# copy manuals
 	cp *.pdf $(LINUX32)/doc
@@ -421,6 +426,7 @@ $(LINUX64).tar.gz:
 	# remove unnecessary files
 	rm -f $(LINUX64)/oh.bat
 	rm -f $(LINUX64)/oh.ps1
+	rm -f $(LINUX64)/ohmac.sh
 	rm -f $(LINUX64)/oh/README.md
 	# copy manuals
 	cp *.pdf $(LINUX64)/doc
@@ -460,18 +466,9 @@ $(FULLDISTRO).zip:
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(FULLDISTRO)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(FULLDISTRO)/oh.bat
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(FULLDISTRO)/oh.sh
+	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(FULLDISTRO)/ohmac.sh
 	# give exec permissions to startup script
 	chmod 755 $(FULLDISTRO)/oh.sh
-	#### windows
-	# download JAVA JRE
-	wget -q -nc $(JAVA_URL)/$(JRE_WIN64)
-	# download MariaDB / MySQL
-	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN64_VER)/winx64-packages/$(MYSQL_WIN64)
-	#### linux
-	# download JAVA JRE
-	wget -q -nc $(JAVA_URL)/$(JRE_LINUX64)
-	# download MariaDB / MySQL
-	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX64_VER)/bintar-linux-systemd-x86_64/$(MYSQL_LINUX64)
 	# copy API jar
 	cp -a ./openhospital-api/target/$(OH_API_JAR) $(FULLDISTRO)/oh/bin
 	# copy API configuration file
