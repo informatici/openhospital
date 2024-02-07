@@ -1,6 +1,7 @@
 ##############################################################################
 #
-#  Makefile for building Open Hospital releases.
+#  Makefile for building Open Hospital release packages.
+#
 #  To list the available targets issue: make help
 #  The following environment variables can be set before running make:
 #  -> OH_VERSION: Open Hospital version
