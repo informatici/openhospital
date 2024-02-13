@@ -456,6 +456,7 @@ $(FULLDISTRO).zip:
 	cp -a ./oh-bundle/* $(FULLDISTRO)
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(FULLDISTRO)/oh
 	mv $(FULLDISTRO)/oh/oh.* $(FULLDISTRO)
+	mv $(FULLDISTRO)/oh/ohmac.* $(FULLDISTRO)
 	cp -a ./openhospital-core/sql $(FULLDISTRO)/
 	cp -f ./openhospital-gui/oh.ico $(FULLDISTRO)/
 	# copy EXTRA files
