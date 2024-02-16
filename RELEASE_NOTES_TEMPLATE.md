@@ -19,7 +19,7 @@ Released on _date_
 _Brought to you by [Informatici Senza Frontiere](https://github.com/informatici)_
 
 ### Languages
-English, Arabic, Chinese (simplified), French, German, Italian, Portuguese, Spanish, Swahili
+English, Albanian, Arabic, Chinese (simplified), French, German, Italian, Portuguese, Spanish, Swahili
 
 *Brought to you by [Transifex community](https://www.transifex.com/informatici-senza-frontiere-onlus/openhospital/dashboard/)*
 
