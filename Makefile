@@ -478,11 +478,6 @@ $(FULLDISTRO).zip:
 	cp -a ./openhospital-api/static $(FULLDISTRO)/oh/
 	# copy UI content
 	cp -a ./openhospital-ui/build/* $(FULLDISTRO)/oh/static/
-	# add external software
-	unzip -u -q $(JRE_WIN64) -d $(FULLDISTRO)
-	unzip -u -q $(MYSQL_WIN64) -d $(FULLDISTRO)
-	tar xz -C $(FULLDISTRO) -f $(JRE_LINUX64)
-	tar xz -C $(FULLDISTRO) -f $(MYSQL_LINUX64)
 	# create package
 	zip -r -q $(FULLDISTRO).zip $(FULLDISTRO)
 ####################################################################
