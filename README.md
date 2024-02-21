@@ -40,6 +40,10 @@ Open Hospital is composed by the following components, hosted in separated repos
  - [OH API][api], a web server that exposes REST APIs over the Core component, and it's used by the UI component [*WIP*]. 
  - [OH UI][ui], a web user interface that consists of a React SPA (single page application) [*WIP*]
 
+## Feedback
+
+Do you already use Open Hospital and you want to **share with us** your feedback in order to improve / extend the software? Please fill in the [Feedback Form][assessment-forms]
+
 ## How to contribute
 
 There are several ways in which you can contribute to Open Hospital:
@@ -104,3 +108,4 @@ Then follow these simple steps:
  [wiki]: https://openhospital.atlassian.net/wiki/spaces/OH/overview
  [slack]: https://join.slack.com/t/openhospitalworkspace/shared_invite/enQtOTc1Nzc0MzE2NjQ0LWIyMzRlZTU5NmNlMjE2MDcwM2FhMjRkNmM4YzI0MTAzYTA0YTI3NjZiOTVhMDZlNWUwNWEzMjE5ZDgzNWQ1YzE
  [ml]: https://sourceforge.net/projects/openhospital/lists/openhospital-devel
+ [assessment-forms]: https://www.open-hospital.org/oh-assessment-forms/
