@@ -34,9 +34,9 @@ For more information check the online documentation [here][documentation].
 
 Open Hospital is composed by the following components, hosted in separated repositories:
 
- - [OH Core][core], a library that contains the business logic and the data abstraction layer
+ - [OH CORE][core], a library that contains the business logic and the data abstraction layer
  - [OH GUI][gui], which provides a graphical user interface (GUI) made with Java Swing
- - [OH Doc][doc], which contains the user and admin documentation in Asciidoc format
+ - [OH DOC][doc], which contains the user and admin documentation in Asciidoc format
  - [OH API][api], a web server that exposes REST APIs over the Core component, and it's used by the UI component [*WIP*]. 
  - [OH UI][ui], a web user interface that consists of a React SPA (single page application) [*WIP*]
 
