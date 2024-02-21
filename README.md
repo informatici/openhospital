@@ -23,7 +23,7 @@
 
 ![SourceForge](https://img.shields.io/sourceforge/dt/openhospital?label=Sourceforge%20downloads)
 ![SourceForge](https://img.shields.io/sourceforge/dm/openhospital?label=this%20month)
-![SourceForge](https://img.shields.io/sourceforge/dt/openhospital/v1.13.0?color=33ccff&label=latest&logoColor=33ccff)
+![SourceForge](https://img.shields.io/sourceforge/dt/openhospital/v1.14.0?color=33ccff&label=latest&logoColor=33ccff)
 
 ## Software
 
