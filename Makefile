@@ -15,6 +15,7 @@ SHELL := /bin/bash
 
 # Open Hospital version
 OH_VERSION ?= $(shell git describe --abbrev=0 --tags)
+RELEASE_DATE := $(shell date +'%d/%m/%Y')
 
 # software distribution
 CLIENT := OpenHospital-$(OH_VERSION)-multiarch-client
@@ -260,6 +261,7 @@ release-notes:
 	sed -i "s/VERSION/$(OH_VERSION)/g" RELEASE_NOTES.md
 	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
 	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
+	sed -i "s/_date_/_$(RELEASE_DATE)_/g" RELEASE_NOTES.md
 	head -6 RELEASE_NOTES.md > RELEASE_NOTES
 
 ####################################################################
