@@ -261,7 +261,7 @@ release-notes:
 	sed -i "s/VERSION/$(OH_VERSION)/g" RELEASE_NOTES.md
 	sed -i "s/SECONDLASTTAG/$${secondlasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
 	sed -i "s/LASTTAG/$${lasttag//$$'\n'/\\n}/g" RELEASE_NOTES.md
-	sed -i "s/RELEASE_DATE/$(RELEASE_DATE)/g" RELEASE_NOTES.md
+	sed -i "s|RELEASE_DATE|$(RELEASE_DATE)|g" RELEASE_NOTES.md
 	head -6 RELEASE_NOTES.md > RELEASE_NOTES
 
 ####################################################################
