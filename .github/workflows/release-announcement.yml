@@ -1,0 +1,30 @@
+name: SourceForge Release Announcement
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  post-release-announcement:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Create Release Announcement on SourceForge
+        env:
+          SOURCEFORGE_TOKEN: ${{ secrets.SOURCEFORGE_TOKEN }}
+          SOURCEFORGE_USERNAME: ${{ secrets.SOURCEFORGE_USERNAME }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          RELEASE_NAME: ${{ github.event.release.name }}
+          RELEASE_BODY: ${{ github.event.release.body }}
+        run: |
+          curl -X POST -H "Authorization: token $SOURCEFORGE_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "title": "'"${RELEASE_NAME}"'",
+              "description": "'"${RELEASE_BODY}"'",
+              "author": "'"${SOURCEFORGE_USERNAME}"'"
+            }' \
+            "https://sourceforge.net/p/openhospital/news/new"
