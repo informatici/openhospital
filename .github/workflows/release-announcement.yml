@@ -19,8 +19,8 @@ jobs:
         env:
           SOURCEFORGE_BEARER: ${{ secrets.SOURCEFORGE_BEARER }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          RELEASE_NAME: ${{ github.event.release.name }}
-          RELEASE_BODY: ${{ github.event.release.body }}
+          RELEASE_NAME: ${{ github.event.release.name }} || "Test"
+          RELEASE_BODY: ${{ github.event.release.body }} || "Empty body"
         run: |
           curl -X POST -H "Content-Type: application/x-www-form-urlencoded" \
                   -H "Authorization: Bearer $SOURCEFORGE_BEARER" \
