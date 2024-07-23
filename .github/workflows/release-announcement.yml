@@ -17,17 +17,15 @@ jobs:
 
       - name: Create Release Announcement on SourceForge
         env:
-          SOURCEFORGE_TOKEN: ${{ secrets.SOURCEFORGE_TOKEN }}
-          SOURCEFORGE_USERNAME: ${{ secrets.SOURCEFORGE_USERNAME }}
+          SOURCEFORGE_BEARER: ${{ secrets.SOURCEFORGE_BEARER }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           RELEASE_NAME: ${{ github.event.release.name }}
           RELEASE_BODY: ${{ github.event.release.body }}
         run: |
-          curl -X POST -H "Authorization: token $SOURCEFORGE_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "title": "'"${RELEASE_NAME}"'",
-              "description": "'"${RELEASE_BODY}"'",
-              "author": "'"${SOURCEFORGE_USERNAME}"'"
-            }' \
-            "https://sourceforge.net/p/openhospital/news/new"
+          curl --location 'https://sourceforge.net/rest/p/openhospital/blog' \
+               --header 'Content-Type: application/x-www-form-urlencoded' \
+               --header 'Authorization: Bearer $SOURCEFORGE_BEARER' \
+               --data-urlencode 'labels=release' \
+               --data-urlencode 'state=draft' \
+               --data-urlencode 'text=$RELEASE_BODY' \
+               --data-urlencode 'title=$RELEASE_NAME'
