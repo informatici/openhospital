@@ -15,8 +15,8 @@ jobs:
       - name: Set Default Release Variables
         id: set-vars
         run: |
-          echo "RELEASE_NAME=${{ github.event.release.name || 'Test' }}" >> $GITHUB_ENV
-          echo "RELEASE_BODY=${{ github.event.release.body || 'Empty body' }}" >> $GITHUB_ENV
+          echo "RELEASE_NAME=${{ github.event.release.name || 'New Release!' }}" >> $GITHUB_ENV
+          echo "RELEASE_BODY=${{ github.event.release.body || 'Please visit https://github.com/informatici/openhospital/releases/latest' }}" >> $GITHUB_ENV
 
       - name: Create Release Announcement on SourceForge
         env:
