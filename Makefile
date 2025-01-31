@@ -148,25 +148,21 @@ clone-core:
 	if [ -d "openhospital-core" ]; then cd openhospital-core; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
-		#git clone https://github.com/informatici/openhospital-core.git openhospital-core
 	fi
 clone-gui:
 	if [ -d "openhospital-gui" ]; then cd openhospital-gui; git checkout -B $(OH_VERSION); git pull;
 	else
-		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
-		#git clone https://github.com/informatici/openhospital-gui.git openhospital-gui
+		git clone --depth=1 -b tomcat_update https://github.com/mizzioisf/openhospital-gui.git openhospital-gui
 	fi
 clone-ui:
 	if [ -d "openhospital-ui" ]; then cd openhospital-ui; git checkout -B $(OH_VERSION); git pull;
 	else
-		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
-		#git clone https://github.com/informatici/openhospital-ui.git openhospital-ui
+		git clone --depth=1 -b tomcat_update https://github.com/mizzioisf/openhospital-ui.git openhospital-ui
 	fi
 clone-api:
 	if [ -d "openhospital-api" ]; then cd openhospital-api; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-api.git openhospital-api
-		#git clone https://github.com/informatici/openhospital-api.git openhospital-api
 	fi
 clone-doc:
 	if [ -d "openhospital-doc" ]; then cd openhospital-doc; git checkout -B $(OH_VERSION); git pull;
@@ -194,11 +190,6 @@ compile-ui:
 	npm install
 	#npm audit fix
 	#npx update-browserslist-db@latest
-	# workaround to replace hardcoded URL
-	sed -i "s/https\:\/\/oh2.open-hospital.org/http:\/\/localhost\:8080/g" ./src/generated/runtime.ts
-	# workaround to replace default hospital name
-	sed -i "s/Princeton-Plainsboro\ Teaching\ Hospital/St\.\ Luke\ Hospital\ Angal/g" ./src/components/accessories/appHeader/AppHeader.tsx
-	sed -i "s/Princeton-Plainsboro\ Teaching\ Hospital/St\.\ Luke\ Hospital\ Angal/g" ./src/components/activities/loginActivity/LoginActivity.tsx
 	# build
 	npm run build:prod
 	popd
@@ -228,37 +219,17 @@ readme:
 ####################################################################
 # Generate contributors file
 contributors:
-	# OH Core
-	pushd openhospital-core
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq > ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=0 | grep -e name -e login > ../CONTRIBUTORS.tmp
-	popd
-	# OH GUI
-	pushd openhospital-gui 
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
-	popd
-	# Web UI
-	pushd openhospital-gui 
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-ui/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
-	popd
-	# Web API
-	pushd openhospital-api
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
-	popd
-	# OH doc
-	pushd openhospital-doc
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-doc/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
-	popd
+	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-core.tmp  || echo "Error downloading core contributors";
+	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-gui.tmp  || echo "Error downloading gui contributors";
+	curl -s https://api.github.com/repos/informatici/openhospital-ui/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-ui.tmp  || echo "Error downloading ui contributors";
+	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-api.tmp  || echo "Error downloading api contributors";
+	curl -s https://api.github.com/repos/informatici/openhospital-doc/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-doc.tmp  || echo "Error downloading doc contributors";
 	# generate final file
 	# # cat CONTRIBUTORS | sed -e s/^[^@]*//g
 	# sed -e -e s/^.*\"name\"\:\ \"//g -e s/^.*\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp # working alternative
-	sed -e s/^.*\"name\"\:\ \"//g -e s/^.*\"login\"\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp
+	cat CONTRIBUTORS-*.tmp > CONTRIBUTORS.tmp
+	sed -e s/^.*\"name\"\:\ \"//g -e s/^.*\"login\"\:\ \"/@/g -e s/\"\,//g CONTRIBUTORS.tmp
 	cat ./CONTRIBUTORS.tmp | sort -u > CONTRIBUTORS
-
 ####################################################################
 # Generate release notes file
 release-notes:
