@@ -1,0 +1,33 @@
+name: SourceForge Release Announcement
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  post-release-announcement:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Set Default Release Variables
+        id: set-vars
+        run: |
+          echo "RELEASE_NAME=${{ github.event.release.name || 'New Release!' }}" >> $GITHUB_ENV
+          echo "RELEASE_BODY=${{ github.event.release.body || 'Please visit https://github.com/informatici/openhospital/releases/latest' }}" >> $GITHUB_ENV
+
+      - name: Create Release Announcement on SourceForge
+        env:
+          SOURCEFORGE_BEARER: ${{ secrets.SOURCEFORGE_BEARER }}
+          RELEASE_NAME: ${{ env.RELEASE_NAME }}
+          RELEASE_BODY: ${{ env.RELEASE_BODY }}
+        run: |
+          curl -X POST -H "Content-Type: application/x-www-form-urlencoded" \
+                  -H "Authorization: Bearer $SOURCEFORGE_BEARER" \
+                  -d "labels=release" \
+                  -d "state=draft" \
+                  -d "text=$RELEASE_BODY" \
+                  -d "title=$RELEASE_NAME" \
+                  "https://sourceforge.net/rest/p/openhospital/blog"
