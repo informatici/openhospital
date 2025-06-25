@@ -2,9 +2,16 @@
 #
 #  Makefile for building Open Hospital release packages.
 #
-#  To list the available targets issue: make help
-#  The following environment variables can be set before running make:
-#  -> OH_VERSION: Open Hospital version
+#  -> To list the available targets:  make help
+#
+#  -> To build a specific version of Open Hospital, set the
+#  following environment variables before running make:
+#
+#     OH_VERSION: x.x.x [Open Hospital version - e.g. 1.4.2]
+# 
+#  -> Example: to build development version of Open Hospital:
+#     
+#     make clean && export OH_VERSION=develop && make
 # 
 ##############################################################################
 SHELL := /bin/bash
@@ -28,7 +35,6 @@ FULLDISTRO := OpenHospital-$(OH_VERSION)-x86_64-EXPERIMENTAL
 # JAVA and MySQL / MariaDB
 # download url
 JAVA_URL := https://cdn.azul.com/zulu/bin
-#MYSQL_URL := https://downloads.mariadb.com/MariaDB/
 MYSQL_URL := https://archive.mariadb.org
 
 # software versions
@@ -42,8 +48,10 @@ MYSQL_LINUX64_VER := 10.6.16
 # help file
 TXTFILE := OH-readme.txt
 
-# oh api jar
+# oh api jar/war
 OH_API_JAR := openhospital-api-0.1.0.jar
+OH_API_WAR := openhospital-api-0.1.0.war
+OH_PUBLIC_URL := oh-ui
 
 # internal variables
 JRE_WIN32 := $(JRE_32_VER)-win_i686.zip
@@ -134,32 +142,27 @@ release-files: $(CLIENT).zip $(WIN32).zip $(WIN64).zip $(LINUX32).tar.gz $(LINUX
 # EXPERIMENTAL - release full distro
 release-full-distro: build-core build-ui build-api build-gui build-doc $(FULLDISTRO).zip
 
-
 ####################################################################
 # Clone repositories of OH components
 clone-core:
 	if [ -d "openhospital-core" ]; then cd openhospital-core; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-core.git openhospital-core
-		#git clone https://github.com/informatici/openhospital-core.git openhospital-core
 	fi
 clone-gui:
 	if [ -d "openhospital-gui" ]; then cd openhospital-gui; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
-		#git clone https://github.com/informatici/openhospital-gui.git openhospital-gui
 	fi
 clone-ui:
 	if [ -d "openhospital-ui" ]; then cd openhospital-ui; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
-		#git clone https://github.com/informatici/openhospital-ui.git openhospital-ui
 	fi
 clone-api:
 	if [ -d "openhospital-api" ]; then cd openhospital-api; git checkout -B $(OH_VERSION); git pull;
 	else
 		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-api.git openhospital-api
-		#git clone https://github.com/informatici/openhospital-api.git openhospital-api
 	fi
 clone-doc:
 	if [ -d "openhospital-doc" ]; then cd openhospital-doc; git checkout -B $(OH_VERSION); git pull;
@@ -187,18 +190,16 @@ compile-ui:
 	npm install
 	#npm audit fix
 	#npx update-browserslist-db@latest
-	# workaround to replace hardcode URL
-	sed -i "s/https\:\/\/oh2.open-hospital.org/http:\/\/localhost\:8080/g" ./src/generated/runtime.ts
-	# workaround to replace default hospital name
-	sed -i "s/Princeton-Plainsboro\ Teaching\ Hospital/St\.\ Luke\ Hospital\ Angal/g" ./src/components/accessories/appHeader/AppHeader.tsx
-	sed -i "s/Princeton-Plainsboro\ Teaching\ Hospital/St\.\ Luke\ Hospital\ Angal/g" ./src/components/activities/loginActivity/LoginActivity.tsx
 	# build
-	npm run build
+	npm run build:prod
 	popd
 # Web API
 compile-api:
 	pushd openhospital-api
-	mvn --quiet -T 1.5C install
+	# build API JAR - outdated
+	# mvn --quiet -T 1.5C install
+	# build API WAR for tomcat
+	mvn --quiet -P war -T 1.5C install
 	popd
 
 ####################################################################
@@ -218,37 +219,17 @@ readme:
 ####################################################################
 # Generate contributors file
 contributors:
-	# OH Core
-	pushd openhospital-core
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq > ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=0 | grep -e name -e login > ../CONTRIBUTORS.tmp
-	popd
-	# OH GUI
-	pushd openhospital-gui 
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
-	popd
-	# Web UI
-	pushd openhospital-gui 
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-ui/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
-	popd
-	# Web API
-	pushd openhospital-api
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
-	popd
-	# OH doc
-	pushd openhospital-doc
-	#	git log --pretty="%aN <%aE>%n%cN <%cE>" | sort | uniq >> ../CONTRIBUTORS.tmp
-	curl -s https://api.github.com/repos/informatici/openhospital-doc/contributors?anon=0 | grep -e name -e login >> ../CONTRIBUTORS.tmp
-	popd
+	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-core.tmp  || echo "Error downloading core contributors";
+	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-gui.tmp  || echo "Error downloading gui contributors";
+	curl -s https://api.github.com/repos/informatici/openhospital-ui/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-ui.tmp  || echo "Error downloading ui contributors";
+	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-api.tmp  || echo "Error downloading api contributors";
+	curl -s https://api.github.com/repos/informatici/openhospital-doc/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-doc.tmp  || echo "Error downloading doc contributors";
 	# generate final file
 	# # cat CONTRIBUTORS | sed -e s/^[^@]*//g
 	# sed -e -e s/^.*\"name\"\:\ \"//g -e s/^.*\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp # working alternative
-	sed -e s/^.*\"name\"\:\ \"//g -e s/^.*\"login\"\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp
+	cat CONTRIBUTORS-*.tmp > CONTRIBUTORS.tmp
+	sed -e s/^.*\"name\"\:\ \"//g -e s/^.*\"login\"\:\ \"/@/g -e s/\"\,//g CONTRIBUTORS.tmp
 	cat ./CONTRIBUTORS.tmp | sort -u > CONTRIBUTORS
-
 ####################################################################
 # Generate release notes file
 release-notes:
@@ -292,6 +273,7 @@ release-contributors: contributors release-notes release-checksums
 
 ####################################################################
 # Create OH release packages
+
 ################
 # Client package
 $(CLIENT).zip: 
@@ -346,9 +328,10 @@ $(WIN32).zip:
 	wget -q -nc $(JAVA_URL)/$(JRE_WIN32)
 	# download MariaDB / MySQL
 	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN32_VER)/win32-packages/$(MYSQL_WIN32)
-	# create package
+	# unzip external software to be included in the package
 	unzip -u -q $(JRE_WIN32) -d $(WIN32)
 	unzip -u -q $(MYSQL_WIN32) -d $(WIN32)
+	# create package
 	zip -r -q $(WIN32).zip $(WIN32)
 
 #######################
@@ -376,9 +359,10 @@ $(WIN64).zip:
 	wget -q -nc $(JAVA_URL)/$(JRE_WIN64)
 	# download MariaDB / MySQL
 	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_WIN64_VER)/winx64-packages/$(MYSQL_WIN64)
-	# create package
+	# unzip external software to be included in the package
 	unzip -u -q $(JRE_WIN64) -d $(WIN64)
 	unzip -u -q $(MYSQL_WIN64) -d $(WIN64)
+	# create package
 	zip -r -q $(WIN64).zip $(WIN64)
 
 #######################
@@ -408,9 +392,10 @@ $(LINUX32).tar.gz:
 	wget -q -nc $(JAVA_URL)/$(JRE_LINUX32)
 	# download MariaDB / MySQL
 	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX32_VER)/bintar-linux-x86/$(MYSQL_LINUX32)
-	# create package
+	# unzip external software to be included in the package
 	tar xz -C $(LINUX32) -f $(JRE_LINUX32)
 	tar xz -C $(LINUX32) -f $(MYSQL_LINUX32)
+	# create package
 	tar -czf $(LINUX32).tar.gz $(LINUX32)
 
 #######################
@@ -440,14 +425,15 @@ $(LINUX64).tar.gz:
 	wget -q -nc $(JAVA_URL)/$(JRE_LINUX64)
 	# download MariaDB / MySQL
 	wget -q -nc $(MYSQL_URL)/mariadb-$(MYSQL_LINUX64_VER)/bintar-linux-systemd-x86_64/$(MYSQL_LINUX64)
-	# create package
+	# unzip external software to be included in the package
 	tar xz -C $(LINUX64) -f $(JRE_LINUX64)
 	tar xz -C $(LINUX64) -f $(MYSQL_LINUX64)
+	# create package
 	tar -czf $(LINUX64).tar.gz $(LINUX64)
 
 ####################################################################
 #
-# EXPERIMENTAL - full distro with UI+API server
+# EXPERIMENTAL - full distro with UI+API server (Tomcat)
 #
 ####################################################################
 $(FULLDISTRO).zip:
@@ -472,14 +458,19 @@ $(FULLDISTRO).zip:
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(FULLDISTRO)/ohmac.sh
 	# give exec permissions to startup script
 	chmod 755 $(FULLDISTRO)/oh.sh
-	# copy API jar
-	cp -a ./openhospital-api/target/$(OH_API_JAR) $(FULLDISTRO)/oh/bin
+	# copy API war
+	cp -a ./openhospital-api/target/$(OH_API_WAR) $(FULLDISTRO)/oh/bin
 	# copy API configuration file
 	cp ./openhospital-api/rsc/application.properties.dist $(FULLDISTRO)/oh/rsc/
-	# copy API content
-	cp -a ./openhospital-api/static $(FULLDISTRO)/oh/
+	# copy generated API WAR file
+	cp -a ./openhospital-api/target/$(OH_API_WAR) $(FULLDISTRO)/oh/bin
 	# copy UI content
-	cp -a ./openhospital-ui/build/* $(FULLDISTRO)/oh/static/
+	mkdir -p $(FULLDISTRO)/oh/$(OH_PUBLIC_URL)
+	cp -a ./openhospital-ui/build/* $(FULLDISTRO)/oh/$(OH_PUBLIC_URL)
+	# Set OH mode to EXPERIMENTAL in startup scripts
+	# EXPERT_MODE="off"
+	sed -i 's/^\#$$script\:EXPERT_MODE\=\"off\"/\$$script\:EXPERT_MODE\=\"on\"/g' $(CLIENT)/oh.ps1
+	sed -i 's/^\#EXPERT_MODE\=off/EXPERT_MODE\=on/g' $(CLIENT)/oh.sh
 	# create package
 	zip -r -q $(FULLDISTRO).zip $(FULLDISTRO)
 ####################################################################
