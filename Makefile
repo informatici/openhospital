@@ -152,12 +152,12 @@ clone-core:
 clone-gui:
 	if [ -d "openhospital-gui" ]; then cd openhospital-gui; git checkout -B $(OH_VERSION); git pull;
 	else
-		git clone --depth=1 -b tomcat_update https://github.com/mizzioisf/openhospital-gui.git openhospital-gui
+		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-gui.git openhospital-gui
 	fi
 clone-ui:
 	if [ -d "openhospital-ui" ]; then cd openhospital-ui; git checkout -B $(OH_VERSION); git pull;
 	else
-		git clone --depth=1 -b tomcat_update https://github.com/mizzioisf/openhospital-ui.git openhospital-ui
+		git clone --depth=1 -b $(OH_VERSION) https://github.com/informatici/openhospital-ui.git openhospital-ui
 	fi
 clone-api:
 	if [ -d "openhospital-api" ]; then cd openhospital-api; git checkout -B $(OH_VERSION); git pull;
