@@ -27,12 +27,12 @@ The Windows version has been tested on Windows 7/10/11 (64bit)
 
 ## Linux
 
-- start OH by running **./oh.sh**
-- to see available options, run **./oh.sh -h**
+- Start OH by running **./oh.sh**
+- To show available options, run **./oh.sh -h**
 
 ## Windows
 
-- double click on the **oh.bat** batch file and choose among available options.
+- Double click **oh.bat** and choose among available options.
 
 Note: The **oh.bat** launches the **oh.ps1** startup file automatically.
 The script presents the interactive menu that can be used to setup and choose how to run Open Hospital.
@@ -63,17 +63,17 @@ powershell.exe -ExecutionPolicy Bypass -File ./oh.ps1 [options]
 # Menu and options 
 
 ```
- -----------------------------------------------------------------
-|                                                                 |
-|                  Open Hospital - 1.14.2                         |
-|                                                                 |
- -----------------------------------------------------------------
-| arch: x86_64 | lang: en | mode: PORTABLE | Demo: off |
- -----------------------------------------------------------------
-| log level: INFO | Expert mode: on | API server: off |
- -----------------------------------------------------------------
+ ------------------------------------------------------------------------
+|                                                                        |
+|                Open Hospital - v1.15.x                                 |
+|                                                                        |
+ ------------------------------------------------------------------------
+| arch: x86_64 | lang: en | mode: PORTABLE | Demo: off | log level: INFO | 
+ ------------------------------------------------------------------------
+| Expert mode: off | API server: off | GUI: on | UI: off |
+ ------------------------------------------------------------------------
 
- Usage: oh.sh -[OPTION] 
+ Usage: oh.sh/oh.ps1 -[OPTION] 
 
    -C    set OH in CLIENT mode
    -P    set OH in PORTABLE mode
@@ -86,19 +86,19 @@ powershell.exe -ExecutionPolicy Bypass -File ./oh.ps1 [options]
    -------------------------------- 
     EXPERT MODE - advanced options
 
-   -A  toggle API server - EXPERIMENTAL	| -m  configure database connection manually
-   -e  export/save OH database		| -r  restore OH database
-   -i  initialize/install OH database	| -t  test database connection (CLIENT mode only)
-   -D  initialize OH with Demo data	| -X  clean/reset OH installation
-   -G  setup GSM			| -u  create Desktop shortcut
-   -d  toggle log level INFO/DEBUG	| -s  save OH configuration
-   -v  show configuration		| -V  check for latest OH version
-
+   -A  toggle API server - EXPERIMENTAL | -d  toggle log level INFO/DEBUG
+   -D  initialize OH with Demo data     | -X  clean/reset OH installation
+   -e  export/save OH database          | -r  restore OH database
+   -m  configure database connection manually   | -i  initialize/install OH databas
+   -s  save OH configuration            | -t  test database connection (CLIENT mode only)
+   -G  setup GSM
+   -U  enable UI web interface          | -u  create Desktop shortcut
+   -v  show configuration               | -V  check for latest available OH version
 
 Please select an option or press enter to start OH: 
+
 ```
 
-### Standard options
 
 - **C**    set Open Hospital to start in CLIENT mode, usually when an external database server is used (Client / Server configuration)
 - **P**    set Open Hospital to start in PORTABLE mode, where data is saved locally
@@ -121,8 +121,9 @@ Please select an option or press enter to start OH:
 - **s**    save / write / generate OH configuration files (oh/rsc/\*.properties) and exit
 - **t**    test database connection to the configured database server (Client mode only)
 - **u**    create Desktop shortcut with current params (Windows / Linux)
+- **U**    enable and start OH UI - Web interface
 - **v**    show Open Hospital external software version and configuration
-- **V**    create online for latest OH version released
+- **V**    check online for latest OH available version
 - **X**    clean/reset OH installation by deleting all data and configuration files -> **use with caution** <-
 
 # Script configuration
@@ -135,7 +136,7 @@ This might also be useful to set different combinations of options (language, de
 ############## OH general configuration - change at your own risk :-) ##############
 #
 # -> OH_PATH is the directory where Open Hospital files are located
-# OH_PATH="c:\Users\OH\OpenHospital\oh-1.14"
+# OH_PATH="c:\Users\OH\OpenHospital\oh-1.15"
 ```
 ### (Windows only) Enable interactive mode
 ```
@@ -163,24 +164,34 @@ $script:WRITE_CONFIG_FILES="off" # windows
 ```
 
 ### Distribution type - CLIENT | PORTABLE | SERVER
+```
+# set OH mode to PORTABLE | CLIENT | SERVER - default set to PORTABLE
+#OH_MODE=PORTABLE 
+#$script:OH_MODE="PORTABLE" # windows
+```
 
-```
-#######################  OH configuration  #########################
-OH_MODE=PORTABLE # set functioning mode to CLIENT | PORTABLE | CLIENT # linux
-$script:OH_MODE="PORTABLE" # windows
-```
 ### Interface and software language:
 ```
 # Language setting - default set to en
-OH_LANGUAGE=en # fr es it pt ar # linux
-$script:OH_LANGUAGE="en" # fr es it pt ar # windows
+OH_LANGUAGE_LIST=("ar" "de" "en" "es" "fr" "it" "pt" "sq")
+OH_LANGUAGE_LIST_INFO=("Arabic" "German" "English" "Spanish" "French" "Italian" "Portuguese" "Albanian")
+$script:OH_LANGUAGE="en" # ar de en es fr it pt sq # windows
 ```
+
+### Single / multi user
+```
+# single / multi user - set "yes" for single user configuration
+#OH_SINGLE_USER="no"
+$script:OH_SINGLE_USER="no"
+```
+
 ### Log level / debug mode
 ```
 # set log level to INFO | DEBUG - default set to INFO
 LOG_LEVEL=INFO # linux
 $script:LOG_LEVEL="INFO" # windows
 ```
+
 ### Demo mode
 ```
 # set DEMO_DATA to on to enable demo database loading - default set to off
@@ -188,6 +199,7 @@ $script:LOG_LEVEL="INFO" # windows
 DEMO_DATA=off # linux
 $script:DEMO_DATA="off" # windows
 ```
+
 ### Enable system wide JAVA
 ```
 # set JAVA_BIN 
@@ -195,6 +207,7 @@ $script:DEMO_DATA="off" # windows
 #JAVA_BIN=`which java` # linux
 #$script:JAVA_BIN="C:\Program Files\JAVA\bin\java.exe" # windows
 ```
+
 ### Database configuration
 
 If a database server hostname/address is specified (other then localhost), OH can be started in CLIENT mode and used in a client/server / LAN environment.
@@ -207,12 +220,13 @@ DATABASE_NAME=oh
 DATABASE_USER=isf
 DATABASE_PASSWORD="xxxxx"
 ```
+
 ### OH configuration
 ```
+#######################  OH configuration  #########################
 # path and directories
 OH_DIR="oh"
-OH_DOC_DIR="../doc"
-OH_SINGLE_USER="yes" # set "no" for multiuser
+OH_DOC_DIR="doc"
 CONF_DIR="data/conf"
 DATA_DIR="data/db"
 PHOTO_DIR="data/photo"
@@ -228,12 +242,12 @@ DICOM_STORAGE="FileSystemDicomManager" # SqlDicomManager
 DICOM_DIR="data/dicom_storage"
 
 # logging
-LOG_FILE=startup.log
-OH_LOG_FILE=openhospital.log
+LOG_FILE="startup.log"
+OH_LOG_FILE="openhospital.log"
 API_LOG_FILE="api.log"
 
 # SQL creation files
-DB_CREATE_SQL="create_all_en.sql" # default to en
+#DB_CREATE_SQL="create_all_en.sql" # default to create_all_en.sql
 DB_DEMO="create_all_demo.sql"
 
 ```
@@ -344,7 +358,7 @@ C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypas
 
 ### Powershell configuration
 
-Powershell minimun version 5.1 is required to run oh.ps1.
+Powershell minimum version 5.1 is required to run oh.ps1.
 To install Powershell 5.1 go to https://www.microsoft.com/en-us/download/details.aspx?id=54616
 
 If you get this error:
@@ -375,9 +389,9 @@ In order to download and unzip Java:
 - Visit  https://cdn.azul.com/zulu/bin/
 - download the latest **JRE** for your architecture:
 
-**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu17.54.21-ca-jre17.0.13-win_x64.zip
+**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu17.60.17-ca-jre17.0.16-win_x64.zip
 
-**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu17.54.21-ca-jre17.0.13-win_i686.zip
+**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu17.60.17-ca-jre17.0.16-win_i686.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -392,7 +406,7 @@ In order to download and unzip MariaDB:
 
 **x86 - 32bit:** https://archive.mariadb.org/mariadb-10.6.5/win32-packages/mariadb-10.6.5-win32.zip
 
-**x64 - 64bit:** https://archive.mariadb.org/mariadb-10.6.20/winx64-packages/mariadb-10.6.20-winx64.zip
+**x64 - 64bit:** https://archive.mariadb.org/mariadb-10.6.23/winx64-packages/mariadb-10.6.23-winx64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -400,4 +414,4 @@ In order to download and unzip MariaDB:
 
 Check online documentation.
 
-*last updated: 2025.01.22*
+*last updated: 2025.11.05*
