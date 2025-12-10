@@ -99,7 +99,6 @@ Please select an option or press enter to start OH:
 
 ```
 
-
 - **C**    set Open Hospital to start in CLIENT mode, usually when an external database server is used (Client / Server configuration)
 - **P**    set Open Hospital to start in PORTABLE mode, where data is saved locally
 - **S**    set Open Hospital to start in SERVER mode: the local portable instance of MariaDB is launched to act as a portable database server
@@ -405,7 +404,6 @@ In order to download and unzip MariaDB:
 - Download the zip file:
 
 **x86 - 32bit:** https://archive.mariadb.org/mariadb-10.6.5/win32-packages/mariadb-10.6.5-win32.zip
-
 **x64 - 64bit:** https://archive.mariadb.org/mariadb-10.6.23/winx64-packages/mariadb-10.6.23-winx64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
@@ -414,4 +412,5 @@ In order to download and unzip MariaDB:
 
 Check online documentation.
 
-*last updated: 2025.11.05*
+*last updated: 2025.12.10*
+
