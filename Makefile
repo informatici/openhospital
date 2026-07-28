@@ -284,22 +284,25 @@ $(CLIENT).zip:
 	cp -a ./oh-bundle/* $(CLIENT)/
 	cp -a ./openhospital-gui/target/OpenHospital20/* $(CLIENT)/oh
 	mv $(CLIENT)/oh/oh.* $(CLIENT)
+	mv $(CLIENT)/oh/ohmac.* $(CLIENT)
 	cp -a ./openhospital-core/sql $(CLIENT)/
 	cp -f ./openhospital-gui/oh.ico $(CLIENT)/
 	# remove unnecessary files
 	rm -f $(CLIENT)/oh/README.md
-	rm -f $(CLIENT)/ohmac.sh
 	# copy manuals
 	cp *.pdf $(CLIENT)/doc
 	# Set oh folder
 	sed -i 's/^\$$script\:OH_DIR\=\".\"/\$$script\:OH_DIR\=\"oh\"/g' $(CLIENT)/oh.ps1
 	sed -i 's/set\ OH_DIR=\".\"/\set\ OH_DIR\=\"oh\"/g' $(CLIENT)/oh.bat
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(CLIENT)/oh.sh
+	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(CLIENT)/ohmac.sh
 	# Set OH mode to CLIENT in startup scripts
 	sed -i 's/^\#$$script\:OH_MODE\=\"PORTABLE\"/\$$script\:OH_MODE\=\"CLIENT\"/g' $(CLIENT)/oh.ps1
 	sed -i 's/^\#OH_MODE\=PORTABLE/OH_MODE\=CLIENT/g' $(CLIENT)/oh.sh
+	sed -i 's/^OH_MODE\=\"PORTABLE\"/OH_MODE\=\"CLIENT\"/g' $(CLIENT)/ohmac.sh
 	# give exec permissions to startup script
 	chmod 755 $(CLIENT)/oh.sh
+	chmod 755 $(CLIENT)/ohmac.sh
 	# create package
 	zip -r -q $(CLIENT).zip $(CLIENT)
 
