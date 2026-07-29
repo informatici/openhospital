@@ -318,9 +318,9 @@ $(WIN32).zip:
 	mv $(WIN32)/oh/oh.* $(WIN32)
 	cp -a ./openhospital-core/sql $(WIN32)/
 	cp -f ./openhospital-gui/oh.ico $(WIN32)/
-	# remove unnecessary files
+	# remove unnecessary files 	
 	rm -f $(WIN32)/oh.sh
-	rm -f $(WIN32)/ohmac.sh
+	rm -f $(WIN32)/oh/ohmac.sh
 	rm -f $(WIN32)/oh/README.md
 	# copy manuals
 	cp *.pdf $(WIN32)/doc
@@ -351,7 +351,7 @@ $(WIN64).zip:
 	cp -f ./openhospital-gui/oh.ico $(WIN64)/
 	# remove unnecessary files
 	rm -f $(WIN64)/oh.sh
-	rm -f $(WIN64)/ohmac.sh
+	rm -f $(WIN64)/oh/ohmac.sh
 	rm -f $(WIN64)/oh/README.md
 	# copy manuals
 	cp *.pdf $(WIN64)/doc
