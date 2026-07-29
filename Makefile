@@ -472,8 +472,8 @@ $(FULLDISTRO).zip:
 	cp -a ./openhospital-ui/build/* $(FULLDISTRO)/oh/$(OH_PUBLIC_URL)
 	# Set OH mode to EXPERIMENTAL in startup scripts
 	# EXPERT_MODE="off"
-	sed -i 's/^\#$$script\:EXPERT_MODE\=\"off\"/\$$script\:EXPERT_MODE\=\"on\"/g' $(CLIENT)/oh.ps1
-	sed -i 's/^\#EXPERT_MODE\=off/EXPERT_MODE\=on/g' $(CLIENT)/oh.sh
+	sed -i 's/^\#$$script\:EXPERT_MODE\=\"off\"/\$$script\:EXPERT_MODE\=\"on\"/g' $(FULLDISTRO)/oh.ps1
+	sed -i 's/^\#EXPERT_MODE\=off/EXPERT_MODE\=on/g' $(FULLDISTRO)/oh.sh
 	# create package
 	zip -r -q $(FULLDISTRO).zip $(FULLDISTRO)
 ####################################################################
