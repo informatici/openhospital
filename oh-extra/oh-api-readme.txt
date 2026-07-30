@@ -9,8 +9,8 @@ To run the full OH distribution Core + GUI + API server + UI, use the bundled oh
 
 Dashboard is available by opening the web address:
 
-http://localhost:8080
+http://localhost:8080/oh-ui
 
 Default credentials:
 User admin
-Password Admin2022test!
+Password admin
