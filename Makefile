@@ -383,7 +383,7 @@ $(LINUX32).tar.gz:
 	# remove unnecessary files
 	rm -f $(LINUX32)/oh.bat
 	rm -f $(LINUX32)/oh.ps1
-	rm -f $(LINUX32)/ohmac.sh
+	rm -f $(LINUX32)/oh/ohmac.sh
 	rm -f $(LINUX32)/oh/README.md
 	# copy manuals
 	cp *.pdf $(LINUX32)/doc
@@ -416,7 +416,7 @@ $(LINUX64).tar.gz:
 	# remove unnecessary files
 	rm -f $(LINUX64)/oh.bat
 	rm -f $(LINUX64)/oh.ps1
-	rm -f $(LINUX64)/ohmac.sh
+	rm -f $(LINUX64)/oh/ohmac.sh
 	rm -f $(LINUX64)/oh/README.md
 	# copy manuals
 	cp *.pdf $(LINUX64)/doc
