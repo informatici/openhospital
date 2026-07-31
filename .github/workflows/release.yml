@@ -7,11 +7,37 @@ on:
       - '**.md'
     tags:
       - 'v*'
-      - 'develop*'      
+      - 'develop*' 
 
 jobs:
+
+  preflight:
+    name: Verify tag across component repos
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Check tag exists in all component repos
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          missing=""
+          for r in core gui api doc ui; do
+            url="https://github.com/informatici/openhospital-$r.git"
+            if git ls-remote --tags "$url" "refs/tags/$TAG" | grep -q .; then
+              echo "OK    openhospital-$r"
+            else
+              echo "MISS  openhospital-$r"
+              missing="$missing openhospital-$r"
+            fi
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Tag $TAG mancante in:$missing"
+            exit 1
+          fi
+          echo "Tag $TAG exists in all 5 repos."
+      
   build:
-    # ubuntu-latest is 22.04 - Feb 2023
+    needs: preflight
     runs-on: ubuntu-latest
 
     steps:
