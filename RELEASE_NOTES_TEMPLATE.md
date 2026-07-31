@@ -49,6 +49,8 @@ English, Albanian, Arabic, Chinese (simplified), French, German, Italian, Portug
  - [Core component changelog](https://github.com/informatici/openhospital-core/compare/SECONDLASTTAG...LASTTAG)
  - [Gui component changelog](https://github.com/informatici/openhospital-gui/compare/SECONDLASTTAG...LASTTAG)
  - [Doc component changelog](https://github.com/informatici/openhospital-doc/compare/SECONDLASTTAG...LASTTAG)
+ - [Api component changelog](https://github.com/informatici/openhospital-api/compare/SECONDLASTTAG...LASTTAG)
+ - [Ui component changelog](https://github.com/informatici/openhospital-ui/compare/SECONDLASTTAG...LASTTAG)
 
 </details>
 
