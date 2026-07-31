@@ -218,18 +218,32 @@ readme:
 	popd
 ####################################################################
 # Generate contributors file
+CONTRIBUTOR_REPOS := \
+	openhospital-core \
+	openhospital-gui \
+	openhospital-ui \
+	openhospital-api \
+	openhospital-doc
 contributors:
-	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-core.tmp  || echo "Error downloading core contributors";
-	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-gui.tmp  || echo "Error downloading gui contributors";
-	curl -s https://api.github.com/repos/informatici/openhospital-ui/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-ui.tmp  || echo "Error downloading ui contributors";
-	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-api.tmp  || echo "Error downloading api contributors";
-	curl -s https://api.github.com/repos/informatici/openhospital-doc/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-doc.tmp  || echo "Error downloading doc contributors";
-	# generate final file
-	# # cat CONTRIBUTORS | sed -e s/^[^@]*//g
-	# sed -e -e s/^.*\"name\"\:\ \"//g -e s/^.*\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp # working alternative
-	cat CONTRIBUTORS-*.tmp > CONTRIBUTORS.tmp
-	sed -e s/^.*\"name\"\:\ \"//g -e s/^.*\"login\"\:\ \"/@/g -e s/\"\,//g CONTRIBUTORS.tmp
-	cat ./CONTRIBUTORS.tmp | sort -u > CONTRIBUTORS
+	@command -v jq >/dev/null || { echo "Error: jq is required"; exit 1; }
+	@tmp_file=$$(mktemp); \
+	trap 'rm -f "$$tmp_file"' EXIT; \
+	for repo in $(CONTRIBUTOR_REPOS); do \
+		page=1; \
+		while :; do \
+			response=$$(curl --fail --silent --show-error --location \
+				-H "Accept: application/vnd.github+json" \
+				"https://api.github.com/repos/informatici/$$repo/contributors?anon=0&per_page=100&page=$$page"); \
+			count=$$(printf '%s' "$$response" | jq 'length'); \
+			[ "$$count" -eq 0 ] && break; \
+			printf '%s' "$$response" \
+				| jq -r '.[] | select(.login != null) | "@\(.login)"' \
+				>> "$$tmp_file"; \
+			[ "$$count" -lt 100 ] && break; \
+			page=$$((page + 1)); \
+		done; \
+	done; \
+	sort -fu "$$tmp_file" > CONTRIBUTORS
 ####################################################################
 # Generate release notes file
 release-notes:
