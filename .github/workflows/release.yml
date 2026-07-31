@@ -31,7 +31,7 @@ jobs:
             fi
           done
           if [ -n "$missing" ]; then
-            echo "::error::Tag $TAG mancante in:$missing"
+            echo "::error::Tag $TAG missing in:$missing"
             exit 1
           fi
           echo "Tag $TAG exists in all 5 repos."
