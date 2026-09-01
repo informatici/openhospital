@@ -47,9 +47,13 @@ jobs:
         distribution: 'zulu'
         java-version: 17
     
-    - name: Install asciidoctor
-      run: sudo gem install asciidoctor-pdf --pre
-      
+    - name: Install asciidoctor and build dependencies
+      run: |
+        sudo gem install asciidoctor-pdf --pre
+        sudo apt-get update
+        sudo apt-get install --yes jq
+        jq --version
+
     - uses: actions/checkout@v4
       with:
        fetch-depth: 0
