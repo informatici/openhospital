@@ -65,7 +65,7 @@ powershell.exe -ExecutionPolicy Bypass -File ./oh.ps1 [options]
 ```
  ------------------------------------------------------------------------
 |                                                                        |
-|                Open Hospital - v1.15.x                                 |
+|                   Open Hospital - v1.15.x                              |
 |                                                                        |
  ------------------------------------------------------------------------
 | arch: x86_64 | lang: en | mode: PORTABLE | Demo: off | log level: INFO | 
@@ -98,6 +98,7 @@ powershell.exe -ExecutionPolicy Bypass -File ./oh.ps1 [options]
 Please select an option or press enter to start OH: 
 
 ```
+
 
 - **C**    set Open Hospital to start in CLIENT mode, usually when an external database server is used (Client / Server configuration)
 - **P**    set Open Hospital to start in PORTABLE mode, where data is saved locally
@@ -388,9 +389,9 @@ In order to download and unzip Java:
 - Visit  https://cdn.azul.com/zulu/bin/
 - download the latest **JRE** for your architecture:
 
-**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu17.60.17-ca-jre17.0.16-win_x64.zip
+**x64 - 64bit:** https://cdn.azul.com/zulu/bin/zulu17.68.203-ca-fx-jre17.0.20.1-win_x64.zip
 
-**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu17.60.17-ca-jre17.0.16-win_i686.zip
+**x86 - 32bit:** https://cdn.azul.com/zulu/bin/zulu17.68.203-ca-fx-jre17.0.20.1-win_i686.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -404,7 +405,8 @@ In order to download and unzip MariaDB:
 - Download the zip file:
 
 **x86 - 32bit:** https://archive.mariadb.org/mariadb-10.6.5/win32-packages/mariadb-10.6.5-win32.zip
-**x64 - 64bit:** https://archive.mariadb.org/mariadb-10.6.23/winx64-packages/mariadb-10.6.23-winx64.zip
+
+**x64 - 64bit:** https://archive.mariadb.org/mariadb-10.6.28/winx64-packages/mariadb-10.6.28-winx64.zip
 
 - unzip the downloaded file into the base directory where OpenHospital has been placed.
 
@@ -412,5 +414,4 @@ In order to download and unzip MariaDB:
 
 Check online documentation.
 
-*last updated: 2025.12.10*
-
+*last updated: 2026.09.01*
