@@ -1,31 +1,21 @@
 # ![](./OH-icon.png) Open Hospital
 
+[[Latest release](https://github.com/informatici/openhospital/releases/latest)] [ [All releases](https://github.com/informatici/openhospital/releases) ]
+
 [![GitHub release](https://img.shields.io/github/v/release/informatici/openhospital?color=orange&label=latest%20release)](https://github.com/informatici/openhospital/releases/latest)
-[![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/informatici/openhospital/blob/master/LICENSE)
 ![Release Date](https://img.shields.io/github/release-date/informatici/openhospital?label=Released)
+[![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/informatici/openhospital/blob/master/LICENSE)
+
+![GitHub all releases](https://img.shields.io/github/downloads/informatici/openhospital/total?label=Downloads)
+![GitHub release (latest by date)](https://img.shields.io/github/downloads/informatici/openhospital/latest/total?label=Latest)
+
+
 
 **[Open Hospital][openhospital]** is a free and open-source Health Information Management System (HIMS) software application.
 
-**This repository is used to assemble the portable (or all-in-one) packages of Open Hospital, which you can download also [here][download].**
+**NOTE: his repository is used to assemble the portable (or all-in-one) packages of Open Hospital, which you can download also [here][download].**
 
-## Download
-
-[![Latest release](https://img.shields.io/github/v/release/informatici/openhospital?color=orange&label=download%20latest)](https://github.com/informatici/openhospital/releases/latest)
-
-[[Download latest release from github](https://github.com/informatici/openhospital/releases/latest)] [ [All releases](https://github.com/informatici/openhospital/releases) ]
-
-[[Download latest release from sourceforge](https://sourceforge.net/projects/openhospital/files/latest/download)] [ [All releases](https://sourceforge.net/projects/openhospital/files/) ]
-
-### Download stats
-
-![GitHub all releases](https://img.shields.io/github/downloads/informatici/openhospital/total?label=GitHub%20Downloads)
-![GitHub release (latest by date)](https://img.shields.io/github/downloads/informatici/openhospital/latest/total?label=latest)
-
-![SourceForge](https://img.shields.io/sourceforge/dt/openhospital?label=Sourceforge%20downloads)
-![SourceForge](https://img.shields.io/sourceforge/dm/openhospital?label=this%20month)
-![SourceForge](https://img.shields.io/sourceforge/dt/openhospital/v1.14.0?color=33ccff&label=latest&logoColor=33ccff)
-
-## Software
+## The Software
 
 Open Hospital (OH) is deployed as a desktop application that can be used in a standalone, single user mode (PORTABLE mode)
 or in a client / server network configuration (CLIENT mode), where multiple clients and users connect to the same database server.
