@@ -20,11 +20,16 @@ SHELL := /bin/bash
 .DELETE_ON_ERROR:		# delete the target if its recipe failed
 ##############################################################################
 
-# Open Hospital version
-OH_VERSION ?= $(shell git describe --abbrev=0 --tags)
+# Set Open Hospital version if not already set externally
+OH_VERSION := $(if $(OH_VERSION),$(OH_VERSION),$(shell git describe --abbrev=0 --tags))
+
+# Set default Open Hospital build version to develop
+OH_VERSION := $(if $(OH_VERSION),$(OH_VERSION),develop)
+
+# Define release date from OS date
 RELEASE_DATE := $(shell date +'%d/%m/%Y')
 
-# software distribution
+# Generated software packages
 CLIENT := OpenHospital-$(OH_VERSION)-multiarch-client
 WIN32 := OpenHospital-$(OH_VERSION)-windows_i686-portable
 WIN64 := OpenHospital-$(OH_VERSION)-windows_x86_64-portable
@@ -32,12 +37,12 @@ LINUX32 := OpenHospital-$(OH_VERSION)-linux_i686-portable
 LINUX64 := OpenHospital-$(OH_VERSION)-linux_x86_64-portable
 FULLDISTRO := OpenHospital-$(OH_VERSION)-x86_64-EXPERIMENTAL
 
-# JAVA and MySQL / MariaDB
-# download url
+####################################################################
+# JAVA and MySQL / MariaDB download urls
 JAVA_URL := https://cdn.azul.com/zulu/bin
 MYSQL_URL := https://archive.mariadb.org
 
-# software versions
+# External software versions
 JRE_32_VER := zulu17.68.203-ca-fx-jre17.0.20.1
 JRE_64_VER := zulu17.68.203-ca-fx-jre17.0.20.1
 MYSQL_WIN32_VER := 10.6.5
@@ -48,11 +53,12 @@ MYSQL_LINUX64_VER := 10.6.28
 # help file
 TXTFILE := OH-readme.txt
 
-# oh api jar/war
+# oh api jar/war binary file
 OH_API_JAR := openhospital-api-0.1.0.jar
 OH_API_WAR := openhospital-api-0.1.0.war
 OH_PUBLIC_URL := oh-ui
 
+####################################################################
 # internal variables
 JRE_WIN32 := $(JRE_32_VER)-win_i686.zip
 JRE_WIN64 := $(JRE_64_VER)-win_x64.zip
@@ -88,6 +94,9 @@ help:
 	@echo -e ""
 	@echo -e "Build (clone + compile) targets:"
 	@echo -e "\tbuild-[core|gui|ui|api|doc]"
+	@echo -e ""
+	@echo -e "Clean targets:"
+	@echo -e "\tclean-[downloads|releases|repos]"
 	@echo -e ""
 	@echo -e "EXPERIMENTAL - Build full distro (full release core+gui+ui+api for Linux and Windows"
 	@echo -e "\trelease-full-distro"
