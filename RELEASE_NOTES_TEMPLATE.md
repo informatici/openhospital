@@ -1,5 +1,4 @@
 # Open Hospital VERSION
------------------------
 
 Open Hospital is a free and open-source Health Information Management System (HIMS) software application.
 Please visit the Open Hospital website https://www.open-hospital.org/ for more information.
@@ -49,6 +48,8 @@ English, Albanian, Arabic, Chinese (simplified), French, German, Italian, Portug
  - [Core component changelog](https://github.com/informatici/openhospital-core/compare/SECONDLASTTAG...LASTTAG)
  - [Gui component changelog](https://github.com/informatici/openhospital-gui/compare/SECONDLASTTAG...LASTTAG)
  - [Doc component changelog](https://github.com/informatici/openhospital-doc/compare/SECONDLASTTAG...LASTTAG)
+ - [Api component changelog](https://github.com/informatici/openhospital-api/compare/SECONDLASTTAG...LASTTAG)
+ - [Ui component changelog](https://github.com/informatici/openhospital-ui/compare/SECONDLASTTAG...LASTTAG)
 
 </details>
 

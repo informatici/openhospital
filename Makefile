@@ -227,18 +227,29 @@ readme:
 	popd
 ####################################################################
 # Generate contributors file
+CONTRIBUTOR_REPOS := \
+	openhospital-core \
+	openhospital-gui \
+	openhospital-ui \
+	openhospital-api \
+	openhospital-doc
+# fetch all pages (100 per page) and extract GitHub logins as @login
 contributors:
-	curl -s https://api.github.com/repos/informatici/openhospital-core/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-core.tmp  || echo "Error downloading core contributors";
-	curl -s https://api.github.com/repos/informatici/openhospital-gui/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-gui.tmp  || echo "Error downloading gui contributors";
-	curl -s https://api.github.com/repos/informatici/openhospital-ui/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-ui.tmp  || echo "Error downloading ui contributors";
-	curl -s https://api.github.com/repos/informatici/openhospital-api/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-api.tmp  || echo "Error downloading api contributors";
-	curl -s https://api.github.com/repos/informatici/openhospital-doc/contributors?anon=0 | grep -e name -e login > ./CONTRIBUTORS-doc.tmp  || echo "Error downloading doc contributors";
-	# generate final file
-	# # cat CONTRIBUTORS | sed -e s/^[^@]*//g
-	# sed -e -e s/^.*\"name\"\:\ \"//g -e s/^.*\:\ \"/@/g -e s/\"\,//g -i CONTRIBUTORS.tmp # working alternative
-	cat CONTRIBUTORS-*.tmp > CONTRIBUTORS.tmp
-	sed -e s/^.*\"name\"\:\ \"//g -e s/^.*\"login\"\:\ \"/@/g -e s/\"\,//g CONTRIBUTORS.tmp
-	cat ./CONTRIBUTORS.tmp | sort -u > CONTRIBUTORS
+	@tmp_file=$$(mktemp); \
+	trap 'rm -f "$$tmp_file"' EXIT; \
+	for repo in $(CONTRIBUTOR_REPOS); do \
+		page=1; \
+		while :; do \
+			logins=$$(curl --fail --silent --show-error --location \
+				"https://api.github.com/repos/informatici/$$repo/contributors?per_page=100&page=$$page" \
+				| grep -o '"login": *"[^"]*"' | sed 's/.*"\([^"]*\)"$$/@\1/'); \
+			[ -z "$$logins" ] && break; \
+			printf '%s\n' "$$logins" >> "$$tmp_file"; \
+			[ $$(printf '%s\n' "$$logins" | wc -l) -lt 100 ] && break; \
+			page=$$((page + 1)); \
+		done; \
+	done; \
+	sort -fu "$$tmp_file" > CONTRIBUTORS
 ####################################################################
 # Generate release notes file
 release-notes:
