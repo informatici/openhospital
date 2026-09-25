@@ -80,21 +80,21 @@ jobs:
       matrix: ${{ steps.config.outputs.matrix }}
       license_matrix: ${{ steps.config.outputs.license_matrix }}
     steps:
-       - name: Generate release bot token
-         id: release-token
-         uses: actions/create-github-app-token@v3
-         with:
-           client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
-           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-           owner: informatici
-           repositories: |
-             openhospital
-             openhospital-core
-             openhospital-gui
-             openhospital-api
-             openhospital-ui
-             openhospital-doc
-           permission-contents: write
+      - name: Generate release bot token
+        id: release-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          owner: informatici
+          repositories: |
+            openhospital
+            openhospital-core
+            openhospital-gui
+            openhospital-api
+            openhospital-ui
+            openhospital-doc
+          permission-contents: write
 
       - name: Validate inputs and configuration
         id: config
