@@ -70,7 +70,7 @@ defaults:
 
 env:
   CONFIG_JSON: ${{ vars.RELEASE_PREP_CONFIG_JSON }}
-  GH_TOKEN: ${{ secrets.RELEASE_BOT_TOKEN }}
+  #GH_TOKEN: ${{ secrets.RELEASE_BOT_TOKEN }}
   VERSION: ${{ inputs.version }}
   SOURCE_REF: ${{ inputs.source_ref }}
   RELEASE_BRANCH: release_${{ inputs.version }}
@@ -84,10 +84,27 @@ jobs:
       matrix: ${{ steps.config.outputs.matrix }}
       license_matrix: ${{ steps.config.outputs.license_matrix }}
     steps:
+       - name: Generate release bot token
+         id: release-token
+         uses: actions/create-github-app-token@v3
+         with:
+           client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+           owner: informatici
+           repositories: |
+             openhospital
+             openhospital-core
+             openhospital-gui
+             openhospital-api
+             openhospital-ui
+             openhospital-doc
+           permission-contents: write
+		
       - name: Validate inputs and configuration
         id: config
         env:
           CONFIG: ${{ env.CONFIG_JSON }}
+		  GH_TOKEN: ${{ steps.release-token.outputs.token }}
         run: |
           set -Eeuo pipefail
 
@@ -215,7 +232,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ matrix.repo.repository }}
-          token: ${{ secrets.RELEASE_BOT_TOKEN }}
+          token: ${{ steps.release-token.outputs.token }}
           ref: develop
           fetch-depth: 0
 
