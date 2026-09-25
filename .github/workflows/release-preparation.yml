@@ -34,10 +34,6 @@ name: Prepare Open Hospital release branches
 # - license=true must be set exactly for: core, gui, api
 # - gui must include rsc/version.properties in properties_files
 # - doc must contain explicit text_replacements for manual/version updates
-#
-# Required secret: RELEASE_BOT_TOKEN (fine-grained token/App token with Contents
-# read/write on all six repositories). The automatic github.token normally only
-# has access to the repository containing this workflow.
 
 on:
   workflow_dispatch:
@@ -104,7 +100,7 @@ jobs:
         id: config
         env:
           CONFIG: ${{ env.CONFIG_JSON }}
-		  GH_TOKEN: ${{ steps.release-token.outputs.token }}
+          GH_TOKEN: ${{ steps.release-token.outputs.token }}
         run: |
           set -Eeuo pipefail
 
