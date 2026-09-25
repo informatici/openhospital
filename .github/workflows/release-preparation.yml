@@ -1,0 +1,458 @@
+name: Prepare Open Hospital release branches
+
+# Required repository variable: RELEASE_PREP_CONFIG_JSON
+#
+# The checklist names six logical repositories but does not provide their GitHub
+# slugs or all file/property mappings. Configure them explicitly; preflight
+# rejects missing/placeholder data. Schema (exactly six entries are required):
+# [
+#   {
+#     "name": "core|gui|ui|api|doc|openhospital",
+#     "repository": "OWNER/REPOSITORY",
+#     "maven": true,
+#     "license": true,
+#     "maven_properties": ["exact.property.name"],
+#     "dependencies": [
+#       {"group_id":"exact.group", "artifact_id":"exact-artifact"}
+#     ],
+#     "properties_files": [
+#       {"file":"exact/path.properties", "key":"exact.key", "value":"${VERSION}"}
+#     ],
+#     "text_replacements": [
+#       {
+#         "file":"exact/documentation/path",
+#         "pattern":"escaped regex with one version value to replace",
+#         "replacement":"${VERSION}",
+#         "expected_matches":1
+#       }
+#     ]
+#   }
+# ]
+#
+# Checklist-derived constraints:
+# - names must be exactly: core, gui, ui, api, doc, openhospital
+# - license=true must be set exactly for: core, gui, api
+# - gui must include rsc/version.properties in properties_files
+# - doc must contain explicit text_replacements for manual/version updates
+#
+# Required secret: RELEASE_BOT_TOKEN (fine-grained token/App token with Contents
+# read/write on all six repositories). The automatic github.token normally only
+# has access to the repository containing this workflow.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version in X.Y.Z form (without v)
+        required: true
+        type: string
+      source_ref:
+        description: Existing branch/tag/SHA used only when a release branch is missing
+        required: true
+        default: develop
+        type: string
+      dry_run:
+        description: Validate and compute changes, but do not push
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: openhospital-release-prep-${{ inputs.version }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  CONFIG_JSON: ${{ vars.RELEASE_PREP_CONFIG_JSON }}
+  GH_TOKEN: ${{ secrets.RELEASE_BOT_TOKEN }}
+  VERSION: ${{ inputs.version }}
+  SOURCE_REF: ${{ inputs.source_ref }}
+  RELEASE_BRANCH: release_${{ inputs.version }}
+  DRY_RUN: ${{ inputs.dry_run }}
+
+jobs:
+  preflight:
+    name: Preflight
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.config.outputs.matrix }}
+      license_matrix: ${{ steps.config.outputs.license_matrix }}
+    steps:
+      - name: Validate inputs and configuration
+        id: config
+        env:
+          CONFIG: ${{ env.CONFIG_JSON }}
+        run: |
+          set -Eeuo pipefail
+
+          fail() { echo "::error::$*"; exit 1; }
+
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
+            || fail "version must have X.Y.Z form (for example 1.15.0)"
+          [[ -n "$SOURCE_REF" ]] || fail "source_ref cannot be empty"
+          [[ -n "${GH_TOKEN:-}" ]] \
+            || fail "Missing RELEASE_BOT_TOKEN secret"
+          [[ -n "${CONFIG:-}" ]] \
+            || fail "Missing RELEASE_PREP_CONFIG_JSON repository variable"
+
+          jq -e 'type == "array" and length == 6' <<<"$CONFIG" >/dev/null \
+            || fail "RELEASE_PREP_CONFIG_JSON must be a JSON array of exactly six repositories"
+
+          expected='["api","core","doc","gui","openhospital","ui"]'
+          actual="$(jq -c '[.[].name] | sort' <<<"$CONFIG")"
+          [[ "$actual" == "$expected" ]] \
+            || fail "Configured names must be exactly: api, core, doc, gui, openhospital, ui"
+
+          duplicates="$(jq -r 'group_by(.repository)[] | select(length > 1) | .[0].repository' <<<"$(jq -c 'sort_by(.repository)' <<<"$CONFIG")")"
+          [[ -z "$duplicates" ]] || fail "Duplicate repository slug(s): $duplicates"
+
+          jq -e 'all(.[].repository;
+              type == "string" and
+              test("^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$") and
+              (test("REPLACE|TODO|UNKNOWN"; "i") | not))' <<<"$CONFIG" >/dev/null \
+            || fail "Every repository must be an explicit OWNER/REPOSITORY slug with no placeholder"
+
+          license_names="$(jq -c '[.[] | select(.license == true) | .name] | sort' <<<"$CONFIG")"
+          [[ "$license_names" == '["api","core","gui"]' ]] \
+            || fail "license=true must be set exactly for api, core, and gui"
+
+          jq -e '.[] |
+            has("maven") and has("license") and
+            has("maven_properties") and has("dependencies") and
+            has("properties_files") and has("text_replacements") and
+            ((.maven // false) | type == "boolean") and
+            ((.license // false) | type == "boolean") and
+            ((.maven_properties // []) | type == "array") and
+            ((.dependencies // []) | type == "array") and
+            ((.properties_files // []) | type == "array") and
+            ((.text_replacements // []) | type == "array")' <<<"$CONFIG" >/dev/null \
+            || fail "One or more repository configuration fields has the wrong type"
+
+          jq -e '.[] | select(.maven == true) |
+            ((.maven_properties // []) | all(.[]; type == "string" and length > 0)) and
+            ((.dependencies // []) | all(.[];
+              (.group_id | type == "string" and length > 0) and
+              (.artifact_id | type == "string" and length > 0)))' <<<"$CONFIG" >/dev/null \
+            || fail "Maven property/dependency mappings must be explicit and non-empty"
+
+          jq -e '.[] | (.properties_files // []) | all(.[];
+            (.file | type == "string" and length > 0) and
+            (.key | type == "string" and length > 0) and
+            (.value | type == "string" and contains("${VERSION}")))' <<<"$CONFIG" >/dev/null \
+            || fail "properties_files entries require file, key, and a value containing \${VERSION}"
+
+          jq -e '.[] | (.text_replacements // []) | all(.[];
+            (.file | type == "string" and length > 0) and
+            (.pattern | type == "string" and length > 0) and
+            (.replacement | type == "string" and contains("${VERSION}")) and
+            (.expected_matches | type == "number" and . >= 1))' <<<"$CONFIG" >/dev/null \
+            || fail "text_replacements require file, pattern, replacement with \${VERSION}, and expected_matches >= 1"
+
+          jq -e '.[] | select(.name == "gui") |
+            any(.properties_files[]?; .file == "rsc/version.properties")' <<<"$CONFIG" >/dev/null \
+            || fail "GUI mapping missing: add the exact key for rsc/version.properties"
+
+          jq -e '.[] | select(.name == "doc") |
+            (.text_replacements | length > 0)' <<<"$CONFIG" >/dev/null \
+            || fail "Documentation mapping missing: doc.text_replacements must explicitly identify every version update"
+
+          compact="$(jq -c '.' <<<"$CONFIG")"
+          license_compact="$(jq -c '[.[] | select(.license == true)]' <<<"$CONFIG")"
+          echo "matrix=$compact" >>"$GITHUB_OUTPUT"
+          echo "license_matrix=$license_compact" >>"$GITHUB_OUTPUT"
+
+      - name: Verify repository access, source refs, and target branches
+        env:
+          CONFIG: ${{ env.CONFIG_JSON }}
+        run: |
+          set -Eeuo pipefail
+
+          while IFS= read -r repo; do
+            echo "Checking $repo"
+            permission="$(gh api "repos/$repo" --jq '.permissions.push // false')"
+            [[ "$permission" == "true" ]] \
+              || { echo "::error::Token has no push permission for $repo"; exit 1; }
+
+            encoded_source="$(jq -rn --arg v "$SOURCE_REF" '$v|@uri')"
+            gh api "repos/$repo/commits/$encoded_source" >/dev/null \
+              || { echo "::error::Source ref '$SOURCE_REF' does not exist in $repo"; exit 1; }
+
+            if gh api "repos/$repo/git/ref/heads/$RELEASE_BRANCH" >/dev/null 2>&1; then
+              echo "Release branch already exists and will be reused: $repo#$RELEASE_BRANCH"
+            else
+              echo "Release branch will be created from $SOURCE_REF: $repo#$RELEASE_BRANCH"
+            fi
+          done < <(jq -r '.[].repository' <<<"$CONFIG_JSON")
+
+      - name: Preflight summary
+        run: |
+          {
+            echo "## Release preparation preflight"
+            echo ""
+            echo "- Version: \`$VERSION\`"
+            echo "- Release branch: \`$RELEASE_BRANCH\`"
+            echo "- Source for missing branches: \`$SOURCE_REF\`"
+            echo "- Dry run: \`$DRY_RUN\`"
+            echo "- Configuration: validated for six repositories"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+  licenses:
+    name: License headers - ${{ matrix.repo.name }} develop
+    needs: preflight
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        repo: ${{ fromJSON(needs.preflight.outputs.license_matrix) }}
+    steps:
+      - name: Check out develop
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.repo.repository }}
+          token: ${{ secrets.RELEASE_BOT_TOKEN }}
+          ref: develop
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Format licenses idempotently
+        run: mvn -B -ntp license:format
+
+      - name: Commit and optionally push license changes
+        env:
+          REPOSITORY: ${{ matrix.repo.repository }}
+        run: |
+          set -Eeuo pipefail
+          git config user.name "openhospital-release-bot"
+          git config user.email "openhospital-release-bot@users.noreply.github.com"
+
+          if git diff --quiet --exit-code; then
+            result="already up to date"
+          else
+            git add -A
+            git diff --cached --check
+            git commit -m "chore: format license headers for $VERSION"
+            if [[ "$DRY_RUN" == "true" ]]; then
+              result="would push $(git rev-parse --short HEAD)"
+            else
+              git push origin HEAD:develop
+              result="pushed $(git rev-parse --short HEAD)"
+            fi
+          fi
+
+          echo "- Licenses \`$REPOSITORY#develop\`: $result" >>"$GITHUB_STEP_SUMMARY"
+
+  prepare:
+    name: Prepare ${{ matrix.repo.name }}
+    needs: [preflight, licenses]
+    if: ${{ always() && needs.preflight.result == 'success' && (needs.licenses.result == 'success' || needs.licenses.result == 'skipped') }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        repo: ${{ fromJSON(needs.preflight.outputs.matrix) }}
+    env:
+      REPOSITORY: ${{ matrix.repo.repository }}
+      REPO_CONFIG: ${{ toJSON(matrix.repo) }}
+    steps:
+      - name: Clone repository and create or reuse release branch
+        run: |
+          set -Eeuo pipefail
+          git config --global user.name "openhospital-release-bot"
+          git config --global user.email "openhospital-release-bot@users.noreply.github.com"
+          git clone --filter=blob:none \
+            "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git" repo
+          cd repo
+          git fetch origin "+refs/heads/*:refs/remotes/origin/*" --tags
+
+          if git show-ref --verify --quiet "refs/remotes/origin/$RELEASE_BRANCH"; then
+            git checkout -B "$RELEASE_BRANCH" "origin/$RELEASE_BRANCH"
+            echo "BRANCH_ACTION=reused" >>"$GITHUB_ENV"
+          else
+            base_ref="$SOURCE_REF"
+            if git show-ref --verify --quiet "refs/remotes/origin/$SOURCE_REF"; then
+              base_ref="origin/$SOURCE_REF"
+            fi
+            git checkout -B "$RELEASE_BRANCH" "$base_ref"
+            echo "BRANCH_ACTION=created from $SOURCE_REF" >>"$GITHUB_ENV"
+          fi
+
+      - name: Set Maven project and internal dependency versions
+        if: ${{ matrix.repo.maven == true }}
+        working-directory: repo
+        run: |
+          set -Eeuo pipefail
+          [[ -f pom.xml ]] \
+            || { echo "::error::Configured as Maven but pom.xml is missing in $REPOSITORY"; exit 1; }
+
+          mvn -B -ntp versions:set \
+            -DnewVersion="$VERSION" \
+            -DprocessAllModules=true \
+            -DgenerateBackupPoms=false
+
+          while IFS= read -r property; do
+            mvn -B -ntp versions:set-property \
+              -Dproperty="$property" \
+              -DnewVersion="$VERSION" \
+              -DgenerateBackupPoms=false
+          done < <(jq -r '.maven_properties[]?' <<<"$REPO_CONFIG")
+
+          while IFS=$'\t' read -r group artifact; do
+            mvn -B -ntp versions:use-dep-version \
+              -Dincludes="$group:$artifact" \
+              -DdepVersion="$VERSION" \
+              -DforceVersion=true \
+              -DprocessDependencyManagement=true \
+              -DgenerateBackupPoms=false
+          done < <(jq -r '.dependencies[]? | [.group_id,.artifact_id] | @tsv' <<<"$REPO_CONFIG")
+
+          if grep -RIn --include='pom.xml' \
+              -E "<version>${VERSION//./\\.}-SNAPSHOT</version>" .; then
+            echo "::error::Target project/dependency version still has -SNAPSHOT in a pom.xml"
+            exit 1
+          fi
+
+      - name: Update exact properties-file mappings
+        working-directory: repo
+        env:
+          RULES_JSON: ${{ toJSON(matrix.repo.properties_files) }}
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib, re, sys
+
+          version = os.environ["VERSION"]
+          rules = json.loads(os.environ.get("RULES_JSON") or "[]")
+          for rule in rules:
+              path = pathlib.Path(rule["file"])
+              if not path.is_file():
+                  sys.exit(f"Configured properties file does not exist: {path}")
+              key = rule["key"]
+              value = rule["value"].replace("${VERSION}", version)
+              original = path.read_text(encoding="utf-8")
+              pattern = re.compile(rf"(?m)^({re.escape(key)}\s*[=:]\s*).*$")
+              updated, count = pattern.subn(lambda m: m.group(1) + value, original)
+              if count != 1:
+                  sys.exit(f"Expected exactly one key '{key}' in {path}; found {count}")
+              if updated != original:
+                  path.write_text(updated, encoding="utf-8", newline="")
+          PY
+
+      - name: Apply explicit documentation and text mappings
+        working-directory: repo
+        env:
+          RULES_JSON: ${{ toJSON(matrix.repo.text_replacements) }}
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib, re, sys
+
+          version = os.environ["VERSION"]
+          rules = json.loads(os.environ.get("RULES_JSON") or "[]")
+          for rule in rules:
+              path = pathlib.Path(rule["file"])
+              if not path.is_file():
+                  sys.exit(f"Configured text file does not exist: {path}")
+              original = path.read_text(encoding="utf-8")
+              replacement = rule["replacement"].replace("${VERSION}", version)
+              try:
+                  updated, count = re.subn(rule["pattern"], replacement, original,
+                                           flags=re.MULTILINE)
+              except re.error as exc:
+                  sys.exit(f"Invalid regex for {path}: {exc}")
+              expected = int(rule["expected_matches"])
+              if count != expected:
+                  sys.exit(f"Expected {expected} matches in {path}; found {count}")
+              if updated != original:
+                  path.write_text(updated, encoding="utf-8", newline="")
+          PY
+
+      - name: Verify target state
+        working-directory: repo
+        run: |
+          set -Eeuo pipefail
+
+          # Maven's effective model must be readable after all edits.
+          if [[ "$(jq -r '.maven // false' <<<"$REPO_CONFIG")" == "true" ]]; then
+            mvn -B -ntp -DskipTests help:effective-pom -Doutput=/tmp/effective-pom.xml
+            [[ -s /tmp/effective-pom.xml ]]
+          fi
+
+          # A rerun must converge: applying the transformations a second time is
+          # represented by the same working tree, so only the intended diff remains.
+          git diff --check
+          git status --short
+
+      - name: Commit only when content changed and push safely
+        working-directory: repo
+        run: |
+          set -Eeuo pipefail
+
+          if git diff --quiet --exit-code; then
+            commit_action="no content changes"
+          else
+            git add -A
+            git diff --cached --check
+            git commit -m "chore: prepare release $VERSION"
+            commit_action="committed $(git rev-parse --short HEAD)"
+          fi
+
+          if [[ "$DRY_RUN" == "true" ]]; then
+            push_action="dry run; nothing pushed"
+          else
+            # --force-with-lease is intentionally not used. Concurrent or manual
+            # updates cause a safe failure and can be reconciled before rerunning.
+            git push --set-upstream origin "$RELEASE_BRANCH"
+            push_action="branch synchronized"
+          fi
+
+          {
+            echo "## $REPOSITORY"
+            echo ""
+            echo "- Branch: \`$RELEASE_BRANCH\` ($BRANCH_ACTION)"
+            echo "- Content: $commit_action"
+            echo "- Push: $push_action"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+  summary:
+    name: Final summary
+    needs: [preflight, licenses, prepare]
+    if: ${{ always() }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Report outcome
+        run: |
+          {
+            echo "# Open Hospital release preparation"
+            echo ""
+            echo "| Stage | Result |"
+            echo "|---|---|"
+            echo "| Preflight | ${{ needs.preflight.result }} |"
+            echo "| Licenses on develop | ${{ needs.licenses.result }} |"
+            echo "| Six release branches | ${{ needs.prepare.result }} |"
+            echo ""
+            if [[ "${{ needs.prepare.result }}" == "success" ]]; then
+              if [[ "$DRY_RUN" == "true" ]]; then
+                echo "Dry run completed. Review each matrix job's summary, then rerun with dry_run=false."
+              else
+                echo "Preparation completed. Existing branches were reused, missing branches were created, and only real changes were committed."
+              fi
+            else
+              echo "Preparation did not complete. Fix the failed preflight or repository job and rerun; completed work is safe to reuse."
+            fi
+          } >>"$GITHUB_STEP_SUMMARY"
+
+          [[ "${{ needs.preflight.result }}" == "success" ]]
+          [[ "${{ needs.licenses.result }}" == "success" || "${{ needs.licenses.result }}" == "skipped" ]]
+          [[ "${{ needs.prepare.result }}" == "success" ]]
