@@ -82,7 +82,6 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.config.outputs.matrix }}
-      license_matrix: ${{ steps.config.outputs.license_matrix }}
     steps:
       - name: Generate GitHub App token
         id: app-token
@@ -189,9 +188,7 @@ jobs:
             || fail "Documentation mapping missing: doc.text_replacements must explicitly identify every version update"
 
           compact="$(jq -c '.' <<<"$CONFIG")"
-          license_compact="$(jq -c '[.[] | select(.license == true)]' <<<"$CONFIG")"
           echo "matrix=$compact" >>"$GITHUB_OUTPUT"
-          echo "license_matrix=$license_compact" >>"$GITHUB_OUTPUT"
 
       - name: Verify repository access, source refs, and target branches
         env:
@@ -242,70 +239,10 @@ jobs:
             echo "- Configuration: validated for six repositories"
           } >>"$GITHUB_STEP_SUMMARY"
 
-  licenses:
-    name: License headers - ${{ matrix.repo.name }} develop
-    needs: preflight
-    runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        repo: ${{ fromJSON(needs.preflight.outputs.license_matrix) }}
-    steps:
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@v3
-        with:
-          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
-          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
-          owner: informatici
-          repositories: ${{ matrix.repo.repository }}
-          permission-contents: write
-
-      - name: Check out develop
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ matrix.repo.repository }}
-          token: ${{ steps.app-token.outputs.token }}
-          ref: develop
-          fetch-depth: 0
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-          cache: maven
-
-      - name: Format licenses idempotently
-        run: mvn -B -ntp license:format
-
-      - name: Commit and optionally push license changes
-        env:
-          REPOSITORY: ${{ matrix.repo.repository }}
-        run: |
-          set -Eeuo pipefail
-          git config user.name "openhospital-release-bot"
-          git config user.email "openhospital-release-bot@users.noreply.github.com"
-
-          if git diff --quiet --exit-code; then
-            result="already up to date"
-          else
-            git add -A
-            git commit -m "chore: format license headers for $VERSION"
-            if [[ "$DRY_RUN" == "true" ]]; then
-              result="would push $(git rev-parse --short HEAD)"
-            else
-              git push origin HEAD:develop
-              result="pushed $(git rev-parse --short HEAD)"
-            fi
-          fi
-
-          echo "- Licenses \`$REPOSITORY#develop\`: $result" >>"$GITHUB_STEP_SUMMARY"
-
   prepare:
     name: Prepare ${{ matrix.repo.name }}
-    needs: [preflight, licenses]
-    if: ${{ always() && needs.preflight.result == 'success' && (needs.licenses.result == 'success' || needs.licenses.result == 'skipped') }}
+    needs: preflight
+    if: ${{ needs.preflight.result == 'success' }}
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -363,6 +300,20 @@ jobs:
             git checkout -B "$RELEASE_BRANCH" "$base_ref"
             echo "BRANCH_ACTION=created from $base_ref" >>"$GITHUB_ENV"
           fi
+
+      - name: Set up Java
+        if: ${{ matrix.repo.maven == true }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: repo/pom.xml
+
+      - name: Format licenses on the release branch
+        if: ${{ matrix.repo.license == true }}
+        working-directory: repo
+        run: mvn -B -ntp license:format
 
       - name: Set Maven project and internal dependency versions
         if: ${{ matrix.repo.maven == true }}
@@ -484,7 +435,9 @@ jobs:
             commit_action="no content changes"
           else
             git add -A
-            git diff --cached --check
+            if [[ "$(jq -r '.license // false' <<<"$REPO_CONFIG")" != "true" ]]; then
+              git diff --cached --check
+            fi
             git commit -m "chore: prepare release $VERSION"
             commit_action="committed $(git rev-parse --short HEAD)"
           fi
@@ -508,7 +461,7 @@ jobs:
 
   summary:
     name: Final summary
-    needs: [preflight, licenses, prepare]
+    needs: [preflight, prepare]
     if: ${{ always() }}
     runs-on: ubuntu-24.04
     steps:
@@ -520,8 +473,7 @@ jobs:
             echo "| Stage | Result |"
             echo "|---|---|"
             echo "| Preflight | ${{ needs.preflight.result }} |"
-            echo "| Licenses on develop | ${{ needs.licenses.result }} |"
-            echo "| Six release branches | ${{ needs.prepare.result }} |"
+            echo "| Release branches, versions, docs, and licenses | ${{ needs.prepare.result }} |"
             echo ""
             if [[ "${{ needs.prepare.result }}" == "success" ]]; then
               if [[ "$DRY_RUN" == "true" ]]; then
@@ -535,5 +487,4 @@ jobs:
           } >>"$GITHUB_STEP_SUMMARY"
 
           [[ "${{ needs.preflight.result }}" == "success" ]]
-          [[ "${{ needs.licenses.result }}" == "success" || "${{ needs.licenses.result }}" == "skipped" ]]
           [[ "${{ needs.prepare.result }}" == "success" ]]
