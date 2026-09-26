@@ -1,4 +1,4 @@
-name: Prepare Open Hospital
+name: Release Open Hospital
 
 on:
   push:
