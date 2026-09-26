@@ -156,16 +156,13 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           GH_REPO_OWNER: informatici
-          RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
           APP_INSTALLATION_ID: ${{ steps.app-token.outputs.installation-id }}
         run: |
           set -euo pipefail
 
           repo=openhospital
-          target_sha="$(gh api \
-            "repos/${GH_REPO_OWNER}/${repo}/git/ref/heads/${RELEASE_BRANCH}" \
-            --jq '.object.sha')"
+
           # Tag the exact commit from which this manual workflow was started
           # (normally the head of master). The host has no release_X_Y_Z branch.
           target_sha="${GITHUB_SHA}"
