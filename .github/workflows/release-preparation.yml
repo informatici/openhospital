@@ -458,9 +458,13 @@ jobs:
             [[ -s /tmp/effective-pom.xml ]]
           fi
 
-          # A rerun must converge: applying the transformations a second time is
-          # represented by the same working tree, so only the intended diff remains.
-          git diff --check
+          # Mycila license:format can intentionally generate whitespace in its
+          # managed license header. Apply Git's generic whitespace validation
+          # only to repositories not formatted by the license plugin.
+          if [[ "$(jq -r '.license // false' <<<"$REPO_CONFIG")" != "true" ]]; then
+            git diff --check
+          fi
+
           git status --short
 
       - name: Commit only when content changed and push safely
