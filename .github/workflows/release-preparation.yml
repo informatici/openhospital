@@ -100,22 +100,6 @@ jobs:
             openhospital-doc
           permission-contents: write
 
-      - name: Diagnose GitHub App token
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          echo "App: ${{ steps.app-token.outputs.app-slug }}"
-          echo "Installation: ${{ steps.app-token.outputs.installation-id }}"
-
-          gh api /installation/repositories \
-            --paginate \
-            --jq '.repositories[] | {
-              repository: .full_name,
-              pull: .permissions.pull,
-              push: .permissions.push,
-              admin: .permissions.admin
-            }'
-
       - name: Validate inputs and configuration
         id: config
         env:
@@ -212,11 +196,20 @@ jobs:
         run: |
           set -Eeuo pipefail
 
+          # Repository .permissions.push/pull/admin describes user roles and is
+          # not meaningful for a GitHub App installation token. Token creation
+          # above explicitly requests contents:write and fails if the App has
+          # not been granted that permission. Here we verify repository scope.
+          accessible_repositories="$(
+            gh api /installation/repositories \
+              --paginate \
+              --jq '.repositories[].full_name'
+          )"
+
           while IFS= read -r repo; do
             echo "Checking $repo"
-            permission="$(gh api "repos/$repo" --jq '.permissions.push // false')"
-            [[ "$permission" == "true" ]] \
-              || { echo "::error::Token has no push permission for $repo"; exit 1; }
+            grep -Fqx "$repo" <<<"$accessible_repositories" \
+              || { echo "::error::GitHub App token cannot access $repo"; exit 1; }
 
             encoded_source="$(jq -rn --arg v "$SOURCE_REF" '$v|@uri')"
             gh api "repos/$repo/commits/$encoded_source" >/dev/null \
