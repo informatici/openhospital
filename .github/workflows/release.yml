@@ -123,6 +123,12 @@ jobs:
               "repos/${GH_REPO_OWNER}/${repo}/git/ref/tags/${RELEASE_TAG}" \
               --jq '.object.sha' 2>/dev/null || true)"
 
+            echo "Repository: ${repo}"
+            echo "Branch:     ${RELEASE_BRANCH}"
+            echo "Target SHA: ${target_sha}"
+            echo "Tag:        ${RELEASE_TAG}"
+            echo "Current:    ${current_sha:-<missing>}"
+
             if [[ -z "$current_sha" ]]; then
               gh api --method POST "repos/${GH_REPO_OWNER}/${repo}/git/refs" \
                 -f "ref=refs/tags/${RELEASE_TAG}" \
