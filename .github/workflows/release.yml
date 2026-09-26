@@ -158,6 +158,7 @@ jobs:
           GH_REPO_OWNER: informatici
           RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          APP_INSTALLATION_ID: ${{ steps.app-token.outputs.installation-id }}
         run: |
           set -euo pipefail
 
@@ -168,6 +169,53 @@ jobs:
           # Tag the exact commit from which this manual workflow was started
           # (normally the head of master). The host has no release_X_Y_Z branch.
           target_sha="${GITHUB_SHA}"
+          
+          echo "=== Host tag diagnostics ==="
+          echo "Repository owner: ${GH_REPO_OWNER}"
+          echo "Repository:       ${repo}"
+          echo "GitHub repository:${GITHUB_REPOSITORY}"
+          echo "Workflow event:   ${GITHUB_EVENT_NAME}"
+          echo "Workflow ref:     ${GITHUB_REF}"
+          echo "Workflow ref name:${GITHUB_REF_NAME}"
+          echo "Target SHA:       ${target_sha}"
+          echo "Release tag:      ${RELEASE_TAG}"
+          echo "Installation ID:  ${APP_INSTALLATION_ID}"
+
+          echo "::group::Repositories accessible to the App token"
+          if ! gh api --paginate "/installation/repositories" \
+            --jq '.repositories[].full_name'; then
+            echo "::error::Unable to list repositories available to the App token"
+          fi
+          echo "::endgroup::"
+
+          echo "::group::Check host repository access"
+          if gh api "repos/${GH_REPO_OWNER}/${repo}" \
+            --jq '"Repository found: \(.full_name), default branch: \(.default_branch)"'; then
+            echo "Host repository is accessible"
+          else
+            echo "::error::Host repository is not accessible with this token"
+          fi
+          echo "::endgroup::"
+
+          echo "::group::Check target commit"
+          if gh api "repos/${GH_REPO_OWNER}/${repo}/git/commits/${target_sha}" \
+            --jq '"Commit found: \(.sha)"'; then
+            echo "Target commit is accessible"
+          else
+            echo "::error::Target commit ${target_sha} is not accessible in ${GH_REPO_OWNER}/${repo}"
+          fi
+          echo "::endgroup::"
+
+          echo "::group::Check existing host tag"
+          if existing_tag_sha="$(gh api \
+            "repos/${GH_REPO_OWNER}/${repo}/git/ref/tags/${RELEASE_TAG}" \
+            --jq '.object.sha' 2>/dev/null)"; then
+            echo "Existing tag found: ${RELEASE_TAG} -> ${existing_tag_sha}"
+          else
+            echo "Tag ${RELEASE_TAG} does not exist yet; it should be created"
+          fi
+          echo "::endgroup::"
+          
           if ! current_sha="$(gh api \
             "repos/${GH_REPO_OWNER}/${repo}/git/ref/tags/${RELEASE_TAG}" \
             --jq '.object.sha' 2>/dev/null)"; then
