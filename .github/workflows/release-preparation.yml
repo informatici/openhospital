@@ -49,6 +49,7 @@ on:
         type: string
       source_ref:
         description: Existing branch/tag/SHA used only when a release branch is missing
+        description: Existing branch, tag, or SHA used when a release branch is missing
         required: true
         default: develop
         type: string
@@ -214,6 +215,26 @@ jobs:
             encoded_source="$(jq -rn --arg v "$SOURCE_REF" '$v|@uri')"
             gh api "repos/$repo/commits/$encoded_source" >/dev/null \
               || { echo "::error::Source ref '$SOURCE_REF' does not exist in $repo"; exit 1; }
+            resolved_source="$SOURCE_REF"
+            encoded_source="$(jq -rn --arg v "$resolved_source" '$v|@uri')"
+            if ! gh api "repos/$repo/commits/$encoded_source" >/dev/null 2>&1; then
+              if [[ "$SOURCE_REF" =~ ^release_([0-9]+)_([0-9]+)_([0-9]+)$ ]]; then
+                fallback_tag="v${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
+                encoded_fallback="$(jq -rn --arg v "$fallback_tag" '$v|@uri')"
+                if gh api "repos/$repo/commits/$encoded_fallback" >/dev/null 2>&1; then
+                  resolved_source="$fallback_tag"
+                  echo "Source branch '$SOURCE_REF' is absent in $repo; using tag '$fallback_tag'"
+                else
+                  echo "::error::Neither source '$SOURCE_REF' nor fallback tag '$fallback_tag' exists in $repo"
+                  exit 1
+                fi
+              else
+                echo "::error::Source branch, tag, or SHA '$SOURCE_REF' does not exist in $repo"
+                exit 1
+              fi
+            else
+              echo "Resolved source for $repo: $resolved_source"
+            fi
 
             if gh api "repos/$repo/git/ref/heads/$RELEASE_BRANCH" >/dev/null 2>&1; then
               echo "Release branch already exists and will be reused: $repo#$RELEASE_BRANCH"
@@ -335,11 +356,28 @@ jobs:
             echo "BRANCH_ACTION=reused" >>"$GITHUB_ENV"
           else
             base_ref="$SOURCE_REF"
+            base_ref=""
             if git show-ref --verify --quiet "refs/remotes/origin/$SOURCE_REF"; then
               base_ref="origin/$SOURCE_REF"
+            elif git show-ref --verify --quiet "refs/tags/$SOURCE_REF"; then
+              base_ref="refs/tags/$SOURCE_REF"
+            elif git rev-parse --verify --quiet "${SOURCE_REF}^{commit}" >/dev/null; then
+              base_ref="$SOURCE_REF"
+            elif [[ "$SOURCE_REF" =~ ^release_([0-9]+)_([0-9]+)_([0-9]+)$ ]]; then
+              fallback_tag="v${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
+              if git show-ref --verify --quiet "refs/tags/$fallback_tag"; then
+                base_ref="refs/tags/$fallback_tag"
+              fi
             fi
+
+            [[ -n "$base_ref" ]] || {
+              echo "::error::Cannot resolve source branch, tag, or SHA '$SOURCE_REF' in $REPOSITORY"
+              exit 1
+            }
+
             git checkout -B "$RELEASE_BRANCH" "$base_ref"
             echo "BRANCH_ACTION=created from $SOURCE_REF" >>"$GITHUB_ENV"
+            echo "BRANCH_ACTION=created from $base_ref" >>"$GITHUB_ENV"
           fi
 
       - name: Set Maven project and internal dependency versions
