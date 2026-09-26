@@ -1,7 +1,6 @@
 name: Release
 
 on:
-  pull_request:
   push:
     paths-ignore:
       - '**.md'
@@ -221,11 +220,13 @@ jobs:
 
   build:
     needs: preflight
-    # workflow_dispatch only moves tags. A host-tag push performs the build.
-    # Ignore the delete half of a same-SHA delete+create retag.
+    # workflow_dispatch only moves tags; the host-tag push performs the build.
+    # When retagging the same SHA, the tag is deleted and recreated to force a push event.
+    # Ignore the deletion event so only the tag recreation triggers the build.
     if: >-
-      github.event_name != 'workflow_dispatch' &&
-      github.event.deleted != true
+      github.event_name == 'push' &&
+      github.event.deleted != true &&
+      startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
 
     steps:
