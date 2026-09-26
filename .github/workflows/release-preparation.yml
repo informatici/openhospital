@@ -35,9 +35,10 @@ name: Prepare Open Hospital release branches
 # - gui must include rsc/version.properties in properties_files
 # - doc must contain explicit text_replacements for manual/version updates
 #
-# Required secret: RELEASE_BOT_TOKEN (fine-grained token/App token with Contents
-# read/write on all six repositories). The automatic github.token normally only
-# has access to the repository containing this workflow.
+# Required GitHub App credentials:
+# - repository variable RELEASE_APP_CLIENT_ID: Client ID of the installed App
+# - repository secret RELEASE_APP_PRIVATE_KEY: complete PEM private key
+# The App must be installed on the six repositories with Contents: read/write.
 
 on:
   workflow_dispatch:
@@ -70,7 +71,6 @@ defaults:
 
 env:
   CONFIG_JSON: ${{ vars.RELEASE_PREP_CONFIG_JSON }}
-  GH_TOKEN: ${{ secrets.RELEASE_BOT_TOKEN }}
   VERSION: ${{ inputs.version }}
   SOURCE_REF: ${{ inputs.source_ref }}
   RELEASE_BRANCH: release_${{ inputs.version }}
@@ -84,6 +84,22 @@ jobs:
       matrix: ${{ steps.config.outputs.matrix }}
       license_matrix: ${{ steps.config.outputs.license_matrix }}
     steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          owner: informatici
+          repositories: |
+            openhospital
+            openhospital-core
+            openhospital-gui
+            openhospital-api
+            openhospital-ui
+            openhospital-doc
+          permission-contents: write
+
       - name: Validate inputs and configuration
         id: config
         env:
@@ -96,8 +112,6 @@ jobs:
           [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
             || fail "version must have X.Y.Z form (for example 1.15.0)"
           [[ -n "$SOURCE_REF" ]] || fail "source_ref cannot be empty"
-          [[ -n "${GH_TOKEN:-}" ]] \
-            || fail "Missing RELEASE_BOT_TOKEN secret"
           [[ -n "${CONFIG:-}" ]] \
             || fail "Missing RELEASE_PREP_CONFIG_JSON repository variable"
 
@@ -117,6 +131,11 @@ jobs:
               test("^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$") and
               (test("REPLACE|TODO|UNKNOWN"; "i") | not))' <<<"$CONFIG" >/dev/null \
             || fail "Every repository must be an explicit OWNER/REPOSITORY slug with no placeholder"
+
+          jq -e '[.. | strings |
+              select(test("^(REPLACE_WITH_|TODO($|_)|UNKNOWN($|_))"; "i"))] |
+            length == 0' <<<"$CONFIG" >/dev/null \
+            || fail "Configuration still contains a REPLACE/TODO/UNKNOWN placeholder"
 
           license_names="$(jq -c '[.[] | select(.license == true) | .name] | sort' <<<"$CONFIG")"
           [[ "$license_names" == '["api","core","gui"]' ]] \
@@ -144,8 +163,9 @@ jobs:
           jq -e '.[] | (.properties_files // []) | all(.[];
             (.file | type == "string" and length > 0) and
             (.key | type == "string" and length > 0) and
-            (.value | type == "string" and contains("${VERSION}")))' <<<"$CONFIG" >/dev/null \
-            || fail "properties_files entries require file, key, and a value containing \${VERSION}"
+            (.value | type == "string" and
+              test("\\$\\{VERSION(_MAJOR|_MINOR|_PATCH)?\\}")))' <<<"$CONFIG" >/dev/null \
+            || fail "properties_files entries require file, key, and a supported version placeholder"
 
           jq -e '.[] | (.text_replacements // []) | all(.[];
             (.file | type == "string" and length > 0) and
@@ -155,8 +175,10 @@ jobs:
             || fail "text_replacements require file, pattern, replacement with \${VERSION}, and expected_matches >= 1"
 
           jq -e '.[] | select(.name == "gui") |
-            any(.properties_files[]?; .file == "rsc/version.properties")' <<<"$CONFIG" >/dev/null \
-            || fail "GUI mapping missing: add the exact key for rsc/version.properties"
+            ([.properties_files[]? |
+              select(.file == "rsc/version.properties") | .key] | sort) ==
+            ["VER_MAJOR","VER_MINOR","VER_RELEASE"]' <<<"$CONFIG" >/dev/null \
+            || fail "GUI mapping must define VER_MAJOR, VER_MINOR, and VER_RELEASE in rsc/version.properties"
 
           jq -e '.[] | select(.name == "doc") |
             (.text_replacements | length > 0)' <<<"$CONFIG" >/dev/null \
@@ -170,6 +192,7 @@ jobs:
       - name: Verify repository access, source refs, and target branches
         env:
           CONFIG: ${{ env.CONFIG_JSON }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -Eeuo pipefail
 
@@ -211,11 +234,21 @@ jobs:
       matrix:
         repo: ${{ fromJSON(needs.preflight.outputs.license_matrix) }}
     steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          owner: informatici
+          repositories: ${{ matrix.repo.repository }}
+          permission-contents: write
+
       - name: Check out develop
         uses: actions/checkout@v4
         with:
           repository: ${{ matrix.repo.repository }}
-          token: ${{ secrets.RELEASE_BOT_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           ref: develop
           fetch-depth: 0
 
@@ -266,7 +299,19 @@ jobs:
       REPOSITORY: ${{ matrix.repo.repository }}
       REPO_CONFIG: ${{ toJSON(matrix.repo) }}
     steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          owner: informatici
+          repositories: ${{ matrix.repo.repository }}
+          permission-contents: write
+
       - name: Clone repository and create or reuse release branch
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -Eeuo pipefail
           git config --global user.name "openhospital-release-bot"
@@ -333,13 +378,18 @@ jobs:
           import json, os, pathlib, re, sys
 
           version = os.environ["VERSION"]
+          major, minor, patch = version.split(".")
           rules = json.loads(os.environ.get("RULES_JSON") or "[]")
           for rule in rules:
               path = pathlib.Path(rule["file"])
               if not path.is_file():
                   sys.exit(f"Configured properties file does not exist: {path}")
               key = rule["key"]
-              value = rule["value"].replace("${VERSION}", version)
+              value = (rule["value"]
+                       .replace("${VERSION}", version)
+                       .replace("${VERSION_MAJOR}", major)
+                       .replace("${VERSION_MINOR}", minor)
+                       .replace("${VERSION_PATCH}", patch))
               original = path.read_text(encoding="utf-8")
               pattern = re.compile(rf"(?m)^({re.escape(key)}\s*[=:]\s*).*$")
               updated, count = pattern.subn(lambda m: m.group(1) + value, original)
