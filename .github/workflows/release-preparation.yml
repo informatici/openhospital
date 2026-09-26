@@ -99,7 +99,7 @@ jobs:
             openhospital-ui
             openhospital-doc
           permission-contents: write
-		  
+
       - name: Diagnose GitHub App token
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
