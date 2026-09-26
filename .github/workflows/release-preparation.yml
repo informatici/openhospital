@@ -2,12 +2,12 @@ name: Prepare Open Hospital release branches
 
 # Required repository variable: RELEASE_PREP_CONFIG_JSON
 #
-# The checklist names six logical repositories but does not provide their GitHub
-# slugs or all file/property mappings. Configure them explicitly; preflight
-# rejects missing/placeholder data. Schema (exactly six entries are required):
+# Configure the five repositories that require release preparation explicitly;
+# preflight rejects missing/placeholder data. Schema (exactly five entries are
+# required):
 # [
 #   {
-#     "name": "core|gui|ui|api|doc|openhospital",
+#     "name": "core|gui|ui|api|doc",
 #     "repository": "OWNER/REPOSITORY",
 #     "maven": true,
 #     "license": true,
@@ -30,7 +30,7 @@ name: Prepare Open Hospital release branches
 # ]
 #
 # Checklist-derived constraints:
-# - names must be exactly: core, gui, ui, api, doc, openhospital
+# - names must be exactly: core, gui, ui, api, doc
 # - license=true must be set exactly for: core, gui, api
 # - gui must include rsc/version.properties in properties_files
 # - doc must contain explicit text_replacements for manual/version updates
@@ -38,7 +38,7 @@ name: Prepare Open Hospital release branches
 # Required GitHub App credentials:
 # - repository variable RELEASE_APP_CLIENT_ID: Client ID of the installed App
 # - repository secret RELEASE_APP_PRIVATE_KEY: complete PEM private key
-# The App must be installed on the six repositories with Contents: read/write.
+# The App must be installed on the five repositories with Contents: read/write.
 
 on:
   workflow_dispatch:
@@ -91,7 +91,6 @@ jobs:
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
           owner: informatici
           repositories: |
-            openhospital
             openhospital-core
             openhospital-gui
             openhospital-api
@@ -118,13 +117,13 @@ jobs:
           [[ -n "${CONFIG:-}" ]] \
             || fail "Missing RELEASE_PREP_CONFIG_JSON repository variable"
 
-          jq -e 'type == "array" and length == 6' <<<"$CONFIG" >/dev/null \
-            || fail "RELEASE_PREP_CONFIG_JSON must be a JSON array of exactly six repositories"
+          jq -e 'type == "array" and length == 5' <<<"$CONFIG" >/dev/null \
+            || fail "RELEASE_PREP_CONFIG_JSON must be a JSON array of exactly five repositories"
 
-          expected='["api","core","doc","gui","openhospital","ui"]'
+          expected='["api","core","doc","gui","ui"]'
           actual="$(jq -c '[.[].name] | sort' <<<"$CONFIG")"
           [[ "$actual" == "$expected" ]] \
-            || fail "Configured names must be exactly: api, core, doc, gui, openhospital, ui"
+            || fail "Configured names must be exactly: api, core, doc, gui, ui"
 
           duplicates="$(jq -r 'group_by(.repository)[] | select(length > 1) | .[0].repository' <<<"$(jq -c 'sort_by(.repository)' <<<"$CONFIG")")"
           [[ -z "$duplicates" ]] || fail "Duplicate repository slug(s): $duplicates"
@@ -236,7 +235,7 @@ jobs:
             echo "- Release branch: \`$RELEASE_BRANCH\`"
             echo "- Requested source for missing branches: \`$SOURCE_INPUT\`"
             echo "- Dry run: \`$DRY_RUN\`"
-            echo "- Configuration: validated for six repositories"
+            echo "- Configuration: validated for five repositories"
           } >>"$GITHUB_STEP_SUMMARY"
 
   prepare:
@@ -297,8 +296,23 @@ jobs:
               exit 1
             }
 
+            base_sha="$(git rev-parse "${base_ref}^{commit}")"
+
+            # In live mode create the remote ref first, pointing exactly at the
+            # requested source. The later Git push then contains only release
+            # preparation changes and does not need Workflows permission merely
+            # because the source tree already contains .github/workflows files.
+            if [[ "$DRY_RUN" != "true" ]]; then
+              gh api --method POST "repos/$REPOSITORY/git/refs" \
+                -f ref="refs/heads/$RELEASE_BRANCH" \
+                -f sha="$base_sha" >/dev/null
+              git fetch origin "+refs/heads/$RELEASE_BRANCH:refs/remotes/origin/$RELEASE_BRANCH"
+              echo "BRANCH_ACTION=created remotely from $base_ref" >>"$GITHUB_ENV"
+            else
+              echo "BRANCH_ACTION=would be created from $base_ref" >>"$GITHUB_ENV"
+            fi
+
             git checkout -B "$RELEASE_BRANCH" "$base_ref"
-            echo "BRANCH_ACTION=created from $base_ref" >>"$GITHUB_ENV"
           fi
 
       - name: Set up Java
@@ -313,7 +327,17 @@ jobs:
       - name: Format licenses on the release branch
         if: ${{ matrix.repo.license == true }}
         working-directory: repo
-        run: mvn -B -ntp license:format
+        run: |
+          set -Eeuo pipefail
+          mvn -B -ntp license:format
+
+          # Release preparation must never create or change Actions workflows.
+          # Some license-plugin configurations also scan YAML files, so retain
+          # the workflow files exactly as they are on the release branch.
+          if ! git diff --quiet -- .github/workflows 2>/dev/null; then
+            echo "::warning::license:format touched .github/workflows; those changes were excluded"
+            git restore --worktree -- .github/workflows
+          fi
 
       - name: Set Maven project and internal dependency versions
         if: ${{ matrix.repo.maven == true }}
