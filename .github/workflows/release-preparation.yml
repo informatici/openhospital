@@ -258,14 +258,9 @@ jobs:
           client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
           owner: informatici
-          # create-github-app-token expects repository names here, not
-          # OWNER/REPOSITORY slugs. Keep this scope aligned with preflight.
-          repositories: |
-            openhospital-core
-            openhospital-gui
-            openhospital-api
-            openhospital-ui
-            openhospital-doc
+          # Full OWNER/REPOSITORY entries are supported when the owner matches.
+          # Give each matrix job access only to the repository it prepares.
+          repositories: ${{ matrix.repo.repository }}
           permission-contents: write
 
       - name: Clone repository and create or reuse release branch
@@ -276,13 +271,23 @@ jobs:
           git config --global user.name "openhospital-release-bot"
           git config --global user.email "openhospital-release-bot@users.noreply.github.com"
 
-          gh api "repos/$REPOSITORY" --jq '.full_name' >/dev/null || {
-            echo "::error::GitHub App token cannot read $REPOSITORY. Check the App installation and Contents permission."
+          token_repositories="$(
+            gh api /installation/repositories \
+              --paginate \
+              --jq '.repositories[].full_name'
+          )"
+          grep -Fqx "$REPOSITORY" <<<"$token_repositories" || {
+            echo "::error::The generated token is not scoped to $REPOSITORY"
+            echo "Repositories visible to this token:"
+            sed 's/^/  - /' <<<"$token_repositories"
             exit 1
           }
 
-          git clone --filter=blob:none \
-            "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git" repo
+          # Configure Git's credential helper using the installation token.
+          # This is the authentication method recommended by
+          # actions/create-github-app-token for Git CLI operations.
+          gh auth setup-git
+          git clone --filter=blob:none "https://github.com/${REPOSITORY}.git" repo
           cd repo
           git fetch origin "+refs/heads/*:refs/remotes/origin/*" --tags
 
