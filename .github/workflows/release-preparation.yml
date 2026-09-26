@@ -271,25 +271,15 @@ jobs:
           git config --global user.name "openhospital-release-bot"
           git config --global user.email "openhospital-release-bot@users.noreply.github.com"
 
-          token_repositories="$(
-            gh api /installation/repositories \
-              --paginate \
-              --jq '.repositories[].full_name'
-          )"
-          grep -Fqx "$REPOSITORY" <<<"$token_repositories" || {
-            echo "::error::The generated token is not scoped to $REPOSITORY"
-            echo "Repositories visible to this token:"
-            sed 's/^/  - /' <<<"$token_repositories"
-            exit 1
-          }
-
-          # Configure Git's credential helper using the installation token.
-          # This is the authentication method recommended by
-          # actions/create-github-app-token for Git CLI operations.
-          gh auth setup-git
+          # These repositories are public: clone and fetch anonymously. This
+          # avoids using the installation token for read operations. The token
+          # is configured only as the push URL below and remains available to
+          # gh for the branch-creation API when needed.
           git clone --filter=blob:none "https://github.com/${REPOSITORY}.git" repo
           cd repo
           git fetch origin "+refs/heads/*:refs/remotes/origin/*" --tags
+          git remote set-url --push origin \
+            "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git"
 
           if git show-ref --verify --quiet "refs/remotes/origin/$RELEASE_BRANCH"; then
             git checkout -B "$RELEASE_BRANCH" "origin/$RELEASE_BRANCH"
