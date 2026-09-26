@@ -10,7 +10,9 @@ name: Prepare Open Hospital release branches
 #     "name": "core|gui|ui|api|doc",
 #     "repository": "OWNER/REPOSITORY",
 #     "maven": true,
+#     "set_project_version": true,
 #     "license": true,
+#     "license_excludes": ["exact/repository-relative/path"],
 #     "maven_properties": ["exact.property.name"],
 #     "dependencies": [
 #       {"group_id":"exact.group", "artifact_id":"exact-artifact"}
@@ -147,15 +149,29 @@ jobs:
 
           jq -e '.[] |
             has("maven") and has("license") and
+            has("set_project_version") and has("license_excludes") and
             has("maven_properties") and has("dependencies") and
             has("properties_files") and has("text_replacements") and
             ((.maven // false) | type == "boolean") and
+            ((.set_project_version // false) | type == "boolean") and
             ((.license // false) | type == "boolean") and
+            ((.license_excludes // []) | type == "array") and
             ((.maven_properties // []) | type == "array") and
             ((.dependencies // []) | type == "array") and
             ((.properties_files // []) | type == "array") and
             ((.text_replacements // []) | type == "array")' <<<"$CONFIG" >/dev/null \
             || fail "One or more repository configuration fields has the wrong type"
+
+          jq -e 'all(.[];
+            if .set_project_version == true then .maven == true else true end)' \
+            <<<"$CONFIG" >/dev/null \
+            || fail "set_project_version=true requires maven=true"
+
+          jq -e '.[] | (.license_excludes // []) | all(.[];
+            type == "string" and length > 0 and
+            (startswith("/") | not) and
+            (contains("..") | not))' <<<"$CONFIG" >/dev/null \
+            || fail "license_excludes entries must be safe repository-relative paths"
 
           jq -e '.[] | select(.maven == true) |
             ((.maven_properties // []) | all(.[]; type == "string" and length > 0)) and
@@ -263,9 +279,14 @@ jobs:
           client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
           owner: informatici
-          # Full OWNER/REPOSITORY entries are supported when the owner matches.
-          # Give each matrix job access only to the repository it prepares.
-          repositories: ${{ matrix.repo.repository }}
+          # create-github-app-token expects repository names here, not
+          # OWNER/REPOSITORY slugs. Keep this scope aligned with preflight.
+          repositories: |
+            openhospital-core
+            openhospital-gui
+            openhospital-api
+            openhospital-ui
+            openhospital-doc
           permission-contents: write
 
       - name: Clone repository and create or reuse release branch
@@ -276,10 +297,8 @@ jobs:
           git config --global user.name "openhospital-release-bot"
           git config --global user.email "openhospital-release-bot@users.noreply.github.com"
 
-          # These repositories are public: clone and fetch anonymously. This
-          # avoids using the installation token for read operations. The token
-          # is configured only as the push URL below and remains available to
-          # gh for the branch-creation API when needed.
+          # The repositories are public, so clone and fetch anonymously. Use
+          # the installation token only for branch creation and push.
           git clone --filter=blob:none "https://github.com/${REPOSITORY}.git" repo
           cd repo
           git fetch origin "+refs/heads/*:refs/remotes/origin/*" --tags
@@ -344,6 +363,15 @@ jobs:
           set -Eeuo pipefail
           mvn -B -ntp license:format
 
+          while IFS= read -r excluded_path; do
+            [[ -n "$excluded_path" ]] || continue
+            git cat-file -e "HEAD:$excluded_path" 2>/dev/null || {
+              echo "::error::Configured license exclusion does not exist: $excluded_path"
+              exit 1
+            }
+            git restore --source=HEAD --worktree -- "$excluded_path"
+          done < <(jq -r '.license_excludes[]?' <<<"$REPO_CONFIG")
+
           # Release preparation must never create or change Actions workflows.
           # Some license-plugin configurations also scan YAML files, so retain
           # the workflow files exactly as they are on the release branch.
@@ -360,10 +388,12 @@ jobs:
           [[ -f pom.xml ]] \
             || { echo "::error::Configured as Maven but pom.xml is missing in $REPOSITORY"; exit 1; }
 
-          mvn -B -ntp versions:set \
-            -DnewVersion="$VERSION" \
-            -DprocessAllModules=true \
-            -DgenerateBackupPoms=false
+          if [[ "$(jq -r '.set_project_version // false' <<<"$REPO_CONFIG")" == "true" ]]; then
+            mvn -B -ntp versions:set \
+              -DnewVersion="$VERSION" \
+              -DprocessAllModules=true \
+              -DgenerateBackupPoms=false
+          fi
 
           while IFS= read -r property; do
             mvn -B -ntp versions:set-property \
@@ -458,13 +488,9 @@ jobs:
             [[ -s /tmp/effective-pom.xml ]]
           fi
 
-          # Mycila license:format can intentionally generate whitespace in its
-          # managed license header. Apply Git's generic whitespace validation
-          # only to repositories not formatted by the license plugin.
           if [[ "$(jq -r '.license // false' <<<"$REPO_CONFIG")" != "true" ]]; then
             git diff --check
           fi
-
           git status --short
 
       - name: Commit only when content changed and push safely
