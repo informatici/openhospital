@@ -49,6 +49,7 @@ on:
         type: string
       source_ref:
         description: Existing branch, tag, or SHA used when a release branch is missing
+        description: Source X.Y.Z (resolved as tag vX.Y.Z), branch, tag, or SHA
         required: true
         default: develop
         type: string
@@ -73,6 +74,7 @@ env:
   CONFIG_JSON: ${{ vars.RELEASE_PREP_CONFIG_JSON }}
   VERSION: ${{ inputs.version }}
   SOURCE_REF: ${{ inputs.source_ref }}
+  SOURCE_INPUT: ${{ inputs.source_ref }}
   RELEASE_BRANCH: release_${{ inputs.version }}
   DRY_RUN: ${{ inputs.dry_run }}
 
@@ -112,6 +114,11 @@ jobs:
           [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
             || fail "version must have X.Y.Z form (for example 1.15.0)"
           [[ -n "$SOURCE_REF" ]] || fail "source_ref cannot be empty"
+          [[ -n "$SOURCE_INPUT" ]] || fail "source_ref cannot be empty"
+          if [[ ! "$SOURCE_INPUT" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            git check-ref-format --branch "$SOURCE_INPUT" >/dev/null 2>&1 \
+              || fail "source_ref must be X.Y.Z or a valid Git branch/tag name"
+          fi
           [[ -n "${CONFIG:-}" ]] \
             || fail "Missing RELEASE_PREP_CONFIG_JSON repository variable"
 
@@ -235,7 +242,16 @@ jobs:
             if gh api "repos/$repo/git/ref/heads/$RELEASE_BRANCH" >/dev/null 2>&1; then
               echo "Release branch already exists and will be reused: $repo#$RELEASE_BRANCH"
             else
+              source_ref="$SOURCE_INPUT"
+              if [[ "$SOURCE_INPUT" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                source_ref="v$SOURCE_INPUT"
+              fi
+              encoded_source="$(jq -rn --arg v "$source_ref" '$v|@uri')"
+              gh api "repos/$repo/commits/$encoded_source" >/dev/null 2>&1 \
+                || { echo "::error::Release branch is missing and source '$source_ref' does not exist in $repo"; exit 1; }
+              echo "Resolved source for $repo: $source_ref"
               echo "Release branch will be created from $SOURCE_REF: $repo#$RELEASE_BRANCH"
+              echo "Release branch will be created from $source_ref: $repo#$RELEASE_BRANCH"
             fi
           done < <(jq -r '.[].repository' <<<"$CONFIG_JSON")
 
@@ -247,6 +263,7 @@ jobs:
             echo "- Version: \`$VERSION\`"
             echo "- Release branch: \`$RELEASE_BRANCH\`"
             echo "- Source for missing branches: \`$SOURCE_REF\`"
+            echo "- Requested source for missing branches: \`$SOURCE_INPUT\`"
             echo "- Dry run: \`$DRY_RUN\`"
             echo "- Configuration: validated for six repositories"
           } >>"$GITHUB_STEP_SUMMARY"
@@ -351,6 +368,11 @@ jobs:
             git checkout -B "$RELEASE_BRANCH" "origin/$RELEASE_BRANCH"
             echo "BRANCH_ACTION=reused" >>"$GITHUB_ENV"
           else
+            source_ref="$SOURCE_INPUT"
+            if [[ "$SOURCE_INPUT" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              source_ref="v$SOURCE_INPUT"
+            fi
+
             base_ref=""
             if git show-ref --verify --quiet "refs/remotes/origin/$SOURCE_REF"; then
               base_ref="origin/$SOURCE_REF"
@@ -363,10 +385,17 @@ jobs:
               if git show-ref --verify --quiet "refs/tags/$fallback_tag"; then
                 base_ref="refs/tags/$fallback_tag"
               fi
+            if git show-ref --verify --quiet "refs/remotes/origin/$source_ref"; then
+              base_ref="origin/$source_ref"
+            elif git show-ref --verify --quiet "refs/tags/$source_ref"; then
+              base_ref="refs/tags/$source_ref"
+            elif git rev-parse --verify --quiet "${source_ref}^{commit}" >/dev/null; then
+              base_ref="$source_ref"
             fi
 
             [[ -n "$base_ref" ]] || {
               echo "::error::Cannot resolve source branch, tag, or SHA '$SOURCE_REF' in $REPOSITORY"
+              echo "::error::Cannot resolve source '$source_ref' in $REPOSITORY"
               exit 1
             }
 
