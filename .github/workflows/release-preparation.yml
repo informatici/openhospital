@@ -73,7 +73,6 @@ env:
   CONFIG_JSON: ${{ vars.RELEASE_PREP_CONFIG_JSON }}
   VERSION: ${{ inputs.version }}
   SOURCE_INPUT: ${{ inputs.source_ref }}
-  RELEASE_BRANCH: release_${{ inputs.version }}
   DRY_RUN: ${{ inputs.dry_run }}
 
 jobs:
@@ -83,6 +82,9 @@ jobs:
     outputs:
       matrix: ${{ steps.config.outputs.matrix }}
     steps:
+      - name: Resolve release branch name
+        run: echo "RELEASE_BRANCH=release_${VERSION//./_}" >>"$GITHUB_ENV"
+
       - name: Generate GitHub App token
         id: app-token
         uses: actions/create-github-app-token@v3
@@ -251,6 +253,9 @@ jobs:
       REPOSITORY: ${{ matrix.repo.repository }}
       REPO_CONFIG: ${{ toJSON(matrix.repo) }}
     steps:
+      - name: Resolve release branch name
+        run: echo "RELEASE_BRANCH=release_${VERSION//./_}" >>"$GITHUB_ENV"
+
       - name: Generate GitHub App token
         id: app-token
         uses: actions/create-github-app-token@v3
