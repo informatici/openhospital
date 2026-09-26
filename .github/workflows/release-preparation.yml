@@ -427,13 +427,16 @@ jobs:
           git status --short
 
       - name: Commit only when content changed and push safely
+        id: publish
         working-directory: repo
         run: |
           set -Eeuo pipefail
 
           if git diff --quiet --exit-code; then
             commit_action="no content changes"
+            changed_files="0"
           else
+            changed_files="$(git status --short | wc -l | xargs)"
             git add -A
             if [[ "$(jq -r '.license // false' <<<"$REPO_CONFIG")" != "true" ]]; then
               git diff --cached --check
@@ -451,6 +454,20 @@ jobs:
             push_action="branch synchronized"
           fi
 
+          mkdir -p "$RUNNER_TEMP/release-report"
+          jq -n \
+            --arg repository "$REPOSITORY" \
+            --arg branch "$RELEASE_BRANCH" \
+            --arg branch_action "$BRANCH_ACTION" \
+            --arg changed_files "$changed_files" \
+            --arg content "$commit_action" \
+            --arg push "$push_action" \
+            --arg license "$(jq -r '.license // false' <<<"$REPO_CONFIG")" \
+            '{repository:$repository, branch:$branch, branch_action:$branch_action,
+              changed_files:($changed_files|tonumber), content:$content,
+              push:$push, license:($license == "true")}' \
+            >"$RUNNER_TEMP/release-report/result.json"
+
           {
             echo "## $REPOSITORY"
             echo ""
@@ -459,30 +476,76 @@ jobs:
             echo "- Push: $push_action"
           } >>"$GITHUB_STEP_SUMMARY"
 
+      - name: Upload repository result
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-report-${{ matrix.repo.name }}
+          path: ${{ runner.temp }}/release-report/result.json
+          if-no-files-found: error
+          retention-days: 7
+
   summary:
     name: Final summary
     needs: [preflight, prepare]
     if: ${{ always() }}
     runs-on: ubuntu-24.04
     steps:
+      - name: Collect repository results
+        if: ${{ needs.prepare.result != 'skipped' }}
+        continue-on-error: true
+        uses: actions/download-artifact@v5
+        with:
+          pattern: release-report-*
+          path: release-reports
+
       - name: Report outcome
         run: |
           {
             echo "# Open Hospital release preparation"
             echo ""
-            echo "| Stage | Result |"
-            echo "|---|---|"
-            echo "| Preflight | ${{ needs.preflight.result }} |"
-            echo "| Release branches, versions, docs, and licenses | ${{ needs.prepare.result }} |"
+            echo "- Version: \`$VERSION\`"
+            echo "- Requested source: \`$SOURCE_INPUT\`"
+            if [[ "$DRY_RUN" == "true" ]]; then
+              echo "- Mode: **DRY RUN — no remote branch was changed**"
+            else
+              echo "- Mode: **LIVE — changes were pushed**"
+            fi
+            echo "- Preflight: **${{ needs.preflight.result }}**"
+            echo "- Repository preparation: **${{ needs.prepare.result }}**"
             echo ""
+
+            if compgen -G 'release-reports/*/result.json' >/dev/null; then
+              echo "## Repository results"
+              echo ""
+              echo "| Repository | Release branch | Branch | Files changed | Commit | Push | Licenses |"
+              echo "|---|---|---|---:|---|---|---|"
+              while IFS= read -r report; do
+                jq -r '[.repository, ("`" + .branch + "`"), .branch_action,
+                         (.changed_files|tostring), .content, .push,
+                         (if .license then "formatted" else "not configured" end)]
+                       | "| " + join(" | ") + " |"' "$report"
+              done < <(find release-reports -name result.json -type f | sort)
+              echo ""
+            else
+              echo "> No repository result was produced. Check the failed preflight or matrix job logs."
+              echo ""
+            fi
+
             if [[ "${{ needs.prepare.result }}" == "success" ]]; then
               if [[ "$DRY_RUN" == "true" ]]; then
-                echo "Dry run completed. Review each matrix job's summary, then rerun with dry_run=false."
+                echo "## Next step"
+                echo ""
+                echo "Review the table above. To apply exactly these operations, rerun the workflow with **Validate and compute changes, but do not push** unchecked."
               else
-                echo "Preparation completed. Existing branches were reused, missing branches were created, and only real changes were committed."
+                echo "## Outcome"
+                echo ""
+                echo "Preparation completed. Existing branches were reused, missing branches were created, and only real changes were committed and pushed."
               fi
             else
-              echo "Preparation did not complete. Fix the failed preflight or repository job and rerun; completed work is safe to reuse."
+              echo "## Action required"
+              echo ""
+              echo "Preparation did not complete. Open the failed preflight or repository matrix job. Successful work is safe to reuse on the next run."
             fi
           } >>"$GITHUB_STEP_SUMMARY"
 
