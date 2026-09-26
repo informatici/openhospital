@@ -165,6 +165,9 @@ jobs:
           target_sha="$(gh api \
             "repos/${GH_REPO_OWNER}/${repo}/git/ref/heads/${RELEASE_BRANCH}" \
             --jq '.object.sha')"
+          # Tag the exact commit from which this manual workflow was started
+          # (normally the head of master). The host has no release_X_Y_Z branch.
+          target_sha="${GITHUB_SHA}"
           if ! current_sha="$(gh api \
             "repos/${GH_REPO_OWNER}/${repo}/git/ref/tags/${RELEASE_TAG}" \
             --jq '.object.sha' 2>/dev/null)"; then
