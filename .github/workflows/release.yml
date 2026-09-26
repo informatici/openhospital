@@ -7,16 +7,199 @@ on:
       - '**.md'
     tags:
       - 'v*'
-      - 'develop*' 
+      - 'develop*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (X.Y.Z, without the leading v)'
+        required: true
+        type: string
+
+# Prevent two manual releases from moving the same set of tags concurrently.
+concurrency:
+  group: release-${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref }}
+  cancel-in-progress: false
 
 jobs:
+  tag-release:
+    name: Tag release branches
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Validate version and derive names
+        id: release
+        shell: bash
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::version must have the form X.Y.Z (for example 1.15.0)"
+            exit 1
+          fi
+
+          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "branch=release_${VERSION//./_}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          owner: informatici
+          repositories: |
+            openhospital
+            openhospital-core
+            openhospital-gui
+            openhospital-api
+            openhospital-doc
+            openhospital-ui
+
+      - name: Verify every release branch before changing tags
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_REPO_OWNER: informatici
+          RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
+        run: |
+          set -euo pipefail
+
+          repos=(
+            openhospital-core
+            openhospital-gui
+            openhospital-api
+            openhospital-doc
+            openhospital-ui
+          )
+
+          missing=()
+          for repo in "${repos[@]}"; do
+            if gh api "repos/${GH_REPO_OWNER}/${repo}/git/ref/heads/${RELEASE_BRANCH}" \
+              --jq '.object.sha' >/dev/null 2>&1; then
+              echo "OK    ${repo}:${RELEASE_BRANCH}"
+            else
+              echo "MISS  ${repo}:${RELEASE_BRANCH}"
+              missing+=("${repo}")
+            fi
+          done
+
+          if (( ${#missing[@]} )); then
+            printf '::error::Branch %s is missing in: %s\n' \
+              "$RELEASE_BRANCH" "${missing[*]}"
+            exit 1
+          fi
+
+      - name: Force component tags to their release branches
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_REPO_OWNER: informatici
+          RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          repos=(
+            openhospital-core
+            openhospital-gui
+            openhospital-api
+            openhospital-doc
+            openhospital-ui
+          )
+
+          move_tag() {
+            local repo="$1"
+            local target_sha current_sha
+
+            target_sha="$(gh api \
+              "repos/${GH_REPO_OWNER}/${repo}/git/ref/heads/${RELEASE_BRANCH}" \
+              --jq '.object.sha')"
+
+            current_sha="$(gh api \
+              "repos/${GH_REPO_OWNER}/${repo}/git/ref/tags/${RELEASE_TAG}" \
+              --jq '.object.sha' 2>/dev/null || true)"
+
+            if [[ -z "$current_sha" ]]; then
+              gh api --method POST "repos/${GH_REPO_OWNER}/${repo}/git/refs" \
+                -f "ref=refs/tags/${RELEASE_TAG}" \
+                -f "sha=${target_sha}" >/dev/null
+              echo "CREATE ${repo}:${RELEASE_TAG} -> ${target_sha}"
+            elif [[ "$current_sha" == "$target_sha" ]]; then
+              # PATCHing a ref to the same SHA may emit no push event. Recreate it.
+              gh api --method DELETE \
+                "repos/${GH_REPO_OWNER}/${repo}/git/refs/tags/${RELEASE_TAG}"
+              gh api --method POST "repos/${GH_REPO_OWNER}/${repo}/git/refs" \
+                -f "ref=refs/tags/${RELEASE_TAG}" \
+                -f "sha=${target_sha}" >/dev/null
+              echo "RECREATE ${repo}:${RELEASE_TAG} -> ${target_sha}"
+            else
+              gh api --method PATCH \
+                "repos/${GH_REPO_OWNER}/${repo}/git/refs/tags/${RELEASE_TAG}" \
+                -f "sha=${target_sha}" \
+                -F force=true >/dev/null
+              echo "MOVE   ${repo}:${RELEASE_TAG} -> ${target_sha}"
+            fi
+          }
+
+          for repo in "${repos[@]}"; do
+            move_tag "$repo"
+          done
+
+      - name: Force host tag last to trigger the build
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_REPO_OWNER: informatici
+          RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          repo=openhospital
+          target_sha="$(gh api \
+            "repos/${GH_REPO_OWNER}/${repo}/git/ref/heads/${RELEASE_BRANCH}" \
+            --jq '.object.sha')"
+          current_sha="$(gh api \
+            "repos/${GH_REPO_OWNER}/${repo}/git/ref/tags/${RELEASE_TAG}" \
+            --jq '.object.sha' 2>/dev/null || true)"
+
+          if [[ -z "$current_sha" ]]; then
+            gh api --method POST "repos/${GH_REPO_OWNER}/${repo}/git/refs" \
+              -f "ref=refs/tags/${RELEASE_TAG}" \
+              -f "sha=${target_sha}" >/dev/null
+            echo "CREATE ${repo}:${RELEASE_TAG} -> ${target_sha}"
+          elif [[ "$current_sha" == "$target_sha" ]]; then
+            # The delete event is ignored by build below; the create event builds once.
+            gh api --method DELETE \
+              "repos/${GH_REPO_OWNER}/${repo}/git/refs/tags/${RELEASE_TAG}"
+            gh api --method POST "repos/${GH_REPO_OWNER}/${repo}/git/refs" \
+              -f "ref=refs/tags/${RELEASE_TAG}" \
+              -f "sha=${target_sha}" >/dev/null
+            echo "RECREATE ${repo}:${RELEASE_TAG} -> ${target_sha}"
+          else
+            gh api --method PATCH \
+              "repos/${GH_REPO_OWNER}/${repo}/git/refs/tags/${RELEASE_TAG}" \
+              -f "sha=${target_sha}" \
+              -F force=true >/dev/null
+            echo "MOVE   ${repo}:${RELEASE_TAG} -> ${target_sha}"
+          fi
 
   preflight:
     name: Verify tag across component repos
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    # Keep this job successful for PRs, manual orchestration and tag deletions so
+    # the existing build dependency does not break non-release executions.
     steps:
       - name: Check tag exists in all component repos
+        if: >-
+          github.event_name == 'push' &&
+          startsWith(github.ref, 'refs/tags/') &&
+          github.event.deleted != true
         env:
           TAG: ${{ github.ref_name }}
         run: |
@@ -35,9 +218,14 @@ jobs:
             exit 1
           fi
           echo "Tag $TAG exists in all 5 repos."
-      
+
   build:
     needs: preflight
+    # workflow_dispatch only moves tags. A host-tag push performs the build.
+    # Ignore the delete half of a same-SHA delete+create retag.
+    if: >-
+      github.event_name != 'workflow_dispatch' &&
+      github.event.deleted != true
     runs-on: ubuntu-latest
 
     steps:
@@ -46,10 +234,10 @@ jobs:
       with:
         distribution: 'zulu'
         java-version: 17
-    
+
     - name: Install asciidoctor
       run: sudo gem install asciidoctor-pdf --pre
-      
+
     - uses: actions/checkout@v4
       with:
        fetch-depth: 0
@@ -65,16 +253,16 @@ jobs:
       with:
         draft: true
         files: |
-          OpenHospital-*.tar.gz 
+          OpenHospital-*.tar.gz
           OpenHospital-*.zip
         body_path: RELEASE_NOTES.md
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+
     - name: Get current date
       id: date
       run: echo "::set-output name=date::$(date +'%Y%m%d')"
-        
+
     - name: Rename artifact
       if: startsWith(github.ref, 'refs/tags/develop')
       run: |
@@ -82,7 +270,7 @@ jobs:
         mv OpenHospital-develop-x86_64-EXPERIMENTAL.zip OpenHospital-dev${{ steps.date.outputs.date }}-x86_64-EXPERIMENTAL.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
- 
+
     - name: Delete last dev release
       if: startsWith(github.ref, 'refs/tags/develop')
       uses: dev-drprasad/delete-older-releases@v0.2.1
@@ -92,7 +280,7 @@ jobs:
         delete_tag_pattern: develop
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              
+
     - name: Create dev release
       if: startsWith(github.ref, 'refs/tags/develop')
       uses: softprops/action-gh-release@v1
@@ -102,7 +290,7 @@ jobs:
         files: |
           OpenHospital-dev${{ steps.date.outputs.date }}-multiarch-client.zip
           OpenHospital-dev${{ steps.date.outputs.date }}-x86_64-EXPERIMENTAL.zip
-          # OpenHospital-*.tar.gz 
+          # OpenHospital-*.tar.gz
           # OpenHospital-*.zip
         body: Development pre-release for testers
       env:
