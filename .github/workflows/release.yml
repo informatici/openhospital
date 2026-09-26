@@ -119,15 +119,11 @@ jobs:
               "repos/${GH_REPO_OWNER}/${repo}/git/ref/heads/${RELEASE_BRANCH}" \
               --jq '.object.sha')"
 
-            current_sha="$(gh api \
+            if ! current_sha="$(gh api \
               "repos/${GH_REPO_OWNER}/${repo}/git/ref/tags/${RELEASE_TAG}" \
-              --jq '.object.sha' 2>/dev/null || true)"
-
-            echo "Repository: ${repo}"
-            echo "Branch:     ${RELEASE_BRANCH}"
-            echo "Target SHA: ${target_sha}"
-            echo "Tag:        ${RELEASE_TAG}"
-            echo "Current:    ${current_sha:-<missing>}"
+              --jq '.object.sha' 2>/dev/null)"; then
+              current_sha=""
+            fi
 
             if [[ -z "$current_sha" ]]; then
               gh api --method POST "repos/${GH_REPO_OWNER}/${repo}/git/refs" \
@@ -169,9 +165,11 @@ jobs:
           target_sha="$(gh api \
             "repos/${GH_REPO_OWNER}/${repo}/git/ref/heads/${RELEASE_BRANCH}" \
             --jq '.object.sha')"
-          current_sha="$(gh api \
+          if ! current_sha="$(gh api \
             "repos/${GH_REPO_OWNER}/${repo}/git/ref/tags/${RELEASE_TAG}" \
-            --jq '.object.sha' 2>/dev/null || true)"
+            --jq '.object.sha' 2>/dev/null)"; then
+            current_sha=""
+          fi
 
           if [[ -z "$current_sha" ]]; then
             gh api --method POST "repos/${GH_REPO_OWNER}/${repo}/git/refs" \
