@@ -1,0 +1,155 @@
+name: Post-release Jira dry-run
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version in X.Y.Z form
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: post-release-jira-dry-run-${{ inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  verify-jira:
+    name: Verify Jira configuration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      VERSION: ${{ inputs.version }}
+      JIRA_CLOUD_ID: ${{ secrets.JIRA_CLOUD_ID }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+    steps:
+      - name: Validate inputs and secrets
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
+            echo "::error::version must have X.Y.Z form (for example 1.15.2)"
+            exit 1
+          }
+
+          [[ -n "$JIRA_CLOUD_ID" ]] || {
+            echo "::error::Missing JIRA_CLOUD_ID secret"
+            exit 1
+          }
+
+          [[ "$JIRA_CLOUD_ID" =~ ^[0-9a-fA-F-]{36}$ ]] || {
+            echo "::error::JIRA_CLOUD_ID does not have UUID form"
+            exit 1
+          }
+
+          [[ -n "$JIRA_API_TOKEN" ]] || {
+            echo "::error::Missing JIRA_API_TOKEN secret"
+            exit 1
+          }
+
+      - name: Verify Jira access, permissions, and release versions
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          set +x
+
+          api="https://api.atlassian.com/ex/jira/${JIRA_CLOUD_ID}/rest/api/3"
+          auth_header="Authorization: Bearer ${JIRA_API_TOKEN}"
+          work_dir="$(mktemp -d)"
+          trap 'rm -rf "$work_dir"' EXIT
+
+          request_json() {
+            local url="$1"
+            local output="$2"
+            local status
+
+            status="$(curl --silent --show-error \
+              --output "$output" \
+              --write-out '%{http_code}' \
+              --header "$auth_header" \
+              --header 'Accept: application/json' \
+              "$url")"
+
+            if [[ "$status" != "200" ]]; then
+              echo "::error::Jira GET failed with HTTP $status for ${url#"$api"}"
+              jq -r '.errorMessages[]?, .message? // empty' "$output" 2>/dev/null || true
+              return 1
+            fi
+          }
+
+          {
+            echo "# Jira post-release dry-run"
+            echo ""
+            echo "- Version: \`$VERSION\`"
+            echo "- Mode: **DRY RUN — only authenticated GET requests are used**"
+            echo "- Cloud ID format: valid"
+            echo ""
+            echo "| Project | Browse | Administer project | Jira version ID | Current state | Planned final-publication change |"
+            echo "|---|---|---|---:|---|---|"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+          failed=0
+
+          for project in OP OH2; do
+            permissions_file="$work_dir/${project}-permissions.json"
+            versions_file="$work_dir/${project}-versions.json"
+
+            if ! request_json \
+              "$api/mypermissions?projectKey=$project&permissions=BROWSE_PROJECTS,ADMINISTER_PROJECTS" \
+              "$permissions_file"; then
+              echo "| $project | error | error | — | permission check failed | none |" \
+                >>"$GITHUB_STEP_SUMMARY"
+              failed=1
+              continue
+            fi
+
+            browse="$(jq -r '.permissions.BROWSE_PROJECTS.havePermission // false' "$permissions_file")"
+            administer="$(jq -r '.permissions.ADMINISTER_PROJECTS.havePermission // false' "$permissions_file")"
+
+            if [[ "$browse" != "true" || "$administer" != "true" ]]; then
+              echo "::error::Service account lacks required Jira permissions in $project (browse=$browse, administer=$administer)"
+              failed=1
+            fi
+
+            if ! request_json "$api/project/$project/versions" "$versions_file"; then
+              echo "| $project | $browse | $administer | — | version lookup failed | none |" \
+                >>"$GITHUB_STEP_SUMMARY"
+              failed=1
+              continue
+            fi
+
+            matches="$(jq --arg version "$VERSION" '[.[] | select(.name == $version)] | length' "$versions_file")"
+            if [[ "$matches" != "1" ]]; then
+              echo "::error::Expected exactly one Jira version '$VERSION' in $project; found $matches"
+              echo "| $project | $browse | $administer | — | exact matches: $matches | none |" \
+                >>"$GITHUB_STEP_SUMMARY"
+              failed=1
+              continue
+            fi
+
+            version_id="$(jq -r --arg version "$VERSION" '.[] | select(.name == $version) | .id' "$versions_file")"
+            released="$(jq -r --arg version "$VERSION" '.[] | select(.name == $version) | .released' "$versions_file")"
+            release_date="$(jq -r --arg version "$VERSION" '.[] | select(.name == $version) | .releaseDate // "not set"' "$versions_file")"
+
+            if [[ "$released" == "true" ]]; then
+              current="released; date: $release_date"
+              planned="already released; no write"
+            else
+              current="unreleased; date: $release_date"
+              planned="would set released=true and the GitHub publication date"
+            fi
+
+            echo "| $project | $browse | $administer | $version_id | $current | $planned |" \
+              >>"$GITHUB_STEP_SUMMARY"
+          done
+
+          {
+            echo ""
+            echo "> No Jira version was created or modified by this workflow."
+          } >>"$GITHUB_STEP_SUMMARY"
+
+          [[ "$failed" == "0" ]]
