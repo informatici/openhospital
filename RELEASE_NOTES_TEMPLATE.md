@@ -20,7 +20,7 @@ _Brought to you by [Informatici Senza Frontiere](http://www.informaticisenzafron
 ### Languages
 English, Albanian, Arabic, Chinese (simplified), French, German, Italian, Portuguese, Spanish, Swahili
 
-*Brought to you by [Transifex community](https://app.transifex.com/informatici-senza-frontiere-onlus/openhospital/dashboard/)*
+_Brought to you by [Transifex community](https://app.transifex.com/informatici-senza-frontiere-onlus/openhospital/dashboard/)_
 
 
 <details>
