@@ -896,15 +896,9 @@ jobs:
             if compgen -G 'release-reports/*/audit.json' >/dev/null; then
               echo "## Validation audit"
               echo ""
-              echo "| Repository | Job | Audit | Source license headers | Manual headers | Manual versions | Issues |"
-              echo "|---|---|---|---|---|---|---:|"
               echo "| Repository | Job | Audit | Source license headers | Manual headers | Manual versions | Compatibility matrix | Issues |"
               echo "|---|---|---|---|---|---|---|---:|"
               while IFS= read -r audit; do
-                jq -r '[.repository, .pipeline_status, .audit_status,
-                         .license_check, .manual_header_check,
-                         .documentation_check, (.issues|length|tostring)]
-                       | "| " + join(" | ") + " |"' "$audit"
                 jq -r '"| \(.repository) | \(.pipeline_status) | \(.audit_status) | \(.license_check) | \(.manual_header_check // "not configured") | \(.documentation_check // "not configured") | \(.compatibility_check // "not configured") | \(.issues | length) |"' "$audit"
               done < <(find release-reports -name audit.json -type f | sort)
               echo ""
