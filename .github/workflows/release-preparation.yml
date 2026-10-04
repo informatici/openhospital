@@ -101,6 +101,7 @@ jobs:
             openhospital-ui
             openhospital-doc
           permission-contents: write
+          permission-workflows: write
 
       - name: Validate inputs and configuration
         id: config
