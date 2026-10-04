@@ -904,9 +904,8 @@ jobs:
                 jq -r '[.repository, .pipeline_status, .audit_status,
                          .license_check, .manual_header_check,
                          .documentation_check, (.issues|length|tostring)]
-                         .documentation_check, .compatibility_check,
-                         (.issues|length|tostring)]
                        | "| " + join(" | ") + " |"' "$audit"
+                jq -r '"| \(.repository) | \(.pipeline_status) | \(.audit_status) | \(.license_check) | \(.manual_header_check // "not configured") | \(.documentation_check // "not configured") | \(.compatibility_check // "not configured") | \(.issues | length) |"' "$audit"
               done < <(find release-reports -name audit.json -type f | sort)
               echo ""
 
