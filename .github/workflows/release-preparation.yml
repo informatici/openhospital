@@ -590,8 +590,9 @@ jobs:
           root = pathlib.Path("repo")
           checks, issues = [], []
 
-          def record(name, ok, detail):
-              checks.append({"name": name, "ok": ok, "detail": detail})
+          def record(name, ok, detail, category="general"):
+              checks.append({"name": name, "ok": ok, "detail": detail,
+                             "category": category})
               if not ok:
                   issues.append(f"{name}: {detail}")
 
@@ -617,8 +618,10 @@ jobs:
               for index, rule in enumerate(config.get("text_replacements", []), start=1):
                   path = root / rule["file"]
                   label = f"text mapping {rule['file']}#{index}"
+                  category = ("manual_header" if "${RELEASE_YEAR}" in rule["replacement"]
+                              else "documentation_mapping")
                   if not path.is_file():
-                      record(label, False, "file missing")
+                      record(label, False, "file missing", category)
                       continue
                   try:
                       count = len(re.findall(rule["pattern"],
@@ -626,9 +629,9 @@ jobs:
                                              flags=re.MULTILINE))
                       expected = int(rule["expected_matches"])
                       record(label, count == expected,
-                             f"expected {expected} matches; found {count}")
+                             f"expected {expected} matches; found {count}", category)
                   except re.error as exc:
-                      record(label, False, f"invalid regular expression: {exc}")
+                      record(label, False, f"invalid regular expression: {exc}", category)
 
           if config.get("license"):
               record("Maven license headers", license_check == "passed",
@@ -637,11 +640,20 @@ jobs:
           if pipeline_status != "success":
               issues.insert(0, "One or more earlier workflow steps failed; inspect this repository job log.")
 
+          def category_status(category):
+              selected = [check for check in checks if check["category"] == category]
+              if not selected:
+                  return "not configured"
+              passed = sum(1 for check in selected if check["ok"])
+              return f"{passed}/{len(selected)} passed"
+
           result = {
               "repository": repository,
               "pipeline_status": pipeline_status,
               "audit_status": "passed" if not issues else "failed",
               "license_check": license_check,
+              "manual_header_check": category_status("manual_header"),
+              "documentation_check": category_status("documentation_mapping"),
               "checks": checks,
               "issues": issues,
           }
@@ -713,11 +725,12 @@ jobs:
             if compgen -G 'release-reports/*/audit.json' >/dev/null; then
               echo "## Validation audit"
               echo ""
-              echo "| Repository | Job | Audit | License headers | Issues |"
-              echo "|---|---|---|---|---:|"
+              echo "| Repository | Job | Audit | Source license headers | Manual headers | Manual versions | Issues |"
+              echo "|---|---|---|---|---|---|---:|"
               while IFS= read -r audit; do
                 jq -r '[.repository, .pipeline_status, .audit_status,
-                         .license_check, (.issues|length|tostring)]
+                         .license_check, .manual_header_check,
+                         .documentation_check, (.issues|length|tostring)]
                        | "| " + join(" | ") + " |"' "$audit"
               done < <(find release-reports -name audit.json -type f | sort)
               echo ""
