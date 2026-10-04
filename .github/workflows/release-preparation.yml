@@ -24,7 +24,7 @@ name: Prepare Open Hospital release branches
 #       {
 #         "file":"exact/documentation/path",
 #         "pattern":"escaped regex with one version value to replace",
-#         "replacement":"${VERSION}",
+#         "replacement":"${VERSION} or ${RELEASE_YEAR}",
 #         "expected_matches":1
 #       }
 #     ]
@@ -54,6 +54,11 @@ on:
         required: true
         default: develop
         type: string
+      release_year:
+        description: Copyright year for manuals; leave empty to use the current UTC year
+        required: false
+        default: ''
+        type: string
       dry_run:
         description: Validate and compute changes, but do not push
         required: true
@@ -75,6 +80,7 @@ env:
   CONFIG_JSON: ${{ vars.RELEASE_PREP_CONFIG_JSON }}
   VERSION: ${{ inputs.version }}
   SOURCE_INPUT: ${{ inputs.source_ref }}
+  RELEASE_YEAR_INPUT: ${{ inputs.release_year }}
   DRY_RUN: ${{ inputs.dry_run }}
 
 jobs:
@@ -85,7 +91,9 @@ jobs:
       matrix: ${{ steps.config.outputs.matrix }}
     steps:
       - name: Resolve release branch name
-        run: echo "RELEASE_BRANCH=release_${VERSION//./_}" >>"$GITHUB_ENV"
+        run: |
+          echo "RELEASE_BRANCH=release_${VERSION//./_}" >>"$GITHUB_ENV"
+          echo "RELEASE_YEAR=${RELEASE_YEAR_INPUT:-$(date -u +%Y)}" >>"$GITHUB_ENV"
 
       - name: Generate GitHub App token
         id: app-token
@@ -101,7 +109,6 @@ jobs:
             openhospital-ui
             openhospital-doc
           permission-contents: write
-          permission-workflows: read
 
       - name: Validate inputs and configuration
         id: config
@@ -114,6 +121,8 @@ jobs:
 
           [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
             || fail "version must have X.Y.Z form (for example 1.15.0)"
+          [[ "$RELEASE_YEAR" =~ ^[0-9]{4}$ ]] \
+            || fail "release_year must be a four-digit year (for example 2026)"
           [[ -n "$SOURCE_INPUT" ]] || fail "source_ref cannot be empty"
           [[ "$SOURCE_INPUT" == "develop" ||
              "$SOURCE_INPUT" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
@@ -190,9 +199,10 @@ jobs:
           jq -e '.[] | (.text_replacements // []) | all(.[];
             (.file | type == "string" and length > 0) and
             (.pattern | type == "string" and length > 0) and
-            (.replacement | type == "string" and contains("${VERSION}")) and
+            (.replacement | type == "string" and
+              test("\\$\\{(VERSION|RELEASE_YEAR)\\}")) and
             (.expected_matches | type == "number" and . >= 1))' <<<"$CONFIG" >/dev/null \
-            || fail "text_replacements require file, pattern, replacement with \${VERSION}, and expected_matches >= 1"
+            || fail "text_replacements require file, pattern, replacement with \${VERSION} or \${RELEASE_YEAR}, and expected_matches >= 1"
 
           jq -e '.[] | select(.name == "gui") |
             ([.properties_files[]? |
@@ -253,6 +263,7 @@ jobs:
             echo "## Release preparation preflight"
             echo ""
             echo "- Version: \`$VERSION\`"
+            echo "- Manual copyright year: \`$RELEASE_YEAR\`"
             echo "- Release branch: \`$RELEASE_BRANCH\`"
             echo "- Requested source for missing branches: \`$SOURCE_INPUT\`"
             echo "- Dry run: \`$DRY_RUN\`"
@@ -273,7 +284,9 @@ jobs:
       REPO_CONFIG: ${{ toJSON(matrix.repo) }}
     steps:
       - name: Resolve release branch name
-        run: echo "RELEASE_BRANCH=release_${VERSION//./_}" >>"$GITHUB_ENV"
+        run: |
+          echo "RELEASE_BRANCH=release_${VERSION//./_}" >>"$GITHUB_ENV"
+          echo "RELEASE_YEAR=${RELEASE_YEAR_INPUT:-$(date -u +%Y)}" >>"$GITHUB_ENV"
 
       - name: Generate GitHub App token
         id: app-token
@@ -451,13 +464,16 @@ jobs:
           import json, os, pathlib, re, sys
 
           version = os.environ["VERSION"]
+          release_year = os.environ["RELEASE_YEAR"]
           rules = json.loads(os.environ.get("RULES_JSON") or "[]")
           for rule in rules:
               path = pathlib.Path(rule["file"])
               if not path.is_file():
                   sys.exit(f"Configured text file does not exist: {path}")
               original = path.read_text(encoding="utf-8")
-              replacement = rule["replacement"].replace("${VERSION}", version)
+              replacement = (rule["replacement"]
+                             .replace("${VERSION}", version)
+                             .replace("${RELEASE_YEAR}", release_year))
               try:
                   updated, count = re.subn(rule["pattern"], replacement, original,
                                            flags=re.MULTILINE)
@@ -536,12 +552,101 @@ jobs:
             echo "- Push: $push_action"
           } >>"$GITHUB_STEP_SUMMARY"
 
+      - name: Build repository audit report
+        if: ${{ always() }}
+        env:
+          PIPELINE_STATUS: ${{ job.status }}
+        run: |
+          set +e
+          mkdir -p "$RUNNER_TEMP/release-report"
+
+          license_check="not configured"
+          if [[ -d repo && "$(jq -r '.license // false' <<<"$REPO_CONFIG")" == "true" ]]; then
+            if (cd repo && mvn -B -ntp license:check) \
+                >"$RUNNER_TEMP/release-report/license-check.log" 2>&1; then
+              license_check="passed"
+            else
+              license_check="failed"
+            fi
+          fi
+          export LICENSE_CHECK="$license_check"
+
+          python3 - <<'PY'
+          import json, os, pathlib, re
+
+          config = json.loads(os.environ["REPO_CONFIG"])
+          repository = os.environ["REPOSITORY"]
+          pipeline_status = os.environ.get("PIPELINE_STATUS", "unknown")
+          license_check = os.environ.get("LICENSE_CHECK", "not configured")
+          root = pathlib.Path("repo")
+          checks, issues = [], []
+
+          def record(name, ok, detail):
+              checks.append({"name": name, "ok": ok, "detail": detail})
+              if not ok:
+                  issues.append(f"{name}: {detail}")
+
+          record("repository checkout", root.is_dir(),
+                 "available" if root.is_dir() else "repository directory was not created")
+
+          if root.is_dir():
+              if config.get("maven"):
+                  record("Maven project", (root / "pom.xml").is_file(),
+                         "pom.xml found" if (root / "pom.xml").is_file() else "pom.xml missing")
+
+              for rule in config.get("properties_files", []):
+                  path = root / rule["file"]
+                  if not path.is_file():
+                      record(f"properties file {rule['file']}", False, "file missing")
+                      continue
+                  text = path.read_text(encoding="utf-8")
+                  count = len(re.findall(
+                      rf"(?m)^{re.escape(rule['key'])}\s*[=:]\s*.*$", text))
+                  record(f"property {rule['file']}::{rule['key']}", count == 1,
+                         f"expected 1 occurrence; found {count}")
+
+              for index, rule in enumerate(config.get("text_replacements", []), start=1):
+                  path = root / rule["file"]
+                  label = f"text mapping {rule['file']}#{index}"
+                  if not path.is_file():
+                      record(label, False, "file missing")
+                      continue
+                  try:
+                      count = len(re.findall(rule["pattern"],
+                                             path.read_text(encoding="utf-8"),
+                                             flags=re.MULTILINE))
+                      expected = int(rule["expected_matches"])
+                      record(label, count == expected,
+                             f"expected {expected} matches; found {count}")
+                  except re.error as exc:
+                      record(label, False, f"invalid regular expression: {exc}")
+
+          if config.get("license"):
+              record("Maven license headers", license_check == "passed",
+                     f"license:check {license_check}")
+
+          if pipeline_status != "success":
+              issues.insert(0, "One or more earlier workflow steps failed; inspect this repository job log.")
+
+          result = {
+              "repository": repository,
+              "pipeline_status": pipeline_status,
+              "audit_status": "passed" if not issues else "failed",
+              "license_check": license_check,
+              "checks": checks,
+              "issues": issues,
+          }
+          output = pathlib.Path(os.environ["RUNNER_TEMP"]) / "release-report" / "audit.json"
+          output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+          raise SystemExit(1 if issues else 0)
+          PY
+
       - name: Upload repository result
-        if: ${{ success() }}
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: release-report-${{ matrix.repo.name }}
-          path: ${{ runner.temp }}/release-report/result.json
+          path: ${{ runner.temp }}/release-report
           if-no-files-found: error
           retention-days: 7
 
@@ -589,6 +694,35 @@ jobs:
               echo ""
             else
               echo "> No repository result was produced. Check the failed preflight or matrix job logs."
+              echo ""
+            fi
+
+            if compgen -G 'release-reports/*/audit.json' >/dev/null; then
+              echo "## Validation audit"
+              echo ""
+              echo "| Repository | Job | Audit | License headers | Issues |"
+              echo "|---|---|---|---|---:|"
+              while IFS= read -r audit; do
+                jq -r '[.repository, .pipeline_status, .audit_status,
+                         .license_check, (.issues|length|tostring)]
+                       | "| " + join(" | ") + " |"' "$audit"
+              done < <(find release-reports -name audit.json -type f | sort)
+              echo ""
+
+              if jq -e -s 'any(.[]; (.issues | length) > 0)' \
+                   $(find release-reports -name audit.json -type f | sort) >/dev/null 2>&1; then
+                echo "### Findings"
+                echo ""
+                while IFS= read -r audit; do
+                  if jq -e '.issues | length > 0' "$audit" >/dev/null; then
+                    echo "#### $(jq -r '.repository' "$audit")"
+                    jq -r '.issues[] | "- " + .' "$audit"
+                    echo ""
+                  fi
+                done < <(find release-reports -name audit.json -type f | sort)
+              fi
+            else
+              echo "> No validation audit was produced. A job may have been cancelled before artifacts could be uploaded."
               echo ""
             fi
 
