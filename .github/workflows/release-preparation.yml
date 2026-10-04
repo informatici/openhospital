@@ -101,7 +101,7 @@ jobs:
             openhospital-ui
             openhospital-doc
           permission-contents: write
-          permission-workflows: write
+          permission-workflows: read
 
       - name: Validate inputs and configuration
         id: config
@@ -291,6 +291,9 @@ jobs:
             openhospital-ui
             openhospital-doc
           permission-contents: write
+          # Creating a branch from a tag also introduces the workflow files
+          # already present in that tagged tree.
+          permission-workflows: write
 
       - name: Clone repository and create or reuse release branch
         env:
@@ -327,23 +330,14 @@ jobs:
               }
             fi
 
-            base_sha="$(git rev-parse "${base_ref}^{commit}")"
-
-            # In live mode create the remote ref first, pointing exactly at the
-            # requested source. The later Git push then contains only release
-            # preparation changes and does not need Workflows permission merely
-            # because the source tree already contains .github/workflows files.
-            if [[ "$DRY_RUN" != "true" ]]; then
-              gh api --method POST "repos/$REPOSITORY/git/refs" \
-                -f ref="refs/heads/$RELEASE_BRANCH" \
-                -f sha="$base_sha" >/dev/null
-              git fetch origin "+refs/heads/$RELEASE_BRANCH:refs/remotes/origin/$RELEASE_BRANCH"
-              echo "BRANCH_ACTION=created remotely from $base_ref" >>"$GITHUB_ENV"
-            else
-              echo "BRANCH_ACTION=would be created from $base_ref" >>"$GITHUB_ENV"
-            fi
-
             git checkout -B "$RELEASE_BRANCH" "$base_ref"
+            if [[ "$DRY_RUN" == "true" ]]; then
+              echo "BRANCH_ACTION=would be created from $base_ref" >>"$GITHUB_ENV"
+            else
+              # The final authenticated git push creates the remote branch and
+              # publishes the preparation commit atomically.
+              echo "BRANCH_ACTION=created from $base_ref" >>"$GITHUB_ENV"
+            fi
           fi
 
       - name: Set up Java
