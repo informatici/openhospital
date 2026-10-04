@@ -54,11 +54,6 @@ on:
         required: true
         default: develop
         type: string
-      release_year:
-        description: Copyright year for manuals; leave empty to use the current UTC year
-        required: false
-        default: ''
-        type: string
       dry_run:
         description: Validate and compute changes, but do not push
         required: true
@@ -80,7 +75,6 @@ env:
   CONFIG_JSON: ${{ vars.RELEASE_PREP_CONFIG_JSON }}
   VERSION: ${{ inputs.version }}
   SOURCE_INPUT: ${{ inputs.source_ref }}
-  RELEASE_YEAR_INPUT: ${{ inputs.release_year }}
   DRY_RUN: ${{ inputs.dry_run }}
 
 jobs:
@@ -93,7 +87,7 @@ jobs:
       - name: Resolve release branch name
         run: |
           echo "RELEASE_BRANCH=release_${VERSION//./_}" >>"$GITHUB_ENV"
-          echo "RELEASE_YEAR=${RELEASE_YEAR_INPUT:-$(date -u +%Y)}" >>"$GITHUB_ENV"
+          echo "RELEASE_YEAR=$(date -u +%Y)" >>"$GITHUB_ENV"
 
       - name: Generate GitHub App token
         id: app-token
@@ -121,8 +115,6 @@ jobs:
 
           [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
             || fail "version must have X.Y.Z form (for example 1.15.0)"
-          [[ "$RELEASE_YEAR" =~ ^[0-9]{4}$ ]] \
-            || fail "release_year must be a four-digit year (for example 2026)"
           [[ -n "$SOURCE_INPUT" ]] || fail "source_ref cannot be empty"
           [[ "$SOURCE_INPUT" == "develop" ||
              "$SOURCE_INPUT" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
@@ -286,7 +278,7 @@ jobs:
       - name: Resolve release branch name
         run: |
           echo "RELEASE_BRANCH=release_${VERSION//./_}" >>"$GITHUB_ENV"
-          echo "RELEASE_YEAR=${RELEASE_YEAR_INPUT:-$(date -u +%Y)}" >>"$GITHUB_ENV"
+          echo "RELEASE_YEAR=$(date -u +%Y)" >>"$GITHUB_ENV"
 
       - name: Generate GitHub App token
         id: app-token
@@ -562,12 +554,29 @@ jobs:
 
           license_check="not configured"
           if [[ -d repo && "$(jq -r '.license // false' <<<"$REPO_CONFIG")" == "true" ]]; then
+            # license_excludes are intentional repository-specific exceptions.
+            # Hide them temporarily so license:check audits everything else
+            # without reporting the known exclusions as missing headers.
+            excluded_root="$RUNNER_TEMP/release-license-excludes"
+            mkdir -p "$excluded_root"
+            while IFS= read -r excluded_path; do
+              [[ -n "$excluded_path" && -f "repo/$excluded_path" ]] || continue
+              mkdir -p "$excluded_root/$(dirname "$excluded_path")"
+              mv "repo/$excluded_path" "$excluded_root/$excluded_path"
+            done < <(jq -r '.license_excludes[]?' <<<"$REPO_CONFIG")
+
             if (cd repo && mvn -B -ntp license:check) \
                 >"$RUNNER_TEMP/release-report/license-check.log" 2>&1; then
               license_check="passed"
             else
               license_check="failed"
             fi
+
+            while IFS= read -r excluded_path; do
+              [[ -n "$excluded_path" && -f "$excluded_root/$excluded_path" ]] || continue
+              mkdir -p "repo/$(dirname "$excluded_path")"
+              mv "$excluded_root/$excluded_path" "repo/$excluded_path"
+            done < <(jq -r '.license_excludes[]?' <<<"$REPO_CONFIG")
           fi
           export LICENSE_CHECK="$license_check"
 
@@ -638,6 +647,10 @@ jobs:
           }
           output = pathlib.Path(os.environ["RUNNER_TEMP"]) / "release-report" / "audit.json"
           output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+          if issues:
+              print("Repository audit findings:")
+              for issue in issues:
+                  print(f"- {issue}")
           raise SystemExit(1 if issues else 0)
           PY
 
