@@ -478,6 +478,160 @@ jobs:
                   path.write_text(updated, encoding="utf-8", newline="")
           PY
 
+      - name: Validate release compatibility matrix against build and launcher sources
+        if: ${{ matrix.repo.name == 'doc' }}
+        run: |
+          set -Eeuo pipefail
+          mkdir -p "$RUNNER_TEMP/release-report"
+
+          git clone --filter=blob:none \
+            "https://github.com/informatici/openhospital.git" compatibility-build
+          (
+            cd compatibility-build
+            git fetch origin --tags
+            if git show-ref --verify --quiet "refs/tags/v$VERSION"; then
+              git checkout --detach "refs/tags/v$VERSION"
+            else
+              git checkout --detach origin/master
+            fi
+          )
+
+          git clone --filter=blob:none \
+            "https://github.com/informatici/openhospital-gui.git" compatibility-gui
+          (
+            cd compatibility-gui
+            git fetch origin "+refs/heads/*:refs/remotes/origin/*" --tags
+            if git show-ref --verify --quiet "refs/remotes/origin/$RELEASE_BRANCH"; then
+              git checkout --detach "origin/$RELEASE_BRANCH"
+            elif [[ "$SOURCE_INPUT" == "develop" ]]; then
+              git checkout --detach origin/develop
+            else
+              git checkout --detach "refs/tags/v$SOURCE_INPUT"
+            fi
+          )
+
+          python3 - <<'PY'
+          import json, os, pathlib, re
+
+          version = os.environ["VERSION"]
+          report_path = (pathlib.Path(os.environ["RUNNER_TEMP"]) /
+                         "release-report" / "compatibility.json")
+          checks, issues = [], []
+
+          def record(name, actual, expected):
+              ok = actual == expected
+              detail = f"expected {expected}; found {actual}"
+              checks.append({"name": name, "ok": ok, "detail": detail})
+              if not ok:
+                  issues.append(f"{name}: {detail}")
+
+          def one(pattern, text, label):
+              matches = re.findall(pattern, text, flags=re.MULTILINE)
+              if len(matches) != 1:
+                  issues.append(f"{label}: expected exactly one value; found {len(matches)}")
+                  return None
+              return matches[0]
+
+          makefile = pathlib.Path("compatibility-build/Makefile").read_text(encoding="utf-8")
+          shell = pathlib.Path("compatibility-gui/oh.sh").read_text(encoding="utf-8")
+          powershell = pathlib.Path("compatibility-gui/oh.ps1").read_text(encoding="utf-8")
+          batch = pathlib.Path("compatibility-gui/oh.bat").read_text(encoding="utf-8")
+          matrix = pathlib.Path("repo/doc_admin/OH_software_compatibility_matrix.adoc").read_text(encoding="utf-8")
+
+          make = {}
+          for key in ("JRE_32_VER", "JRE_64_VER", "MYSQL_WIN32_VER",
+                      "MYSQL_WIN64_VER", "MYSQL_LINUX32_VER", "MYSQL_LINUX64_VER"):
+              make[key] = one(rf"^{key}\s*:=\s*(\S+)\s*$", makefile, f"Makefile {key}")
+
+          if make["JRE_32_VER"] and make["JRE_64_VER"]:
+              record("Makefile Java 32/64 agreement", make["JRE_32_VER"], make["JRE_64_VER"])
+
+          script_values = {
+              "oh.sh MariaDB Linux 64": one(r'^MYSQL_VERSION="([^"]+)"$', shell,
+                                              "oh.sh MYSQL_VERSION"),
+              "oh.sh MariaDB Linux 32": one(r'^MYSQL32_VERSION="([^"]+)"$', shell,
+                                              "oh.sh MYSQL32_VERSION"),
+              "oh.ps1 MariaDB Windows 64": one(r'^\$script:MYSQL_VERSION="([^"]+)"$', powershell,
+                                                  "oh.ps1 MYSQL_VERSION"),
+              "oh.ps1 MariaDB Windows 32": one(r'^\$script:MYSQL32_VERSION="([^"]+)"$', powershell,
+                                                  "oh.ps1 MYSQL32_VERSION"),
+              "oh.bat MariaDB Windows 64": one(r'^set MYSQL_DIR=mariadb-([0-9.]+)-win%ARCH%\s*$', batch,
+                                                  "oh.bat MYSQL_DIR"),
+              "oh.bat MariaDB Windows 32": one(r'^REM set MYSQL_DIR=mariadb-([0-9.]+)-win%ARCH%\s*$', batch,
+                                                  "oh.bat 32-bit MYSQL_DIR"),
+              "oh.sh Java": one(r'^JAVA_DISTRO="(.+)-linux_\$JAVA_PACKAGE_ARCH"$', shell,
+                                  "oh.sh JAVA_DISTRO"),
+              "oh.ps1 Java": one(r'^\$script:JAVA_DISTRO="(.+)-win_\$JAVA_PACKAGE_ARCH"$', powershell,
+                                   "oh.ps1 JAVA_DISTRO"),
+              "oh.bat Java": one(r'^set JAVA_DIR=(.+)-win_%ARCH%\s*$', batch,
+                                   "oh.bat JAVA_DIR"),
+          }
+
+          expected_scripts = {
+              "oh.sh MariaDB Linux 64": make["MYSQL_LINUX64_VER"],
+              "oh.sh MariaDB Linux 32": make["MYSQL_LINUX32_VER"],
+              "oh.ps1 MariaDB Windows 64": make["MYSQL_WIN64_VER"],
+              "oh.ps1 MariaDB Windows 32": make["MYSQL_WIN32_VER"],
+              "oh.bat MariaDB Windows 64": make["MYSQL_WIN64_VER"],
+              "oh.bat MariaDB Windows 32": make["MYSQL_WIN32_VER"],
+              "oh.sh Java": make["JRE_64_VER"],
+              "oh.ps1 Java": make["JRE_64_VER"],
+              "oh.bat Java": make["JRE_64_VER"],
+          }
+          for name, actual in script_values.items():
+              expected = expected_scripts[name]
+              if actual is not None and expected is not None:
+                  record(name, actual, expected)
+
+          lines = matrix.splitlines()
+          row_indexes = [index for index, line in enumerate(lines)
+                         if re.match(rf'^\.4\+\|\*{re.escape(version)}\*\s', line)]
+          record("compatibility matrix release row count", len(row_indexes), 1)
+
+          if len(row_indexes) == 1:
+              block = lines[row_indexes[0]:row_indexes[0] + 4]
+              if len(block) != 4:
+                  issues.append(f"Compatibility matrix {version}: expected four platform rows")
+              else:
+                  linux64_db = one(r'^\.4\+\|\*[^*]+\*\s+\.2\+\|\s*\*([^*]+)\*\s*/',
+                                   block[0], "matrix Linux/Windows 64 MariaDB")
+                  java64 = one(r'/\s*n\.a\.\s+\.2\+\|\*([^*]+)\*',
+                               block[0], "matrix Java 64")
+                  linux32 = one(r'^\|([^| ]+)\s+\|([^| ]+)\s+\|_Linux32_',
+                                block[2], "matrix Linux 32 versions")
+                  win32 = one(r'^\|([^| ]+)\s+\|([^| ]+)\s*\|_Windows',
+                              block[3], "matrix Windows 32 versions")
+                  java_display = (make["JRE_64_VER"].split("-ca", 1)[0]
+                                  if make["JRE_64_VER"] else None)
+
+                  if make["MYSQL_LINUX64_VER"] and make["MYSQL_WIN64_VER"]:
+                      record("Makefile MariaDB Linux/Windows 64 agreement",
+                             make["MYSQL_LINUX64_VER"], make["MYSQL_WIN64_VER"])
+                  if linux64_db is not None and make["MYSQL_LINUX64_VER"] is not None:
+                      record("matrix MariaDB 64", linux64_db.strip(), make["MYSQL_LINUX64_VER"])
+                  if java64 is not None and java_display is not None:
+                      record("matrix Java 64", java64.strip(), java_display)
+                  if linux32 is not None:
+                      record("matrix MariaDB Linux 32", linux32[0].strip(), make["MYSQL_LINUX32_VER"])
+                      record("matrix Java Linux 32", linux32[1].strip(), java_display)
+                  if win32 is not None:
+                      record("matrix MariaDB Windows 32", win32[0].strip(), make["MYSQL_WIN32_VER"])
+                      record("matrix Java Windows 32", win32[1].strip(), java_display)
+
+          result = {
+              "status": "passed" if not issues else "failed",
+              "checks": checks,
+              "issues": issues,
+          }
+          report_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+          if issues:
+              print("Compatibility validation findings:")
+              for issue in issues:
+                  print(f"- {issue}")
+              raise SystemExit(1)
+          print("Compatibility matrix, Makefile, and launcher versions are consistent.")
+          PY
+
       - name: Verify target state
         working-directory: repo
         run: |
@@ -633,6 +787,22 @@ jobs:
                   except re.error as exc:
                       record(label, False, f"invalid regular expression: {exc}", category)
 
+              if config.get("name") == "doc":
+                  compatibility_path = (pathlib.Path(os.environ["RUNNER_TEMP"]) /
+                                        "release-report" / "compatibility.json")
+                  if compatibility_path.is_file():
+                      compatibility = json.loads(
+                          compatibility_path.read_text(encoding="utf-8"))
+                      for check in compatibility.get("checks", []):
+                          record(f"compatibility: {check['name']}", check["ok"],
+                                 check["detail"], "compatibility")
+                      for issue in compatibility.get("issues", []):
+                          if not any(issue in existing for existing in issues):
+                              issues.append(f"compatibility: {issue}")
+                  else:
+                      record("compatibility validation", False,
+                             "no compatibility report was produced", "compatibility")
+
           if config.get("license"):
               record("Maven license headers", license_check == "passed",
                      f"license:check {license_check}")
@@ -654,6 +824,7 @@ jobs:
               "license_check": license_check,
               "manual_header_check": category_status("manual_header"),
               "documentation_check": category_status("documentation_mapping"),
+              "compatibility_check": category_status("compatibility"),
               "checks": checks,
               "issues": issues,
           }
@@ -727,10 +898,14 @@ jobs:
               echo ""
               echo "| Repository | Job | Audit | Source license headers | Manual headers | Manual versions | Issues |"
               echo "|---|---|---|---|---|---|---:|"
+              echo "| Repository | Job | Audit | Source license headers | Manual headers | Manual versions | Compatibility matrix | Issues |"
+              echo "|---|---|---|---|---|---|---|---:|"
               while IFS= read -r audit; do
                 jq -r '[.repository, .pipeline_status, .audit_status,
                          .license_check, .manual_header_check,
                          .documentation_check, (.issues|length|tostring)]
+                         .documentation_check, .compatibility_check,
+                         (.issues|length|tostring)]
                        | "| " + join(" | ") + " |"' "$audit"
               done < <(find release-reports -name audit.json -type f | sort)
               echo ""
