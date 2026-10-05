@@ -437,14 +437,14 @@ jobs:
             pending_jql="project = $project AND fixVersion = $version_id AND statusCategory != Done ORDER BY key"
 
             if ! search_issues "$all_jql" "$all_issues_file"; then
-              echo "| $project | $version_id | error | error | JQL search failed | **blocked** |" \
+              echo "| $project | [$VERSION](https://openhospital.atlassian.net/projects/$project/versions/$version_id) | error | error | JQL search failed | **blocked** |" \
                 >>"$release_summary"
               failed=1
               continue
             fi
 
             if ! search_issues "$pending_jql" "$pending_issues_file"; then
-              echo "| $project | $version_id | error | error | pending search failed | **blocked** |" \
+              echo "| $project | [$VERSION](https://openhospital.atlassian.net/projects/$project/versions/$version_id) | error | error | pending search failed | **blocked** |" \
                 >>"$release_summary"
               failed=1
               continue
@@ -452,6 +452,17 @@ jobs:
 
             issue_count="$(jq 'length' "$all_issues_file")"
             pending_count="$(jq 'length' "$pending_issues_file")"
+
+            included_codes="$(jq -r \
+              --arg site "https://openhospital.atlassian.net" \
+              '[.[] | "[\(.key)](\($site)/browse/\(.key))"] |
+               if length == 0 then "none" else join(", ") end' \
+              "$all_issues_file")"
+            pending_codes="$(jq -r \
+              --arg site "https://openhospital.atlassian.net" \
+              '[.[] | "[\(.key)](\($site)/browse/\(.key))"] |
+               if length == 0 then "none" else join(", ") end' \
+              "$pending_issues_file")"
 
             if [[ "$released" == "true" ]]; then
               current="released; date: $release_date"
@@ -472,7 +483,7 @@ jobs:
               readiness="ready; would publish on final GitHub release"
             fi
 
-            echo "| $project | $version_id | $issue_count | $pending_count | $current | $readiness |" \
+            echo "| $project | [$VERSION](https://openhospital.atlassian.net/projects/$project/versions/$version_id) | **$issue_count:** $included_codes | **$pending_count:** $pending_codes | $current | $readiness |" \
               >>"$release_summary"
 
             if (( pending_count > 0 )); then
@@ -500,9 +511,10 @@ jobs:
             echo ""
             echo "### Jira release readiness"
             echo ""
-            echo "| Project | Version ID | Issues | Pending | Current state | Readiness |"
-            echo "|---|---:|---:|---:|---|---|"
+            echo "| Project | Jira version | Included issues | Pending issues | Current state | Readiness |"
+            echo "|---|---:|---|---|---|---|"
             cat "$release_summary"
+            echo ""
             cat "$pending_summary"
             echo ""
             echo "> No Jira version was created or modified by this workflow."
