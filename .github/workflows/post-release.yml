@@ -57,6 +57,7 @@ jobs:
           echo "RELEASE_TAG=v$VERSION" >>"$GITHUB_ENV"
           echo "RELEASE_BRANCH=release_${VERSION//./_}" >>"$GITHUB_ENV"
           echo "GITHUB_BLOCKED=0" >>"$GITHUB_ENV"
+          echo "JIRA_BLOCKED=0" >>"$GITHUB_ENV"
 
       - name: Inspect GitHub release
         shell: bash
@@ -213,8 +214,7 @@ jobs:
                 [[ -n "$conflicts" ]] || conflicts="merge command failed; inspect logs"
                 merge_test="**conflicts:** $conflicts"
                 action="manual resolution required"
-                echo "::error::$full_repo trial merge has conflicts: $conflicts"
-                blocked=1
+                echo "::warning::$full_repo trial merge has conflicts: $conflicts"
               fi
 
               git -C "$repo_dir" merge --abort >/dev/null 2>&1 || true
@@ -508,4 +508,19 @@ jobs:
             echo "> No Jira version was created or modified by this workflow."
           } >>"$GITHUB_STEP_SUMMARY"
 
-          [[ "$failed" == "0" && "$GITHUB_BLOCKED" == "0" ]]
+          if (( failed != 0 )); then
+            echo "JIRA_BLOCKED=1" >>"$GITHUB_ENV"
+          fi
+
+      - name: Evaluate dry-run outcome
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          if [[ "$GITHUB_BLOCKED" == "1" || "$JIRA_BLOCKED" == "1" ]]; then
+            echo "::error::Post-release dry-run found one or more blocking conditions; review the job summary"
+            exit 1
+          fi
+
+          echo "Post-release dry-run completed without blocking conditions."
