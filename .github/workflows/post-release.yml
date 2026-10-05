@@ -121,7 +121,7 @@ jobs:
             branch_sha=""
             tag_sha=""
             relation=""
-            pr_state="none"
+            pr_state="would create"
             merge_test="not run"
             action=""
 
@@ -142,9 +142,9 @@ jobs:
             fi
 
             if [[ "$branch_sha" == "$tag_sha" ]]; then
-              ref_state="matching at \`${branch_sha:0:7}\`"
+              ref_state="\`$RELEASE_BRANCH\` matches \`$RELEASE_TAG\`; target \`develop\`"
             else
-              ref_state="**mismatch** branch \`${branch_sha:0:7}\`, tag \`${tag_sha:0:7}\`"
+              ref_state="**mismatch:** \`$RELEASE_BRANCH\` != \`$RELEASE_TAG\`; target \`develop\`"
               echo "::error::$full_repo branch/tag SHA mismatch"
               blocked=1
             fi
@@ -188,6 +188,9 @@ jobs:
                 "origin/$RELEASE_BRANCH" origin/develop; then
               merge_test="already contained"
               action="no PR needed"
+              if [[ "$pr_state" == "would create" ]]; then
+                pr_state="not needed"
+              fi
             else
               git -C "$repo_dir" checkout --quiet -B dry-run-develop origin/develop
               set +e
@@ -199,7 +202,7 @@ jobs:
 
               if (( merge_rc == 0 )); then
                 merge_test="clean"
-                if [[ "$pr_state" == "none" ]]; then
+                if [[ "$pr_state" == "would create" ]]; then
                   action="would create PR"
                 else
                   action="reuse existing PR state"
@@ -226,7 +229,7 @@ jobs:
             echo ""
             echo "## Merge-back analysis"
             echo ""
-            echo "| Repository | Release branch/tag | Exact PR | Divergence | Trial merge / plan |"
+            echo "| Repository | Source → target | Merge-back PR | Divergence | Trial merge / plan |"
             echo "|---|---|---|---|---|"
             cat "$rows"
             echo ""
@@ -369,12 +372,15 @@ jobs:
             echo ""
             echo "- Jira Cloud ID format: valid"
             echo "- Jira calls: authenticated reads plus read-only JQL searches"
-            echo ""
-            echo "| Project | Browse | Administer | Version ID | Issues | Pending | Current state | Readiness |"
-            echo "|---|---|---|---:|---:|---:|---|---|"
           } >>"$GITHUB_STEP_SUMMARY"
 
           failed=0
+          access_summary="$work_dir/jira-access.md"
+          release_summary="$work_dir/jira-releases.md"
+          pending_summary="$work_dir/jira-pending.md"
+          : >"$access_summary"
+          : >"$release_summary"
+          : >"$pending_summary"
 
           for project in OP OH2; do
             permissions_file="$work_dir/${project}-permissions.json"
@@ -385,8 +391,9 @@ jobs:
             if ! request_json \
               "$api/mypermissions?projectKey=$project&permissions=BROWSE_PROJECTS,ADMINISTER_PROJECTS" \
               "$permissions_file"; then
-              echo "| $project | error | error | — | — | — | permission check failed | blocked |" \
-                >>"$GITHUB_STEP_SUMMARY"
+              echo "- **$project:** permission check failed ❌" >>"$access_summary"
+              echo "| $project | — | — | — | permission check failed | **blocked** |" \
+                >>"$release_summary"
               failed=1
               continue
             fi
@@ -394,14 +401,21 @@ jobs:
             browse="$(jq -r '.permissions.BROWSE_PROJECTS.havePermission // false' "$permissions_file")"
             administer="$(jq -r '.permissions.ADMINISTER_PROJECTS.havePermission // false' "$permissions_file")"
 
+            if [[ "$browse" == "true" && "$administer" == "true" ]]; then
+              echo "- **$project:** Browse Projects ✅; Administer Projects ✅" >>"$access_summary"
+            else
+              echo "- **$project:** Browse Projects=$browse; Administer Projects=$administer ❌" \
+                >>"$access_summary"
+            fi
+
             if [[ "$browse" != "true" || "$administer" != "true" ]]; then
               echo "::error::Service account lacks required Jira permissions in $project (browse=$browse, administer=$administer)"
               failed=1
             fi
 
             if ! request_json "$api/project/$project/versions" "$versions_file"; then
-              echo "| $project | $browse | $administer | — | — | — | version lookup failed | blocked |" \
-                >>"$GITHUB_STEP_SUMMARY"
+              echo "| $project | — | — | — | version lookup failed | **blocked** |" \
+                >>"$release_summary"
               failed=1
               continue
             fi
@@ -409,8 +423,8 @@ jobs:
             matches="$(jq --arg version "$VERSION" '[.[] | select(.name == $version)] | length' "$versions_file")"
             if [[ "$matches" != "1" ]]; then
               echo "::error::Expected exactly one Jira version '$VERSION' in $project; found $matches"
-              echo "| $project | $browse | $administer | — | — | — | exact matches: $matches | blocked |" \
-                >>"$GITHUB_STEP_SUMMARY"
+              echo "| $project | — | — | — | exact matches: $matches | **blocked** |" \
+                >>"$release_summary"
               failed=1
               continue
             fi
@@ -423,15 +437,15 @@ jobs:
             pending_jql="project = $project AND fixVersion = $version_id AND statusCategory != Done ORDER BY key"
 
             if ! search_issues "$all_jql" "$all_issues_file"; then
-              echo "| $project | $browse | $administer | $version_id | error | error | JQL search failed | blocked |" \
-                >>"$GITHUB_STEP_SUMMARY"
+              echo "| $project | $version_id | error | error | JQL search failed | **blocked** |" \
+                >>"$release_summary"
               failed=1
               continue
             fi
 
             if ! search_issues "$pending_jql" "$pending_issues_file"; then
-              echo "| $project | $browse | $administer | $version_id | error | error | pending search failed | blocked |" \
-                >>"$GITHUB_STEP_SUMMARY"
+              echo "| $project | $version_id | error | error | pending search failed | **blocked** |" \
+                >>"$release_summary"
               failed=1
               continue
             fi
@@ -458,8 +472,8 @@ jobs:
               readiness="ready; would publish on final GitHub release"
             fi
 
-            echo "| $project | $browse | $administer | $version_id | $issue_count | $pending_count | $current | $readiness |" \
-              >>"$GITHUB_STEP_SUMMARY"
+            echo "| $project | $version_id | $issue_count | $pending_count | $current | $readiness |" \
+              >>"$release_summary"
 
             if (( pending_count > 0 )); then
               {
@@ -474,11 +488,22 @@ jobs:
                    (.fields.summary // "" | gsub("[|\\r\\n]"; " ")) as $summary |
                    "| [\(.key)](\($site)/browse/\(.key)) | \(.fields.status.name) | \(.fields.status.statusCategory.name) | \($summary) |"' \
                   "$pending_issues_file"
-              } >>"$GITHUB_STEP_SUMMARY"
+              } >>"$pending_summary"
             fi
           done
 
           {
+            echo ""
+            echo "### Jira access checks"
+            echo ""
+            cat "$access_summary"
+            echo ""
+            echo "### Jira release readiness"
+            echo ""
+            echo "| Project | Version ID | Issues | Pending | Current state | Readiness |"
+            echo "|---|---:|---:|---:|---|---|"
+            cat "$release_summary"
+            cat "$pending_summary"
             echo ""
             echo "> No Jira version was created or modified by this workflow."
           } >>"$GITHUB_STEP_SUMMARY"
