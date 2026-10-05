@@ -81,6 +81,54 @@ jobs:
             fi
           }
 
+          search_issues() {
+            local jql="$1"
+            local output="$2"
+            local page_file="$work_dir/search-page.json"
+            local merged_file="$work_dir/search-merged.json"
+            local next_token=""
+            local page=0
+
+            printf '[]\n' >"$output"
+
+            while true; do
+              page=$((page + 1))
+              if (( page > 1000 )); then
+                echo "::error::Jira search exceeded 1000 pages"
+                return 1
+              fi
+
+              body="$(jq -n \
+                --arg jql "$jql" \
+                --arg next "$next_token" \
+                '{jql:$jql, fields:["summary","status"], maxResults:100}
+                 + (if $next == "" then {} else {nextPageToken:$next} end)')"
+
+              status="$(curl --silent --show-error \
+                --output "$page_file" \
+                --write-out '%{http_code}' \
+                --request POST \
+                --header "$auth_header" \
+                --header 'Accept: application/json' \
+                --header 'Content-Type: application/json' \
+                --data "$body" \
+                "$api/search/jql")"
+
+              if [[ "$status" != "200" ]]; then
+                echo "::error::Jira JQL search failed with HTTP $status"
+                jq -r '.errorMessages[]?, .message? // empty' "$page_file" 2>/dev/null || true
+                return 1
+              fi
+
+              jq -s '.[0] + .[1]' \
+                "$output" <(jq '.issues // []' "$page_file") >"$merged_file"
+              mv "$merged_file" "$output"
+
+              next_token="$(jq -r '.nextPageToken // empty' "$page_file")"
+              [[ -n "$next_token" ]] || break
+            done
+          }
+
           {
             echo "# Jira post-release dry-run"
             echo ""
@@ -88,8 +136,8 @@ jobs:
             echo "- Mode: **DRY RUN — only authenticated GET requests are used**"
             echo "- Cloud ID format: valid"
             echo ""
-            echo "| Project | Browse | Administer project | Jira version ID | Current state | Planned final-publication change |"
-            echo "|---|---|---|---:|---|---|"
+            echo "| Project | Browse | Administer | Version ID | Issues | Pending | Current state | Readiness |"
+            echo "|---|---|---|---:|---:|---:|---|---|"
           } >>"$GITHUB_STEP_SUMMARY"
 
           failed=0
@@ -97,11 +145,13 @@ jobs:
           for project in OP OH2; do
             permissions_file="$work_dir/${project}-permissions.json"
             versions_file="$work_dir/${project}-versions.json"
+            all_issues_file="$work_dir/${project}-all-issues.json"
+            pending_issues_file="$work_dir/${project}-pending-issues.json"
 
             if ! request_json \
               "$api/mypermissions?projectKey=$project&permissions=BROWSE_PROJECTS,ADMINISTER_PROJECTS" \
               "$permissions_file"; then
-              echo "| $project | error | error | — | permission check failed | none |" \
+              echo "| $project | error | error | — | — | — | permission check failed | blocked |" \
                 >>"$GITHUB_STEP_SUMMARY"
               failed=1
               continue
@@ -116,7 +166,7 @@ jobs:
             fi
 
             if ! request_json "$api/project/$project/versions" "$versions_file"; then
-              echo "| $project | $browse | $administer | — | version lookup failed | none |" \
+              echo "| $project | $browse | $administer | — | — | — | version lookup failed | blocked |" \
                 >>"$GITHUB_STEP_SUMMARY"
               failed=1
               continue
@@ -125,7 +175,7 @@ jobs:
             matches="$(jq --arg version "$VERSION" '[.[] | select(.name == $version)] | length' "$versions_file")"
             if [[ "$matches" != "1" ]]; then
               echo "::error::Expected exactly one Jira version '$VERSION' in $project; found $matches"
-              echo "| $project | $browse | $administer | — | exact matches: $matches | none |" \
+              echo "| $project | $browse | $administer | — | — | — | exact matches: $matches | blocked |" \
                 >>"$GITHUB_STEP_SUMMARY"
               failed=1
               continue
@@ -135,16 +185,63 @@ jobs:
             released="$(jq -r --arg version "$VERSION" '.[] | select(.name == $version) | .released' "$versions_file")"
             release_date="$(jq -r --arg version "$VERSION" '.[] | select(.name == $version) | .releaseDate // "not set"' "$versions_file")"
 
-            if [[ "$released" == "true" ]]; then
-              current="released; date: $release_date"
-              planned="already released; no write"
-            else
-              current="unreleased; date: $release_date"
-              planned="would set released=true and the GitHub publication date"
+            all_jql="project = $project AND fixVersion = $version_id ORDER BY key"
+            pending_jql="project = $project AND fixVersion = $version_id AND statusCategory != Done ORDER BY key"
+
+            if ! search_issues "$all_jql" "$all_issues_file"; then
+              echo "| $project | $browse | $administer | $version_id | error | error | JQL search failed | blocked |" \
+                >>"$GITHUB_STEP_SUMMARY"
+              failed=1
+              continue
             fi
 
-            echo "| $project | $browse | $administer | $version_id | $current | $planned |" \
+            if ! search_issues "$pending_jql" "$pending_issues_file"; then
+              echo "| $project | $browse | $administer | $version_id | error | error | pending search failed | blocked |" \
+                >>"$GITHUB_STEP_SUMMARY"
+              failed=1
+              continue
+            fi
+
+            issue_count="$(jq 'length' "$all_issues_file")"
+            pending_count="$(jq 'length' "$pending_issues_file")"
+
+            if [[ "$released" == "true" ]]; then
+              current="released; date: $release_date"
+            else
+              current="unreleased; date: $release_date"
+            fi
+
+            if (( pending_count > 0 )); then
+              readiness="**blocked**"
+              failed=1
+              echo "::error::$project version $VERSION has $pending_count issue(s) outside the Done status category"
+            elif (( issue_count == 0 )); then
+              readiness="warning: no issues"
+              echo "::warning::$project version $VERSION has no associated issues"
+            elif [[ "$released" == "true" ]]; then
+              readiness="already released"
+            else
+              readiness="ready; would publish on final GitHub release"
+            fi
+
+            echo "| $project | $browse | $administer | $version_id | $issue_count | $pending_count | $current | $readiness |" \
               >>"$GITHUB_STEP_SUMMARY"
+
+            if (( pending_count > 0 )); then
+              {
+                echo ""
+                echo "## Pending issues — $project"
+                echo ""
+                echo "| Issue | Status | Category | Summary |"
+                echo "|---|---|---|---|"
+                jq -r \
+                  --arg site "https://openhospital.atlassian.net" \
+                  '.[] |
+                   (.fields.summary // "" | gsub("[|\\r\\n]"; " ")) as $summary |
+                   "| [\(.key)](\($site)/browse/\(.key)) | \(.fields.status.name) | \(.fields.status.statusCategory.name) | \($summary) |"' \
+                  "$pending_issues_file"
+              } >>"$GITHUB_STEP_SUMMARY"
+            fi
           done
 
           {
