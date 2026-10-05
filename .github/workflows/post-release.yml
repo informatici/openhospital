@@ -1,4 +1,4 @@
-name: Post-release dry-run
+name: Open Hospital post-release
 
 on:
   workflow_dispatch:
@@ -7,32 +7,71 @@ on:
         description: Release version in X.Y.Z form
         required: true
         type: string
+  release:
+    types: [released]
 
 permissions:
   contents: read
   pull-requests: read
 
 concurrency:
-  group: post-release-dry-run-${{ inputs.version }}
+  group: post-release-${{ github.event.release.tag_name || inputs.version }}
   cancel-in-progress: false
 
 jobs:
-  dry-run:
-    name: Verify post-release plan
+  post-release:
+    name: Verify and apply post-release plan
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 10
     env:
-      VERSION: ${{ inputs.version }}
+      VERSION: ${{ inputs.version || '' }}
       JIRA_CLOUD_ID: ${{ secrets.JIRA_CLOUD_ID }}
       JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
       GH_TOKEN: ${{ github.token }}
       GH_OWNER: informatici
+      EVENT_NAME: ${{ github.event_name }}
+      EVENT_TAG: ${{ github.event.release.tag_name || '' }}
+      EVENT_DRAFT: ${{ github.event.release.draft || false }}
+      EVENT_PRERELEASE: ${{ github.event.release.prerelease || false }}
+      EVENT_PUBLISHED_AT: ${{ github.event.release.published_at || '' }}
+      EVENT_RELEASE_URL: ${{ github.event.release.html_url || '' }}
+      RELEASE_APP_CLIENT_ID: ${{ vars.RELEASE_APP_CLIENT_ID }}
+      RELEASE_APP_PRIVATE_KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
 
     steps:
       - name: Validate inputs and secrets
         shell: bash
         run: |
           set -Eeuo pipefail
+
+          if [[ "$EVENT_NAME" == "release" ]]; then
+            [[ "$EVENT_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
+              echo "::error::release tag must have vX.Y.Z form"
+              exit 1
+            }
+            [[ "$EVENT_DRAFT" == "false" && "$EVENT_PRERELEASE" == "false" ]] || {
+              echo "::error::released event is not a final non-draft release"
+              exit 1
+            }
+            [[ -n "$EVENT_PUBLISHED_AT" ]] || {
+              echo "::error::release event has no published_at timestamp"
+              exit 1
+            }
+            [[ -n "$RELEASE_APP_CLIENT_ID" ]] || {
+              echo "::error::Missing RELEASE_APP_CLIENT_ID repository variable"
+              exit 1
+            }
+            [[ -n "$RELEASE_APP_PRIVATE_KEY" ]] || {
+              echo "::error::Missing RELEASE_APP_PRIVATE_KEY secret"
+              exit 1
+            }
+            VERSION="${EVENT_TAG#v}"
+            DRY_RUN=false
+            RELEASE_DATE="${EVENT_PUBLISHED_AT:0:10}"
+          else
+            DRY_RUN=true
+            RELEASE_DATE=""
+          fi
 
           [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
             echo "::error::version must have X.Y.Z form (for example 1.15.2)"
@@ -54,10 +93,43 @@ jobs:
             exit 1
           }
 
-          echo "RELEASE_TAG=v$VERSION" >>"$GITHUB_ENV"
-          echo "RELEASE_BRANCH=release_${VERSION//./_}" >>"$GITHUB_ENV"
-          echo "GITHUB_BLOCKED=0" >>"$GITHUB_ENV"
-          echo "JIRA_BLOCKED=0" >>"$GITHUB_ENV"
+          {
+            echo "VERSION=$VERSION"
+            echo "DRY_RUN=$DRY_RUN"
+            echo "RELEASE_DATE=$RELEASE_DATE"
+            echo "RELEASE_TAG=v$VERSION"
+            echo "RELEASE_BRANCH=release_${VERSION//./_}"
+            echo "GITHUB_BLOCKED=0"
+            echo "JIRA_BLOCKED=0"
+          } >>"$GITHUB_ENV"
+
+      - name: Generate live GitHub App token
+        if: ${{ github.event_name == 'release' }}
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ env.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ env.RELEASE_APP_PRIVATE_KEY }}
+          owner: informatici
+          repositories: |
+            openhospital
+            openhospital-core
+            openhospital-gui
+            openhospital-api
+            openhospital-ui
+            openhospital-doc
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Select live GitHub credentials
+        if: ${{ github.event_name == 'release' }}
+        shell: bash
+        env:
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          set -Eeuo pipefail
+          echo "::add-mask::$APP_TOKEN"
+          echo "GH_TOKEN=$APP_TOKEN" >>"$GITHUB_ENV"
 
       - name: Inspect GitHub release
         shell: bash
@@ -72,11 +144,19 @@ jobs:
             release_url="$(jq -r '.html_url' "$release_file")"
 
             if [[ "$draft" == "false" && "$prerelease" == "false" ]]; then
-              eligibility="final release; a future publish-triggered workflow would apply changes"
+              if [[ "$DRY_RUN" == "true" ]]; then
+                eligibility="final release; a release-triggered run would apply changes"
+              else
+                eligibility="final release; post-release changes enabled"
+              fi
             else
               eligibility="not final; publish-triggered changes would be skipped"
             fi
           else
+            if [[ "$DRY_RUN" == "false" ]]; then
+              echo "::error::The triggering release $RELEASE_TAG could not be read"
+              exit 1
+            fi
             draft="not found"
             prerelease="not found"
             published_at="not published"
@@ -85,12 +165,20 @@ jobs:
           fi
 
           {
-            echo "# Open Hospital post-release dry-run"
+            if [[ "$DRY_RUN" == "true" ]]; then
+              title="Open Hospital post-release dry-run"
+              mode="**DRY RUN — no remote state is changed**"
+            else
+              title="Open Hospital post-release"
+              mode="**LIVE — idempotent post-release changes are enabled**"
+            fi
+
+            echo "# $title"
             echo ""
             echo "- Version: \`$VERSION\`"
             echo "- Tag: \`$RELEASE_TAG\`"
             echo "- Release branch: \`$RELEASE_BRANCH\`"
-            echo "- Mode: **DRY RUN — no remote state is changed**"
+            echo "- Mode: $mode"
             echo ""
             echo "## Aggregate GitHub release"
             echo ""
@@ -125,6 +213,8 @@ jobs:
             pr_state="would create"
             merge_test="not run"
             action=""
+            ref_matches=false
+            already_contained=false
 
             if ! branch_sha="$(gh api "repos/$full_repo/git/ref/heads/$RELEASE_BRANCH" --jq '.object.sha' 2>/dev/null)"; then
               echo "::error::$full_repo is missing $RELEASE_BRANCH"
@@ -144,6 +234,7 @@ jobs:
 
             if [[ "$branch_sha" == "$tag_sha" ]]; then
               ref_state="\`$RELEASE_BRANCH\` matches \`$RELEASE_TAG\`; target \`develop\`"
+              ref_matches=true
             else
               ref_state="**mismatch:** \`$RELEASE_BRANCH\` != \`$RELEASE_TAG\`; target \`develop\`"
               echo "::error::$full_repo branch/tag SHA mismatch"
@@ -187,6 +278,7 @@ jobs:
 
             if git -C "$repo_dir" merge-base --is-ancestor \
                 "origin/$RELEASE_BRANCH" origin/develop; then
+              already_contained=true
               merge_test="already contained"
               action="no PR needed"
               if [[ "$pr_state" == "would create" ]]; then
@@ -220,6 +312,30 @@ jobs:
               git -C "$repo_dir" merge --abort >/dev/null 2>&1 || true
             fi
 
+            if [[ "$DRY_RUN" == "false" && "$ref_matches" == "true" && \
+                  "$already_contained" == "false" && "$pr_count" == "0" ]]; then
+              pr_body="$(jq -n \
+                --arg title "chore: merge back $VERSION into develop" \
+                --arg head "$RELEASE_BRANCH" \
+                --arg base "develop" \
+                --arg body "Automated merge-back for [$RELEASE_TAG]($EVENT_RELEASE_URL).\n\nCreated by the post-release workflow: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\n\nMerge conflicts are intentionally left for manual resolution. For release-managed POM version fields, retain the values from develop; review all other POM changes manually." \
+                '{title:$title, head:$head, base:$base, body:$body}')"
+
+              if created_pr="$(gh api --method POST "repos/$full_repo/pulls" \
+                  --input - <<<"$pr_body" 2>"$repo_dir/create-pr.err")"; then
+                pr_url="$(jq -r '.html_url' <<<"$created_pr")"
+                pr_number="$(jq -r '.number' <<<"$created_pr")"
+                pr_state="[created #$pr_number]($pr_url)"
+                action="PR created; merge remains subject to repository checks"
+              else
+                echo "::error::$full_repo merge-back PR creation failed"
+                sed 's/^/  /' "$repo_dir/create-pr.err" >&2 || true
+                pr_state="**creation failed**"
+                action="blocked; rerun is safe"
+                blocked=1
+              fi
+            fi
+
             printf '| %s | %s | %s | %s | %s — %s |\n' \
               "$repository" "$ref_state" "$pr_state" "$relation" \
               "$merge_test" "$action" >>"$rows"
@@ -233,7 +349,11 @@ jobs:
             echo "|---|---|---|---|---|"
             cat "$rows"
             echo ""
-            echo "> Trial merges run only in temporary runner clones. No branch, commit, or PR is created."
+            if [[ "$DRY_RUN" == "true" ]]; then
+              echo "> Trial merges run only in temporary runner clones. No branch, commit, or PR is created."
+            else
+              echo "> Trial merges run in temporary runner clones. Missing merge-back PRs are created; existing exact PRs are reused."
+            fi
             echo ""
             echo "> Conflicts are never resolved automatically. For release-managed POM version fields, retain the values from \`develop\`; review all other POM changes manually."
           } >>"$GITHUB_STEP_SUMMARY"
@@ -276,7 +396,24 @@ jobs:
             fi
           else
             state="missing; tag at \`${tag_sha:0:7}\`"
-            plan="would create branch \`$VERSION\` from \`$RELEASE_TAG\`"
+            if [[ "$DRY_RUN" == "true" ]]; then
+              plan="would create branch \`$VERSION\` from \`$RELEASE_TAG\`"
+            else
+              ref_body="$(jq -n \
+                --arg ref "refs/heads/$VERSION" \
+                --arg sha "$tag_sha" \
+                '{ref:$ref, sha:$sha}')"
+              if gh api --method POST "repos/$repository/git/refs" \
+                  --input - <<<"$ref_body" >/dev/null; then
+                state="created at \`${tag_sha:0:7}\`"
+                plan="branch \`$VERSION\` created from \`$RELEASE_TAG\`"
+              else
+                state="**creation failed**"
+                plan="blocked; rerun is safe"
+                echo "::error::Could not create documentation branch $VERSION"
+                echo "GITHUB_BLOCKED=1" >>"$GITHUB_ENV"
+              fi
+            fi
           fi
 
           {
@@ -313,6 +450,31 @@ jobs:
 
             if [[ "$status" != "200" ]]; then
               echo "::error::Jira GET failed with HTTP $status for ${url#"$api"}"
+              jq -r '.errorMessages[]?, .message? // empty' "$output" 2>/dev/null || true
+              return 1
+            fi
+          }
+
+          release_jira_version() {
+            local version_id="$1"
+            local output="$2"
+            local body status
+
+            body="$(jq -n \
+              --arg release_date "$RELEASE_DATE" \
+              '{released:true, releaseDate:$release_date}')"
+            status="$(curl --silent --show-error \
+              --output "$output" \
+              --write-out '%{http_code}' \
+              --request PUT \
+              --header "$auth_header" \
+              --header 'Accept: application/json' \
+              --header 'Content-Type: application/json' \
+              --data "$body" \
+              "$api/version/$version_id")"
+
+            if [[ "$status" != "200" ]]; then
+              echo "::error::Jira version update failed with HTTP $status for version $version_id"
               jq -r '.errorMessages[]?, .message? // empty' "$output" 2>/dev/null || true
               return 1
             fi
@@ -371,7 +533,12 @@ jobs:
             echo "## Jira access and release readiness"
             echo ""
             echo "- Jira Cloud ID format: valid"
-            echo "- Jira calls: authenticated reads plus read-only JQL searches"
+            if [[ "$DRY_RUN" == "true" ]]; then
+              echo "- Jira calls: authenticated reads plus read-only JQL searches"
+            else
+              echo "- Jira calls: readiness is rechecked immediately before an idempotent version update"
+              echo "- GitHub publication date used for Jira: \`$RELEASE_DATE\`"
+            fi
           } >>"$GITHUB_STEP_SUMMARY"
 
           failed=0
@@ -475,12 +642,50 @@ jobs:
               failed=1
               echo "::error::$project version $VERSION has $pending_count issue(s) outside the Done status category"
             elif (( issue_count == 0 )); then
-              readiness="warning: no issues"
               echo "::warning::$project version $VERSION has no associated issues"
-            elif [[ "$released" == "true" ]]; then
-              readiness="already released"
-            else
+            fi
+
+            if (( pending_count == 0 )) && [[ "$released" == "true" ]]; then
+              if [[ "$DRY_RUN" == "false" && "$release_date" != "$RELEASE_DATE" ]]; then
+                readiness="**blocked: already released with a different date**"
+                failed=1
+                echo "::error::$project version $VERSION is already released with date $release_date, expected $RELEASE_DATE"
+              else
+                readiness="already released"
+              fi
+            elif (( pending_count == 0 )) && [[ "$released" != "true" && "$DRY_RUN" == "true" ]]; then
               readiness="ready; would publish on final GitHub release"
+            elif (( pending_count == 0 )) && [[ "$released" != "true" ]]; then
+              if [[ "$GITHUB_BLOCKED" == "1" ]]; then
+                readiness="**blocked: GitHub preflight failed**"
+                failed=1
+              elif [[ "$browse" != "true" || "$administer" != "true" ]]; then
+                readiness="**blocked: insufficient permissions**"
+                failed=1
+              else
+                update_file="$work_dir/${project}-version-update.json"
+                if release_jira_version "$version_id" "$update_file"; then
+                  updated_released="$(jq -r '.released // false' "$update_file")"
+                  updated_date="$(jq -r '.releaseDate // "not set"' "$update_file")"
+                  if [[ "$updated_released" == "true" && "$updated_date" == "$RELEASE_DATE" ]]; then
+                    released="true"
+                    release_date="$updated_date"
+                    current="released; date: $release_date"
+                    readiness="released now"
+                  else
+                    readiness="**blocked: update verification failed**"
+                    failed=1
+                    echo "::error::$project Jira update response did not contain the expected released state and date"
+                  fi
+                else
+                  readiness="**blocked: update failed**"
+                  failed=1
+                fi
+              fi
+            fi
+
+            if (( issue_count == 0 )); then
+              readiness="$readiness; warning: no issues"
             fi
 
             echo "| $project | [$VERSION](https://openhospital.atlassian.net/projects/$project/versions/$version_id) | **$issue_count:** $included_codes | **$pending_count:** $pending_codes | $current | $readiness |" \
@@ -517,22 +722,30 @@ jobs:
             echo ""
             cat "$pending_summary"
             echo ""
-            echo "> No Jira version was created or modified by this workflow."
+            if [[ "$DRY_RUN" == "true" ]]; then
+              echo "> No Jira version was created or modified by this workflow."
+            else
+              echo "> Existing Jira versions are updated only after the final readiness search; no Jira version is created."
+            fi
           } >>"$GITHUB_STEP_SUMMARY"
 
           if (( failed != 0 )); then
             echo "JIRA_BLOCKED=1" >>"$GITHUB_ENV"
           fi
 
-      - name: Evaluate dry-run outcome
+      - name: Evaluate post-release outcome
         if: ${{ always() }}
         shell: bash
         run: |
           set -Eeuo pipefail
 
           if [[ "$GITHUB_BLOCKED" == "1" || "$JIRA_BLOCKED" == "1" ]]; then
-            echo "::error::Post-release dry-run found one or more blocking conditions; review the job summary"
+            echo "::error::Post-release workflow found one or more blocking conditions; review the job summary"
             exit 1
           fi
 
-          echo "Post-release dry-run completed without blocking conditions."
+          if [[ "$DRY_RUN" == "true" ]]; then
+            echo "Post-release dry-run completed without blocking conditions."
+          else
+            echo "Post-release execution completed without blocking conditions."
+          fi
