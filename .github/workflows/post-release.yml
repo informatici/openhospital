@@ -1,4 +1,4 @@
-name: Post-release Jira dry-run
+name: Post-release dry-run
 
 on:
   workflow_dispatch:
@@ -10,20 +10,23 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
-  group: post-release-jira-dry-run-${{ inputs.version }}
+  group: post-release-dry-run-${{ inputs.version }}
   cancel-in-progress: false
 
 jobs:
-  verify-jira:
-    name: Verify Jira configuration
+  dry-run:
+    name: Verify post-release plan
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     env:
       VERSION: ${{ inputs.version }}
       JIRA_CLOUD_ID: ${{ secrets.JIRA_CLOUD_ID }}
       JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      GH_TOKEN: ${{ github.token }}
+      GH_OWNER: informatici
 
     steps:
       - name: Validate inputs and secrets
@@ -50,6 +53,237 @@ jobs:
             echo "::error::Missing JIRA_API_TOKEN secret"
             exit 1
           }
+
+          echo "RELEASE_TAG=v$VERSION" >>"$GITHUB_ENV"
+          echo "RELEASE_BRANCH=release_${VERSION//./_}" >>"$GITHUB_ENV"
+          echo "GITHUB_BLOCKED=0" >>"$GITHUB_ENV"
+
+      - name: Inspect GitHub release
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          release_file="$RUNNER_TEMP/github-release.json"
+          if gh api "repos/$GH_OWNER/openhospital/releases/tags/$RELEASE_TAG" >"$release_file" 2>/dev/null; then
+            draft="$(jq -r '.draft' "$release_file")"
+            prerelease="$(jq -r '.prerelease' "$release_file")"
+            published_at="$(jq -r '.published_at // "not published"' "$release_file")"
+            release_url="$(jq -r '.html_url' "$release_file")"
+
+            if [[ "$draft" == "false" && "$prerelease" == "false" ]]; then
+              eligibility="final release; a future publish-triggered workflow would apply changes"
+            else
+              eligibility="not final; publish-triggered changes would be skipped"
+            fi
+          else
+            draft="not found"
+            prerelease="not found"
+            published_at="not published"
+            release_url="—"
+            eligibility="release not currently visible by tag; dry-run continues"
+          fi
+
+          {
+            echo "# Open Hospital post-release dry-run"
+            echo ""
+            echo "- Version: \`$VERSION\`"
+            echo "- Tag: \`$RELEASE_TAG\`"
+            echo "- Release branch: \`$RELEASE_BRANCH\`"
+            echo "- Mode: **DRY RUN — no remote state is changed**"
+            echo ""
+            echo "## Aggregate GitHub release"
+            echo ""
+            echo "| Draft | Prerelease | Published at | URL | Eligibility |"
+            echo "|---|---|---|---|---|"
+            echo "| $draft | $prerelease | $published_at | $release_url | $eligibility |"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+      - name: Analyze merge-back pull requests
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          repositories=(
+            openhospital-core
+            openhospital-gui
+            openhospital-api
+            openhospital-ui
+            openhospital-doc
+          )
+
+          rows="$RUNNER_TEMP/merge-back-rows.md"
+          : >"$rows"
+          blocked=0
+
+          for repository in "${repositories[@]}"; do
+            full_repo="$GH_OWNER/$repository"
+            repo_dir="$RUNNER_TEMP/$repository"
+            branch_sha=""
+            tag_sha=""
+            relation=""
+            pr_state="none"
+            merge_test="not run"
+            action=""
+
+            if ! branch_sha="$(gh api "repos/$full_repo/git/ref/heads/$RELEASE_BRANCH" --jq '.object.sha' 2>/dev/null)"; then
+              echo "::error::$full_repo is missing $RELEASE_BRANCH"
+              printf '| %s | missing | — | — | blocked: release branch missing |\n' \
+                "$repository" >>"$rows"
+              blocked=1
+              continue
+            fi
+
+            if ! tag_sha="$(gh api "repos/$full_repo/commits/$RELEASE_TAG" --jq '.sha' 2>/dev/null)"; then
+              echo "::error::$full_repo is missing $RELEASE_TAG"
+              printf '| %s | branch exists; tag missing | — | — | blocked: tag missing |\n' \
+                "$repository" >>"$rows"
+              blocked=1
+              continue
+            fi
+
+            if [[ "$branch_sha" == "$tag_sha" ]]; then
+              ref_state="matching at \`${branch_sha:0:7}\`"
+            else
+              ref_state="**mismatch** branch \`${branch_sha:0:7}\`, tag \`${tag_sha:0:7}\`"
+              echo "::error::$full_repo branch/tag SHA mismatch"
+              blocked=1
+            fi
+
+            prs="$(gh api \
+              "repos/$full_repo/pulls?state=all&head=$GH_OWNER:$RELEASE_BRANCH&base=develop&per_page=100")"
+            pr_count="$(jq 'length' <<<"$prs")"
+
+            if (( pr_count > 1 )); then
+              pr_state="**ambiguous: $pr_count exact PRs**"
+              echo "::error::$full_repo has $pr_count PRs for the exact head/base pair"
+              blocked=1
+            elif (( pr_count == 1 )); then
+              pr_url="$(jq -r '.[0].html_url' <<<"$prs")"
+              state="$(jq -r '.[0].state' <<<"$prs")"
+              merged="$(jq -r '.[0].merged_at != null' <<<"$prs")"
+              if [[ "$merged" == "true" ]]; then
+                pr_state="[already merged]($pr_url)"
+              elif [[ "$state" == "open" ]]; then
+                pr_state="[open]($pr_url)"
+              else
+                pr_state="[**closed without merge**]($pr_url)"
+                echo "::error::$full_repo has a closed-unmerged exact PR"
+                blocked=1
+              fi
+            fi
+
+            git clone --quiet --filter=blob:none --no-checkout \
+              "https://github.com/$full_repo.git" "$repo_dir"
+            git -C "$repo_dir" fetch --quiet origin \
+              "+refs/heads/develop:refs/remotes/origin/develop" \
+              "+refs/heads/$RELEASE_BRANCH:refs/remotes/origin/$RELEASE_BRANCH"
+
+            read -r develop_only release_only < <(
+              git -C "$repo_dir" rev-list --left-right --count \
+                "origin/develop...origin/$RELEASE_BRANCH"
+            )
+            relation="develop-only: $develop_only; release-only: $release_only"
+
+            if git -C "$repo_dir" merge-base --is-ancestor \
+                "origin/$RELEASE_BRANCH" origin/develop; then
+              merge_test="already contained"
+              action="no PR needed"
+            else
+              git -C "$repo_dir" checkout --quiet -B dry-run-develop origin/develop
+              set +e
+              git -C "$repo_dir" -c user.name=dry-run -c user.email=dry-run@example.invalid \
+                merge --no-commit --no-ff "origin/$RELEASE_BRANCH" \
+                >"$repo_dir/merge.log" 2>&1
+              merge_rc=$?
+              set -e
+
+              if (( merge_rc == 0 )); then
+                merge_test="clean"
+                if [[ "$pr_state" == "none" ]]; then
+                  action="would create PR"
+                else
+                  action="reuse existing PR state"
+                fi
+              else
+                conflicts="$(git -C "$repo_dir" diff --name-only --diff-filter=U \
+                  | paste -sd ', ' -)"
+                [[ -n "$conflicts" ]] || conflicts="merge command failed; inspect logs"
+                merge_test="**conflicts:** $conflicts"
+                action="manual resolution required"
+                echo "::error::$full_repo trial merge has conflicts: $conflicts"
+                blocked=1
+              fi
+
+              git -C "$repo_dir" merge --abort >/dev/null 2>&1 || true
+            fi
+
+            printf '| %s | %s | %s | %s | %s — %s |\n' \
+              "$repository" "$ref_state" "$pr_state" "$relation" \
+              "$merge_test" "$action" >>"$rows"
+          done
+
+          {
+            echo ""
+            echo "## Merge-back analysis"
+            echo ""
+            echo "| Repository | Release branch/tag | Exact PR | Divergence | Trial merge / plan |"
+            echo "|---|---|---|---|---|"
+            cat "$rows"
+            echo ""
+            echo "> Trial merges run only in temporary runner clones. No branch, commit, or PR is created."
+            echo ""
+            echo "> Conflicts are never resolved automatically. For release-managed POM version fields, retain the values from \`develop\`; review all other POM changes manually."
+          } >>"$GITHUB_STEP_SUMMARY"
+
+          if (( blocked != 0 )); then
+            echo "GITHUB_BLOCKED=1" >>"$GITHUB_ENV"
+          fi
+
+      - name: Analyze documentation selector branch
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          repository="$GH_OWNER/openhospital-doc"
+          if ! tag_sha="$(gh api "repos/$repository/commits/$RELEASE_TAG" \
+              --jq '.sha' 2>/dev/null)"; then
+            echo "::error::Documentation tag $RELEASE_TAG is missing"
+            echo "GITHUB_BLOCKED=1" >>"$GITHUB_ENV"
+            {
+              echo ""
+              echo "## Documentation selector branch"
+              echo ""
+              echo "| Repository | Branch | State | Planned action |"
+              echo "|---|---|---|---|"
+              echo "| openhospital-doc | \`$VERSION\` | tag \`$RELEASE_TAG\` missing | blocked |"
+            } >>"$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          if branch_sha="$(gh api "repos/$repository/git/ref/heads/$VERSION" \
+              --jq '.object.sha' 2>/dev/null)"; then
+            if [[ "$branch_sha" == "$tag_sha" ]]; then
+              state="already correct at \`${tag_sha:0:7}\`"
+              plan="nothing"
+            else
+              state="**mismatch:** branch \`${branch_sha:0:7}\`, tag \`${tag_sha:0:7}\`"
+              plan="blocked; never force-move"
+              echo "::error::Documentation branch $VERSION points to a different commit"
+              echo "GITHUB_BLOCKED=1" >>"$GITHUB_ENV"
+            fi
+          else
+            state="missing; tag at \`${tag_sha:0:7}\`"
+            plan="would create branch \`$VERSION\` from \`$RELEASE_TAG\`"
+          fi
+
+          {
+            echo ""
+            echo "## Documentation selector branch"
+            echo ""
+            echo "| Repository | Branch | State | Planned action |"
+            echo "|---|---|---|---|"
+            echo "| openhospital-doc | \`$VERSION\` | $state | $plan |"
+          } >>"$GITHUB_STEP_SUMMARY"
 
       - name: Verify Jira access, permissions, and release versions
         shell: bash
@@ -130,11 +364,11 @@ jobs:
           }
 
           {
-            echo "# Jira post-release dry-run"
             echo ""
-            echo "- Version: \`$VERSION\`"
-            echo "- Mode: **DRY RUN — only authenticated GET requests are used**"
-            echo "- Cloud ID format: valid"
+            echo "## Jira access and release readiness"
+            echo ""
+            echo "- Jira Cloud ID format: valid"
+            echo "- Jira calls: authenticated reads plus read-only JQL searches"
             echo ""
             echo "| Project | Browse | Administer | Version ID | Issues | Pending | Current state | Readiness |"
             echo "|---|---|---|---:|---:|---:|---|---|"
@@ -249,4 +483,4 @@ jobs:
             echo "> No Jira version was created or modified by this workflow."
           } >>"$GITHUB_STEP_SUMMARY"
 
-          [[ "$failed" == "0" ]]
+          [[ "$failed" == "0" && "$GITHUB_BLOCKED" == "0" ]]
