@@ -237,10 +237,11 @@ jobs:
 
     steps:
     - name: Setup Java JDK
-      uses: actions/setup-java@v1.4.3
+      uses: actions/setup-java@v6
       with:
         distribution: 'zulu'
         java-version: 17
+        cache: 'maven'
 
     - name: Install asciidoctor
       run: sudo gem install asciidoctor-pdf --pre
@@ -268,7 +269,8 @@ jobs:
 
     - name: Get current date
       id: date
-      run: echo "::set-output name=date::$(date +'%Y%m%d')"
+      if: startsWith(github.ref, 'refs/tags/develop')
+      run: echo "date=$(date +'%Y%m%d')" >> "$GITHUB_OUTPUT"
 
     - name: Rename artifact
       if: startsWith(github.ref, 'refs/tags/develop')
