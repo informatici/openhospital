@@ -490,6 +490,7 @@ $(FULLDISTRO).zip:
 	# copy UI content
 	mkdir -p $(FULLDISTRO)/oh/$(OH_PUBLIC_URL)
 	cp -a ./openhospital-ui/build/* $(FULLDISTRO)/oh/$(OH_PUBLIC_URL)
+	cp -a ./oh-extra/oh-ui/WEB-INF $(FULLDISTRO)/oh/$(OH_PUBLIC_URL)
 	# Set OH mode to EXPERIMENTAL in startup scripts
 	# EXPERT_MODE="off"
 	sed -i 's/^\#$$script\:EXPERT_MODE\=\"off\"/\$$script\:EXPERT_MODE\=\"on\"/g' $(FULLDISTRO)/oh.ps1
