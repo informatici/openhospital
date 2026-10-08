@@ -481,8 +481,6 @@ $(FULLDISTRO).zip:
 	sed -i 's/^\OH_DIR\=\".\"/OH_DIR\=\"oh\"/g' $(FULLDISTRO)/ohmac.sh
 	# give exec permissions to startup script
 	chmod 755 $(FULLDISTRO)/oh.sh
-	# copy API war
-	cp -a ./openhospital-api/target/$(OH_API_WAR) $(FULLDISTRO)/oh/bin
 	# copy API configuration file
 	cp ./openhospital-api/rsc/application.properties.dist $(FULLDISTRO)/oh/rsc/
 	# copy generated API WAR file
