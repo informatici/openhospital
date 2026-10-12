@@ -204,6 +204,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
     - name: Setup Java JDK
       uses: actions/setup-java@v6
       with:
@@ -213,10 +217,6 @@ jobs:
 
     - name: Install asciidoctor
       run: sudo gem install asciidoctor-pdf --pre
-
-    - uses: actions/checkout@v4
-      with:
-       fetch-depth: 0
 
     - name: Build OH distributions
       run: make
