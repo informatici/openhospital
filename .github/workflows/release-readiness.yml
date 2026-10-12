@@ -1,0 +1,328 @@
+name: Open Hospital release readiness
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: Release version in X.Y.Z or vX.Y.Z form
+        required: true
+        type: string
+      phase:
+        description: preparation, tagging, build, publication, or development
+        required: true
+        type: string
+      enforcement:
+        description: report emits findings; block fails on blocking findings
+        required: true
+        type: string
+    secrets:
+      JIRA_CLOUD_ID:
+        required: false
+      JIRA_API_TOKEN:
+        required: false
+    outputs:
+      ready:
+        value: ${{ jobs.readiness.outputs.ready }}
+      version:
+        value: ${{ jobs.readiness.outputs.version }}
+      pending_issues:
+        value: ${{ jobs.readiness.outputs.pending_issues }}
+      op_version_id:
+        value: ${{ jobs.readiness.outputs.op_version_id }}
+      oh2_version_id:
+        value: ${{ jobs.readiness.outputs.oh2_version_id }}
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version in X.Y.Z form
+        required: true
+        type: string
+      phase:
+        required: true
+        type: choice
+        options: [preparation, tagging, build, publication]
+      enforcement:
+        required: true
+        type: choice
+        default: report
+        options: [report, block]
+
+permissions:
+  contents: read
+
+jobs:
+  readiness:
+    name: Check ${{ inputs.phase }} readiness
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+      version: ${{ steps.check.outputs.version }}
+      pending_issues: ${{ steps.check.outputs.pending_issues }}
+      op_version_id: ${{ steps.check.outputs.op_version_id }}
+      oh2_version_id: ${{ steps.check.outputs.oh2_version_id }}
+    env:
+      VERSION_INPUT: ${{ inputs.version }}
+      PHASE: ${{ inputs.phase }}
+      ENFORCEMENT: ${{ inputs.enforcement }}
+      JIRA_CLOUD_ID: ${{ secrets.JIRA_CLOUD_ID }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      GH_OWNER: informatici
+
+    steps:
+      - name: Check release readiness
+        id: check
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          set +x
+
+          version="${VERSION_INPUT#v}"
+          release_tag="v${version}"
+          release_branch="release_${version//./_}"
+          blocking_findings=0
+          pending_total=0
+          op_version_id=""
+          oh2_version_id=""
+          work_dir="$(mktemp -d)"
+          trap 'rm -rf "$work_dir"' EXIT
+
+          block() {
+            echo "::error::$1"
+            blocking_findings=$((blocking_findings + 1))
+          }
+
+          warn() {
+            echo "::warning::$1"
+          }
+
+          [[ "$PHASE" =~ ^(preparation|tagging|build|publication|development)$ ]] \
+            || block "Unsupported readiness phase: $PHASE"
+          [[ "$ENFORCEMENT" =~ ^(report|block)$ ]] \
+            || block "enforcement must be report or block"
+
+          if [[ "$PHASE" != "development" && \
+                ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            block "version must have X.Y.Z or vX.Y.Z form"
+          fi
+
+          jira_rows="$work_dir/jira.md"
+          pending_rows="$work_dir/pending.md"
+          github_rows="$work_dir/github.md"
+          : >"$jira_rows"
+          : >"$pending_rows"
+          : >"$github_rows"
+
+          jira_api="https://api.atlassian.com/ex/jira/${JIRA_CLOUD_ID}/rest/api/3"
+          auth_header="Authorization: Bearer ${JIRA_API_TOKEN}"
+
+          jira_get() {
+            local path="$1" output="$2" status
+            status="$(curl --silent --show-error --output "$output" \
+              --write-out '%{http_code}' --header "$auth_header" \
+              --header 'Accept: application/json' "$jira_api/$path")"
+            [[ "$status" == "200" ]]
+          }
+
+          jira_search() {
+            local jql="$1" output="$2"
+            local page_file="$work_dir/search-page.json"
+            local merged_file="$work_dir/search-merged.json"
+            local next_token="" status body page=0
+            printf '[]\n' >"$output"
+
+            while true; do
+              page=$((page + 1))
+              (( page <= 1000 )) || return 1
+              body="$(jq -n --arg jql "$jql" --arg next "$next_token" \
+                '{jql:$jql, fields:["summary","status"], maxResults:100}
+                 + (if $next == "" then {} else {nextPageToken:$next} end)')"
+              status="$(curl --silent --show-error --output "$page_file" \
+                --write-out '%{http_code}' --request POST \
+                --header "$auth_header" --header 'Accept: application/json' \
+                --header 'Content-Type: application/json' --data "$body" \
+                "$jira_api/search/jql")"
+              [[ "$status" == "200" ]] || return 1
+              jq -s '.[0] + .[1]' "$output" \
+                <(jq '.issues // []' "$page_file") >"$merged_file"
+              mv "$merged_file" "$output"
+              next_token="$(jq -r '.nextPageToken // empty' "$page_file")"
+              [[ -n "$next_token" ]] || break
+            done
+          }
+
+          if [[ "$PHASE" != "development" ]]; then
+            [[ -n "$JIRA_CLOUD_ID" ]] || block "Missing JIRA_CLOUD_ID secret"
+            [[ -n "$JIRA_API_TOKEN" ]] || block "Missing JIRA_API_TOKEN secret"
+
+            if [[ -n "$JIRA_CLOUD_ID" && -n "$JIRA_API_TOKEN" ]]; then
+              for project in OP OH2; do
+                permissions_file="$work_dir/${project}-permissions.json"
+                versions_file="$work_dir/${project}-versions.json"
+                all_file="$work_dir/${project}-all.json"
+                pending_file="$work_dir/${project}-pending.json"
+
+                if ! jira_get \
+                    "mypermissions?projectKey=$project&permissions=BROWSE_PROJECTS,ADMINISTER_PROJECTS" \
+                    "$permissions_file"; then
+                  block "$project Jira permission lookup failed"
+                  echo "| $project | error | — | — | blocked |" >>"$jira_rows"
+                  continue
+                fi
+
+                browse="$(jq -r '.permissions.BROWSE_PROJECTS.havePermission // false' "$permissions_file")"
+                administer="$(jq -r '.permissions.ADMINISTER_PROJECTS.havePermission // false' "$permissions_file")"
+                if [[ "$browse" != "true" || "$administer" != "true" ]]; then
+                  block "Jira account lacks required permissions in $project"
+                fi
+
+                if ! jira_get "project/$project/versions" "$versions_file"; then
+                  block "$project Jira version lookup failed"
+                  echo "| $project | lookup failed | — | — | blocked |" >>"$jira_rows"
+                  continue
+                fi
+
+                matches="$(jq --arg version "$version" \
+                  '[.[] | select(.name == $version)] | length' "$versions_file")"
+                if [[ "$matches" != "1" ]]; then
+                  block "Expected exactly one Jira version '$version' in $project; found $matches"
+                  echo "| $project | exact matches: $matches | — | — | blocked |" >>"$jira_rows"
+                  continue
+                fi
+
+                version_id="$(jq -r --arg version "$version" \
+                  '.[] | select(.name == $version) | .id' "$versions_file")"
+                released="$(jq -r --arg version "$version" \
+                  '.[] | select(.name == $version) | .released' "$versions_file")"
+                if [[ "$project" == "OP" ]]; then
+                  op_version_id="$version_id"
+                else
+                  oh2_version_id="$version_id"
+                fi
+
+                all_jql="project = $project AND fixVersion = $version_id ORDER BY key"
+                pending_jql="project = $project AND fixVersion = $version_id AND statusCategory != Done ORDER BY key"
+                if ! jira_search "$all_jql" "$all_file"; then
+                  block "$project issue search failed"
+                  echo "| $project | $version_id | error | error | blocked |" >>"$jira_rows"
+                  continue
+                fi
+                if ! jira_search "$pending_jql" "$pending_file"; then
+                  block "$project pending-issue search failed"
+                  echo "| $project | $version_id | error | error | blocked |" >>"$jira_rows"
+                  continue
+                fi
+
+                issue_count="$(jq 'length' "$all_file")"
+                pending_count="$(jq 'length' "$pending_file")"
+                pending_total=$((pending_total + pending_count))
+
+                if (( pending_count > 0 )); then
+                  if [[ "$PHASE" == "publication" ]]; then
+                    block "$project version $version has $pending_count issue(s) outside Done"
+                    result="blocked"
+                  else
+                    warn "$project version $version has $pending_count issue(s) outside Done"
+                    result="warning"
+                  fi
+                  jq -r --arg project "$project" \
+                    '.[] | (.fields.summary // "" | gsub("[|\\r\\n]"; " ")) as $summary |
+                     "| " + $project + " | [" + .key + "](https://openhospital.atlassian.net/browse/" + .key + ") | " +
+                     .fields.status.name + " | " + .fields.status.statusCategory.name + " | " + $summary + " |"' \
+                    "$pending_file" >>"$pending_rows"
+                else
+                  result="ready"
+                fi
+
+                echo "| $project | $version_id | $issue_count | $pending_count | $released | $result |" \
+                  >>"$jira_rows"
+              done
+            fi
+          fi
+
+          repositories=(
+            openhospital-core
+            openhospital-gui
+            openhospital-api
+            openhospital-ui
+            openhospital-doc
+          )
+
+          if [[ "$PHASE" =~ ^(tagging|build|publication)$ ]]; then
+            for repository in "${repositories[@]}"; do
+              full_repo="$GH_OWNER/$repository"
+              if ! branch_sha="$(gh api \
+                  "repos/$full_repo/git/ref/heads/$release_branch" \
+                  --jq '.object.sha' 2>/dev/null)"; then
+                block "$full_repo is missing $release_branch"
+                echo "| $repository | missing | — | blocked |" >>"$github_rows"
+                continue
+              fi
+
+              if [[ "$PHASE" == "tagging" ]]; then
+                echo "| $repository | ${branch_sha:0:7} | not required | ready |" >>"$github_rows"
+                continue
+              fi
+
+              if ! tag_sha="$(gh api "repos/$full_repo/commits/$release_tag" \
+                  --jq '.sha' 2>/dev/null)"; then
+                block "$full_repo is missing $release_tag"
+                echo "| $repository | ${branch_sha:0:7} | missing | blocked |" >>"$github_rows"
+              elif [[ "$branch_sha" != "$tag_sha" ]]; then
+                block "$full_repo $release_branch does not match $release_tag"
+                echo "| $repository | ${branch_sha:0:7} | ${tag_sha:0:7} | blocked |" >>"$github_rows"
+              else
+                echo "| $repository | ${branch_sha:0:7} | ${tag_sha:0:7} | ready |" >>"$github_rows"
+              fi
+            done
+          fi
+
+          if (( blocking_findings == 0 )); then ready=true; else ready=false; fi
+          {
+            echo "ready=$ready"
+            echo "version=$version"
+            echo "pending_issues=$pending_total"
+            echo "op_version_id=$op_version_id"
+            echo "oh2_version_id=$oh2_version_id"
+          } >>"$GITHUB_OUTPUT"
+
+          {
+            echo "# Release readiness"
+            echo ""
+            echo "- Version: \`$version\`"
+            echo "- Phase: \`$PHASE\`"
+            echo "- Enforcement: \`$ENFORCEMENT\`"
+            echo "- Ready: **$ready**"
+            if [[ "$PHASE" != "development" ]]; then
+              echo ""
+              echo "## Jira"
+              echo ""
+              echo "| Project | Version ID | Issues | Pending | Released | Result |"
+              echo "|---|---:|---:|---:|---|---|"
+              cat "$jira_rows"
+              if [[ -s "$pending_rows" ]]; then
+                echo ""
+                echo "### Pending Jira issues"
+                echo ""
+                echo "| Project | Issue | Status | Category | Summary |"
+                echo "|---|---|---|---|---|"
+                cat "$pending_rows"
+              fi
+            fi
+            if [[ "$PHASE" =~ ^(tagging|build|publication)$ ]]; then
+              echo ""
+              echo "## Component repositories"
+              echo ""
+              echo "| Repository | Release branch SHA | Tag SHA | Result |"
+              echo "|---|---|---|---|"
+              cat "$github_rows"
+            fi
+          } >>"$GITHUB_STEP_SUMMARY"
+
+          if [[ "$ready" != "true" && "$ENFORCEMENT" == "block" ]]; then
+            echo "::error::Release readiness checks failed"
+            exit 1
+          fi
