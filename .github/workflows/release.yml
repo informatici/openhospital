@@ -20,9 +20,37 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  tagging-readiness:
+    name: Check tagging readiness
+    if: github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/release-readiness.yml
+    with:
+      version: ${{ inputs.version }}
+      phase: tagging
+      enforcement: block
+    secrets:
+      JIRA_CLOUD_ID: ${{ secrets.JIRA_CLOUD_ID }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+  build-readiness:
+    name: Check build readiness
+    if: github.event_name == 'push'
+    uses: ./.github/workflows/release-readiness.yml
+    with:
+      version: ${{ github.ref_name }}
+      phase: ${{ github.event.deleted != true && startsWith(github.ref, 'refs/tags/v') && 'build' || 'development' }}
+      enforcement: block
+    secrets:
+      JIRA_CLOUD_ID: ${{ secrets.JIRA_CLOUD_ID }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
   tag-release:
     name: Tag release branches
-    if: github.event_name == 'workflow_dispatch'
+    needs: tagging-readiness
+    if: >-
+      always() &&
+      github.event_name == 'workflow_dispatch' &&
+      needs.tagging-readiness.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -58,40 +86,6 @@ jobs:
             openhospital-api
             openhospital-doc
             openhospital-ui
-
-      - name: Verify every release branch before changing tags
-        shell: bash
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          GH_REPO_OWNER: informatici
-          RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
-        run: |
-          set -euo pipefail
-
-          repos=(
-            openhospital-core
-            openhospital-gui
-            openhospital-api
-            openhospital-doc
-            openhospital-ui
-          )
-
-          missing=()
-          for repo in "${repos[@]}"; do
-            if gh api "repos/${GH_REPO_OWNER}/${repo}/git/ref/heads/${RELEASE_BRANCH}" \
-              --jq '.object.sha' >/dev/null 2>&1; then
-              echo "OK    ${repo}:${RELEASE_BRANCH}"
-            else
-              echo "MISS  ${repo}:${RELEASE_BRANCH}"
-              missing+=("${repo}")
-            fi
-          done
-
-          if (( ${#missing[@]} )); then
-            printf '::error::Branch %s is missing in: %s\n' \
-              "$RELEASE_BRANCH" "${missing[*]}"
-            exit 1
-          fi
 
       - name: Force component tags to their release branches
         shell: bash
@@ -194,38 +188,8 @@ jobs:
             echo "MOVE   ${repo}:${RELEASE_TAG} -> ${target_sha}"
           fi
 
-  preflight:
-    name: Verify tag across component repos
-    runs-on: ubuntu-latest
-    # Keep this job successful for PRs, manual orchestration and tag deletions so
-    # the existing build dependency does not break non-release executions.
-    steps:
-      - name: Check tag exists in all component repos
-        if: >-
-          github.event_name == 'push' &&
-          startsWith(github.ref, 'refs/tags/') &&
-          github.event.deleted != true
-        env:
-          TAG: ${{ github.ref_name }}
-        run: |
-          missing=""
-          for r in core gui api doc ui; do
-            url="https://github.com/informatici/openhospital-$r.git"
-            if git ls-remote --tags "$url" "refs/tags/$TAG" | grep -q .; then
-              echo "OK    openhospital-$r"
-            else
-              echo "MISS  openhospital-$r"
-              missing="$missing openhospital-$r"
-            fi
-          done
-          if [ -n "$missing" ]; then
-            echo "::error::Tag $TAG missing in:$missing"
-            exit 1
-          fi
-          echo "Tag $TAG exists in all 5 repos."
-
   build:
-    needs: preflight
+    needs: build-readiness
     # workflow_dispatch only moves tags; the host-tag push performs the build.
     # When retagging the same SHA, the tag is deleted and recreated to force a push event.
     # Ignore the deletion event so only the tag recreation triggers the build.

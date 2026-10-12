@@ -19,8 +19,20 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  readiness:
+    name: Enforce publication readiness
+    uses: ./.github/workflows/release-readiness.yml
+    with:
+      version: ${{ github.event.release.tag_name || inputs.version }}
+      phase: publication
+      enforcement: ${{ github.event_name == 'release' && 'block' || 'report' }}
+    secrets:
+      JIRA_CLOUD_ID: ${{ secrets.JIRA_CLOUD_ID }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
   post-release:
     name: Verify and apply post-release plan
+    needs: readiness
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
@@ -37,6 +49,8 @@ jobs:
       EVENT_RELEASE_URL: ${{ github.event.release.html_url || '' }}
       RELEASE_APP_CLIENT_ID: ${{ vars.RELEASE_APP_CLIENT_ID }}
       RELEASE_APP_PRIVATE_KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+      OP_VERSION_ID: ${{ needs.readiness.outputs.op_version_id }}
+      OH2_VERSION_ID: ${{ needs.readiness.outputs.oh2_version_id }}
 
     steps:
       - name: Validate inputs and secrets
@@ -75,21 +89,6 @@ jobs:
 
           [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
             echo "::error::version must have X.Y.Z form (for example 1.15.2)"
-            exit 1
-          }
-
-          [[ -n "$JIRA_CLOUD_ID" ]] || {
-            echo "::error::Missing JIRA_CLOUD_ID secret"
-            exit 1
-          }
-
-          [[ "$JIRA_CLOUD_ID" =~ ^[0-9a-fA-F-]{36}$ ]] || {
-            echo "::error::JIRA_CLOUD_ID does not have UUID form"
-            exit 1
-          }
-
-          [[ -n "$JIRA_API_TOKEN" ]] || {
-            echo "::error::Missing JIRA_API_TOKEN secret"
             exit 1
           }
 
@@ -208,12 +207,10 @@ jobs:
             full_repo="$GH_OWNER/$repository"
             repo_dir="$RUNNER_TEMP/$repository"
             branch_sha=""
-            tag_sha=""
             relation=""
             pr_state="would create"
             merge_test="not run"
             action=""
-            ref_matches=false
             already_contained=false
 
             if ! branch_sha="$(gh api "repos/$full_repo/git/ref/heads/$RELEASE_BRANCH" --jq '.object.sha' 2>/dev/null)"; then
@@ -224,22 +221,7 @@ jobs:
               continue
             fi
 
-            if ! tag_sha="$(gh api "repos/$full_repo/commits/$RELEASE_TAG" --jq '.sha' 2>/dev/null)"; then
-              echo "::error::$full_repo is missing $RELEASE_TAG"
-              printf '| %s | branch exists; tag missing | — | — | blocked: tag missing |\n' \
-                "$repository" >>"$rows"
-              blocked=1
-              continue
-            fi
-
-            if [[ "$branch_sha" == "$tag_sha" ]]; then
-              ref_state="\`$RELEASE_BRANCH\` matches \`$RELEASE_TAG\`; target \`develop\`"
-              ref_matches=true
-            else
-              ref_state="**mismatch:** \`$RELEASE_BRANCH\` != \`$RELEASE_TAG\`; target \`develop\`"
-              echo "::error::$full_repo branch/tag SHA mismatch"
-              blocked=1
-            fi
+            ref_state="\`$RELEASE_BRANCH\` validated by readiness; target \`develop\`"
 
             prs="$(gh api \
               "repos/$full_repo/pulls?state=all&head=$GH_OWNER:$RELEASE_BRANCH&base=develop&per_page=100")"
@@ -312,7 +294,7 @@ jobs:
               git -C "$repo_dir" merge --abort >/dev/null 2>&1 || true
             fi
 
-            if [[ "$DRY_RUN" == "false" && "$ref_matches" == "true" && \
+            if [[ "$DRY_RUN" == "false" && \
                   "$already_contained" == "false" && "$pr_count" == "0" ]]; then
               pr_body="$(jq -n \
                 --arg title "chore: merge back $VERSION into develop" \
@@ -425,7 +407,8 @@ jobs:
             echo "| openhospital-doc | \`$VERSION\` | $state | $plan |"
           } >>"$GITHUB_STEP_SUMMARY"
 
-      - name: Verify Jira access, permissions, and release versions
+      - name: Publish the validated Jira versions
+        if: ${{ github.event_name == 'release' }}
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -435,36 +418,56 @@ jobs:
           auth_header="Authorization: Bearer ${JIRA_API_TOKEN}"
           work_dir="$(mktemp -d)"
           trap 'rm -rf "$work_dir"' EXIT
+          rows="$work_dir/jira-publication.md"
+          : >"$rows"
+          failed=0
 
-          request_json() {
-            local url="$1"
-            local output="$2"
-            local status
+          publish_version() {
+            local project="$1"
+            local version_id="$2"
+            local current_file="$work_dir/${project}-current.json"
+            local update_file="$work_dir/${project}-update.json"
+            local status released current_date body
+
+            if [[ -z "$version_id" ]]; then
+              echo "::error::Readiness did not return the Jira version ID for $project"
+              echo "| $project | — | blocked: missing validated version ID |" >>"$rows"
+              failed=1
+              return
+            fi
 
             status="$(curl --silent --show-error \
-              --output "$output" \
+              --output "$current_file" \
               --write-out '%{http_code}' \
               --header "$auth_header" \
               --header 'Accept: application/json' \
-              "$url")"
+              "$api/version/$version_id")"
 
             if [[ "$status" != "200" ]]; then
-              echo "::error::Jira GET failed with HTTP $status for ${url#"$api"}"
-              jq -r '.errorMessages[]?, .message? // empty' "$output" 2>/dev/null || true
-              return 1
+              echo "::error::Jira version read failed with HTTP $status for $project/$version_id"
+              echo "| $project | $version_id | blocked: current state unavailable |" >>"$rows"
+              failed=1
+              return
             fi
-          }
 
-          release_jira_version() {
-            local version_id="$1"
-            local output="$2"
-            local body status
+            released="$(jq -r '.released // false' "$current_file")"
+            current_date="$(jq -r '.releaseDate // empty' "$current_file")"
 
-            body="$(jq -n \
-              --arg release_date "$RELEASE_DATE" \
+            if [[ "$released" == "true" ]]; then
+              if [[ "$current_date" == "$RELEASE_DATE" ]]; then
+                echo "| $project | $version_id | already released on $current_date |" >>"$rows"
+              else
+                echo "::error::$project version $VERSION is already released on ${current_date:-an unspecified date}, expected $RELEASE_DATE"
+                echo "| $project | $version_id | blocked: already released on ${current_date:-not set} |" >>"$rows"
+                failed=1
+              fi
+              return
+            fi
+
+            body="$(jq -n --arg release_date "$RELEASE_DATE" \
               '{released:true, releaseDate:$release_date}')"
             status="$(curl --silent --show-error \
-              --output "$output" \
+              --output "$update_file" \
               --write-out '%{http_code}' \
               --request PUT \
               --header "$auth_header" \
@@ -473,266 +476,35 @@ jobs:
               --data "$body" \
               "$api/version/$version_id")"
 
-            if [[ "$status" != "200" ]]; then
-              echo "::error::Jira version update failed with HTTP $status for version $version_id"
-              jq -r '.errorMessages[]?, .message? // empty' "$output" 2>/dev/null || true
-              return 1
+            if [[ "$status" != "200" ]] || \
+               [[ "$(jq -r '.released // false' "$update_file")" != "true" ]] || \
+               [[ "$(jq -r '.releaseDate // empty' "$update_file")" != "$RELEASE_DATE" ]]; then
+              echo "::error::Jira version publication failed for $project/$version_id (HTTP $status)"
+              echo "| $project | $version_id | blocked: publication failed |" >>"$rows"
+              failed=1
+              return
             fi
+
+            echo "| $project | $version_id | released on $RELEASE_DATE |" >>"$rows"
           }
 
-          search_issues() {
-            local jql="$1"
-            local output="$2"
-            local page_file="$work_dir/search-page.json"
-            local merged_file="$work_dir/search-merged.json"
-            local next_token=""
-            local page=0
-
-            printf '[]\n' >"$output"
-
-            while true; do
-              page=$((page + 1))
-              if (( page > 1000 )); then
-                echo "::error::Jira search exceeded 1000 pages"
-                return 1
-              fi
-
-              body="$(jq -n \
-                --arg jql "$jql" \
-                --arg next "$next_token" \
-                '{jql:$jql, fields:["summary","status"], maxResults:100}
-                 + (if $next == "" then {} else {nextPageToken:$next} end)')"
-
-              status="$(curl --silent --show-error \
-                --output "$page_file" \
-                --write-out '%{http_code}' \
-                --request POST \
-                --header "$auth_header" \
-                --header 'Accept: application/json' \
-                --header 'Content-Type: application/json' \
-                --data "$body" \
-                "$api/search/jql")"
-
-              if [[ "$status" != "200" ]]; then
-                echo "::error::Jira JQL search failed with HTTP $status"
-                jq -r '.errorMessages[]?, .message? // empty' "$page_file" 2>/dev/null || true
-                return 1
-              fi
-
-              jq -s '.[0] + .[1]' \
-                "$output" <(jq '.issues // []' "$page_file") >"$merged_file"
-              mv "$merged_file" "$output"
-
-              next_token="$(jq -r '.nextPageToken // empty' "$page_file")"
-              [[ -n "$next_token" ]] || break
-            done
-          }
+          publish_version OP "$OP_VERSION_ID"
+          publish_version OH2 "$OH2_VERSION_ID"
 
           {
             echo ""
-            echo "## Jira access and release readiness"
+            echo "## Jira publication"
             echo ""
-            echo "- Jira Cloud ID format: valid"
-            if [[ "$DRY_RUN" == "true" ]]; then
-              echo "- Jira calls: authenticated reads plus read-only JQL searches"
-            else
-              echo "- Jira calls: readiness is rechecked immediately before an idempotent version update"
-              echo "- GitHub publication date used for Jira: \`$RELEASE_DATE\`"
-            fi
-          } >>"$GITHUB_STEP_SUMMARY"
-
-          failed=0
-          access_summary="$work_dir/jira-access.md"
-          release_summary="$work_dir/jira-releases.md"
-          pending_summary="$work_dir/jira-pending.md"
-          : >"$access_summary"
-          : >"$release_summary"
-          : >"$pending_summary"
-
-          for project in OP OH2; do
-            permissions_file="$work_dir/${project}-permissions.json"
-            versions_file="$work_dir/${project}-versions.json"
-            all_issues_file="$work_dir/${project}-all-issues.json"
-            pending_issues_file="$work_dir/${project}-pending-issues.json"
-
-            if ! request_json \
-              "$api/mypermissions?projectKey=$project&permissions=BROWSE_PROJECTS,ADMINISTER_PROJECTS" \
-              "$permissions_file"; then
-              echo "- **$project:** permission check failed ❌" >>"$access_summary"
-              echo "| $project | — | — | — | permission check failed | **blocked** |" \
-                >>"$release_summary"
-              failed=1
-              continue
-            fi
-
-            browse="$(jq -r '.permissions.BROWSE_PROJECTS.havePermission // false' "$permissions_file")"
-            administer="$(jq -r '.permissions.ADMINISTER_PROJECTS.havePermission // false' "$permissions_file")"
-
-            if [[ "$browse" == "true" && "$administer" == "true" ]]; then
-              echo "- **$project:** Browse Projects ✅; Administer Projects ✅" >>"$access_summary"
-            else
-              echo "- **$project:** Browse Projects=$browse; Administer Projects=$administer ❌" \
-                >>"$access_summary"
-            fi
-
-            if [[ "$browse" != "true" || "$administer" != "true" ]]; then
-              echo "::error::Service account lacks required Jira permissions in $project (browse=$browse, administer=$administer)"
-              failed=1
-            fi
-
-            if ! request_json "$api/project/$project/versions" "$versions_file"; then
-              echo "| $project | — | — | — | version lookup failed | **blocked** |" \
-                >>"$release_summary"
-              failed=1
-              continue
-            fi
-
-            matches="$(jq --arg version "$VERSION" '[.[] | select(.name == $version)] | length' "$versions_file")"
-            if [[ "$matches" != "1" ]]; then
-              echo "::error::Expected exactly one Jira version '$VERSION' in $project; found $matches"
-              echo "| $project | — | — | — | exact matches: $matches | **blocked** |" \
-                >>"$release_summary"
-              failed=1
-              continue
-            fi
-
-            version_id="$(jq -r --arg version "$VERSION" '.[] | select(.name == $version) | .id' "$versions_file")"
-            released="$(jq -r --arg version "$VERSION" '.[] | select(.name == $version) | .released' "$versions_file")"
-            release_date="$(jq -r --arg version "$VERSION" '.[] | select(.name == $version) | .releaseDate // "not set"' "$versions_file")"
-
-            all_jql="project = $project AND fixVersion = $version_id ORDER BY key"
-            pending_jql="project = $project AND fixVersion = $version_id AND statusCategory != Done ORDER BY key"
-
-            if ! search_issues "$all_jql" "$all_issues_file"; then
-              echo "| $project | [$VERSION](https://openhospital.atlassian.net/projects/$project/versions/$version_id) | error | error | JQL search failed | **blocked** |" \
-                >>"$release_summary"
-              failed=1
-              continue
-            fi
-
-            if ! search_issues "$pending_jql" "$pending_issues_file"; then
-              echo "| $project | [$VERSION](https://openhospital.atlassian.net/projects/$project/versions/$version_id) | error | error | pending search failed | **blocked** |" \
-                >>"$release_summary"
-              failed=1
-              continue
-            fi
-
-            issue_count="$(jq 'length' "$all_issues_file")"
-            pending_count="$(jq 'length' "$pending_issues_file")"
-
-            included_codes="$(jq -r \
-              --arg site "https://openhospital.atlassian.net" \
-              '[.[] | "[\(.key)](\($site)/browse/\(.key))"] |
-               if length == 0 then "none" else join(", ") end' \
-              "$all_issues_file")"
-            pending_codes="$(jq -r \
-              --arg site "https://openhospital.atlassian.net" \
-              '[.[] | "[\(.key)](\($site)/browse/\(.key))"] |
-               if length == 0 then "none" else join(", ") end' \
-              "$pending_issues_file")"
-
-            if [[ "$released" == "true" ]]; then
-              current="released; date: $release_date"
-            else
-              current="unreleased; date: $release_date"
-            fi
-
-            if (( pending_count > 0 )); then
-              readiness="**blocked**"
-              failed=1
-              echo "::error::$project version $VERSION has $pending_count issue(s) outside the Done status category"
-            elif (( issue_count == 0 )); then
-              echo "::warning::$project version $VERSION has no associated issues"
-            fi
-
-            if (( pending_count == 0 )) && [[ "$released" == "true" ]]; then
-              if [[ "$DRY_RUN" == "false" && "$release_date" != "$RELEASE_DATE" ]]; then
-                readiness="**blocked: already released with a different date**"
-                failed=1
-                echo "::error::$project version $VERSION is already released with date $release_date, expected $RELEASE_DATE"
-              else
-                readiness="already released"
-              fi
-            elif (( pending_count == 0 )) && [[ "$released" != "true" && "$DRY_RUN" == "true" ]]; then
-              readiness="ready; would publish on final GitHub release"
-            elif (( pending_count == 0 )) && [[ "$released" != "true" ]]; then
-              if [[ "$GITHUB_BLOCKED" == "1" ]]; then
-                readiness="**blocked: GitHub preflight failed**"
-                failed=1
-              elif [[ "$browse" != "true" || "$administer" != "true" ]]; then
-                readiness="**blocked: insufficient permissions**"
-                failed=1
-              else
-                update_file="$work_dir/${project}-version-update.json"
-                if release_jira_version "$version_id" "$update_file"; then
-                  updated_released="$(jq -r '.released // false' "$update_file")"
-                  updated_date="$(jq -r '.releaseDate // "not set"' "$update_file")"
-                  if [[ "$updated_released" == "true" && "$updated_date" == "$RELEASE_DATE" ]]; then
-                    released="true"
-                    release_date="$updated_date"
-                    current="released; date: $release_date"
-                    readiness="released now"
-                  else
-                    readiness="**blocked: update verification failed**"
-                    failed=1
-                    echo "::error::$project Jira update response did not contain the expected released state and date"
-                  fi
-                else
-                  readiness="**blocked: update failed**"
-                  failed=1
-                fi
-              fi
-            fi
-
-            if (( issue_count == 0 )); then
-              readiness="$readiness; warning: no issues"
-            fi
-
-            echo "| $project | [$VERSION](https://openhospital.atlassian.net/projects/$project/versions/$version_id) | **$issue_count:** $included_codes | **$pending_count:** $pending_codes | $current | $readiness |" \
-              >>"$release_summary"
-
-            if (( pending_count > 0 )); then
-              {
-                echo ""
-                echo "## Pending issues — $project"
-                echo ""
-                echo "| Issue | Status | Category | Summary |"
-                echo "|---|---|---|---|"
-                jq -r \
-                  --arg site "https://openhospital.atlassian.net" \
-                  '.[] |
-                   (.fields.summary // "" | gsub("[|\\r\\n]"; " ")) as $summary |
-                   "| [\(.key)](\($site)/browse/\(.key)) | \(.fields.status.name) | \(.fields.status.statusCategory.name) | \($summary) |"' \
-                  "$pending_issues_file"
-              } >>"$pending_summary"
-            fi
-          done
-
-          {
+            echo "> Jira access, versions, and issues were validated by the shared readiness workflow."
             echo ""
-            echo "### Jira access checks"
-            echo ""
-            cat "$access_summary"
-            echo ""
-            echo "### Jira release readiness"
-            echo ""
-            echo "| Project | Jira version | Included issues | Pending issues | Current state | Readiness |"
-            echo "|---|---:|---|---|---|---|"
-            cat "$release_summary"
-            echo ""
-            cat "$pending_summary"
-            echo ""
-            if [[ "$DRY_RUN" == "true" ]]; then
-              echo "> No Jira version was created or modified by this workflow."
-            else
-              echo "> Existing Jira versions are updated only after the final readiness search; no Jira version is created."
-            fi
+            echo "| Project | Version ID | Result |"
+            echo "|---|---:|---|"
+            cat "$rows"
           } >>"$GITHUB_STEP_SUMMARY"
 
           if (( failed != 0 )); then
             echo "JIRA_BLOCKED=1" >>"$GITHUB_ENV"
           fi
-
       - name: Evaluate post-release outcome
         if: ${{ always() }}
         shell: bash

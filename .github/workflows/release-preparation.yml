@@ -78,8 +78,20 @@ env:
   DRY_RUN: ${{ inputs.dry_run }}
 
 jobs:
+  readiness:
+    name: Report preparation readiness
+    uses: ./.github/workflows/release-readiness.yml
+    with:
+      version: ${{ inputs.version }}
+      phase: preparation
+      enforcement: report
+    secrets:
+      JIRA_CLOUD_ID: ${{ secrets.JIRA_CLOUD_ID }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
   preflight:
     name: Preflight
+    needs: readiness
     runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.config.outputs.matrix }}
