@@ -50,6 +50,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   readiness:
@@ -112,9 +113,13 @@ jobs:
           jira_rows="$work_dir/jira.md"
           pending_rows="$work_dir/pending.md"
           github_rows="$work_dir/github.md"
+          open_pr_rows="$work_dir/open-release-prs.md"
+          release_issue_keys="$work_dir/release-issue-keys.txt"
           : >"$jira_rows"
           : >"$pending_rows"
           : >"$github_rows"
+          : >"$open_pr_rows"
+          : >"$release_issue_keys"
 
           jira_api="https://api.atlassian.com/ex/jira/${JIRA_CLOUD_ID}/rest/api/3"
           auth_header="Authorization: Bearer ${JIRA_API_TOKEN}"
@@ -219,6 +224,7 @@ jobs:
                 issue_count="$(jq 'length' "$all_file")"
                 pending_count="$(jq 'length' "$pending_file")"
                 pending_total=$((pending_total + pending_count))
+                jq -r '.[].key' "$all_file" >>"$release_issue_keys"
 
                 if (( pending_count > 0 )); then
                   if [[ "$PHASE" == "publication" ]]; then
@@ -241,6 +247,59 @@ jobs:
                   >>"$jira_rows"
               done
             fi
+          fi
+
+          # A release must not include work that is still represented by an open PR.
+          # A PR is associated with a Jira issue when its key occurs in the title,
+          # body, or source branch name.
+          if [[ "$PHASE" != "development" && -s "$release_issue_keys" ]]; then
+            sort -u -o "$release_issue_keys" "$release_issue_keys"
+            issue_keys_json="$(jq -Rsc 'split("\n") | map(select(length > 0))' \
+              "$release_issue_keys")"
+            pr_repositories=(
+              openhospital
+              openhospital-core
+              openhospital-gui
+              openhospital-api
+              openhospital-ui
+              openhospital-doc
+            )
+
+            for repository in "${pr_repositories[@]}"; do
+              full_repo="$GH_OWNER/$repository"
+              pr_pages="$work_dir/${repository}-open-pr-pages.json"
+              pr_list="$work_dir/${repository}-open-prs.json"
+              matches_file="$work_dir/${repository}-release-prs.tsv"
+
+              if ! gh api --paginate --slurp \
+                  "repos/$full_repo/pulls?state=open&per_page=100" >"$pr_pages"; then
+                block "Unable to inspect open pull requests in $full_repo"
+                continue
+              fi
+              jq 'add // []' "$pr_pages" >"$pr_list"
+              jq -r --argjson keys "$issue_keys_json" '
+                .[] |
+                ((.title // "") + " " + (.body // "") + " " + (.head.ref // "")) as $text |
+                [$keys[] as $key |
+                  select($text | test("(^|[^A-Za-z0-9])" + $key + "([^A-Za-z0-9]|$)"; "i")) |
+                  $key
+                ] as $matches |
+                select($matches | length > 0) |
+                [(.number | tostring), .html_url,
+                 (.title | gsub("[|\\r\\n]"; " ")),
+                 (.head.ref | gsub("[|\\r\\n]"; " ")),
+                 ($matches | join(", "))] |
+                @tsv
+              ' "$pr_list" >"$matches_file"
+
+              while IFS=$'\t' read -r number url title head_ref issue_keys; do
+                [[ -n "$number" ]] || continue
+                block "$full_repo has open PR #$number associated with release issue(s): $issue_keys"
+                printf '| %s | [#%s](%s) | %s | `%s` | %s |\n' \
+                  "$repository" "$number" "$url" "$title" "$head_ref" "$issue_keys" \
+                  >>"$open_pr_rows"
+              done <"$matches_file"
+            done
           fi
 
           repositories=(
@@ -310,6 +369,18 @@ jobs:
                 echo "| Project | Issue | Status | Category | Summary |"
                 echo "|---|---|---|---|---|"
                 cat "$pending_rows"
+              fi
+              echo ""
+              echo "## Open pull requests for release issues"
+              echo ""
+              if [[ -s "$open_pr_rows" ]]; then
+                echo "The following open pull requests refer to Jira issues included in this release:"
+                echo ""
+                echo "| Repository | Pull request | Title | Source branch | Jira issues |"
+                echo "|---|---|---|---|---|"
+                cat "$open_pr_rows"
+              else
+                echo "No open pull request refers to a Jira issue included in this release."
               fi
             fi
             if [[ "$PHASE" =~ ^(tagging|build|publication)$ ]]; then

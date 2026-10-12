@@ -62,6 +62,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
   group: openhospital-release-prep-${{ inputs.version }}
