@@ -213,7 +213,6 @@ jobs:
       with:
         distribution: 'zulu'
         java-version: 17
-        cache: 'maven'
 
     - name: Install asciidoctor
       run: sudo gem install asciidoctor-pdf --pre
