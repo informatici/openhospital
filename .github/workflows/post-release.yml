@@ -296,11 +296,16 @@ jobs:
 
             if [[ "$DRY_RUN" == "false" && \
                   "$already_contained" == "false" && "$pr_count" == "0" ]]; then
+              printf -v pr_description '%s\n\n%s\n\n%s' \
+                "Automated merge-back for [$RELEASE_TAG]($EVENT_RELEASE_URL)." \
+                "Created by the post-release workflow: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+                "Merge conflicts are intentionally left for manual resolution. For release-managed POM version fields, retain the values from develop; review all other POM changes manually."
+
               pr_body="$(jq -n \
                 --arg title "chore: merge back $VERSION into develop" \
                 --arg head "$RELEASE_BRANCH" \
                 --arg base "develop" \
-                --arg body "Automated merge-back for [$RELEASE_TAG]($EVENT_RELEASE_URL).\n\nCreated by the post-release workflow: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\n\nMerge conflicts are intentionally left for manual resolution. For release-managed POM version fields, retain the values from develop; review all other POM changes manually." \
+                --arg body "$pr_description" \
                 '{title:$title, head:$head, base:$base, body:$body}')"
 
               if created_pr="$(gh api --method POST "repos/$full_repo/pulls" \
